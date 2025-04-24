@@ -5,32 +5,32 @@
 package db
 
 import (
-	"database/sql"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Task struct {
-	ID           int32
-	UserID       int32
-	ParentID     sql.NullInt32
-	Title        string
-	Description  sql.NullString
-	CreatedAt    sql.NullTime
-	UpdatedAt    sql.NullTime
-	DueDate      sql.NullTime
-	IsCompleted  sql.NullBool
-	Status       sql.NullString
-	Priority     sql.NullString
-	Tags         []string
-	DisplayOrder sql.NullInt32
+	ID           int32            `json:"id"`
+	UserID       int32            `json:"user_id"`
+	ParentID     pgtype.Int4      `json:"parent_id"`
+	Title        string           `json:"title"`
+	Description  pgtype.Text      `json:"description"`
+	CreatedAt    pgtype.Timestamp `json:"created_at"`
+	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
+	DueDate      pgtype.Timestamp `json:"due_date"`
+	IsCompleted  pgtype.Bool      `json:"is_completed"`
+	Status       pgtype.Text      `json:"status"`
+	Priority     pgtype.Text      `json:"priority"`
+	Tags         []string         `json:"tags"`
+	DisplayOrder pgtype.Int4      `json:"display_order"`
 }
 
 type User struct {
-	ID           int32
-	Username     string
-	Email        string
-	PasswordHash string
-	CreatedAt    sql.NullTime
-	UpdatedAt    sql.NullTime
-	LastLogin    sql.NullTime
-	IsActive     sql.NullBool
+	ID           int32            `json:"id"`
+	Username     string           `json:"username"`
+	Email        string           `json:"email"`
+	PasswordHash string           `json:"password_hash"`
+	CreatedAt    pgtype.Timestamp `json:"created_at"`
+	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
+	LastLogin    pgtype.Timestamp `json:"last_login"`
+	IsActive     pgtype.Bool      `json:"is_active"`
 }

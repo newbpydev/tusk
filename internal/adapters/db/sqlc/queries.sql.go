@@ -7,9 +7,8 @@ package db
 
 import (
 	"context"
-	"database/sql"
 
-	"github.com/lib/pq"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createTask = `-- name: CreateTask :one
@@ -23,21 +22,21 @@ RETURNING
 `
 
 type CreateTaskParams struct {
-	UserID       int32
-	ParentID     sql.NullInt32
-	Title        string
-	Description  sql.NullString
-	DueDate      sql.NullTime
-	IsCompleted  sql.NullBool
-	Status       sql.NullString
-	Priority     sql.NullString
-	Tags         []string
-	DisplayOrder sql.NullInt32
+	UserID       int32            `json:"user_id"`
+	ParentID     pgtype.Int4      `json:"parent_id"`
+	Title        string           `json:"title"`
+	Description  pgtype.Text      `json:"description"`
+	DueDate      pgtype.Timestamp `json:"due_date"`
+	IsCompleted  pgtype.Bool      `json:"is_completed"`
+	Status       pgtype.Text      `json:"status"`
+	Priority     pgtype.Text      `json:"priority"`
+	Tags         []string         `json:"tags"`
+	DisplayOrder pgtype.Int4      `json:"display_order"`
 }
 
 // Tasks ---------------------------------------------------------------
 func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, error) {
-	row := q.db.QueryRowContext(ctx, createTask,
+	row := q.db.QueryRow(ctx, createTask,
 		arg.UserID,
 		arg.ParentID,
 		arg.Title,
@@ -46,7 +45,7 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 		arg.IsCompleted,
 		arg.Status,
 		arg.Priority,
-		pq.Array(arg.Tags),
+		arg.Tags,
 		arg.DisplayOrder,
 	)
 	var i Task
@@ -62,7 +61,7 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 		&i.IsCompleted,
 		&i.Status,
 		&i.Priority,
-		pq.Array(&i.Tags),
+		&i.Tags,
 		&i.DisplayOrder,
 	)
 	return i, err
@@ -78,24 +77,24 @@ RETURNING
 `
 
 type CreateUserParams struct {
-	Username     string
-	Email        string
-	PasswordHash string
+	Username     string `json:"username"`
+	Email        string `json:"email"`
+	PasswordHash string `json:"password_hash"`
 }
 
 type CreateUserRow struct {
-	ID        int32
-	Username  string
-	Email     string
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
-	LastLogin sql.NullTime
-	IsActive  sql.NullBool
+	ID        int32            `json:"id"`
+	Username  string           `json:"username"`
+	Email     string           `json:"email"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	LastLogin pgtype.Timestamp `json:"last_login"`
+	IsActive  pgtype.Bool      `json:"is_active"`
 }
 
 // Users ---------------------------------------------------------------
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.Email, arg.PasswordHash)
+	row := q.db.QueryRow(ctx, createUser, arg.Username, arg.Email, arg.PasswordHash)
 	var i CreateUserRow
 	err := row.Scan(
 		&i.ID,
@@ -116,7 +115,7 @@ WHERE
 `
 
 func (q *Queries) DeleteTask(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, deleteTask, id)
+	_, err := q.db.Exec(ctx, deleteTask, id)
 	return err
 }
 
@@ -130,8 +129,8 @@ ORDER BY
    display_order, created_at DESC
 `
 
-func (q *Queries) GetSubtasksByParentId(ctx context.Context, parentID sql.NullInt32) ([]Task, error) {
-	rows, err := q.db.QueryContext(ctx, getSubtasksByParentId, parentID)
+func (q *Queries) GetSubtasksByParentId(ctx context.Context, parentID pgtype.Int4) ([]Task, error) {
+	rows, err := q.db.Query(ctx, getSubtasksByParentId, parentID)
 	if err != nil {
 		return nil, err
 	}
@@ -151,15 +150,12 @@ func (q *Queries) GetSubtasksByParentId(ctx context.Context, parentID sql.NullIn
 			&i.IsCompleted,
 			&i.Status,
 			&i.Priority,
-			pq.Array(&i.Tags),
+			&i.Tags,
 			&i.DisplayOrder,
 		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -176,7 +172,7 @@ WHERE
 `
 
 func (q *Queries) GetTaskById(ctx context.Context, id int32) (Task, error) {
-	row := q.db.QueryRowContext(ctx, getTaskById, id)
+	row := q.db.QueryRow(ctx, getTaskById, id)
 	var i Task
 	err := row.Scan(
 		&i.ID,
@@ -190,7 +186,7 @@ func (q *Queries) GetTaskById(ctx context.Context, id int32) (Task, error) {
 		&i.IsCompleted,
 		&i.Status,
 		&i.Priority,
-		pq.Array(&i.Tags),
+		&i.Tags,
 		&i.DisplayOrder,
 	)
 	return i, err
@@ -205,17 +201,17 @@ WHERE
 `
 
 type GetUserByUsernameRow struct {
-	ID        int32
-	Username  string
-	Email     string
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
-	LastLogin sql.NullTime
-	IsActive  sql.NullBool
+	ID        int32            `json:"id"`
+	Username  string           `json:"username"`
+	Email     string           `json:"email"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	LastLogin pgtype.Timestamp `json:"last_login"`
+	IsActive  pgtype.Bool      `json:"is_active"`
 }
 
 func (q *Queries) GetUserByUsername(ctx context.Context, username string) (GetUserByUsernameRow, error) {
-	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
+	row := q.db.QueryRow(ctx, getUserByUsername, username)
 	var i GetUserByUsernameRow
 	err := row.Scan(
 		&i.ID,
@@ -240,7 +236,7 @@ ORDER BY
 `
 
 func (q *Queries) ListRootTasksByUserId(ctx context.Context, userID int32) ([]Task, error) {
-	rows, err := q.db.QueryContext(ctx, listRootTasksByUserId, userID)
+	rows, err := q.db.Query(ctx, listRootTasksByUserId, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -260,15 +256,12 @@ func (q *Queries) ListRootTasksByUserId(ctx context.Context, userID int32) ([]Ta
 			&i.IsCompleted,
 			&i.Status,
 			&i.Priority,
-			pq.Array(&i.Tags),
+			&i.Tags,
 			&i.DisplayOrder,
 		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -313,23 +306,23 @@ ORDER BY task_tree.display_order, task_tree.created_at DESC
 `
 
 type ListTasksWithSubtasksRecursiveRow struct {
-	ID           int32
-	UserID       int32
-	ParentID     sql.NullInt32
-	Title        string
-	Description  sql.NullString
-	CreatedAt    sql.NullTime
-	UpdatedAt    sql.NullTime
-	DueDate      sql.NullTime
-	IsCompleted  sql.NullBool
-	Status       sql.NullString
-	Priority     sql.NullString
-	Tags         []string
-	DisplayOrder sql.NullInt32
+	ID           int32            `json:"id"`
+	UserID       int32            `json:"user_id"`
+	ParentID     pgtype.Int4      `json:"parent_id"`
+	Title        string           `json:"title"`
+	Description  pgtype.Text      `json:"description"`
+	CreatedAt    pgtype.Timestamp `json:"created_at"`
+	UpdatedAt    pgtype.Timestamp `json:"updated_at"`
+	DueDate      pgtype.Timestamp `json:"due_date"`
+	IsCompleted  pgtype.Bool      `json:"is_completed"`
+	Status       pgtype.Text      `json:"status"`
+	Priority     pgtype.Text      `json:"priority"`
+	Tags         []string         `json:"tags"`
+	DisplayOrder pgtype.Int4      `json:"display_order"`
 }
 
 func (q *Queries) ListTasksWithSubtasksRecursive(ctx context.Context, id int32) ([]ListTasksWithSubtasksRecursiveRow, error) {
-	rows, err := q.db.QueryContext(ctx, listTasksWithSubtasksRecursive, id)
+	rows, err := q.db.Query(ctx, listTasksWithSubtasksRecursive, id)
 	if err != nil {
 		return nil, err
 	}
@@ -349,15 +342,12 @@ func (q *Queries) ListTasksWithSubtasksRecursive(ctx context.Context, id int32) 
 			&i.IsCompleted,
 			&i.Status,
 			&i.Priority,
-			pq.Array(&i.Tags),
+			&i.Tags,
 			&i.DisplayOrder,
 		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -374,12 +364,12 @@ WHERE
 `
 
 type ReorderTaskParams struct {
-	ID           int32
-	DisplayOrder sql.NullInt32
+	ID           int32       `json:"id"`
+	DisplayOrder pgtype.Int4 `json:"display_order"`
 }
 
 func (q *Queries) ReorderTask(ctx context.Context, arg ReorderTaskParams) error {
-	_, err := q.db.ExecContext(ctx, reorderTask, arg.ID, arg.DisplayOrder)
+	_, err := q.db.Exec(ctx, reorderTask, arg.ID, arg.DisplayOrder)
 	return err
 }
 
@@ -403,21 +393,21 @@ RETURNING
 `
 
 type UpdateTaskParams struct {
-	ID           int32
-	UserID       int32
-	ParentID     sql.NullInt32
-	Title        string
-	Description  sql.NullString
-	DueDate      sql.NullTime
-	IsCompleted  sql.NullBool
-	Status       sql.NullString
-	Priority     sql.NullString
-	Tags         []string
-	DisplayOrder sql.NullInt32
+	ID           int32            `json:"id"`
+	UserID       int32            `json:"user_id"`
+	ParentID     pgtype.Int4      `json:"parent_id"`
+	Title        string           `json:"title"`
+	Description  pgtype.Text      `json:"description"`
+	DueDate      pgtype.Timestamp `json:"due_date"`
+	IsCompleted  pgtype.Bool      `json:"is_completed"`
+	Status       pgtype.Text      `json:"status"`
+	Priority     pgtype.Text      `json:"priority"`
+	Tags         []string         `json:"tags"`
+	DisplayOrder pgtype.Int4      `json:"display_order"`
 }
 
 func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
-	_, err := q.db.ExecContext(ctx, updateTask,
+	_, err := q.db.Exec(ctx, updateTask,
 		arg.ID,
 		arg.UserID,
 		arg.ParentID,
@@ -427,7 +417,7 @@ func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
 		arg.IsCompleted,
 		arg.Status,
 		arg.Priority,
-		pq.Array(arg.Tags),
+		arg.Tags,
 		arg.DisplayOrder,
 	)
 	return err
@@ -444,26 +434,26 @@ RETURNING
 `
 
 type UpdateUserParams struct {
-	Username     string
-	Email        string
-	PasswordHash string
-	LastLogin    sql.NullTime
-	IsActive     sql.NullBool
-	ID           int32
+	Username     string           `json:"username"`
+	Email        string           `json:"email"`
+	PasswordHash string           `json:"password_hash"`
+	LastLogin    pgtype.Timestamp `json:"last_login"`
+	IsActive     pgtype.Bool      `json:"is_active"`
+	ID           int32            `json:"id"`
 }
 
 type UpdateUserRow struct {
-	ID        int32
-	Username  string
-	Email     string
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
-	LastLogin sql.NullTime
-	IsActive  sql.NullBool
+	ID        int32            `json:"id"`
+	Username  string           `json:"username"`
+	Email     string           `json:"email"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	LastLogin pgtype.Timestamp `json:"last_login"`
+	IsActive  pgtype.Bool      `json:"is_active"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
-	row := q.db.QueryRowContext(ctx, updateUser,
+	row := q.db.QueryRow(ctx, updateUser,
 		arg.Username,
 		arg.Email,
 		arg.PasswordHash,
