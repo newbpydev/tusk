@@ -63,7 +63,7 @@ DELETE FROM tasks
 WHERE 
    id = $1;
 
---name: ListRootTasksByUserId :many
+-- name: ListRootTasksByUserId :many
 SELECT 
    id, user_id, parent_id, title, description, created_at, updated_at, due_date, is_completed, status, priority, tags, display_order
 FROM tasks
@@ -83,19 +83,38 @@ ORDER BY
 
 -- name: ListTasksWithSubtasksRecursive :many
 WITH RECURSIVE task_tree AS (
+    -- Base case
     SELECT 
-        id, user_id, parent_id, title, description, created_at, updated_at, due_date, is_completed, status, priority, tags, display_order
-    FROM tasks
-    WHERE id = $1
-    UNION ALL
-    SELECT 
-        t.id, t.user_id, t.parent_id, t.title, t.description, t.created_at, t.updated_at, t.due_date, t.is_completed, t.status, t.priority, t.tags, t.display_order
+        t.id, t.user_id, t.parent_id, t.title, t.description, t.created_at, t.updated_at, 
+        t.due_date, t.is_completed, t.status, t.priority, t.tags, t.display_order
     FROM tasks t
-    INNER JOIN task_tree tt ON tt.id = t.parent_id
+    WHERE t.id = $1
+    
+    UNION ALL
+    
+    -- Recursive case
+    SELECT 
+        t.id, t.user_id, t.parent_id, t.title, t.description, t.created_at, t.updated_at, 
+        t.due_date, t.is_completed, t.status, t.priority, t.tags, t.display_order
+    FROM tasks t
+    INNER JOIN task_tree tt ON t.parent_id = tt.id
 )
-SELECT *
+SELECT 
+    task_tree.id,
+    task_tree.user_id,
+    task_tree.parent_id,
+    task_tree.title,
+    task_tree.description,
+    task_tree.created_at,
+    task_tree.updated_at,
+    task_tree.due_date,
+    task_tree.is_completed,
+    task_tree.status,
+    task_tree.priority,
+    task_tree.tags,
+    task_tree.display_order
 FROM task_tree
-ORDER BY display_order, created_at DESC;
+ORDER BY task_tree.display_order, task_tree.created_at DESC;
 
 -- name: ReorderTask :exec
 UPDATE tasks
