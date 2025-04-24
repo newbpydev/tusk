@@ -23,6 +23,13 @@ FROM users
 WHERE 
    username = $1;
 
+-- name: GetUserById :one
+SELECT 
+   id, username, email, created_at, updated_at, last_login, is_active
+FROM users
+WHERE 
+   id = $1;
+
 -- Tasks ---------------------------------------------------------------
 
 -- name: CreateTask :one
