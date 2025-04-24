@@ -7,7 +7,7 @@ import "time"
 // created and updated timestamps, last login timestamp, and active status.
 // The password hash is used for authentication and should not be stored in plain text.
 type User struct {
-	ID           int64  `json:"id"`
+	ID           int32  `json:"id"`
 	Username     string `json:"username"`
 	Email        string `json:"email"`
 	PasswordHash string `json:"-"` // Exclude from JSON response
