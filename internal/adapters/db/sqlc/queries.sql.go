@@ -192,6 +192,39 @@ func (q *Queries) GetTaskById(ctx context.Context, id int32) (Task, error) {
 	return i, err
 }
 
+const getUserById = `-- name: GetUserById :one
+SELECT 
+   id, username, email, created_at, updated_at, last_login, is_active
+FROM users
+WHERE 
+   id = $1
+`
+
+type GetUserByIdRow struct {
+	ID        int32            `json:"id"`
+	Username  string           `json:"username"`
+	Email     string           `json:"email"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	LastLogin pgtype.Timestamp `json:"last_login"`
+	IsActive  pgtype.Bool      `json:"is_active"`
+}
+
+func (q *Queries) GetUserById(ctx context.Context, id int32) (GetUserByIdRow, error) {
+	row := q.db.QueryRow(ctx, getUserById, id)
+	var i GetUserByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.LastLogin,
+		&i.IsActive,
+	)
+	return i, err
+}
+
 const getUserByUsername = `-- name: GetUserByUsername :one
 SELECT 
    id, username, email, created_at, updated_at, last_login, is_active
