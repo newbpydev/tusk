@@ -4,8 +4,6 @@ A terminal-based task management application written in Go, designed for develop
 
 ---
 
----
-
 ## 🗺️ Roadmap & Project Timeline
 
 This section outlines what’s been completed, what’s in progress, and upcoming milestones.
