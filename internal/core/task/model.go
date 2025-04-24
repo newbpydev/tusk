@@ -11,7 +11,7 @@ type Tag struct {
 }
 
 // Status represents the status of a task.
-// It can be one of the following values: "todo", "in_progress", or "done".
+// It can be one of the following values: "todo", "in-progress", or "done".
 type Status string
 
 // Priority represents the priority of a task.
@@ -22,7 +22,7 @@ const (
 	// StatusTodo represents a task that is yet to be started.
 	StatusTodo Status = "todo"
 	// StatusInProgress represents a task that is currently being worked on.
-	StatusInProgress Status = "in_progress"
+	StatusInProgress Status = "in-progress"
 	// StatusDone represents a task that has been completed.
 	StatusDone Status = "done"
 
@@ -36,24 +36,25 @@ const (
 
 // Task represents a task in the system.
 // It includes fields for the task's ID, user ID, parent ID, title, description,
-// created and updated timestamps, due date, status, priority, tags, and display order.
+// created and updated timestamps, due date, is completed, status, priority, tags, and display order.
 // It also includes a list of sub-tasks and computed fields for total count, completed count, and progress.
 type Task struct {
 	ID           int64      `json:"id"`
 	UserID       int64      `json:"user_id"`
-	ParentID     *int64     `json:"parent_id"`
+	ParentID     *int64     `json:"parent_id,omitempty"` // nil means root task
 	Title        string     `json:"title"`
-	Description  *string    `json:"description"`
+	Description  *string    `json:"description,omitempty"`
 	CreatedAt    time.Time  `json:"created_at"`
 	UpdatedAt    time.Time  `json:"updated_at"`
-	DueDate      *time.Time `json:"due_date"`
+	DueDate      *time.Time `json:"due_date,omitempty"`
+	IsCompleted  bool       `json:"is_completed"`
 	Status       Status     `json:"status"`
 	Priority     Priority   `json:"priority"`
 	Tags         []Tag      `json:"tags"`
 	DisplayOrder int        `json:"display_order"`
 
 	// Children hierarchical tasks
-	SubTasks []Task `json:"sub_tasks"`
+	SubTasks []Task `json:"subtasks,omitempty"`
 
 	// Computed fields
 	TotalCount     int     `json:"total_count"`
