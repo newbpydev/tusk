@@ -6,12 +6,16 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Config holds the application configuration values.
+// It uses struct tags to specify the environment variable names.
 type Config struct {
 	DBURL  string `env:"DB_URL"`
 	Port   string `env:"PORT"`
 	AppEnv string `env:"APP_ENV"`
 }
 
+// Load loads the configuration from environment variables and returns a Config struct.
+// It uses the godotenv package to load variables from a .env file if it exists.
 func Load() *Config {
 	_ = godotenv.Load() // Load .env file if it exists
 
