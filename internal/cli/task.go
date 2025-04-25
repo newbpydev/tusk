@@ -34,7 +34,7 @@ var createTaskCmd = &cobra.Command{
 			return err
 		}
 
-		dueDateStr, err := cmd.Flags().GetString("due-date")
+		dueDateStr, err := cmd.Flags().GetString("due")
 		if err != nil {
 			return err
 		}
@@ -58,15 +58,42 @@ var createTaskCmd = &cobra.Command{
 			return err
 		}
 
-		// Added parentID parameter with nil value for root tasks
+		// Get parent-id flag value for subtasks
 		var parentID *int64
+		parentIDValue, err := cmd.Flags().GetInt64("parent-id")
+		if err != nil {
+			return err
+		}
 
+		// Only set parentID if it was explicitly provided (non-zero value)
+		if parentIDValue > 0 {
+			parentID = &parentIDValue
+		}
+
+		// Get status for the task if provided
+		status, err := cmd.Flags().GetString("status")
+		if err != nil {
+			return err
+		}
+
+		// First create the task with default status
 		t, err := taskSvc.Create(context.Background(), userID, parentID, title, description, dueDate, task.Priority(priority), tags)
 		if err != nil {
 			return err
 		}
 
+		// Then update the status if it was provided and is different from default
+		if status != "" && status != "todo" {
+			t, err = taskSvc.ChangeStatus(context.Background(), int64(t.ID), task.Status(status))
+			if err != nil {
+				cmd.Printf("Warning: Created task but failed to set status: %v\n", err)
+			}
+		}
+
 		cmd.Printf("Created task %d (%s)\n", t.ID, t.Title)
+		if parentID != nil {
+			cmd.Printf("This is a subtask of task %d\n", *parentID)
+		}
 		return nil
 	},
 }
@@ -122,7 +149,35 @@ func init() {
 	createTaskCmd.Flags().StringP("due", "D", "", "Due date of the task in RFC3339 format")
 	createTaskCmd.Flags().StringP("priority", "p", "normal", "Priority of the task")
 	createTaskCmd.Flags().StringArrayP("tags", "g", []string{}, "Tags for the task")
+	createTaskCmd.Flags().Int64P("parent-id", "P", 0, "Parent task ID for creating subtasks")
+	createTaskCmd.Flags().StringP("status", "s", "todo", "Status of the task (todo, in-progress, done)")
 
 	createTaskCmd.MarkFlagRequired("user-id")
 	createTaskCmd.MarkFlagRequired("title")
+}
+
+// Helper functions to convert between types
+func int32PtrToInt32Ptr(i64 *int64) *int32 {
+	if i64 == nil {
+		return nil
+	}
+	i32 := int32(*i64)
+	return &i32
+}
+
+func stringPtrFromString(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
+
+func stringsToTags(strs []string) []task.Tag {
+	tags := make([]task.Tag, 0, len(strs))
+	for _, s := range strs {
+		if s != "" {
+			tags = append(tags, task.Tag{Name: s})
+		}
+	}
+	return tags
 }
