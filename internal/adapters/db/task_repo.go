@@ -214,6 +214,206 @@ func (r *SQLTaskRepository) ReorderTask(ctx context.Context, taskID int64, newOr
 	return nil
 }
 
+// SearchTasksByTitle implements output.TaskRepository.SearchTasksByTitle
+func (r *SQLTaskRepository) SearchTasksByTitle(ctx context.Context, userID int64, titlePattern string) ([]task.Task, error) {
+	rows, err := r.q.SearchTasksByTitle(ctx, sqlc.SearchTasksByTitleParams{
+		UserID: int32(userID),
+		Title:  fmt.Sprintf("%%%s%%", titlePattern), // Add wildcards for ILIKE
+	})
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to search tasks by title: %v", err))
+	}
+
+	tasks := make([]task.Task, len(rows))
+	for i, row := range rows {
+		tasks[i] = mapDBTaskToDomain(row)
+	}
+	return tasks, nil
+}
+
+// SearchTasksByTag implements output.TaskRepository.SearchTasksByTag
+func (r *SQLTaskRepository) SearchTasksByTag(ctx context.Context, userID int64, tag string) ([]task.Task, error) {
+	rows, err := r.q.SearchTasksByTag(ctx, sqlc.SearchTasksByTagParams{
+		UserID: int32(userID),
+		Tags:   []string{tag}, // Changed from Tag to Tags and passing as a slice
+	})
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to search tasks by tag: %v", err))
+	}
+
+	tasks := make([]task.Task, len(rows))
+	for i, row := range rows {
+		tasks[i] = mapDBTaskToDomain(row)
+	}
+	return tasks, nil
+}
+
+// ListTasksByStatus implements output.TaskRepository.ListTasksByStatus
+func (r *SQLTaskRepository) ListTasksByStatus(ctx context.Context, userID int64, status task.Status) ([]task.Task, error) {
+	rows, err := r.q.ListTasksByStatus(ctx, sqlc.ListTasksByStatusParams{
+		UserID: int32(userID),
+		Status: pgtype.Text{
+			String: string(status),
+			Valid:  true,
+		},
+	})
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to list tasks by status: %v", err))
+	}
+
+	tasks := make([]task.Task, len(rows))
+	for i, row := range rows {
+		tasks[i] = mapDBTaskToDomain(row)
+	}
+	return tasks, nil
+}
+
+// ListTasksByPriority implements output.TaskRepository.ListTasksByPriority
+func (r *SQLTaskRepository) ListTasksByPriority(ctx context.Context, userID int64, priority task.Priority) ([]task.Task, error) {
+	rows, err := r.q.ListTasksByPriority(ctx, sqlc.ListTasksByPriorityParams{
+		UserID: int32(userID),
+		Priority: pgtype.Text{
+			String: string(priority),
+			Valid:  true,
+		},
+	})
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to list tasks by priority: %v", err))
+	}
+
+	tasks := make([]task.Task, len(rows))
+	for i, row := range rows {
+		tasks[i] = mapDBTaskToDomain(row)
+	}
+	return tasks, nil
+}
+
+// ListTasksDueToday implements output.TaskRepository.ListTasksDueToday
+func (r *SQLTaskRepository) ListTasksDueToday(ctx context.Context, userID int64) ([]task.Task, error) {
+	rows, err := r.q.ListTasksDueToday(ctx, int32(userID))
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to list tasks due today: %v", err))
+	}
+
+	tasks := make([]task.Task, len(rows))
+	for i, row := range rows {
+		tasks[i] = mapDBTaskToDomain(row)
+	}
+	return tasks, nil
+}
+
+// ListTasksDueSoon implements output.TaskRepository.ListTasksDueSoon
+func (r *SQLTaskRepository) ListTasksDueSoon(ctx context.Context, userID int64) ([]task.Task, error) {
+	rows, err := r.q.ListTasksDueSoon(ctx, int32(userID))
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to list tasks due soon: %v", err))
+	}
+
+	tasks := make([]task.Task, len(rows))
+	for i, row := range rows {
+		tasks[i] = mapDBTaskToDomain(row)
+	}
+	return tasks, nil
+}
+
+// ListOverdueTasks implements output.TaskRepository.ListOverdueTasks
+func (r *SQLTaskRepository) ListOverdueTasks(ctx context.Context, userID int64) ([]task.Task, error) {
+	rows, err := r.q.ListOverdueTasks(ctx, int32(userID))
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to list overdue tasks: %v", err))
+	}
+
+	tasks := make([]task.Task, len(rows))
+	for i, row := range rows {
+		tasks[i] = mapDBTaskToDomain(row)
+	}
+	return tasks, nil
+}
+
+// GetTaskCountsByStatus implements output.TaskRepository.GetTaskCountsByStatus
+func (r *SQLTaskRepository) GetTaskCountsByStatus(ctx context.Context, userID int64) (output.TaskStatusCounts, error) {
+	row, err := r.q.GetTaskCountsByStatus(ctx, int32(userID))
+	if err != nil {
+		return output.TaskStatusCounts{}, errors.InternalError(fmt.Sprintf("failed to get task counts by status: %v", err))
+	}
+
+	return output.TaskStatusCounts{
+		TodoCount:       int(row.TodoCount),
+		InProgressCount: int(row.InProgressCount),
+		DoneCount:       int(row.DoneCount),
+		TotalCount:      int(row.TotalCount),
+	}, nil
+}
+
+// GetTaskCountsByPriority implements output.TaskRepository.GetTaskCountsByPriority
+func (r *SQLTaskRepository) GetTaskCountsByPriority(ctx context.Context, userID int64) (output.TaskPriorityCounts, error) {
+	row, err := r.q.GetTaskCountsByPriority(ctx, int32(userID))
+	if err != nil {
+		return output.TaskPriorityCounts{}, errors.InternalError(fmt.Sprintf("failed to get task counts by priority: %v", err))
+	}
+
+	return output.TaskPriorityCounts{
+		LowCount:    int(row.LowPriorityCount),
+		MediumCount: int(row.MediumPriorityCount),
+		HighCount:   int(row.HighPriorityCount),
+	}, nil
+}
+
+// GetRecentlyCompletedTasks implements output.TaskRepository.GetRecentlyCompletedTasks
+func (r *SQLTaskRepository) GetRecentlyCompletedTasks(ctx context.Context, userID int64, limit int32) ([]task.Task, error) {
+	rows, err := r.q.GetRecentlyCompletedTasks(ctx, sqlc.GetRecentlyCompletedTasksParams{
+		UserID: int32(userID),
+		Limit:  limit,
+	})
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to get recently completed tasks: %v", err))
+	}
+
+	tasks := make([]task.Task, len(rows))
+	for i, row := range rows {
+		tasks[i] = mapDBTaskToDomain(row)
+	}
+	return tasks, nil
+}
+
+// BulkUpdateTaskStatus implements output.TaskRepository.BulkUpdateTaskStatus
+func (r *SQLTaskRepository) BulkUpdateTaskStatus(ctx context.Context, taskIDs []int32, status task.Status, isCompleted bool) error {
+	err := r.q.BulkUpdateTaskStatus(ctx, sqlc.BulkUpdateTaskStatusParams{
+		Column1: taskIDs,
+		Status: pgtype.Text{
+			String: string(status),
+			Valid:  true,
+		},
+		IsCompleted: pgtype.Bool{
+			Bool:  isCompleted,
+			Valid: true,
+		},
+	})
+	if err != nil {
+		return errors.InternalError(fmt.Sprintf("failed to bulk update task status: %v", err))
+	}
+	return nil
+}
+
+// GetAllTagsForUser implements output.TaskRepository.GetAllTagsForUser
+func (r *SQLTaskRepository) GetAllTagsForUser(ctx context.Context, userID int64) ([]string, error) {
+	rows, err := r.q.GetAllTagsForUser(ctx, int32(userID))
+	if err != nil {
+		return nil, errors.InternalError(fmt.Sprintf("failed to get all tags for user: %v", err))
+	}
+
+	// Convert the interface{} values to strings
+	tags := make([]string, 0, len(rows))
+	for _, row := range rows {
+		// Convert the interface{} to string
+		if str, ok := row.(string); ok {
+			tags = append(tags, str)
+		}
+	}
+
+	return tags, nil
+}
+
 // Mapping functions
 
 // mapDBTaskToDomain maps a sqlc.Task to a task.Task

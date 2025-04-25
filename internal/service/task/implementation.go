@@ -312,6 +312,135 @@ func (s *taskService) ChangePriority(ctx context.Context, taskID int64, priority
 	return updatedTask, nil
 }
 
+// SearchByTitle searches for tasks with titles matching the given pattern
+func (s *taskService) SearchByTitle(ctx context.Context, userID int64, titlePattern string) ([]task.Task, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+	if titlePattern == "" {
+		return nil, errors.InvalidInput("search pattern is required")
+	}
+
+	return s.repo.SearchTasksByTitle(ctx, userID, titlePattern)
+}
+
+// SearchByTag searches for tasks that have the specified tag
+func (s *taskService) SearchByTag(ctx context.Context, userID int64, tag string) ([]task.Task, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+	if tag == "" {
+		return nil, errors.InvalidInput("tag is required")
+	}
+
+	return s.repo.SearchTasksByTag(ctx, userID, tag)
+}
+
+// ListByStatus retrieves all tasks for a user with the given status
+func (s *taskService) ListByStatus(ctx context.Context, userID int64, status task.Status) ([]task.Task, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+	if !isValidStatus(status) {
+		return nil, errors.InvalidInput("invalid status")
+	}
+
+	return s.repo.ListTasksByStatus(ctx, userID, status)
+}
+
+// ListByPriority retrieves all tasks for a user with the given priority
+func (s *taskService) ListByPriority(ctx context.Context, userID int64, priority task.Priority) ([]task.Task, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+	if !isValidPriority(priority) {
+		return nil, errors.InvalidInput("invalid priority")
+	}
+
+	return s.repo.ListTasksByPriority(ctx, userID, priority)
+}
+
+// ListTasksDueToday retrieves all incomplete tasks due on the current day
+func (s *taskService) ListTasksDueToday(ctx context.Context, userID int64) ([]task.Task, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+
+	return s.repo.ListTasksDueToday(ctx, userID)
+}
+
+// ListTasksDueSoon retrieves all incomplete tasks due within the next 7 days
+func (s *taskService) ListTasksDueSoon(ctx context.Context, userID int64) ([]task.Task, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+
+	return s.repo.ListTasksDueSoon(ctx, userID)
+}
+
+// ListOverdueTasks retrieves all incomplete tasks that are past their due date
+func (s *taskService) ListOverdueTasks(ctx context.Context, userID int64) ([]task.Task, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+
+	return s.repo.ListOverdueTasks(ctx, userID)
+}
+
+// GetTaskCountsByStatus retrieves counts of tasks grouped by status
+func (s *taskService) GetTaskCountsByStatus(ctx context.Context, userID int64) (repo.TaskStatusCounts, error) {
+	if userID <= 0 {
+		return repo.TaskStatusCounts{}, errors.InvalidInput("user ID must be positive")
+	}
+
+	return s.repo.GetTaskCountsByStatus(ctx, userID)
+}
+
+// GetTaskCountsByPriority retrieves counts of incomplete tasks grouped by priority
+func (s *taskService) GetTaskCountsByPriority(ctx context.Context, userID int64) (repo.TaskPriorityCounts, error) {
+	if userID <= 0 {
+		return repo.TaskPriorityCounts{}, errors.InvalidInput("user ID must be positive")
+	}
+
+	return s.repo.GetTaskCountsByPriority(ctx, userID)
+}
+
+// GetRecentlyCompletedTasks retrieves recently completed tasks, limited by count
+func (s *taskService) GetRecentlyCompletedTasks(ctx context.Context, userID int64, limit int) ([]task.Task, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+	if limit <= 0 {
+		return nil, errors.InvalidInput("limit must be positive")
+	}
+
+	return s.repo.GetRecentlyCompletedTasks(ctx, userID, int32(limit))
+}
+
+// BulkUpdateStatus updates the status of multiple tasks at once
+func (s *taskService) BulkUpdateStatus(ctx context.Context, taskIDs []int32, status task.Status) error {
+	if len(taskIDs) == 0 {
+		return errors.InvalidInput("task IDs list cannot be empty")
+	}
+	if !isValidStatus(status) {
+		return errors.InvalidInput("invalid status")
+	}
+
+	// Calculate if tasks should be completed based on status
+	isCompleted := status == task.StatusDone
+
+	return s.repo.BulkUpdateTaskStatus(ctx, taskIDs, status, isCompleted)
+}
+
+// GetAllTags retrieves all unique tags used by a user
+func (s *taskService) GetAllTags(ctx context.Context, userID int64) ([]string, error) {
+	if userID <= 0 {
+		return nil, errors.InvalidInput("user ID must be positive")
+	}
+
+	return s.repo.GetAllTagsForUser(ctx, userID)
+}
+
 // Helper functions
 
 // isValidStatus checks if a status is valid
