@@ -17,7 +17,7 @@ type Config struct {
 // Load loads the configuration from environment variables and returns a Config struct.
 // It uses the godotenv package to load variables from a .env file if it exists.
 func Load() *Config {
-	_ = godotenv.Load() // Load .env file if it exists
+	_ = godotenv.Load() // Load .env file if it exists, ignore errors if file not found
 
 	return &Config{
 		DBURL:  getEnv("DB_URL", "postgres://postgres:password@localhost:5432/tuskapp"),
@@ -33,5 +33,4 @@ func getEnv(key, fallback string) string {
 		return val
 	}
 	return fallback
-
 }
