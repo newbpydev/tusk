@@ -11,6 +11,27 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const bulkUpdateTaskStatus = `-- name: BulkUpdateTaskStatus :exec
+UPDATE tasks
+SET 
+   status = $2,
+   is_completed = $3,
+   updated_at = CURRENT_TIMESTAMP
+WHERE 
+   id = ANY($1::int[])
+`
+
+type BulkUpdateTaskStatusParams struct {
+	Column1     []int32     `json:"column_1"`
+	Status      pgtype.Text `json:"status"`
+	IsCompleted pgtype.Bool `json:"is_completed"`
+}
+
+func (q *Queries) BulkUpdateTaskStatus(ctx context.Context, arg BulkUpdateTaskStatusParams) error {
+	_, err := q.db.Exec(ctx, bulkUpdateTaskStatus, arg.Column1, arg.Status, arg.IsCompleted)
+	return err
+}
+
 const createTask = `-- name: CreateTask :one
 
 INSERT INTO tasks 
@@ -108,6 +129,20 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
+const deactivateUser = `-- name: DeactivateUser :exec
+UPDATE users
+SET 
+   is_active = false,
+   updated_at = CURRENT_TIMESTAMP
+WHERE 
+   id = $1
+`
+
+func (q *Queries) DeactivateUser(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deactivateUser, id)
+	return err
+}
+
 const deleteTask = `-- name: DeleteTask :exec
 DELETE FROM tasks 
 WHERE 
@@ -117,6 +152,85 @@ WHERE
 func (q *Queries) DeleteTask(ctx context.Context, id int32) error {
 	_, err := q.db.Exec(ctx, deleteTask, id)
 	return err
+}
+
+const getAllTagsForUser = `-- name: GetAllTagsForUser :many
+SELECT DISTINCT unnest(tags) as tag
+FROM tasks
+WHERE user_id = $1
+ORDER BY tag
+`
+
+func (q *Queries) GetAllTagsForUser(ctx context.Context, userID int32) ([]interface{}, error) {
+	rows, err := q.db.Query(ctx, getAllTagsForUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []interface{}
+	for rows.Next() {
+		var tag interface{}
+		if err := rows.Scan(&tag); err != nil {
+			return nil, err
+		}
+		items = append(items, tag)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getRecentlyCompletedTasks = `-- name: GetRecentlyCompletedTasks :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   is_completed = true
+ORDER BY
+   updated_at DESC
+LIMIT $2
+`
+
+type GetRecentlyCompletedTasksParams struct {
+	UserID int32 `json:"user_id"`
+	Limit  int32 `json:"limit"`
+}
+
+func (q *Queries) GetRecentlyCompletedTasks(ctx context.Context, arg GetRecentlyCompletedTasksParams) ([]Task, error) {
+	rows, err := q.db.Query(ctx, getRecentlyCompletedTasks, arg.UserID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Task
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ParentID,
+			&i.Title,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.IsCompleted,
+			&i.Status,
+			&i.Priority,
+			&i.Tags,
+			&i.DisplayOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getSubtasksByParentId = `-- name: GetSubtasksByParentId :many
@@ -191,6 +305,93 @@ func (q *Queries) GetTaskById(ctx context.Context, id int32) (Task, error) {
 	return i, err
 }
 
+const getTaskCountsByPriority = `-- name: GetTaskCountsByPriority :one
+SELECT
+   COUNT(*) FILTER (WHERE priority = 'low') AS low_priority_count,
+   COUNT(*) FILTER (WHERE priority = 'medium') AS medium_priority_count,
+   COUNT(*) FILTER (WHERE priority = 'high') AS high_priority_count
+FROM tasks
+WHERE
+   user_id = $1 AND
+   is_completed = false
+`
+
+type GetTaskCountsByPriorityRow struct {
+	LowPriorityCount    int64 `json:"low_priority_count"`
+	MediumPriorityCount int64 `json:"medium_priority_count"`
+	HighPriorityCount   int64 `json:"high_priority_count"`
+}
+
+func (q *Queries) GetTaskCountsByPriority(ctx context.Context, userID int32) (GetTaskCountsByPriorityRow, error) {
+	row := q.db.QueryRow(ctx, getTaskCountsByPriority, userID)
+	var i GetTaskCountsByPriorityRow
+	err := row.Scan(&i.LowPriorityCount, &i.MediumPriorityCount, &i.HighPriorityCount)
+	return i, err
+}
+
+const getTaskCountsByStatus = `-- name: GetTaskCountsByStatus :one
+SELECT
+   COUNT(*) FILTER (WHERE status = 'todo') AS todo_count,
+   COUNT(*) FILTER (WHERE status = 'in-progress') AS in_progress_count,
+   COUNT(*) FILTER (WHERE status = 'done') AS done_count,
+   COUNT(*) AS total_count
+FROM tasks
+WHERE
+   user_id = $1
+`
+
+type GetTaskCountsByStatusRow struct {
+	TodoCount       int64 `json:"todo_count"`
+	InProgressCount int64 `json:"in_progress_count"`
+	DoneCount       int64 `json:"done_count"`
+	TotalCount      int64 `json:"total_count"`
+}
+
+func (q *Queries) GetTaskCountsByStatus(ctx context.Context, userID int32) (GetTaskCountsByStatusRow, error) {
+	row := q.db.QueryRow(ctx, getTaskCountsByStatus, userID)
+	var i GetTaskCountsByStatusRow
+	err := row.Scan(
+		&i.TodoCount,
+		&i.InProgressCount,
+		&i.DoneCount,
+		&i.TotalCount,
+	)
+	return i, err
+}
+
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT 
+   id, username, email, created_at, updated_at, last_login, is_active
+FROM users
+WHERE 
+   email = $1
+`
+
+type GetUserByEmailRow struct {
+	ID        int32            `json:"id"`
+	Username  string           `json:"username"`
+	Email     string           `json:"email"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	LastLogin pgtype.Timestamp `json:"last_login"`
+	IsActive  pgtype.Bool      `json:"is_active"`
+}
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
+	row := q.db.QueryRow(ctx, getUserByEmail, email)
+	var i GetUserByEmailRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.LastLogin,
+		&i.IsActive,
+	)
+	return i, err
+}
+
 const getUserById = `-- name: GetUserById :one
 SELECT 
    id, username, email, created_at, updated_at, last_login, is_active
@@ -257,6 +458,53 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (GetUs
 	return i, err
 }
 
+const listOverdueTasks = `-- name: ListOverdueTasks :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   due_date < CURRENT_DATE AND
+   is_completed = false
+ORDER BY
+   due_date, priority DESC
+`
+
+func (q *Queries) ListOverdueTasks(ctx context.Context, userID int32) ([]Task, error) {
+	rows, err := q.db.Query(ctx, listOverdueTasks, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Task
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ParentID,
+			&i.Title,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.IsCompleted,
+			&i.Status,
+			&i.Priority,
+			&i.Tags,
+			&i.DisplayOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listRootTasksByUserId = `-- name: ListRootTasksByUserId :many
 SELECT 
    id, user_id, parent_id, title, description, created_at, updated_at, due_date, is_completed, status, priority, tags, display_order
@@ -269,6 +517,203 @@ ORDER BY
 
 func (q *Queries) ListRootTasksByUserId(ctx context.Context, userID int32) ([]Task, error) {
 	rows, err := q.db.Query(ctx, listRootTasksByUserId, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Task
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ParentID,
+			&i.Title,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.IsCompleted,
+			&i.Status,
+			&i.Priority,
+			&i.Tags,
+			&i.DisplayOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTasksByPriority = `-- name: ListTasksByPriority :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   priority = $2
+ORDER BY
+   display_order, created_at DESC
+`
+
+type ListTasksByPriorityParams struct {
+	UserID   int32       `json:"user_id"`
+	Priority pgtype.Text `json:"priority"`
+}
+
+func (q *Queries) ListTasksByPriority(ctx context.Context, arg ListTasksByPriorityParams) ([]Task, error) {
+	rows, err := q.db.Query(ctx, listTasksByPriority, arg.UserID, arg.Priority)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Task
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ParentID,
+			&i.Title,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.IsCompleted,
+			&i.Status,
+			&i.Priority,
+			&i.Tags,
+			&i.DisplayOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTasksByStatus = `-- name: ListTasksByStatus :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   status = $2
+ORDER BY
+   priority DESC, display_order, created_at DESC
+`
+
+type ListTasksByStatusParams struct {
+	UserID int32       `json:"user_id"`
+	Status pgtype.Text `json:"status"`
+}
+
+func (q *Queries) ListTasksByStatus(ctx context.Context, arg ListTasksByStatusParams) ([]Task, error) {
+	rows, err := q.db.Query(ctx, listTasksByStatus, arg.UserID, arg.Status)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Task
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ParentID,
+			&i.Title,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.IsCompleted,
+			&i.Status,
+			&i.Priority,
+			&i.Tags,
+			&i.DisplayOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTasksDueSoon = `-- name: ListTasksDueSoon :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   due_date IS NOT NULL AND
+   due_date::date BETWEEN CURRENT_DATE AND (CURRENT_DATE + interval '7 days')::date AND
+   is_completed = false
+ORDER BY
+   due_date, priority DESC
+`
+
+func (q *Queries) ListTasksDueSoon(ctx context.Context, userID int32) ([]Task, error) {
+	rows, err := q.db.Query(ctx, listTasksDueSoon, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Task
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ParentID,
+			&i.Title,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.IsCompleted,
+			&i.Status,
+			&i.Priority,
+			&i.Tags,
+			&i.DisplayOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listTasksDueToday = `-- name: ListTasksDueToday :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   due_date::date = CURRENT_DATE AND
+   is_completed = false
+ORDER BY
+   priority DESC, display_order
+`
+
+func (q *Queries) ListTasksDueToday(ctx context.Context, userID int32) ([]Task, error) {
+	rows, err := q.db.Query(ctx, listTasksDueToday, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -387,6 +832,54 @@ func (q *Queries) ListTasksWithSubtasksRecursive(ctx context.Context, id int32) 
 	return items, nil
 }
 
+const listUsers = `-- name: ListUsers :many
+SELECT 
+   id, username, email, created_at, updated_at, last_login, is_active
+FROM users
+WHERE 
+   is_active = true
+ORDER BY
+   username
+`
+
+type ListUsersRow struct {
+	ID        int32            `json:"id"`
+	Username  string           `json:"username"`
+	Email     string           `json:"email"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	LastLogin pgtype.Timestamp `json:"last_login"`
+	IsActive  pgtype.Bool      `json:"is_active"`
+}
+
+func (q *Queries) ListUsers(ctx context.Context) ([]ListUsersRow, error) {
+	rows, err := q.db.Query(ctx, listUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListUsersRow
+	for rows.Next() {
+		var i ListUsersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Username,
+			&i.Email,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.LastLogin,
+			&i.IsActive,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const reorderTask = `-- name: ReorderTask :exec
 UPDATE tasks
 SET 
@@ -403,6 +896,110 @@ type ReorderTaskParams struct {
 func (q *Queries) ReorderTask(ctx context.Context, arg ReorderTaskParams) error {
 	_, err := q.db.Exec(ctx, reorderTask, arg.ID, arg.DisplayOrder)
 	return err
+}
+
+const searchTasksByTag = `-- name: SearchTasksByTag :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   $2 = ANY(tags)
+ORDER BY
+   created_at DESC
+`
+
+type SearchTasksByTagParams struct {
+	UserID int32    `json:"user_id"`
+	Tags   []string `json:"tags"`
+}
+
+func (q *Queries) SearchTasksByTag(ctx context.Context, arg SearchTasksByTagParams) ([]Task, error) {
+	rows, err := q.db.Query(ctx, searchTasksByTag, arg.UserID, arg.Tags)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Task
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ParentID,
+			&i.Title,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.IsCompleted,
+			&i.Status,
+			&i.Priority,
+			&i.Tags,
+			&i.DisplayOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const searchTasksByTitle = `-- name: SearchTasksByTitle :many
+
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   title ILIKE $2
+ORDER BY
+   created_at DESC
+`
+
+type SearchTasksByTitleParams struct {
+	UserID int32  `json:"user_id"`
+	Title  string `json:"title"`
+}
+
+// Additional queries for enhanced functionality -------------------------
+func (q *Queries) SearchTasksByTitle(ctx context.Context, arg SearchTasksByTitleParams) ([]Task, error) {
+	rows, err := q.db.Query(ctx, searchTasksByTitle, arg.UserID, arg.Title)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Task
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.ParentID,
+			&i.Title,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.IsCompleted,
+			&i.Status,
+			&i.Priority,
+			&i.Tags,
+			&i.DisplayOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateTask = `-- name: UpdateTask :exec
