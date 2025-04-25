@@ -29,19 +29,19 @@ This section outlines what’s been completed, what’s in progress, and upcomin
   - Implement repository wrappers that call the generated `sqlc` methods.
   - Auto-calculation of parent task completion based on subtasks.
 
-### ▶️ In Progress
-
-- **Step 4: Service Layer & CLI Handlers**
+- **Service Layer & CLI Handlers** _(2025-04-25)_
 
   - Build service interfaces and business logic.
   - Wire CLI commands for `add`, `list`, `complete`, `delete`, and `reorder`.
 
-### ⏳ Upcoming
+### ▶️ In Progress
 
 - **Step 5: Terminal UI (TUI)**
 
-  - Choose between `tview` or `tcell` for interactive Kanban and List views.
+  - Chosen `bubbletea` for interactive Kanban and List views.
   - Keyboard navigation, highlighting, and toggling tasks.
+
+### ⏳ Upcoming
 
 - **Step 6: Kanban View & Advanced Features**
 
