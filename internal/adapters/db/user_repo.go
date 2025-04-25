@@ -96,8 +96,8 @@ func (r *SQLUserRepo) GetByUsername(ctx context.Context, username string) (user.
 
 // GetByID retrieves a user from the database by ID.
 // It returns the user.User struct or an error if the user is not found or if the operation fails.
-func (r *SQLUserRepo) GetByID(ctx context.Context, id int32) (user.User, error) {
-	row, err := r.q.GetUserById(ctx, id)
+func (r *SQLUserRepo) GetByID(ctx context.Context, id int64) (user.User, error) {
+	row, err := r.q.GetUserById(ctx, int32(id))
 	if err != nil {
 		return user.User{}, errors.NotFound(fmt.Sprintf("user with id %d not found: %v", id, err))
 	}
