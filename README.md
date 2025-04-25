@@ -23,20 +23,20 @@ This section outlines what’s been completed, what’s in progress, and upcomin
   - Type-safe DB layer generated via `sqlc`, using `pgx` and `pgtype`.
   - Smoke tests in `cmd/cli/main.go` for `CreateUser` and `CreateTask`.
 
-### ▶️ In Progress
-
-- **Step 3: Domain Models & Repository Layer**
+- **Domain Models & Repository Layer** _(2025-04-25)_
 
   - Define Go structs for `User` and `Task`, including subtasks hierarchy and progress logic.
   - Implement repository wrappers that call the generated `sqlc` methods.
   - Auto-calculation of parent task completion based on subtasks.
 
-### ⏳ Upcoming
+### ▶️ In Progress
 
 - **Step 4: Service Layer & CLI Handlers**
 
   - Build service interfaces and business logic.
   - Wire CLI commands for `add`, `list`, `complete`, `delete`, and `reorder`.
+
+### ⏳ Upcoming
 
 - **Step 5: Terminal UI (TUI)**
 
