@@ -25,7 +25,12 @@ var (
 // Execute runs the root command and handles errors.
 // It initializes the database connection and repositories before executing the command.
 func Execute() {
-	cobra.CheckErr(rootCmd.Execute())
+	err := rootCmd.Execute()
+
+	// Close the database connection after command execution
+	db.Close()
+
+	cobra.CheckErr(err)
 }
 
 // init initializes the database connection and repositories for the CLI application.
@@ -38,7 +43,7 @@ func init() {
 	// Connect to the database
 	// This will load the configuration from the environment variables and the config file.
 	cobra.CheckErr(db.Connect(ctx))
-	defer db.Close()
+	// Don't close the connection here, we'll close it after command execution
 
 	uRepo := db.NewSQLUserRepo(db.Pool)
 	tRepo := db.NewSQLTaskRepository(db.Pool)
