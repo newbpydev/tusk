@@ -52,12 +52,10 @@ ALTER TABLE users ADD CONSTRAINT unique_username UNIQUE (username);
 -- Add a unique constraint to the email column
 ALTER TABLE users ADD CONSTRAINT unique_email UNIQUE (email);
 
--- Add a unique constraint to the title column in tasks table
-ALTER TABLE tasks ADD CONSTRAINT unique_title UNIQUE (title);
--- Add a unique constraint to the user_id and title columns in tasks table
-ALTER TABLE tasks ADD CONSTRAINT unique_user_title UNIQUE (user_id, title);
--- Add a unique constraint to the user_id and status columns in tasks table
-ALTER TABLE tasks ADD CONSTRAINT unique_user_status UNIQUE (user_id, status);
+-- Removing problematic constraints:
+-- 1. unique_title - Different users should be able to create tasks with the same title
+-- 2. unique_user_title - Users may need multiple tasks with the same name
+-- 3. unique_user_status - Users need to have multiple tasks with the same status
 
 /* -------------------------------------------------------------------------- */
 /*                                  TRIGGERS                                  */
