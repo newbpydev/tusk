@@ -164,8 +164,7 @@ func (q *Queries) GetSubtasksByParentId(ctx context.Context, parentID pgtype.Int
 }
 
 const getTaskById = `-- name: GetTaskById :one
-SELECT 
-   id, user_id, parent_id, title, description, created_at, updated_at, due_date, is_completed, status, priority, tags, display_order
+SELECT id, user_id, parent_id, title, description, created_at, updated_at, due_date, is_completed, status, priority, tags, display_order 
 FROM tasks 
 WHERE 
    id = $1

@@ -41,8 +41,7 @@ RETURNING
    id, user_id, parent_id, title, description, created_at, updated_at, due_date, is_completed, status, priority, tags, display_order;
 
 -- name: GetTaskById :one
-SELECT 
-   id, user_id, parent_id, title, description, created_at, updated_at, due_date, is_completed, status, priority, tags, display_order
+SELECT * 
 FROM tasks 
 WHERE 
    id = $1;

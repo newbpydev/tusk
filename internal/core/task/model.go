@@ -39,9 +39,9 @@ const (
 // created and updated timestamps, due date, is completed, status, priority, tags, and display order.
 // It also includes a list of sub-tasks and computed fields for total count, completed count, and progress.
 type Task struct {
-	ID           int64      `json:"id"`
-	UserID       int64      `json:"user_id"`
-	ParentID     *int64     `json:"parent_id,omitempty"` // nil means root task
+	ID           int32      `json:"id"`
+	UserID       int32      `json:"user_id"`
+	ParentID     *int32     `json:"parent_id,omitempty"` // nil means root task
 	Title        string     `json:"title"`
 	Description  *string    `json:"description,omitempty"`
 	CreatedAt    time.Time  `json:"created_at"`
