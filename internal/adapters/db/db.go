@@ -3,29 +3,31 @@ package db
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/newbpydev/tusk/internal/config"
 )
 
 // Pool is the global database connection pool
 // It is initialized in the Connect function and used throughout the application.
 var Pool *pgxpool.Pool
 
-// Connect initializes the database connection pool using the DSN from the environment variable DB_URL.
-// It returns an error if the connection fails or if the DSN is not set.
+// Connect initializes the database connection pool using the DSN from the configuration.
+// It returns an error if the connection fails.
 func Connect(ctx context.Context) error {
-	dsn := os.Getenv("DB_URL")
+	cfg := config.Load()
+	dsn := cfg.DBURL
+
 	if dsn == "" {
-		return fmt.Errorf("DB_URL environment variable is not set")
+		return fmt.Errorf("DB_URL is not configured")
 	}
 
-	cfg, err := pgxpool.ParseConfig(dsn)
+	poolCfg, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
 		return fmt.Errorf("failed to parse database URL: %w", err)
 	}
 
-	pool, err := pgxpool.NewWithConfig(ctx, cfg)
+	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
 	}
