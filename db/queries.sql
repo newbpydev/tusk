@@ -30,6 +30,30 @@ FROM users
 WHERE 
    id = $1;
 
+-- name: GetUserByEmail :one
+SELECT 
+   id, username, email, created_at, updated_at, last_login, is_active
+FROM users
+WHERE 
+   email = $1;
+
+-- name: ListUsers :many
+SELECT 
+   id, username, email, created_at, updated_at, last_login, is_active
+FROM users
+WHERE 
+   is_active = true
+ORDER BY
+   username;
+
+-- name: DeactivateUser :exec
+UPDATE users
+SET 
+   is_active = false,
+   updated_at = CURRENT_TIMESTAMP
+WHERE 
+   id = $1;
+
 -- Tasks ---------------------------------------------------------------
 
 -- name: CreateTask :one
@@ -128,6 +152,136 @@ SET
    display_order = $2
 WHERE 
    id = $1;
+
+-- Additional queries for enhanced functionality -------------------------
+
+-- name: SearchTasksByTitle :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   title ILIKE $2
+ORDER BY
+   created_at DESC;
+
+-- name: SearchTasksByTag :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   $2 = ANY(tags)
+ORDER BY
+   created_at DESC;
+
+-- name: ListTasksByStatus :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   status = $2
+ORDER BY
+   priority DESC, display_order, created_at DESC;
+
+-- name: ListTasksByPriority :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   priority = $2
+ORDER BY
+   display_order, created_at DESC;
+
+-- name: ListTasksDueToday :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   due_date::date = CURRENT_DATE AND
+   is_completed = false
+ORDER BY
+   priority DESC, display_order;
+
+-- name: ListTasksDueSoon :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   due_date IS NOT NULL AND
+   due_date::date BETWEEN CURRENT_DATE AND (CURRENT_DATE + interval '7 days')::date AND
+   is_completed = false
+ORDER BY
+   due_date, priority DESC;
+
+-- name: ListOverdueTasks :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   due_date < CURRENT_DATE AND
+   is_completed = false
+ORDER BY
+   due_date, priority DESC;
+
+-- name: GetTaskCountsByStatus :one
+SELECT
+   COUNT(*) FILTER (WHERE status = 'todo') AS todo_count,
+   COUNT(*) FILTER (WHERE status = 'in-progress') AS in_progress_count,
+   COUNT(*) FILTER (WHERE status = 'done') AS done_count,
+   COUNT(*) AS total_count
+FROM tasks
+WHERE
+   user_id = $1;
+
+-- name: GetTaskCountsByPriority :one
+SELECT
+   COUNT(*) FILTER (WHERE priority = 'low') AS low_priority_count,
+   COUNT(*) FILTER (WHERE priority = 'medium') AS medium_priority_count,
+   COUNT(*) FILTER (WHERE priority = 'high') AS high_priority_count
+FROM tasks
+WHERE
+   user_id = $1 AND
+   is_completed = false;
+
+-- name: GetRecentlyCompletedTasks :many
+SELECT 
+   id, user_id, parent_id, title, description, created_at, updated_at, due_date, 
+   is_completed, status, priority, tags, display_order
+FROM tasks
+WHERE 
+   user_id = $1 AND
+   is_completed = true
+ORDER BY
+   updated_at DESC
+LIMIT $2;
+
+-- name: BulkUpdateTaskStatus :exec
+UPDATE tasks
+SET 
+   status = $2,
+   is_completed = $3,
+   updated_at = CURRENT_TIMESTAMP
+WHERE 
+   id = ANY($1::int[]);
+
+-- name: GetAllTagsForUser :many
+SELECT DISTINCT unnest(tags) as tag
+FROM tasks
+WHERE user_id = $1
+ORDER BY tag;
 
 
 
