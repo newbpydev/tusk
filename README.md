@@ -2,11 +2,82 @@
 
 A terminal-based task management application written in Go, designed for developers and power users who want a fast, extensible, and feature-rich TODO experience. Tusk combines PostgreSQL persistence, concurrent file backups, and a rich terminal UI to keep your workflow smooth, both now in CLI form and future REST/API extensions.
 
+## 🧰 Technology Stack
+
+- **Backend**: Go 1.24
+- **Database**: PostgreSQL 12+
+- **SQL Tools**:
+  - `sqlc` - Type-safe SQL query generation
+  - `golang-migrate` - Database migration management
+  - `pgx` - PostgreSQL driver for Go
+- **CLI Framework**: Cobra - Rich command-line interface with subcommands
+- **Terminal UI**:
+  - `bubbletea` - MVC framework for terminal applications
+  - `lipgloss` - Styling for terminal UI components
+- **Configuration**: `godotenv` - Environment variable management
+- **Authentication**: `golang.org/x/crypto` - Password hashing and verification
+- **Version Control**: Git
+
+## 📂 Project Structure
+
+```plaintext
+tusk-go/
+├── cmd/                    # Entry points for different app interfaces
+│   ├── api/                # REST API server entry point (future)
+│   └── cli/                # Command-line interface entry point
+├── configs/                # Configuration files and templates
+├── db/                     # Database definitions
+│   ├── migrations/         # SQL migration files
+│   └── queries.sql         # SQL queries for sqlc generation
+├── internal/               # Internal application code (not exported)
+│   ├── adapters/           # External system adapters (hexagonal architecture)
+│   │   ├── auth/           # Authentication adapter
+│   │   ├── backup/         # File backup adapter
+│   │   ├── db/             # Database adapter and repository implementations
+│   │   │   └── sqlc/       # Generated SQL code
+│   │   └── tui/            # Terminal UI adapter
+│   │       └── bubbletea/  # BubbleTea implementation of the TUI
+│   ├── app/                # Application services orchestration
+│   ├── cli/                # CLI command implementations
+│   ├── config/             # Configuration loading and parsing
+│   ├── core/               # Core domain models and business logic
+│   │   ├── errors/         # Domain-specific errors
+│   │   ├── task/           # Task domain model
+│   │   └── user/           # User domain model
+│   ├── ports/              # Interface definitions (hexagonal architecture)
+│   │   ├── input/          # Input ports (use cases)
+│   │   └── output/         # Output ports (repositories)
+│   ├── service/            # Service layer implementation
+│   │   ├── task/           # Task service implementation
+│   │   └── user/           # User service implementation
+│   └── util/               # Shared utilities
+├── migrations/             # Application-level migrations
+├── test/                   # Integration and E2E tests
+├── go.mod                  # Go module definition
+├── go.sum                  # Go module checksums
+├── LICENSE                 # AGPL-3.0 license file
+├── README.md               # This file
+└── sqlc.yaml               # sqlc configuration
+```
+
+The project follows a hexagonal architecture (also known as ports and adapters) to maintain a clean separation of concerns:
+
+- **Core Domain**: Contains pure business logic and domain models
+- **Ports**: Define interfaces for the application to interact with external systems
+- **Adapters**: Connect the application to external systems like databases and UI
+- **Services**: Implement use cases by orchestrating domain models and ports
+
+This architecture allows us to easily:
+
+- Switch between different database providers
+- Add new user interfaces (CLI, TUI, Web) without changing business logic
+- Test business logic in isolation from external dependencies
+
 ---
 
 ## 🗺️ Roadmap & Project Timeline
 
-This section outlines what’s been completed, what’s in progress, and upcoming milestones.
+This section outlines what's been completed, what's in progress, and upcoming milestones.
 
 ### ✅ Completed
 
@@ -31,43 +102,58 @@ This section outlines what’s been completed, what’s in progress, and upcomin
 
 - **Service Layer & CLI Handlers** _(2025-04-25)_
 
-  - Build service interfaces and business logic.
-  - Wire CLI commands for `add`, `list`, `complete`, `delete`, and `reorder`.
+  - Built service interfaces and business logic for tasks and users.
+  - Implemented CLI commands for `add`, `list`, `complete`, `delete`, and `reorder`.
+  - Added Cobra command structure for intuitive CLI experience.
+
+- **Initial Terminal UI (TUI)** _(2025-04-26)_
+
+  - Implemented basic `bubbletea` framework with list view of tasks.
+  - Added keyboard navigation and task status toggling.
+  - Created task deletion functionality with confirmation prompt.
+  - Designed basic styling with `lipgloss` for improved visual hierarchy.
 
 ### ▶️ In Progress
 
-- **Step 5: Terminal UI (TUI)**
+- **Advanced Terminal UI Features**
 
-  - Chosen `bubbletea` for interactive Kanban and List views.
-  - Keyboard navigation, highlighting, and toggling tasks.
+  - Implementing detail view and edit mode for tasks.
+  - Adding subtask management within the TUI.
+  - Working on task filtering and sorting options.
+  - Developing keyboard shortcuts and help menu.
 
 ### ⏳ Upcoming
 
-- **Step 6: Kanban View & Advanced Features**
+- **Kanban View & Advanced Features**
 
   - Group tasks by status in columns, enable drag-and-drop or key-based moves.
   - Persist column order and support custom sorting.
+  - View task dependencies and relationships visually.
 
-- **Step 7: User Authentication & Management**
+- **User Authentication & Management**
 
   - Secure login prompt, session handling.
   - CLI commands for adding and removing users.
+  - Role-based permissions for team task management.
 
-- **Step 8: File Backup & Concurrency**
+- **File Backup & Concurrency**
 
   - Implement JSON/CSV backup that runs in parallel with DB writes via goroutines and channels.
   - Error handling and retry mechanisms.
+  - Automated scheduled backups with configurable intervals.
 
-- **Step 9: Testing & CI**
+- **Testing & CI**
 
   - Unit tests for repository and service layers.
   - Integration tests with a test database.
   - GitHub Actions for automated testing and linting.
+  - Code coverage reports and quality metrics.
 
-- **Step 10: REST API & Web App**
+- **REST API & Web App**
 
   - Expose the same business logic via a Go HTTP server.
   - Build a minimal web frontend (e.g. Next.js, SvelteKit) to consume the API.
+  - Add JWT authentication for secure API access.
 
 ---
 
@@ -108,11 +194,27 @@ This section outlines what’s been completed, what’s in progress, and upcomin
    sqlc generate
    ```
 
-5. **Run the CLI smoke test**
+5. **Build and run the CLI**
 
    ```bash
-   go run cmd/cli/main.go
+   go build -o tusk ./cmd/cli
+   ./tusk help
    ```
+
+6. **Run the TUI interface**
+
+   ```bash
+   ./tusk tui
+   ```
+
+### TUI Key Commands
+
+- `↑`/`↓` - Navigate between tasks
+- `Space`/`Enter` - Toggle task completion status
+- `d` - Delete selected task
+- `q` - Quit the application
+- `h` - Switch to list view
+- `Tab` - Cycle between views
 
 ---
 
@@ -124,6 +226,14 @@ We welcome contributions! Please follow these guidelines:
 2. Run tests and ensure `sqlc generate` passes.
 3. Follow the existing code style and include comments.
 4. Open a Pull Request with a clear description of your changes.
+
+### Development Environment
+
+For best results, we recommend:
+
+- VS Code with Go extension
+- PostgreSQL running locally or in Docker
+- Go 1.24 or newer
 
 ---
 
