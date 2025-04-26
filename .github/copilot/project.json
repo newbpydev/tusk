@@ -1,0 +1,20 @@
+{
+  "projectType": "go",
+  "architecture": "hexagonal",
+  "structure": {
+    "cmd": "Entry points for different app interfaces",
+    "internal": {
+      "adapters": "External system adapters (database, UI, etc.)",
+      "core": "Core domain models and business logic",
+      "ports": "Interface definitions for adapters",
+      "service": "Business logic implementations",
+      "app": "Application services orchestration",
+      "config": "Configuration management",
+      "cli": "Command line interface implementations",
+      "util": "Shared utilities"
+    },
+    "db": "Database definitions and migrations",
+    "configs": "Configuration files and templates",
+    "test": "Integration and E2E tests"
+  }
+}

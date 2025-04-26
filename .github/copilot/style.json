@@ -1,0 +1,22 @@
+{
+  "language": "go",
+  "style": {
+    "imports": "grouped and alphabetized by standard, external, internal",
+    "errors": "wrapped with contextual information",
+    "naming": {
+      "interfaces": "No 'I' prefix, named by their behavior (e.g., 'Repository', 'Service')",
+      "implementations": "Named with descriptive nouns or suffixed with 'Impl'"
+    },
+    "comments": {
+      "publicAPI": "Always include godoc comments for exported functions and types",
+      "format": "Start with the name of the item being documented"
+    },
+    "testing": "Table-driven tests preferred",
+    "errorHandling": "Early return pattern, avoid nested if statements"
+  },
+  "patterns": {
+    "repositories": "Use interfaces defined in ports/output, implemented in adapters/db",
+    "services": "Use interfaces defined in ports/input, implemented in service/",
+    "domainModels": "Keep in core/, pure business logic with no external dependencies"
+  }
+}

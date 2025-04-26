@@ -1,0 +1,25 @@
+{
+  "testing": {
+    "framework": "standard Go testing",
+    "approach": "table-driven tests",
+    "mocking": "prefer interfaces and simple stub implementations",
+    "coverage": "aim for 80% or higher"
+  },
+  "dependencies": {
+    "preferred": {
+      "database": ["sqlc", "pgx", "golang-migrate"],
+      "cli": ["cobra", "viper"],
+      "tui": ["bubbletea", "lipgloss", "bubbles"],
+      "config": ["godotenv"],
+      "auth": ["golang.org/x/crypto"],
+      "logging": ["zap"]
+    },
+    "avoidIfPossible": ["gorm", "database/sql"]
+  },
+  "implementation": {
+    "errorHandling": "use pkg/errors for wrapping, explicit error return values",
+    "contextHandling": "pass context.Context as first parameter to functions that perform I/O",
+    "concurrency": "prefer goroutines and channels for concurrent operations",
+    "configuration": "environment variables via godotenv, with sane defaults"
+  }
+}
