@@ -185,6 +185,72 @@ func (r *SQLUserRepo) GetByID(ctx context.Context, id int64) (user.User, error) 
 	}, nil
 }
 
+// GetByEmail retrieves a user from the database by email address.
+// It returns the user.User struct or an error if the user is not found or if the operation fails.
+func (r *SQLUserRepo) GetByEmail(ctx context.Context, email string) (user.User, error) {
+	r.log.Debug("Fetching user by email",
+		zap.String("email_domain", emailDomain(email)))
+
+	startTime := time.Now()
+	row, err := r.q.GetUserByEmail(ctx, email)
+	queryDuration := time.Since(startTime)
+
+	if err != nil {
+		r.log.Warn("User not found by email",
+			zap.String("email_domain", emailDomain(email)),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
+		return user.User{}, errors.NotFound(fmt.Sprintf("user with email address ending in %s not found", emailDomain(email)))
+	}
+
+	r.log.Debug("User fetched successfully by email",
+		zap.Int32("user_id", row.ID),
+		zap.String("username", row.Username),
+		zap.Duration("duration_ms", queryDuration))
+
+	return user.User{
+		ID:        row.ID,
+		Username:  row.Username,
+		Email:     row.Email,
+		CreatedAt: row.CreatedAt.Time,
+		UpdatedAt: row.UpdatedAt.Time,
+		IsActive:  row.IsActive.Bool,
+		LastLogin: &row.LastLogin.Time,
+	}, nil
+}
+
+// Delete removes a user from the database by ID.
+// It returns an error if the user does not exist or if the operation fails.
+func (r *SQLUserRepo) Delete(ctx context.Context, id int64) error {
+	r.log.Debug("Deleting user from database",
+		zap.Int64("user_id", id))
+
+	startTime := time.Now()
+	rowsAffected, err := r.q.DeleteUser(ctx, int32(id))
+	queryDuration := time.Since(startTime)
+
+	if err != nil {
+		r.log.Error("Failed to delete user from database",
+			zap.Int64("user_id", id),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
+		return errors.InternalError(fmt.Sprintf("failed to delete user: %v", err))
+	}
+
+	if rowsAffected == 0 {
+		r.log.Warn("User not found for deletion",
+			zap.Int64("user_id", id),
+			zap.Duration("duration_ms", queryDuration))
+		return errors.NotFound(fmt.Sprintf("user with id %d not found", id))
+	}
+
+	r.log.Info("User deleted successfully from database",
+		zap.Int64("user_id", id),
+		zap.Duration("duration_ms", queryDuration))
+
+	return nil
+}
+
 // emailDomain extracts domain part from an email address
 // Returns empty string if invalid email format
 func emailDomain(email string) string {

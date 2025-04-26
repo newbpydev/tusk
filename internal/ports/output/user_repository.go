@@ -24,4 +24,12 @@ type UserRepository interface {
 	// GetByUsername retrieves a user by their username from the database.
 	// It returns the user or an error if the user could not be found.
 	GetByUsername(ctx context.Context, username string) (user.User, error)
+
+	// GetByEmail retrieves a user by their email from the database.
+	// It returns the user or an error if the user could not be found.
+	GetByEmail(ctx context.Context, email string) (user.User, error)
+
+	// Delete removes a user from the database by ID.
+	// It returns an error if the user could not be found or deleted.
+	Delete(ctx context.Context, id int64) error
 }

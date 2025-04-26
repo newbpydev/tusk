@@ -154,6 +154,20 @@ func (q *Queries) DeleteTask(ctx context.Context, id int32) error {
 	return err
 }
 
+const deleteUser = `-- name: DeleteUser :execrows
+DELETE FROM users
+WHERE 
+   id = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, id int32) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteUser, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const getAllTagsForUser = `-- name: GetAllTagsForUser :many
 SELECT DISTINCT unnest(tags) as tag
 FROM tasks
