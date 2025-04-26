@@ -11,6 +11,8 @@ import (
 )
 
 var (
+	// rootCmd is the main command for the Tusk CLI application.
+	// It serves as the entry point for the command-line interface.
 	rootCmd = &cobra.Command{
 		Use:   "tusk",
 		Short: "Tusk: Your Tasks, Tamed with Go",
