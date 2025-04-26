@@ -7,16 +7,22 @@ import (
 	"github.com/newbpydev/tusk/internal/core/errors"
 	"github.com/newbpydev/tusk/internal/core/task"
 	repo "github.com/newbpydev/tusk/internal/ports/output"
+	"github.com/newbpydev/tusk/internal/util/logging"
+	"go.uber.org/zap"
 )
 
 // taskService implements the Service interface
 type taskService struct {
 	repo repo.TaskRepository
+	log  *zap.Logger
 }
 
 // NewTaskService creates a new instance of the task service
 func NewTaskService(r repo.TaskRepository) Service {
-	return &taskService{repo: r}
+	return &taskService{
+		repo: r,
+		log:  logging.ServiceLogger.Named("task"),
+	}
 }
 
 // Create creates a new task with the given parameters
@@ -25,14 +31,30 @@ func (s *taskService) Create(ctx context.Context, userID int64, parentID *int64,
 
 	// Validate input
 	if userID <= 0 {
+		s.log.Error("Invalid user ID provided for task creation",
+			zap.Int64("user_id", userID))
 		return task.Task{}, errors.InvalidInput("user ID must be positive")
 	}
 	if title == "" {
+		s.log.Error("Empty title provided for task creation",
+			zap.Int64("user_id", userID))
 		return task.Task{}, errors.InvalidInput("title is required")
 	}
 	if !isValidPriority(priority) {
+		s.log.Warn("Invalid priority provided, defaulting to medium",
+			zap.Int64("user_id", userID),
+			zap.String("given_priority", string(priority)))
 		priority = task.PriorityMedium // Set default priority if invalid
 	}
+
+	// Log task creation attempt - don't log full description which may contain sensitive data
+	s.log.Info("Creating new task",
+		zap.Int64("user_id", userID),
+		zap.String("title", truncateString(title, 30)), // Truncate title for logs
+		zap.Bool("has_parent", parentID != nil),
+		zap.Bool("has_due_date", dueDate != nil),
+		zap.String("priority", string(priority)),
+		zap.Int("tag_count", len(tags)))
 
 	// Convert tags to Tag objects
 	var taskTags []task.Tag
@@ -71,8 +93,15 @@ func (s *taskService) Create(ctx context.Context, userID int64, parentID *int64,
 
 	createdTask, err := s.repo.Create(ctx, newTask)
 	if err != nil {
+		s.log.Error("Failed to create task",
+			zap.Int64("user_id", userID),
+			zap.Error(err))
 		return task.Task{}, err
 	}
+
+	s.log.Info("Task created successfully",
+		zap.Int64("user_id", userID),
+		zap.Int32("task_id", createdTask.ID))
 
 	return createdTask, nil
 }
@@ -80,14 +109,28 @@ func (s *taskService) Create(ctx context.Context, userID int64, parentID *int64,
 // Show retrieves a task by its ID
 func (s *taskService) Show(ctx context.Context, taskID int64) (task.Task, error) {
 	if taskID <= 0 {
+		s.log.Error("Invalid task ID for task retrieval",
+			zap.Int64("task_id", taskID))
 		return task.Task{}, errors.InvalidInput("task ID must be positive")
 	}
+
+	s.log.Debug("Retrieving task details",
+		zap.Int64("task_id", taskID))
 
 	// Get the task with its full tree
 	taskWithTree, err := s.repo.GetTaskTree(ctx, taskID)
 	if err != nil {
+		s.log.Error("Failed to retrieve task details",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
 		return task.Task{}, err
 	}
+
+	s.log.Debug("Task retrieved successfully",
+		zap.Int64("task_id", taskID),
+		zap.Int32("user_id", taskWithTree.UserID),
+		zap.String("status", string(taskWithTree.Status)),
+		zap.Int("subtask_count", len(taskWithTree.SubTasks)))
 
 	return taskWithTree, nil
 }
@@ -98,9 +141,15 @@ func (s *taskService) List(ctx context.Context, userID int64) ([]task.Task, erro
 		return nil, errors.InvalidInput("user ID must be positive")
 	}
 
+	s.log.Debug("Listing all tasks for user",
+		zap.Int64("user_id", userID))
+
 	// Get all root tasks for the user
 	rootTasks, err := s.repo.ListRootTasks(ctx, userID)
 	if err != nil {
+		s.log.Error("Failed to retrieve user's root tasks",
+			zap.Int64("user_id", userID),
+			zap.Error(err))
 		return nil, err
 	}
 
@@ -108,10 +157,18 @@ func (s *taskService) List(ctx context.Context, userID int64) ([]task.Task, erro
 	for i, rootTask := range rootTasks {
 		fullTask, err := s.repo.GetTaskTree(ctx, int64(rootTask.ID))
 		if err != nil {
+			s.log.Warn("Failed to retrieve complete task tree for task",
+				zap.Int64("user_id", userID),
+				zap.Int32("task_id", rootTask.ID),
+				zap.Error(err))
 			continue // Skip this task if we can't get its tree
 		}
 		rootTasks[i] = fullTask
 	}
+
+	s.log.Info("Retrieved all tasks for user",
+		zap.Int64("user_id", userID),
+		zap.Int("task_count", len(rootTasks)))
 
 	return rootTasks, nil
 }
@@ -193,27 +250,60 @@ func (s *taskService) Update(ctx context.Context, taskID int64, title, descripti
 // Delete removes a task
 func (s *taskService) Delete(ctx context.Context, taskID int64) error {
 	if taskID <= 0 {
+		s.log.Error("Invalid task ID for task deletion",
+			zap.Int64("task_id", taskID))
 		return errors.InvalidInput("task ID must be positive")
 	}
 
+	s.log.Info("Attempting to delete task",
+		zap.Int64("task_id", taskID))
+
 	// Check if the task exists
-	_, err := s.repo.GetByID(ctx, taskID)
+	existingTask, err := s.repo.GetByID(ctx, taskID)
 	if err != nil {
+		s.log.Error("Failed to find task for deletion",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
 		return err
 	}
 
-	return s.repo.Delete(ctx, taskID)
+	// Log the task deletion but don't include any potentially sensitive content
+	s.log.Info("Deleting task",
+		zap.Int64("task_id", taskID),
+		zap.Int32("user_id", existingTask.UserID))
+
+	err = s.repo.Delete(ctx, taskID)
+	if err != nil {
+		s.log.Error("Failed to delete task",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
+		return err
+	}
+
+	s.log.Info("Task deleted successfully",
+		zap.Int64("task_id", taskID),
+		zap.Int32("user_id", existingTask.UserID))
+
+	return nil
 }
 
 // Complete marks a task as completed
 func (s *taskService) Complete(ctx context.Context, taskID int64) (task.Task, error) {
 	if taskID <= 0 {
+		s.log.Error("Invalid task ID for task completion",
+			zap.Int64("task_id", taskID))
 		return task.Task{}, errors.InvalidInput("task ID must be positive")
 	}
+
+	s.log.Debug("Attempting to mark task as complete",
+		zap.Int64("task_id", taskID))
 
 	// Get the existing task
 	existingTask, err := s.repo.GetByID(ctx, taskID)
 	if err != nil {
+		s.log.Error("Failed to find task for completion",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
 		return task.Task{}, err
 	}
 
@@ -225,14 +315,24 @@ func (s *taskService) Complete(ctx context.Context, taskID int64) (task.Task, er
 	// Update the task in the repository
 	err = s.repo.Update(ctx, existingTask)
 	if err != nil {
+		s.log.Error("Failed to update task completion status",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
 		return task.Task{}, err
 	}
 
 	// Get the updated task
 	updatedTask, err := s.repo.GetByID(ctx, taskID)
 	if err != nil {
+		s.log.Error("Failed to retrieve updated task after completion",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
 		return task.Task{}, err
 	}
+
+	s.log.Info("Task marked as complete",
+		zap.Int64("task_id", taskID),
+		zap.Int32("user_id", updatedTask.UserID))
 
 	return updatedTask, nil
 }
@@ -240,18 +340,32 @@ func (s *taskService) Complete(ctx context.Context, taskID int64) (task.Task, er
 // ChangeStatus updates the status of a task
 func (s *taskService) ChangeStatus(ctx context.Context, taskID int64, status task.Status) (task.Task, error) {
 	if taskID <= 0 {
+		s.log.Error("Invalid task ID for task status change",
+			zap.Int64("task_id", taskID))
 		return task.Task{}, errors.InvalidInput("task ID must be positive")
 	}
 
 	if !isValidStatus(status) {
+		s.log.Error("Invalid status provided for task status change",
+			zap.Int64("task_id", taskID),
+			zap.String("status", string(status)))
 		return task.Task{}, errors.InvalidInput("invalid status")
 	}
+
+	s.log.Info("Attempting to change task status",
+		zap.Int64("task_id", taskID),
+		zap.String("new_status", string(status)))
 
 	// Get the existing task
 	existingTask, err := s.repo.GetByID(ctx, taskID)
 	if err != nil {
+		s.log.Error("Failed to find task for status change",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
 		return task.Task{}, err
 	}
+
+	oldStatus := existingTask.Status
 
 	// Update status and completion based on the new status
 	existingTask.Status = status
@@ -265,14 +379,26 @@ func (s *taskService) ChangeStatus(ctx context.Context, taskID int64, status tas
 	// Update the task in the repository
 	err = s.repo.Update(ctx, existingTask)
 	if err != nil {
+		s.log.Error("Failed to update task status",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
 		return task.Task{}, err
 	}
 
 	// Get the updated task
 	updatedTask, err := s.repo.GetByID(ctx, taskID)
 	if err != nil {
+		s.log.Error("Failed to retrieve updated task after status change",
+			zap.Int64("task_id", taskID),
+			zap.Error(err))
 		return task.Task{}, err
 	}
+
+	s.log.Info("Task status changed successfully",
+		zap.Int64("task_id", taskID),
+		zap.Int32("user_id", updatedTask.UserID),
+		zap.String("old_status", string(oldStatus)),
+		zap.String("new_status", string(status)))
 
 	return updatedTask, nil
 }
@@ -475,4 +601,12 @@ func isValidPriority(priority task.Priority) bool {
 	}
 
 	return false
+}
+
+// truncateString truncates a string to the given max length
+func truncateString(s string, maxLen int) string {
+	if len(s) <= maxLen {
+		return s
+	}
+	return s[:maxLen] + "..."
 }

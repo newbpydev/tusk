@@ -12,6 +12,8 @@ import (
 	"github.com/newbpydev/tusk/internal/core/errors"
 	"github.com/newbpydev/tusk/internal/core/task"
 	"github.com/newbpydev/tusk/internal/ports/output"
+	"github.com/newbpydev/tusk/internal/util/logging"
+	"go.uber.org/zap"
 )
 
 // Ensure SQLTaskRepository implements output.TaskRepository interface
@@ -19,18 +21,28 @@ var _ output.TaskRepository = (*SQLTaskRepository)(nil)
 
 // SQLTaskRepository implements the output.TaskRepository interface using SQLC and PostgreSQL
 type SQLTaskRepository struct {
-	q *sqlc.Queries
+	q   *sqlc.Queries
+	log *zap.Logger
 }
 
 // NewSQLTaskRepository creates a new SQLTaskRepository with the provided connection pool
 func NewSQLTaskRepository(pool *pgxpool.Pool) *SQLTaskRepository {
 	return &SQLTaskRepository{
-		q: sqlc.New(pool),
+		q:   sqlc.New(pool),
+		log: logging.DBLogger.Named("task_repo"),
 	}
 }
 
 // Create implements output.TaskRepository.Create
 func (r *SQLTaskRepository) Create(ctx context.Context, t task.Task) (task.Task, error) {
+	r.log.Debug("Creating new task in database",
+		zap.Int32("user_id", t.UserID),
+		zap.String("title_length", fmt.Sprintf("%d chars", len(t.Title))),
+		zap.Bool("has_parent", t.ParentID != nil),
+		zap.Bool("has_description", t.Description != nil),
+		zap.Bool("has_due_date", t.DueDate != nil),
+		zap.Int("tag_count", len(t.Tags)))
+
 	// Convert domain model to db params
 	params := sqlc.CreateTaskParams{
 		UserID:   t.UserID,
@@ -61,10 +73,22 @@ func (r *SQLTaskRepository) Create(ctx context.Context, t task.Task) (task.Task,
 	}
 
 	// Execute query
+	startTime := time.Now()
 	row, err := r.q.CreateTask(ctx, params)
+	queryDuration := time.Since(startTime)
+
 	if err != nil {
+		r.log.Error("Failed to create task in database",
+			zap.Int32("user_id", t.UserID),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
 		return task.Task{}, errors.InternalError(fmt.Sprintf("failed to create task: %v", err))
 	}
+
+	r.log.Info("Task created successfully in database",
+		zap.Int32("task_id", row.ID),
+		zap.Int32("user_id", t.UserID),
+		zap.Duration("duration_ms", queryDuration))
 
 	// Convert result back to domain model
 	result := mapDBTaskToDomain(row)
@@ -73,6 +97,12 @@ func (r *SQLTaskRepository) Create(ctx context.Context, t task.Task) (task.Task,
 
 // Update implements output.TaskRepository.Update
 func (r *SQLTaskRepository) Update(ctx context.Context, t task.Task) error {
+	r.log.Debug("Updating task in database",
+		zap.Int32("task_id", t.ID),
+		zap.Int32("user_id", t.UserID),
+		zap.String("status", string(t.Status)),
+		zap.Bool("is_completed", t.IsCompleted))
+
 	params := sqlc.UpdateTaskParams{
 		ID:       int32(t.ID),
 		UserID:   t.UserID,
@@ -102,37 +132,90 @@ func (r *SQLTaskRepository) Update(ctx context.Context, t task.Task) error {
 		},
 	}
 
+	startTime := time.Now()
 	err := r.q.UpdateTask(ctx, params)
+	queryDuration := time.Since(startTime)
+
 	if err != nil {
 		if err == pgx.ErrNoRows {
+			r.log.Warn("Failed to update task - not found",
+				zap.Int32("task_id", t.ID),
+				zap.Duration("duration_ms", queryDuration))
 			return errors.NotFound(fmt.Sprintf("task %d not found", t.ID))
 		}
+		r.log.Error("Failed to update task",
+			zap.Int32("task_id", t.ID),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
 		return errors.InternalError(fmt.Sprintf("failed to update task: %v", err))
 	}
+
+	r.log.Info("Task updated successfully",
+		zap.Int32("task_id", t.ID),
+		zap.Int32("user_id", t.UserID),
+		zap.Duration("duration_ms", queryDuration))
+
 	return nil
 }
 
 // Delete implements output.TaskRepository.Delete
 func (r *SQLTaskRepository) Delete(ctx context.Context, id int64) error {
+	r.log.Info("Deleting task",
+		zap.Int64("task_id", id))
+
+	startTime := time.Now()
 	err := r.q.DeleteTask(ctx, int32(id))
+	queryDuration := time.Since(startTime)
+
 	if err != nil {
 		if err == pgx.ErrNoRows {
+			r.log.Warn("Failed to delete task - not found",
+				zap.Int64("task_id", id),
+				zap.Duration("duration_ms", queryDuration))
 			return errors.NotFound(fmt.Sprintf("task %d not found", id))
 		}
+		r.log.Error("Failed to delete task",
+			zap.Int64("task_id", id),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
 		return errors.InternalError(fmt.Sprintf("failed to delete task: %v", err))
 	}
+
+	r.log.Info("Task deleted successfully",
+		zap.Int64("task_id", id),
+		zap.Duration("duration_ms", queryDuration))
+
 	return nil
 }
 
 // GetByID implements output.TaskRepository.GetByID
 func (r *SQLTaskRepository) GetByID(ctx context.Context, id int64) (task.Task, error) {
+	r.log.Debug("Fetching task by ID",
+		zap.Int64("task_id", id))
+
+	startTime := time.Now()
 	row, err := r.q.GetTaskById(ctx, int32(id))
+	queryDuration := time.Since(startTime)
+
 	if err != nil {
 		if err == pgx.ErrNoRows {
+			r.log.Warn("Task not found",
+				zap.Int64("task_id", id),
+				zap.Duration("duration_ms", queryDuration))
 			return task.Task{}, errors.NotFound(fmt.Sprintf("task %d not found", id))
 		}
+		r.log.Error("Failed to get task by ID",
+			zap.Int64("task_id", id),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
 		return task.Task{}, errors.InternalError(fmt.Sprintf("failed to get task: %v", err))
 	}
+
+	r.log.Debug("Task fetched successfully",
+		zap.Int64("task_id", id),
+		zap.Int32("user_id", row.UserID),
+		zap.Duration("duration_ms", queryDuration))
+
 	return mapDBTaskToDomain(row), nil
 }
 
@@ -170,12 +253,25 @@ func (r *SQLTaskRepository) ListSubTasks(ctx context.Context, parentID int64) ([
 
 // GetTaskTree implements output.TaskRepository.GetTaskTree
 func (r *SQLTaskRepository) GetTaskTree(ctx context.Context, rootID int64) (task.Task, error) {
+	r.log.Debug("Fetching task tree",
+		zap.Int64("root_id", rootID))
+
+	startTime := time.Now()
 	rows, err := r.q.ListTasksWithSubtasksRecursive(ctx, int32(rootID))
+	queryDuration := time.Since(startTime)
+
 	if err != nil {
+		r.log.Error("Failed to get task tree",
+			zap.Int64("root_id", rootID),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
 		return task.Task{}, errors.InternalError(fmt.Sprintf("failed to get task tree: %v", err))
 	}
 
 	if len(rows) == 0 {
+		r.log.Warn("Task tree not found",
+			zap.Int64("root_id", rootID),
+			zap.Duration("duration_ms", queryDuration))
 		return task.Task{}, errors.NotFound(fmt.Sprintf("task %d not found", rootID))
 	}
 
@@ -190,6 +286,11 @@ func (r *SQLTaskRepository) GetTaskTree(ctx context.Context, rootID int64) (task
 
 	// Compute metrics
 	computeTaskMetrics(&tree)
+
+	r.log.Debug("Task tree fetched successfully",
+		zap.Int64("root_id", rootID),
+		zap.Int("node_count", len(rows)),
+		zap.Duration("duration_ms", queryDuration))
 
 	return tree, nil
 }
@@ -290,8 +391,18 @@ func (r *SQLTaskRepository) ListTasksByPriority(ctx context.Context, userID int6
 
 // ListTasksDueToday implements output.TaskRepository.ListTasksDueToday
 func (r *SQLTaskRepository) ListTasksDueToday(ctx context.Context, userID int64) ([]task.Task, error) {
+	r.log.Debug("Listing tasks due today",
+		zap.Int64("user_id", userID))
+
+	startTime := time.Now()
 	rows, err := r.q.ListTasksDueToday(ctx, int32(userID))
+	queryDuration := time.Since(startTime)
+
 	if err != nil {
+		r.log.Error("Failed to list tasks due today",
+			zap.Int64("user_id", userID),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
 		return nil, errors.InternalError(fmt.Sprintf("failed to list tasks due today: %v", err))
 	}
 
@@ -299,6 +410,12 @@ func (r *SQLTaskRepository) ListTasksDueToday(ctx context.Context, userID int64)
 	for i, row := range rows {
 		tasks[i] = mapDBTaskToDomain(row)
 	}
+
+	r.log.Debug("Successfully listed tasks due today",
+		zap.Int64("user_id", userID),
+		zap.Int("task_count", len(tasks)),
+		zap.Duration("duration_ms", queryDuration))
+
 	return tasks, nil
 }
 
@@ -378,6 +495,12 @@ func (r *SQLTaskRepository) GetRecentlyCompletedTasks(ctx context.Context, userI
 
 // BulkUpdateTaskStatus implements output.TaskRepository.BulkUpdateTaskStatus
 func (r *SQLTaskRepository) BulkUpdateTaskStatus(ctx context.Context, taskIDs []int32, status task.Status, isCompleted bool) error {
+	r.log.Info("Bulk updating task status",
+		zap.Int("task_count", len(taskIDs)),
+		zap.String("new_status", string(status)),
+		zap.Bool("is_completed", isCompleted))
+
+	startTime := time.Now()
 	err := r.q.BulkUpdateTaskStatus(ctx, sqlc.BulkUpdateTaskStatusParams{
 		Column1: taskIDs,
 		Status: pgtype.Text{
@@ -389,9 +512,22 @@ func (r *SQLTaskRepository) BulkUpdateTaskStatus(ctx context.Context, taskIDs []
 			Valid: true,
 		},
 	})
+	queryDuration := time.Since(startTime)
+
 	if err != nil {
+		r.log.Error("Failed to bulk update task status",
+			zap.Int("task_count", len(taskIDs)),
+			zap.String("status", string(status)),
+			zap.Duration("duration_ms", queryDuration),
+			zap.Error(err))
 		return errors.InternalError(fmt.Sprintf("failed to bulk update task status: %v", err))
 	}
+
+	r.log.Info("Bulk task status update successful",
+		zap.Int("task_count", len(taskIDs)),
+		zap.String("new_status", string(status)),
+		zap.Duration("duration_ms", queryDuration))
+
 	return nil
 }
 
