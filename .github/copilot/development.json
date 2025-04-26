@@ -21,5 +21,17 @@
     "contextHandling": "pass context.Context as first parameter to functions that perform I/O",
     "concurrency": "prefer goroutines and channels for concurrent operations",
     "configuration": "environment variables via godotenv, with sane defaults"
+  },
+  "agentBehavior": {
+    "fileModification": {
+      "validateAfterChange": true,
+      "checkForErrors": true,
+      "fixErrorsBeforeContinuing": true,
+      "validateCompilation": true
+    },
+    "codeQuality": {
+      "ensureConsistentStyle": true,
+      "followProjectPatterns": true
+    }
   }
 }
