@@ -2,8 +2,6 @@
 package cli
 
 import (
-	"context"
-
 	"github.com/newbpydev/tusk/internal/adapters/db"
 	tservice "github.com/newbpydev/tusk/internal/service/task"
 	uservice "github.com/newbpydev/tusk/internal/service/user"
@@ -27,6 +25,9 @@ var (
 // Execute runs the root command and handles errors.
 // It initializes the database connection and repositories before executing the command.
 func Execute() {
+	// Initialize the services before running the command
+	initServices()
+
 	err := rootCmd.Execute()
 
 	// Close the database connection after command execution
@@ -35,21 +36,20 @@ func Execute() {
 	cobra.CheckErr(err)
 }
 
-// init initializes the database connection and repositories for the CLI application.
+// initServices initializes the database connection and repositories for the CLI application.
 // It sets up the user and task services using the database repositories.
-func init() {
-	// Initialize the database connection and repositories
-	// This will use the DSN from the environment variable DB_URL.
-	ctx := context.Background()
-
-	// Connect to the database
-	// This will load the configuration from the environment variables and the config file.
-	cobra.CheckErr(db.Connect(ctx))
-	// Don't close the connection here, we'll close it after command execution
-
+func initServices() {
+	// The database connection should already be established in main.go
 	uRepo := db.NewSQLUserRepo(db.Pool)
 	tRepo := db.NewSQLTaskRepository(db.Pool)
 
 	userSvc = uservice.NewUserService(uRepo)
 	taskSvc = tservice.NewTaskService(tRepo)
+}
+
+// init is only used to set up commands, not for database connections
+func init() {
+	// rootCmd and all subcommand registrations happen in their respective files (task.go, user.go, tui.go)
+	// The CLI commands are registered in their respective files via their own init() functions
+	// No database operations occur during command registration
 }

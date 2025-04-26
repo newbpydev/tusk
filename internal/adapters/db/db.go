@@ -2,27 +2,17 @@ package db
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/newbpydev/tusk/internal/config"
+	"github.com/newbpydev/tusk/internal/util/logging"
 	"github.com/pkg/errors"
-	"go.uber.org/zap"
 )
 
 // Pool is the global database connection pool
 // It is initialized in the Connect function and used throughout the application.
 var Pool *pgxpool.Pool
-var logger *zap.Logger
-
-func init() {
-	// Initialize logger
-	var err error
-	logger, err = zap.NewProduction()
-	if err != nil {
-		// Fallback to basic logging if zap initialization fails
-		panic("failed to initialize logger: " + err.Error())
-	}
-}
 
 // Connect initializes the database connection pool using the DSN from the configuration.
 // It returns an error if the connection fails.
@@ -45,7 +35,14 @@ func Connect(ctx context.Context) error {
 	}
 
 	Pool = pool
-	logger.Info("Database connection established")
+
+	// Use safe logging approach to avoid nil pointer dereference
+	if logging.DBLogger != nil {
+		logging.DBLogger.Info("Database connection established")
+	} else {
+		// Fallback if logger is not yet initialized
+		fmt.Println("Database connection established")
+	}
 	return nil
 }
 
@@ -53,9 +50,18 @@ func Connect(ctx context.Context) error {
 // It should be called when the application is shutting down to release resources.
 func Close() {
 	if Pool != nil {
-		logger.Info("Closing database connection")
+		// Use safe logging approach
+		if logging.DBLogger != nil {
+			logging.DBLogger.Info("Closing database connection")
+		} else {
+			fmt.Println("Closing database connection")
+		}
 		Pool.Close()
 	} else {
-		logger.Warn("DB is nil, nothing to close")
+		if logging.DBLogger != nil {
+			logging.DBLogger.Warn("DB is nil, nothing to close")
+		} else {
+			fmt.Println("DB is nil, nothing to close")
+		}
 	}
 }
