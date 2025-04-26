@@ -1,7 +1,9 @@
 package errors
 
 import (
-	"github.com/pkg/errors"
+	stderrors "errors"
+
+	pkgerrors "github.com/pkg/errors"
 )
 
 // ErrorCode represents the error code for a domain error.
@@ -113,23 +115,85 @@ func Forbidden(msg string, err ...error) error {
 // Wrap wraps an error with a message and returns a new error.
 // This function uses pkg/errors.Wrap for enhanced stack tracing.
 func Wrap(err error, msg string) error {
-	return errors.Wrap(err, msg)
+	return pkgerrors.Wrap(err, msg)
 }
 
 // Wrapf wraps an error with a formatted message and returns a new error.
 // This function uses pkg/errors.Wrapf for enhanced stack tracing.
 func Wrapf(err error, format string, args ...interface{}) error {
-	return errors.Wrapf(err, format, args...)
+	return pkgerrors.Wrapf(err, format, args...)
 }
 
 // WithStack annotates an error with a stack trace at the point WithStack was called.
 // This function uses pkg/errors.WithStack for enhanced stack tracing.
 func WithStack(err error) error {
-	return errors.WithStack(err)
+	return pkgerrors.WithStack(err)
 }
 
 // Cause returns the underlying cause of the error, if possible.
 // This function uses pkg/errors.Cause to unwrap errors.
 func Cause(err error) error {
-	return errors.Cause(err)
+	return pkgerrors.Cause(err)
+}
+
+// Error type checking functions
+
+// IsDomainError checks if the given error is a DomainError.
+func IsDomainError(err error) bool {
+	var domainErr DomainError
+	return stderrors.As(err, &domainErr)
+}
+
+// IsNotFound checks if the given error is a NotFound error.
+func IsNotFound(err error) bool {
+	var domainErr DomainError
+	if stderrors.As(err, &domainErr) {
+		return domainErr.Code == CodeNotFound
+	}
+	return false
+}
+
+// IsConflict checks if the given error is a Conflict error.
+func IsConflict(err error) bool {
+	var domainErr DomainError
+	if stderrors.As(err, &domainErr) {
+		return domainErr.Code == CodeConflict
+	}
+	return false
+}
+
+// IsInvalidInput checks if the given error is an InvalidInput error.
+func IsInvalidInput(err error) bool {
+	var domainErr DomainError
+	if stderrors.As(err, &domainErr) {
+		return domainErr.Code == CodeInvalidInput
+	}
+	return false
+}
+
+// IsUnauthorized checks if the given error is an Unauthorized error.
+func IsUnauthorized(err error) bool {
+	var domainErr DomainError
+	if stderrors.As(err, &domainErr) {
+		return domainErr.Code == CodeUnauthorized
+	}
+	return false
+}
+
+// IsInternalError checks if the given error is an InternalError error.
+func IsInternalError(err error) bool {
+	var domainErr DomainError
+	if stderrors.As(err, &domainErr) {
+		return domainErr.Code == CodeInternalError
+	}
+	return false
+}
+
+// IsForbidden checks if the given error is a Forbidden error.
+func IsForbidden(err error) bool {
+	var domainErr DomainError
+	if stderrors.As(err, &domainErr) {
+		return domainErr.Code == CodeForbidden
+	}
+	return false
 }
