@@ -73,8 +73,12 @@ func setupTestDB(t *testing.T) {
 		}
 
 		password := os.Getenv("TEST_DB_PASSWORD")
+		// Don't use default password as it's likely not correct in most environments
 		if password == "" {
-			password = "postgres" // Default password, change this if needed
+			// Check if the user is running this on their local machine
+			t.Log("Warning: TEST_DB_PASSWORD environment variable not set. Please set it to run the tests.")
+			t.Skip("Skipping test as TEST_DB_PASSWORD is not set")
+			return
 		}
 
 		host := os.Getenv("TEST_DB_HOST")
