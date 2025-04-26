@@ -22,3 +22,19 @@ Thumbs.db
 
 # Testing
 /coverage.out
+/coverage.html
+/profile.out
+
+# Go specific
+*.test
+/vendor/
+go.work
+go.work.sum
+
+# Build and Distribution
+/dist/
+/build/
+
+# Temporary files
+/tmp/
+*.tmp
