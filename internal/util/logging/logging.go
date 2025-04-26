@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/newbpydev/tusk/internal/config"
 	"go.uber.org/zap"
@@ -109,7 +108,8 @@ func Init(cfg *config.Config) error {
 		// Continue with console logging only
 		Logger = zap.New(consoleCore, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 	} else {
-		file.Close() // Close the file, lumberjack will handle it
+		// Close the file immediately - we just wanted to verify permissions
+		file.Close()
 
 		// Configure lumberjack for log rotation
 		fileWriter := &lumberjack.Logger{
@@ -131,10 +131,6 @@ func Init(cfg *config.Config) error {
 
 		// Create main logger
 		Logger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
-
-		// Log to file that logging was initialized
-		fmt.Fprintf(file, "{\"level\":\"info\",\"timestamp\":\"%s\",\"caller\":\"logging/logging.go\",\"msg\":\"File logging initialized\"}\n",
-			time.Now().Format(time.RFC3339))
 	}
 
 	// Create component specific loggers
@@ -143,6 +139,11 @@ func Init(cfg *config.Config) error {
 	ServiceLogger = Logger.Named("service")
 	APILogger = Logger.Named("api")
 	TUILogger = Logger.Named("tui")
+
+	// Log initialization message using the configured logger
+	if Logger != nil {
+		Logger.Info("File logging system initialized")
+	}
 
 	return nil
 }
