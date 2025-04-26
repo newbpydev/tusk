@@ -54,6 +54,11 @@ SET
 WHERE 
    id = $1;
 
+-- name: DeleteUser :execrows
+DELETE FROM users
+WHERE 
+   id = $1;
+
 -- Tasks ---------------------------------------------------------------
 
 -- name: CreateTask :one
