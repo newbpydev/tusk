@@ -37,7 +37,7 @@ func (m Model) View() string {
 
 // renderListView renders the list of tasks
 func (m Model) renderListView() string {
-	s := titleStyle.Render("Tusk: Task Manager") + "\n\n"
+	s := m.styles.Title.Render("Tusk: Task Manager") + "\n\n"
 
 	if m.err != nil {
 		s += fmt.Sprintf("Error: %v\n\n", m.err)
@@ -48,23 +48,23 @@ func (m Model) renderListView() string {
 	} else {
 		for i, t := range m.tasks {
 			statusSymbol := "[ ]"
-			var statusStyle = todoStyle
+			var statusStyle = m.styles.Todo
 
 			switch t.Status {
 			case task.StatusDone:
 				statusSymbol = "[✓]"
-				statusStyle = doneStyle
+				statusStyle = m.styles.Done
 			case task.StatusInProgress:
 				statusSymbol = "[⟳]"
-				statusStyle = inProgressStyle
+				statusStyle = m.styles.InProgress
 			}
 
-			var priorityStyle = lowStyle
+			var priorityStyle = m.styles.LowPriority
 			switch t.Priority {
 			case task.PriorityHigh:
-				priorityStyle = highStyle
+				priorityStyle = m.styles.HighPriority
 			case task.PriorityMedium:
-				priorityStyle = mediumStyle
+				priorityStyle = m.styles.MediumPriority
 			}
 
 			priority := string(t.Priority)
@@ -80,14 +80,14 @@ func (m Model) renderListView() string {
 			}
 
 			if i == m.cursor {
-				s += selectedItemStyle.Render(taskLine) + "\n"
+				s += m.styles.SelectedItem.Render(taskLine) + "\n"
 			} else {
 				s += taskLine + "\n"
 			}
 		}
 	}
 
-	s += "\n" + helpStyle.Render("j/k: navigate • enter: view details • c: toggle completion • q: quit")
+	s += "\n" + m.styles.Help.Render("j/k: navigate • enter: view details • c: toggle completion • q: quit")
 
 	return s
 }
@@ -100,13 +100,13 @@ func (m Model) renderDetailView() string {
 
 	t := m.tasks[m.cursor]
 
-	s := titleStyle.Render("Task Details") + "\n\n"
+	s := m.styles.Title.Render("Task Details") + "\n\n"
 
 	// Task title
-	s += titleStyle.Render("Title: ") + t.Title + "\n\n"
+	s += m.styles.Title.Render("Title: ") + t.Title + "\n\n"
 
 	// Task description
-	s += titleStyle.Render("Description: ") + "\n"
+	s += m.styles.Title.Render("Description: ") + "\n"
 	if t.Description != nil && *t.Description != "" {
 		s += *t.Description + "\n\n"
 	} else {
@@ -114,31 +114,31 @@ func (m Model) renderDetailView() string {
 	}
 
 	// Status
-	s += titleStyle.Render("Status: ")
+	s += m.styles.Title.Render("Status: ")
 	switch t.Status {
 	case task.StatusDone:
-		s += doneStyle.Render(string(t.Status))
+		s += m.styles.Done.Render(string(t.Status))
 	case task.StatusInProgress:
-		s += inProgressStyle.Render(string(t.Status))
+		s += m.styles.InProgress.Render(string(t.Status))
 	default:
-		s += todoStyle.Render(string(t.Status))
+		s += m.styles.Todo.Render(string(t.Status))
 	}
 	s += "\n\n"
 
 	// Priority
-	s += titleStyle.Render("Priority: ")
+	s += m.styles.Title.Render("Priority: ")
 	switch t.Priority {
 	case task.PriorityHigh:
-		s += highStyle.Render(string(t.Priority))
+		s += m.styles.HighPriority.Render(string(t.Priority))
 	case task.PriorityMedium:
-		s += mediumStyle.Render(string(t.Priority))
+		s += m.styles.MediumPriority.Render(string(t.Priority))
 	default:
-		s += lowStyle.Render(string(t.Priority))
+		s += m.styles.LowPriority.Render(string(t.Priority))
 	}
 	s += "\n\n"
 
 	// Due date
-	s += titleStyle.Render("Due date: ")
+	s += m.styles.Title.Render("Due date: ")
 	if t.DueDate != nil {
 		s += t.DueDate.Format("2006-01-02")
 	} else {
@@ -147,7 +147,7 @@ func (m Model) renderDetailView() string {
 	s += "\n\n"
 
 	// Tags
-	s += titleStyle.Render("Tags: ")
+	s += m.styles.Title.Render("Tags: ")
 	if len(t.Tags) > 0 {
 		tags := ""
 		for i, tag := range t.Tags {
@@ -163,16 +163,22 @@ func (m Model) renderDetailView() string {
 	s += "\n\n"
 
 	// Subtasks
-	s += titleStyle.Render("Subtasks:") + "\n"
+	s += m.styles.Title.Render("Subtasks:") + "\n"
 	if len(t.SubTasks) > 0 {
 		for _, st := range t.SubTasks {
 			statusSymbol := "[ ]"
-			if st.Status == task.StatusDone {
+			var statusStyle = m.styles.Todo
+
+			switch st.Status {
+			case task.StatusDone:
 				statusSymbol = "[✓]"
-			} else if st.Status == task.StatusInProgress {
+				statusStyle = m.styles.Done
+			case task.StatusInProgress:
 				statusSymbol = "[⟳]"
+				statusStyle = m.styles.InProgress
 			}
-			s += fmt.Sprintf("  %s %s\n", statusSymbol, st.Title)
+
+			s += fmt.Sprintf("  %s %s\n", statusStyle.Render(statusSymbol), st.Title)
 		}
 	} else {
 		s += "  No subtasks\n"
@@ -181,11 +187,11 @@ func (m Model) renderDetailView() string {
 
 	// Progress
 	if len(t.SubTasks) > 0 {
-		s += titleStyle.Render(fmt.Sprintf("Progress: %d%% (%d/%d tasks completed)\n",
+		s += m.styles.Title.Render(fmt.Sprintf("Progress: %d%% (%d/%d tasks completed)\n",
 			int(t.Progress*100), t.CompletedCount, t.TotalCount))
 	}
 
-	s += "\n" + helpStyle.Render("esc: back • e: edit • c: toggle completion • d: delete")
+	s += "\n" + m.styles.Help.Render("esc: back • e: edit • c: toggle completion • d: delete")
 
 	return s
 }
@@ -193,8 +199,8 @@ func (m Model) renderDetailView() string {
 // renderEditView renders the edit view of the selected task
 func (m Model) renderEditView() string {
 	// Basic placeholder for edit view - would require text input
-	s := titleStyle.Render("Edit Task") + "\n\n"
+	s := m.styles.Title.Render("Edit Task") + "\n\n"
 	s += "Edit mode not fully implemented\n\n"
-	s += helpStyle.Render("esc: cancel • enter: save changes")
+	s += m.styles.Help.Render("esc: cancel • enter: save changes")
 	return s
 }

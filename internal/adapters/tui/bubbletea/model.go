@@ -19,27 +19,8 @@ import (
 	"context"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/newbpydev/tusk/internal/core/task"
 	taskService "github.com/newbpydev/tusk/internal/service/task"
-)
-
-// Define styles at the package level for use across all files
-var (
-	// Styles
-	titleStyle        = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FAFAFA"))
-	selectedItemStyle = lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("#1E88E5")).Foreground(lipgloss.Color("#FFF"))
-	todoStyle         = lipgloss.NewStyle().Foreground(lipgloss.Color("#909090"))
-	inProgressStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFB300"))
-	doneStyle         = lipgloss.NewStyle().Foreground(lipgloss.Color("#00E676"))
-
-	// Priority styles
-	lowStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#009688"))
-	mediumStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#FB8C00"))
-	highStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#E53935"))
-
-	// Help style
-	helpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#747474")).Italic(true)
 )
 
 // Model represents the state of the TUI application.
@@ -54,6 +35,7 @@ type Model struct {
 	viewMode string // "list", "detail", "edit"
 	width    int
 	height   int
+	styles   *Styles // Reference to the current styles
 }
 
 // NewModel initializes a new Model instance with the provided context and tasks.
@@ -68,6 +50,7 @@ func NewModel(ctx context.Context, svc taskService.Service, userID int64) Model 
 		taskSvc:  svc,
 		userID:   userID,
 		viewMode: "list",
+		styles:   ActiveStyles, // Use the active styles
 	}
 }
 
