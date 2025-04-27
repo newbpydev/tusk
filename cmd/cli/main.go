@@ -26,8 +26,8 @@ func main() {
 	// Use defer to flush any buffered log entries when main returns
 	defer logging.Sync()
 
-	// Log startup information
-	logging.Info("Tusk CLI starting up",
+	// Log startup information to log file only, not to console
+	logging.Logger.Info("Tusk CLI starting up",
 		zap.String("version", "0.1.0"),
 		zap.String("environment", cfg.AppEnv))
 
@@ -35,13 +35,13 @@ func main() {
 
 	// Initialize the database connection pool
 	if err := db.Connect(ctx); err != nil {
-		logging.Error("Failed to connect to database",
-			zap.Error(err))
+		// Log to file and show minimal error on screen
+		logging.Logger.Error("Failed to connect to database", zap.Error(err))
+		fmt.Println("Error: Could not connect to database. Check logs for details.")
 		os.Exit(1)
 	}
-	// Don't close the database here - it will be closed in cli.Execute()
 
-	// Log that we're about to execute CLI commands
+	// Log silently to the log file
 	logging.CLILogger.Info("Starting CLI execution")
 
 	// Execute CLI commands - services will be initialized inside
