@@ -1,26 +1,42 @@
 {
   "testing": {
     "framework": "standard Go testing",
-    "approach": "table-driven tests",
-    "mocking": "prefer interfaces and simple stub implementations",
-    "coverage": "aim for 80% or higher"
+    "approach": "table-driven tests with testify/assert and testify/require",
+    "mocking": "testify/mock for interfaces with comprehensive assertions",
+    "coverage": "aim for 80% or higher",
+    "integration": "database tests with proper setup/teardown and environment variables"
   },
   "dependencies": {
     "preferred": {
-      "database": ["sqlc", "pgx", "golang-migrate"],
+      "database": ["sqlc", "pgx/v5", "golang-migrate"],
       "cli": ["cobra", "viper"],
       "tui": ["bubbletea", "lipgloss", "bubbles"],
       "config": ["godotenv"],
       "auth": ["golang.org/x/crypto"],
-      "logging": ["zap"]
+      "logging": ["zap", "lumberjack"],
+      "testing": ["testify"]
     },
-    "avoidIfPossible": ["gorm", "database/sql"]
+    "avoidIfPossible": ["gorm", "database/sql", "log"]
   },
   "implementation": {
-    "errorHandling": "use pkg/errors for wrapping, explicit error return values",
+    "architecture": "hexagonal with clear separation between adapters and core domain",
+    "errorHandling": "use pkg/errors for wrapping, explicit error return values, domain-specific error types",
     "contextHandling": "pass context.Context as first parameter to functions that perform I/O",
     "concurrency": "prefer goroutines and channels for concurrent operations",
-    "configuration": "environment variables via godotenv, with sane defaults"
+    "configuration": "environment variables via godotenv, with sane defaults",
+    "logging": "structured logging with zap, separate file and console loggers"
+  },
+  "domainModel": {
+    "task": {
+      "hierarchical": true,
+      "statusFlow": ["todo", "in_progress", "done"],
+      "priorities": ["low", "medium", "high"],
+      "supportsTags": true
+    },
+    "user": {
+      "authentication": "password hash using bcrypt",
+      "authorization": "basic owner-based access control"
+    }
   },
   "agentBehavior": {
     "fileModification": {
@@ -31,7 +47,13 @@
     },
     "codeQuality": {
       "ensureConsistentStyle": true,
-      "followProjectPatterns": true
+      "followProjectPatterns": true,
+      "maintainTestCoverage": true
+    },
+    "contextAwareness": {
+      "respectHexagonalArchitecture": true,
+      "understandRepositoryPattern": true,
+      "recognizeTableDrivenTests": true
     }
   }
 }
