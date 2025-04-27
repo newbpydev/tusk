@@ -4,76 +4,33 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/manifoldco/promptui"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea"
-	"github.com/newbpydev/tusk/internal/core/errors"
 	"github.com/spf13/cobra"
-)
-
-var (
-	// Authentication flags for TUI mode
-	tuiUsername string
-	tuiPassword string
-	createUser  bool
 )
 
 var tuiCmd = &cobra.Command{
 	Use:   "tui",
-	Short: "Start the TUI (Text User Interface) application",
+	Short: "Start the Tusk task manager application",
+	Long:  "Launch the interactive Task User Interface for managing your tasks, subtasks, and projects.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 		var userID int64
-		var err error
 
-		// First attempt to authenticate with provided credentials
-		if tuiUsername != "" && tuiPassword != "" {
-			user, err := userSvc.Login(ctx, tuiUsername, tuiPassword)
-			if err != nil {
-				if createUser {
-					// If login failed but create flag is set, prompt for email
-					prompt := promptui.Prompt{
-						Label: "Email for new account",
-						Validate: func(input string) error {
-							if input == "" {
-								return fmt.Errorf("email cannot be empty")
-							}
-							if !strings.Contains(input, "@") {
-								return fmt.Errorf("invalid email format")
-							}
-							return nil
-						},
-					}
+		// Show welcome intro
+		showWelcomeIntro()
 
-					email, err := prompt.Run()
-					if err != nil {
-						return fmt.Errorf("failed to read email: %v", err)
-					}
-
-					// Create new user
-					user, err = userSvc.Create(ctx, tuiUsername, email, tuiPassword)
-					if err != nil {
-						return fmt.Errorf("failed to create user: %v", err)
-					}
-					fmt.Printf("Created new user: %s\n", user.Username)
-				} else {
-					// Not creating a new user, offer options
-					if errors.IsUnauthorized(err) {
-						return fmt.Errorf("invalid username or password. Use --create flag to create a new account")
-					}
-					return fmt.Errorf("authentication failed: %v", err)
-				}
+		// Always use interactive authentication
+		err := interactiveAuth(ctx, &userID)
+		if err != nil {
+			if err == errAuthCancelled {
+				fmt.Println("Authentication cancelled. Goodbye!")
+				return nil // Return nil to avoid showing error message
 			}
-
-			userID = int64(user.ID)
-			fmt.Printf("Welcome, %s!\n", user.Username)
-		} else {
-			// Interactive mode if no credentials provided
-			err = interactiveAuth(ctx, &userID)
-			if err != nil {
-				return err
-			}
+			return err
 		}
 
 		// Start TUI with authenticated user
@@ -85,17 +42,58 @@ var tuiCmd = &cobra.Command{
 	},
 }
 
+// showWelcomeIntro displays a friendly introduction to the Tusk application
+func showWelcomeIntro() {
+	// Clear the terminal screen with ANSI escape code
+	fmt.Print("\033[H\033[2J")
+
+	// Improved ASCII art logo that clearly spells "TUSK"
+	logo := `
+  _____  _    _  _____  _  __
+ |_   _|| |  | |/ ____|| |/ /
+   | |  | |  | | (___  | ' / 
+   | |  | |  | |\___ \ |  <  
+   | |  | |__| |____) || . \ 
+   |_|   \____/|_____/ |_|\_\
+                             
+`
+	fmt.Println(logo)
+	fmt.Println("Welcome to Tusk - Your Personal Task Management System")
+	fmt.Println("====================================================")
+	fmt.Println()
+	fmt.Println("Tusk helps you organize your tasks, track progress, and boost productivity.")
+	fmt.Println("Features include:")
+	fmt.Println("• Create and manage tasks with priorities and deadlines")
+	fmt.Println("• Organize tasks into projects")
+	fmt.Println("• Track your productivity with built-in reports")
+	fmt.Println("• Simple and intuitive interface")
+	fmt.Println()
+	fmt.Println("Let's get started!")
+	fmt.Println()
+
+	// Give users a moment to read the introduction
+	time.Sleep(2 * time.Second)
+}
+
+// errAuthCancelled is returned when the user cancels the authentication process
+var errAuthCancelled = fmt.Errorf("authentication cancelled by user")
+
 // interactiveAuth handles interactive authentication flow
 func interactiveAuth(ctx context.Context, userID *int64) error {
 	// Ask whether to login or create account
 	promptSelect := promptui.Select{
 		Label: "Choose an action",
-		Items: []string{"Login to existing account", "Create new account"},
+		Items: []string{"Login to existing account", "Create new account", "Cancel"},
 	}
 
 	idx, _, err := promptSelect.Run()
 	if err != nil {
 		return fmt.Errorf("prompt failed: %v", err)
+	}
+
+	// Handle cancellation
+	if idx == 2 {
+		return errAuthCancelled
 	}
 
 	// Username prompt
@@ -172,9 +170,5 @@ func interactiveAuth(ctx context.Context, userID *int64) error {
 
 func init() {
 	rootCmd.AddCommand(tuiCmd)
-
-	// Add authentication flags
-	tuiCmd.Flags().StringVarP(&tuiUsername, "username", "u", "", "Username for authentication")
-	tuiCmd.Flags().StringVarP(&tuiPassword, "password", "p", "", "Password for authentication")
-	tuiCmd.Flags().BoolVarP(&createUser, "create", "c", false, "Create a new user if login fails")
+	// No flags added - we're using interactive authentication only
 }
