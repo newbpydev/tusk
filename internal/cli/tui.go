@@ -34,9 +34,9 @@ var tuiCmd = &cobra.Command{
 		}
 
 		// Start TUI with authenticated user
+		// NewModel already returns a pointer to Model
 		m := bubbletea.NewModel(ctx, taskSvc, userID)
-
-		// Configure with proper options for terminal programs
+		// Pass the model directly since it's already a pointer
 		p := tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion())
 		return p.Start()
 	},
