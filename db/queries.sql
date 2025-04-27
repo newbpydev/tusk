@@ -5,7 +5,7 @@ INSERT INTO users
 VALUES 
    ($1, $2, $3)
 RETURNING 
-   id, username, email, created_at, updated_at, last_login, is_active;
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active;
 
 -- name: UpdateUser :one
 UPDATE users
@@ -14,25 +14,25 @@ SET
 WHERE 
    id = $6
 RETURNING 
-   id, username, email, created_at, updated_at, last_login, is_active;
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active;
 
 -- name: GetUserByUsername :one
 SELECT 
-   id, username, email, created_at, updated_at, last_login, is_active
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active
 FROM users 
 WHERE 
    username = $1;
 
 -- name: GetUserById :one
 SELECT 
-   id, username, email, created_at, updated_at, last_login, is_active
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active
 FROM users
 WHERE 
    id = $1;
 
 -- name: GetUserByEmail :one
 SELECT 
-   id, username, email, created_at, updated_at, last_login, is_active
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active
 FROM users
 WHERE 
    email = $1;
