@@ -1,5 +1,11 @@
+// Package cli provides user-related CLI functionality (disabled)
 package cli
 
+// Note: User commands have been disabled as requested.
+// All user management is now available through the TUI interface only.
+
+// All commands and init functions are commented out to prevent them from registering with the CLI
+/*
 import (
 	"context"
 
@@ -89,3 +95,4 @@ func init() {
 	loginCmd.MarkFlagRequired("username")
 	loginCmd.MarkFlagRequired("password")
 }
+*/

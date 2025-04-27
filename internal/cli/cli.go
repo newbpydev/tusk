@@ -49,7 +49,6 @@ func initServices() {
 
 // init is only used to set up commands, not for database connections
 func init() {
-	// rootCmd and all subcommand registrations happen in their respective files (task.go, user.go, tui.go)
-	// The CLI commands are registered in their respective files via their own init() functions
-	// No database operations occur during command registration
+	// Only the TUI command is registered now, via its own init() function in tui.go
+	// Task and user commands have been removed as requested
 }
