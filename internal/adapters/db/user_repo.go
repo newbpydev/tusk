@@ -79,12 +79,20 @@ func (r *SQLUserRepo) Update(ctx context.Context, u user.User) (user.User, error
 		zap.String("email_domain", emailDomain(u.Email)),
 		zap.Bool("is_active", u.IsActive))
 
+	// Convert LastLogin to pgtype.Timestamp
+	var lastLogin pgtype.Timestamp
+	if u.LastLogin != nil {
+		lastLogin.Time = *u.LastLogin
+		lastLogin.Valid = true
+	}
+
 	startTime := time.Now()
 	row, err := r.q.UpdateUser(ctx, sqlc.UpdateUserParams{
 		ID:           u.ID,
 		Username:     u.Username,
 		Email:        u.Email,
 		PasswordHash: u.PasswordHash,
+		LastLogin:    lastLogin,
 		IsActive: pgtype.Bool{
 			Bool:  u.IsActive,
 			Valid: true,
@@ -107,13 +115,14 @@ func (r *SQLUserRepo) Update(ctx context.Context, u user.User) (user.User, error
 		zap.Duration("duration_ms", queryDuration))
 
 	return user.User{
-		ID:       row.ID,
-		Username: row.Username,
-		Email:    row.Email,
-		// PasswordHash field is not present in UpdateUserRow, so it is omitted.
-		CreatedAt: row.CreatedAt.Time,
-		UpdatedAt: row.UpdatedAt.Time,
-		IsActive:  row.IsActive.Bool,
+		ID:           row.ID,
+		Username:     row.Username,
+		Email:        row.Email,
+		PasswordHash: row.PasswordHash, // Include the password hash in the returned user
+		CreatedAt:    row.CreatedAt.Time,
+		UpdatedAt:    row.UpdatedAt.Time,
+		IsActive:     row.IsActive.Bool,
+		LastLogin:    &row.LastLogin.Time,
 	}, nil
 }
 
@@ -141,13 +150,14 @@ func (r *SQLUserRepo) GetByUsername(ctx context.Context, username string) (user.
 		zap.Duration("duration_ms", queryDuration))
 
 	return user.User{
-		ID:        row.ID,
-		Username:  row.Username,
-		Email:     row.Email,
-		CreatedAt: row.CreatedAt.Time,
-		UpdatedAt: row.UpdatedAt.Time,
-		IsActive:  row.IsActive.Bool,
-		LastLogin: &row.LastLogin.Time,
+		ID:           row.ID,
+		Username:     row.Username,
+		Email:        row.Email,
+		PasswordHash: row.PasswordHash,
+		CreatedAt:    row.CreatedAt.Time,
+		UpdatedAt:    row.UpdatedAt.Time,
+		IsActive:     row.IsActive.Bool,
+		LastLogin:    &row.LastLogin.Time,
 	}, nil
 }
 
@@ -175,13 +185,14 @@ func (r *SQLUserRepo) GetByID(ctx context.Context, id int64) (user.User, error) 
 		zap.Duration("duration_ms", queryDuration))
 
 	return user.User{
-		ID:        row.ID,
-		Username:  row.Username,
-		Email:     row.Email,
-		CreatedAt: row.CreatedAt.Time,
-		UpdatedAt: row.UpdatedAt.Time,
-		IsActive:  row.IsActive.Bool,
-		LastLogin: &row.LastLogin.Time,
+		ID:           row.ID,
+		Username:     row.Username,
+		Email:        row.Email,
+		PasswordHash: row.PasswordHash, // Added the missing PasswordHash field
+		CreatedAt:    row.CreatedAt.Time,
+		UpdatedAt:    row.UpdatedAt.Time,
+		IsActive:     row.IsActive.Bool,
+		LastLogin:    &row.LastLogin.Time,
 	}, nil
 }
 
@@ -209,13 +220,14 @@ func (r *SQLUserRepo) GetByEmail(ctx context.Context, email string) (user.User, 
 		zap.Duration("duration_ms", queryDuration))
 
 	return user.User{
-		ID:        row.ID,
-		Username:  row.Username,
-		Email:     row.Email,
-		CreatedAt: row.CreatedAt.Time,
-		UpdatedAt: row.UpdatedAt.Time,
-		IsActive:  row.IsActive.Bool,
-		LastLogin: &row.LastLogin.Time,
+		ID:           row.ID,
+		Username:     row.Username,
+		Email:        row.Email,
+		PasswordHash: row.PasswordHash, // Added the missing PasswordHash field
+		CreatedAt:    row.CreatedAt.Time,
+		UpdatedAt:    row.UpdatedAt.Time,
+		IsActive:     row.IsActive.Bool,
+		LastLogin:    &row.LastLogin.Time,
 	}, nil
 }
 
