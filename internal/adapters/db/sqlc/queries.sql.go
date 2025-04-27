@@ -94,7 +94,7 @@ INSERT INTO users
 VALUES 
    ($1, $2, $3)
 RETURNING 
-   id, username, email, created_at, updated_at, last_login, is_active
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active
 `
 
 type CreateUserParams struct {
@@ -103,24 +103,15 @@ type CreateUserParams struct {
 	PasswordHash string `json:"password_hash"`
 }
 
-type CreateUserRow struct {
-	ID        int32            `json:"id"`
-	Username  string           `json:"username"`
-	Email     string           `json:"email"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	LastLogin pgtype.Timestamp `json:"last_login"`
-	IsActive  pgtype.Bool      `json:"is_active"`
-}
-
 // Users ---------------------------------------------------------------
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, createUser, arg.Username, arg.Email, arg.PasswordHash)
-	var i CreateUserRow
+	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.Email,
+		&i.PasswordHash,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.LastLogin,
@@ -375,29 +366,20 @@ func (q *Queries) GetTaskCountsByStatus(ctx context.Context, userID int32) (GetT
 
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT 
-   id, username, email, created_at, updated_at, last_login, is_active
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active
 FROM users
 WHERE 
    email = $1
 `
 
-type GetUserByEmailRow struct {
-	ID        int32            `json:"id"`
-	Username  string           `json:"username"`
-	Email     string           `json:"email"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	LastLogin pgtype.Timestamp `json:"last_login"`
-	IsActive  pgtype.Bool      `json:"is_active"`
-}
-
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
 	row := q.db.QueryRow(ctx, getUserByEmail, email)
-	var i GetUserByEmailRow
+	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.Email,
+		&i.PasswordHash,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.LastLogin,
@@ -408,29 +390,20 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEm
 
 const getUserById = `-- name: GetUserById :one
 SELECT 
-   id, username, email, created_at, updated_at, last_login, is_active
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active
 FROM users
 WHERE 
    id = $1
 `
 
-type GetUserByIdRow struct {
-	ID        int32            `json:"id"`
-	Username  string           `json:"username"`
-	Email     string           `json:"email"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	LastLogin pgtype.Timestamp `json:"last_login"`
-	IsActive  pgtype.Bool      `json:"is_active"`
-}
-
-func (q *Queries) GetUserById(ctx context.Context, id int32) (GetUserByIdRow, error) {
+func (q *Queries) GetUserById(ctx context.Context, id int32) (User, error) {
 	row := q.db.QueryRow(ctx, getUserById, id)
-	var i GetUserByIdRow
+	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.Email,
+		&i.PasswordHash,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.LastLogin,
@@ -441,29 +414,20 @@ func (q *Queries) GetUserById(ctx context.Context, id int32) (GetUserByIdRow, er
 
 const getUserByUsername = `-- name: GetUserByUsername :one
 SELECT 
-   id, username, email, created_at, updated_at, last_login, is_active
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active
 FROM users 
 WHERE 
    username = $1
 `
 
-type GetUserByUsernameRow struct {
-	ID        int32            `json:"id"`
-	Username  string           `json:"username"`
-	Email     string           `json:"email"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	LastLogin pgtype.Timestamp `json:"last_login"`
-	IsActive  pgtype.Bool      `json:"is_active"`
-}
-
-func (q *Queries) GetUserByUsername(ctx context.Context, username string) (GetUserByUsernameRow, error) {
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
 	row := q.db.QueryRow(ctx, getUserByUsername, username)
-	var i GetUserByUsernameRow
+	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.Email,
+		&i.PasswordHash,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.LastLogin,
@@ -1073,7 +1037,7 @@ SET
 WHERE 
    id = $6
 RETURNING 
-   id, username, email, created_at, updated_at, last_login, is_active
+   id, username, email, password_hash, created_at, updated_at, last_login, is_active
 `
 
 type UpdateUserParams struct {
@@ -1085,17 +1049,7 @@ type UpdateUserParams struct {
 	ID           int32            `json:"id"`
 }
 
-type UpdateUserRow struct {
-	ID        int32            `json:"id"`
-	Username  string           `json:"username"`
-	Email     string           `json:"email"`
-	CreatedAt pgtype.Timestamp `json:"created_at"`
-	UpdatedAt pgtype.Timestamp `json:"updated_at"`
-	LastLogin pgtype.Timestamp `json:"last_login"`
-	IsActive  pgtype.Bool      `json:"is_active"`
-}
-
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, updateUser,
 		arg.Username,
 		arg.Email,
@@ -1104,11 +1058,12 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 		arg.IsActive,
 		arg.ID,
 	)
-	var i UpdateUserRow
+	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.Email,
+		&i.PasswordHash,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.LastLogin,
