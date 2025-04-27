@@ -16,8 +16,24 @@ func main() {
 	// Load the configuration from environment variables and .env file
 	cfg := config.Load()
 
-	// Initialize the logging system first
-	if err := logging.Init(cfg); err != nil {
+	// Check if we're running in TUI mode - if so, enable quiet logging
+	isTuiMode := false
+	for i, arg := range os.Args {
+		if arg == "tui" && i > 0 {
+			isTuiMode = true
+			break
+		}
+	}
+
+	// Initialize the logging system with appropriate quiet mode setting
+	var err error
+	if isTuiMode {
+		err = logging.InitWithOptions(cfg, true) // Enable quiet mode for TUI
+	} else {
+		err = logging.Init(cfg) // Normal logging for other commands
+	}
+
+	if err != nil {
 		// If we can't initialize logging, fall back to basic console output
 		fmt.Printf("Failed to initialize logger: %v\n", err)
 		os.Exit(1)

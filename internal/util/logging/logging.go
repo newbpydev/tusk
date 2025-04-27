@@ -40,6 +40,9 @@ var (
 
 	// Dedicated file-only logger (no console output)
 	FileOnlyLogger *zap.Logger
+
+	// Flag to indicate if we're in quiet mode (no console output)
+	quietMode bool
 )
 
 // Component specific loggers for different parts of the application
@@ -65,6 +68,15 @@ const (
 // Init initializes the logging system with the given configuration.
 // It sets up both console and file logging based on environment.
 func Init(cfg *config.Config) error {
+	return InitWithOptions(cfg, false)
+}
+
+// InitWithOptions initializes the logging system with the given configuration and options.
+// When quietMode is true, all logs are directed to the log file only, not to the console.
+func InitWithOptions(cfg *config.Config, quiet bool) error {
+	// Store the quiet mode flag
+	quietMode = quiet
+
 	// Create logs directory if it doesn't exist
 	logDir := getLogDirectory()
 
@@ -92,6 +104,12 @@ func Init(cfg *config.Config) error {
 	if cfg.AppEnv == "production" {
 		consoleLevel = zapcore.WarnLevel // Only warnings and above in production
 	}
+
+	// In quiet mode, set console level to a level that effectively disables console output
+	if quietMode {
+		consoleLevel = zapcore.FatalLevel + 1 // Higher than any defined level to suppress all output
+	}
+
 	consoleCore := zapcore.NewCore(
 		consoleEncoder,
 		zapcore.Lock(os.Stderr),
@@ -125,12 +143,18 @@ func Init(cfg *config.Config) error {
 			zapLevel,
 		)
 
-		// Combine cores for standard logger
-		core := zapcore.NewTee(consoleCore, fileCore)
-		Logger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+		// In quiet mode, only use the file core for all loggers
+		if quietMode {
+			Logger = zap.New(fileCore, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+			FileOnlyLogger = Logger // In quiet mode, main logger is already file-only
+		} else {
+			// Normal mode - combine cores for standard logger
+			core := zapcore.NewTee(consoleCore, fileCore)
+			Logger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 
-		// Create a file-only logger (no console output) for TUI context
-		FileOnlyLogger = zap.New(fileCore, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+			// Create a dedicated file-only logger
+			FileOnlyLogger = zap.New(fileCore, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+		}
 	}
 
 	// Create component specific loggers
@@ -139,17 +163,19 @@ func Init(cfg *config.Config) error {
 	ServiceLogger = Logger.Named("service")
 	APILogger = Logger.Named("api")
 
-	// TUI logger uses the file-only logger to avoid console output
+	// TUI logger always uses the file-only logger to avoid console output
 	if FileOnlyLogger != nil {
 		TUILogger = FileOnlyLogger.Named("tui")
 	} else {
 		TUILogger = Logger.Named("tui")
 	}
 
-	// Log initialization message only to the file, not to the console
-	if Logger != nil {
-		Logger.Info("File logging system initialized")
+	// Log initialization message (will go to the file only in quiet mode)
+	logMessage := "Logging system initialized"
+	if quietMode {
+		logMessage += " in quiet mode (console output disabled)"
 	}
+	Logger.Info(logMessage)
 
 	return nil
 }
