@@ -21,7 +21,7 @@ type taskService struct {
 func NewTaskService(r repo.TaskRepository) Service {
 	return &taskService{
 		repo: r,
-		log:  logging.ServiceLogger.Named("task"),
+		log:  logging.GetFileOnlyLogger("service.task"),
 	}
 }
 

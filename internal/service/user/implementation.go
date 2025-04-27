@@ -24,7 +24,7 @@ type userService struct {
 func NewUserService(r repo.UserRepository) Service {
 	return &userService{
 		repo: r,
-		log:  logging.ServiceLogger.Named("user"),
+		log:  logging.GetFileOnlyLogger("service.user"),
 	}
 }
 

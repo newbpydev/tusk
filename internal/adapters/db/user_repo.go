@@ -30,6 +30,14 @@ func NewSQLUserRepo(pool *pgxpool.Pool) *SQLUserRepo {
 	}
 }
 
+// NewUserRepository creates a new user repository
+func NewUserRepository(queries *sqlc.Queries) *SQLUserRepo {
+	return &SQLUserRepo{
+		q:   queries,
+		log: logging.GetFileOnlyLogger("db.user_repo"),
+	}
+}
+
 // Create creates a new user in the database using the provided user.User struct.
 // It returns the created user.User struct or an error if the operation fails.
 func (r *SQLUserRepo) Create(ctx context.Context, u user.User) (user.User, error) {

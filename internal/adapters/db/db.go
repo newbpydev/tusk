@@ -2,17 +2,22 @@ package db
 
 import (
 	"context"
-	"fmt"
+	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/newbpydev/tusk/internal/config"
 	"github.com/newbpydev/tusk/internal/util/logging"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 // Pool is the global database connection pool
 // It is initialized in the Connect function and used throughout the application.
 var Pool *pgxpool.Pool
+
+// Logger is a specialized file-only logger for database operations
+var Logger *zap.Logger
 
 // Connect initializes the database connection pool using the DSN from the configuration.
 // It returns an error if the connection fails.
@@ -20,29 +25,47 @@ func Connect(ctx context.Context) error {
 	cfg := config.Load()
 	dsn := cfg.DBURL
 
+	// Initialize the file-only logger for database operations
+	Logger = logging.GetFileOnlyLogger("db")
+
+	Logger.Info("Connecting to database...",
+		zap.String("dsn", strings.Replace(dsn, ":", ":*****@", 1))) // Mask password in logs
+
 	if dsn == "" {
+		Logger.Error("DB_URL is not configured")
 		return errors.New("DB_URL is not configured")
 	}
 
 	poolCfg, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
+		Logger.Error("Failed to parse database URL", zap.Error(err))
 		return errors.Wrap(err, "failed to parse database URL")
 	}
 
+	// Configure the pool with reasonable defaults
+	poolCfg.MaxConns = 10
+	poolCfg.MinConns = 2
+	poolCfg.MaxConnLifetime = 1 * time.Hour
+	poolCfg.MaxConnIdleTime = 30 * time.Minute
+	poolCfg.HealthCheckPeriod = 1 * time.Minute
+
 	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
 	if err != nil {
+		Logger.Error("Failed to connect to database", zap.Error(err))
 		return errors.Wrap(err, "failed to connect to database")
+	}
+
+	// Test the connection
+	if err := pool.Ping(ctx); err != nil {
+		Logger.Error("Failed to ping database", zap.Error(err))
+		return errors.Wrap(err, "failed to ping database")
 	}
 
 	Pool = pool
 
-	// Use safe logging approach to avoid nil pointer dereference
-	if logging.DBLogger != nil {
-		logging.DBLogger.Info("Database connection established")
-	} else {
-		// Fallback if logger is not yet initialized
-		fmt.Println("Database connection established")
-	}
+	Logger.Info("Database connection established successfully",
+		zap.Int("max_connections", 10))
+
 	return nil
 }
 
@@ -50,18 +73,9 @@ func Connect(ctx context.Context) error {
 // It should be called when the application is shutting down to release resources.
 func Close() {
 	if Pool != nil {
-		// Use safe logging approach
-		if logging.DBLogger != nil {
-			logging.DBLogger.Info("Closing database connection")
-		} else {
-			fmt.Println("Closing database connection")
-		}
+		Logger.Info("Closing database connection")
 		Pool.Close()
 	} else {
-		if logging.DBLogger != nil {
-			logging.DBLogger.Warn("DB is nil, nothing to close")
-		} else {
-			fmt.Println("DB is nil, nothing to close")
-		}
+		Logger.Warn("DB is nil, nothing to close")
 	}
 }

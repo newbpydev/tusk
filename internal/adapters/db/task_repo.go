@@ -25,6 +25,14 @@ type SQLTaskRepository struct {
 	log *zap.Logger
 }
 
+// NewTaskRepository creates a new task repository
+func NewTaskRepository(queries *sqlc.Queries) output.TaskRepository {
+	return &SQLTaskRepository{
+		q:   queries,
+		log: logging.GetFileOnlyLogger("db.task_repo"),
+	}
+}
+
 // NewSQLTaskRepository creates a new SQLTaskRepository with the provided connection pool
 func NewSQLTaskRepository(pool *pgxpool.Pool) *SQLTaskRepository {
 	return &SQLTaskRepository{
