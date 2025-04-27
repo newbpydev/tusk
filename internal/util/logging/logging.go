@@ -37,6 +37,9 @@ var (
 	// Access these through helper functions below
 	consoleLogger *zap.Logger
 	fileLogger    *zap.Logger
+
+	// Dedicated file-only logger (no console output)
+	FileOnlyLogger *zap.Logger
 )
 
 // Component specific loggers for different parts of the application
@@ -65,10 +68,8 @@ func Init(cfg *config.Config) error {
 	// Create logs directory if it doesn't exist
 	logDir := getLogDirectory()
 
-	// Explicitly print the log directory to help with debugging
-	fmt.Printf("Setting up logging to directory: %s\n", logDir)
-
-	// Use MkdirAll instead of mkdir to ensure all parent directories are created too
+	// Remove the debug print statements that display on screen
+	// and just create the directory silently
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		return fmt.Errorf("failed to create log directory: %w", err)
 	}
@@ -99,12 +100,10 @@ func Init(cfg *config.Config) error {
 
 	// Set up file core with rotation
 	logFilePath := filepath.Join(logDir, "tusk.log")
-	fmt.Printf("Log file will be created at: %s\n", logFilePath)
 
 	// Try to create the file explicitly to verify we have write permissions
 	file, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
-		fmt.Printf("Warning: Failed to create log file: %v\n", err)
 		// Continue with console logging only
 		Logger = zap.New(consoleCore, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 	} else {
@@ -126,11 +125,12 @@ func Init(cfg *config.Config) error {
 			zapLevel,
 		)
 
-		// Combine cores
+		// Combine cores for standard logger
 		core := zapcore.NewTee(consoleCore, fileCore)
-
-		// Create main logger
 		Logger = zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+
+		// Create a file-only logger (no console output) for TUI context
+		FileOnlyLogger = zap.New(fileCore, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 	}
 
 	// Create component specific loggers
@@ -138,9 +138,15 @@ func Init(cfg *config.Config) error {
 	DBLogger = Logger.Named("db")
 	ServiceLogger = Logger.Named("service")
 	APILogger = Logger.Named("api")
-	TUILogger = Logger.Named("tui")
 
-	// Log initialization message using the configured logger
+	// TUI logger uses the file-only logger to avoid console output
+	if FileOnlyLogger != nil {
+		TUILogger = FileOnlyLogger.Named("tui")
+	} else {
+		TUILogger = Logger.Named("tui")
+	}
+
+	// Log initialization message only to the file, not to the console
 	if Logger != nil {
 		Logger.Info("File logging system initialized")
 	}

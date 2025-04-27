@@ -29,6 +29,16 @@ func GetComponentLogger(component string) *zap.Logger {
 	return Logger.Named(component)
 }
 
+// GetFileOnlyLogger returns a logger that only writes to log files and not to the console.
+// This is particularly useful for TUI applications where console output would interfere with the UI.
+func GetFileOnlyLogger(component string) *zap.Logger {
+	if FileOnlyLogger != nil {
+		return FileOnlyLogger.Named(component)
+	}
+	// Fall back to regular logger if file-only logger isn't available
+	return GetComponentLogger(component)
+}
+
 // Debug logs a message at DebugLevel with associated structured context.
 func Debug(msg string, fields ...zap.Field) {
 	if Logger != nil {
@@ -65,6 +75,26 @@ func Fatal(msg string, fields ...zap.Field) {
 	}
 }
 
+// LogToFileOnly logs a message only to the log file, not to the console.
+// This is particularly useful for logging from TUI components.
+func LogToFileOnly(level LogLevel, msg string, fields ...zap.Field) {
+	if FileOnlyLogger == nil {
+		// If file-only logger isn't available, don't log at all to avoid console output
+		return
+	}
+
+	switch level {
+	case DebugLevel:
+		FileOnlyLogger.Debug(msg, fields...)
+	case InfoLevel:
+		FileOnlyLogger.Info(msg, fields...)
+	case WarningLevel:
+		FileOnlyLogger.Warn(msg, fields...)
+	case ErrorLevel:
+		FileOnlyLogger.Error(msg, fields...)
+	}
+}
+
 // GetLoggerForContext returns the appropriate logger based on the context.
 // This is useful for middleware or shared code that might be used by different components.
 func GetLoggerForContext(ctx string) *zap.Logger {
@@ -78,7 +108,11 @@ func GetLoggerForContext(ctx string) *zap.Logger {
 	case "api":
 		return APILogger
 	case "tui":
-		return TUILogger
+		// For TUI, always use the file-only logger if available
+		if FileOnlyLogger != nil {
+			return TUILogger
+		}
+		return Logger.Named("tui")
 	default:
 		return Logger
 	}
