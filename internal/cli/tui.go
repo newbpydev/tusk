@@ -1,15 +1,18 @@
 package cli
 
 import (
+	"bufio"
 	"context"
 	"fmt"
+	"os"
 	"strings"
+	"syscall"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/manifoldco/promptui"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 )
 
 var tuiCmd = &cobra.Command{
@@ -20,11 +23,11 @@ var tuiCmd = &cobra.Command{
 		ctx := context.Background()
 		var userID int64
 
-		// Show welcome intro
+		// Show welcome intro - only once
 		showWelcomeIntro()
 
-		// Always use interactive authentication
-		err := interactiveAuth(ctx, &userID)
+		// Use a simpler direct terminal input method for authentication
+		err := simpleTerminalAuth(ctx, &userID)
 		if err != nil {
 			if err == errAuthCancelled {
 				fmt.Println("Authentication cancelled. Goodbye!")
@@ -34,9 +37,7 @@ var tuiCmd = &cobra.Command{
 		}
 
 		// Start TUI with authenticated user
-		// NewModel already returns a pointer to Model
 		m := bubbletea.NewModel(ctx, taskSvc, userID)
-		// Pass the model directly since it's already a pointer
 		p := tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion())
 		return p.Start()
 	},
@@ -72,23 +73,59 @@ func showWelcomeIntro() {
 	fmt.Println()
 
 	// Give users a moment to read the introduction
-	time.Sleep(2 * time.Second)
+	time.Sleep(1 * time.Second)
+}
+
+// readLine reads a line from stdin
+func readLine(prompt string) (string, error) {
+	fmt.Print(prompt)
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+	// Trim newline and carriage return
+	return strings.TrimSpace(input), nil
+}
+
+// readPassword reads a password from stdin without echoing
+func readPassword(prompt string) (string, error) {
+	fmt.Print(prompt)
+	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+	fmt.Println() // Add a newline after the password
+	if err != nil {
+		return "", err
+	}
+	return string(bytePassword), nil
 }
 
 // errAuthCancelled is returned when the user cancels the authentication process
 var errAuthCancelled = fmt.Errorf("authentication cancelled by user")
 
-// interactiveAuth handles interactive authentication flow
-func interactiveAuth(ctx context.Context, userID *int64) error {
+// simpleTerminalAuth handles authentication using direct terminal input
+func simpleTerminalAuth(ctx context.Context, userID *int64) error {
 	// Ask whether to login or create account
-	promptSelect := promptui.Select{
-		Label: "Choose an action",
-		Items: []string{"Login to existing account", "Create new account", "Cancel"},
+	fmt.Println("Choose an action:")
+	fmt.Println("1) Login to existing account")
+	fmt.Println("2) Create new account")
+	fmt.Println("3) Cancel")
+
+	choice, err := readLine("Enter choice (1-3): ")
+	if err != nil {
+		return fmt.Errorf("failed to read choice: %v", err)
 	}
 
-	idx, _, err := promptSelect.Run()
-	if err != nil {
-		return fmt.Errorf("prompt failed: %v", err)
+	// Convert choice to index
+	idx := 0
+	switch choice {
+	case "1":
+		idx = 0
+	case "2":
+		idx = 1
+	case "3", "q", "exit", "cancel":
+		idx = 2
+	default:
+		return fmt.Errorf("invalid choice: %s", choice)
 	}
 
 	// Handle cancellation
@@ -97,36 +134,21 @@ func interactiveAuth(ctx context.Context, userID *int64) error {
 	}
 
 	// Username prompt
-	usernamePrompt := promptui.Prompt{
-		Label: "Username",
-		Validate: func(input string) error {
-			if input == "" {
-				return fmt.Errorf("username cannot be empty")
-			}
-			return nil
-		},
-	}
-
-	username, err := usernamePrompt.Run()
+	username, err := readLine("Username: ")
 	if err != nil {
-		return fmt.Errorf("prompt failed: %v", err)
+		return fmt.Errorf("failed to read username: %v", err)
+	}
+	if username == "" {
+		return fmt.Errorf("username cannot be empty")
 	}
 
 	// Password prompt
-	passwordPrompt := promptui.Prompt{
-		Label: "Password",
-		Mask:  '*',
-		Validate: func(input string) error {
-			if input == "" {
-				return fmt.Errorf("password cannot be empty")
-			}
-			return nil
-		},
-	}
-
-	password, err := passwordPrompt.Run()
+	password, err := readPassword("Password: ")
 	if err != nil {
-		return fmt.Errorf("prompt failed: %v", err)
+		return fmt.Errorf("failed to read password: %v", err)
+	}
+	if password == "" {
+		return fmt.Errorf("password cannot be empty")
 	}
 
 	if idx == 0 {
@@ -139,22 +161,15 @@ func interactiveAuth(ctx context.Context, userID *int64) error {
 		fmt.Printf("Welcome back, %s!\n", user.Username)
 	} else {
 		// Create account flow
-		emailPrompt := promptui.Prompt{
-			Label: "Email",
-			Validate: func(input string) error {
-				if input == "" {
-					return fmt.Errorf("email cannot be empty")
-				}
-				if !strings.Contains(input, "@") {
-					return fmt.Errorf("invalid email format")
-				}
-				return nil
-			},
-		}
-
-		email, err := emailPrompt.Run()
+		email, err := readLine("Email: ")
 		if err != nil {
-			return fmt.Errorf("prompt failed: %v", err)
+			return fmt.Errorf("failed to read email: %v", err)
+		}
+		if email == "" {
+			return fmt.Errorf("email cannot be empty")
+		}
+		if !strings.Contains(email, "@") {
+			return fmt.Errorf("invalid email format")
 		}
 
 		user, err := userSvc.Create(ctx, username, email, password)
