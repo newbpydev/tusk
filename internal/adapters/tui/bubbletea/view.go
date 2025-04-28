@@ -25,134 +25,116 @@ import (
 
 // renderHeader creates a header with app name, time, and status information
 func (m *Model) renderHeader() string {
+	// Set fixed dimensions for the header
 	headerHeight := 3
 
-	// Create a style for the entire header
+	// Create a single background for the entire header
 	headerStyle := lipgloss.NewStyle().
 		Width(m.width).
 		Height(headerHeight).
-		Padding(0, 1).
-		Background(lipgloss.Color("#2d3748")).
-		Foreground(lipgloss.Color("#ffffff"))
+		Background(lipgloss.Color("#2d3748"))
 
-	// Left section - App logo and tagline
+	// Calculate section widths
+	logoWidth := m.width / 4                       // 25% for logo
+	timeWidth := m.width / 2                       // 50% for time in center
+	statusWidth := m.width - logoWidth - timeWidth // Remaining ~25% for status
+
+	// 1. Left Section - Logo
 	logoStyle := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(lipgloss.Color("#48bb78")).
-		PaddingLeft(2)
-	logo := logoStyle.Render("TUSK")
+		Width(logoWidth).
+		PaddingLeft(2).
+		Background(lipgloss.Color("#2d3748"))
 
 	taglineStyle := lipgloss.NewStyle().
 		Italic(true).
-		Foreground(lipgloss.Color("#a0aec0"))
-	tagline := taglineStyle.Render("Task Management Simplified")
+		Foreground(lipgloss.Color("#a0aec0")).
+		Width(logoWidth).
+		PaddingLeft(2).
+		Background(lipgloss.Color("#2d3748"))
 
-	leftSection := lipgloss.JoinVertical(
-		lipgloss.Left,
-		logo,
-		tagline,
-	)
-
-	// Middle section - Current time and date
+	// 2. Middle Section - Time
 	timeStyle := lipgloss.NewStyle().
+		Width(timeWidth).
 		Align(lipgloss.Center).
-		Bold(true)
+		Bold(true).
+		Foreground(lipgloss.Color("#ffffff")).
+		Background(lipgloss.Color("#2d3748"))
+
 	dateStyle := lipgloss.NewStyle().
+		Width(timeWidth).
 		Align(lipgloss.Center).
-		Foreground(lipgloss.Color("#a0aec0"))
+		Foreground(lipgloss.Color("#a0aec0")).
+		Background(lipgloss.Color("#2d3748"))
 
-	timeDisplay := timeStyle.Render(m.currentTime.Format("15:04:05"))
-	dateDisplay := dateStyle.Render(m.currentTime.Format("Monday, January 2, 2006"))
+	// 3. Right Section - Status
+	statusContainerStyle := lipgloss.NewStyle().
+		Width(statusWidth).
+		Align(lipgloss.Right).
+		PaddingRight(2).
+		Background(lipgloss.Color("#2d3748"))
 
-	middleSection := lipgloss.JoinVertical(
-		lipgloss.Center,
-		timeDisplay,
-		dateDisplay,
-	)
+	// Prepare row content
+	// First row: Logo + Time + Status
+	row1Left := logoStyle.Render("TUSK")
+	row1Middle := timeStyle.Render(m.currentTime.Format("15:04:05"))
 
-	// Right section - Status information with fixed height and consistent alignment
-	// Always use two lines to ensure consistent height regardless of status
-	var statusLine1 string
-	var statusLine2 string
-
+	// Status message with appropriate styling and icon for first row
+	var row1Right string
 	if m.isLoading {
-		// Loading indicator
 		loadingStyle := lipgloss.NewStyle().
 			Bold(true).
-			Foreground(lipgloss.Color("#90cdf4"))
-
-		statusLine1 = loadingStyle.Render("Loading...")
-		statusLine2 = m.statusMessage
+			Foreground(lipgloss.Color("#90cdf4")).
+			Background(lipgloss.Color("#2d3748"))
+		row1Right = statusContainerStyle.Render(loadingStyle.Render("Loading..."))
 	} else if m.statusMessage != "" {
-		// Status message with appropriate styling
-		var statusStyle lipgloss.Style
+		var msgStyle lipgloss.Style
 		var statusIcon string
 
 		switch m.statusType {
 		case "success":
-			statusStyle = lipgloss.NewStyle().
+			msgStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.Color("#48bb78")).
-				Bold(true)
+				Bold(true).
+				Background(lipgloss.Color("#2d3748"))
 			statusIcon = "✓"
 		case "error":
-			statusStyle = lipgloss.NewStyle().
+			msgStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.Color("#f56565")).
-				Bold(true)
+				Bold(true).
+				Background(lipgloss.Color("#2d3748"))
 			statusIcon = "✗"
 		case "info":
-			statusStyle = lipgloss.NewStyle().
+			msgStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.Color("#4299e1")).
-				Bold(true)
+				Bold(true).
+				Background(lipgloss.Color("#2d3748"))
 			statusIcon = "ℹ"
 		default:
-			statusStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#a0aec0"))
+			msgStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("#a0aec0")).
+				Background(lipgloss.Color("#2d3748"))
 			statusIcon = "→"
 		}
-
-		statusLine1 = statusStyle.Render(statusIcon + " " + m.statusMessage)
-		statusLine2 = "" // Empty second line
+		row1Right = statusContainerStyle.Render(msgStyle.Render(statusIcon + " " + m.statusMessage))
 	} else {
-		// Empty status (maintain height with empty lines)
-		statusLine1 = ""
-		statusLine2 = ""
+		row1Right = statusContainerStyle.Render("") // Empty status
 	}
 
-	// Ensure status always takes exactly two lines of consistent height
-	rightSection := lipgloss.JoinVertical(
-		lipgloss.Right,
-		statusLine1,
-		statusLine2,
-	)
+	// Second row: Tagline + Date + Empty
+	row2Left := taglineStyle.Render("Task Management Simplified")
+	row2Middle := dateStyle.Render(m.currentTime.Format("Monday, January 2, 2006"))
+	row2Right := statusContainerStyle.Render("") // Empty space or could be used for additional status info
 
-	// Calculate widths for each section
-	sectionWidth := m.width / 3
+	// Construct each row
+	row1 := lipgloss.JoinHorizontal(lipgloss.Top, row1Left, row1Middle, row1Right)
+	row2 := lipgloss.JoinHorizontal(lipgloss.Top, row2Left, row2Middle, row2Right)
 
-	// Style each section with appropriate width and alignment
-	leftSectionStyled := lipgloss.NewStyle().
-		Width(sectionWidth).
-		Align(lipgloss.Left).
-		Render(leftSection)
+	// Stack rows vertically
+	headerContent := lipgloss.JoinVertical(lipgloss.Left, row1, row2)
 
-	middleSectionStyled := lipgloss.NewStyle().
-		Width(sectionWidth).
-		Align(lipgloss.Center).
-		Render(middleSection)
-
-	rightSectionStyled := lipgloss.NewStyle().
-		Width(sectionWidth).
-		Align(lipgloss.Right).
-		Render(rightSection)
-
-	// Join the sections horizontally
-	headerContent := lipgloss.JoinHorizontal(
-		lipgloss.Center,
-		leftSectionStyled,
-		middleSectionStyled,
-		rightSectionStyled,
-	)
-
-	// Apply the header style to the content
+	// Apply header background and return
 	return headerStyle.Render(headerContent)
 }
 
