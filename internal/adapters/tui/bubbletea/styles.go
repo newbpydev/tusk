@@ -31,6 +31,7 @@ const (
 	colorTeal      = "#009688"
 	colorOrange    = "#FB8C00"
 	colorRed       = "#E53935"
+	colorBorder    = "#4B9CD3" // Light blue color for borders
 )
 
 // Styles encapsulates all UI styling for the TUI
@@ -39,6 +40,7 @@ type Styles struct {
 	Title        lipgloss.Style
 	SelectedItem lipgloss.Style
 	Help         lipgloss.Style
+	ActiveBorder lipgloss.Style
 
 	// Task status styles
 	Todo       lipgloss.Style
@@ -59,6 +61,10 @@ func DefaultStyles() *Styles {
 	s.Title = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color(colorOffWhite))
 	s.SelectedItem = lipgloss.NewStyle().Bold(true).Background(lipgloss.Color(colorBlue)).Foreground(lipgloss.Color(colorWhite))
 	s.Help = lipgloss.NewStyle().Foreground(lipgloss.Color(colorDarkGray)).Italic(true)
+	s.ActiveBorder = lipgloss.NewStyle().
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(colorBorder)).
+		Padding(0, 1)
 
 	// Set up task status styles
 	s.Todo = lipgloss.NewStyle().Foreground(lipgloss.Color(colorLightGray))
