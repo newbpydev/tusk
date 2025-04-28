@@ -70,8 +70,10 @@ func (m *Model) renderHeader() string {
 		dateDisplay,
 	)
 
-	// Right section - Status information
-	rightSection := ""
+	// Right section - Status information with fixed height and consistent alignment
+	// Always use two lines to ensure consistent height regardless of status
+	var statusLine1 string
+	var statusLine2 string
 
 	if m.isLoading {
 		// Loading indicator
@@ -79,11 +81,8 @@ func (m *Model) renderHeader() string {
 			Bold(true).
 			Foreground(lipgloss.Color("#90cdf4"))
 
-		rightSection = lipgloss.JoinVertical(
-			lipgloss.Right,
-			loadingStyle.Render("Loading..."),
-			lipgloss.NewStyle().Render(m.statusMessage),
-		)
+		statusLine1 = loadingStyle.Render("Loading...")
+		statusLine2 = m.statusMessage
 	} else if m.statusMessage != "" {
 		// Status message with appropriate styling
 		var statusStyle lipgloss.Style
@@ -111,17 +110,25 @@ func (m *Model) renderHeader() string {
 			statusIcon = "→"
 		}
 
-		rightSection = lipgloss.JoinVertical(
-			lipgloss.Right,
-			statusStyle.Render(statusIcon+" "+m.statusMessage),
-			"", // Empty line for vertical spacing
-		)
+		statusLine1 = statusStyle.Render(statusIcon + " " + m.statusMessage)
+		statusLine2 = "" // Empty second line
+	} else {
+		// Empty status (maintain height with empty lines)
+		statusLine1 = ""
+		statusLine2 = ""
 	}
+
+	// Ensure status always takes exactly two lines of consistent height
+	rightSection := lipgloss.JoinVertical(
+		lipgloss.Right,
+		statusLine1,
+		statusLine2,
+	)
 
 	// Calculate widths for each section
 	sectionWidth := m.width / 3
 
-	// Style each section with appropriate width
+	// Style each section with appropriate width and alignment
 	leftSectionStyled := lipgloss.NewStyle().
 		Width(sectionWidth).
 		Align(lipgloss.Left).
