@@ -43,12 +43,15 @@
       "validateAfterChange": true,
       "checkForErrors": true,
       "fixErrorsBeforeContinuing": true,
-      "validateCompilation": true
+      "validateCompilation": true,
+      "doubleCheckErrors": true
     },
     "codeQuality": {
       "ensureConsistentStyle": true,
       "followProjectPatterns": true,
-      "maintainTestCoverage": true
+      "maintainTestCoverage": true,
+      "autoDocumentCode": true,
+      "preventCodeSilencing": true
     },
     "contextAwareness": {
       "respectHexagonalArchitecture": true,
