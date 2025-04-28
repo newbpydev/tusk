@@ -58,6 +58,13 @@ type Model struct {
 	taskDetailsOffset int // Vertical scroll position for task details panel
 	timelineOffset    int // Vertical scroll position for timeline panel
 
+	// Header information
+	currentTime   time.Time // Current time to display in header
+	statusMessage string    // Status message to display in header (success, error, etc.)
+	statusType    string    // Type of status message: "success", "error", "info", "loading"
+	statusExpiry  time.Time // When to clear the status message
+	isLoading     bool      // Whether the app is currently loading data
+
 	// Success message
 	successMsg string
 }
@@ -88,19 +95,69 @@ func NewModel(ctx context.Context, svc taskService.Service, userID int64) *Model
 
 // Init initializes the bubbletea model.
 func (m *Model) Init() tea.Cmd {
-	// No commands to run at initialization
-	return nil
+	// Initialize time
+	m.currentTime = time.Now()
+
+	// Start a ticker to update the time every second
+	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+		return TickMsg(t)
+	})
+}
+
+// TickMsg is a message that's sent when the ticker ticks
+type TickMsg time.Time
+
+// setStatusMessage sets a status message with a type and expiry duration
+func (m *Model) setStatusMessage(msg string, msgType string, duration time.Duration) {
+	m.statusMessage = msg
+	m.statusType = msgType
+	m.statusExpiry = time.Now().Add(duration)
+}
+
+// setSuccessStatus is a helper to set success status messages
+func (m *Model) setSuccessStatus(msg string) {
+	m.setStatusMessage(msg, "success", 5*time.Second)
+}
+
+// setErrorStatus is a helper to set error status messages
+func (m *Model) setErrorStatus(msg string) {
+	m.setStatusMessage(msg, "error", 10*time.Second)
+}
+
+// setInfoStatus is a helper to set informational status messages
+func (m *Model) setInfoStatus(msg string) {
+	m.setStatusMessage(msg, "info", 3*time.Second)
+}
+
+// setLoadingStatus sets the app in loading state with a message
+func (m *Model) setLoadingStatus(msg string) {
+	m.setStatusMessage(msg, "loading", 30*time.Second)
+	m.isLoading = true
+}
+
+// clearLoadingStatus clears the loading state
+func (m *Model) clearLoadingStatus() {
+	m.isLoading = false
+	if m.statusType == "loading" {
+		m.statusMessage = ""
+		m.statusType = ""
+	}
 }
 
 // refreshTasks reloads the task list from the service
 func (m *Model) refreshTasks() tea.Msg {
+	m.setLoadingStatus("Loading tasks...")
+
 	tasks, err := m.taskSvc.List(m.ctx, m.userID)
 	if err != nil {
 		m.err = err
+		m.setErrorStatus(fmt.Sprintf("Error loading tasks: %v", err))
 		return nil
 	}
 
+	m.clearLoadingStatus()
 	m.tasks = tasks
+	m.setInfoStatus("Tasks refreshed")
 
 	// Adjust cursor if needed
 	if m.cursor >= len(m.tasks) && len(m.tasks) > 0 {
@@ -119,17 +176,26 @@ func (m *Model) toggleTaskCompletion() tea.Msg {
 	currentTask := m.tasks[m.cursor]
 	taskID := int64(currentTask.ID)
 
+	m.setLoadingStatus("Updating task status...")
+
 	var err error
 	if currentTask.Status == task.StatusDone {
 		// Change from done to todo
 		_, err = m.taskSvc.ChangeStatus(m.ctx, taskID, task.StatusTodo)
+		if err == nil {
+			m.setSuccessStatus(fmt.Sprintf("Task '%s' marked as TODO", currentTask.Title))
+		}
 	} else {
 		// Change to done
 		_, err = m.taskSvc.ChangeStatus(m.ctx, taskID, task.StatusDone)
+		if err == nil {
+			m.setSuccessStatus(fmt.Sprintf("Task '%s' marked as DONE", currentTask.Title))
+		}
 	}
 
 	if err != nil {
 		m.err = err
+		m.setErrorStatus(fmt.Sprintf("Error changing status: %v", err))
 	}
 
 	// Refresh tasks after toggle
@@ -142,11 +208,19 @@ func (m *Model) deleteCurrentTask() tea.Msg {
 		return nil
 	}
 
+	taskTitle := m.tasks[m.cursor].Title
 	taskID := int64(m.tasks[m.cursor].ID)
+
+	m.setLoadingStatus("Deleting task...")
+
 	if err := m.taskSvc.Delete(m.ctx, taskID); err != nil {
 		m.err = err
+		m.setErrorStatus(fmt.Sprintf("Error deleting task: %v", err))
 		return nil
 	}
+
+	// Success message
+	m.setSuccessStatus(fmt.Sprintf("Task '%s' deleted", taskTitle))
 
 	// Go back to list view after deletion
 	m.viewMode = "list"
@@ -159,8 +233,11 @@ func (m *Model) deleteCurrentTask() tea.Msg {
 func (m *Model) createNewTask() tea.Msg {
 	if m.formTitle == "" {
 		m.err = fmt.Errorf("title is required")
+		m.setErrorStatus("Title is required")
 		return nil
 	}
+
+	m.setLoadingStatus("Creating new task...")
 
 	// Parse due date if provided
 	var dueDate *time.Time
@@ -168,6 +245,10 @@ func (m *Model) createNewTask() tea.Msg {
 		date, err := time.Parse("2006-01-02", m.formDueDate)
 		if err == nil {
 			dueDate = &date
+		} else {
+			m.setErrorStatus(fmt.Sprintf("Invalid date format: %v", err))
+			m.err = fmt.Errorf("invalid date format: %v", err)
+			return nil
 		}
 	}
 
@@ -200,12 +281,13 @@ func (m *Model) createNewTask() tea.Msg {
 
 	if err != nil {
 		m.err = err
+		m.setErrorStatus(fmt.Sprintf("Error creating task: %v", err))
 		return nil
 	}
 
 	// Set success message
 	m.err = nil
-	m.successMsg = fmt.Sprintf("Task '%s' successfully saved to database", createdTask.Title)
+	m.setSuccessStatus(fmt.Sprintf("Task '%s' successfully created", createdTask.Title))
 
 	// Reset form fields
 	m.formTitle = ""
