@@ -226,69 +226,109 @@ func (m *Model) View() string {
 
 // renderTaskList renders the first column with the list of tasks
 func (m *Model) renderTaskList() string {
-	// Build the full content first
-	var fullContent strings.Builder
-	fullContent.WriteString(m.styles.Title.Render("Tasks") + "\n\n")
+	// Build the header content
+	var headerContent strings.Builder
+	headerContent.WriteString(m.styles.Title.Render("Tasks") + "\n\n")
 
 	// Display error message if exists
 	if m.err != nil {
-		fullContent.WriteString(fmt.Sprintf("Error: %v\n\n", m.err))
+		headerContent.WriteString(fmt.Sprintf("Error: %v\n\n", m.err))
 	}
 
 	// Display success message if exists
 	if m.successMsg != "" {
-		fullContent.WriteString(m.styles.Done.Render(fmt.Sprintf("✓ %s\n\n", m.successMsg)))
+		headerContent.WriteString(m.styles.Done.Render(fmt.Sprintf("✓ %s\n\n", m.successMsg)))
 		// Clear the success message after it's been displayed once
-		// This is a deferred operation so it gets cleared on the next update
 		defer func() { m.successMsg = "" }()
 	}
 
 	if len(m.tasks) == 0 {
-		fullContent.WriteString("No tasks found.\n\n")
-		fullContent.WriteString("Press 'n' to create a new task.\n")
-	} else {
-		for i, t := range m.tasks {
-			statusSymbol := "[ ]"
-			var statusStyle = m.styles.Todo
+		headerContent.WriteString("No tasks found.\n\n")
+		headerContent.WriteString("Press 'n' to create a new task.\n")
+		return headerContent.String()
+	}
 
-			switch t.Status {
-			case task.StatusDone:
-				statusSymbol = "[✓]"
-				statusStyle = m.styles.Done
-			case task.StatusInProgress:
-				statusSymbol = "[⟳]"
-				statusStyle = m.styles.InProgress
-			}
+	// Estimate the height of the viewport for tasks (after headers)
+	// This determines how many tasks we can show at once
+	viewableHeight := m.height - 14         // Adjust for header, borders, scroll indicators
+	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
 
-			var priorityStyle = m.styles.LowPriority
-			switch t.Priority {
-			case task.PriorityHigh:
-				priorityStyle = m.styles.HighPriority
-			case task.PriorityMedium:
-				priorityStyle = m.styles.MediumPriority
-			}
+	// Make sure the cursor is visible
+	if m.cursor < m.taskListOffset {
+		// Cursor has moved above visible area
+		m.taskListOffset = m.cursor
+	} else if m.cursor >= m.taskListOffset+viewableHeight {
+		// Cursor has moved below visible area
+		m.taskListOffset = m.cursor - viewableHeight + 1
+	}
 
-			priority := string(t.Priority)
-			taskLine := fmt.Sprintf("%s %s (%s)",
-				statusStyle.Render(statusSymbol),
-				t.Title,
-				priorityStyle.Render(priority))
+	// Clamp taskListOffset to ensure it's never negative or too far down
+	maxOffset := max(0, len(m.tasks)-viewableHeight)
+	m.taskListOffset = min(m.taskListOffset, maxOffset)
+	m.taskListOffset = max(0, m.taskListOffset)
 
-			if i == m.cursor {
-				fullContent.WriteString(m.styles.SelectedItem.Render(taskLine) + "\n")
-			} else {
-				fullContent.WriteString(taskLine + "\n")
-			}
+	// Build list content with tasks
+	var tasksContent strings.Builder
+
+	// Add up-scroll indicator if needed
+	if m.taskListOffset > 0 {
+		tasksContent.WriteString(m.styles.Help.Render("↑ More tasks above ↑") + "\n")
+	}
+
+	// Build the visible task items
+	visibleStartIdx := m.taskListOffset
+	visibleEndIdx := min(m.taskListOffset+viewableHeight, len(m.tasks))
+
+	// Render the currently visible tasks
+	for i := visibleStartIdx; i < visibleEndIdx; i++ {
+		t := m.tasks[i]
+		statusSymbol := "[ ]"
+		var statusStyle = m.styles.Todo
+
+		switch t.Status {
+		case task.StatusDone:
+			statusSymbol = "[✓]"
+			statusStyle = m.styles.Done
+		case task.StatusInProgress:
+			statusSymbol = "[⟳]"
+			statusStyle = m.styles.InProgress
+		}
+
+		var priorityStyle = m.styles.LowPriority
+		switch t.Priority {
+		case task.PriorityHigh:
+			priorityStyle = m.styles.HighPriority
+		case task.PriorityMedium:
+			priorityStyle = m.styles.MediumPriority
+		}
+
+		priority := string(t.Priority)
+		taskLine := fmt.Sprintf("%s %s (%s)",
+			statusStyle.Render(statusSymbol),
+			t.Title,
+			priorityStyle.Render(priority))
+
+		if i == m.cursor {
+			// Add cursor indicator and highlight
+			tasksContent.WriteString("→ " + m.styles.SelectedItem.Render(taskLine) + "\n")
+		} else {
+			tasksContent.WriteString("  " + taskLine + "\n")
 		}
 	}
 
-	// Estimate viewable height - subtract header and some padding from total panel height
-	// This is an approximation since we don't know exact panel height
-	viewableHeight := m.height - 10         // Adjust as needed based on header size and padding
-	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
+	// Add down-scroll indicator if needed
+	if visibleEndIdx < len(m.tasks) {
+		tasksContent.WriteString(m.styles.Help.Render("↓ More tasks below ↓") + "\n")
+	}
 
-	// Apply scrolling logic to the content
-	return m.createScrollableContent(fullContent.String(), m.taskListOffset, viewableHeight)
+	// Position indicator
+	if len(m.tasks) > viewableHeight {
+		position := fmt.Sprintf("[%d/%d]", m.cursor+1, len(m.tasks))
+		tasksContent.WriteString(m.styles.Help.Render(position))
+	}
+
+	// Combine header and task list
+	return headerContent.String() + tasksContent.String()
 }
 
 // renderTaskDetails renders the second column with details of the currently selected task
