@@ -57,7 +57,7 @@ type Model struct {
 	taskListOffset    int // Vertical scroll position for task list panel
 	taskDetailsOffset int // Vertical scroll position for task details panel
 	timelineOffset    int // Vertical scroll position for timeline panel
-	
+
 	// Success message
 	successMsg string
 }

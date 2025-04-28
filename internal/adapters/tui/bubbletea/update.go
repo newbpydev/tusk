@@ -348,7 +348,7 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.formStatus = string(task.StatusTodo)
 		m.formPriority = string(task.PriorityLow)
 		return m, nil
-		
+
 	case "up", "k":
 		// Scroll up in the detail view
 		switch m.activePanel {
@@ -372,7 +372,7 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			}
 		}
 		return m, nil
-		
+
 	case "down", "j":
 		// Scroll down in the detail view
 		switch m.activePanel {
@@ -391,7 +391,7 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			if len(m.tasks) > 0 && m.cursor < len(m.tasks) && m.tasks[m.cursor].Description != nil {
 				maxOffset += len(*m.tasks[m.cursor].Description) / 30
 			}
-			
+
 			m.taskDetailsOffset += 1
 			if m.taskDetailsOffset > maxOffset {
 				m.taskDetailsOffset = maxOffset
@@ -400,25 +400,25 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			// Rough estimate of content length
 			overdue, today, upcoming := m.getTasksByTimeCategory()
 			maxOffset := len(overdue) + len(today) + len(upcoming) + 10 // +10 for headers and spacing
-			
+
 			m.timelineOffset += 1
 			if m.timelineOffset > maxOffset {
 				m.timelineOffset = maxOffset
 			}
 		}
 		return m, nil
-		
+
 	case "page-up", "ctrl+b":
 		// Page Up - scroll up by a page
 		pageSize := 10 // Approximate lines per page
-		
+
 		switch m.activePanel {
 		case 0: // Task list
 			m.taskListOffset -= pageSize
 			if m.taskListOffset < 0 {
 				m.taskListOffset = 0
 			}
-			
+
 			// Also move cursor if it would be off-screen
 			if m.cursor >= m.taskListOffset+pageSize {
 				m.cursor = m.taskListOffset
@@ -435,11 +435,11 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			}
 		}
 		return m, nil
-		
+
 	case "page-down", "ctrl+f":
 		// Page Down - scroll down by a page
 		pageSize := 10 // Approximate lines per page
-		
+
 		switch m.activePanel {
 		case 0: // Task list
 			maxOffset := max(0, len(m.tasks)-pageSize)
@@ -447,7 +447,7 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			if m.taskListOffset > maxOffset {
 				m.taskListOffset = maxOffset
 			}
-			
+
 			// Also move cursor if it would be off-screen
 			if m.cursor < m.taskListOffset {
 				m.cursor = m.taskListOffset
@@ -459,7 +459,7 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				maxOffset += len(*m.tasks[m.cursor].Description) / 30
 			}
 			maxOffset = max(0, maxOffset-pageSize)
-			
+
 			m.taskDetailsOffset += pageSize
 			if m.taskDetailsOffset > maxOffset {
 				m.taskDetailsOffset = maxOffset
@@ -469,14 +469,14 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			overdue, today, upcoming := m.getTasksByTimeCategory()
 			maxOffset := len(overdue) + len(today) + len(upcoming) - pageSize
 			maxOffset = max(0, maxOffset)
-			
+
 			m.timelineOffset += pageSize
 			if m.timelineOffset > maxOffset {
 				m.timelineOffset = maxOffset
 			}
 		}
 		return m, nil
-		
+
 	case "home", "g":
 		// Scroll to top
 		switch m.activePanel {
@@ -489,11 +489,11 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.timelineOffset = 0
 		}
 		return m, nil
-		
+
 	case "end", "G":
 		// Scroll to bottom
 		pageSize := 10 // Approximate lines per page
-		
+
 		switch m.activePanel {
 		case 0:
 			if len(m.tasks) > 0 {
