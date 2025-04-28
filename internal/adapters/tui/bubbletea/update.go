@@ -50,6 +50,32 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return TickMsg(t)
 		})
 
+	case statusUpdateErrorMsg:
+		// Handle error during task status update
+		m.err = msg.err
+		m.setErrorStatus(fmt.Sprintf("Error updating task '%s': %v", msg.taskTitle, msg.err))
+
+		// Refresh tasks to ensure UI is in sync with database
+		return m, m.refreshTasks
+
+	case tasksRefreshedMsg:
+		// Handle successful background task refresh
+		m.tasks = msg.tasks
+
+		// Make sure cursor position is still valid
+		if m.cursor >= len(m.tasks) && len(m.tasks) > 0 {
+			m.cursor = len(m.tasks) - 1
+		}
+
+		m.clearLoadingStatus()
+		return m, nil
+
+	case errorMsg:
+		// Handle generic errors
+		m.err = error(msg)
+		m.setErrorStatus(fmt.Sprintf("Error: %v", error(msg)))
+		return m, nil
+
 	default:
 		return m, nil
 	}

@@ -175,31 +175,63 @@ func (m *Model) toggleTaskCompletion() tea.Msg {
 
 	currentTask := m.tasks[m.cursor]
 	taskID := int64(currentTask.ID)
+	taskTitle := currentTask.Title
 
-	m.setLoadingStatus("Updating task status...")
-
-	var err error
+	// Immediately update UI with new status (optimistic update)
+	var newStatus task.Status
 	if currentTask.Status == task.StatusDone {
 		// Change from done to todo
-		_, err = m.taskSvc.ChangeStatus(m.ctx, taskID, task.StatusTodo)
-		if err == nil {
-			m.setSuccessStatus(fmt.Sprintf("Task '%s' marked as TODO", currentTask.Title))
-		}
+		newStatus = task.StatusTodo
+		m.tasks[m.cursor].Status = newStatus
+		m.tasks[m.cursor].IsCompleted = false
+		m.setSuccessStatus(fmt.Sprintf("Task '%s' marked as TODO", taskTitle))
 	} else {
 		// Change to done
-		_, err = m.taskSvc.ChangeStatus(m.ctx, taskID, task.StatusDone)
-		if err == nil {
-			m.setSuccessStatus(fmt.Sprintf("Task '%s' marked as DONE", currentTask.Title))
+		newStatus = task.StatusDone
+		m.tasks[m.cursor].Status = newStatus
+		m.tasks[m.cursor].IsCompleted = true
+		m.setSuccessStatus(fmt.Sprintf("Task '%s' marked as DONE", taskTitle))
+	}
+
+	// Show subtle loading indicator without blocking the UI
+	m.setInfoStatus("Saving changes...")
+
+	// Start a background operation to update the database
+	return func() tea.Msg {
+		// Perform the actual status change in the background
+		_, err := m.taskSvc.ChangeStatus(m.ctx, taskID, newStatus)
+
+		if err != nil {
+			// If there's an error, revert the optimistic update
+			return statusUpdateErrorMsg{
+				taskIndex: m.cursor,
+				err:       err,
+				taskTitle: taskTitle,
+			}
 		}
-	}
 
-	if err != nil {
-		m.err = err
-		m.setErrorStatus(fmt.Sprintf("Error changing status: %v", err))
-	}
+		// Refresh tasks in the background to ensure data consistency
+		// but the UI is already updated so user sees the change immediately
+		tasks, err := m.taskSvc.List(m.ctx, m.userID)
+		if err != nil {
+			return errorMsg(err)
+		}
 
-	// Refresh tasks after toggle
-	return m.refreshTasks()
+		return tasksRefreshedMsg{tasks: tasks}
+	}
+}
+
+// Custom message types for handling background operations
+type statusUpdateErrorMsg struct {
+	taskIndex int
+	taskTitle string
+	err       error
+}
+
+type errorMsg error
+
+type tasksRefreshedMsg struct {
+	tasks []task.Task
 }
 
 // deleteCurrentTask deletes the currently selected task
