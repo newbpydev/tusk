@@ -51,7 +51,13 @@ type Model struct {
 	showTaskList    bool
 	showTaskDetails bool
 	showTimeline    bool
+	activePanel     int // 0 = task list, 1 = task details, 2 = timeline
 
+	// Scrolling offset for each panel
+	taskListOffset    int // Vertical scroll position for task list panel
+	taskDetailsOffset int // Vertical scroll position for task details panel
+	timelineOffset    int // Vertical scroll position for timeline panel
+	
 	// Success message
 	successMsg string
 }
@@ -72,6 +78,7 @@ func NewModel(ctx context.Context, svc taskService.Service, userID int64) *Model
 		showTaskList:    true,
 		showTaskDetails: true,
 		showTimeline:    true,
+		activePanel:     0, // Start with focus on the task list panel
 		// Default to list view even if there are no tasks
 		viewMode: "list",
 	}

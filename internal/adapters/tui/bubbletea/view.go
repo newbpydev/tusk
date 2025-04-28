@@ -3,7 +3,7 @@
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// (at any later version).
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,6 +17,7 @@ package bubbletea
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/newbpydev/tusk/internal/core/task"
@@ -31,33 +32,163 @@ func (m *Model) View() string {
 
 	// Three-column layout
 	var columns []string
+	var visiblePanelCount int
 
-	// Column 1: Task list
+	// Count visible panels
 	if m.showTaskList {
-		columns = append(columns, m.renderTaskList())
+		visiblePanelCount++
 	}
-
-	// Column 2: Task details
 	if m.showTaskDetails {
-		columns = append(columns, m.renderTaskDetails())
+		visiblePanelCount++
 	}
-
-	// Column 3: Timeline view
 	if m.showTimeline {
-		columns = append(columns, m.renderTimelineView())
+		visiblePanelCount++
 	}
 
-	// Join columns with dividers
-	columnWidth := m.width / max(1, len(columns))
+	// Calculate column width - account for visible panels
+	availableWidth := m.width
+	columnWidth := availableWidth / max(1, visiblePanelCount)
 
-	for i := range columns {
-		// Set fixed width for each column
-		columns[i] = lipgloss.NewStyle().
-			Width(columnWidth).
-			MaxWidth(columnWidth).
-			Render(columns[i])
+	// Constants for border and padding
+	const borderWidth = 1     // Width of border on each side
+	const paddingWidth = 1    // Width of padding on each side
+	const totalFrameWidth = 4 // Total extra width: (borderWidth + paddingWidth) * 2
+
+	// Content width is column width minus frame elements for consistency
+	contentWidth := columnWidth - totalFrameWidth
+
+	// Prepare content for each panel
+	var taskListContent, taskDetailsContent, timelineContent string
+
+	// Get content for each panel
+	if m.showTaskList {
+		taskListContent = m.renderTaskList()
 	}
 
+	if m.showTaskDetails {
+		taskDetailsContent = m.renderTaskDetails()
+	}
+
+	if m.showTimeline {
+		timelineContent = m.renderTimelineView()
+	}
+
+	// Always create panels with consistent dimensions, with or without borders
+	if m.showTaskList {
+		// Create base style for content
+		contentStyle := lipgloss.NewStyle().
+			Width(contentWidth).
+			MaxWidth(contentWidth)
+
+		// Apply style to content
+		taskListContent = contentStyle.Render(taskListContent)
+
+		// Create frame style - either with visible border or with spacing
+		var frameStyle lipgloss.Style
+		if m.activePanel == 0 {
+			// Active panel - visible borders
+			frameStyle = lipgloss.NewStyle().
+				BorderStyle(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color(colorBorder)).
+				BorderLeft(true).
+				BorderRight(true).
+				BorderTop(true).
+				BorderBottom(true).
+				Padding(paddingWidth).
+				Width(columnWidth - 2) // Account for left and right border
+		} else {
+			// Inactive panel - invisible placeholder borders
+			frameStyle = lipgloss.NewStyle().
+				BorderStyle(lipgloss.HiddenBorder()).
+				BorderLeft(true).
+				BorderRight(true).
+				BorderTop(true).
+				BorderBottom(true).
+				Padding(paddingWidth).
+				Width(columnWidth - 2)
+		}
+
+		// Apply frame and add to columns
+		columns = append(columns, frameStyle.Render(taskListContent))
+	}
+
+	if m.showTaskDetails {
+		// Create base style for content
+		contentStyle := lipgloss.NewStyle().
+			Width(contentWidth).
+			MaxWidth(contentWidth)
+
+		// Apply style to content
+		taskDetailsContent = contentStyle.Render(taskDetailsContent)
+
+		// Create frame style - either with visible border or with spacing
+		var frameStyle lipgloss.Style
+		if m.activePanel == 1 {
+			// Active panel - visible borders
+			frameStyle = lipgloss.NewStyle().
+				BorderStyle(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color(colorBorder)).
+				BorderLeft(true).
+				BorderRight(true).
+				BorderTop(true).
+				BorderBottom(true).
+				Padding(paddingWidth).
+				Width(columnWidth - 2) // Account for left and right border
+		} else {
+			// Inactive panel - invisible placeholder borders
+			frameStyle = lipgloss.NewStyle().
+				BorderStyle(lipgloss.HiddenBorder()).
+				BorderLeft(true).
+				BorderRight(true).
+				BorderTop(true).
+				BorderBottom(true).
+				Padding(paddingWidth).
+				Width(columnWidth - 2)
+		}
+
+		// Apply frame and add to columns
+		columns = append(columns, frameStyle.Render(taskDetailsContent))
+	}
+
+	if m.showTimeline {
+		// Create base style for content
+		contentStyle := lipgloss.NewStyle().
+			Width(contentWidth).
+			MaxWidth(contentWidth)
+
+		// Apply style to content
+		timelineContent = contentStyle.Render(timelineContent)
+
+		// Create frame style - either with visible border or with spacing
+		var frameStyle lipgloss.Style
+		if m.activePanel == 2 {
+			// Active panel - visible borders
+			frameStyle = lipgloss.NewStyle().
+				BorderStyle(lipgloss.RoundedBorder()).
+				BorderForeground(lipgloss.Color(colorBorder)).
+				BorderLeft(true).
+				BorderRight(true).
+				BorderTop(true).
+				BorderBottom(true).
+				Padding(paddingWidth).
+				Width(columnWidth - 2) // Account for left and right border
+		} else {
+			// Inactive panel - invisible placeholder borders
+			frameStyle = lipgloss.NewStyle().
+				BorderStyle(lipgloss.HiddenBorder()).
+				BorderLeft(true).
+				BorderRight(true).
+				BorderTop(true).
+				BorderBottom(true).
+				Padding(paddingWidth).
+				Width(columnWidth - 2)
+		}
+
+		// Apply frame and add to columns
+		columns = append(columns, frameStyle.Render(timelineContent))
+	}
+
+	// Join columns horizontally with consistent spacing
 	content := lipgloss.JoinHorizontal(lipgloss.Top, columns...)
 
 	// Calculate available height for content, leaving space for help text
@@ -95,24 +226,26 @@ func (m *Model) View() string {
 
 // renderTaskList renders the first column with the list of tasks
 func (m *Model) renderTaskList() string {
-	s := m.styles.Title.Render("Tasks") + "\n\n"
+	// Build the full content first
+	var fullContent strings.Builder
+	fullContent.WriteString(m.styles.Title.Render("Tasks") + "\n\n")
 
 	// Display error message if exists
 	if m.err != nil {
-		s += fmt.Sprintf("Error: %v\n\n", m.err)
+		fullContent.WriteString(fmt.Sprintf("Error: %v\n\n", m.err))
 	}
 
 	// Display success message if exists
 	if m.successMsg != "" {
-		s += m.styles.Done.Render(fmt.Sprintf("✓ %s\n\n", m.successMsg))
+		fullContent.WriteString(m.styles.Done.Render(fmt.Sprintf("✓ %s\n\n", m.successMsg)))
 		// Clear the success message after it's been displayed once
 		// This is a deferred operation so it gets cleared on the next update
 		defer func() { m.successMsg = "" }()
 	}
 
 	if len(m.tasks) == 0 {
-		s += "No tasks found.\n\n"
-		s += "Press 'n' to create a new task.\n"
+		fullContent.WriteString("No tasks found.\n\n")
+		fullContent.WriteString("Press 'n' to create a new task.\n")
 	} else {
 		for i, t := range m.tasks {
 			statusSymbol := "[ ]"
@@ -142,78 +275,88 @@ func (m *Model) renderTaskList() string {
 				priorityStyle.Render(priority))
 
 			if i == m.cursor {
-				s += m.styles.SelectedItem.Render(taskLine) + "\n"
+				fullContent.WriteString(m.styles.SelectedItem.Render(taskLine) + "\n")
 			} else {
-				s += taskLine + "\n"
+				fullContent.WriteString(taskLine + "\n")
 			}
 		}
 	}
 
-	return s
+	// Estimate viewable height - subtract header and some padding from total panel height
+	// This is an approximation since we don't know exact panel height
+	viewableHeight := m.height - 10         // Adjust as needed based on header size and padding
+	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
+
+	// Apply scrolling logic to the content
+	return m.createScrollableContent(fullContent.String(), m.taskListOffset, viewableHeight)
 }
 
 // renderTaskDetails renders the second column with details of the currently selected task
 func (m *Model) renderTaskDetails() string {
+	// Build full content first
+	var fullContent strings.Builder
+
 	if len(m.tasks) == 0 {
-		s := m.styles.Title.Render("Task Details") + "\n\n"
-		s += "No tasks yet. Press 'n' to create your first task.\n\n"
-		s += m.styles.Help.Render("Tip: You can organize tasks with priorities and due dates!")
-		return s
+		fullContent.WriteString(m.styles.Title.Render("Task Details") + "\n\n")
+		fullContent.WriteString("No tasks yet. Press 'n' to create your first task.\n\n")
+		fullContent.WriteString(m.styles.Help.Render("Tip: You can organize tasks with priorities and due dates!"))
+		return fullContent.String()
 	}
 
 	if len(m.tasks) == 0 || m.cursor >= len(m.tasks) {
-		return m.styles.Title.Render("Task Details") + "\n\nNo task selected"
+		fullContent.WriteString(m.styles.Title.Render("Task Details") + "\n\nNo task selected")
+		return fullContent.String()
 	}
 
 	t := m.tasks[m.cursor]
-	s := m.styles.Title.Render("Task Details") + "\n\n"
+	fullContent.WriteString(m.styles.Title.Render("Task Details") + "\n\n")
 
 	// Task title
-	s += m.styles.Title.Render("Title: ") + t.Title + "\n\n"
+	fullContent.WriteString(m.styles.Title.Render("Title: ") + t.Title + "\n\n")
 
 	// Task description
-	s += m.styles.Title.Render("Description: ") + "\n"
+	fullContent.WriteString(m.styles.Title.Render("Description: ") + "\n")
 	if t.Description != nil && *t.Description != "" {
-		s += *t.Description + "\n\n"
+		fullContent.WriteString(*t.Description + "\n\n")
 	} else {
-		s += "No description\n\n"
+		fullContent.WriteString("No description\n\n")
 	}
 
 	// Status
-	s += m.styles.Title.Render("Status: ")
+	fullContent.WriteString(m.styles.Title.Render("Status: "))
 	switch t.Status {
 	case task.StatusDone:
-		s += m.styles.Done.Render(string(t.Status))
+		fullContent.WriteString(m.styles.Done.Render(string(t.Status)))
 	case task.StatusInProgress:
-		s += m.styles.InProgress.Render(string(t.Status))
+		fullContent.WriteString(m.styles.InProgress.Render(string(t.Status)))
 	default:
-		s += m.styles.Todo.Render(string(t.Status))
+		fullContent.WriteString(m.styles.Todo.Render(string(t.Status)))
 	}
-	s += "\n\n"
+	fullContent.WriteString("\n\n")
 
 	// Priority
-	s += m.styles.Title.Render("Priority: ")
+	fullContent.WriteString(m.styles.Title.Render("Priority: "))
 	switch t.Priority {
 	case task.PriorityHigh:
-		s += m.styles.HighPriority.Render(string(t.Priority))
+		fullContent.WriteString(m.styles.HighPriority.Render(string(t.Priority)))
 	case task.PriorityMedium:
-		s += m.styles.MediumPriority.Render(string(t.Priority))
+		fullContent.WriteString(m.styles.MediumPriority.Render(string(t.Priority)))
 	default:
-		s += m.styles.LowPriority.Render(string(t.Priority))
+		fullContent.WriteString(m.styles.LowPriority.Render(string(t.Priority)))
 	}
-	s += "\n\n"
+	fullContent.WriteString("\n\n")
 
 	// Due date
-	s += m.styles.Title.Render("Due date: ")
+	fullContent.WriteString(m.styles.Title.Render("Due date: "))
 	if t.DueDate != nil {
-		s += t.DueDate.Format("2006-01-02")
+		fullContent.WriteString(t.DueDate.Format("2006-01-02"))
 	} else {
-		s += "No due date"
+		fullContent.WriteString("No due date")
 	}
-	s += "\n\n"
+	fullContent.WriteString("\n\n")
 
 	// Subtasks section
-	s += m.styles.Title.Render("Subtasks:") + "\n"
+	fullContent.WriteString(m.styles.Title.Render("Subtasks:") + "\n")
 	if len(t.SubTasks) > 0 {
 		for _, st := range t.SubTasks {
 			statusSymbol := "[ ]"
@@ -228,74 +371,87 @@ func (m *Model) renderTaskDetails() string {
 				statusStyle = m.styles.InProgress
 			}
 
-			s += fmt.Sprintf("  %s %s\n", statusStyle.Render(statusSymbol), st.Title)
+			fullContent.WriteString(fmt.Sprintf("  %s %s\n", statusStyle.Render(statusSymbol), st.Title))
 		}
 	} else {
-		s += "  No subtasks\n"
+		fullContent.WriteString("  No subtasks\n")
 	}
 
 	// Progress
 	if len(t.SubTasks) > 0 {
-		s += "\n" + m.styles.Title.Render(fmt.Sprintf("Progress: %d%% (%d/%d tasks completed)\n",
-			int(t.Progress*100), t.CompletedCount, t.TotalCount))
+		fullContent.WriteString("\n" + m.styles.Title.Render(fmt.Sprintf("Progress: %d%% (%d/%d tasks completed)\n",
+			int(t.Progress*100), t.CompletedCount, t.TotalCount)))
 	}
 
-	return s
+	// Estimate viewable height - subtract header and some padding from total panel height
+	viewableHeight := m.height - 10         // Adjust as needed based on header size and padding
+	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
+
+	// Apply scrolling logic to the content
+	return m.createScrollableContent(fullContent.String(), m.taskDetailsOffset, viewableHeight)
 }
 
 // renderTimelineView renders the third column with time-based task categories
 func (m *Model) renderTimelineView() string {
-	s := m.styles.Title.Render("Timeline") + "\n\n"
+	// Build full content first
+	var fullContent strings.Builder
+
+	fullContent.WriteString(m.styles.Title.Render("Timeline") + "\n\n")
 
 	if len(m.tasks) == 0 {
-		s += "No tasks to display in timeline.\n\n"
-		s += "Create tasks with due dates to see them organized here."
-		return s
+		fullContent.WriteString("No tasks to display in timeline.\n\n")
+		fullContent.WriteString("Create tasks with due dates to see them organized here.")
+		return fullContent.String() // No need for scrolling with minimal content
 	}
 
 	overdue, today, upcoming := m.getTasksByTimeCategory()
 
 	// Overdue section
-	s += m.styles.HighPriority.Bold(true).Render("Overdue:") + "\n"
+	fullContent.WriteString(m.styles.HighPriority.Bold(true).Render("Overdue:") + "\n")
 	if len(overdue) > 0 {
 		for _, t := range overdue {
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
 			}
-			s += fmt.Sprintf("  %s (%s)\n", t.Title, dueDate)
+			fullContent.WriteString(fmt.Sprintf("  %s (%s)\n", t.Title, dueDate))
 		}
 	} else {
-		s += "  No overdue tasks\n"
+		fullContent.WriteString("  No overdue tasks\n")
 	}
-	s += "\n"
+	fullContent.WriteString("\n")
 
 	// Today section
-	s += m.styles.MediumPriority.Bold(true).Render("Today:") + "\n"
+	fullContent.WriteString(m.styles.MediumPriority.Bold(true).Render("Today:") + "\n")
 	if len(today) > 0 {
 		for _, t := range today {
-			s += fmt.Sprintf("  %s\n", t.Title)
+			fullContent.WriteString(fmt.Sprintf("  %s\n", t.Title))
 		}
 	} else {
-		s += "  No tasks due today\n"
+		fullContent.WriteString("  No tasks due today\n")
 	}
-	s += "\n"
+	fullContent.WriteString("\n")
 
 	// Upcoming section
-	s += m.styles.LowPriority.Bold(true).Render("Upcoming:") + "\n"
+	fullContent.WriteString(m.styles.LowPriority.Bold(true).Render("Upcoming:") + "\n")
 	if len(upcoming) > 0 {
 		for _, t := range upcoming {
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
 			}
-			s += fmt.Sprintf("  %s (%s)\n", t.Title, dueDate)
+			fullContent.WriteString(fmt.Sprintf("  %s (%s)\n", t.Title, dueDate))
 		}
 	} else {
-		s += "  No upcoming tasks\n"
+		fullContent.WriteString("  No upcoming tasks\n")
 	}
 
-	return s
+	// Estimate viewable height - subtract header and some padding from total panel height
+	viewableHeight := m.height - 10         // Adjust as needed based on header size and padding
+	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
+
+	// Apply scrolling logic to the content
+	return m.createScrollableContent(fullContent.String(), m.timelineOffset, viewableHeight)
 }
 
 // renderCreateForm renders the task creation form
@@ -377,9 +533,9 @@ func (m *Model) renderHelpText() string {
 
 	switch m.viewMode {
 	case "list":
-		help = "j/k: navigate • enter: view details • c: toggle completion • n: new task • 1/2/3: toggle columns • q: quit"
+		help = "j/k: navigate • h/l or ←/→: switch panels • enter: view details • c: toggle completion • n: new task • 1/2/3: toggle columns • q: quit"
 	case "detail":
-		help = "esc: back • e: edit • c: toggle completion • d: delete • n: new task"
+		help = "esc: back • h/l or ←/→: switch panels • e: edit • c: toggle completion • d: delete • n: new task"
 	case "edit":
 		help = "esc: cancel • enter: save changes"
 	case "create":
@@ -404,4 +560,59 @@ func max(a, b int) int {
 		return a
 	}
 	return b
+}
+
+// min returns the smaller of two integers
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+// createScrollableContent creates a scrollable view of given content
+func (m *Model) createScrollableContent(content string, offset int, maxHeight int) string {
+	lines := strings.Split(content, "\n")
+
+	// Calculate actual content height
+	contentHeight := len(lines)
+
+	// Determine if scrolling is needed
+	needsScrolling := contentHeight > maxHeight
+
+	// Clamp offset within valid range
+	maxOffset := max(0, contentHeight-maxHeight)
+	offset = min(offset, maxOffset)
+	offset = max(0, offset)
+
+	// Apply offset and limit number of lines to maxHeight
+	startLine := min(offset, len(lines))
+	endLine := min(startLine+maxHeight, len(lines))
+	visibleLines := lines[startLine:endLine]
+
+	// Add scroll indicators if needed
+	if needsScrolling {
+		// Ensure we have room for indicators
+		visibleContent := strings.Join(visibleLines, "\n")
+
+		var scrollIndicator string
+		if offset > 0 && offset < maxOffset {
+			// Both up and down scroll are available
+			scrollIndicator = "▲\n" + visibleContent + "\n▼"
+		} else if offset > 0 {
+			// Only up scroll available
+			scrollIndicator = "▲\n" + visibleContent
+		} else if offset < maxOffset {
+			// Only down scroll available
+			scrollIndicator = visibleContent + "\n▼"
+		} else {
+			// No scrolling needed or at exact bounds
+			scrollIndicator = visibleContent
+		}
+
+		return scrollIndicator
+	}
+
+	// No scrolling needed
+	return strings.Join(visibleLines, "\n")
 }
