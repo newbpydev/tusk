@@ -23,14 +23,144 @@ import (
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
-// View renders the current state of the model as a string.
-func (m *Model) View() string {
-	if m.viewMode == "create" {
-		// Special case for create form
-		return m.renderCreateForm()
+// renderHeader creates a header with app name, time, and status information
+func (m *Model) renderHeader() string {
+	headerHeight := 3
+
+	// Create a style for the entire header
+	headerStyle := lipgloss.NewStyle().
+		Width(m.width).
+		Height(headerHeight).
+		Padding(0, 1).
+		Background(lipgloss.Color("#2d3748")).
+		Foreground(lipgloss.Color("#ffffff"))
+
+	// Left section - App logo and tagline
+	logoStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#48bb78")).
+		PaddingLeft(2)
+	logo := logoStyle.Render("TUSK")
+
+	taglineStyle := lipgloss.NewStyle().
+		Italic(true).
+		Foreground(lipgloss.Color("#a0aec0"))
+	tagline := taglineStyle.Render("Task Management Simplified")
+
+	leftSection := lipgloss.JoinVertical(
+		lipgloss.Left,
+		logo,
+		tagline,
+	)
+
+	// Middle section - Current time and date
+	timeStyle := lipgloss.NewStyle().
+		Align(lipgloss.Center).
+		Bold(true)
+	dateStyle := lipgloss.NewStyle().
+		Align(lipgloss.Center).
+		Foreground(lipgloss.Color("#a0aec0"))
+
+	timeDisplay := timeStyle.Render(m.currentTime.Format("15:04:05"))
+	dateDisplay := dateStyle.Render(m.currentTime.Format("Monday, January 2, 2006"))
+
+	middleSection := lipgloss.JoinVertical(
+		lipgloss.Center,
+		timeDisplay,
+		dateDisplay,
+	)
+
+	// Right section - Status information
+	rightSection := ""
+
+	if m.isLoading {
+		// Loading indicator
+		loadingStyle := lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("#90cdf4"))
+
+		rightSection = lipgloss.JoinVertical(
+			lipgloss.Right,
+			loadingStyle.Render("Loading..."),
+			lipgloss.NewStyle().Render(m.statusMessage),
+		)
+	} else if m.statusMessage != "" {
+		// Status message with appropriate styling
+		var statusStyle lipgloss.Style
+		var statusIcon string
+
+		switch m.statusType {
+		case "success":
+			statusStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("#48bb78")).
+				Bold(true)
+			statusIcon = "✓"
+		case "error":
+			statusStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("#f56565")).
+				Bold(true)
+			statusIcon = "✗"
+		case "info":
+			statusStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("#4299e1")).
+				Bold(true)
+			statusIcon = "ℹ"
+		default:
+			statusStyle = lipgloss.NewStyle().
+				Foreground(lipgloss.Color("#a0aec0"))
+			statusIcon = "→"
+		}
+
+		rightSection = lipgloss.JoinVertical(
+			lipgloss.Right,
+			statusStyle.Render(statusIcon+" "+m.statusMessage),
+			"", // Empty line for vertical spacing
+		)
 	}
 
-	// Three-column layout
+	// Calculate widths for each section
+	sectionWidth := m.width / 3
+
+	// Style each section with appropriate width
+	leftSectionStyled := lipgloss.NewStyle().
+		Width(sectionWidth).
+		Align(lipgloss.Left).
+		Render(leftSection)
+
+	middleSectionStyled := lipgloss.NewStyle().
+		Width(sectionWidth).
+		Align(lipgloss.Center).
+		Render(middleSection)
+
+	rightSectionStyled := lipgloss.NewStyle().
+		Width(sectionWidth).
+		Align(lipgloss.Right).
+		Render(rightSection)
+
+	// Join the sections horizontally
+	headerContent := lipgloss.JoinHorizontal(
+		lipgloss.Center,
+		leftSectionStyled,
+		middleSectionStyled,
+		rightSectionStyled,
+	)
+
+	// Apply the header style to the content
+	return headerStyle.Render(headerContent)
+}
+
+// View renders the current state of the model as a string.
+func (m *Model) View() string {
+	// Render the header first
+	header := m.renderHeader()
+
+	// For the create form view, just show header and form
+	if m.viewMode == "create" {
+		createForm := m.renderCreateForm()
+		return lipgloss.JoinVertical(lipgloss.Left, header, "\n", createForm)
+	}
+
+	// Three-column layout for main content
 	var columns []string
 	var visiblePanelCount int
 
@@ -192,7 +322,8 @@ func (m *Model) View() string {
 	content := lipgloss.JoinHorizontal(lipgloss.Top, columns...)
 
 	// Calculate available height for content, leaving space for help text
-	contentHeight := m.height - 2 // Reserve 2 rows for help text with padding
+	// Adjust to account for header and a gap
+	contentHeight := m.height - 2 - 4 // Reserve 2 rows for help text with padding and 4 for header with gap
 
 	// Ensure content fits available height
 	contentStyle := lipgloss.NewStyle().
@@ -216,9 +347,11 @@ func (m *Model) View() string {
 
 	styledHelp := footerStyle.Render(helpText)
 
-	// Position content and help text
+	// Position header, content and help text
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
+		header,
+		"", // Gap after header
 		content,
 		styledHelp,
 	)

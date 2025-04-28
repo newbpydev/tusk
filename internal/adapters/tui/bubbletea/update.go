@@ -17,6 +17,7 @@ package bubbletea
 
 import (
 	"fmt"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/core/task"
@@ -32,6 +33,22 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 		return m, nil
+
+	case TickMsg:
+		// Update the current time
+		m.currentTime = time.Time(msg)
+
+		// Check if status message has expired
+		if !m.statusExpiry.IsZero() && time.Now().After(m.statusExpiry) {
+			m.statusMessage = ""
+			m.statusType = ""
+			m.statusExpiry = time.Time{}
+		}
+
+		// Continue ticking
+		return m, tea.Tick(time.Second, func(t time.Time) tea.Msg {
+			return TickMsg(t)
+		})
 
 	default:
 		return m, nil
@@ -64,10 +81,21 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		switch m.activePanel {
 		case 0: // Task list - move cursor only if task list panel is active
 			if m.cursor > 0 {
+				// Store the previous cursor position to detect changes
+				prevCursor := m.cursor
+
+				// Move cursor up
 				m.cursor--
+
 				// Auto-scroll if cursor moves out of view (above viewport)
 				if m.cursor < m.taskListOffset {
 					m.taskListOffset = m.cursor
+				}
+
+				// If the cursor position changed, reset the scroll position of detail and timeline panels
+				if prevCursor != m.cursor {
+					m.taskDetailsOffset = 0
+					m.timelineOffset = 0
 				}
 			}
 		case 1: // Task details - scroll details panel
@@ -87,11 +115,22 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		switch m.activePanel {
 		case 0: // Task list - move cursor only if task list panel is active
 			if m.cursor < len(m.tasks)-1 {
+				// Store the previous cursor position to detect changes
+				prevCursor := m.cursor
+
+				// Move cursor down
 				m.cursor++
+
 				// Auto-scroll if cursor moves out of view (below viewport)
 				viewportHeight := 10 // Approximate visible lines
 				if m.cursor >= m.taskListOffset+viewportHeight {
 					m.taskListOffset = m.cursor - viewportHeight + 1
+				}
+
+				// If the cursor position changed, reset the scroll position of detail and timeline panels
+				if prevCursor != m.cursor {
+					m.taskDetailsOffset = 0
+					m.timelineOffset = 0
 				}
 			}
 		case 1: // Task details - scroll details panel
@@ -123,6 +162,9 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 		switch m.activePanel {
 		case 0: // Task list
+			// Store the previous cursor position to detect changes
+			prevCursor := m.cursor
+
 			m.taskListOffset -= pageSize
 			if m.taskListOffset < 0 {
 				m.taskListOffset = 0
@@ -131,6 +173,12 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			// Also move cursor if it would be off-screen
 			if m.cursor >= m.taskListOffset+pageSize {
 				m.cursor = m.taskListOffset
+			}
+
+			// If the cursor position changed, reset the scroll position of detail and timeline panels
+			if prevCursor != m.cursor {
+				m.taskDetailsOffset = 0
+				m.timelineOffset = 0
 			}
 		case 1: // Task details
 			m.taskDetailsOffset -= pageSize
@@ -152,6 +200,9 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 		switch m.activePanel {
 		case 0: // Task list
+			// Store the previous cursor position to detect changes
+			prevCursor := m.cursor
+
 			// Calculate max offset based on content
 			maxOffset = max(0, len(m.tasks)-pageSize)
 			m.taskListOffset += pageSize
@@ -162,6 +213,12 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			// Also move cursor if it would be off-screen
 			if m.cursor < m.taskListOffset {
 				m.cursor = m.taskListOffset
+			}
+
+			// If the cursor position changed, reset the scroll position of detail and timeline panels
+			if prevCursor != m.cursor {
+				m.taskDetailsOffset = 0
+				m.timelineOffset = 0
 			}
 		case 1: // Task details - rough estimate for max offset
 			if len(m.tasks) > 0 && m.cursor < len(m.tasks) {
@@ -194,9 +251,18 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		// Scroll to top
 		switch m.activePanel {
 		case 0:
+			// Store the previous cursor position to detect changes
+			prevCursor := m.cursor
+
 			m.taskListOffset = 0
 			// Also move cursor to top if in task list
 			m.cursor = 0
+
+			// If the cursor position changed, reset the scroll position of detail and timeline panels
+			if prevCursor != m.cursor {
+				m.taskDetailsOffset = 0
+				m.timelineOffset = 0
+			}
 		case 1:
 			m.taskDetailsOffset = 0
 		case 2:
@@ -210,10 +276,19 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 		switch m.activePanel {
 		case 0:
+			// Store the previous cursor position to detect changes
+			prevCursor := m.cursor
+
 			// Go to last task and make sure it's visible
 			if len(m.tasks) > 0 {
 				m.cursor = len(m.tasks) - 1
 				m.taskListOffset = max(0, m.cursor-pageSize+1)
+
+				// If the cursor position changed, reset the scroll position of detail and timeline panels
+				if prevCursor != m.cursor {
+					m.taskDetailsOffset = 0
+					m.timelineOffset = 0
+				}
 			}
 		case 1:
 			// Rough estimate for max offset in task details
