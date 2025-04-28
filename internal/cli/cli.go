@@ -1,54 +1,76 @@
-// Package cli provides the CLI commands and functionality for the Tusk application.
+// Package cli implements the command-line interface for the Tusk application
 package cli
 
 import (
+	"context"
+	"fmt"
+	"os"
+
 	"github.com/newbpydev/tusk/internal/adapters/db"
-	tservice "github.com/newbpydev/tusk/internal/service/task"
-	uservice "github.com/newbpydev/tusk/internal/service/user"
+	"github.com/newbpydev/tusk/internal/service/task"
+	"github.com/newbpydev/tusk/internal/service/user"
+	"github.com/newbpydev/tusk/internal/util/logging"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 )
 
 var (
-	// rootCmd is the main command for the Tusk CLI application.
-	// It serves as the entry point for the command-line interface.
-	rootCmd = &cobra.Command{
+	taskSvc      task.Service
+	asyncTaskSvc *task.AsyncTaskService
+	userSvc      user.Service
+	rootCmd      = &cobra.Command{
 		Use:   "tusk",
-		Short: "Tusk: Your Tasks, Tamed with Go",
-		Long:  "A terminal-based task manager with nested subtasks, kanban support, and more.",
+		Short: "Tusk - Task Management System",
+		Long: `Tusk is a task management system for organizing your work and personal projects.
+It supports hierarchical tasks, priorities, due dates, and more.`,
+		// Run: func(cmd *cobra.Command, args []string) {
+		// 	// If no commands or flags, show help by default
+		// 	cmd.Help()
+		// },
 	}
-
-	// Service instances
-	userSvc uservice.Service
-	taskSvc tservice.Service
 )
 
-// Execute runs the root command and handles errors.
-// It initializes the database connection and repositories before executing the command.
+// initServices initializes all application services
+func initServices() {
+	// Connect to database
+	if err := db.Connect(context.Background()); err != nil {
+		logging.Logger.Error("Failed to connect to database", zap.Error(err))
+		fmt.Println("Error: Could not connect to database. Check logs for details.")
+		os.Exit(1)
+	}
+	logger := logging.Logger
+
+	// Initialize the task repository using the global DB pool
+	taskRepo := db.NewSQLTaskRepository(db.Pool)
+
+	// Initialize the regular task service
+	regularTaskSvc := task.NewTaskService(taskRepo)
+
+	// Wrap in async service for non-blocking operations
+	asyncTaskSvc = task.NewAsyncTaskService(regularTaskSvc, logger)
+
+	// Expose as the global task service
+	taskSvc = asyncTaskSvc
+
+	// Initialize the user repository using the global DB pool
+	userRepo := db.NewSQLUserRepo(db.Pool)
+
+	// Initialize the user service
+	userSvc = user.NewUserService(userRepo)
+}
+
+// Execute runs the root command
 func Execute() {
-	// Initialize the services before running the command
+	// Initialize services
 	initServices()
 
-	err := rootCmd.Execute()
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-	// Close the database connection after command execution
-	db.Close()
-
-	cobra.CheckErr(err)
-}
-
-// initServices initializes the database connection and repositories for the CLI application.
-// It sets up the user and task services using the database repositories.
-func initServices() {
-	// The database connection should already be established in main.go
-	uRepo := db.NewSQLUserRepo(db.Pool)
-	tRepo := db.NewSQLTaskRepository(db.Pool)
-
-	userSvc = uservice.NewUserService(uRepo)
-	taskSvc = tservice.NewTaskService(tRepo)
-}
-
-// init is only used to set up commands, not for database connections
-func init() {
-	// Only the TUI command is registered now, via its own init() function in tui.go
-	// Task and user commands have been removed as requested
+	// Clean shutdown of async services
+	if asyncTaskSvc != nil {
+		asyncTaskSvc.Close()
+	}
 }

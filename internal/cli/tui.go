@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"syscall"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -91,7 +90,7 @@ func readLine(prompt string) (string, error) {
 // readPassword reads a password from stdin without echoing
 func readPassword(prompt string) (string, error) {
 	fmt.Print(prompt)
-	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+	bytePassword, err := term.ReadPassword(int(os.Stdin.Fd()))
 	fmt.Println() // Add a newline after the password
 	if err != nil {
 		return "", err

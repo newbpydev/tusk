@@ -104,8 +104,32 @@ func (m *Model) Init() tea.Cmd {
 	})
 }
 
-// TickMsg is a message that's sent when the ticker ticks
-type TickMsg time.Time
+// Message types for asynchronous operations
+type (
+	// TickMsg is a tick from the timer
+	TickMsg time.Time
+
+	// errorMsg represents a generic error
+	errorMsg error
+
+	// statusUpdateErrorMsg represents an error during task status update
+	statusUpdateErrorMsg struct {
+		taskIndex int
+		taskTitle string
+		err       error
+	}
+
+	// statusUpdateSuccessMsg represents a successful task status update
+	statusUpdateSuccessMsg struct {
+		task    task.Task
+		message string
+	}
+
+	// tasksRefreshedMsg represents refreshed tasks from a background operation
+	tasksRefreshedMsg struct {
+		tasks []task.Task
+	}
+)
 
 // setStatusMessage sets a status message with a type and expiry duration
 func (m *Model) setStatusMessage(msg string, msgType string, duration time.Duration) {
@@ -145,30 +169,24 @@ func (m *Model) clearLoadingStatus() {
 }
 
 // refreshTasks reloads the task list from the service
-func (m *Model) refreshTasks() tea.Msg {
+func (m *Model) refreshTasks() tea.Cmd {
 	m.setLoadingStatus("Loading tasks...")
 
-	tasks, err := m.taskSvc.List(m.ctx, m.userID)
-	if err != nil {
-		m.err = err
-		m.setErrorStatus(fmt.Sprintf("Error loading tasks: %v", err))
-		return nil
+	// Return a command that will fetch tasks asynchronously
+	return func() tea.Msg {
+		tasks, err := m.taskSvc.List(m.ctx, m.userID)
+		if err != nil {
+			return errorMsg(fmt.Errorf("failed to refresh tasks: %v", err))
+		}
+
+		return tasksRefreshedMsg{
+			tasks: tasks,
+		}
 	}
-
-	m.clearLoadingStatus()
-	m.tasks = tasks
-	m.setInfoStatus("Tasks refreshed")
-
-	// Adjust cursor if needed
-	if m.cursor >= len(m.tasks) && len(m.tasks) > 0 {
-		m.cursor = len(m.tasks) - 1
-	}
-
-	return nil
 }
 
 // toggleTaskCompletion toggles the completion status of the selected task
-func (m *Model) toggleTaskCompletion() tea.Msg {
+func (m *Model) toggleTaskCompletion() tea.Cmd {
 	if len(m.tasks) == 0 || m.cursor >= len(m.tasks) {
 		return nil
 	}
@@ -196,13 +214,13 @@ func (m *Model) toggleTaskCompletion() tea.Msg {
 	// Show subtle loading indicator without blocking the UI
 	m.setInfoStatus("Saving changes...")
 
-	// Start a background operation to update the database
+	// Return a command that will perform the update in the background
 	return func() tea.Msg {
 		// Perform the actual status change in the background
-		_, err := m.taskSvc.ChangeStatus(m.ctx, taskID, newStatus)
+		updatedTask, err := m.taskSvc.ChangeStatus(m.ctx, taskID, newStatus)
 
 		if err != nil {
-			// If there's an error, revert the optimistic update
+			// If there's an error, revert the optimistic update and notify
 			return statusUpdateErrorMsg{
 				taskIndex: m.cursor,
 				err:       err,
@@ -210,59 +228,55 @@ func (m *Model) toggleTaskCompletion() tea.Msg {
 			}
 		}
 
-		// Refresh tasks in the background to ensure data consistency
-		// but the UI is already updated so user sees the change immediately
-		tasks, err := m.taskSvc.List(m.ctx, m.userID)
-		if err != nil {
-			return errorMsg(err)
+		// Command succeeded
+		return statusUpdateSuccessMsg{
+			task:    updatedTask,
+			message: fmt.Sprintf("Task '%s' status updated successfully", taskTitle),
 		}
-
-		return tasksRefreshedMsg{tasks: tasks}
 	}
 }
 
-// Custom message types for handling background operations
-type statusUpdateErrorMsg struct {
-	taskIndex int
-	taskTitle string
-	err       error
-}
-
-type errorMsg error
-
-type tasksRefreshedMsg struct {
-	tasks []task.Task
-}
-
 // deleteCurrentTask deletes the currently selected task
-func (m *Model) deleteCurrentTask() tea.Msg {
+func (m *Model) deleteCurrentTask() tea.Cmd {
 	if len(m.tasks) == 0 || m.cursor >= len(m.tasks) {
 		return nil
 	}
 
 	taskTitle := m.tasks[m.cursor].Title
 	taskID := int64(m.tasks[m.cursor].ID)
+	taskIndex := m.cursor
 
 	m.setLoadingStatus("Deleting task...")
 
-	if err := m.taskSvc.Delete(m.ctx, taskID); err != nil {
-		m.err = err
-		m.setErrorStatus(fmt.Sprintf("Error deleting task: %v", err))
-		return nil
+	// Create a command to delete the task asynchronously
+	return func() tea.Msg {
+		err := m.taskSvc.Delete(m.ctx, taskID)
+		if err != nil {
+			return statusUpdateErrorMsg{
+				taskIndex: taskIndex,
+				err:       err,
+				taskTitle: taskTitle,
+			}
+		}
+
+		// Once deleted, refresh the task list
+		tasks, err := m.taskSvc.List(m.ctx, m.userID)
+		if err != nil {
+			return errorMsg(fmt.Errorf("task deleted but failed to refresh: %v", err))
+		}
+
+		// Go back to list view after deletion
+		m.viewMode = "list"
+
+		// Return a success message and the refreshed tasks
+		return tasksRefreshedMsg{
+			tasks: tasks,
+		}
 	}
-
-	// Success message
-	m.setSuccessStatus(fmt.Sprintf("Task '%s' deleted", taskTitle))
-
-	// Go back to list view after deletion
-	m.viewMode = "list"
-
-	// Refresh tasks after deletion
-	return m.refreshTasks()
 }
 
 // createNewTask creates a new task from the form fields
-func (m *Model) createNewTask() tea.Msg {
+func (m *Model) createNewTask() tea.Cmd {
 	if m.formTitle == "" {
 		m.err = fmt.Errorf("title is required")
 		m.setErrorStatus("Title is required")
@@ -298,30 +312,10 @@ func (m *Model) createNewTask() tea.Msg {
 		description = m.formDescription
 	}
 
-	// Call service to create task
-	// Pass nil for parent ID as this is a root task
-	createdTask, err := m.taskSvc.Create(
-		m.ctx,       // context
-		m.userID,    // user ID
-		nil,         // parent ID (nil for root tasks)
-		m.formTitle, // title
-		description, // description
-		dueDate,     // due date
-		priority,    // priority
-		[]string{},  // tags
-	)
+	// Store form values to be used in the async task
+	title := m.formTitle
 
-	if err != nil {
-		m.err = err
-		m.setErrorStatus(fmt.Sprintf("Error creating task: %v", err))
-		return nil
-	}
-
-	// Set success message
-	m.err = nil
-	m.setSuccessStatus(fmt.Sprintf("Task '%s' successfully created", createdTask.Title))
-
-	// Reset form fields
+	// Reset form fields immediately for better UX
 	m.formTitle = ""
 	m.formDescription = ""
 	m.formPriority = ""
@@ -329,11 +323,39 @@ func (m *Model) createNewTask() tea.Msg {
 	m.formStatus = ""
 	m.activeField = 0
 
-	// Switch to list view
+	// Switch to list view immediately
 	m.viewMode = "list"
 
-	// Refresh tasks
-	return m.refreshTasks()
+	// Return a command to create the task asynchronously
+	return func() tea.Msg {
+		// Call service to create task
+		// Pass nil for parent ID as this is a root task
+		_, err := m.taskSvc.Create(
+			m.ctx,       // context
+			m.userID,    // user ID
+			nil,         // parent ID (nil for root tasks)
+			title,       // title from stored value
+			description, // description
+			dueDate,     // due date
+			priority,    // priority
+			[]string{},  // tags
+		)
+
+		if err != nil {
+			return errorMsg(fmt.Errorf("failed to create task: %v", err))
+		}
+
+		// Once created, fetch the updated task list
+		tasks, err := m.taskSvc.List(m.ctx, m.userID)
+		if err != nil {
+			return errorMsg(fmt.Errorf("task created but failed to refresh: %v", err))
+		}
+
+		// Return the refreshed task list with a success message
+		return tasksRefreshedMsg{
+			tasks: tasks,
+		}
+	}
 }
 
 // getTasksByTimeCategory organizes tasks into overdue, today, and upcoming categories

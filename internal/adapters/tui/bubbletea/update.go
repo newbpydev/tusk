@@ -55,8 +55,21 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.err = msg.err
 		m.setErrorStatus(fmt.Sprintf("Error updating task '%s': %v", msg.taskTitle, msg.err))
 
-		// Refresh tasks to ensure UI is in sync with database
-		return m, m.refreshTasks
+		// Refresh tasks to ensure UI is in sync with DB
+		return m, m.refreshTasks()
+
+	case statusUpdateSuccessMsg:
+		// Handle successful task status update
+		m.setSuccessStatus(msg.message)
+
+		// Update the task in our local cache to ensure UI reflects the change
+		for i := range m.tasks {
+			if m.tasks[i].ID == msg.task.ID {
+				m.tasks[i] = msg.task
+				break
+			}
+		}
+		return m, nil
 
 	case tasksRefreshedMsg:
 		// Handle successful background task refresh
@@ -381,12 +394,12 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "c":
 		// Toggle completion status only if task list is active
 		if m.activePanel == 0 && len(m.tasks) > 0 {
-			return m, m.toggleTaskCompletion
+			return m, m.toggleTaskCompletion()
 		}
 
 	case "r":
 		// Refresh task list
-		return m, m.refreshTasks
+		return m, m.refreshTasks()
 
 	case "s":
 		// Change sort order (not implemented yet)
@@ -464,13 +477,13 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "d":
 		// Only allow deletion if task list panel is active
 		if m.activePanel == 0 {
-			return m, m.deleteCurrentTask
+			return m, m.deleteCurrentTask()
 		}
 
 	case "c":
 		// Only allow toggling completion if task list panel is active
 		if m.activePanel == 0 {
-			return m, m.toggleTaskCompletion
+			return m, m.toggleTaskCompletion()
 		}
 
 	case "n":
@@ -729,7 +742,7 @@ func (m *Model) handleCreateFormKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			}
 
 			// Create the task
-			return m, m.createNewTask
+			return m, m.createNewTask()
 		}
 
 		// Move to next field
@@ -793,13 +806,13 @@ func (m *Model) handleInputField(msg tea.KeyMsg, field *string) (tea.Model, tea.
 	case tea.KeyEnter:
 		// Move to the next field or submit if on the last field
 		if m.activeField == 4 { // Submit button field
-			// Validate that title field is not empty
+			// Validate that title is not empty
 			if m.formTitle == "" {
 				m.err = fmt.Errorf("title is required")
 				return m, nil
 			}
 			// Create the task
-			return m, m.createNewTask
+			return m, m.createNewTask()
 		}
 
 		// Move to next field
@@ -860,7 +873,7 @@ func (m *Model) handleDateField(msg tea.KeyMsg, field *string) (tea.Model, tea.C
 				return m, nil
 			}
 			// Create the task
-			return m, m.createNewTask
+			return m, m.createNewTask()
 		}
 
 		// Move to next field
