@@ -61,35 +61,58 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, tea.Quit
 
 	case "up", "k":
-		if m.cursor > 0 {
-			m.cursor--
-
-			// Auto-scroll if cursor moves out of view (above viewport)
-			switch m.activePanel {
-			case 0: // Task list
+		switch m.activePanel {
+		case 0: // Task list - move cursor only if task list panel is active
+			if m.cursor > 0 {
+				m.cursor--
+				// Auto-scroll if cursor moves out of view (above viewport)
 				if m.cursor < m.taskListOffset {
 					m.taskListOffset = m.cursor
 				}
-			case 1: // Task details - no cursor-based scrolling
-			case 2: // Timeline - no cursor-based scrolling
+			}
+		case 1: // Task details - scroll details panel
+			m.taskDetailsOffset -= 1
+			if m.taskDetailsOffset < 0 {
+				m.taskDetailsOffset = 0
+			}
+		case 2: // Timeline - scroll timeline panel
+			m.timelineOffset -= 1
+			if m.timelineOffset < 0 {
+				m.timelineOffset = 0
 			}
 		}
 		return m, nil
 
 	case "down", "j":
-		if m.cursor < len(m.tasks)-1 {
-			m.cursor++
-
-			// Auto-scroll if cursor moves out of view (below viewport)
-			// Assuming ~10 visible lines in viewport after headers
-			viewportHeight := 10
-			switch m.activePanel {
-			case 0: // Task list
+		switch m.activePanel {
+		case 0: // Task list - move cursor only if task list panel is active
+			if m.cursor < len(m.tasks)-1 {
+				m.cursor++
+				// Auto-scroll if cursor moves out of view (below viewport)
+				viewportHeight := 10 // Approximate visible lines
 				if m.cursor >= m.taskListOffset+viewportHeight {
 					m.taskListOffset = m.cursor - viewportHeight + 1
 				}
-			case 1: // Task details - no cursor-based scrolling
-			case 2: // Timeline - no cursor-based scrolling
+			}
+		case 1: // Task details - scroll details panel
+			// Rough estimate of content length
+			maxOffset := 15 // Base value
+			if len(m.tasks) > 0 && m.cursor < len(m.tasks) && m.tasks[m.cursor].Description != nil {
+				maxOffset += len(*m.tasks[m.cursor].Description) / 30
+			}
+
+			m.taskDetailsOffset += 1
+			if m.taskDetailsOffset > maxOffset {
+				m.taskDetailsOffset = maxOffset
+			}
+		case 2: // Timeline - scroll timeline panel
+			// Rough estimate of content length
+			overdue, today, upcoming := m.getTasksByTimeCategory()
+			maxOffset := len(overdue) + len(today) + len(upcoming) + 10 // +10 for headers and spacing
+
+			m.timelineOffset += 1
+			if m.timelineOffset > maxOffset {
+				m.timelineOffset = maxOffset
 			}
 		}
 		return m, nil
@@ -248,14 +271,15 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case "enter":
-		if len(m.tasks) > 0 {
+		// Only respond to enter if task list is active
+		if m.activePanel == 0 && len(m.tasks) > 0 {
 			m.viewMode = "detail"
 			return m, nil
 		}
 
 	case "c":
-		// Toggle completion status
-		if len(m.tasks) > 0 {
+		// Toggle completion status only if task list is active
+		if m.activePanel == 0 && len(m.tasks) > 0 {
 			return m, m.toggleTaskCompletion
 		}
 
@@ -330,19 +354,26 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case "e":
-		m.viewMode = "edit"
-		return m, nil
+		// Only allow editing if task list panel is active
+		if m.activePanel == 0 {
+			m.viewMode = "edit"
+			return m, nil
+		}
 
 	case "d":
-		// Delete task
-		return m, m.deleteCurrentTask
+		// Only allow deletion if task list panel is active
+		if m.activePanel == 0 {
+			return m, m.deleteCurrentTask
+		}
 
 	case "c":
-		// Toggle completion status
-		return m, m.toggleTaskCompletion
+		// Only allow toggling completion if task list panel is active
+		if m.activePanel == 0 {
+			return m, m.toggleTaskCompletion
+		}
 
 	case "n":
-		// Create new task
+		// Create new task (available from any panel)
 		m.viewMode = "create"
 		// Initialize form with default values
 		m.formStatus = string(task.StatusTodo)
