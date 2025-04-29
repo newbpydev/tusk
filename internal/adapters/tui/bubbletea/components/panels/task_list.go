@@ -37,121 +37,43 @@ type TaskListProps struct {
 	ClearSuccess func()
 }
 
-// RenderTaskList renders the first column with the list of tasks
+// RenderTaskList renders the task list panel with a fixed header and scrollable content
 func RenderTaskList(props TaskListProps) string {
-	// Build the header content
-	var headerContent strings.Builder
-	headerContent.WriteString(props.Styles.Title.Render("Tasks") + "\n\n")
+	headerContent := ""
 
-	// Display error message if exists
 	if props.Error != nil {
-		headerContent.WriteString(fmt.Sprintf("Error: %v\n\n", props.Error))
+		headerContent += fmt.Sprintf("Error: %v\n\n", props.Error)
 	}
 
-	// Display success message if exists
 	if props.SuccessMsg != "" {
-		headerContent.WriteString(props.Styles.Done.Render(fmt.Sprintf("✓ %s\n\n", props.SuccessMsg)))
-		// Clear the success message after it's been displayed once
+		headerContent += props.Styles.Done.Render(fmt.Sprintf("✓ %s\n\n", props.SuccessMsg))
 		if props.ClearSuccess != nil {
 			defer props.ClearSuccess()
 		}
 	}
 
+	var scrollableContent strings.Builder
 	if len(props.Tasks) == 0 {
-		headerContent.WriteString("No tasks found.\n\n")
-		headerContent.WriteString("Press 'n' to create a new task.\n")
-		// Add padding to maintain consistent layout
-		headerContent.WriteString("\n\n") // Top arrow space
-		headerContent.WriteString("\n")   // Bottom arrow space
-		headerContent.WriteString("\n")   // Position indicator space
-		return headerContent.String()
-	}
-
-	// Use as much space as possible for content
-	// Only reserve minimal space for headers and indicators
-	const headerFooterOffset = 2 // Reduced from previous values
-
-	// frameHeight is total panel height
-	frameHeight := props.Height - headerFooterOffset
-
-	// Count header content lines
-	headerStr := headerContent.String()
-	headerLines := len(strings.Split(strings.TrimSuffix(headerStr, "\n"), "\n"))
-
-	// Reserve space for navigation indicators - always maintain consistent layout
-	const arrowLinesCount = 2   // One for top arrow, one for bottom
-	const positionLineCount = 1 // One for position indicator
-
-	// Compute available height for task list, accounting for fixed layout elements
-	viewableHeight := frameHeight - headerLines - arrowLinesCount - positionLineCount
-	viewableHeight = max(3, viewableHeight) // Ensure minimum reasonable height
-
-	// Make sure cursor is in valid range
-	cursor := min(max(0, props.Cursor), len(props.Tasks)-1)
-
-	// Auto-adjust offset to ensure cursor is always visible
-	offset := props.Offset
-
-	// If cursor is below visible area, adjust offset to show cursor at bottom of view
-	if cursor >= offset+viewableHeight {
-		offset = cursor - viewableHeight + 1
-	}
-
-	// If cursor is above visible area, adjust offset to show cursor at top of view
-	if cursor < offset {
-		offset = cursor
-	}
-
-	// Clamp the offset to valid values
-	maxOffset := max(0, len(props.Tasks)-viewableHeight)
-	offset = min(offset, maxOffset)
-	offset = max(0, offset)
-
-	// Build list content with tasks
-	var tasksContent strings.Builder
-
-	// Always reserve space for up indicator - show it only if needed
-	if offset > 0 {
-		tasksContent.WriteString(props.Styles.Help.Render("↑ More tasks above ↑") + "\n")
+		scrollableContent.WriteString("No tasks found.\n\nPress 'n' to create a new task.\n")
 	} else {
-		tasksContent.WriteString("\n") // Empty line to maintain spacing
-	}
-
-	// Check if we can display all tasks
-	if len(props.Tasks) <= viewableHeight {
-		// If we have enough space, display all tasks
 		for i, t := range props.Tasks {
-			renderTaskLine(&tasksContent, t, i, cursor, props.Styles)
-		}
-
-		// Add padding if necessary to maintain consistent height
-		for i := len(props.Tasks); i < viewableHeight; i++ {
-			tasksContent.WriteString("\n")
-		}
-	} else {
-		// Otherwise, display tasks with scrolling
-		visibleStartIdx := offset
-		visibleEndIdx := min(offset+viewableHeight, len(props.Tasks))
-
-		// Render the currently visible tasks
-		for i := visibleStartIdx; i < visibleEndIdx; i++ {
-			renderTaskLine(&tasksContent, props.Tasks[i], i, cursor, props.Styles)
+			renderTaskLine(&scrollableContent, t, i, props.Cursor, props.Styles)
 		}
 	}
 
-	// Always reserve space for down indicator - show it only if needed
-	if offset+viewableHeight < len(props.Tasks) {
-		tasksContent.WriteString(props.Styles.Help.Render("↓ More tasks below ↓") + "\n")
-	} else {
-		tasksContent.WriteString("\n") // Empty line to maintain spacing
-	}
-
-	// Always display position indicator but customize it based on list state
-	position := fmt.Sprintf("[%d/%d]", cursor+1, len(props.Tasks))
-	tasksContent.WriteString(props.Styles.Help.Render(position))
-
-	// Combine header and task list
-	return headerContent.String() + tasksContent.String()
+	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
+		Title:             "Tasks",
+		HeaderContent:     headerContent,
+		ScrollableContent: scrollableContent.String(),
+		EmptyMessage:      "No tasks available",
+		Width:             props.Width,
+		Height:            props.Height,
+		Offset:            props.Offset,
+		CursorPosition:    props.Cursor,
+		Styles:            props.Styles,
+		IsActive:          props.IsActive,
+		BorderColor:       shared.ColorBorder,
+	})
 }
 
 // renderTaskLine renders a single task line

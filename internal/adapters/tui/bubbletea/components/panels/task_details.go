@@ -18,6 +18,7 @@ package panels
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/core/task"
@@ -34,121 +35,95 @@ type TaskDetailsProps struct {
 	IsActive bool
 }
 
-// RenderTaskDetails renders the second column with details of the currently selected task
+// RenderTaskDetails renders the task details panel with a fixed header and scrollable content
 func RenderTaskDetails(props TaskDetailsProps) string {
-	// Always keep the title fixed at top with consistent positioning
-	headerContent := props.Styles.Title.Render("Task Details") + "\n\n"
-
-	// Total height available for the scrollable content area
-	headerLines := 2 // "Task Details" + blank line
-	scrollableHeight := max(1, props.Height-headerLines)
-
-	// The message to show when no content is available
-	emptyContent := func(message string) string {
-		// Pad the message to fill the scrollable height to maintain panel dimensions
-		padding := ""
-		msgLines := strings.Count(message, "\n") + 1
-		if msgLines < scrollableHeight {
-			padding = strings.Repeat("\n", scrollableHeight-msgLines)
-		}
-		return message + padding
-	}
-
-	// Guard against negative height which can cause array bounds errors
-	if props.Height < 5 {
-		return headerContent + emptyContent("Window too small")
-	}
-
-	// Handle empty task list
-	if len(props.Tasks) == 0 {
-		return headerContent + emptyContent("No tasks yet. Press 'n' to create your first task.\n\n"+
-			props.Styles.Help.Render("Tip: You can organize tasks with priorities and due dates!"))
-	}
-
-	// Handle invalid cursor
-	if props.Cursor >= len(props.Tasks) {
-		return headerContent + emptyContent("No task selected")
-	}
-
-	// Build the scrollable content (everything except the header)
 	var scrollableContent strings.Builder
-	t := props.Tasks[props.Cursor]
 
-	// Task title
-	scrollableContent.WriteString(props.Styles.Title.Render("Title: ") + t.Title + "\n\n")
+	if len(props.Tasks) == 0 {
+		scrollableContent.WriteString("No tasks yet. Press 'n' to create your first task.\n\n")
+		scrollableContent.WriteString(props.Styles.Help.Render("Tip: You can organize tasks with priorities and due dates!"))
+	} else if props.Cursor < len(props.Tasks) {
+		t := props.Tasks[props.Cursor]
 
-	// Task description
-	scrollableContent.WriteString(props.Styles.Title.Render("Description: ") + "\n")
-	if t.Description != nil && *t.Description != "" {
-		scrollableContent.WriteString(*t.Description + "\n\n")
-	} else {
-		scrollableContent.WriteString("No description\n\n")
-	}
+		// Add more detailed task information with formatting to make it more scrollable
+		scrollableContent.WriteString(props.Styles.Title.Render("Title: ") + t.Title + "\n\n")
 
-	// Status
-	scrollableContent.WriteString(props.Styles.Title.Render("Status: "))
-	switch t.Status {
-	case task.StatusDone:
-		scrollableContent.WriteString(props.Styles.Done.Render(string(t.Status)))
-	case task.StatusInProgress:
-		scrollableContent.WriteString(props.Styles.InProgress.Render(string(t.Status)))
-	default:
-		scrollableContent.WriteString(props.Styles.Todo.Render(string(t.Status)))
-	}
-	scrollableContent.WriteString("\n\n")
+		// Status with appropriate styling
+		statusLabel := props.Styles.Title.Render("Status: ")
+		var statusStyle = props.Styles.Todo
+		switch t.Status {
+		case task.StatusDone:
+			statusStyle = props.Styles.Done
+		case task.StatusInProgress:
+			statusStyle = props.Styles.InProgress
+		}
+		scrollableContent.WriteString(statusLabel + statusStyle.Render(string(t.Status)) + "\n\n")
 
-	// Priority
-	scrollableContent.WriteString(props.Styles.Title.Render("Priority: "))
-	switch t.Priority {
-	case task.PriorityHigh:
-		scrollableContent.WriteString(props.Styles.HighPriority.Render(string(t.Priority)))
-	case task.PriorityMedium:
-		scrollableContent.WriteString(props.Styles.MediumPriority.Render(string(t.Priority)))
-	default:
-		scrollableContent.WriteString(props.Styles.LowPriority.Render(string(t.Priority)))
-	}
-	scrollableContent.WriteString("\n\n")
+		// Priority with appropriate styling
+		priorityLabel := props.Styles.Title.Render("Priority: ")
+		var priorityStyle = props.Styles.LowPriority
+		switch t.Priority {
+		case task.PriorityHigh:
+			priorityStyle = props.Styles.HighPriority
+		case task.PriorityMedium:
+			priorityStyle = props.Styles.MediumPriority
+		}
+		scrollableContent.WriteString(priorityLabel + priorityStyle.Render(string(t.Priority)) + "\n\n")
 
-	// Due date
-	scrollableContent.WriteString(props.Styles.Title.Render("Due date: "))
-	if t.DueDate != nil {
-		scrollableContent.WriteString(t.DueDate.Format("2006-01-02"))
-	} else {
-		scrollableContent.WriteString("No due date")
-	}
-	scrollableContent.WriteString("\n\n")
+		// Due date if available
+		if t.DueDate != nil {
+			dueLabel := props.Styles.Title.Render("Due Date: ")
+			dueDate := t.DueDate.Format("2006-01-02")
 
-	// Subtasks section
-	scrollableContent.WriteString(props.Styles.Title.Render("Subtasks:") + "\n")
-	if len(t.SubTasks) > 0 {
-		for _, st := range t.SubTasks {
-			statusSymbol := "[ ]"
-			var statusStyle = props.Styles.Todo
-
-			switch st.Status {
-			case task.StatusDone:
-				statusSymbol = "[✓]"
-				statusStyle = props.Styles.Done
-			case task.StatusInProgress:
-				statusSymbol = "[⟳]"
-				statusStyle = props.Styles.InProgress
+			// Show if overdue
+			if t.DueDate.Before(time.Now()) && t.Status != task.StatusDone {
+				dueDate = props.Styles.HighPriority.Render(dueDate + " (Overdue)")
 			}
 
-			scrollableContent.WriteString(fmt.Sprintf("  %s %s\n", statusStyle.Render(statusSymbol), st.Title))
+			scrollableContent.WriteString(dueLabel + dueDate + "\n\n")
 		}
+
+		// Description
+		descriptionLabel := props.Styles.Title.Render("Description: ")
+		if t.Description != nil && *t.Description != "" {
+			// Format description with word wrapping to fit panel
+			description := *t.Description
+			scrollableContent.WriteString(descriptionLabel + "\n" + description + "\n\n")
+		} else {
+			scrollableContent.WriteString(descriptionLabel + "No description provided\n\n")
+		}
+
+		// Created/Updated timestamps
+		if !t.CreatedAt.IsZero() {
+			scrollableContent.WriteString(props.Styles.Title.Render("Created: ") + t.CreatedAt.Format("2006-01-02 15:04") + "\n")
+		}
+
+		if !t.UpdatedAt.IsZero() {
+			scrollableContent.WriteString(props.Styles.Title.Render("Updated: ") + t.UpdatedAt.Format("2006-01-02 15:04") + "\n")
+		}
+
+		// Add extra info to make the content more scrollable for testing
+		scrollableContent.WriteString("\n" + props.Styles.Help.Render("Task ID: ") + fmt.Sprintf("%d", t.ID) + "\n")
+
+		// Add help text at the bottom
+		scrollableContent.WriteString("\n" + props.Styles.Help.Render("Press 'e' to edit task") + "\n")
+		scrollableContent.WriteString(props.Styles.Help.Render("Press 'c' to toggle completion") + "\n")
+		scrollableContent.WriteString(props.Styles.Help.Render("Press 'd' to delete task") + "\n")
 	} else {
-		scrollableContent.WriteString("  No subtasks\n")
+		scrollableContent.WriteString("No task selected")
 	}
 
-	// Progress
-	if len(t.SubTasks) > 0 {
-		scrollableContent.WriteString("\n" + props.Styles.Title.Render(fmt.Sprintf("Progress: %d%% (%d/%d tasks completed)\n",
-			int(t.Progress*100), t.CompletedCount, t.TotalCount)))
-	}
-
-	// Get the scrollable content with proper height management
-	scrollableText := scrollableContent.String()
-
-	// Use the shared implementation to create consistently sized scrollable content
-	return headerContent + shared.CreateScrollableContent(scrollableText, props.Offset, scrollableHeight, props.Styles)
+	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
+		Title:             "Task Details",
+		ScrollableContent: scrollableContent.String(),
+		EmptyMessage:      "No tasks available",
+		Width:             props.Width,
+		Height:            props.Height,
+		Offset:            props.Offset,
+		Styles:            props.Styles,
+		IsActive:          props.IsActive,
+		BorderColor:       shared.ColorBorder,
+		// Pass a virtual cursor position to enable scrolling even without a real cursor
+		CursorPosition: props.Offset,
+	})
 }

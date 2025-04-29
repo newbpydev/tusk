@@ -34,86 +34,157 @@ type TimelineProps struct {
 	IsActive bool
 }
 
-// RenderTimeline renders the third column with time-based task categories
+// RenderTimeline renders the timeline panel with a fixed header and scrollable content
 func RenderTimeline(props TimelineProps) string {
-	// Always keep the title fixed at top with consistent positioning
-	headerContent := props.Styles.Title.Render("Timeline") + "\n\n"
-
-	// Total height available for the scrollable content area
-	headerLines := 2 // "Timeline" + blank line
-	scrollableHeight := max(1, props.Height-headerLines)
-
-	// The message to show when no content is available
-	emptyContent := func(message string) string {
-		// Pad the message to fill the scrollable height to maintain panel dimensions
-		padding := ""
-		msgLines := strings.Count(message, "\n") + 1
-		if msgLines < scrollableHeight {
-			padding = strings.Repeat("\n", scrollableHeight-msgLines)
-		}
-		return message + padding
-	}
-
-	// Guard against negative height which can cause array bounds errors
-	if props.Height < 5 {
-		return headerContent + emptyContent("Window too small")
-	}
-
-	if len(props.Tasks) == 0 {
-		return headerContent + emptyContent("No tasks to display in timeline.\n\n"+
-			"Create tasks with due dates to see them organized here.")
-	}
-
-	// Build the scrollable content (everything except the header)
 	var scrollableContent strings.Builder
-
 	overdue, today, upcoming := getTasksByTimeCategory(props.Tasks)
 
-	// Overdue section
+	// Create a visually rich timeline that's worth scrolling through
 	scrollableContent.WriteString(props.Styles.HighPriority.Bold(true).Render("Overdue:") + "\n")
 	if len(overdue) > 0 {
-		for _, t := range overdue {
+		for i, t := range overdue {
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
+				daysSince := int(time.Since(*t.DueDate).Hours() / 24)
+				dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysSince)
 			}
-			scrollableContent.WriteString(fmt.Sprintf("  %s (%s)\n", t.Title, dueDate))
+
+			// Add status indicator
+			var statusSymbol string
+			switch t.Status {
+			case task.StatusDone:
+				statusSymbol = "[✓]"
+			case task.StatusInProgress:
+				statusSymbol = "[⟳]"
+			default:
+				statusSymbol = "[ ]"
+			}
+
+			line := fmt.Sprintf("  %s %s (%s)\n", statusSymbol, t.Title, props.Styles.HighPriority.Render(dueDate))
+			scrollableContent.WriteString(line)
+
+			// Add a short description if available
+			if t.Description != nil && *t.Description != "" {
+				desc := *t.Description
+				if len(desc) > 50 {
+					desc = desc[:47] + "..."
+				}
+				scrollableContent.WriteString(fmt.Sprintf("     %s\n", props.Styles.Help.Render(desc)))
+			}
+
+			// Add a separator between tasks except for the last one
+			if i < len(overdue)-1 {
+				scrollableContent.WriteString("     ---\n")
+			}
 		}
 	} else {
-		scrollableContent.WriteString("  No overdue tasks\n")
+		scrollableContent.WriteString("  " + props.Styles.Help.Render("No overdue tasks\n"))
 	}
 	scrollableContent.WriteString("\n")
 
-	// Today section
 	scrollableContent.WriteString(props.Styles.MediumPriority.Bold(true).Render("Today:") + "\n")
 	if len(today) > 0 {
-		for _, t := range today {
-			scrollableContent.WriteString(fmt.Sprintf("  %s\n", t.Title))
+		for i, t := range today {
+			// Add status indicator
+			var statusSymbol string
+			switch t.Status {
+			case task.StatusDone:
+				statusSymbol = "[✓]"
+			case task.StatusInProgress:
+				statusSymbol = "[⟳]"
+			default:
+				statusSymbol = "[ ]"
+			}
+
+			line := fmt.Sprintf("  %s %s\n", statusSymbol, t.Title)
+			scrollableContent.WriteString(line)
+
+			// Add a short description if available
+			if t.Description != nil && *t.Description != "" {
+				desc := *t.Description
+				if len(desc) > 50 {
+					desc = desc[:47] + "..."
+				}
+				scrollableContent.WriteString(fmt.Sprintf("     %s\n", props.Styles.Help.Render(desc)))
+			}
+
+			// Add a separator between tasks except for the last one
+			if i < len(today)-1 {
+				scrollableContent.WriteString("     ---\n")
+			}
 		}
 	} else {
-		scrollableContent.WriteString("  No tasks due today\n")
+		scrollableContent.WriteString("  " + props.Styles.Help.Render("No tasks due today\n"))
 	}
 	scrollableContent.WriteString("\n")
 
-	// Upcoming section
 	scrollableContent.WriteString(props.Styles.LowPriority.Bold(true).Render("Upcoming:") + "\n")
 	if len(upcoming) > 0 {
-		for _, t := range upcoming {
+		for i, t := range upcoming {
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
+				daysUntil := int(t.DueDate.Sub(time.Now()).Hours() / 24)
+				if daysUntil == 1 {
+					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
+				} else {
+					dueDate = fmt.Sprintf("%s (in %d days)", dueDate, daysUntil)
+				}
 			}
-			scrollableContent.WriteString(fmt.Sprintf("  %s (%s)\n", t.Title, dueDate))
+
+			// Add status indicator
+			var statusSymbol string
+			switch t.Status {
+			case task.StatusDone:
+				statusSymbol = "[✓]"
+			case task.StatusInProgress:
+				statusSymbol = "[⟳]"
+			default:
+				statusSymbol = "[ ]"
+			}
+
+			line := fmt.Sprintf("  %s %s (%s)\n", statusSymbol, t.Title, props.Styles.LowPriority.Render(dueDate))
+			scrollableContent.WriteString(line)
+
+			// Add a short description if available
+			if t.Description != nil && *t.Description != "" {
+				desc := *t.Description
+				if len(desc) > 50 {
+					desc = desc[:47] + "..."
+				}
+				scrollableContent.WriteString(fmt.Sprintf("     %s\n", props.Styles.Help.Render(desc)))
+			}
+
+			// Add a separator between tasks except for the last one
+			if i < len(upcoming)-1 {
+				scrollableContent.WriteString("     ---\n")
+			}
 		}
 	} else {
-		scrollableContent.WriteString("  No upcoming tasks\n")
+		scrollableContent.WriteString("  " + props.Styles.Help.Render("No upcoming tasks\n"))
 	}
 
-	// Get the scrollable content as text
-	scrollableText := scrollableContent.String()
+	// Add summary at the bottom
+	scrollableContent.WriteString("\n" + props.Styles.Title.Render("Summary:") + "\n")
+	scrollableContent.WriteString(fmt.Sprintf("  Overdue: %d tasks\n", len(overdue)))
+	scrollableContent.WriteString(fmt.Sprintf("  Today: %d tasks\n", len(today)))
+	scrollableContent.WriteString(fmt.Sprintf("  Upcoming: %d tasks\n", len(upcoming)))
+	scrollableContent.WriteString(fmt.Sprintf("  Total: %d tasks\n", len(props.Tasks)))
 
-	// Use the shared implementation to create consistently sized scrollable content
-	return headerContent + shared.CreateScrollableContent(scrollableText, props.Offset, scrollableHeight, props.Styles)
+	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
+		Title:             "Timeline",
+		ScrollableContent: scrollableContent.String(),
+		EmptyMessage:      "No tasks to display in timeline.",
+		Width:             props.Width,
+		Height:            props.Height,
+		Offset:            props.Offset,
+		Styles:            props.Styles,
+		IsActive:          props.IsActive,
+		BorderColor:       shared.ColorBorder,
+		// Use offset as virtual cursor position to enable scrolling
+		CursorPosition: props.Offset,
+	})
 }
 
 // getTasksByTimeCategory organizes tasks into overdue, today, and upcoming categories

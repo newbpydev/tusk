@@ -30,11 +30,11 @@ type PanelProps struct {
 	BorderColor string
 }
 
-// RenderPanel wraps content with a panel border
+// RenderPanel wraps content without borders to avoid double borders
 func RenderPanel(props PanelProps) string {
-	const borderWidth = 1     // Width of border on each side
-	const paddingWidth = 0    // Reduced padding to 0 (was 1)
-	const totalFrameWidth = 2 // Total extra width: (borderWidth) * 2 (removed padding)
+	const borderWidth = 0     // Set border width to 0 to remove borders
+	const paddingWidth = 0    // Keep padding as is
+	const totalFrameWidth = 0 // No extra width for borders
 
 	// Content width is panel width minus frame elements for consistency
 	contentWidth := props.Width - totalFrameWidth
@@ -62,40 +62,7 @@ func RenderPanel(props PanelProps) string {
 		styledContent += padding
 	}
 
-	// Create frame style - either with visible border or with spacing
-	var frameStyle lipgloss.Style
-	if props.IsActive {
-		// Active panel - visible borders with custom or default color
-		borderColor := props.BorderColor
-		if borderColor == "" {
-			borderColor = ColorBorder
-		}
-
-		frameStyle = lipgloss.NewStyle().
-			BorderStyle(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color(borderColor)).
-			BorderLeft(true).
-			BorderRight(true).
-			BorderTop(true).
-			BorderBottom(true).
-			Padding(0, 0, 0, 0).     // Removed all padding
-			Width(props.Width - 2).  // Account for left and right border
-			Height(props.Height - 2) // Account for top and bottom border
-	} else {
-		// Inactive panel - invisible placeholder borders
-		frameStyle = lipgloss.NewStyle().
-			BorderStyle(lipgloss.HiddenBorder()).
-			BorderLeft(true).
-			BorderRight(true).
-			BorderTop(true).
-			BorderBottom(true).
-			Padding(0, 0, 0, 0).     // Removed all padding
-			Width(props.Width - 2).  // Account for left and right border
-			Height(props.Height - 2) // Account for top and bottom border
-	}
-
-	// Apply frame and return
-	return frameStyle.Render(styledContent)
+	return styledContent
 }
 
 // max returns the larger of two integers
@@ -107,7 +74,7 @@ func max(a, b int) int {
 }
 
 // CreateScrollableContent creates a scrollable view of given content
-func CreateScrollableContent(content string, offset int, maxHeight int, styles *Styles) string {
+func CreateScrollableContent(content string, offset int, maxHeight int, styles *Styles, cursorPosition ...int) string {
 	// Guard against negative height which causes panic
 	if maxHeight <= 0 {
 		return "Content not available (window too small)"
@@ -118,11 +85,8 @@ func CreateScrollableContent(content string, offset int, maxHeight int, styles *
 	// Calculate actual content height
 	contentHeight := len(lines)
 
-	// Determine if scrolling is needed
-	needsScrolling := contentHeight > maxHeight
-
 	// If scrolling not needed, just return the whole content padded to maxHeight
-	if !needsScrolling {
+	if contentHeight <= maxHeight {
 		// Pad content to maxHeight to maintain consistent height
 		if len(lines) < maxHeight {
 			paddingLines := maxHeight - len(lines)
@@ -130,6 +94,28 @@ func CreateScrollableContent(content string, offset int, maxHeight int, styles *
 			return content + padding
 		}
 		return content
+	}
+
+	// Check if we need to adjust scroll position based on cursor
+	// This ensures the selected item is always visible
+	if len(cursorPosition) > 0 && cursorPosition[0] >= 0 {
+		cursor := cursorPosition[0]
+
+		// Define a comfortable padding to keep around the cursor
+		const visibilityPadding = 2
+
+		// Calculate viewport boundaries
+		viewportStart := offset
+		viewportEnd := offset + maxHeight - 1
+
+		// Adjust offset if cursor would be outside visible area
+		if cursor < viewportStart+visibilityPadding {
+			// Cursor is above the viewport or too close to top
+			offset = max(0, cursor-visibilityPadding)
+		} else if cursor > viewportEnd-visibilityPadding {
+			// Cursor is below the viewport or too close to bottom
+			offset = min(contentHeight-maxHeight, cursor-maxHeight+visibilityPadding+1)
+		}
 	}
 
 	// Clamp offset within valid range

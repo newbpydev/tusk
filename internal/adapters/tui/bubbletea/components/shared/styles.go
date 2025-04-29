@@ -41,6 +41,7 @@ type Styles struct {
 	SelectedItem lipgloss.Style
 	Help         lipgloss.Style
 	ActiveBorder lipgloss.Style
+	Background   lipgloss.Style // New field for background color
 
 	// Task status styles
 	Todo       lipgloss.Style
@@ -65,6 +66,7 @@ func DefaultStyles() *Styles {
 		BorderStyle(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color(ColorBorder)).
 		Padding(0, 1)
+	s.Background = lipgloss.NewStyle().Background(lipgloss.Color(ColorOffWhite)) // Initialize background color
 
 	// Set up task status styles
 	s.Todo = lipgloss.NewStyle().Foreground(lipgloss.Color(ColorLightGray))

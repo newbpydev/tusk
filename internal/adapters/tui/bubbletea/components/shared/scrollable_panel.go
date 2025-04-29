@@ -17,6 +17,8 @@ package shared
 
 import (
 	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 // ScrollablePanelProps contains properties for rendering a panel with a fixed header
@@ -35,9 +37,10 @@ type ScrollablePanelProps struct {
 	ScrollableContent string // The main content that will be scrollable
 	EmptyMessage      string // Message to show when ScrollableContent is empty
 	Offset            int    // Current scroll offset for the content
+	CursorPosition    int    // Position of the cursor/selected item (to ensure visibility)
 }
 
-// RenderScrollablePanel renders a panel with a fixed header and scrollable content
+// RenderScrollablePanel ensures borders are properly set and height takes up available space
 func RenderScrollablePanel(props ScrollablePanelProps) string {
 	// Build the complete content with header + scrollable area
 	var fullContent strings.Builder
@@ -93,18 +96,27 @@ func RenderScrollablePanel(props ScrollablePanelProps) string {
 			props.Offset,
 			contentHeight,
 			props.Styles,
+			props.CursorPosition, // Pass cursor position to ensure visibility
 		)
 	}
 
 	// Add the scrollable section to the full content
 	fullContent.WriteString(scrollableSection)
 
+	// Update border colors to make inactive panels invisible
+	// Determine border color based on active state
+	borderColor := props.BorderColor
+	if props.IsActive {
+		borderColor = "#00BFFF" // Bright blue color for active panel
+	} else {
+		borderColor = "#2d3748" // Dark background color that matches terminal background
+	}
+
 	// Render the complete panel with borders
-	return RenderPanel(PanelProps{
-		Content:     fullContent.String(),
-		Width:       props.Width,
-		Height:      props.Height,
-		IsActive:    props.IsActive,
-		BorderColor: props.BorderColor,
-	})
+	return lipgloss.NewStyle().
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(borderColor)).
+		Width(props.Width).
+		Height(props.Height).
+		Render(fullContent.String())
 }
