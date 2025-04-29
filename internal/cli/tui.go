@@ -9,7 +9,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea"
+	app "github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/app"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
@@ -36,7 +36,7 @@ var tuiCmd = &cobra.Command{
 		}
 
 		// Start TUI with authenticated user
-		m := bubbletea.NewModel(ctx, taskSvc, userID)
+		m := app.NewModel(ctx, taskSvc, userID)
 		p := tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion())
 		return p.Start()
 	},
