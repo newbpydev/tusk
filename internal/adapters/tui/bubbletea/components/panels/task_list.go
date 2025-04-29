@@ -60,6 +60,10 @@ func RenderTaskList(props TaskListProps) string {
 	if len(props.Tasks) == 0 {
 		headerContent.WriteString("No tasks found.\n\n")
 		headerContent.WriteString("Press 'n' to create a new task.\n")
+		// Add padding to maintain consistent layout
+		headerContent.WriteString("\n\n") // Top arrow space
+		headerContent.WriteString("\n")   // Bottom arrow space
+		headerContent.WriteString("\n")   // Position indicator space
 		return headerContent.String()
 	}
 
@@ -74,9 +78,13 @@ func RenderTaskList(props TaskListProps) string {
 	headerStr := headerContent.String()
 	headerLines := len(strings.Split(strings.TrimSuffix(headerStr, "\n"), "\n"))
 
-	// Compute available height for task list
-	viewableHeight := frameHeight - headerLines
-	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
+	// Reserve space for navigation indicators - always maintain consistent layout
+	const arrowLinesCount = 2   // One for top arrow, one for bottom
+	const positionLineCount = 1 // One for position indicator
+
+	// Compute available height for task list, accounting for fixed layout elements
+	viewableHeight := frameHeight - headerLines - arrowLinesCount - positionLineCount
+	viewableHeight = max(3, viewableHeight) // Ensure minimum reasonable height
 
 	// Make sure cursor is in valid range
 	cursor := min(max(0, props.Cursor), len(props.Tasks)-1)
@@ -102,9 +110,11 @@ func RenderTaskList(props TaskListProps) string {
 	// Build list content with tasks
 	var tasksContent strings.Builder
 
-	// Add up-scroll indicator only if necessary - don't waste space
+	// Always reserve space for up indicator - show it only if needed
 	if offset > 0 {
 		tasksContent.WriteString(props.Styles.Help.Render("↑ More tasks above ↑") + "\n")
+	} else {
+		tasksContent.WriteString("\n") // Empty line to maintain spacing
 	}
 
 	// Check if we can display all tasks
@@ -113,17 +123,15 @@ func RenderTaskList(props TaskListProps) string {
 		for i, t := range props.Tasks {
 			renderTaskLine(&tasksContent, t, i, cursor, props.Styles)
 		}
+
+		// Add padding if necessary to maintain consistent height
+		for i := len(props.Tasks); i < viewableHeight; i++ {
+			tasksContent.WriteString("\n")
+		}
 	} else {
 		// Otherwise, display tasks with scrolling
 		visibleStartIdx := offset
 		visibleEndIdx := min(offset+viewableHeight, len(props.Tasks))
-
-		// If we have space, show more items
-		if visibleEndIdx-visibleStartIdx < viewableHeight && len(props.Tasks) > visibleEndIdx {
-			// We have more room to show items
-			additionalItems := min(viewableHeight-(visibleEndIdx-visibleStartIdx), len(props.Tasks)-visibleEndIdx)
-			visibleEndIdx += additionalItems
-		}
 
 		// Render the currently visible tasks
 		for i := visibleStartIdx; i < visibleEndIdx; i++ {
@@ -131,16 +139,16 @@ func RenderTaskList(props TaskListProps) string {
 		}
 	}
 
-	// Add down-scroll indicator only if needed
+	// Always reserve space for down indicator - show it only if needed
 	if offset+viewableHeight < len(props.Tasks) {
 		tasksContent.WriteString(props.Styles.Help.Render("↓ More tasks below ↓") + "\n")
+	} else {
+		tasksContent.WriteString("\n") // Empty line to maintain spacing
 	}
 
-	// Position indicator - only if we can't show everything
-	if len(props.Tasks) > viewableHeight {
-		position := fmt.Sprintf("[%d/%d]", cursor+1, len(props.Tasks))
-		tasksContent.WriteString(props.Styles.Help.Render(position))
-	}
+	// Always display position indicator but customize it based on list state
+	position := fmt.Sprintf("[%d/%d]", cursor+1, len(props.Tasks))
+	tasksContent.WriteString(props.Styles.Help.Render(position))
 
 	// Combine header and task list
 	return headerContent.String() + tasksContent.String()
