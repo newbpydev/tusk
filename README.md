@@ -113,14 +113,22 @@ This section outlines what's been completed, what's in progress, and upcoming mi
   - Created task deletion functionality with confirmation prompt.
   - Designed basic styling with `lipgloss` for improved visual hierarchy.
 
+- **Advanced Terminal UI Features** _(2025-04-28)_
+
+  - Implemented detail view for tasks with scrollable content.
+  - Added task creation form with field validation.
+  - Implemented time-based task categorization (overdue, today, upcoming).
+  - Added status messages and loading indicators for better user feedback.
+  - Enhanced UI with priority color-coding and status indicators.
+
 ### ▶️ In Progress
 
-- **Advanced Terminal UI Features**
+- **TUI Enhancements**
 
-  - Implementing detail view and edit mode for tasks.
   - Adding subtask management within the TUI.
   - Working on task filtering and sorting options.
-  - Developing keyboard shortcuts and help menu.
+  - Developing comprehensive keyboard shortcuts and help menu.
+  - Implementing edit mode for existing tasks.
 
 ### ⏳ Upcoming
 
