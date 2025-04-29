@@ -184,15 +184,11 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case 1:
-			m.taskDetailsOffset--
-			if m.taskDetailsOffset < 0 {
-				m.taskDetailsOffset = 0
-			}
+			// For Task Details panel, scroll more efficiently
+			m.taskDetailsOffset = max(0, m.taskDetailsOffset-3)
 		case 2:
-			m.timelineOffset--
-			if m.timelineOffset < 0 {
-				m.timelineOffset = 0
-			}
+			// For Timeline panel, scroll more efficiently
+			m.timelineOffset = max(0, m.timelineOffset-3)
 		}
 		return m, nil
 
@@ -212,22 +208,18 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case 1:
-			// Rough estimate of content length
+			// For Task Details panel, scroll more efficiently
+			// Calculate a rough estimate of content length
 			maxOffset := 15
 			if len(m.tasks) > 0 && m.cursor < len(m.tasks) && m.tasks[m.cursor].Description != nil {
 				maxOffset += len(*m.tasks[m.cursor].Description) / 30
 			}
-			m.taskDetailsOffset++
-			if m.taskDetailsOffset > maxOffset {
-				m.taskDetailsOffset = maxOffset
-			}
+			m.taskDetailsOffset = min(m.taskDetailsOffset+3, maxOffset)
 		case 2:
-			overdue2, today2, upcoming2 := m.getTasksByTimeCategory()
-			m.timelineOffset++
-			maxOffset2 := len(overdue2) + len(today2) + len(upcoming2) + 10
-			if m.timelineOffset > maxOffset2 {
-				m.timelineOffset = maxOffset2
-			}
+			// For Timeline panel, scroll more efficiently
+			overdue, today, upcoming := m.getTasksByTimeCategory()
+			maxOffset := len(overdue) + len(today) + len(upcoming) + 10
+			m.timelineOffset = min(m.timelineOffset+3, maxOffset)
 		}
 		return m, nil
 
