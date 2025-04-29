@@ -105,3 +105,99 @@ func max(a, b int) int {
 	}
 	return b
 }
+
+// CreateScrollableContent creates a scrollable view of given content
+func CreateScrollableContent(content string, offset int, maxHeight int, styles *Styles) string {
+	// Guard against negative height which causes panic
+	if maxHeight <= 0 {
+		return "Content not available (window too small)"
+	}
+
+	lines := strings.Split(content, "\n")
+
+	// Calculate actual content height
+	contentHeight := len(lines)
+
+	// Determine if scrolling is needed
+	needsScrolling := contentHeight > maxHeight
+
+	// If scrolling not needed, just return the whole content padded to maxHeight
+	if !needsScrolling {
+		// Pad content to maxHeight to maintain consistent height
+		if len(lines) < maxHeight {
+			paddingLines := maxHeight - len(lines)
+			padding := strings.Repeat("\n", paddingLines)
+			return content + padding
+		}
+		return content
+	}
+
+	// Clamp offset within valid range
+	maxOffset := max(0, contentHeight-maxHeight)
+	offset = min(offset, maxOffset)
+	offset = max(0, offset)
+
+	// Apply offset and limit number of lines to maxHeight
+	startLine := min(offset, len(lines))
+	endLine := min(startLine+maxHeight, len(lines))
+
+	// Safety check: ensure we have at least one line to show
+	if startLine >= endLine || startLine >= len(lines) {
+		return "Error: Cannot display content (display area too small)"
+	}
+
+	// Calculate available content space
+	// For scroll indicators we use 2 lines max (top and bottom)
+	contentSpace := maxHeight
+	needTopIndicator := offset > 0
+	needBottomIndicator := offset < maxOffset
+
+	if needTopIndicator {
+		contentSpace--
+	}
+	if needBottomIndicator {
+		contentSpace--
+	}
+
+	// Make sure we don't try to show more lines than available space
+	if endLine-startLine > contentSpace {
+		endLine = startLine + contentSpace
+	}
+
+	visibleLines := lines[startLine:endLine]
+
+	// Calculate padding to maintain consistent height
+	remainingSpace := contentSpace - len(visibleLines)
+	padding := ""
+	if remainingSpace > 0 {
+		padding = strings.Repeat("\n", remainingSpace)
+	}
+
+	// Build the content with indicators and padding
+	var result strings.Builder
+
+	if needTopIndicator {
+		result.WriteString("▲\n")
+	}
+
+	result.WriteString(strings.Join(visibleLines, "\n"))
+
+	// Add padding to maintain consistent height
+	if padding != "" {
+		result.WriteString(padding)
+	}
+
+	if needBottomIndicator {
+		result.WriteString("\n▼")
+	}
+
+	return result.String()
+}
+
+// min returns the smaller of two integers
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}

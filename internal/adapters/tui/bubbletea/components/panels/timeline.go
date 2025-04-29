@@ -36,73 +36,84 @@ type TimelineProps struct {
 
 // RenderTimeline renders the third column with time-based task categories
 func RenderTimeline(props TimelineProps) string {
-	// Build full content first
-	var fullContent strings.Builder
+	// Always keep the title fixed at top with consistent positioning
+	headerContent := props.Styles.Title.Render("Timeline") + "\n\n"
 
-	fullContent.WriteString(props.Styles.Title.Render("Timeline") + "\n\n")
+	// Total height available for the scrollable content area
+	headerLines := 2 // "Timeline" + blank line
+	scrollableHeight := max(1, props.Height-headerLines)
+
+	// The message to show when no content is available
+	emptyContent := func(message string) string {
+		// Pad the message to fill the scrollable height to maintain panel dimensions
+		padding := ""
+		msgLines := strings.Count(message, "\n") + 1
+		if msgLines < scrollableHeight {
+			padding = strings.Repeat("\n", scrollableHeight-msgLines)
+		}
+		return message + padding
+	}
+
+	// Guard against negative height which can cause array bounds errors
+	if props.Height < 5 {
+		return headerContent + emptyContent("Window too small")
+	}
 
 	if len(props.Tasks) == 0 {
-		fullContent.WriteString("No tasks to display in timeline.\n\n")
-		fullContent.WriteString("Create tasks with due dates to see them organized here.")
-		return fullContent.String() // No need for scrolling with minimal content
+		return headerContent + emptyContent("No tasks to display in timeline.\n\n"+
+			"Create tasks with due dates to see them organized here.")
 	}
+
+	// Build the scrollable content (everything except the header)
+	var scrollableContent strings.Builder
 
 	overdue, today, upcoming := getTasksByTimeCategory(props.Tasks)
 
 	// Overdue section
-	fullContent.WriteString(props.Styles.HighPriority.Bold(true).Render("Overdue:") + "\n")
+	scrollableContent.WriteString(props.Styles.HighPriority.Bold(true).Render("Overdue:") + "\n")
 	if len(overdue) > 0 {
 		for _, t := range overdue {
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
 			}
-			fullContent.WriteString(fmt.Sprintf("  %s (%s)\n", t.Title, dueDate))
+			scrollableContent.WriteString(fmt.Sprintf("  %s (%s)\n", t.Title, dueDate))
 		}
 	} else {
-		fullContent.WriteString("  No overdue tasks\n")
+		scrollableContent.WriteString("  No overdue tasks\n")
 	}
-	fullContent.WriteString("\n")
+	scrollableContent.WriteString("\n")
 
 	// Today section
-	fullContent.WriteString(props.Styles.MediumPriority.Bold(true).Render("Today:") + "\n")
+	scrollableContent.WriteString(props.Styles.MediumPriority.Bold(true).Render("Today:") + "\n")
 	if len(today) > 0 {
 		for _, t := range today {
-			fullContent.WriteString(fmt.Sprintf("  %s\n", t.Title))
+			scrollableContent.WriteString(fmt.Sprintf("  %s\n", t.Title))
 		}
 	} else {
-		fullContent.WriteString("  No tasks due today\n")
+		scrollableContent.WriteString("  No tasks due today\n")
 	}
-	fullContent.WriteString("\n")
+	scrollableContent.WriteString("\n")
 
 	// Upcoming section
-	fullContent.WriteString(props.Styles.LowPriority.Bold(true).Render("Upcoming:") + "\n")
+	scrollableContent.WriteString(props.Styles.LowPriority.Bold(true).Render("Upcoming:") + "\n")
 	if len(upcoming) > 0 {
 		for _, t := range upcoming {
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
 			}
-			fullContent.WriteString(fmt.Sprintf("  %s (%s)\n", t.Title, dueDate))
+			scrollableContent.WriteString(fmt.Sprintf("  %s (%s)\n", t.Title, dueDate))
 		}
 	} else {
-		fullContent.WriteString("  No upcoming tasks\n")
+		scrollableContent.WriteString("  No upcoming tasks\n")
 	}
 
-	// Use less aggressive height reduction to show more content
-	const headerOffset = 3 // Reduced from previous value
-	viewableHeight := props.Height - headerOffset
-	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
+	// Get the scrollable content as text
+	scrollableText := scrollableContent.String()
 
-	// Check if the content fits without scrolling
-	contentLines := strings.Split(fullContent.String(), "\n")
-	if len(contentLines) <= viewableHeight {
-		// Content fits without scrolling, return as is
-		return fullContent.String()
-	}
-
-	// Apply scrolling logic to the content
-	return createScrollableContent(fullContent.String(), props.Offset, viewableHeight, props.Styles)
+	// Use the shared implementation to create consistently sized scrollable content
+	return headerContent + shared.CreateScrollableContent(scrollableText, props.Offset, scrollableHeight, props.Styles)
 }
 
 // getTasksByTimeCategory organizes tasks into overdue, today, and upcoming categories

@@ -36,70 +36,90 @@ type TaskDetailsProps struct {
 
 // RenderTaskDetails renders the second column with details of the currently selected task
 func RenderTaskDetails(props TaskDetailsProps) string {
-	// Build full content first
-	var fullContent strings.Builder
+	// Always keep the title fixed at top with consistent positioning
+	headerContent := props.Styles.Title.Render("Task Details") + "\n\n"
 
+	// Total height available for the scrollable content area
+	headerLines := 2 // "Task Details" + blank line
+	scrollableHeight := max(1, props.Height-headerLines)
+
+	// The message to show when no content is available
+	emptyContent := func(message string) string {
+		// Pad the message to fill the scrollable height to maintain panel dimensions
+		padding := ""
+		msgLines := strings.Count(message, "\n") + 1
+		if msgLines < scrollableHeight {
+			padding = strings.Repeat("\n", scrollableHeight-msgLines)
+		}
+		return message + padding
+	}
+
+	// Guard against negative height which can cause array bounds errors
+	if props.Height < 5 {
+		return headerContent + emptyContent("Window too small")
+	}
+
+	// Handle empty task list
 	if len(props.Tasks) == 0 {
-		fullContent.WriteString(props.Styles.Title.Render("Task Details") + "\n\n")
-		fullContent.WriteString("No tasks yet. Press 'n' to create your first task.\n\n")
-		fullContent.WriteString(props.Styles.Help.Render("Tip: You can organize tasks with priorities and due dates!"))
-		return fullContent.String()
+		return headerContent + emptyContent("No tasks yet. Press 'n' to create your first task.\n\n"+
+			props.Styles.Help.Render("Tip: You can organize tasks with priorities and due dates!"))
 	}
 
-	if len(props.Tasks) == 0 || props.Cursor >= len(props.Tasks) {
-		fullContent.WriteString(props.Styles.Title.Render("Task Details") + "\n\nNo task selected")
-		return fullContent.String()
+	// Handle invalid cursor
+	if props.Cursor >= len(props.Tasks) {
+		return headerContent + emptyContent("No task selected")
 	}
 
+	// Build the scrollable content (everything except the header)
+	var scrollableContent strings.Builder
 	t := props.Tasks[props.Cursor]
-	fullContent.WriteString(props.Styles.Title.Render("Task Details") + "\n\n")
 
 	// Task title
-	fullContent.WriteString(props.Styles.Title.Render("Title: ") + t.Title + "\n\n")
+	scrollableContent.WriteString(props.Styles.Title.Render("Title: ") + t.Title + "\n\n")
 
 	// Task description
-	fullContent.WriteString(props.Styles.Title.Render("Description: ") + "\n")
+	scrollableContent.WriteString(props.Styles.Title.Render("Description: ") + "\n")
 	if t.Description != nil && *t.Description != "" {
-		fullContent.WriteString(*t.Description + "\n\n")
+		scrollableContent.WriteString(*t.Description + "\n\n")
 	} else {
-		fullContent.WriteString("No description\n\n")
+		scrollableContent.WriteString("No description\n\n")
 	}
 
 	// Status
-	fullContent.WriteString(props.Styles.Title.Render("Status: "))
+	scrollableContent.WriteString(props.Styles.Title.Render("Status: "))
 	switch t.Status {
 	case task.StatusDone:
-		fullContent.WriteString(props.Styles.Done.Render(string(t.Status)))
+		scrollableContent.WriteString(props.Styles.Done.Render(string(t.Status)))
 	case task.StatusInProgress:
-		fullContent.WriteString(props.Styles.InProgress.Render(string(t.Status)))
+		scrollableContent.WriteString(props.Styles.InProgress.Render(string(t.Status)))
 	default:
-		fullContent.WriteString(props.Styles.Todo.Render(string(t.Status)))
+		scrollableContent.WriteString(props.Styles.Todo.Render(string(t.Status)))
 	}
-	fullContent.WriteString("\n\n")
+	scrollableContent.WriteString("\n\n")
 
 	// Priority
-	fullContent.WriteString(props.Styles.Title.Render("Priority: "))
+	scrollableContent.WriteString(props.Styles.Title.Render("Priority: "))
 	switch t.Priority {
 	case task.PriorityHigh:
-		fullContent.WriteString(props.Styles.HighPriority.Render(string(t.Priority)))
+		scrollableContent.WriteString(props.Styles.HighPriority.Render(string(t.Priority)))
 	case task.PriorityMedium:
-		fullContent.WriteString(props.Styles.MediumPriority.Render(string(t.Priority)))
+		scrollableContent.WriteString(props.Styles.MediumPriority.Render(string(t.Priority)))
 	default:
-		fullContent.WriteString(props.Styles.LowPriority.Render(string(t.Priority)))
+		scrollableContent.WriteString(props.Styles.LowPriority.Render(string(t.Priority)))
 	}
-	fullContent.WriteString("\n\n")
+	scrollableContent.WriteString("\n\n")
 
 	// Due date
-	fullContent.WriteString(props.Styles.Title.Render("Due date: "))
+	scrollableContent.WriteString(props.Styles.Title.Render("Due date: "))
 	if t.DueDate != nil {
-		fullContent.WriteString(t.DueDate.Format("2006-01-02"))
+		scrollableContent.WriteString(t.DueDate.Format("2006-01-02"))
 	} else {
-		fullContent.WriteString("No due date")
+		scrollableContent.WriteString("No due date")
 	}
-	fullContent.WriteString("\n\n")
+	scrollableContent.WriteString("\n\n")
 
 	// Subtasks section
-	fullContent.WriteString(props.Styles.Title.Render("Subtasks:") + "\n")
+	scrollableContent.WriteString(props.Styles.Title.Render("Subtasks:") + "\n")
 	if len(t.SubTasks) > 0 {
 		for _, st := range t.SubTasks {
 			statusSymbol := "[ ]"
@@ -114,86 +134,21 @@ func RenderTaskDetails(props TaskDetailsProps) string {
 				statusStyle = props.Styles.InProgress
 			}
 
-			fullContent.WriteString(fmt.Sprintf("  %s %s\n", statusStyle.Render(statusSymbol), st.Title))
+			scrollableContent.WriteString(fmt.Sprintf("  %s %s\n", statusStyle.Render(statusSymbol), st.Title))
 		}
 	} else {
-		fullContent.WriteString("  No subtasks\n")
+		scrollableContent.WriteString("  No subtasks\n")
 	}
 
 	// Progress
 	if len(t.SubTasks) > 0 {
-		fullContent.WriteString("\n" + props.Styles.Title.Render(fmt.Sprintf("Progress: %d%% (%d/%d tasks completed)\n",
+		scrollableContent.WriteString("\n" + props.Styles.Title.Render(fmt.Sprintf("Progress: %d%% (%d/%d tasks completed)\n",
 			int(t.Progress*100), t.CompletedCount, t.TotalCount)))
 	}
 
-	// Use minimal height reduction to maximize content display
-	const headerOffset = 2 // Reduced from previous value of 3
-	viewableHeight := props.Height - headerOffset
-	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
+	// Get the scrollable content with proper height management
+	scrollableText := scrollableContent.String()
 
-	// Check if content fits without scrolling
-	lines := strings.Split(fullContent.String(), "\n")
-	if len(lines) <= viewableHeight {
-		// If content fits without scrolling, display it all
-		return fullContent.String()
-	}
-
-	// Apply scrolling logic to the content
-	return createScrollableContent(fullContent.String(), props.Offset, viewableHeight, props.Styles)
-}
-
-// createScrollableContent creates a scrollable view of given content
-func createScrollableContent(content string, offset int, maxHeight int, styles *shared.Styles) string {
-	lines := strings.Split(content, "\n")
-
-	// Calculate actual content height
-	contentHeight := len(lines)
-
-	// Determine if scrolling is needed
-	needsScrolling := contentHeight > maxHeight
-
-	// If scrolling not needed, just return the whole content
-	if !needsScrolling {
-		return content
-	}
-
-	// Clamp offset within valid range
-	maxOffset := max(0, contentHeight-maxHeight)
-	offset = min(offset, maxOffset)
-	offset = max(0, offset)
-
-	// Apply offset and limit number of lines to maxHeight
-	startLine := min(offset, len(lines))
-	endLine := min(startLine+maxHeight, len(lines))
-
-	// Try to show more content if we have space
-	if endLine-startLine < maxHeight && endLine < len(lines) {
-		additionalLines := min(maxHeight-(endLine-startLine), len(lines)-endLine)
-		endLine += additionalLines
-	}
-
-	visibleLines := lines[startLine:endLine]
-
-	// Add scroll indicators if needed
-	var scrollIndicator strings.Builder
-
-	if offset > 0 && offset < maxOffset {
-		// Both up and down scroll are available
-		scrollIndicator.WriteString("▲\n")
-		scrollIndicator.WriteString(strings.Join(visibleLines, "\n"))
-		scrollIndicator.WriteString("\n▼")
-	} else if offset > 0 {
-		// Only up scroll available
-		scrollIndicator.WriteString("▲\n")
-		scrollIndicator.WriteString(strings.Join(visibleLines, "\n"))
-	} else if offset < maxOffset {
-		// Only down scroll available
-		scrollIndicator.WriteString(strings.Join(visibleLines, "\n"))
-		scrollIndicator.WriteString("\n▼")
-	} else {
-		// No scrolling needed or at exact bounds
-		return strings.Join(visibleLines, "\n")
-	}
-
-	return scrollIndicator.String()
+	// Use the shared implementation to create consistently sized scrollable content
+	return headerContent + shared.CreateScrollableContent(scrollableText, props.Offset, scrollableHeight, props.Styles)
 }
