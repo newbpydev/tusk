@@ -150,8 +150,11 @@ func (m *Model) View() string {
 	}
 
 	// Three-column layout for main content
-	var columns []string
 	var visiblePanelCount int
+	// Calculate panel height precisely: total minus header (including gap) and footer heights
+	const headerHeight = 4 // header height (3) plus gap line
+	const footerHeight = 2 // footer help line (1) plus margin top (1)
+	panelHeight := m.height - headerHeight - footerHeight
 
 	// Count visible panels
 	if m.showTaskList {
@@ -193,6 +196,7 @@ func (m *Model) View() string {
 	}
 
 	// Always create panels with consistent dimensions, with or without borders
+	var columns []string
 	if m.showTaskList {
 		// Create base style for content
 		contentStyle := lipgloss.NewStyle().
@@ -214,7 +218,8 @@ func (m *Model) View() string {
 				BorderTop(true).
 				BorderBottom(true).
 				Padding(paddingWidth).
-				Width(columnWidth - 2) // Account for left and right border
+				Width(columnWidth - 2). // Account for left and right border
+				Height(panelHeight)
 		} else {
 			// Inactive panel - invisible placeholder borders
 			frameStyle = lipgloss.NewStyle().
@@ -224,7 +229,8 @@ func (m *Model) View() string {
 				BorderTop(true).
 				BorderBottom(true).
 				Padding(paddingWidth).
-				Width(columnWidth - 2)
+				Width(columnWidth - 2).
+				Height(panelHeight)
 		}
 
 		// Apply frame and add to columns
@@ -252,7 +258,8 @@ func (m *Model) View() string {
 				BorderTop(true).
 				BorderBottom(true).
 				Padding(paddingWidth).
-				Width(columnWidth - 2) // Account for left and right border
+				Width(columnWidth - 2). // Account for left and right border
+				Height(panelHeight)
 		} else {
 			// Inactive panel - invisible placeholder borders
 			frameStyle = lipgloss.NewStyle().
@@ -262,7 +269,8 @@ func (m *Model) View() string {
 				BorderTop(true).
 				BorderBottom(true).
 				Padding(paddingWidth).
-				Width(columnWidth - 2)
+				Width(columnWidth - 2).
+				Height(panelHeight)
 		}
 
 		// Apply frame and add to columns
@@ -290,7 +298,8 @@ func (m *Model) View() string {
 				BorderTop(true).
 				BorderBottom(true).
 				Padding(paddingWidth).
-				Width(columnWidth - 2) // Account for left and right border
+				Width(columnWidth - 2). // Account for left and right border
+				Height(panelHeight)
 		} else {
 			// Inactive panel - invisible placeholder borders
 			frameStyle = lipgloss.NewStyle().
@@ -300,26 +309,16 @@ func (m *Model) View() string {
 				BorderTop(true).
 				BorderBottom(true).
 				Padding(paddingWidth).
-				Width(columnWidth - 2)
+				Width(columnWidth - 2).
+				Height(panelHeight)
 		}
 
 		// Apply frame and add to columns
 		columns = append(columns, frameStyle.Render(timelineContent))
 	}
 
-	// Join columns horizontally with consistent spacing
+	// join panels horizontally with consistent spacing
 	content := lipgloss.JoinHorizontal(lipgloss.Top, columns...)
-
-	// Calculate available height for content, leaving space for help text
-	// Adjust to account for header and a gap
-	contentHeight := m.height - 2 - 4 // Reserve 2 rows for help text with padding and 4 for header with gap
-
-	// Ensure content fits available height
-	contentStyle := lipgloss.NewStyle().
-		MaxHeight(contentHeight).
-		Height(contentHeight)
-
-	content = contentStyle.Render(content)
 
 	// Add help footer fixed at the bottom with proper styling
 	helpText := m.renderHelpText()
@@ -336,11 +335,11 @@ func (m *Model) View() string {
 
 	styledHelp := footerStyle.Render(helpText)
 
-	// Position header, content and help text
+	// Simple composition with header always at the top
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		header,
-		"", // Gap after header
+		"", // gap line to separate header from panels
 		content,
 		styledHelp,
 	)
@@ -370,10 +369,17 @@ func (m *Model) renderTaskList() string {
 		return headerContent.String()
 	}
 
-	// Estimate the height of the viewport for tasks (after headers)
-	// This determines how many tasks we can show at once
-	viewableHeight := m.height - 14         // Adjust for header, borders, scroll indicators
-	viewableHeight = max(5, viewableHeight) // Ensure minimum reasonable height
+	// Dynamically compute viewableHeight: frameHeight minus headerContent lines and scroll indicator lines
+	const globalHeaderHeight = 3
+	const globalFooterHeight = 2
+	// frameHeight is total panel height inside borders/padding
+	frameHeight := m.height - globalHeaderHeight - globalFooterHeight
+	// Count header content lines
+	headerStr := headerContent.String()
+	headerLines := len(strings.Split(strings.TrimSuffix(headerStr, "\n"), "\n"))
+	// Reserve three lines: top scroll indicator, bottom scroll indicator, and position indicator
+	viewableHeight := frameHeight - headerLines - 3
+	viewableHeight = max(5, viewableHeight)
 
 	// Make sure the cursor is visible
 	if m.cursor < m.taskListOffset {
@@ -392,9 +398,11 @@ func (m *Model) renderTaskList() string {
 	// Build list content with tasks
 	var tasksContent strings.Builder
 
-	// Add up-scroll indicator if needed
+	// Add up-scroll indicator or reserve blank line to maintain layout
 	if m.taskListOffset > 0 {
 		tasksContent.WriteString(m.styles.Help.Render("↑ More tasks above ↑") + "\n")
+	} else {
+		tasksContent.WriteString("\n")
 	}
 
 	// Build the visible task items
@@ -438,9 +446,11 @@ func (m *Model) renderTaskList() string {
 		}
 	}
 
-	// Add down-scroll indicator if needed
+	// Add down-scroll indicator or reserve blank line to maintain layout
 	if visibleEndIdx < len(m.tasks) {
 		tasksContent.WriteString(m.styles.Help.Render("↓ More tasks below ↓") + "\n")
+	} else {
+		tasksContent.WriteString("\n")
 	}
 
 	// Position indicator
