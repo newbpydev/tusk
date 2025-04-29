@@ -218,7 +218,8 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		case 2:
 			// For Timeline panel, scroll more efficiently
 			overdue, today, upcoming := m.getTasksByTimeCategory()
-			maxOffset := len(overdue) + len(today) + len(upcoming) + 10
+			// Add extra padding to ensure reaching the summary section at the bottom
+			maxOffset := len(overdue) + len(today) + len(upcoming) + 15
 			m.timelineOffset = min(m.timelineOffset+3, maxOffset)
 		}
 		return m, nil
@@ -315,7 +316,9 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.taskDetailsOffset = max(0, maxOff-pageSize)
 		case 2:
 			overdue, today, upcoming := m.getTasksByTimeCategory()
-			m.timelineOffset = max(0, len(overdue)+len(today)+len(upcoming)-pageSize)
+			// Increase maximum offset to ensure we can scroll to the very end of the timeline content
+			maxOff := len(overdue) + len(today) + len(upcoming) + 15
+			m.timelineOffset = max(0, maxOff-pageSize)
 		}
 		return m, nil
 
