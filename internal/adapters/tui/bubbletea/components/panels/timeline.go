@@ -166,10 +166,15 @@ func RenderTimeline(props TimelineProps) string {
 	}
 
 	// Add summary at the bottom
+	completedCount := countCompletedTasks(props.Tasks)
+	activeCount := len(props.Tasks) - completedCount
+
 	scrollableContent.WriteString("\n" + props.Styles.Title.Render("Summary:") + "\n")
 	scrollableContent.WriteString(fmt.Sprintf("  Overdue: %d tasks\n", len(overdue)))
 	scrollableContent.WriteString(fmt.Sprintf("  Today: %d tasks\n", len(today)))
 	scrollableContent.WriteString(fmt.Sprintf("  Upcoming: %d tasks\n", len(upcoming)))
+	scrollableContent.WriteString(fmt.Sprintf("  Completed: %d tasks\n", completedCount))
+	scrollableContent.WriteString(fmt.Sprintf("  Active: %d tasks\n", activeCount))
 	scrollableContent.WriteString(fmt.Sprintf("  Total: %d tasks\n", len(props.Tasks)))
 
 	// Calculate the current line based on offset
@@ -191,6 +196,7 @@ func RenderTimeline(props TimelineProps) string {
 }
 
 // getTasksByTimeCategory organizes tasks into overdue, today, and upcoming categories
+// Only returns incomplete tasks for display in timeline
 func getTasksByTimeCategory(tasks []task.Task) ([]task.Task, []task.Task, []task.Task) {
 	var overdue, todayTasks, upcoming []task.Task
 
@@ -199,7 +205,13 @@ func getTasksByTimeCategory(tasks []task.Task) ([]task.Task, []task.Task, []task
 	tomorrow := todayDate.AddDate(0, 0, 1)
 
 	for _, t := range tasks {
+		// Skip tasks that don't have a due date
 		if t.DueDate == nil {
+			continue
+		}
+
+		// Skip completed tasks
+		if t.Status == task.StatusDone || t.IsCompleted {
 			continue
 		}
 
@@ -214,4 +226,15 @@ func getTasksByTimeCategory(tasks []task.Task) ([]task.Task, []task.Task, []task
 	}
 
 	return overdue, todayTasks, upcoming
+}
+
+// countCompletedTasks returns the number of completed tasks from the given task list
+func countCompletedTasks(tasks []task.Task) int {
+	count := 0
+	for _, t := range tasks {
+		if t.Status == task.StatusDone || t.IsCompleted {
+			count++
+		}
+	}
+	return count
 }
