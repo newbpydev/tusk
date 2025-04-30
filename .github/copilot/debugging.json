@@ -1,0 +1,77 @@
+{
+  "debuggingQuestions": [
+    {
+      "question": "Is my setup or configuration correct?",
+      "explanation": "Confirm your environment, dependencies, and configuration files are aligned with expectations."
+    },
+    {
+      "question": "Did the debug log tell me what the actual problem is?",
+      "explanation": "Examine log output closely—often the stack trace or error message pinpoints the culprit."
+    },
+    {
+      "question": "Am I in the right folder or context?",
+      "explanation": "Ensure you're running commands and inspecting files in the intended working directory."
+    },
+    {
+      "question": "What triggered this error—where did it originate?",
+      "explanation": "Ask 'What caused that error?' to trace back through execution flow."
+    },
+    {
+      "question": "Am I dividing the problem space effectively to isolate the cause?",
+      "explanation": "Use a binary-search approach on your codebase: split, test, and narrow down the suspect area."
+    },
+    {
+      "question": "Did we forget to make the correct connections?",
+      "explanation": "Check external integrations, network plugs, database connections, and other 'plugs' to validate assumptions."
+    },
+    {
+      "question": "Do I need to break the work into more manageable sub-parts?",
+      "explanation": "Apply 'divide and conquer'—split large tasks or code sections into smaller, testable units."
+    },
+    {
+      "question": "Have I validated my assumptions at each step?",
+      "explanation": "Explicitly confirm that inputs, outputs, and state transitions match your expectations."
+    },
+    {
+      "question": "Have I tried rubber-duck debugging (explaining the problem out loud)?",
+      "explanation": "Articulating the issue, even to an inanimate object, often reveals hidden mismatches."
+    },
+    {
+      "question": "Have there been recent changes in code or dependencies that could affect behavior?",
+      "explanation": "Use tools like 'git bisect' or review changelogs to spot introduced regressions."
+    },
+    {
+      "question": "Is the input exactly what I expect?",
+      "explanation": "Inspect incoming parameters or data to catch formatting, type, or nil vs. empty‐slice issues."
+    },
+    {
+      "question": "Is the output matching my expectations?",
+      "explanation": "Compare actual results against expected ones to detect logic flaws or transformation errors."
+    }
+  ],
+  "desiredResponseStructure": {
+    "clarifyAndConfirm": [
+      "Restate the task in Go terms (module, package, function)",
+      "List any assumptions (e.g., 'handler uses net/http')",
+      "Ask follow-up questions if context is missing"
+    ],
+    "analysisAndPlanning": [
+      "Break the work into Go-specific subtasks (e.g., update struct tags, adjust interface)",
+      "Explain relevant libraries (standard library or third-party like chi, gorm, cobra)",
+      "Highlight potential pitfalls (nil vs empty slice, pointer vs value receiver)"
+    ],
+    "stepByStepSolutionPlan": [
+      "Edit handler.go to parse pagination parameters",
+      "Update service.go interface and its implementation",
+      "Adjust go.mod if adding or upgrading dependencies",
+      "Run formatting and vetting tools (go fmt, go vet)",
+      "Add or update table-driven tests in *_test.go",
+      "Note complexity or risk for each step (e.g., 'touches auth middleware')"
+    ],
+    "implementation": [
+      "Provide unified-diff-style snippets for the affected .go files",
+      "Clearly mark new code vs. unchanged code",
+      "Include inline comments for non-obvious Go idioms (error wrapping with %w, context usage)"
+    ]
+  }
+}
