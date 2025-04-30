@@ -13,6 +13,7 @@ import (
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/layout"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/panels"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/styles"
 )
@@ -59,6 +60,13 @@ type Model struct {
 
 	// Success message
 	successMsg string
+
+	// Collapsible section management
+	collapsibleManager *hooks.CollapsibleManager
+	// The visual position of the cursor in the task list with sections
+	visualCursor int
+	// Whether the current task is a section header (not a task item)
+	cursorOnHeader bool
 }
 
 // NewModel initializes the bubbletea application model.
@@ -66,19 +74,23 @@ func NewModel(ctx context.Context, svc taskService.Service, userID int64) *Model
 	roots, err := svc.List(ctx, userID)
 
 	m := &Model{
-		ctx:             ctx,
-		tasks:           roots,
-		cursor:          0,
-		err:             err,
-		taskSvc:         svc,
-		userID:          userID,
-		viewMode:        "list",
-		styles:          styles.ActiveStyles,
-		showTaskList:    true,
-		showTaskDetails: true,
-		showTimeline:    true,
-		activePanel:     0,
+		ctx:                ctx,
+		tasks:              roots,
+		cursor:             0,
+		err:                err,
+		taskSvc:            svc,
+		userID:             userID,
+		viewMode:           "list",
+		styles:             styles.ActiveStyles,
+		showTaskList:       true,
+		showTaskDetails:    true,
+		showTimeline:       true,
+		activePanel:        0,
+		collapsibleManager: hooks.NewCollapsibleManager(),
 	}
+
+	// Setup initial collapsible sections
+	m.initCollapsibleSections()
 
 	return m
 }
@@ -163,83 +175,206 @@ func (m *Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 }
 
-// handleListViewKeys processes keyboard input in list view
+// initCollapsibleSections initializes the sections in the task list
+func (m *Model) initCollapsibleSections() {
+	if m.collapsibleManager == nil {
+		m.collapsibleManager = hooks.NewCollapsibleManager()
+	}
+
+	// Count todo and completed tasks
+	var todoCount, completedCount int
+	for _, t := range m.tasks {
+		if t.Status == task.StatusDone {
+			completedCount++
+		} else {
+			todoCount++
+		}
+	}
+
+	// Clear and reinitialize sections
+	m.collapsibleManager.ClearSections()
+
+	// Add our sections - order matters as it determines the index
+	m.collapsibleManager.AddSection(hooks.SectionTypeTodo, "Todo", todoCount, 0)
+	m.collapsibleManager.AddSection(hooks.SectionTypeProjects, "Projects", 0, todoCount)
+	m.collapsibleManager.AddSection(hooks.SectionTypeCompleted, "Completed", completedCount, todoCount)
+
+	// Initialize visual cursor at the right position
+	m.updateVisualCursorFromTaskCursor()
+}
+
+// updateVisualCursorFromTaskCursor translates the task index (cursor) to the visual cursor position
+func (m *Model) updateVisualCursorFromTaskCursor() {
+	if m.collapsibleManager == nil {
+		m.visualCursor = m.cursor
+		return
+	}
+
+	// Find which section contains this task
+	m.visualCursor = m.collapsibleManager.GetVisibleIndexFromTaskIndex(m.cursor)
+	m.cursorOnHeader = false
+}
+
+// updateTaskCursorFromVisualCursor translates the visual cursor to the actual task index
+func (m *Model) updateTaskCursorFromVisualCursor() {
+	if m.collapsibleManager == nil {
+		m.cursor = m.visualCursor
+		return
+	}
+
+	// Check if we're on a section header
+	if m.collapsibleManager.IsSectionHeader(m.visualCursor) {
+		// We're on a header, cursor shouldn't point to a task
+		m.cursorOnHeader = true
+		return
+	}
+
+	// Get the actual task index
+	taskIndex := m.collapsibleManager.GetActualTaskIndex(m.visualCursor)
+	if taskIndex != -1 {
+		m.cursor = taskIndex
+		m.cursorOnHeader = false
+	}
+}
+
+// handleListViewKeys processes keyboard input in list view with collapsible sections support
 func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// Initialize sections if needed
+	if m.collapsibleManager == nil {
+		m.initCollapsibleSections()
+	}
+
 	switch msg.String() {
 	case "q", "ctrl+c":
 		return m, tea.Quit
 
 	case "up", "k":
 		switch m.activePanel {
-		case 0:
-			if m.cursor > 0 {
-				prevCursor := m.cursor
-				m.cursor--
-				if m.cursor < m.taskListOffset {
-					m.taskListOffset = m.cursor
+		case 0: // Task list panel
+			if m.collapsibleManager != nil {
+				prevVisual := m.visualCursor
+
+				// Move up in the visual list (includes section headers)
+				m.visualCursor = m.collapsibleManager.GetNextCursorPosition(m.visualCursor, -1)
+
+				// Auto-scroll if cursor moves out of view
+				if m.visualCursor < m.taskListOffset {
+					m.taskListOffset = m.visualCursor
 				}
-				if prevCursor != m.cursor {
+
+				// Update the task cursor based on the new visual position
+				m.updateTaskCursorFromVisualCursor()
+
+				// Reset detail & timeline scroll offsets if selection changed
+				if prevVisual != m.visualCursor {
 					m.taskDetailsOffset = 0
 					m.timelineOffset = 0
 				}
+			} else {
+				// Legacy behavior without collapsible sections
+				if m.cursor > 0 {
+					prevCursor := m.cursor
+					m.cursor--
+					if m.cursor < m.taskListOffset {
+						m.taskListOffset = m.cursor
+					}
+					if prevCursor != m.cursor {
+						m.taskDetailsOffset = 0
+						m.timelineOffset = 0
+					}
+				}
 			}
-		case 1:
-			// For Task Details panel, scroll more efficiently
+		case 1: // Task Details panel - scroll more efficiently
 			m.taskDetailsOffset = max(0, m.taskDetailsOffset-3)
-		case 2:
-			// For Timeline panel, scroll more efficiently
+		case 2: // Timeline panel - scroll more efficiently
 			m.timelineOffset = max(0, m.timelineOffset-3)
 		}
 		return m, nil
 
 	case "down", "j":
 		switch m.activePanel {
-		case 0:
-			if m.cursor < len(m.tasks)-1 {
-				prevCursor := m.cursor
-				m.cursor++
-				viewportHeight := 10
-				if m.cursor >= m.taskListOffset+viewportHeight {
-					m.taskListOffset = m.cursor - viewportHeight + 1
+		case 0: // Task list panel
+			if m.collapsibleManager != nil {
+				prevVisual := m.visualCursor
+
+				// Move down in the visual list (includes section headers)
+				m.visualCursor = m.collapsibleManager.GetNextCursorPosition(m.visualCursor, 1)
+
+				// Auto-scroll if cursor moves out of view
+				viewportHeight := 10 // Approximate visible lines
+				if m.visualCursor >= m.taskListOffset+viewportHeight {
+					m.taskListOffset = m.visualCursor - viewportHeight + 1
 				}
-				if prevCursor != m.cursor {
+
+				// Update the task cursor based on the new visual position
+				m.updateTaskCursorFromVisualCursor()
+
+				// Reset detail & timeline scroll offsets if selection changed
+				if prevVisual != m.visualCursor {
 					m.taskDetailsOffset = 0
 					m.timelineOffset = 0
 				}
+			} else {
+				// Legacy behavior without collapsible sections
+				if m.cursor < len(m.tasks)-1 {
+					prevCursor := m.cursor
+					m.cursor++
+					viewportHeight := 10
+					if m.cursor >= m.taskListOffset+viewportHeight {
+						m.taskListOffset = m.cursor - viewportHeight + 1
+					}
+					if prevCursor != m.cursor {
+						m.taskDetailsOffset = 0
+						m.timelineOffset = 0
+					}
+				}
 			}
-		case 1:
-			// For Task Details panel, scroll more efficiently
-			// Calculate a rough estimate of content length
+		case 1: // Task Details panel - scroll more efficiently
 			maxOffset := 15
 			if len(m.tasks) > 0 && m.cursor < len(m.tasks) && m.tasks[m.cursor].Description != nil {
 				maxOffset += len(*m.tasks[m.cursor].Description) / 30
 			}
 			m.taskDetailsOffset = min(m.taskDetailsOffset+3, maxOffset)
-		case 2:
-			// For Timeline panel, scroll more efficiently
+		case 2: // Timeline panel - scroll more efficiently
 			overdue, today, upcoming := m.getTasksByTimeCategory()
-			// Add extra padding to ensure reaching the summary section at the bottom
 			maxOffset := len(overdue) + len(today) + len(upcoming) + 15
 			m.timelineOffset = min(m.timelineOffset+3, maxOffset)
 		}
 		return m, nil
 
-	// Additional key bindings
 	case "page-up", "ctrl+b":
 		pageSize := 10
 		switch m.activePanel {
 		case 0:
-			prev := m.cursor
-			m.taskListOffset -= pageSize
-			if m.taskListOffset < 0 {
-				m.taskListOffset = 0
-			}
-			if m.cursor >= m.taskListOffset+pageSize {
-				m.cursor = m.taskListOffset
-			}
-			if prev != m.cursor {
-				m.taskDetailsOffset = 0
-				m.timelineOffset = 0
+			if m.collapsibleManager != nil {
+				// Move up by a page in the visual list
+				prevVisual := m.visualCursor
+
+				m.visualCursor = max(0, m.visualCursor-pageSize)
+				m.taskListOffset = max(0, m.taskListOffset-pageSize)
+
+				// Update the task cursor based on the new visual position
+				m.updateTaskCursorFromVisualCursor()
+
+				// Reset detail & timeline scroll offsets if selection changed
+				if prevVisual != m.visualCursor {
+					m.taskDetailsOffset = 0
+					m.timelineOffset = 0
+				}
+			} else {
+				// Legacy behavior
+				prev := m.cursor
+				m.taskListOffset -= pageSize
+				if m.taskListOffset < 0 {
+					m.taskListOffset = 0
+				}
+				if m.cursor >= m.taskListOffset+pageSize {
+					m.cursor = m.taskListOffset
+				}
+				if prev != m.cursor {
+					m.taskDetailsOffset = 0
+					m.timelineOffset = 0
+				}
 			}
 		case 1:
 			m.taskDetailsOffset -= pageSize
@@ -259,13 +394,38 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		var maxOffset int
 		switch m.activePanel {
 		case 0:
-			maxOffset = max(0, len(m.tasks)-pageSize)
-			m.taskListOffset += pageSize
-			if m.taskListOffset > maxOffset {
-				m.taskListOffset = maxOffset
-			}
-			if m.cursor < m.taskListOffset {
-				m.cursor = m.taskListOffset
+			if m.collapsibleManager != nil {
+				// Move down by a page in the visual list
+				prevVisual := m.visualCursor
+				totalItems := m.collapsibleManager.GetItemCount()
+
+				// Calculate maximum offset and cursor positions
+				maxOffset = max(0, totalItems-pageSize)
+				m.taskListOffset += pageSize
+				if m.taskListOffset > maxOffset {
+					m.taskListOffset = maxOffset
+				}
+
+				m.visualCursor = min(totalItems-1, m.visualCursor+pageSize)
+
+				// Update the task cursor based on the new visual position
+				m.updateTaskCursorFromVisualCursor()
+
+				// Reset detail & timeline scroll offsets if selection changed
+				if prevVisual != m.visualCursor {
+					m.taskDetailsOffset = 0
+					m.timelineOffset = 0
+				}
+			} else {
+				// Legacy behavior
+				maxOffset = max(0, len(m.tasks)-pageSize)
+				m.taskListOffset += pageSize
+				if m.taskListOffset > maxOffset {
+					m.taskListOffset = maxOffset
+				}
+				if m.cursor < m.taskListOffset {
+					m.cursor = m.taskListOffset
+				}
 			}
 		case 1:
 			maxOffset = 15
@@ -291,8 +451,25 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "home", "g":
 		switch m.activePanel {
 		case 0:
-			m.taskListOffset = 0
-			m.cursor = 0
+			if m.collapsibleManager != nil {
+				// Go to the first item (should be the first section header)
+				prevVisual := m.visualCursor
+				m.visualCursor = 0
+				m.taskListOffset = 0
+
+				// Update the task cursor
+				m.updateTaskCursorFromVisualCursor()
+
+				// Reset scroll positions if cursor changed
+				if prevVisual != m.visualCursor {
+					m.taskDetailsOffset = 0
+					m.timelineOffset = 0
+				}
+			} else {
+				// Legacy behavior
+				m.taskListOffset = 0
+				m.cursor = 0
+			}
 		case 1:
 			m.taskDetailsOffset = 0
 		case 2:
@@ -304,9 +481,30 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		pageSize := 10
 		switch m.activePanel {
 		case 0:
-			if len(m.tasks) > 0 {
-				m.cursor = len(m.tasks) - 1
-				m.taskListOffset = max(0, m.cursor-pageSize+1)
+			if m.collapsibleManager != nil {
+				// Go to the last item in the visual list
+				prevVisual := m.visualCursor
+				totalItems := m.collapsibleManager.GetItemCount()
+
+				if totalItems > 0 {
+					m.visualCursor = totalItems - 1
+					m.taskListOffset = max(0, m.visualCursor-pageSize+1)
+
+					// Update the task cursor
+					m.updateTaskCursorFromVisualCursor()
+
+					// Reset scroll positions if cursor changed
+					if prevVisual != m.visualCursor {
+						m.taskDetailsOffset = 0
+						m.timelineOffset = 0
+					}
+				}
+			} else {
+				// Legacy behavior
+				if len(m.tasks) > 0 {
+					m.cursor = len(m.tasks) - 1
+					m.taskListOffset = max(0, m.cursor-pageSize+1)
+				}
 			}
 		case 1:
 			maxOff := 15
@@ -316,52 +514,39 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.taskDetailsOffset = max(0, maxOff-pageSize)
 		case 2:
 			overdue, today, upcoming := m.getTasksByTimeCategory()
-			// Increase maximum offset to ensure we can scroll to the very end of the timeline content
 			maxOff := len(overdue) + len(today) + len(upcoming) + 15
 			m.timelineOffset = max(0, maxOff-pageSize)
 		}
 		return m, nil
 
-	case "right", "l":
-		visible := []bool{m.showTaskList, m.showTaskDetails, m.showTimeline}
-		orig := m.activePanel
-		for i := 0; i < 3; i++ {
-			m.activePanel = (m.activePanel + 1) % 3
-			if visible[m.activePanel] {
-				break
+	case "enter", " ":
+		// Only respond when task list panel is active
+		if m.activePanel == 0 {
+			// Check if we're on a section header
+			if m.cursorOnHeader && m.collapsibleManager != nil {
+				// Toggle the section's expanded state
+				section := m.collapsibleManager.GetSectionAtIndex(m.visualCursor)
+				if section != nil {
+					m.collapsibleManager.ToggleSection(section.Type)
+					return m, nil
+				}
+				return m, nil
+			} else if len(m.tasks) > 0 && m.cursor < len(m.tasks) {
+				// We're on a task, go to detail view
+				m.viewMode = "detail"
+				return m, nil
 			}
-		}
-		if !visible[m.activePanel] {
-			m.activePanel = orig
 		}
 		return m, nil
 
-	case "left", "h":
-		visible := []bool{m.showTaskList, m.showTaskDetails, m.showTimeline}
-		orig := m.activePanel
-		for i := 0; i < 3; i++ {
-			m.activePanel = (m.activePanel + 2) % 3
-			if visible[m.activePanel] {
-				break
-			}
-		}
-		if !visible[m.activePanel] {
-			m.activePanel = orig
-		}
-		return m, nil
-
-	case "enter":
-		if m.activePanel == 0 && len(m.tasks) > 0 {
-			m.viewMode = "detail"
-			return m, nil
-		}
-
-	case "c", " ":
-		if m.activePanel == 0 && len(m.tasks) > 0 {
+	case "c":
+		// Only toggle completion status when on a task (not section header)
+		if m.activePanel == 0 && !m.cursorOnHeader && len(m.tasks) > 0 && m.cursor < len(m.tasks) {
 			return m, m.toggleTaskCompletion()
 		}
 		return m, nil
 
+	// Keep the rest of the key bindings unchanged
 	case "r":
 		return m, m.refreshTasks()
 
@@ -858,6 +1043,12 @@ func (m *Model) View() string {
 		MediumPriority: m.styles.MediumPriority,
 		HighPriority:   m.styles.HighPriority,
 	}
+
+	// Initialize collapsible sections if needed
+	if m.collapsibleManager == nil {
+		m.initCollapsibleSections()
+	}
+
 	// Render header
 	header := layout.RenderHeader(layout.HeaderProps{
 		Width:         m.width,
@@ -905,16 +1096,19 @@ func (m *Model) View() string {
 	if m.showTaskList {
 		contentWidth := columnWidth - 2
 		list := panels.RenderTaskList(panels.TaskListProps{
-			Tasks:        m.tasks,
-			Cursor:       m.cursor,
-			Offset:       m.taskListOffset,
-			Width:        contentWidth,
-			Height:       panelHeight - 2,
-			Styles:       sharedStyles,
-			IsActive:     m.activePanel == 0,
-			Error:        m.err,
-			SuccessMsg:   m.successMsg,
-			ClearSuccess: func() { m.successMsg = "" },
+			Tasks:          m.tasks,
+			Cursor:         m.cursor,
+			VisualCursor:   m.visualCursor,
+			Offset:         m.taskListOffset,
+			Width:          contentWidth,
+			Height:         panelHeight - 2,
+			Styles:         sharedStyles,
+			IsActive:       m.activePanel == 0,
+			Error:          m.err,
+			SuccessMsg:     m.successMsg,
+			ClearSuccess:   func() { m.successMsg = "" },
+			CursorOnHeader: m.cursorOnHeader,
+			CollapsibleMgr: m.collapsibleManager,
 		})
 		wrapped := shared.RenderPanel(shared.PanelProps{
 			Content:     list,
@@ -925,6 +1119,7 @@ func (m *Model) View() string {
 		})
 		columns = append(columns, wrapped)
 	}
+
 	// Task Details Panel
 	if m.showTaskDetails {
 		contentWidth := columnWidth - 2
@@ -946,6 +1141,7 @@ func (m *Model) View() string {
 		})
 		columns = append(columns, wrapped)
 	}
+
 	// Timeline Panel
 	if m.showTimeline {
 		contentWidth := columnWidth - 2
@@ -966,6 +1162,7 @@ func (m *Model) View() string {
 		})
 		columns = append(columns, wrapped)
 	}
+
 	content := lipgloss.JoinHorizontal(lipgloss.Top, columns...)
 
 	footer := layout.RenderFooter(layout.FooterProps{
