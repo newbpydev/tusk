@@ -217,12 +217,27 @@ This section outlines what's been completed, what's in progress, and upcoming mi
 
 ### TUI Key Commands
 
-- `↑`/`↓` - Navigate between tasks
-- `Space`/`Enter` - Toggle task completion status
-- `d` - Delete selected task
-- `q` - Quit the application
-- `h` - Switch to list view
-- `Tab` - Cycle between views
+- **Navigation**
+
+  - `↑`/`↓` or `k`/`j` - Navigate between tasks
+  - `Page Up`/`Page Down` or `Ctrl+b`/`Ctrl+f` - Scroll by page
+  - `Home`/`End` or `g`/`G` - Jump to top/bottom
+  - `Tab` - Cycle between panels (left to right)
+  - `Left`/`Right` or `h`/`l` - Navigate between panels
+  - `1`/`2`/`3` - Toggle panel visibility
+
+- **Task Management**
+
+  - `Space` or `c` - Toggle task completion status
+  - `Enter` - View task details
+  - `n` - Create new task
+  - `d` - Delete selected task
+  - `e` - Edit selected task
+  - `r` - Refresh task list
+
+- **Application Controls**
+  - `Esc` - Return to previous view
+  - `q` - Quit the application
 
 ---
 
