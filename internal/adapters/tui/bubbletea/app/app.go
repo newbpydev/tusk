@@ -528,11 +528,12 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				section := m.collapsibleManager.GetSectionAtIndex(m.visualCursor)
 				if section != nil {
 					m.collapsibleManager.ToggleSection(section.Type)
+					// Don't reset cursor state after toggling
 					return m, nil
 				}
 				return m, nil
-			} else if len(m.tasks) > 0 && m.cursor < len(m.tasks) {
-				// We're on a task, go to detail view
+			} else if !m.cursorOnHeader && len(m.tasks) > 0 && m.cursor < len(m.tasks) {
+				// We're on a task (not a header), go to detail view
 				m.viewMode = "detail"
 				return m, nil
 			}
@@ -1166,9 +1167,10 @@ func (m *Model) View() string {
 	content := lipgloss.JoinHorizontal(lipgloss.Top, columns...)
 
 	footer := layout.RenderFooter(layout.FooterProps{
-		Width:     m.width,
-		ViewMode:  m.viewMode,
-		HelpStyle: m.styles.Help,
+		Width:          m.width,
+		ViewMode:       m.viewMode,
+		HelpStyle:      m.styles.Help,
+		CursorOnHeader: m.cursorOnHeader,
 	})
 
 	sections := []string{header, content, footer}
