@@ -26,18 +26,36 @@ import (
 
 // TaskDetailsProps contains all properties needed to render the task details panel
 type TaskDetailsProps struct {
-	Tasks    []task.Task
-	Cursor   int
-	Offset   int
-	Width    int
-	Height   int
-	Styles   *shared.Styles
-	IsActive bool
+	Tasks          []task.Task
+	Cursor         int
+	Offset         int
+	Width          int
+	Height         int
+	Styles         *shared.Styles
+	IsActive       bool
+	CursorOnHeader bool // whether selection is on a section header
 }
 
 // RenderTaskDetails renders the task details panel with a fixed header and scrollable content
 func RenderTaskDetails(props TaskDetailsProps) string {
 	var scrollableContent strings.Builder
+
+	// If cursor is on a section header or out of valid range, show placeholder
+	if props.CursorOnHeader || props.Cursor < 0 || props.Cursor >= len(props.Tasks) {
+		scrollableContent.WriteString(props.Styles.Help.Render("Select a task to view details"))
+		return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
+			Title:             "Task Details",
+			ScrollableContent: scrollableContent.String(),
+			EmptyMessage:      "No task selected",
+			Width:             props.Width,
+			Height:            props.Height,
+			Offset:            props.Offset,
+			Styles:            props.Styles,
+			IsActive:          props.IsActive,
+			BorderColor:       shared.ColorBorder,
+			CursorPosition:    props.Offset,
+		})
+	}
 
 	if len(props.Tasks) == 0 {
 		scrollableContent.WriteString("No tasks yet. Press 'n' to create your first task.\n\n")

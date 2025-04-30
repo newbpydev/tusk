@@ -1125,13 +1125,14 @@ func (m *Model) View() string {
 	if m.showTaskDetails {
 		contentWidth := columnWidth - 2
 		details := panels.RenderTaskDetails(panels.TaskDetailsProps{
-			Tasks:    m.tasks,
-			Cursor:   m.cursor,
-			Offset:   m.taskDetailsOffset,
-			Width:    contentWidth,
-			Height:   panelHeight - 2,
-			Styles:   sharedStyles,
-			IsActive: m.activePanel == 1,
+			Tasks:          m.tasks,
+			Cursor:         m.cursor,
+			Offset:         m.taskDetailsOffset,
+			Width:          contentWidth,
+			Height:         panelHeight - 2,
+			Styles:         sharedStyles,
+			IsActive:       m.activePanel == 1,
+			CursorOnHeader: m.cursorOnHeader,
 		})
 		wrapped := shared.RenderPanel(shared.PanelProps{
 			Content:     details,
