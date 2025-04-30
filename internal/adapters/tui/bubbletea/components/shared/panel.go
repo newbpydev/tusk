@@ -38,7 +38,6 @@ func RenderPanel(props PanelProps) string {
 
 	// Content width is panel width minus frame elements for consistency
 	contentWidth := props.Width - totalFrameWidth
-	contentHeight := props.Height - 2 // Account for top and bottom borders
 
 	// Create base style for content
 	contentStyle := lipgloss.NewStyle().
@@ -47,20 +46,6 @@ func RenderPanel(props PanelProps) string {
 
 	// Apply style to content
 	styledContent := contentStyle.Render(props.Content)
-
-	// Ensure the content fills the panel height by adding padding if needed
-	contentHeight = max(0, contentHeight) // Ensure non-negative height
-
-	// Count lines in the content
-	lines := strings.Split(styledContent, "\n")
-	lineCount := len(lines)
-
-	// If content is shorter than available space, pad with empty lines
-	if lineCount < contentHeight {
-		paddingLines := contentHeight - lineCount
-		padding := strings.Repeat("\n", paddingLines)
-		styledContent += padding
-	}
 
 	return styledContent
 }
@@ -83,40 +68,13 @@ func CreateScrollableContent(content string, offset int, maxHeight int, styles *
 	lines := strings.Split(content, "\n")
 	contentHeight := len(lines)
 
-	// If scrolling not needed, just return the whole content padded to maxHeight
+	// If content fits exactly or is smaller, return as is without padding
 	if contentHeight <= maxHeight {
-		if len(lines) < maxHeight {
-			paddingLines := maxHeight - len(lines)
-			padding := strings.Repeat("\n", paddingLines)
-			return content + padding
-		}
 		return content
 	}
 
-	// Define a comfortable padding to keep around the cursor
-	const visibilityPadding = 2
-
 	// Calculate maximum valid offset
 	maxOffset := max(0, contentHeight-maxHeight)
-
-	// If we have a cursor position, ensure it's visible and centered if possible
-	if len(cursorPosition) > 0 && cursorPosition[0] >= 0 {
-		cursor := cursorPosition[0]
-
-		// Try to center the cursor in the viewport
-		halfHeight := maxHeight / 2
-		targetOffset := cursor - halfHeight
-
-		// Ensure we don't scroll past the content boundaries
-		if targetOffset > maxOffset {
-			targetOffset = maxOffset
-		}
-		if targetOffset < 0 {
-			targetOffset = 0
-		}
-
-		offset = targetOffset
-	}
 
 	// Clamp offset within valid range
 	offset = min(offset, maxOffset)
@@ -128,7 +86,7 @@ func CreateScrollableContent(content string, offset int, maxHeight int, styles *
 
 	// Show scroll indicators if needed
 	needTopIndicator := offset > 0
-	needBottomIndicator := offset < maxOffset
+	needBottomIndicator := endLine < contentHeight
 
 	// Calculate available content space accounting for indicators
 	contentSpace := maxHeight
@@ -170,12 +128,6 @@ func CreateScrollableContent(content string, offset int, maxHeight int, styles *
 	// Guard against empty content
 	if startLine < endLine && startLine >= 0 && endLine <= len(lines) {
 		result.WriteString(strings.Join(lines[startLine:endLine], "\n"))
-	}
-
-	// Add padding if needed to maintain consistent height
-	remainingSpace := contentSpace - (endLine - startLine)
-	if remainingSpace > 0 {
-		result.WriteString(strings.Repeat("\n", remainingSpace))
 	}
 
 	if needBottomIndicator {

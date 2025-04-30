@@ -55,7 +55,7 @@ func RenderScrollablePanel(props ScrollablePanelProps) string {
 		fullContent.WriteString(props.HeaderContent + "\n\n")
 	}
 
-	// Calculate the header height
+	// Calculate the header height accurately
 	headerLines := 0
 	if props.Title != "" {
 		headerLines += 2 // Title + blank line
@@ -67,7 +67,7 @@ func RenderScrollablePanel(props ScrollablePanelProps) string {
 	}
 
 	// Calculate the available height for the scrollable content
-	contentHeight := props.Height - headerLines
+	contentHeight := props.Height - headerLines - 2 // -2 for top/bottom borders
 
 	// Ensure we have positive content height
 	contentHeight = max(1, contentHeight)
@@ -77,17 +77,7 @@ func RenderScrollablePanel(props ScrollablePanelProps) string {
 	if props.ScrollableContent == "" {
 		// Show empty message if no content
 		if props.EmptyMessage != "" {
-			// Pad the message to fill the available height
-			msgLines := strings.Count(props.EmptyMessage, "\n") + 1
-			if msgLines < contentHeight {
-				padding := strings.Repeat("\n", contentHeight-msgLines)
-				scrollableSection = props.EmptyMessage + padding
-			} else {
-				scrollableSection = props.EmptyMessage
-			}
-		} else {
-			// If no empty message is provided, just add padding
-			scrollableSection = strings.Repeat("\n", contentHeight)
+			scrollableSection = props.EmptyMessage
 		}
 	} else {
 		// We have content, so make it scrollable
@@ -96,14 +86,13 @@ func RenderScrollablePanel(props ScrollablePanelProps) string {
 			props.Offset,
 			contentHeight,
 			props.Styles,
-			props.CursorPosition, // Pass cursor position to ensure visibility
+			props.CursorPosition,
 		)
 	}
 
 	// Add the scrollable section to the full content
 	fullContent.WriteString(scrollableSection)
 
-	// Update border colors to make inactive panels invisible
 	// Determine border color based on active state
 	borderColor := props.BorderColor
 	if props.IsActive {
@@ -112,11 +101,20 @@ func RenderScrollablePanel(props ScrollablePanelProps) string {
 		borderColor = "#2d3748" // Dark background color that matches terminal background
 	}
 
-	// Render the complete panel with borders
-	return lipgloss.NewStyle().
+	// Create the panel style
+	panelStyle := lipgloss.NewStyle().
 		BorderStyle(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color(borderColor)).
 		Width(props.Width).
 		Height(props.Height).
-		Render(fullContent.String())
+		PaddingTop(0).
+		PaddingBottom(0).
+		PaddingLeft(0).
+		PaddingRight(0).
+		MarginTop(0).
+		MarginBottom(0).
+		MarginLeft(0).
+		MarginRight(0)
+
+	return panelStyle.Render(fullContent.String())
 }

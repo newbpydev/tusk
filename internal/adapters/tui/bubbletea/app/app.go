@@ -284,10 +284,12 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 					}
 				}
 			}
-		case 1: // Task Details panel - scroll more efficiently
-			m.taskDetailsOffset = max(0, m.taskDetailsOffset-3)
-		case 2: // Timeline panel - scroll more efficiently
-			m.timelineOffset = max(0, m.timelineOffset-3)
+		case 1: // Task Details panel - instant scroll
+			viewportHeight := 10
+			m.taskDetailsOffset = max(0, m.taskDetailsOffset-viewportHeight)
+		case 2: // Timeline panel - instant scroll
+			viewportHeight := 10
+			m.timelineOffset = max(0, m.timelineOffset-viewportHeight)
 		}
 		return m, nil
 
@@ -329,21 +331,23 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 					}
 				}
 			}
-		case 1: // Task Details panel - scroll more efficiently
+		case 1: // Task Details panel - instant scroll
+			viewportHeight := 10
 			maxOffset := 15
 			if len(m.tasks) > 0 && m.cursor < len(m.tasks) && m.tasks[m.cursor].Description != nil {
 				maxOffset += len(*m.tasks[m.cursor].Description) / 30
 			}
-			m.taskDetailsOffset = min(m.taskDetailsOffset+3, maxOffset)
-		case 2: // Timeline panel - scroll more efficiently
+			m.taskDetailsOffset = min(m.taskDetailsOffset+viewportHeight, maxOffset)
+		case 2: // Timeline panel - instant scroll
+			viewportHeight := 10
 			overdue, today, upcoming := m.getTasksByTimeCategory()
 			maxOffset := len(overdue) + len(today) + len(upcoming) + 15
-			m.timelineOffset = min(m.timelineOffset+3, maxOffset)
+			m.timelineOffset = min(m.timelineOffset+viewportHeight, maxOffset)
 		}
 		return m, nil
 
 	case "page-up", "ctrl+b":
-		pageSize := 10
+		pageSize := 20 // Larger page size for details and timeline
 		switch m.activePanel {
 		case 0:
 			if m.collapsibleManager != nil {
@@ -377,20 +381,14 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case 1:
-			m.taskDetailsOffset -= pageSize
-			if m.taskDetailsOffset < 0 {
-				m.taskDetailsOffset = 0
-			}
+			m.taskDetailsOffset = max(0, m.taskDetailsOffset-pageSize)
 		case 2:
-			m.timelineOffset -= pageSize
-			if m.timelineOffset < 0 {
-				m.timelineOffset = 0
-			}
+			m.timelineOffset = max(0, m.timelineOffset-pageSize)
 		}
 		return m, nil
 
 	case "page-down", "ctrl+f":
-		pageSize := 10
+		pageSize := 20 // Larger page size for details and timeline
 		var maxOffset int
 		switch m.activePanel {
 		case 0:
@@ -432,19 +430,11 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			if len(m.tasks) > 0 && m.cursor < len(m.tasks) && m.tasks[m.cursor].Description != nil {
 				maxOffset += len(*m.tasks[m.cursor].Description) / 30
 			}
-			maxOffset = max(0, maxOffset-pageSize)
-			m.taskDetailsOffset += pageSize
-			if m.taskDetailsOffset > maxOffset {
-				m.taskDetailsOffset = maxOffset
-			}
+			m.taskDetailsOffset = min(m.taskDetailsOffset+pageSize, maxOffset)
 		case 2:
 			overdue, today, upcoming := m.getTasksByTimeCategory()
-			maxOffset = len(overdue) + len(today) + len(upcoming) - pageSize
-			maxOffset = max(0, maxOffset)
-			m.timelineOffset += pageSize
-			if m.timelineOffset > maxOffset {
-				m.timelineOffset = maxOffset
-			}
+			maxOffset = len(overdue) + len(today) + len(upcoming) + 15
+			m.timelineOffset = min(m.timelineOffset+pageSize, maxOffset)
 		}
 		return m, nil
 

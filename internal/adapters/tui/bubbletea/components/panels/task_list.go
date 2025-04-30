@@ -192,8 +192,10 @@ func renderSection(builder *strings.Builder, props TaskListProps, sectionType ho
 		visibleIndex += len(sectionTasks)
 	}
 
-	// Add some spacing after the section
-	builder.WriteString("\n")
+	// Only add spacing after non-final sections
+	if sectionType != hooks.SectionTypeCompleted {
+		builder.WriteString("\n")
+	}
 
 	return visibleIndex
 }
