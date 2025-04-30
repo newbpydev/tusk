@@ -67,6 +67,9 @@ type Model struct {
 	visualCursor int
 	// Whether the current task is a section header (not a task item)
 	cursorOnHeader bool
+
+	// Add separate slices for todo, projects, and completed tasks
+	todoTasks, projectTasks, completedTasks []task.Task
 }
 
 // NewModel initializes the bubbletea application model.
@@ -133,20 +136,23 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case messages.StatusUpdateSuccessMsg:
 		m.setSuccessStatus(msg.Message)
+		// Update local task entry only
 		for i := range m.tasks {
 			if m.tasks[i].ID == msg.Task.ID {
 				m.tasks[i] = msg.Task
 				break
 			}
 		}
+		// No reposition here; toggleTaskCompletion already handled cursor movement
 		return m, nil
 
 	case messages.TasksRefreshedMsg:
 		m.tasks = msg.Tasks
-		if m.cursor >= len(m.tasks) && len(m.tasks) > 0 {
-			m.cursor = len(m.tasks) - 1
+		if m.cursor >= len(m.tasks) {
+			m.cursor = max(0, len(m.tasks)-1)
 		}
 		m.clearLoadingStatus()
+		m.initCollapsibleSections()
 		return m, nil
 
 	case messages.ErrorMsg:
@@ -201,6 +207,29 @@ func (m *Model) initCollapsibleSections() {
 
 	// Initialize visual cursor at the right position
 	m.updateVisualCursorFromTaskCursor()
+}
+
+// Refactor categorizeTasks to update slices directly
+func (m *Model) categorizeTasks(tasks []task.Task) {
+	m.todoTasks = nil
+	m.projectTasks = nil
+	m.completedTasks = nil
+
+	for _, t := range tasks {
+		if t.Status == task.StatusDone {
+			m.completedTasks = append(m.completedTasks, t)
+		} else if t.ParentID != nil {
+			m.projectTasks = append(m.projectTasks, t)
+		} else {
+			m.todoTasks = append(m.todoTasks, t)
+		}
+	}
+
+	// Update collapsible sections
+	m.collapsibleManager.ClearSections()
+	m.collapsibleManager.AddSection(hooks.SectionTypeTodo, "Todo", len(m.todoTasks), 0)
+	m.collapsibleManager.AddSection(hooks.SectionTypeProjects, "Projects", len(m.projectTasks), len(m.todoTasks))
+	m.collapsibleManager.AddSection(hooks.SectionTypeCompleted, "Completed", len(m.completedTasks), len(m.todoTasks)+len(m.projectTasks))
 }
 
 // updateVisualCursorFromTaskCursor translates the task index (cursor) to the visual cursor position
@@ -909,7 +938,7 @@ func (m *Model) clearLoadingStatus() {
 	}
 }
 
-// refreshTasks reloads the task list from the service
+// Update refreshTasks to categorize tasks
 func (m *Model) refreshTasks() tea.Cmd {
 	m.setLoadingStatus("Loading tasks...")
 	return func() tea.Msg {
@@ -917,37 +946,47 @@ func (m *Model) refreshTasks() tea.Cmd {
 		if err != nil {
 			return messages.ErrorMsg(fmt.Errorf("failed to refresh tasks: %v", err))
 		}
+		m.categorizeTasks(tasks)
 		return messages.TasksRefreshedMsg{Tasks: tasks}
 	}
 }
 
-// toggleTaskCompletion toggles the completion status of the selected task
+// Update toggleTaskCompletion to ensure synchronization between visualCursor and taskCursor
 func (m *Model) toggleTaskCompletion() tea.Cmd {
 	if len(m.tasks) == 0 || m.cursor >= len(m.tasks) {
 		return nil
 	}
-	currentTask := m.tasks[m.cursor]
-	taskID := int64(currentTask.ID)
-	taskTitle := currentTask.Title
+
+	// Get current task and its ID
+	curr := m.tasks[m.cursor]
+	toggledID := curr.ID
+
+	// Determine new status
 	var newStatus task.Status
-	if currentTask.Status == task.StatusDone {
-		newStatus = task.StatusTodo
-		m.tasks[m.cursor].Status = newStatus
-		m.tasks[m.cursor].IsCompleted = false
-		m.setSuccessStatus(fmt.Sprintf("Task '%s' marked as TODO", taskTitle))
-	} else {
+	if curr.Status != task.StatusDone {
 		newStatus = task.StatusDone
-		m.tasks[m.cursor].Status = newStatus
-		m.tasks[m.cursor].IsCompleted = true
-		m.setSuccessStatus(fmt.Sprintf("Task '%s' marked as DONE", taskTitle))
+	} else {
+		newStatus = task.StatusTodo
 	}
-	m.setInfoStatus("Saving changes...")
+
+	// Update local task
+	m.tasks[m.cursor].Status = newStatus
+	m.tasks[m.cursor].IsCompleted = (newStatus == task.StatusDone)
+
+	// Re-categorize tasks
+	m.categorizeTasks(m.tasks)
+
+	// Update visual cursor and task cursor
+	m.updateVisualCursorFromTaskCursor()
+	m.updateTaskCursorFromVisualCursor()
+
+	// Call server to update
 	return func() tea.Msg {
-		updatedTask, err := m.taskSvc.ChangeStatus(m.ctx, taskID, newStatus)
+		updatedTask, err := m.taskSvc.ChangeStatus(m.ctx, int64(toggledID), newStatus)
 		if err != nil {
-			return messages.StatusUpdateErrorMsg{TaskIndex: m.cursor, TaskTitle: taskTitle, Err: err}
+			return messages.StatusUpdateErrorMsg{TaskIndex: m.cursor, TaskTitle: curr.Title, Err: err}
 		}
-		return messages.StatusUpdateSuccessMsg{Task: updatedTask, Message: fmt.Sprintf("Task '%s' status updated successfully", taskTitle)}
+		return messages.StatusUpdateSuccessMsg{Task: updatedTask, Message: "Task status updated successfully"}
 	}
 }
 
