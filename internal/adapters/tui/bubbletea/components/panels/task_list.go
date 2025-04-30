@@ -43,8 +43,11 @@ type TaskListProps struct {
 
 // RenderTaskList renders the task list panel with a fixed header and scrollable content
 func RenderTaskList(props TaskListProps) string {
-	headerContent := ""
+	// Keep track of total visible height for calculations
+	const scrollPadding = 3            // Number of lines to keep visible above/below selection
+	viewportHeight := props.Height - 4 // Account for borders and header
 
+	headerContent := ""
 	if props.Error != nil {
 		headerContent += fmt.Sprintf("Error: %v\n\n", props.Error)
 	}
@@ -57,8 +60,6 @@ func RenderTaskList(props TaskListProps) string {
 	}
 
 	var scrollableContent strings.Builder
-
-	// No tasks scenario
 	if len(props.Tasks) == 0 {
 		scrollableContent.WriteString("No tasks found.\n\nPress 'n' to create a new task.\n")
 	} else {
@@ -71,6 +72,17 @@ func RenderTaskList(props TaskListProps) string {
 		}
 	}
 
+	// Calculate the optimal offset to keep selection centered
+	totalVisibleItems := props.CollapsibleMgr.GetItemCount()
+	halfViewport := (viewportHeight - scrollPadding) / 2
+
+	// Adjust offset to center the selected item
+	targetOffset := max(0, props.VisualCursor-halfViewport)
+
+	// Don't scroll past the end
+	maxOffset := max(0, totalVisibleItems-viewportHeight+scrollPadding)
+	targetOffset = min(targetOffset, maxOffset)
+
 	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
 		Title:             "Tasks",
 		HeaderContent:     headerContent,
@@ -78,7 +90,7 @@ func RenderTaskList(props TaskListProps) string {
 		EmptyMessage:      "No tasks available",
 		Width:             props.Width,
 		Height:            props.Height,
-		Offset:            props.Offset,
+		Offset:            targetOffset,
 		CursorPosition:    props.VisualCursor,
 		Styles:            props.Styles,
 		IsActive:          props.IsActive,
@@ -117,7 +129,7 @@ func renderCollapsibleTaskList(builder *strings.Builder, props TaskListProps) {
 	// Projects section - currently empty as placeholder
 	props.CollapsibleMgr.AddSection(hooks.SectionTypeProjects, "Projects", 0, len(todoTasks))
 
-	// Completed tasks section (collapsed by default)
+	// Completed tasks section
 	props.CollapsibleMgr.AddSection(hooks.SectionTypeCompleted, "Completed", len(completedTasks), len(todoTasks))
 
 	// Now render the sections and their contents

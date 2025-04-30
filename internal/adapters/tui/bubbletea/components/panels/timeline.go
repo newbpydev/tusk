@@ -172,6 +172,9 @@ func RenderTimeline(props TimelineProps) string {
 	scrollableContent.WriteString(fmt.Sprintf("  Upcoming: %d tasks\n", len(upcoming)))
 	scrollableContent.WriteString(fmt.Sprintf("  Total: %d tasks\n", len(props.Tasks)))
 
+	// Calculate the current line based on offset
+	currentLine := props.Offset
+
 	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
 		Title:             "Timeline",
 		ScrollableContent: scrollableContent.String(),
@@ -182,8 +185,8 @@ func RenderTimeline(props TimelineProps) string {
 		Styles:            props.Styles,
 		IsActive:          props.IsActive,
 		BorderColor:       shared.ColorBorder,
-		// Use offset as virtual cursor position to enable scrolling
-		CursorPosition: props.Offset,
+		// Use current line as cursor position to maintain viewport
+		CursorPosition: currentLine,
 	})
 }
 

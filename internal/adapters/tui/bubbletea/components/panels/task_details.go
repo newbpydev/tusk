@@ -53,7 +53,8 @@ func RenderTaskDetails(props TaskDetailsProps) string {
 			Styles:            props.Styles,
 			IsActive:          props.IsActive,
 			BorderColor:       shared.ColorBorder,
-			CursorPosition:    props.Offset,
+			// Use cursor position to keep details in view
+			CursorPosition: props.Cursor,
 		})
 	}
 
@@ -141,7 +142,6 @@ func RenderTaskDetails(props TaskDetailsProps) string {
 		Styles:            props.Styles,
 		IsActive:          props.IsActive,
 		BorderColor:       shared.ColorBorder,
-		// Pass a virtual cursor position to enable scrolling even without a real cursor
-		CursorPosition: props.Offset,
+		CursorPosition:    props.Cursor,
 	})
 }

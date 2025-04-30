@@ -25,70 +25,74 @@ const (
 	SectionTypeCompleted SectionType = "completed"
 )
 
-// CollapsibleSection represents a collapsible section in the UI
-type CollapsibleSection struct {
-	Type         SectionType
-	Title        string
-	IsExpanded   bool
-	StartIndex   int  // Index in the flat task list where this section starts
-	ItemCount    int  // Number of items in this section
-	IsSelectable bool // Whether the section itself can be selected
+// Section represents a collapsible section in the task list
+type Section struct {
+	Type       SectionType
+	Title      string
+	ItemCount  int
+	StartIndex int
+	IsExpanded bool
 }
 
 // CollapsibleManager manages the state of collapsible sections
 type CollapsibleManager struct {
-	Sections         []CollapsibleSection
+	Sections         []Section
 	FlatCursorPos    int // Cursor position in the flattened task list
 	VisibleStartIdx  int // Index where visible tasks start (for scrolling)
-	ExpandedSections map[SectionType]bool
+	expandedSections map[SectionType]bool
 }
 
-// NewCollapsibleManager creates a new collapsible section manager with default settings
+// NewCollapsibleManager creates a new CollapsibleManager with default settings
 func NewCollapsibleManager() *CollapsibleManager {
-	return &CollapsibleManager{
-		Sections: []CollapsibleSection{},
-		ExpandedSections: map[SectionType]bool{
-			SectionTypeTodo:      true,  // Todo section expanded by default
-			SectionTypeProjects:  false, // Projects section collapsed by default
-			SectionTypeCompleted: false, // Completed section collapsed by default
-		},
+	cm := &CollapsibleManager{
+		Sections: make([]Section, 0),
 	}
+
+	// Set default expanded states
+	cm.expandedSections = map[SectionType]bool{
+		SectionTypeTodo:      true,  // Todo section expanded by default
+		SectionTypeProjects:  false, // Projects collapsed by default
+		SectionTypeCompleted: true,  // Completed section expanded by default
+	}
+
+	return cm
 }
 
 // AddSection adds a new section to the manager
 func (cm *CollapsibleManager) AddSection(sectionType SectionType, title string, itemCount int, startIndex int) {
-	isExpanded := cm.ExpandedSections[sectionType]
-	cm.Sections = append(cm.Sections, CollapsibleSection{
-		Type:         sectionType,
-		Title:        title,
-		IsExpanded:   isExpanded,
-		StartIndex:   startIndex,
-		ItemCount:    itemCount,
-		IsSelectable: true,
-	})
+	// Get default expanded state from the map
+	isExpanded := cm.expandedSections[sectionType]
+
+	section := Section{
+		Type:       sectionType,
+		Title:      title,
+		ItemCount:  itemCount,
+		StartIndex: startIndex,
+		IsExpanded: isExpanded,
+	}
+
+	cm.Sections = append(cm.Sections, section)
 }
 
 // ClearSections removes all sections
 func (cm *CollapsibleManager) ClearSections() {
-	cm.Sections = []CollapsibleSection{}
+	cm.Sections = []Section{}
 }
 
-// ToggleSection toggles the expanded/collapsed state of a section
+// ToggleSection toggles the expanded state of a section
 func (cm *CollapsibleManager) ToggleSection(sectionType SectionType) {
-	currentState := cm.ExpandedSections[sectionType]
-	cm.ExpandedSections[sectionType] = !currentState
-
-	// Update all sections of this type
 	for i := range cm.Sections {
 		if cm.Sections[i].Type == sectionType {
-			cm.Sections[i].IsExpanded = !currentState
+			cm.Sections[i].IsExpanded = !cm.Sections[i].IsExpanded
+			cm.expandedSections[sectionType] = cm.Sections[i].IsExpanded
+			break
 		}
 	}
 }
 
 // GetSectionAtIndex returns the section at the given index
 // Returns nil if the index is not a section
-func (cm *CollapsibleManager) GetSectionAtIndex(index int) *CollapsibleSection {
+func (cm *CollapsibleManager) GetSectionAtIndex(index int) *Section {
 	var currentIndex int = 0
 
 	for i, section := range cm.Sections {
