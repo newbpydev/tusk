@@ -589,6 +589,44 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			}
 		}
 		return m, nil
+
+	case "right", "l":
+		// Move focus to the next visible panel
+		visiblePanels := []bool{m.showTaskList, m.showTaskDetails, m.showTimeline}
+		originalPanel := m.activePanel
+
+		// Find next visible panel
+		for i := 0; i < 3; i++ {
+			m.activePanel = (m.activePanel + 1) % 3
+			if visiblePanels[m.activePanel] {
+				break
+			}
+		}
+
+		// If no other panels are visible, keep the original panel
+		if !visiblePanels[m.activePanel] {
+			m.activePanel = originalPanel
+		}
+		return m, nil
+
+	case "left", "h":
+		// Move focus to the previous visible panel
+		visiblePanels := []bool{m.showTaskList, m.showTaskDetails, m.showTimeline}
+		originalPanel := m.activePanel
+
+		// Find previous visible panel
+		for i := 0; i < 3; i++ {
+			m.activePanel = (m.activePanel + 2) % 3 // +2 is equivalent to -1 in modulo 3
+			if visiblePanels[m.activePanel] {
+				break
+			}
+		}
+
+		// If no other panels are visible, keep the original panel
+		if !visiblePanels[m.activePanel] {
+			m.activePanel = originalPanel
+		}
+		return m, nil
 	}
 	return m, nil
 }
