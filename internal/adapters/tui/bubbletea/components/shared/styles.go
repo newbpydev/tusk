@@ -81,5 +81,5 @@ func DefaultStyles() *Styles {
 	return s
 }
 
-// DefaultStyles instance to be used throughout the application
+// DefaultStylesInstance is the default styles instance to be used throughout the application
 var DefaultStylesInstance = DefaultStyles()
