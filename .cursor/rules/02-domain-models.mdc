@@ -3,3 +3,24 @@ description:
 globs:
 alwaysApply: false
 ---
+# Domain Models
+
+The core domain models define the business entities and rules for the Tusk application.
+
+## Task Model
+
+The [Task model](mdc:internal/core/task/model.go) is the primary entity representing user tasks with these key properties:
+
+- Hierarchical structure with parent-child relationships
+- Status tracking (todo, in-progress, done)
+- Priority levels (low, medium, high)
+- Due dates and completion status
+- Progress calculation based on subtask completion
+
+## User Model
+
+The [User model](mdc:internal/core/user/model.go) manages authentication and user preferences.
+
+## Error Handling
+
+Domain-specific errors are defined in [internal/core/errors](mdc:internal/core/errors) to provide rich error context.
