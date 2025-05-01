@@ -25,27 +25,36 @@ type FooterProps struct {
 	ViewMode       string
 	HelpStyle      lipgloss.Style
 	CursorOnHeader bool // Whether cursor is on a section header
+	CustomHelpText string // Optional custom help text to override defaults
 }
 
 // RenderFooter renders the help text footer for the current view mode
 func RenderFooter(props FooterProps) string {
 	var help string
 
-	switch props.ViewMode {
-	case "list":
-		if props.CursorOnHeader {
-			// When cursor is on a section header, show different actions
-			help = "j/k: navigate • h/l or ←/→: switch panels • enter/space: expand/collapse • n: new task • 1/2/3: toggle columns • q: quit"
-		} else {
-			// Normal task item actions
-			help = "j/k: navigate • h/l or ←/→: switch panels • enter: view details • c: toggle completion • n: new task • 1/2/3: toggle columns • q: quit"
+	// Use custom help text if provided, otherwise use default based on view mode
+	if props.CustomHelpText != "" {
+		help = props.CustomHelpText
+	} else {
+		// Default help text based on view mode
+		switch props.ViewMode {
+		case "list":
+			if props.CursorOnHeader {
+				// When cursor is on a section header, show different actions
+				help = "j/k: navigate • h/l or ←/→: switch panels • enter/space: expand/collapse • n: new task • 1/2/3: toggle columns • q: quit"
+			} else {
+				// Normal task item actions
+				help = "j/k: navigate • h/l or ←/→: switch panels • enter: view details • c: toggle completion • n: new task • 1/2/3: toggle columns • q: quit"
+			}
+		case "detail":
+			help = "esc: back • h/l or ←/→: switch panels • e: edit • c: toggle completion • d: delete • n: new task"
+		case "edit":
+			help = "esc: cancel • enter: save changes"
+		case "create":
+			help = "tab: next field • enter: submit • esc: cancel • space: cycle priority"
+		default:
+			help = "q: quit • ?: help"
 		}
-	case "detail":
-		help = "esc: back • h/l or ←/→: switch panels • e: edit • c: toggle completion • d: delete • n: new task"
-	case "edit":
-		help = "esc: cancel • enter: save changes"
-	case "create":
-		help = "tab: next field • enter: submit • esc: cancel • space: cycle priority"
 	}
 
 	// Create a prominent footer style

@@ -9,7 +9,7 @@ import (
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
-// renderFormView renders the create or edit form screen
+// renderFormView renders the create or edit form screen using the main layout
 func (m *Model) renderFormView(sharedStyles *shared.Styles) string {
 	// Create form props based on current form state
 	formProps := panels.CreateFormProps{
@@ -22,31 +22,38 @@ func (m *Model) renderFormView(sharedStyles *shared.Styles) string {
 		Styles:          sharedStyles,
 	}
 
-	// Render header and form
-	header := layout.RenderHeader(layout.HeaderProps{
+	// Render the form content
+	formContent := panels.RenderCreateForm(formProps)
+	
+	// Define custom help text for the form
+	var helpText string
+	if m.viewMode == "create" {
+		helpText = "tab: next field • enter: create task • esc: cancel • space: cycle priority"
+	} else { // edit mode
+		helpText = "tab: next field • enter: update task • esc: cancel • space: cycle priority"
+	}
+	
+	// Use the main layout for consistent UI
+	return layout.RenderMainLayout(layout.MainLayoutProps{
+		// Header properties
 		Width:         m.width,
 		CurrentTime:   m.currentTime,
 		StatusMessage: m.statusMessage,
 		StatusType:    m.statusType,
 		IsLoading:     m.isLoading,
+		
+		// Main content
+		Content:       formContent,
+		
+		// Footer properties
+		ViewMode:      m.viewMode,
+		HelpStyle:     m.styles.Help,
+		HelpText:      helpText,
 	})
-
-	formContent := panels.RenderCreateForm(formProps)
-	
-	return lipgloss.JoinVertical(lipgloss.Left, header, formContent)
 }
 
 // renderMultiPanelView renders the main multi-panel interface with list, details, and/or timeline
 func (m *Model) renderMultiPanelView(sharedStyles *shared.Styles) string {
-	// Render header
-	header := layout.RenderHeader(layout.HeaderProps{
-		Width:         m.width,
-		CurrentTime:   m.currentTime,
-		StatusMessage: m.statusMessage,
-		StatusType:    m.statusType,
-		IsLoading:     m.isLoading,
-	})
-
 	// Calculate layout dimensions
 	var visiblePanelCount int
 	const headerHeight = 5 // These constants might become configurable
@@ -87,19 +94,25 @@ func (m *Model) renderMultiPanelView(sharedStyles *shared.Styles) string {
 	}
 
 	// Join panels horizontally
-	content := lipgloss.JoinHorizontal(lipgloss.Top, columns...)
-
-	// Render footer
-	footer := layout.RenderFooter(layout.FooterProps{
+	panelsContent := lipgloss.JoinHorizontal(lipgloss.Top, columns...)
+	
+	// Use the main layout for consistent UI
+	return layout.RenderMainLayout(layout.MainLayoutProps{
+		// Header properties
 		Width:          m.width,
+		CurrentTime:    m.currentTime,
+		StatusMessage:  m.statusMessage,
+		StatusType:     m.statusType,
+		IsLoading:      m.isLoading,
+		
+		// Main content is the combined panels
+		Content:        panelsContent,
+		
+		// Footer properties
 		ViewMode:       m.viewMode,
 		HelpStyle:      m.styles.Help,
 		CursorOnHeader: m.cursorOnHeader,
 	})
-
-	// Join all sections vertically
-	sections := []string{header, content, footer}
-	return lipgloss.JoinVertical(lipgloss.Left, sections...)
 }
 
 // renderTaskListPanel renders the task list panel

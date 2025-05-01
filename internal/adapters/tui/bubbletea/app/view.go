@@ -6,6 +6,7 @@ import (
 )
 
 // View implements tea.Model View, displaying the appropriate view based on the current mode.
+// It leverages the reusable MainLayout component for consistent UI across all views.
 func (m *Model) View() string {
 	// Create shared styles for all components
 	sharedStyles := &shared.Styles{
@@ -26,16 +27,7 @@ func (m *Model) View() string {
 		m.initCollapsibleSections()
 	}
 	
-	// Render the appropriate view based on the current view mode
-
-	switch m.viewMode {
-	case "create", "edit":
-		// Both create and edit use the same form rendering
-		return m.renderFormView(sharedStyles)
-	
-	default:
-		// The default view is the multi-panel view for list mode and others
-
-		return m.renderMultiPanelView(sharedStyles)
-	}
+	// Use the view registry to render the appropriate view based on the current mode
+	// This centralizes all view rendering logic through a single entry point
+	return m.RenderMainView(sharedStyles)
 }
