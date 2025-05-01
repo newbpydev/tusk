@@ -44,31 +44,39 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Call to setSuccessStatus will be moved to status.go
 		m.setSuccessStatus(msg.Message)
 
-		// Keep track of the updated task ID for selection
+		// We don't need to update the cursor again here
+		// The optimistic update in toggleTaskCompletion has already
+		// positioned the cursor correctly. If we attempt to reposition
+		// it again, we might end up with inconsistent state.
+
+		// Keep track of the updated task ID
 		updatedTaskID := msg.Task.ID
 
-		// Update local task entry
+		// Just update the task data in the main list without changing cursor position
 		for i := range m.tasks {
 			if m.tasks[i].ID == updatedTaskID {
+				// Update the task with server data
 				m.tasks[i] = msg.Task
 				break
 			}
 		}
 
-		// Ensure the tasks are properly re-categorized
+		// To ensure consistency, preserve the current cursor positions
+		originalCursor := m.cursor
+		originalVisualCursor := m.visualCursor
+		originalCursorOnHeader := m.cursorOnHeader
+
+		// Re-categorize tasks with updated data
 		m.categorizeTasks(m.tasks)
 
-		// Find the updated task in the main task list after recategorization
-		for i, t := range m.tasks {
-			if t.ID == updatedTaskID {
-				m.cursor = i
-				break
-			}
-		}
+		// Restore cursor positions
+		m.cursor = originalCursor
+		m.visualCursor = originalVisualCursor
+		m.cursorOnHeader = originalCursorOnHeader
 
-		// Re-sync the cursor positions to ensure they're pointing to the correct task
+		// Refresh the visual cursor from task cursor to ensure consistency
+		// This is important for cases where the task moves between sections
 		m.updateVisualCursorFromTaskCursor()
-		m.updateTaskCursorFromVisualCursor()
 
 		return m, nil
 

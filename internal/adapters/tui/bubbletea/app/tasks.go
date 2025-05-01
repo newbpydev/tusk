@@ -5,6 +5,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
@@ -34,6 +35,58 @@ func (m *Model) toggleTaskCompletion() tea.Cmd {
 	curr := m.tasks[m.cursor]
 	toggledID := curr.ID
 
+	// Determine the current section for this task
+	var currentSectionType hooks.SectionType
+	if curr.Status == task.StatusDone {
+		currentSectionType = hooks.SectionTypeCompleted
+	} else {
+		if curr.ParentID != nil {
+			currentSectionType = hooks.SectionTypeProjects
+		} else {
+			currentSectionType = hooks.SectionTypeTodo
+		}
+	}
+
+	// Store the current cursor positions
+	originalVisualCursor := m.visualCursor
+
+	// IMPORTANT: First get a copy of the tasks in the current section BEFORE changing anything
+	// This ensures we properly identify the position and next task
+	var tasksInCurrentSection []task.Task
+	switch currentSectionType {
+	case hooks.SectionTypeTodo:
+		tasksInCurrentSection = make([]task.Task, len(m.todoTasks))
+		copy(tasksInCurrentSection, m.todoTasks)
+	case hooks.SectionTypeProjects:
+		tasksInCurrentSection = make([]task.Task, len(m.projectTasks))
+		copy(tasksInCurrentSection, m.projectTasks)
+	case hooks.SectionTypeCompleted:
+		tasksInCurrentSection = make([]task.Task, len(m.completedTasks))
+		copy(tasksInCurrentSection, m.completedTasks)
+	}
+
+	// Find the position of the current task in its section
+	currentPositionInSection := -1
+	for i, t := range tasksInCurrentSection {
+		if t.ID == toggledID {
+			currentPositionInSection = i
+			break
+		}
+	}
+
+	// Find the next task ID to select (if any)
+	var nextTaskID int32 = -1
+	if currentPositionInSection != -1 {
+		if currentPositionInSection+1 < len(tasksInCurrentSection) {
+			// There's a next task in this section
+			nextTaskID = tasksInCurrentSection[currentPositionInSection+1].ID
+		} else if len(tasksInCurrentSection) > 1 {
+			// We're at the last task, but there are other tasks in the section
+			// In this case, after the task is removed, the previous task becomes the last
+			nextTaskID = tasksInCurrentSection[currentPositionInSection-1].ID
+		}
+	}
+
 	// Determine new status
 	var newStatus task.Status
 	if curr.Status != task.StatusDone {
@@ -42,32 +95,64 @@ func (m *Model) toggleTaskCompletion() tea.Cmd {
 		newStatus = task.StatusTodo
 	}
 
-	// --- Optimistic Update ---
-	// Update local task state immediately
-	m.tasks[m.cursor].Status = newStatus
-	m.tasks[m.cursor].IsCompleted = (newStatus == task.StatusDone)
+	// --- Start Optimistic Update ---
+	// Create updated task
+	updatedTask := curr
+	updatedTask.Status = newStatus
+	updatedTask.IsCompleted = (newStatus == task.StatusDone)
 
-	// Re-categorize tasks locally
-	m.categorizeTasks(m.tasks)
-
-	// Keep track of the task ID for re-selection
-	targetTaskID := toggledID
-
-	// Find the task in the recategorized lists and update cursor
-	foundTask := false
+	// Update task in the main list
 	for i, t := range m.tasks {
-		if t.ID == targetTaskID {
-			m.cursor = i
-			foundTask = true
+		if t.ID == toggledID {
+			m.tasks[i] = updatedTask
 			break
 		}
 	}
 
-	// If for some reason the task isn't found (shouldn't happen), just keep the current cursor
-	if foundTask {
-		// Update visual cursor and task cursor based on the potentially new position
-		m.updateVisualCursorFromTaskCursor()
-		m.updateTaskCursorFromVisualCursor()
+	// Re-categorize tasks with the updated data
+	m.categorizeTasks(m.tasks)
+
+	// Now handle cursor positioning after task recategorization
+	if nextTaskID != -1 {
+		// If we identified a next task, find and select it
+		found := false
+		for i, t := range m.tasks {
+			if t.ID == nextTaskID {
+				m.cursor = i
+				m.cursorOnHeader = false
+				found = true
+				break
+			}
+		}
+
+		if found {
+			// Update visual cursor position
+			m.updateVisualCursorFromTaskCursor()
+		} else {
+			// If next task wasn't found, fall back to selecting the section header
+			m.selectSectionHeader(currentSectionType)
+		}
+	} else {
+		// No next task identified, select the section header
+		m.selectSectionHeader(currentSectionType)
+	}
+
+	// Ensure cursor is visible in the viewport
+	if m.visualCursor != originalVisualCursor {
+		viewportHeight := 10 // Approximate visible lines
+
+		// Adjust scroll if cursor moved above visible area
+		if m.visualCursor < m.taskListOffset {
+			m.taskListOffset = m.visualCursor
+		}
+
+		// Adjust scroll if cursor moved below visible area
+		if m.visualCursor >= m.taskListOffset+viewportHeight {
+			m.taskListOffset = m.visualCursor - viewportHeight + 1
+		}
+
+		// Reset detail panel offset when selection changes
+		m.taskDetailsOffset = 0
 	}
 	// --- End Optimistic Update ---
 
@@ -81,6 +166,32 @@ func (m *Model) toggleTaskCompletion() tea.Cmd {
 		return messages.StatusUpdateSuccessMsg{
 			Task:    updatedTask,
 			Message: "Task status updated successfully",
+		}
+	}
+}
+
+// selectSectionHeader helps position the cursor on a specific section header
+func (m *Model) selectSectionHeader(sectionType hooks.SectionType) {
+	for i, section := range m.collapsibleManager.Sections {
+		if section.Type == sectionType {
+			// Calculate the visual index of the section header
+			var headerIndex int = 0
+			for j := 0; j < i; j++ {
+				headerIndex++ // Count the header
+				if m.collapsibleManager.Sections[j].IsExpanded {
+					// Add items in expanded sections
+					// Get the item count directly from the section, which will work for any section type
+					headerIndex += m.collapsibleManager.Sections[j].ItemCount
+				}
+			}
+
+			// Set cursor to the section header
+			m.visualCursor = headerIndex
+			m.cursorOnHeader = true
+
+			// Update the task cursor from this visual position
+			m.updateTaskCursorFromVisualCursor()
+			break
 		}
 	}
 }
