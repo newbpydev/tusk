@@ -17,6 +17,7 @@ package panels
 
 import (
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -36,6 +37,10 @@ type TimelineProps struct {
 
 // RenderTimeline renders the timeline panel with a fixed header and scrollable content
 func RenderTimeline(props TimelineProps) string {
+	// Get the current date for consistent comparison throughout the function
+	now := time.Now()
+	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	
 	var scrollableContent strings.Builder
 	overdue, today, upcoming := getTasksByTimeCategory(props.Tasks)
 
@@ -46,8 +51,20 @@ func RenderTimeline(props TimelineProps) string {
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
-				daysSince := int(time.Since(*t.DueDate).Hours() / 24)
-				dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysSince)
+				
+				// For overdue tasks, calculate days since due
+				// CRITICAL: Only tasks with dates STRICTLY BEFORE today should be here
+				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
+				
+				// Double-check that this task is truly overdue
+				if taskDueDate.Before(todayDate) {
+					daysOverdue := int(todayDate.Sub(taskDueDate).Hours() / 24)
+					dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysOverdue)
+				} else {
+					// This should never happen if categorization is working correctly
+					// But as a safeguard, if a today task gets into overdue section, fix it
+					dueDate = fmt.Sprintf("%s (Today)", dueDate)
+				}
 			}
 
 			// Add status indicator
@@ -97,7 +114,23 @@ func RenderTimeline(props TimelineProps) string {
 				statusSymbol = "[ ]"
 			}
 
-			line := fmt.Sprintf("  %s %s\n", statusSymbol, t.Title)
+			// For today's tasks, show the remaining time until the end of the day
+			dueDateStr := ""
+			if t.DueDate != nil {
+				// Compute the end of day based on current time
+				now := time.Now()
+				todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+				endOfDay := todayDate.Add(24 * time.Hour)
+				remaining := endOfDay.Sub(now)
+				if remaining < 0 {
+					remaining = 0
+				}
+				hours := int(remaining.Hours())
+				minutes := int(remaining.Minutes()) % 60
+				dueDateStr = fmt.Sprintf("Today (%dh %dm left)", hours, minutes)
+			}
+
+			line := fmt.Sprintf("  %s %s %s\n", statusSymbol, t.Title, props.Styles.MediumPriority.Render(dueDateStr))
 			scrollableContent.WriteString(line)
 
 			// Add a short description if available
@@ -125,11 +158,29 @@ func RenderTimeline(props TimelineProps) string {
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
-				daysUntil := int(t.DueDate.Sub(time.Now()).Hours() / 24)
-				if daysUntil == 1 {
+				// Get the date components only for reliable day comparison
+				now := time.Now()
+				todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+				tomorrowDate := todayDate.AddDate(0, 0, 1)
+				taskDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
+				
+				if taskDate.Equal(tomorrowDate) {
 					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
 				} else {
-					dueDate = fmt.Sprintf("%s (in %d days)", dueDate, daysUntil)
+					// Calculate days difference using manual counting for accuracy
+					
+					// Add a failsafe: manually calculate day difference to ensure accuracy
+					days := 0
+					testDate := todayDate
+					for !testDate.After(taskDate) {
+						if testDate.Equal(taskDate) {
+							break
+						}
+						testDate = testDate.AddDate(0, 0, 1)
+						days++
+					}
+					
+					dueDate = fmt.Sprintf("%s (in %d days)", dueDate, days)
 				}
 			}
 
@@ -200,10 +251,10 @@ func RenderTimeline(props TimelineProps) string {
 func getTasksByTimeCategory(tasks []task.Task) ([]task.Task, []task.Task, []task.Task) {
 	var overdue, todayTasks, upcoming []task.Task
 
-	now := time.Now()
-	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	tomorrow := todayDate.AddDate(0, 0, 1)
-
+	// Use local time for consistency
+	today := time.Now().In(time.Local)
+	todayDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, time.Local)
+	
 	for _, t := range tasks {
 		// Skip tasks that don't have a due date
 		if t.DueDate == nil {
@@ -215,16 +266,23 @@ func getTasksByTimeCategory(tasks []task.Task) ([]task.Task, []task.Task, []task
 			continue
 		}
 
-		dueDate := *t.DueDate
-		if dueDate.Before(todayDate) {
-			overdue = append(overdue, t)
-		} else if dueDate.Before(tomorrow) {
+		// Normalize the task's due date using time.Local
+		taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, time.Local)
+
+		// Compute the difference in days between today and the task due date
+		diff := todayDate.Sub(taskDueDate).Hours() / 24
+		if math.Abs(diff) < 0.01 {
+			// Due today (allowing a small tolerance)
 			todayTasks = append(todayTasks, t)
+		} else if diff > 0 {
+			// Overdue: taskDueDate is strictly before today
+			overdue = append(overdue, t)
 		} else {
+			// Upcoming: taskDueDate is after today
 			upcoming = append(upcoming, t)
 		}
 	}
-
+	
 	return overdue, todayTasks, upcoming
 }
 

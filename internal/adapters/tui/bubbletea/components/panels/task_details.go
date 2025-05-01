@@ -39,6 +39,9 @@ type TaskDetailsProps struct {
 
 // RenderTaskDetails renders the task details panel with a fixed header and scrollable content
 func RenderTaskDetails(props TaskDetailsProps) string {
+	// Get the current date for consistent comparison
+	now := time.Now()
+	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	var scrollableContent strings.Builder
 
 	// If cursor is on a section header or out of valid range, show placeholder
@@ -101,9 +104,15 @@ func RenderTaskDetails(props TaskDetailsProps) string {
 			dueLabel := props.Styles.Title.Render("Due Date: ")
 			dueDate := t.DueDate.Format("2006-01-02")
 
-			// Show if overdue
-			if t.DueDate.Before(time.Now()) && t.Status != task.StatusDone {
-				dueDate = props.Styles.HighPriority.Render(dueDate + " (Overdue)")
+			// Use the task due date without time components
+			dueDateTime := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
+
+			// Updated due date logic in RenderTaskDetails
+			if dueDateTime.Equal(todayDate) && t.Status != task.StatusDone {
+				dueDate = props.Styles.MediumPriority.Render(dueDate + " (Today)")
+			} else if dueDateTime.Before(todayDate) && t.Status != task.StatusDone {
+				daysOverdue := int(todayDate.Sub(dueDateTime).Hours() / 24)
+				dueDate = props.Styles.HighPriority.Render(dueDate + fmt.Sprintf(" (%d days overdue)", daysOverdue))
 			}
 
 			scrollableContent.WriteString(dueLabel + dueDate + "\n\n")

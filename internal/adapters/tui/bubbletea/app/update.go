@@ -25,14 +25,16 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case messages.TickMsg:
-		// Update current time and check for status message expiry
-		m.currentTime = time.Time(msg)
+		// Update current time with the CURRENT system time, not the msg time
+		// This ensures we always display the latest time and prevents drift
+		m.currentTime = time.Now()
 		if (!m.statusExpiry.IsZero()) && time.Now().After(m.statusExpiry) {
 			m.statusMessage = ""
 			m.statusType = ""
 			m.statusExpiry = time.Time{}
 		}
 		return m, tea.Tick(time.Second, func(t time.Time) tea.Msg {
+			// Pass the time but force refresh on receipt
 			return messages.TickMsg(t)
 		})
 
