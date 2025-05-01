@@ -57,6 +57,20 @@
       "respectHexagonalArchitecture": true,
       "understandRepositoryPattern": true,
       "recognizeTableDrivenTests": true
+    },
+    "debuggingGuidelines": {
+      "followDebuggingQuestions": true,
+      "structureResponses": true,
+      "referenceDebuggingJson": true,
+      "prioritizeLogAnalysis": true,
+      "explainErrorSources": true,
+      "suggestBinarySplitApproach": true,
+      "validateAssumptions": true
     }
+  },
+  "debugging": {
+    "approach": "systematic questioning to isolate issues",
+    "guidelines": "see debugging.json for complete set of questions",
+    "responseFormat": "follow clarifyAndConfirm, analysisAndPlanning, stepByStepSolutionPlan, and implementation structure"
   }
 }

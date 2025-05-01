@@ -21,9 +21,10 @@ import (
 
 // FooterProps contains all the data needed to render the footer component
 type FooterProps struct {
-	Width     int
-	ViewMode  string
-	HelpStyle lipgloss.Style
+	Width          int
+	ViewMode       string
+	HelpStyle      lipgloss.Style
+	CursorOnHeader bool // Whether cursor is on a section header
 }
 
 // RenderFooter renders the help text footer for the current view mode
@@ -32,7 +33,13 @@ func RenderFooter(props FooterProps) string {
 
 	switch props.ViewMode {
 	case "list":
-		help = "j/k: navigate • h/l or ←/→: switch panels • enter: view details • c: toggle completion • n: new task • 1/2/3: toggle columns • q: quit"
+		if props.CursorOnHeader {
+			// When cursor is on a section header, show different actions
+			help = "j/k: navigate • h/l or ←/→: switch panels • enter/space: expand/collapse • n: new task • 1/2/3: toggle columns • q: quit"
+		} else {
+			// Normal task item actions
+			help = "j/k: navigate • h/l or ←/→: switch panels • enter: view details • c: toggle completion • n: new task • 1/2/3: toggle columns • q: quit"
+		}
 	case "detail":
 		help = "esc: back • h/l or ←/→: switch panels • e: edit • c: toggle completion • d: delete • n: new task"
 	case "edit":

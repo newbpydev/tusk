@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Terminal UI Implementation
+
+The terminal user interface is built using the BubbleTea framework, following the Model-View-Update (MVU) pattern.
+
+## Architecture
+
+- **Model**: Main application state in [internal/adapters/tui/bubbletea/app/model.go](mdc:internal/adapters/tui/bubbletea/app/model.go)
+- **View**: Terminal rendering in view.go files
+- **Update**: State updates in update.go files
+
+## Components
+
+The UI is organized into reusable components:
+
+- **Panels**: UI sections in [internal/adapters/tui/bubbletea/components/panels](mdc:internal/adapters/tui/bubbletea/components/panels)
+- **Layouts**: Structural components in [internal/adapters/tui/bubbletea/components/layout](mdc:internal/adapters/tui/bubbletea/components/layout)
+- **Shared**: Common UI utilities in [internal/adapters/tui/bubbletea/components/shared](mdc:internal/adapters/tui/bubbletea/components/shared)
+
+## Styling
+
+UI styling is managed through Lipgloss with theme definitions in [internal/adapters/tui/bubbletea/styles](mdc:internal/adapters/tui/bubbletea/styles).
+
+## Entry Point
+
+The TUI is launched from [internal/cli/tui.go](mdc:internal/cli/tui.go) after user authentication.
+

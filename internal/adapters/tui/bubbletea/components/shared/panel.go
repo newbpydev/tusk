@@ -38,7 +38,6 @@ func RenderPanel(props PanelProps) string {
 
 	// Content width is panel width minus frame elements for consistency
 	contentWidth := props.Width - totalFrameWidth
-	contentHeight := props.Height - 2 // Account for top and bottom borders
 
 	// Create base style for content
 	contentStyle := lipgloss.NewStyle().
@@ -47,20 +46,6 @@ func RenderPanel(props PanelProps) string {
 
 	// Apply style to content
 	styledContent := contentStyle.Render(props.Content)
-
-	// Ensure the content fills the panel height by adding padding if needed
-	contentHeight = max(0, contentHeight) // Ensure non-negative height
-
-	// Count lines in the content
-	lines := strings.Split(styledContent, "\n")
-	lineCount := len(lines)
-
-	// If content is shorter than available space, pad with empty lines
-	if lineCount < contentHeight {
-		paddingLines := contentHeight - lineCount
-		padding := strings.Repeat("\n", paddingLines)
-		styledContent += padding
-	}
 
 	return styledContent
 }
@@ -81,63 +66,30 @@ func CreateScrollableContent(content string, offset int, maxHeight int, styles *
 	}
 
 	lines := strings.Split(content, "\n")
-
-	// Calculate actual content height
 	contentHeight := len(lines)
 
-	// If scrolling not needed, just return the whole content padded to maxHeight
+	// If content fits exactly or is smaller, return as is without padding
 	if contentHeight <= maxHeight {
-		// Pad content to maxHeight to maintain consistent height
-		if len(lines) < maxHeight {
-			paddingLines := maxHeight - len(lines)
-			padding := strings.Repeat("\n", paddingLines)
-			return content + padding
-		}
 		return content
 	}
 
-	// Check if we need to adjust scroll position based on cursor
-	// This ensures the selected item is always visible
-	if len(cursorPosition) > 0 && cursorPosition[0] >= 0 {
-		cursor := cursorPosition[0]
-
-		// Define a comfortable padding to keep around the cursor
-		const visibilityPadding = 2
-
-		// Calculate viewport boundaries
-		viewportStart := offset
-		viewportEnd := offset + maxHeight - 1
-
-		// Adjust offset if cursor would be outside visible area
-		if cursor < viewportStart+visibilityPadding {
-			// Cursor is above the viewport or too close to top
-			offset = max(0, cursor-visibilityPadding)
-		} else if cursor > viewportEnd-visibilityPadding {
-			// Cursor is below the viewport or too close to bottom
-			offset = min(contentHeight-maxHeight, cursor-maxHeight+visibilityPadding+1)
-		}
-	}
+	// Calculate maximum valid offset
+	maxOffset := max(0, contentHeight-maxHeight)
 
 	// Clamp offset within valid range
-	maxOffset := max(0, contentHeight-maxHeight)
 	offset = min(offset, maxOffset)
 	offset = max(0, offset)
 
-	// Apply offset and limit number of lines to maxHeight
-	startLine := min(offset, len(lines))
-	endLine := min(startLine+maxHeight, len(lines))
+	// Calculate visible range
+	startLine := offset
+	endLine := min(startLine+maxHeight, contentHeight)
 
-	// Safety check: ensure we have at least one line to show
-	if startLine >= endLine || startLine >= len(lines) {
-		return "Error: Cannot display content (display area too small)"
-	}
-
-	// Calculate available content space
-	// For scroll indicators we use 2 lines max (top and bottom)
-	contentSpace := maxHeight
+	// Show scroll indicators if needed
 	needTopIndicator := offset > 0
-	needBottomIndicator := offset < maxOffset
+	needBottomIndicator := endLine < contentHeight
 
+	// Calculate available content space accounting for indicators
+	contentSpace := maxHeight
 	if needTopIndicator {
 		contentSpace--
 	}
@@ -145,32 +97,37 @@ func CreateScrollableContent(content string, offset int, maxHeight int, styles *
 		contentSpace--
 	}
 
-	// Make sure we don't try to show more lines than available space
+	// Adjust visible range based on available space
 	if endLine-startLine > contentSpace {
 		endLine = startLine + contentSpace
 	}
 
-	visibleLines := lines[startLine:endLine]
-
-	// Calculate padding to maintain consistent height
-	remainingSpace := contentSpace - len(visibleLines)
-	padding := ""
-	if remainingSpace > 0 {
-		padding = strings.Repeat("\n", remainingSpace)
+	// Additional guard to prevent invalid slice access
+	if startLine >= len(lines) {
+		startLine = len(lines) - 1
+	}
+	if endLine > len(lines) {
+		endLine = len(lines)
 	}
 
-	// Build the content with indicators and padding
+	// Make sure we never have an invalid range
+	if startLine < 0 {
+		startLine = 0
+	}
+	if endLine <= startLine {
+		endLine = startLine + 1
+	}
+
+	// Build the result
 	var result strings.Builder
 
 	if needTopIndicator {
 		result.WriteString("▲\n")
 	}
 
-	result.WriteString(strings.Join(visibleLines, "\n"))
-
-	// Add padding to maintain consistent height
-	if padding != "" {
-		result.WriteString(padding)
+	// Guard against empty content
+	if startLine < endLine && startLine >= 0 && endLine <= len(lines) {
+		result.WriteString(strings.Join(lines[startLine:endLine], "\n"))
 	}
 
 	if needBottomIndicator {

@@ -26,24 +26,50 @@ import (
 
 // TaskDetailsProps contains all properties needed to render the task details panel
 type TaskDetailsProps struct {
-	Tasks    []task.Task
-	Cursor   int
-	Offset   int
-	Width    int
-	Height   int
-	Styles   *shared.Styles
-	IsActive bool
+	Tasks          []task.Task
+	Cursor         int
+	SelectedTask   *task.Task // Direct reference to the selected task
+	Offset         int
+	Width          int
+	Height         int
+	Styles         *shared.Styles
+	IsActive       bool
+	CursorOnHeader bool // whether selection is on a section header
 }
 
 // RenderTaskDetails renders the task details panel with a fixed header and scrollable content
 func RenderTaskDetails(props TaskDetailsProps) string {
 	var scrollableContent strings.Builder
 
-	if len(props.Tasks) == 0 {
+	// If cursor is on a section header or out of valid range, show placeholder
+	if props.CursorOnHeader || props.SelectedTask == nil && (props.Cursor < 0 || props.Cursor >= len(props.Tasks)) {
+		scrollableContent.WriteString(props.Styles.Help.Render("Select a task to view details"))
+		return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
+			Title:             "Task Details",
+			ScrollableContent: scrollableContent.String(),
+			EmptyMessage:      "No task selected",
+			Width:             props.Width,
+			Height:            props.Height,
+			Offset:            props.Offset,
+			Styles:            props.Styles,
+			IsActive:          props.IsActive,
+			BorderColor:       shared.ColorBorder,
+			// Use cursor position to keep details in view
+			CursorPosition: props.Cursor,
+		})
+	}
+
+	if len(props.Tasks) == 0 && props.SelectedTask == nil {
 		scrollableContent.WriteString("No tasks yet. Press 'n' to create your first task.\n\n")
 		scrollableContent.WriteString(props.Styles.Help.Render("Tip: You can organize tasks with priorities and due dates!"))
-	} else if props.Cursor < len(props.Tasks) {
-		t := props.Tasks[props.Cursor]
+	} else {
+		// Use SelectedTask if provided, otherwise use task at cursor position
+		var t task.Task
+		if props.SelectedTask != nil {
+			t = *props.SelectedTask
+		} else if props.Cursor < len(props.Tasks) {
+			t = props.Tasks[props.Cursor]
+		}
 
 		// Add more detailed task information with formatting to make it more scrollable
 		scrollableContent.WriteString(props.Styles.Title.Render("Title: ") + t.Title + "\n\n")
@@ -109,8 +135,6 @@ func RenderTaskDetails(props TaskDetailsProps) string {
 		scrollableContent.WriteString("\n" + props.Styles.Help.Render("Press 'e' to edit task") + "\n")
 		scrollableContent.WriteString(props.Styles.Help.Render("Press 'c' to toggle completion") + "\n")
 		scrollableContent.WriteString(props.Styles.Help.Render("Press 'd' to delete task") + "\n")
-	} else {
-		scrollableContent.WriteString("No task selected")
 	}
 
 	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
@@ -123,7 +147,6 @@ func RenderTaskDetails(props TaskDetailsProps) string {
 		Styles:            props.Styles,
 		IsActive:          props.IsActive,
 		BorderColor:       shared.ColorBorder,
-		// Pass a virtual cursor position to enable scrolling even without a real cursor
-		CursorPosition: props.Offset,
+		CursorPosition:    props.Cursor,
 	})
 }

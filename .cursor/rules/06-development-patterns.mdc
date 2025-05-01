@@ -1,0 +1,37 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Development Patterns
+
+## Hexagonal Architecture
+
+Tusk follows the hexagonal architecture pattern with clear boundaries:
+
+- **Core**: Business logic in [internal/core](mdc:internal/core)
+- **Ports**: Interface definitions in [internal/ports](mdc:internal/ports)
+- **Adapters**: External system integrations in [internal/adapters](mdc:internal/adapters)
+- **Services**: Use case implementation in [internal/service](mdc:internal/service)
+
+## Error Handling
+
+Errors follow a consistent pattern:
+- Domain errors in [internal/core/errors](mdc:internal/core/errors)
+- Contextual wrap/unwrap using `pkg/errors`
+- Logging with zap in [internal/util/logging](mdc:internal/util/logging)
+
+## Configuration
+
+Configuration is managed through:
+- Environment variables
+- .env files loaded by godotenv
+- Configuration struct in [internal/config](mdc:internal/config)
+
+## Testing Approach
+
+Tests follow a structured approach:
+- Unit tests alongside code files
+- Integration tests in [test](mdc:test) directory
+- Testify for assertions and mocks
+

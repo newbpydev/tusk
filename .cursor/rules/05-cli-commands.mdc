@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# CLI Commands
+
+Tusk provides a command-line interface using the Cobra framework.
+
+## Command Structure
+
+- **Root Command**: Defined in [internal/cli/root.go](mdc:internal/cli/root.go)
+- **TUI Command**: Launches the terminal UI from [internal/cli/tui.go](mdc:internal/cli/tui.go)
+- **Task Commands**: Operations like add, list, complete in [internal/cli](mdc:internal/cli)
+
+## Entry Point
+
+The CLI is launched from [cmd/cli/main.go](mdc:cmd/cli/main.go), which:
+1. Loads configuration
+2. Initializes logging
+3. Connects to the database
+4. Executes the CLI commands
+
+## Usage
+
+Common commands include:
+- `tusk tui` - Launch the terminal UI
+- `tusk add "Task name"` - Add a new task
+- `tusk list` - List all tasks
+- `tusk complete <id>` - Mark a task as complete
+

@@ -1,0 +1,33 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Tusk Project Overview
+
+Tusk is a terminal-based task management application written in Go, designed for developers and power users who want a fast, extensible, and feature-rich TODO experience.
+
+## Architecture
+
+The project follows a hexagonal architecture (also known as ports and adapters):
+
+- **Core Domain**: Contains pure business logic and domain models in [internal/core](mdc:internal/core)
+- **Ports**: Define interfaces for the application in [internal/ports](mdc:internal/ports)
+- **Adapters**: Connect the application to external systems in [internal/adapters](mdc:internal/adapters)
+- **Services**: Implement use cases in [internal/service](mdc:internal/service)
+
+## Main Components
+
+- **CLI Application**: Entry point in [cmd/cli](mdc:cmd/cli)
+- **Terminal UI**: Built with BubbleTea framework in [internal/adapters/tui/bubbletea](mdc:internal/adapters/tui/bubbletea)
+- **Database**: PostgreSQL with sqlc-generated code in [internal/adapters/db/sqlc](mdc:internal/adapters/db/sqlc)
+- **Domain Models**: Core entities in [internal/core](mdc:internal/core)
+
+## Key Features
+
+- Task management with subtasks
+- Priority and status tracking
+- Terminal user interface
+- PostgreSQL persistence
+- Future REST API support
+
