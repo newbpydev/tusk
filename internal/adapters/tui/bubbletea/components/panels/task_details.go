@@ -18,7 +18,6 @@ package panels
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/core/task"
@@ -39,9 +38,6 @@ type TaskDetailsProps struct {
 
 // RenderTaskDetails renders the task details panel with a fixed header and scrollable content
 func RenderTaskDetails(props TaskDetailsProps) string {
-	// Get the current date for consistent comparison
-	now := time.Now()
-	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	var scrollableContent strings.Builder
 
 	// If cursor is on a section header or out of valid range, show placeholder
@@ -102,20 +98,20 @@ func RenderTaskDetails(props TaskDetailsProps) string {
 		// Due date if available
 		if t.DueDate != nil {
 			dueLabel := props.Styles.Title.Render("Due Date: ")
-			dueDate := t.DueDate.Format("2006-01-02")
-
-			// Use the task due date without time components
-			dueDateTime := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-
-			// Updated due date logic in RenderTaskDetails
-			if dueDateTime.Equal(todayDate) && t.Status != task.StatusDone {
-				dueDate = props.Styles.MediumPriority.Render(dueDate + " (Today)")
-			} else if dueDateTime.Before(todayDate) && t.Status != task.StatusDone {
-				daysOverdue := int(todayDate.Sub(dueDateTime).Hours() / 24)
-				dueDate = props.Styles.HighPriority.Render(dueDate + fmt.Sprintf(" (%d days overdue)", daysOverdue))
+			formattedDue, dateStatus := shared.FormatDueDate(t.DueDate, string(t.Status))
+			
+			// Apply appropriate styling based on date status
+			var styledDue string
+			switch dateStatus {
+			case "today":
+				styledDue = props.Styles.MediumPriority.Render(formattedDue)
+			case "overdue":
+				styledDue = props.Styles.HighPriority.Render(formattedDue)
+			default:
+				styledDue = formattedDue
 			}
-
-			scrollableContent.WriteString(dueLabel + dueDate + "\n\n")
+			
+			scrollableContent.WriteString(dueLabel + styledDue + "\n\n")
 		}
 
 		// Description
