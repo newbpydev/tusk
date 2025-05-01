@@ -8,11 +8,27 @@ import (
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
-// handleKeyPress delegates keyboard input based on current view mode
+// handleKeyPress delegates keyboard input based on current view mode and active panel
 func (m *Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// Global key handlers that work in any mode
+	switch msg.String() {
+	case "q", "ctrl+c":
+		return m, tea.Quit
+	}
+
 	switch m.viewMode {
 	case "list":
-		return m.handleListViewKeys(msg)
+		// In list view, delegate to panel-specific handlers based on active panel
+		switch m.activePanel {
+		case 0: // Task list panel
+			return m.handleTaskListPanelKeys(msg)
+		case 1: // Task details panel
+			return m.handleTaskDetailsPanelKeys(msg)
+		case 2: // Timeline panel
+			return m.handleTimelinePanelKeys(msg)
+		default:
+			return m, nil
+		}
 	case "detail":
 		return m.handleDetailViewKeys(msg)
 	case "create", "edit":
@@ -24,17 +40,14 @@ func (m *Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 }
 
-// handleListViewKeys processes keyboard input in list view
-func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+// handleTaskListPanelKeys processes keyboard input when the task list panel is active
+func (m *Model) handleTaskListPanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// Initialize sections if needed
 	if m.collapsibleManager == nil {
 		m.initCollapsibleSections()
 	}
 
 	switch msg.String() {
-	case "q", "ctrl+c":
-		return m, tea.Quit
-
 	case "j", "down":
 		// Handle down navigation through tasks and section headers
 		if m.collapsibleManager.GetItemCount() > 0 {
@@ -63,19 +76,10 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case "tab", "right", "l":
 		// Move to next panel if available
-		if m.showTaskDetails && m.activePanel == 0 {
+		if m.showTaskDetails {
 			m.activePanel = 1
-		} else if m.showTimeline && m.activePanel < 2 {
+		} else if m.showTimeline {
 			m.activePanel = 2
-		}
-		return m, nil
-
-	case "shift+tab", "left", "h":
-		// Move to previous panel if available
-		if m.showTimeline && m.activePanel == 2 {
-			m.activePanel = 1
-		} else if m.showTaskDetails && m.activePanel == 1 {
-			m.activePanel = 0
 		}
 		return m, nil
 
@@ -85,7 +89,7 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, m.toggleSection()
 		}
 		// If on a task, show details (if available)
-		if m.showTaskDetails && m.activePanel == 0 && !m.cursorOnHeader {
+		if m.showTaskDetails && !m.cursorOnHeader {
 			m.activePanel = 1
 		}
 		return m, nil
@@ -118,7 +122,98 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		// Refresh tasks
 		m.setLoadingStatus("Refreshing tasks...")
 		return m, m.refreshTasks()
+	}
 
+	// Handle panel visibility toggles
+	return m.handlePanelVisibilityKeys(msg)
+}
+
+// handleTaskDetailsPanelKeys processes keyboard input when the task details panel is active
+func (m *Model) handleTaskDetailsPanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "tab", "right", "l":
+		// Move to next panel if available
+		if m.showTimeline {
+			m.activePanel = 2
+		}
+		return m, nil
+
+	case "shift+tab", "left", "h", "esc":
+		// Move to previous panel
+		if m.showTaskList {
+			m.activePanel = 0
+		}
+		return m, nil
+
+	case "j", "down":
+		// Scroll down in task details
+		if m.taskDetailsOffset < 100 { // Arbitrary limit that could be calculated
+			m.taskDetailsOffset++
+		}
+		return m, nil
+
+	case "k", "up":
+		// Scroll up in task details
+		if m.taskDetailsOffset > 0 {
+			m.taskDetailsOffset--
+		}
+		return m, nil
+
+	case "e":
+		// Edit current task
+		if !m.cursorOnHeader && m.cursor < len(m.tasks) {
+			m.viewMode = "edit"
+			// Load current task into form
+			m.loadTaskIntoForm(m.tasks[m.cursor])
+			return m, nil
+		}
+		return m, nil
+
+	case "r":
+		// Refresh tasks
+		m.setLoadingStatus("Refreshing tasks...")
+		return m, m.refreshTasks()
+	}
+
+	// Handle panel visibility toggles
+	return m.handlePanelVisibilityKeys(msg)
+}
+
+// handleTimelinePanelKeys processes keyboard input when the timeline panel is active
+func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "shift+tab", "left", "h", "esc":
+		// Move to previous panel
+		if m.showTaskDetails {
+			m.activePanel = 1
+		} else if m.showTaskList {
+			m.activePanel = 0
+		}
+		return m, nil
+
+	case "j", "down":
+		// Scroll down in timeline (to be implemented)
+		// Placeholder for timeline scrolling functionality
+		return m, nil
+
+	case "k", "up":
+		// Scroll up in timeline (to be implemented)
+		// Placeholder for timeline scrolling functionality
+		return m, nil
+
+	case "r":
+		// Refresh tasks
+		m.setLoadingStatus("Refreshing tasks...")
+		return m, m.refreshTasks()
+	}
+
+	// Handle panel visibility toggles
+	return m.handlePanelVisibilityKeys(msg)
+}
+
+// handlePanelVisibilityKeys processes keyboard input for panel visibility toggles
+func (m *Model) handlePanelVisibilityKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
 	case "1":
 		// Toggle task list visibility
 		m.showTaskList = !m.showTaskList
@@ -159,7 +254,7 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// handleDetailViewKeys processes keyboard input in detail view
+// handleDetailViewKeys processes keyboard input in detail view (legacy function, kept for compatibility)
 func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "q", "ctrl+c":

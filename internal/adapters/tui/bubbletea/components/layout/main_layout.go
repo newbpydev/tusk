@@ -24,6 +24,7 @@ type MainLayoutProps struct {
 	HelpStyle      lipgloss.Style
 	CursorOnHeader bool
 	HelpText       string // Custom help text for the current view
+	ActivePanel    int    // The currently active panel (0: task list, 1: task details, 2: timeline)
 }
 
 // RenderMainLayout creates a consistent layout with header, content, and footer.
@@ -59,6 +60,7 @@ func RenderMainLayout(props MainLayoutProps) string {
 		ViewMode:       props.ViewMode,
 		HelpStyle:      props.HelpStyle,
 		CursorOnHeader: props.CursorOnHeader,
+		ActivePanel:    props.ActivePanel,
 		CustomHelpText: props.HelpText,
 	})
 

@@ -114,6 +114,7 @@ func (m *Model) renderMultiPanelView(sharedStyles *shared.Styles) string {
 		ViewMode:       m.viewMode,
 		HelpStyle:      m.styles.Help,
 		CursorOnHeader: m.cursorOnHeader,
+		ActivePanel:    m.activePanel,
 	})
 }
 
