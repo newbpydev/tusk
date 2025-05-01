@@ -7,22 +7,24 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/core/task"
-	// NOTE: Need to potentially add more imports later depending on where helper functions land.
 )
 
 // Update implements tea.Model Update, handling all message types.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		// Delegate all keyboard handling to the handler functions in handlers.go
 		newModel, cmd := m.handleKeyPress(msg)
 		return newModel, cmd
 
 	case tea.WindowSizeMsg:
+		// Update window dimensions for layout calculations
 		m.width = msg.Width
 		m.height = msg.Height
 		return m, nil
 
 	case messages.TickMsg:
+		// Update current time and check for status message expiry
 		m.currentTime = time.Time(msg)
 		if (!m.statusExpiry.IsZero()) && time.Now().After(m.statusExpiry) {
 			m.statusMessage = ""
@@ -34,20 +36,14 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		})
 
 	case messages.StatusUpdateErrorMsg:
+		// Handle task update error
 		m.err = msg.Err
-		// Call to setErrorStatus will be moved to status.go
 		m.setErrorStatus(fmt.Sprintf("Error updating task '%s': %v", msg.TaskTitle, msg.Err))
-		// Call to refreshTasks will be moved to tasks.go
 		return m, m.refreshTasks()
 
 	case messages.StatusUpdateSuccessMsg:
-		// Call to setSuccessStatus will be moved to status.go
+		// Handle successful task update
 		m.setSuccessStatus(msg.Message)
-
-		// We don't need to update the cursor again here
-		// The optimistic update in toggleTaskCompletion has already
-		// positioned the cursor correctly. If we attempt to reposition
-		// it again, we might end up with inconsistent state.
 
 		// Keep track of the updated task ID
 		updatedTaskID := msg.Task.ID
@@ -81,20 +77,18 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case messages.TasksRefreshedMsg:
+		// Handle refreshed task list
 		m.tasks = msg.Tasks
 		if m.cursor >= len(m.tasks) {
-			// Call to max will be moved to utils.go
 			m.cursor = max(0, len(m.tasks)-1)
 		}
-		// Call to clearLoadingStatus will be moved to status.go
 		m.clearLoadingStatus()
-		// Call to initCollapsibleSections will be moved to sections.go
 		m.initCollapsibleSections()
 		return m, nil
 
 	case messages.ErrorMsg:
+		// Handle general error
 		m.err = error(msg)
-		// Call to setErrorStatus will be moved to status.go
 		m.setErrorStatus(fmt.Sprintf("Error: %v", error(msg)))
 		return m, nil
 
@@ -103,26 +97,17 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 }
 
-// handleKeyPress processes keyboard input by viewMode
-func (m *Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	switch m.viewMode {
-	case "list":
-		return m.handleListViewKeys(msg)
-	case "detail":
-		return m.handleDetailViewKeys(msg)
-	case "edit":
-		// Note: Refers to handleEditViewKeys which might be moved to form.go
-		return m.handleEditViewKeys(msg)
-	case "create":
-		// Note: Refers to handleCreateFormKeys which might be moved to form.go
-		return m.handleCreateFormKeys(msg)
-	default:
-		return m, nil
-	}
-}
 
-// handleListViewKeys processes keyboard input in list view with collapsible sections support
-func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+
+
+
+
+
+// NOTICE: This was moved to handlers.go. 
+// This function is kept here temporarily for legacy compatibility.
+// All new code should call the version in handlers.go.
+// TODO: Remove this function when the refactoring is complete.
+func handleLegacyListViewKeys(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// Initialize sections if needed
 	if m.collapsibleManager == nil {
 		// Call to initCollapsibleSections will be moved to sections.go
@@ -533,8 +518,11 @@ func (m *Model) handleListViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// handleDetailViewKeys processes keyboard input in detail view
-func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+// NOTICE: This was moved to handlers.go. 
+// This function is kept here temporarily for legacy compatibility.
+// All new code should call the version in handlers.go.
+// TODO: Remove this function when the refactoring is complete.
+func handleLegacyDetailViewKeys(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "esc", "q":
 		m.viewMode = "list"
@@ -575,8 +563,11 @@ func (m *Model) handleDetailViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// handleCreateFormKeys processes keyboard input in create form - This will likely move to form.go
-func (m *Model) handleCreateFormKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+// NOTICE: This functionality was moved to form.go. 
+// This function is kept here temporarily for legacy compatibility.
+// All new code should call handleFormKeys in form.go.
+// TODO: Remove this function when the refactoring is complete.
+func handleLegacyCreateFormKeys(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.Type {
 	case tea.KeyEsc:
 		m.viewMode = "list"
@@ -646,8 +637,11 @@ func (m *Model) handleCreateFormKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// handleEditViewKeys processes keyboard input in edit view - This will likely move to form.go
-func (m *Model) handleEditViewKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+// NOTICE: This functionality was moved to form.go. 
+// This function is kept here temporarily for legacy compatibility.
+// All new code should call handleFormKeys in form.go.
+// TODO: Remove this function when the refactoring is complete.
+func handleLegacyEditViewKeys(m *Model, msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// This function needs refinement. It should likely load task data into form fields
 	// upon entering edit mode, and then handle updates similar to create form,
 	// finally calling an update task command instead of create.
