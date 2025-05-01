@@ -43,14 +43,33 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.StatusUpdateSuccessMsg:
 		// Call to setSuccessStatus will be moved to status.go
 		m.setSuccessStatus(msg.Message)
-		// Update local task entry only
+
+		// Keep track of the updated task ID for selection
+		updatedTaskID := msg.Task.ID
+
+		// Update local task entry
 		for i := range m.tasks {
-			if m.tasks[i].ID == msg.Task.ID {
+			if m.tasks[i].ID == updatedTaskID {
 				m.tasks[i] = msg.Task
 				break
 			}
 		}
-		// No reposition here; toggleTaskCompletion already handled cursor movement
+
+		// Ensure the tasks are properly re-categorized
+		m.categorizeTasks(m.tasks)
+
+		// Find the updated task in the main task list after recategorization
+		for i, t := range m.tasks {
+			if t.ID == updatedTaskID {
+				m.cursor = i
+				break
+			}
+		}
+
+		// Re-sync the cursor positions to ensure they're pointing to the correct task
+		m.updateVisualCursorFromTaskCursor()
+		m.updateTaskCursorFromVisualCursor()
+
 		return m, nil
 
 	case messages.TasksRefreshedMsg:

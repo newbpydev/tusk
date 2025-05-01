@@ -43,47 +43,45 @@ func (m *Model) toggleTaskCompletion() tea.Cmd {
 	}
 
 	// --- Optimistic Update ---
-	// Store previous state for potential rollback
-	// prevTasks := make([]task.Task, len(m.tasks))
-	// copy(prevTasks, m.tasks)
-	// prevCursor := m.cursor
-	// prevVisualCursor := m.visualCursor
-	// prevCursorOnHeader := m.cursorOnHeader
-
 	// Update local task state immediately
 	m.tasks[m.cursor].Status = newStatus
 	m.tasks[m.cursor].IsCompleted = (newStatus == task.StatusDone)
 
 	// Re-categorize tasks locally
-	// Call to categorizeTasks will be in sections.go
 	m.categorizeTasks(m.tasks)
 
-	// Update visual cursor and task cursor based on the potentially new position
-	// Calls will be in sections.go
-	m.updateVisualCursorFromTaskCursor()
-	m.updateTaskCursorFromVisualCursor()
+	// Keep track of the task ID for re-selection
+	targetTaskID := toggledID
+
+	// Find the task in the recategorized lists and update cursor
+	foundTask := false
+	for i, t := range m.tasks {
+		if t.ID == targetTaskID {
+			m.cursor = i
+			foundTask = true
+			break
+		}
+	}
+
+	// If for some reason the task isn't found (shouldn't happen), just keep the current cursor
+	if foundTask {
+		// Update visual cursor and task cursor based on the potentially new position
+		m.updateVisualCursorFromTaskCursor()
+		m.updateTaskCursorFromVisualCursor()
+	}
 	// --- End Optimistic Update ---
 
 	// Call server to update
 	return func() tea.Msg {
 		updatedTask, err := m.taskSvc.ChangeStatus(m.ctx, int64(toggledID), newStatus)
 		if err != nil {
-			// Rollback optimistic update on error?
-			// m.tasks = prevTasks
-			// m.cursor = prevCursor
-			// m.visualCursor = prevVisualCursor
-			// m.cursorOnHeader = prevCursorOnHeader
-			// m.categorizeTasks(m.tasks) // Recategorize based on rolled back state
-			// m.updateVisualCursorFromTaskCursor()
-			// m.updateTaskCursorFromVisualCursor()
-
-			// Return error message
 			return messages.StatusUpdateErrorMsg{TaskIndex: m.cursor, TaskTitle: curr.Title, Err: err}
 		}
-		// On success, the TasksRefreshedMsg from refreshTasks() in the Update loop
-		// will eventually handle the final state, or we can send a specific success message.
-		// For now, sending a simple success message.
-		return messages.StatusUpdateSuccessMsg{Task: updatedTask, Message: "Task status updated successfully"}
+
+		return messages.StatusUpdateSuccessMsg{
+			Task:    updatedTask,
+			Message: "Task status updated successfully",
+		}
 	}
 }
 
