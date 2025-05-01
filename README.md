@@ -121,14 +121,22 @@ This section outlines what's been completed, what's in progress, and upcoming mi
   - Added status messages and loading indicators for better user feedback.
   - Enhanced UI with priority color-coding and status indicators.
 
+- **TUI Enhancements** _(2025-05-01)_
+
+  - Implemented subtask management within the TUI.
+  - Added task filtering and sorting options.
+  - Developed comprehensive keyboard shortcuts and help menu.
+  - Implemented edit mode for existing tasks.
+  - Refactored TUI codebase for better organization and maintainability.
+
 ### ▶️ In Progress
 
-- **TUI Enhancements**
+- **Kanban View Implementation**
 
-  - Adding subtask management within the TUI.
-  - Working on task filtering and sorting options.
-  - Developing comprehensive keyboard shortcuts and help menu.
-  - Implementing edit mode for existing tasks.
+  - Developing a Kanban board view for task organization.
+  - Implementing drag-and-drop functionality between columns.
+  - Adding customizable columns based on task status or priority.
+  - Creating visual indicators for task relationships and dependencies.
 
 ### ⏳ Upcoming
 
@@ -234,9 +242,13 @@ This section outlines what's been completed, what's in progress, and upcoming mi
   - `d` - Delete selected task
   - `e` - Edit selected task
   - `r` - Refresh task list
+  - `s` - Toggle subtask visibility
+  - `f` - Filter tasks by criteria
+  - `o` - Sort tasks by different fields
 
 - **Application Controls**
   - `Esc` - Return to previous view
+  - `?` - Show keyboard shortcut help
   - `q` - Quit the application
 
 ---

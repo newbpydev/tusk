@@ -19,7 +19,14 @@ adapters/
 └── tui/               # Terminal UI adapter
     └── bubbletea/     # BubbleTea implementation of the TUI
         ├── app/       # Application container
+        │   ├── app.go   # Application initialization and coordination
+        │   ├── model.go # Core model definition and state management
+        │   ├── update.go # Main update logic for handling messages
+        │   ├── view.go  # Main view rendering
+        │   ├── views.go # Utility functions for different views
+        │   └── tasks.go # Task-specific functionality
         ├── components/# Reusable UI components
+        ├── hooks/     # Custom hook functionality for UI
         ├── messages/  # Message definitions for Bubble Tea
         ├── styles/    # UI styling definitions
         └── views/     # Individual screens/views
@@ -53,7 +60,10 @@ The Terminal UI adapter using BubbleTea:
 - Handles user interactions and keyboard shortcuts
 - Provides views for task management, details, and creation
 - Manages application state and transitions
+- Supports subtask management with collapsible sections
+- Offers filtering and sorting capabilities
 - Styles UI components using Lip Gloss
+- Follows a well-organized MVU (Model-View-Update) architecture
 
 ### Authentication Adapter (`auth/`)
 

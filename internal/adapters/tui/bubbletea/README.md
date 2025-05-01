@@ -7,7 +7,12 @@ This directory contains the Terminal User Interface (TUI) implementation for Tus
 ```plaintext
 bubbletea/
 ├── app/                # Main application container
-│   └── app.go          # Application initialization and coordination
+│   ├── app.go          # Application initialization and coordination
+│   ├── model.go        # Core model definition and state management
+│   ├── update.go       # Main update logic for handling messages
+│   ├── view.go         # Main view rendering
+│   ├── views.go        # Utility functions for different views
+│   └── tasks.go        # Task-specific functionality
 ├── components/         # Reusable UI components
 │   ├── input/          # Input field components
 │   ├── layout/         # Layout components
@@ -23,6 +28,8 @@ bubbletea/
 │       ├── panel.go    # Base panel implementation
 │       ├── scrollable_panel.go # Scrollable content panel
 │       └── styles.go   # Shared styling constants
+├── hooks/              # Custom hook functionality
+│   └── collapsible.go  # Collapsible section implementation
 ├── legacy/             # Legacy implementation (for reference)
 │   ├── model.go        # Original model definition
 │   ├── styles.go       # Original styling approach
@@ -41,22 +48,26 @@ bubbletea/
 
 The TUI follows a Model-View-Update (MVU) architecture pattern implemented through BubbleTea:
 
-1. **Model**: Represents the application state
-2. **View**: Renders the state as terminal output
-3. **Update**: Processes messages and updates the model accordingly
+1. **Model**: Represents the application state (defined in `app/model.go`)
+2. **View**: Renders the state as terminal output (implemented in `app/view.go` and `app/views.go`)
+3. **Update**: Processes messages and updates the model accordingly (implemented in `app/update.go`)
 
-Components communicate through message passing, which allows for loosely coupled interactions between different parts of the UI.
+Components communicate through message passing, which allows for loosely coupled interactions between different parts of the UI. The code has been refactored to improve organization with task-specific functionality moved to `app/tasks.go` to make the codebase more maintainable.
 
 ## Key Components
 
-### App Container (`app/app.go`)
+### App Container (`app/` directory)
 
-The entry point for the TUI implementation, responsible for:
+The core of the TUI implementation, now better organized into several files:
 
-- Initializing the BubbleTea program
-- Managing global state and component coordination
-- Handling top-level keyboard shortcuts
-- Managing view transitions
+- **app.go**: Entry point for initialization and coordination
+- **model.go**: Core model definition and state management
+- **update.go**: Logic for handling messages and state transitions
+- **view.go**: Primary view rendering and layout
+- **views.go**: Helper functions for specific view types
+- **tasks.go**: Task-specific functionality like creation, editing, and deletion
+
+This modular organization improves maintainability and makes the codebase easier to understand.
 
 ### Panels (`components/panels/`)
 
@@ -106,6 +117,9 @@ When working with the TUI:
 4. **Keyboard Focus**: Ensure keyboard navigation works consistently
 5. **Error Handling**: Provide meaningful feedback for errors
 6. **Accessibility**: Consider terminal limitations and provide good navigation options
+7. **Code Organization**: Follow the established pattern of separating functionality into appropriate files
+8. **TODO Management**: Address TODO comments by moving functions to appropriate files
+9. **Hook Utilization**: Use the hooks package for reusable stateful behavior like collapsible sections
 
 ### Adding a New Panel
 
