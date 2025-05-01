@@ -37,6 +37,7 @@ func (m *Model) renderFormView(sharedStyles *shared.Styles) string {
 	return layout.RenderMainLayout(layout.MainLayoutProps{
 		// Header properties
 		Width:         m.width,
+		Height:        m.height,
 		CurrentTime:   m.currentTime,
 		StatusMessage: m.statusMessage,
 		StatusType:    m.statusType,
@@ -100,6 +101,7 @@ func (m *Model) renderMultiPanelView(sharedStyles *shared.Styles) string {
 	return layout.RenderMainLayout(layout.MainLayoutProps{
 		// Header properties
 		Width:          m.width,
+		Height:         m.height,
 		CurrentTime:    m.currentTime,
 		StatusMessage:  m.statusMessage,
 		StatusType:     m.statusType,

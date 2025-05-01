@@ -10,6 +10,7 @@ import (
 type MainLayoutProps struct {
 	// Header properties
 	Width         int
+	Height        int // Total available height of the screen
 	CurrentTime   time.Time
 	StatusMessage string
 	StatusType    string
@@ -28,6 +29,10 @@ type MainLayoutProps struct {
 // RenderMainLayout creates a consistent layout with header, content, and footer.
 // This serves as the main container for all screens in the application.
 func RenderMainLayout(props MainLayoutProps) string {
+	// Define layout constants
+	const headerHeight = 5
+	const footerHeight = 1
+	
 	// Render the header
 	header := RenderHeader(HeaderProps{
 		Width:         props.Width,
@@ -37,8 +42,16 @@ func RenderMainLayout(props MainLayoutProps) string {
 		IsLoading:     props.IsLoading,
 	})
 
-	// Middle content is provided by the caller
-	content := props.Content
+	// Calculate content height to fill available space
+	contentHeight := props.Height - headerHeight - footerHeight
+	
+	// Create a style for the content to ensure it takes the full available height
+	contentStyle := lipgloss.NewStyle().
+		Width(props.Width).
+		Height(contentHeight)
+	
+	// Style the content to ensure it takes the full available height
+	content := contentStyle.Render(props.Content)
 
 	// Render the footer with appropriate help text
 	footer := RenderFooter(FooterProps{
@@ -49,6 +62,13 @@ func RenderMainLayout(props MainLayoutProps) string {
 		CustomHelpText: props.HelpText,
 	})
 
-	// Combine all sections
-	return lipgloss.JoinVertical(lipgloss.Left, header, content, footer)
+	// Combine all sections with proper vertical alignment
+	layout := lipgloss.JoinVertical(lipgloss.Left, header, content, footer)
+	
+	// Create a full-screen container that ensures the layout takes up the entire screen
+	fullScreenStyle := lipgloss.NewStyle().
+		Width(props.Width).
+		Height(props.Height)
+	
+	return fullScreenStyle.Render(layout)
 }
