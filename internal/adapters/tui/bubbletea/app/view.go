@@ -5,6 +5,7 @@ import (
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/layout"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/panels"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
+	"github.com/newbpydev/tusk/internal/core/task"
 	// NOTE: Need to potentially add more imports later (e.g., for max/min from utils.go).
 	// Need styles, hooks as well.
 )
@@ -81,7 +82,10 @@ func (m *Model) View() string {
 	if m.showTaskList {
 		contentWidth := columnWidth - 2
 		list := panels.RenderTaskList(panels.TaskListProps{
-			Tasks:          m.tasks, // Consider passing categorized tasks (m.todoTasks etc.) if sections are involved
+			Tasks:          m.tasks,
+			TodoTasks:      m.todoTasks,
+			ProjectTasks:   m.projectTasks,
+			CompletedTasks: m.completedTasks,
 			Cursor:         m.cursor,
 			VisualCursor:   m.visualCursor,
 			Offset:         m.taskListOffset,
@@ -91,7 +95,7 @@ func (m *Model) View() string {
 			IsActive:       m.activePanel == 0,
 			Error:          m.err,
 			SuccessMsg:     m.successMsg,
-			ClearSuccess:   func() { m.successMsg = "" }, // This closure might need adjustment
+			ClearSuccess:   func() { m.successMsg = "" },
 			CursorOnHeader: m.cursorOnHeader,
 			CollapsibleMgr: m.collapsibleManager,
 		})
@@ -108,15 +112,53 @@ func (m *Model) View() string {
 	// Task Details Panel
 	if m.showTaskDetails {
 		contentWidth := columnWidth - 2
+
+		// Get the appropriate task to display based on cursor position
+		var selectedTask *task.Task
+		if !m.cursorOnHeader && m.cursor < len(m.tasks) && m.cursor >= 0 {
+			// Find which section the selected task belongs to
+			// and get the correct task from the categorized lists
+			taskID := m.tasks[m.cursor].ID
+
+			// First check todoTasks
+			for i, t := range m.todoTasks {
+				if t.ID == taskID {
+					selectedTask = &m.todoTasks[i]
+					break
+				}
+			}
+
+			// If not found, check projectTasks
+			if selectedTask == nil {
+				for i, t := range m.projectTasks {
+					if t.ID == taskID {
+						selectedTask = &m.projectTasks[i]
+						break
+					}
+				}
+			}
+
+			// If still not found, check completedTasks
+			if selectedTask == nil {
+				for i, t := range m.completedTasks {
+					if t.ID == taskID {
+						selectedTask = &m.completedTasks[i]
+						break
+					}
+				}
+			}
+		}
+
 		details := panels.RenderTaskDetails(panels.TaskDetailsProps{
 			Tasks:          m.tasks,
-			Cursor:         m.cursor, // Detail might only need the selected task, not all tasks + cursor
+			Cursor:         m.cursor,
+			SelectedTask:   selectedTask, // Pass the selected task separately
 			Offset:         m.taskDetailsOffset,
 			Width:          contentWidth,
 			Height:         panelHeight - 2,
 			Styles:         sharedStyles,
 			IsActive:       m.activePanel == 1,
-			CursorOnHeader: m.cursorOnHeader, // Details panel probably doesn't care about this
+			CursorOnHeader: m.cursorOnHeader,
 		})
 		wrapped := shared.RenderPanel(shared.PanelProps{
 			Content:     details,

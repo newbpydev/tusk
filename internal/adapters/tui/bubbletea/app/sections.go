@@ -35,19 +35,27 @@ func (m *Model) categorizeTasks(tasks []task.Task) {
 
 	// Iterate through the main tasks list and append to appropriate slices
 	for _, t := range tasks {
+		// Make a copy of the task to avoid pointer issues
+		taskCopy := t
+
 		if t.Status == task.StatusDone {
-			m.completedTasks = append(m.completedTasks, t)
+			m.completedTasks = append(m.completedTasks, taskCopy)
 		} else if t.ParentID != nil {
 			// Assuming tasks with a ParentID belong to the "Projects" category for now
 			// This might need refinement based on how projects are structured
-			m.projectTasks = append(m.projectTasks, t)
+			m.projectTasks = append(m.projectTasks, taskCopy)
 		} else {
 			// Tasks that are not Done and have no ParentID go to Todo
-			m.todoTasks = append(m.todoTasks, t)
+			m.todoTasks = append(m.todoTasks, taskCopy)
 		}
 	}
-	// Note: This function only categorizes; it doesn't update the collapsible manager counts directly.
-	// initCollapsibleSections is responsible for using these categorized slices to update the manager.
+
+	// Ensure the main tasks slice contains the same tasks in the same order for consistency
+	// This approach ensures we don't lose any tasks while maintaining categorization
+	m.tasks = m.tasks[:0]
+	m.tasks = append(m.tasks, m.todoTasks...)
+	m.tasks = append(m.tasks, m.projectTasks...)
+	m.tasks = append(m.tasks, m.completedTasks...)
 }
 
 // updateVisualCursorFromTaskCursor translates the internal task index (m.cursor)

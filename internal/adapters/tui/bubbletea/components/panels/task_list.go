@@ -26,7 +26,10 @@ import (
 
 // TaskListProps contains all properties needed to render the task list panel
 type TaskListProps struct {
-	Tasks          []task.Task
+	Tasks          []task.Task // Main task list
+	TodoTasks      []task.Task // Already categorized todo tasks
+	ProjectTasks   []task.Task // Already categorized project tasks
+	CompletedTasks []task.Task // Already categorized completed tasks
 	Cursor         int
 	VisualCursor   int // Cursor position in the collapsible section view
 	Offset         int
@@ -107,15 +110,21 @@ func renderFlatTaskList(builder *strings.Builder, props TaskListProps) {
 
 // renderCollapsibleTaskList renders tasks organized into collapsible sections
 func renderCollapsibleTaskList(builder *strings.Builder, props TaskListProps) {
-	// First organize tasks by completion status
+	// Use the pre-categorized task lists if provided, otherwise categorize here
 	var todoTasks, completedTasks []task.Task
 
-	// Separate tasks by status
-	for _, t := range props.Tasks {
-		if t.Status == task.StatusDone {
-			completedTasks = append(completedTasks, t)
-		} else {
-			todoTasks = append(todoTasks, t)
+	if len(props.TodoTasks) > 0 || len(props.CompletedTasks) > 0 {
+		// Use the pre-categorized lists
+		todoTasks = props.TodoTasks
+		completedTasks = props.CompletedTasks
+	} else {
+		// Categorize tasks on the fly
+		for _, t := range props.Tasks {
+			if t.Status == task.StatusDone {
+				completedTasks = append(completedTasks, t)
+			} else {
+				todoTasks = append(todoTasks, t)
+			}
 		}
 	}
 
@@ -126,11 +135,15 @@ func renderCollapsibleTaskList(builder *strings.Builder, props TaskListProps) {
 	// Todo tasks section (expanded by default)
 	props.CollapsibleMgr.AddSection(hooks.SectionTypeTodo, "Todo", len(todoTasks), 0)
 
-	// Projects section - currently empty as placeholder
-	props.CollapsibleMgr.AddSection(hooks.SectionTypeProjects, "Projects", 0, len(todoTasks))
+	// Projects section - use pre-categorized projects if available
+	projectCount := 0
+	if len(props.ProjectTasks) > 0 {
+		projectCount = len(props.ProjectTasks)
+	}
+	props.CollapsibleMgr.AddSection(hooks.SectionTypeProjects, "Projects", projectCount, len(todoTasks))
 
 	// Completed tasks section
-	props.CollapsibleMgr.AddSection(hooks.SectionTypeCompleted, "Completed", len(completedTasks), len(todoTasks))
+	props.CollapsibleMgr.AddSection(hooks.SectionTypeCompleted, "Completed", len(completedTasks), len(todoTasks)+projectCount)
 
 	// Now render the sections and their contents
 	var visibleIndex int = 0
@@ -138,8 +151,8 @@ func renderCollapsibleTaskList(builder *strings.Builder, props TaskListProps) {
 	// Todo section
 	visibleIndex = renderSection(builder, props, hooks.SectionTypeTodo, todoTasks, visibleIndex)
 
-	// Projects section (placeholder for now)
-	visibleIndex = renderSection(builder, props, hooks.SectionTypeProjects, nil, visibleIndex)
+	// Projects section
+	visibleIndex = renderSection(builder, props, hooks.SectionTypeProjects, props.ProjectTasks, visibleIndex)
 
 	// Completed tasks section
 	renderSection(builder, props, hooks.SectionTypeCompleted, completedTasks, visibleIndex)
