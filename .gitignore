@@ -38,3 +38,6 @@ go.work.sum
 # Temporary files
 /tmp/
 *.tmp
+
+# windsurf rules
+.windsurfrules
