@@ -205,6 +205,47 @@ func (m *Model) toggleTimelineTaskCompletion() tea.Cmd {
 	// Get the task
 	curr := m.tasks[taskIndex]
 
+	// Store the section information for cursor movement after status change
+	currentSection := hooks.SectionType("")
+	var sectionHeaderIndex int
+
+	// Determine which section this task belongs to
+	overdue, today, upcoming := m.getTimelineFilteredTasks()
+
+	// Find the task's section
+	// Check overdue section
+	for _, t := range overdue {
+		if t.ID == taskID {
+			currentSection = hooks.SectionTypeOverdue
+			break
+		}
+	}
+
+	// If not found in overdue, check today section
+	if currentSection == "" {
+		for _, t := range today {
+			if t.ID == taskID {
+				currentSection = hooks.SectionTypeToday
+				break
+			}
+		}
+	}
+
+	// If not found in today, check upcoming section
+	if currentSection == "" {
+		for _, t := range upcoming {
+			if t.ID == taskID {
+				currentSection = hooks.SectionTypeUpcoming
+				break
+			}
+		}
+	}
+
+	// Get the section header index for calculating next position
+	if currentSection != "" {
+		sectionHeaderIndex = m.timelineCollapsibleMgr.GetSectionHeaderIndex(currentSection)
+	}
+
 	// Determine the new status (toggle between Done and Todo)
 	var newStatus task.Status
 	if curr.Status == task.StatusDone {
@@ -229,6 +270,48 @@ func (m *Model) toggleTimelineTaskCompletion() tea.Cmd {
 
 	// Reset offsets to ensure good UX
 	m.taskDetailsOffset = 0
+	
+	// Move the cursor to the next item or section header if the task is being marked as done
+	if newStatus == task.StatusDone && currentSection != "" {
+		// After task is marked complete, we need to properly move the cursor
+		// to the next task in the section or to the section header if no more tasks
+		var nextSectionItems []task.Task
+		switch currentSection {
+		case hooks.SectionTypeOverdue:
+			nextSectionItems = m.overdueTasks
+		case hooks.SectionTypeToday:
+			nextSectionItems = m.todayTasks
+		case hooks.SectionTypeUpcoming:
+			nextSectionItems = m.upcomingTasks
+		}
+		
+		// If there are no more items in this section, move to the section header
+		if len(nextSectionItems) == 0 {
+			// Move cursor to section header
+			if sectionHeaderIndex >= 0 {
+				m.timelineCursor = sectionHeaderIndex
+				m.timelineCursorOnHeader = true
+			}
+		} else {
+			// Find the first available task in the section
+			firstTaskIndex := sectionHeaderIndex + 1 // Skip the header
+			
+			// Ensure the section is expanded
+			if section := m.timelineCollapsibleMgr.GetSection(currentSection); section != nil {
+				if !section.IsExpanded {
+					m.timelineCollapsibleMgr.ToggleSection(currentSection)
+				}
+				
+				// Set cursor to the first task in the section
+				m.timelineCursor = firstTaskIndex
+				m.timelineCursorOnHeader = false
+			}
+		}
+		
+		// Adjust the timeline offset to ensure the selection is visible
+		half := (m.height - 4) / 2 // Approximate half viewport height
+		m.timelineOffset = max(0, m.timelineCursor - half)
+	}
 
 	// Call server to update
 	return func() tea.Msg {
