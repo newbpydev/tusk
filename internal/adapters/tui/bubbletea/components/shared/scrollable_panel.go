@@ -107,10 +107,10 @@ func RenderScrollablePanel(props ScrollablePanelProps) string {
 		BorderForeground(lipgloss.Color(borderColor)).
 		Width(props.Width).
 		Height(props.Height).
-		PaddingTop(0).
-		PaddingBottom(0).
-		PaddingLeft(0).
-		PaddingRight(0).
+		PaddingTop(1).
+		PaddingBottom(1).
+		PaddingLeft(2).
+		PaddingRight(2).
 		MarginTop(0).
 		MarginBottom(0).
 		MarginLeft(0).
