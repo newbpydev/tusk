@@ -154,9 +154,24 @@ func (m *Model) renderTaskListPanel(styles *shared.Styles, width, height int) st
 func (m *Model) renderTaskDetailsPanel(styles *shared.Styles, width, height int) string {
 	contentWidth := width - 2
 
-	// Get the appropriate task to display based on cursor position
+	// Get the appropriate task to display based on which panel is active and its cursor position
 	var selectedTask *task.Task
-	if !m.cursorOnHeader && m.cursor < len(m.tasks) && m.cursor >= 0 {
+	
+	// If timeline panel is active, use the timeline cursor position
+	if m.activePanel == 2 && !m.timelineCursorOnHeader {
+		// Get the task ID from the timeline cursor position
+		taskID := m.getTimelineTaskID()
+		if taskID > 0 {
+			// Find the task with this ID in any of the task lists
+			for i, t := range m.tasks {
+				if t.ID == taskID {
+					selectedTask = &m.tasks[i]
+					break
+				}
+			}
+		}
+	} else if !m.cursorOnHeader && m.cursor < len(m.tasks) && m.cursor >= 0 {
+		// Otherwise, use the task list cursor position (default behavior)
 		// Find which section the selected task belongs to and get the correct task
 		taskID := m.tasks[m.cursor].ID
 
@@ -214,13 +229,21 @@ func (m *Model) renderTaskDetailsPanel(styles *shared.Styles, width, height int)
 func (m *Model) renderTimelinePanel(styles *shared.Styles, width, height int) string {
 	contentWidth := width - 2
 	
+	// Initialize timeline collapsible sections if needed
+	if m.timelineCollapsibleMgr == nil {
+		m.initTimelineCollapsibleSections()
+	}
+	
 	timeline := panels.RenderTimeline(panels.TimelineProps{
-		Tasks:    m.tasks,
-		Offset:   m.timelineOffset,
-		Width:    contentWidth,
-		Height:   height - 2,
-		Styles:   styles,
-		IsActive: m.activePanel == 2,
+		Tasks:           m.tasks,
+		Offset:          m.timelineOffset,
+		Width:           contentWidth,
+		Height:          height - 2,
+		Styles:          styles,
+		IsActive:        m.activePanel == 2,
+		CollapsibleMgr:  m.timelineCollapsibleMgr,
+		CursorPosition:  m.timelineCursor,
+		CursorOnHeader:  m.timelineCursorOnHeader,
 	})
 	
 	return shared.RenderPanel(shared.PanelProps{

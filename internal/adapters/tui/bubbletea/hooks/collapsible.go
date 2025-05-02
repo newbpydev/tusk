@@ -20,9 +20,15 @@ type SectionType string
 
 // Section types
 const (
+	// Task list sections
 	SectionTypeTodo      SectionType = "todo"
 	SectionTypeProjects  SectionType = "projects"
 	SectionTypeCompleted SectionType = "completed"
+	
+	// Timeline sections
+	SectionTypeOverdue   SectionType = "overdue"
+	SectionTypeToday     SectionType = "today"
+	SectionTypeUpcoming  SectionType = "upcoming"
 )
 
 // Section represents a collapsible section in the task list

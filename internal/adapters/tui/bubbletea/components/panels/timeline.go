@@ -21,29 +21,265 @@ import (
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
 // TimelineProps contains all properties needed to render the timeline panel
 type TimelineProps struct {
-	Tasks    []task.Task
-	Offset   int
-	Width    int
-	Height   int
-	Styles   *shared.Styles
-	IsActive bool
+	Tasks           []task.Task
+	Offset          int
+	Width           int
+	Height          int
+	Styles          *shared.Styles
+	IsActive        bool
+	CollapsibleMgr  *hooks.CollapsibleManager
+	CursorPosition  int  // Position for scrolling and highlighting
+	CursorOnHeader  bool // Whether the cursor is on a section header
 }
 
 // RenderTimeline renders the timeline panel with a fixed header and scrollable content
 func RenderTimeline(props TimelineProps) string {
+	// Get the current date for comparison is now done in each helper function
+	var scrollableContent strings.Builder
+	overdue, today, upcoming := getTasksByTimeCategory(props.Tasks)
+	
+	// Check if we have a valid collapsible manager
+	if props.CollapsibleMgr == nil {
+		// Fall back to the old non-collapsible rendering if manager isn't available
+		return renderLegacyTimeline(props, overdue, today, upcoming)
+	}
+	
+	// Calculate viewport constraints for scrolling
+	const scrollPadding = 3            // Number of lines to keep visible above/below selection
+	viewportHeight := props.Height - 4 // Account for borders and header
+
+	// Render the collapsible sections
+	// First, get all the sections from the manager
+	totalVisibleItems := props.CollapsibleMgr.GetItemCount()
+	
+	// Check if the Overdue section is expanded
+	overdueSection := props.CollapsibleMgr.GetSection(hooks.SectionTypeOverdue)
+	if overdueSection != nil {
+		// Render the section header with expansion indicator
+		expansionIndicator := "▼"
+		if !overdueSection.IsExpanded {
+			expansionIndicator = "▶"
+		}
+		
+		// Create the section header with count
+		headerText := fmt.Sprintf("%s Overdue (%d)", expansionIndicator, len(overdue))
+		
+		// Apply styling based on whether it's selected
+		if props.CursorOnHeader && props.CursorPosition == props.CollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeOverdue) {
+			// This section header is selected
+			headerText = props.Styles.SelectedItem.Render(headerText)
+		} else {
+			// Normal styling for section header
+			headerText = props.Styles.HighPriority.Bold(true).Render(headerText)
+		}
+		
+		scrollableContent.WriteString(headerText + "\n")
+		
+		// If the section is expanded, render its tasks
+		if overdueSection.IsExpanded {
+			renderTasksWithHighlight(&scrollableContent, overdue, props, props.Styles.HighPriority, hooks.SectionTypeOverdue)
+		}
+		
+		scrollableContent.WriteString("\n")
+	}
+	
+	// Check if the Today section is expanded
+	todaySection := props.CollapsibleMgr.GetSection(hooks.SectionTypeToday)
+	if todaySection != nil {
+		// Render the section header with expansion indicator
+		expansionIndicator := "▼"
+		if !todaySection.IsExpanded {
+			expansionIndicator = "▶"
+		}
+		
+		// Create the section header with count
+		headerText := fmt.Sprintf("%s Today (%d)", expansionIndicator, len(today))
+		
+		// Apply styling based on whether it's selected
+		if props.CursorOnHeader && props.CursorPosition == props.CollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeToday) {
+			// This section header is selected
+			headerText = props.Styles.SelectedItem.Render(headerText)
+		} else {
+			// Normal styling for section header
+			headerText = props.Styles.MediumPriority.Bold(true).Render(headerText)
+		}
+		
+		scrollableContent.WriteString(headerText + "\n")
+		
+		// If the section is expanded, render its tasks
+		if todaySection.IsExpanded {
+			renderTasksWithHighlight(&scrollableContent, today, props, props.Styles.MediumPriority, hooks.SectionTypeToday)
+		}
+		
+		scrollableContent.WriteString("\n")
+	}
+	
+	// Check if the Upcoming section is expanded
+	upcomingSection := props.CollapsibleMgr.GetSection(hooks.SectionTypeUpcoming)
+	if upcomingSection != nil {
+		// Render the section header with expansion indicator
+		expansionIndicator := "▼"
+		if !upcomingSection.IsExpanded {
+			expansionIndicator = "▶"
+		}
+		
+		// Create the section header with count
+		headerText := fmt.Sprintf("%s Upcoming (%d)", expansionIndicator, len(upcoming))
+		
+		// Apply styling based on whether it's selected
+		if props.CursorOnHeader && props.CursorPosition == props.CollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeUpcoming) {
+			// This section header is selected
+			headerText = props.Styles.SelectedItem.Render(headerText)
+		} else {
+			// Normal styling for section header
+			headerText = props.Styles.LowPriority.Bold(true).Render(headerText)
+		}
+		
+		scrollableContent.WriteString(headerText + "\n")
+		
+		// If the section is expanded, render its tasks
+		if upcomingSection.IsExpanded {
+			renderTasksWithHighlight(&scrollableContent, upcoming, props, props.Styles.LowPriority, hooks.SectionTypeUpcoming)
+		}
+	}
+
+	// Calculate the optimal offset to keep selection centered
+	halfViewport := (viewportHeight - scrollPadding) / 2
+	targetOffset := max(0, props.CursorPosition-halfViewport)
+	
+	// Don't scroll past the end
+	maxOffset := max(0, totalVisibleItems-viewportHeight+scrollPadding)
+	targetOffset = min(targetOffset, maxOffset)
+	
+	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
+		Title:             "Timeline",
+		HeaderContent:     "",
+		ScrollableContent: scrollableContent.String(),
+		EmptyMessage:      "No tasks with due dates",
+		Width:             props.Width,
+		Height:            props.Height,
+		Offset:            props.Offset,
+		CursorPosition:    -1, // No cursor in simple timeline
+		Styles:            props.Styles,
+		IsActive:          props.IsActive,
+		BorderColor:       shared.ColorBorder,
+	})
+}
+
+// renderTasksWithHighlight renders a list of tasks with potential cursor highlighting
+func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props TimelineProps, sectionStyle lipgloss.Style, sectionType hooks.SectionType) {
+	// If there are no tasks, show a message
+	if len(tasks) == 0 {
+		sb.WriteString("  " + props.Styles.Help.Render("No tasks in this section\n"))
+		return
+	}
+	
+	// Get the current date for date formatting
+	now := time.Now()
+	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	
+	for i, t := range tasks {
+		// Calculate the visual index of this task
+		visualTaskIndex := -1
+		sectionIndex := props.CollapsibleMgr.GetSectionHeaderIndex(sectionType)
+		if sectionIndex >= 0 {
+			visualTaskIndex = sectionIndex + 1 + i // Header index + 1 (to skip header) + task offset
+		}
+		
+		// Prepare the status symbol
+		var statusSymbol string
+		switch t.Status {
+		case task.StatusDone:
+			statusSymbol = "[✓]"
+		case task.StatusInProgress:
+			statusSymbol = "[⟳]"
+		default:
+			statusSymbol = "[ ]"
+		}
+		
+		// Format due date with appropriate styling based on section
+		dueDate := ""
+		if t.DueDate != nil {
+			dueDate = t.DueDate.Format("2006-01-02")
+			
+			switch sectionType {
+			case hooks.SectionTypeOverdue:
+				// Calculate days overdue
+				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
+				daysOverdue := int(todayDate.Sub(taskDueDate).Hours() / 24)
+				dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysOverdue)
+				
+			case hooks.SectionTypeToday:
+				// Show remaining time in day
+				endOfDay := todayDate.Add(24 * time.Hour)
+				remaining := endOfDay.Sub(now)
+				if remaining < 0 {
+					remaining = 0
+				}
+				hours := int(remaining.Hours())
+				minutes := int(remaining.Minutes()) % 60
+				dueDate = fmt.Sprintf("Today (%dh %dm left)", hours, minutes)
+				
+			case hooks.SectionTypeUpcoming:
+				// Show days until due
+				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
+				daysUntil := int(taskDueDate.Sub(todayDate).Hours() / 24)
+				if daysUntil == 1 {
+					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
+				} else {
+					dueDate = fmt.Sprintf("%s (in %d days)", dueDate, daysUntil)
+				}
+			}
+		}
+		
+		// Build task line content
+		taskContent := fmt.Sprintf("%s %s", statusSymbol, t.Title)
+		if dueDate != "" {
+			taskContent += fmt.Sprintf(" (%s)", sectionStyle.Render(dueDate))
+		}
+		
+		// Apply highlighting if this is the selected task (match task list style)
+		if !props.CursorOnHeader && props.CursorPosition == visualTaskIndex {
+			// Add cursor indicator and highlight (match task_list.go style)
+			sb.WriteString("→   " + props.Styles.SelectedItem.Render(taskContent) + "\n")
+		} else {
+			// Regular indentation
+			sb.WriteString("    " + taskContent + "\n")
+		}
+		
+		// Add a short description if available
+		if t.Description != nil && *t.Description != "" {
+			desc := *t.Description
+			if len(desc) > 50 {
+				desc = desc[:47] + "..."
+			}
+			sb.WriteString(fmt.Sprintf("     %s\n", props.Styles.Help.Render(desc)))
+		}
+		
+		// Add a separator between tasks except for the last one
+		if i < len(tasks)-1 {
+			sb.WriteString("     ---\n")
+		}
+	}
+}
+
+// renderLegacyTimeline renders the timeline panel without using collapsible sections
+// This is the original timeline implementation before the refactoring
+func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.Task) string {
 	// Get the current date for consistent comparison throughout the function
 	now := time.Now()
 	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	
 	var scrollableContent strings.Builder
-	overdue, today, upcoming := getTasksByTimeCategory(props.Tasks)
-
+	
 	// Create a visually rich timeline that's worth scrolling through
 	scrollableContent.WriteString(props.Styles.HighPriority.Bold(true).Render("Overdue:") + "\n")
 	if len(overdue) > 0 {

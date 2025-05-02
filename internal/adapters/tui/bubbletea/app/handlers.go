@@ -1,6 +1,7 @@
 package app
 
 import (
+	"math"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -181,6 +182,18 @@ func (m *Model) handleTaskDetailsPanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) 
 
 // handleTimelinePanelKeys processes keyboard input when the timeline panel is active
 func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// Make sure the timeline collapsible manager is initialized
+	if m.timelineCollapsibleMgr == nil {
+		m.initTimelineCollapsibleSections()
+	}
+
+	// Initialize the timeline cursor state if needed
+	if m.timelineCursor == 0 && m.timelineCollapsibleMgr.GetItemCount() > 0 {
+		// Start with cursor on the first section header
+		m.timelineCursor = 0
+		m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(0)
+	}
+
 	switch msg.String() {
 	case "shift+tab", "left", "h", "esc":
 		// Move to previous panel
@@ -192,13 +205,130 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case "j", "down":
-		// Scroll down in timeline (to be implemented)
-		// Placeholder for timeline scrolling functionality
+		// Navigate down through the timeline sections and items
+		if m.timelineCollapsibleMgr.GetItemCount() > 0 {
+			// Store the previous cursor state to check if selection changed
+			prevCursor := m.timelineCursor
+			prevOnHeader := m.timelineCursorOnHeader
+			
+			// Navigate down in the timeline sections
+			m.timelineCursor = m.timelineCollapsibleMgr.GetNextCursorPosition(m.timelineCursor, 1)
+			m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(m.timelineCursor)
+			
+			// If selection changed and showing task details, reset the details scroll offset
+			if (m.timelineCursor != prevCursor || m.timelineCursorOnHeader != prevOnHeader) && m.showTaskDetails {
+				m.taskDetailsOffset = 0
+			}
+			
+			// Adjust scroll offset to follow the cursor if needed
+			visibleHeight := m.height - 8
+			if m.timelineCursor > m.timelineOffset + visibleHeight {
+				m.timelineOffset = m.timelineCursor - visibleHeight
+			}
+		} else {
+			// Fall back to just scrolling if no collapsible sections
+			const maxTimelineScroll = 500
+			if m.timelineOffset < maxTimelineScroll {
+				m.timelineOffset++
+			}
+		}
 		return m, nil
 
 	case "k", "up":
-		// Scroll up in timeline (to be implemented)
-		// Placeholder for timeline scrolling functionality
+		// Navigate up through the timeline sections and items
+		if m.timelineCollapsibleMgr.GetItemCount() > 0 {
+			if m.timelineCursor > 0 {
+				// Store the previous cursor state to check if selection changed
+				prevCursor := m.timelineCursor
+				prevOnHeader := m.timelineCursorOnHeader
+				
+				m.timelineCursor = m.timelineCollapsibleMgr.GetNextCursorPosition(m.timelineCursor, -1)
+				m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(m.timelineCursor)
+				
+				// If selection changed and showing task details, reset the details scroll offset
+				if (m.timelineCursor != prevCursor || m.timelineCursorOnHeader != prevOnHeader) && m.showTaskDetails {
+					m.taskDetailsOffset = 0
+				}
+				
+				// Adjust scroll offset to follow the cursor if needed
+				if m.timelineCursor < m.timelineOffset + 3 {
+					m.timelineOffset = int(math.Max(0, float64(m.timelineCursor - 3)))
+				}
+			}
+		} else {
+			// Fall back to just scrolling if no collapsible sections
+			if m.timelineOffset > 0 {
+				m.timelineOffset--
+			}
+		}
+		return m, nil
+		
+	case "g":
+		// Jump to top of timeline
+		m.timelineOffset = 0
+		m.timelineCursor = 0
+		m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(0)
+		
+		// Reset task details offset if task details panel is visible
+		if m.showTaskDetails {
+			m.taskDetailsOffset = 0
+		}
+		
+		return m, nil
+		
+	case "G":
+		// Jump to bottom of timeline
+		if m.timelineCollapsibleMgr.GetItemCount() > 0 {
+			lastIndex := m.timelineCollapsibleMgr.GetItemCount() - 1
+			m.timelineCursor = lastIndex
+			m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(lastIndex)
+			
+			// Ensure the cursor is visible
+			visibleHeight := m.height - 8
+			m.timelineOffset = int(math.Max(0, float64(lastIndex - visibleHeight)))
+		} else {
+			// Fall back to approximate scrolling
+			m.timelineOffset = 500 // Large value that should be near the bottom
+		}
+		
+		// Reset task details offset if task details panel is visible
+		if m.showTaskDetails {
+			m.taskDetailsOffset = 0
+		}
+		
+		return m, nil
+
+	case "enter", "space":
+		// If on a section header, toggle expansion
+		if m.timelineCursorOnHeader {
+			section := m.timelineCollapsibleMgr.GetSectionAtIndex(m.timelineCursor)
+			if section != nil {
+				return m, m.toggleTimelineSection(section.Type)
+			}
+		} else {
+			// If on a task, toggle its completion status
+			return m, m.toggleTimelineTaskCompletion()
+		}
+		return m, nil
+
+	case "tab", "right", "l":
+		// Show task details if a task is selected
+		if !m.timelineCursorOnHeader {
+			// Find the task by timeline index
+			taskIndex := m.getTimelineTaskIndex()
+			if taskIndex >= 0 {
+				m.cursor = taskIndex // Set the main cursor to this task
+				m.activePanel = 1  // Switch to task details panel
+				return m, nil
+			}
+		}
+		return m, nil
+		
+	case "c":
+		// Toggle task completion status when 'c' is pressed (similar to Space)
+		if !m.timelineCursorOnHeader {
+			return m, m.toggleTimelineTaskCompletion()
+		}
 		return m, nil
 
 	case "r":

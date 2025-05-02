@@ -56,12 +56,17 @@ type Model struct {
 	// Success message
 	successMsg string
 
-	// Collapsible section management
-	collapsibleManager *hooks.CollapsibleManager
+	// Collapsible sections organization
+	collapsibleManager     *hooks.CollapsibleManager
+	timelineCollapsibleMgr *hooks.CollapsibleManager
 	// The visual position of the cursor in the task list with sections
 	visualCursor int
 	// Whether the current task is a section header (not a task item)
 	cursorOnHeader bool
+	
+	// Timeline cursor state
+	timelineCursor      int  // Visual cursor position in the timeline
+	timelineCursorOnHeader bool // Whether the timeline cursor is on a section header
 
 	// Add separate slices for todo, projects, and completed tasks
 	todoTasks, projectTasks, completedTasks []task.Task
@@ -75,23 +80,25 @@ func NewModel(ctx context.Context, svc taskService.Service, userID int64) *Model
 	roots, err := svc.List(ctx, userID)
 
 	m := &Model{
-		ctx:                ctx,
-		tasks:              roots,
-		cursor:             0,
-		err:                err,
-		taskSvc:            svc,
-		userID:             userID,
-		viewMode:           "list",
-		styles:             styles.ActiveStyles,
-		showTaskList:       true,
-		showTaskDetails:    true,
-		showTimeline:       true,
-		activePanel:        0,
-		collapsibleManager: hooks.NewCollapsibleManager(),
+		ctx:                   ctx,
+		tasks:                 roots,
+		cursor:                0,
+		err:                   err,
+		taskSvc:               svc,
+		userID:                userID,
+		viewMode:              "list",
+		styles:                styles.ActiveStyles,
+		showTaskList:          true,
+		showTaskDetails:       true,
+		showTimeline:          true,
+		activePanel:           0,
+		collapsibleManager:    hooks.NewCollapsibleManager(),
+		timelineCollapsibleMgr: hooks.NewCollapsibleManager(),
 	}
 
 	// Setup initial collapsible sections
 	m.initCollapsibleSections() // Note: initCollapsibleSections will be in sections.go
+	m.initTimelineCollapsibleSections() // Initialize timeline sections
 
 	return m
 }
