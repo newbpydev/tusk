@@ -1,6 +1,7 @@
 package app
 
 import (
+	"sort"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -8,48 +9,75 @@ import (
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
-// initTimelineCollapsibleSections initializes or resets the sections in the timeline view.
+// initTimelineCollapsibleSections initializes the timeline section state
 func (m *Model) initTimelineCollapsibleSections() {
+	// Create a collapsible manager if needed
 	if m.timelineCollapsibleMgr == nil {
 		m.timelineCollapsibleMgr = hooks.NewCollapsibleManager()
 	}
-
-	// Get the task counts for each timeline section
-	overdue, today, upcoming := getTasksByTimeCategory(m.tasks)
-
-	// Update collapsible sections with latest counts
+	
+	// Clear any existing sections 
 	m.timelineCollapsibleMgr.ClearSections()
-	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeOverdue, "Overdue", len(overdue), 0)
-	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeToday, "Today", len(today), len(overdue))
-	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeUpcoming, "Upcoming", len(upcoming), len(overdue)+len(today))
+	
+	// Categorize tasks for the timeline view and store in the model's dedicated slices
+	m.overdueTasks, m.todayTasks, m.upcomingTasks = m.categorizeTimelineTasks(m.tasks)
+	
+	// Add sections to the timeline collapsible manager
+	// Start indices are computed based on section sizes to ensure proper cursor handling
+	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeOverdue, "Overdue", len(m.overdueTasks), 0)
+	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeToday, "Today", len(m.todayTasks), len(m.overdueTasks))
+	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeUpcoming, "Upcoming", len(m.upcomingTasks), len(m.overdueTasks)+len(m.todayTasks))
 }
 
-// getTasksByTimeCategory categorizes tasks into overdue, due today, and upcoming
-func getTasksByTimeCategory(tasks []task.Task) (overdue, today, upcoming []task.Task) {
+// categorizeTimelineTasks separates tasks into timeline categories (overdue, today, upcoming)
+func (m *Model) categorizeTimelineTasks(tasks []task.Task) ([]task.Task, []task.Task, []task.Task) {
+	overdueTasks := []task.Task{}
+	todayTasks := []task.Task{}
+	upcomingTasks := []task.Task{}
+	
 	// Get the current date for consistent comparison
 	now := time.Now()
 	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 
+	// Loop through all tasks and categorize
 	for _, t := range tasks {
 		// Skip tasks without due dates
 		if t.DueDate == nil {
 			continue
 		}
 		
-		// Extract just the date part for comparison
+		// Skip completed tasks for timeline view
+		if t.Status == task.StatusDone || t.IsCompleted {
+			continue
+		}
+		
+		// Normalize task due date
 		taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
 		
-		// Categorize based on due date
+		// Compare to determine category
 		if taskDueDate.Before(todayDate) {
-			overdue = append(overdue, t)
+			overdueTasks = append(overdueTasks, t)
 		} else if taskDueDate.Equal(todayDate) {
-			today = append(today, t)
+			todayTasks = append(todayTasks, t)
 		} else {
-			upcoming = append(upcoming, t)
+			upcomingTasks = append(upcomingTasks, t)
 		}
 	}
-
-	return overdue, today, upcoming
+	
+	// Sort each category by due date for consistent ordering
+	sort.Slice(overdueTasks, func(i, j int) bool {
+		return overdueTasks[i].DueDate.Before(*overdueTasks[j].DueDate)
+	})
+	
+	sort.Slice(todayTasks, func(i, j int) bool {
+		return todayTasks[i].Title < todayTasks[j].Title
+	})
+	
+	sort.Slice(upcomingTasks, func(i, j int) bool {
+		return upcomingTasks[i].DueDate.Before(*upcomingTasks[j].DueDate)
+	})
+	
+	return overdueTasks, todayTasks, upcomingTasks
 }
 
 // toggleTimelineSection expands or collapses the section at the given index in the timeline

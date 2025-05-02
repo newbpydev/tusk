@@ -70,6 +70,9 @@ type Model struct {
 
 	// Add separate slices for todo, projects, and completed tasks
 	todoTasks, projectTasks, completedTasks []task.Task
+	
+	// Timeline specific task categories
+	overdueTasks, todayTasks, upcomingTasks []task.Task
 
 	// View registry for managing different views
 	viewRegistry ViewRegistry

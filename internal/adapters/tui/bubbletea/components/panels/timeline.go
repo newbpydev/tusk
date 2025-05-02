@@ -29,7 +29,15 @@ import (
 
 // TimelineProps contains all properties needed to render the timeline panel
 type TimelineProps struct {
+	// Task category slices (replaces the single Tasks field)
+	OverdueTasks    []task.Task
+	TodayTasks      []task.Task
+	UpcomingTasks   []task.Task
+	
+	// For backwards compatibility, still accept a single Tasks list
+	// which will be used if the categorized slices are not provided
 	Tasks           []task.Task
+	
 	Offset          int
 	Width           int
 	Height          int
@@ -44,7 +52,18 @@ type TimelineProps struct {
 func RenderTimeline(props TimelineProps) string {
 	// Get the current date for comparison is now done in each helper function
 	var scrollableContent strings.Builder
-	overdue, today, upcoming := getTasksByTimeCategory(props.Tasks)
+	var overdue, today, upcoming []task.Task
+	
+	// Use the dedicated category slices if they are provided, otherwise use the legacy behavior
+	if len(props.OverdueTasks) > 0 || len(props.TodayTasks) > 0 || len(props.UpcomingTasks) > 0 {
+		// Use the pre-categorized tasks from the model
+		overdue = props.OverdueTasks
+		today = props.TodayTasks
+		upcoming = props.UpcomingTasks
+	} else {
+		// Fall back to categorizing the tasks in the component
+		overdue, today, upcoming = getTasksByTimeCategory(props.Tasks)
+	}
 	
 	// Check if we have a valid collapsible manager
 	if props.CollapsibleMgr == nil {
@@ -240,20 +259,34 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 			}
 		}
 		
-		// Build task line content
-		taskContent := fmt.Sprintf("%s %s", statusSymbol, t.Title)
-		if dueDate != "" {
-			taskContent += fmt.Sprintf(" (%s)", sectionStyle.Render(dueDate))
+		// Handle status symbol highlighting
+		var renderedStatusSymbol string
+		var titlePart string
+		
+		// Check if this item is selected
+		isSelected := !props.CursorOnHeader && props.CursorPosition == visualTaskIndex
+		
+		if isSelected {
+			// When selected, only highlight the status symbol
+			renderedStatusSymbol = props.Styles.SelectedItem.Render(statusSymbol)
+			// Add the cursor arrow (→)
+			renderedStatusSymbol = "→ " + renderedStatusSymbol
+		} else {
+			// Regular styling when not selected
+			renderedStatusSymbol = statusSymbol
+			// Add normal spacing without cursor
+			renderedStatusSymbol = "  " + renderedStatusSymbol
 		}
 		
-		// Apply highlighting if this is the selected task (match task list style)
-		if !props.CursorOnHeader && props.CursorPosition == visualTaskIndex {
-			// Add cursor indicator and highlight (match task_list.go style)
-			sb.WriteString("→   " + props.Styles.SelectedItem.Render(taskContent) + "\n")
-		} else {
-			// Regular indentation
-			sb.WriteString("    " + taskContent + "\n")
+		// Build title part and due date
+		titlePart = " " + t.Title
+		if dueDate != "" {
+			titlePart += fmt.Sprintf(" (%s)", sectionStyle.Render(dueDate))
 		}
+		
+		// Combine all parts with proper indentation
+		taskLine := renderedStatusSymbol + titlePart
+		sb.WriteString(taskLine + "\n")
 		
 		// Add a short description if available
 		if t.Description != nil && *t.Description != "" {

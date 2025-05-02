@@ -157,16 +157,49 @@ func (m *Model) renderTaskDetailsPanel(styles *shared.Styles, width, height int)
 	// Get the appropriate task to display based on which panel is active and its cursor position
 	var selectedTask *task.Task
 	
-	// If timeline panel is active, use the timeline cursor position
+	// If timeline panel is active and not on a header, use the timeline selection
 	if m.activePanel == 2 && !m.timelineCursorOnHeader {
-		// Get the task ID from the timeline cursor position
+		// Get the task ID from the timeline cursor
 		taskID := m.getTimelineTaskID()
+		
+		// Only proceed if we have a valid task ID
 		if taskID > 0 {
-			// Find the task with this ID in any of the task lists
-			for i, t := range m.tasks {
+			// Check each of the dedicated timeline task categories
+			// First check overdue tasks
+			for i, t := range m.overdueTasks {
 				if t.ID == taskID {
-					selectedTask = &m.tasks[i]
+					selectedTask = &m.overdueTasks[i]
 					break
+				}
+			}
+			
+			// Then check today tasks if not found
+			if selectedTask == nil {
+				for i, t := range m.todayTasks {
+					if t.ID == taskID {
+						selectedTask = &m.todayTasks[i]
+						break
+					}
+				}
+			}
+			
+			// Then check upcoming tasks if not found
+			if selectedTask == nil {
+				for i, t := range m.upcomingTasks {
+					if t.ID == taskID {
+						selectedTask = &m.upcomingTasks[i]
+						break
+					}
+				}
+			}
+			
+			// If still not found, try the main task list as a fallback
+			if selectedTask == nil {
+				for i, t := range m.tasks {
+					if t.ID == taskID {
+						selectedTask = &m.tasks[i]
+						break
+					}
 				}
 			}
 		}
@@ -235,7 +268,10 @@ func (m *Model) renderTimelinePanel(styles *shared.Styles, width, height int) st
 	}
 	
 	timeline := panels.RenderTimeline(panels.TimelineProps{
-		Tasks:           m.tasks,
+		// Pass the categorized task slices instead of the entire task list
+		OverdueTasks:    m.overdueTasks,
+		TodayTasks:      m.todayTasks,
+		UpcomingTasks:   m.upcomingTasks,
 		Offset:          m.timelineOffset,
 		Width:           contentWidth,
 		Height:          height - 2,

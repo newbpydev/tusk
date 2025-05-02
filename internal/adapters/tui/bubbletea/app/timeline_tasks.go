@@ -1,8 +1,6 @@
 package app
 
 import (
-	"time"
-	
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
@@ -87,50 +85,11 @@ func (m *Model) getTimelineTaskIndex() int {
 }
 
 // getTimelineFilteredTasks returns the filtered tasks used in the timeline view
-// The same logic is used in timeline_sections.go to categorize tasks, so we maintain consistency
+// This now returns the dedicated task slices that are maintained by the model
 func (m *Model) getTimelineFilteredTasks() ([]task.Task, []task.Task, []task.Task) {
-	overdue, today, upcoming := []task.Task{}, []task.Task{}, []task.Task{}
-	
-	// Create a helper function to filter tasks by due date category
-	// Same as in components/panels/timeline.go
-	filterTimelineTasks := func(tasks []task.Task) ([]task.Task, []task.Task, []task.Task) {
-		var overdueTasks, todayTasks, upcomingTasks []task.Task
-		
-		// Get the current date for consistent comparison
-		now := time.Now()
-		todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-		
-		for _, t := range tasks {
-			// Skip tasks without due dates
-			if t.DueDate == nil {
-				continue
-			}
-			
-			// Skip completed tasks
-			if t.Status == task.StatusDone || t.IsCompleted {
-				continue
-			}
-			
-			// Normalize task due date
-			taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-			
-			// Compare to determine category
-			if taskDueDate.Before(todayDate) {
-				overdueTasks = append(overdueTasks, t)
-			} else if taskDueDate.Equal(todayDate) {
-				todayTasks = append(todayTasks, t)
-			} else {
-				upcomingTasks = append(upcomingTasks, t)
-			}
-		}
-		
-		return overdueTasks, todayTasks, upcomingTasks
-	}
-	
-	// Filter the tasks
-	overdue, today, upcoming = filterTimelineTasks(m.tasks)
-	
-	return overdue, today, upcoming
+	// Return the cached categorized tasks from the model
+	// These are updated whenever the task list changes via initTimelineCollapsibleSections()
+	return m.overdueTasks, m.todayTasks, m.upcomingTasks
 }
 
 // toggleTimelineTaskCompletion toggles the completion status of the task selected in the timeline
