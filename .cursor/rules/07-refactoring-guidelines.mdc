@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Refactoring Guidelines
+
+## Code Reusability
+
+- Extract shared logic into dedicated utility functions in [internal/util](mdc:internal/util)
+- Move reusable UI components to [internal/adapters/tui/bubbletea/components/shared](mdc:internal/adapters/tui/bubbletea/components/shared)
+- Create abstractions for repeated patterns through interfaces in [internal/ports](mdc:internal/ports)
+- Use composition over inheritance for component reuse
+
+## Error Handling
+
+- Use domain-specific errors from [internal/core/errors](mdc:internal/core/errors) for business logic errors
+- Wrap errors with context using `errors.Wrap(err, "context message")` pattern
+- Handle errors at appropriate levels - don't pass UI errors to domain layer or vice versa
+- Log errors with appropriate context using the structured logger
+
+## Component Extraction
+
+- Extract complex UI elements into their own components when they exceed 100 lines
+- Split large files when they manage more than one responsibility
+- Move business logic from UI components into service layer methods
+
+## Naming Conventions
+
+- Use consistent naming patterns across similar components
+- Follow Go conventions: CamelCase for exported, camelCase for unexported
+- Prefer descriptive names over abbreviations
+- Name files based on their primary contained component
+
+## Performance Improvements
+
+- Use pagination for large data sets in repositories
+- Minimize database round trips by batch loading when possible
+- For complex UI components, implement efficient rendering with selective updates
+- Consider caching for frequently accessed, rarely changed data
+
+## Test Coverage
+
+- Write tests for business logic focusing on behavior, not implementation
+- Mock external dependencies using interfaces from [internal/ports](mdc:internal/ports)
+- Cover edge cases and error scenarios in tests
+- Maintain test coverage for critical paths through the application
+
