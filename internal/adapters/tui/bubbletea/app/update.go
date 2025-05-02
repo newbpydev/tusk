@@ -68,6 +68,10 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Re-categorize tasks with updated data
 		m.categorizeTasks(m.tasks)
 
+		// Also update timeline categories to ensure proper timeline display
+		// This is critical when toggling task completion status
+		m.overdueTasks, m.todayTasks, m.upcomingTasks = m.categorizeTimelineTasks(m.tasks)
+
 		// Restore cursor positions
 		m.cursor = originalCursor
 		m.visualCursor = originalVisualCursor
@@ -87,6 +91,9 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		m.clearLoadingStatus()
 		m.initCollapsibleSections()
+
+		// Also initialize timeline sections to ensure timeline view is up-to-date
+		m.initTimelineCollapsibleSections()
 		return m, nil
 
 	case messages.ErrorMsg:

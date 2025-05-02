@@ -19,6 +19,48 @@ func (m *Model) refreshTasks() tea.Cmd {
 		if err != nil {
 			return messages.ErrorMsg(fmt.Errorf("failed to refresh tasks: %v", err))
 		}
+
+		// Debug check for Task 9 and Task 12
+		var found9, found12 bool
+		var date9, date12 string
+		now := time.Now()
+
+		for _, t := range tasks {
+			if t.Title == "Task 9" && t.DueDate != nil {
+				found9 = true
+				date9 = t.DueDate.Format("2006-01-02 15:04:05")
+
+				// Check date classification
+				if isSameDay(*t.DueDate, now) {
+					date9 += " (Today)"
+				} else if isBeforeDay(*t.DueDate, now) {
+					date9 += " (Before)"
+				} else {
+					date9 += " (After)"
+				}
+			}
+			if t.Title == "Task 12" && t.DueDate != nil {
+				found12 = true
+				date12 = t.DueDate.Format("2006-01-02 15:04:05")
+
+				// Check date classification
+				if isSameDay(*t.DueDate, now) {
+					date12 += " (Today)"
+				} else if isBeforeDay(*t.DueDate, now) {
+					date12 += " (Before)"
+				} else {
+					date12 += " (After)"
+				}
+			}
+		}
+
+		if found9 || found12 {
+			m.setStatusMessage(
+				fmt.Sprintf("Found in refresh: Task 9=%v [%s], Task 12=%v [%s]",
+					found9, date9, found12, date12),
+				"info", 2*time.Second)
+		}
+
 		// Call to categorizeTasks will be in sections.go
 		m.categorizeTasks(tasks)
 		return messages.TasksRefreshedMsg{Tasks: tasks}
@@ -111,6 +153,10 @@ func (m *Model) toggleTaskCompletion() tea.Cmd {
 
 	// Re-categorize tasks with the updated data
 	m.categorizeTasks(m.tasks)
+
+	// Also update timeline categories to ensure the task appears correctly in the timeline
+	// This is critical when toggling task completion, especially for tasks with due dates
+	m.overdueTasks, m.todayTasks, m.upcomingTasks = m.categorizeTimelineTasks(m.tasks)
 
 	// Now handle cursor positioning after task recategorization
 	if nextTaskID != -1 {
@@ -302,22 +348,25 @@ func (m *Model) createNewTask() tea.Cmd {
 func (m *Model) getTasksByTimeCategory() ([]task.Task, []task.Task, []task.Task) {
 	var overdue, todayTasks, upcoming []task.Task
 	now := time.Now()
-	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	tomorrow := todayDate.AddDate(0, 0, 1)
+
 	for _, t := range m.tasks {
-		// Filter out tasks without due dates or completed tasks? Depends on requirements.
+		// Skip tasks without due dates or completed tasks
 		if t.DueDate == nil || t.Status == task.StatusDone {
 			continue
 		}
-		dueDate := *t.DueDate
-		if dueDate.Before(todayDate) {
+
+		// Use the same reliable date comparison logic used elsewhere
+		if isBeforeDay(*t.DueDate, now) {
+			// Task is due before today = overdue
 			overdue = append(overdue, t)
-		} else if dueDate.Before(tomorrow) { // Tasks due today
+		} else if isSameDay(*t.DueDate, now) {
+			// Task is due today = today section
 			todayTasks = append(todayTasks, t)
-		} else { // Tasks due tomorrow or later
+		} else {
+			// Task is due after today = upcoming
 			upcoming = append(upcoming, t)
 		}
 	}
-	// Sorting logic could be added here if needed (e.g., sort each category by due date)
+
 	return overdue, todayTasks, upcoming
 }

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -33,7 +34,7 @@ func (m *Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "detail":
 		return m.handleDetailViewKeys(msg)
 	case "create", "edit":
-		// Both create and edit use the same form handling, 
+		// Both create and edit use the same form handling,
 		// with behavior differences handled inside the form functions
 		return m.handleFormKeys(msg)
 	default:
@@ -122,6 +123,21 @@ func (m *Model) handleTaskListPanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "r":
 		// Refresh tasks
 		m.setLoadingStatus("Refreshing tasks...")
+
+		// Debug date comparison functions with a manufactured test
+		now := time.Now()
+		testDate1 := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)  // Today at midnight
+		testDate2 := time.Date(now.Year(), now.Month(), now.Day(), 12, 0, 0, 0, time.UTC) // Today at noon
+
+		sameDay := isSameDay(testDate1, testDate2)
+		beforeDay := isBeforeDay(testDate1, testDate2)
+		afterDay := isAfterDay(testDate1, testDate2)
+
+		m.setStatusMessage(
+			fmt.Sprintf("Date test: same day=%v, before=%v, after=%v",
+				sameDay, beforeDay, afterDay),
+			"info", 2*time.Second)
+
 		return m, m.refreshTasks()
 	}
 
@@ -210,19 +226,19 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			// Store the previous cursor state to check if selection changed
 			prevCursor := m.timelineCursor
 			prevOnHeader := m.timelineCursorOnHeader
-			
+
 			// Navigate down in the timeline sections
 			m.timelineCursor = m.timelineCollapsibleMgr.GetNextCursorPosition(m.timelineCursor, 1)
 			m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(m.timelineCursor)
-			
+
 			// If selection changed and showing task details, reset the details scroll offset
 			if (m.timelineCursor != prevCursor || m.timelineCursorOnHeader != prevOnHeader) && m.showTaskDetails {
 				m.taskDetailsOffset = 0
 			}
-			
+
 			// Adjust scroll offset to follow the cursor if needed
 			visibleHeight := m.height - 8
-			if m.timelineCursor > m.timelineOffset + visibleHeight {
+			if m.timelineCursor > m.timelineOffset+visibleHeight {
 				m.timelineOffset = m.timelineCursor - visibleHeight
 			}
 		} else {
@@ -241,18 +257,18 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				// Store the previous cursor state to check if selection changed
 				prevCursor := m.timelineCursor
 				prevOnHeader := m.timelineCursorOnHeader
-				
+
 				m.timelineCursor = m.timelineCollapsibleMgr.GetNextCursorPosition(m.timelineCursor, -1)
 				m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(m.timelineCursor)
-				
+
 				// If selection changed and showing task details, reset the details scroll offset
 				if (m.timelineCursor != prevCursor || m.timelineCursorOnHeader != prevOnHeader) && m.showTaskDetails {
 					m.taskDetailsOffset = 0
 				}
-				
+
 				// Adjust scroll offset to follow the cursor if needed
-				if m.timelineCursor < m.timelineOffset + 3 {
-					m.timelineOffset = int(math.Max(0, float64(m.timelineCursor - 3)))
+				if m.timelineCursor < m.timelineOffset+3 {
+					m.timelineOffset = int(math.Max(0, float64(m.timelineCursor-3)))
 				}
 			}
 		} else {
@@ -262,40 +278,40 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			}
 		}
 		return m, nil
-		
+
 	case "g":
 		// Jump to top of timeline
 		m.timelineOffset = 0
 		m.timelineCursor = 0
 		m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(0)
-		
+
 		// Reset task details offset if task details panel is visible
 		if m.showTaskDetails {
 			m.taskDetailsOffset = 0
 		}
-		
+
 		return m, nil
-		
+
 	case "G":
 		// Jump to bottom of timeline
 		if m.timelineCollapsibleMgr.GetItemCount() > 0 {
 			lastIndex := m.timelineCollapsibleMgr.GetItemCount() - 1
 			m.timelineCursor = lastIndex
 			m.timelineCursorOnHeader = m.timelineCollapsibleMgr.IsSectionHeader(lastIndex)
-			
+
 			// Ensure the cursor is visible
 			visibleHeight := m.height - 8
-			m.timelineOffset = int(math.Max(0, float64(lastIndex - visibleHeight)))
+			m.timelineOffset = int(math.Max(0, float64(lastIndex-visibleHeight)))
 		} else {
 			// Fall back to approximate scrolling
 			m.timelineOffset = 500 // Large value that should be near the bottom
 		}
-		
+
 		// Reset task details offset if task details panel is visible
 		if m.showTaskDetails {
 			m.taskDetailsOffset = 0
 		}
-		
+
 		return m, nil
 
 	case "enter", "space":
@@ -318,12 +334,12 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			taskIndex := m.getTimelineTaskIndex()
 			if taskIndex >= 0 {
 				m.cursor = taskIndex // Set the main cursor to this task
-				m.activePanel = 1  // Switch to task details panel
+				m.activePanel = 1    // Switch to task details panel
 				return m, nil
 			}
 		}
 		return m, nil
-		
+
 	case "c":
 		// Toggle task completion status when 'c' is pressed (similar to Space)
 		if !m.timelineCursorOnHeader {
@@ -437,10 +453,10 @@ func (m *Model) navigateDown() {
 	// Check if there's another item below
 	if m.visualCursor < m.collapsibleManager.GetItemCount()-1 {
 		m.visualCursor = m.collapsibleManager.GetNextCursorPosition(m.visualCursor, 1)
-		
+
 		// Check if we're on a section header
 		m.cursorOnHeader = m.collapsibleManager.IsSectionHeader(m.visualCursor)
-		
+
 		// If it's a task, update the task cursor
 		if !m.cursorOnHeader {
 			taskIndex := m.collapsibleManager.GetActualTaskIndex(m.visualCursor)
@@ -455,10 +471,10 @@ func (m *Model) navigateDown() {
 func (m *Model) navigateUp() {
 	if m.visualCursor > 0 {
 		m.visualCursor = m.collapsibleManager.GetNextCursorPosition(m.visualCursor, -1)
-		
+
 		// Check if we're on a section header
 		m.cursorOnHeader = m.collapsibleManager.IsSectionHeader(m.visualCursor)
-		
+
 		// If it's a task, update the task cursor
 		if !m.cursorOnHeader {
 			taskIndex := m.collapsibleManager.GetActualTaskIndex(m.visualCursor)
@@ -474,7 +490,7 @@ func (m *Model) navigateToTop() {
 	m.visualCursor = 0
 	// Check if we're on a section header
 	m.cursorOnHeader = m.collapsibleManager.IsSectionHeader(0)
-	
+
 	// If not on a header, get the task index
 	if !m.cursorOnHeader {
 		taskIndex := m.collapsibleManager.GetActualTaskIndex(0)
@@ -491,7 +507,7 @@ func (m *Model) navigateToBottom() {
 		m.visualCursor = lastIndex
 		// Check if we're on a section header
 		m.cursorOnHeader = m.collapsibleManager.IsSectionHeader(lastIndex)
-		
+
 		// If not on a header, get the task index
 		if !m.cursorOnHeader {
 			taskIndex := m.collapsibleManager.GetActualTaskIndex(lastIndex)
@@ -518,14 +534,14 @@ func (m *Model) toggleSection() tea.Cmd {
 			case hooks.SectionTypeCompleted:
 				sectionName = "Completed"
 			}
-			
+
 			// Use the section name for status updates
 			if section.IsExpanded {
-				m.setStatusMessage("Collapsing " + sectionName + " section", "info", 1*time.Second)
+				m.setStatusMessage("Collapsing "+sectionName+" section", "info", 1*time.Second)
 			} else {
-				m.setStatusMessage("Expanding " + sectionName + " section", "info", 1*time.Second)
+				m.setStatusMessage("Expanding "+sectionName+" section", "info", 1*time.Second)
 			}
-			
+
 			// Toggle the section
 			m.collapsibleManager.ToggleSection(section.Type)
 		}
