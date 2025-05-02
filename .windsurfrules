@@ -1,0 +1,58 @@
+# Go Code Style and Formatting Rules
+
+## General
+- Follow standard Go formatting conventions (gofmt)
+- Line length should not exceed 100 characters
+- Use tabs for indentation, not spaces
+- Always run `go fmt` before committing code
+
+## Naming
+- Use camelCase for variable and function names
+- Use PascalCase for exported functions, types, and variables
+- Use snake_case for file names
+- Package names should be lowercase, single-word nouns
+- Acronyms should be capitalized (e.g., HTTP, URL, ID)
+
+## Organization
+- Group imports: standard library, third-party, internal packages
+- Within functions, declare variables close to their use
+- Place related functions close to each other
+
+## Comments
+- Begin all packages with a package comment
+- Comment all exported functions, types, and variables
+- Use complete sentences with proper punctuation
+- Don't add unnecessary comments for obvious code
+
+## Error Handling
+- Check errors immediately after function calls
+- Don't use `_` to ignore errors without explanation
+- Prefer returning errors over panicking
+- Use custom error types when appropriate
+
+## Testing
+- Test files should end with _test.go
+- Test functions should be named TestXxx
+- Write table-driven tests when appropriate
+- Cover edge cases in tests
+
+## Concurrency
+- Prefer explicit context passing for cancelation
+- Document channel ownership clearly
+- Always close channels when done with them
+- Use mutexes for simple shared state
+
+## Interfaces
+- Keep interfaces small and focused
+- Define interfaces where they're used, not implemented
+- Name interfaces appropriately (er suffix for single method interfaces)
+
+## Dependencies
+- Minimize external dependencies
+- Pin dependency versions in go.mod
+- Regularly update dependencies
+
+## Logging
+- Use structured logging when possible
+- Include relevant context in log messages
+- Use appropriate log levels
