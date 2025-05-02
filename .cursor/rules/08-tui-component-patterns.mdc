@@ -1,0 +1,49 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# TUI Component Patterns
+
+## Component Structure
+
+- **State Management**: Keep component state in the struct, use pointers for shared state
+- **Update Logic**: Handle events in the `Update()` method, send messages for cross-component communication
+- **View Rendering**: Keep `View()` methods pure, only render based on current state
+- **Lifecycle**: Use `Init()` for setup, return commands for side effects
+
+## Message Passing
+
+- Define message types in [internal/adapters/tui/bubbletea/messages](mdc:internal/adapters/tui/bubbletea/messages)
+- Use message passing for cross-component communication
+- Avoid direct method calls between components when possible
+- Forward messages up/down the component hierarchy as needed
+
+## Styling Consistency
+
+- Use the shared styles from [internal/adapters/tui/bubbletea/styles](mdc:internal/adapters/tui/bubbletea/styles)
+- Follow the theme color palette to maintain visual consistency
+- Handle viewport dimensions properly for responsive layouts
+- Apply consistent spacing and alignment across components
+
+## Component Composition
+
+- Use embedding for base component functionality
+- Implement the tea.Model interface consistently
+- Split large components into smaller sub-components
+- Design components for reusability and composition
+
+## Performance Tips
+
+- Minimize string concatenation in `View()` methods
+- Cache rendered views when they haven't changed
+- Use efficient data structures for large collections
+- Implement pagination for long lists
+
+## Accessibility
+
+- Ensure keyboard navigation works consistently
+- Provide clear visual feedback for focused elements
+- Use color contrast that works in various terminal settings
+- Include help text for available commands
+

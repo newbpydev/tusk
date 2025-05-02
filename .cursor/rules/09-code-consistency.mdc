@@ -1,0 +1,50 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Code Consistency Standards
+
+## Code Formatting
+
+- Follow Go standard formatting using `gofmt` or `go fmt`
+- Use consistent comment style throughout the codebase
+- Organize imports alphabetically, standard library first
+- Maximum line length should be around 100 characters
+
+## Error Handling
+
+- Always check error returns, don't use `_` to ignore errors without reason
+- Use structured error handling for domain errors
+- Follow the error wrapping pattern for context preservation
+- Log errors with appropriate context and stack traces when needed
+
+## Naming Conventions
+
+- Use PascalCase for exported identifiers (visible outside package)
+- Use camelCase for non-exported identifiers (package-private)
+- Use ALL_CAPS for constants
+- Avoid Hungarian notation (prefixing types)
+- Use descriptive names for packages, avoid generic names like "util" without qualification
+
+## Package Structure
+
+- One primary type per file when possible
+- Group related functionality in the same package
+- Adhere to the established hexagonal architecture pattern
+- Avoid circular dependencies between packages
+
+## Documentation
+
+- Document all exported functions, types, and methods
+- Include examples for complex functionality
+- Keep documentation up-to-date when changing code
+- Use godoc-compatible comments
+
+## Testing
+
+- Test files should be adjacent to the code they're testing with _test.go suffix
+- Use table-driven tests for covering multiple scenarios
+- Mock external dependencies to ensure unit tests are isolated
+- Aim for high coverage on core business logic
+

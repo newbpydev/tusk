@@ -6,6 +6,7 @@ import (
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/layout"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/panels"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
@@ -114,6 +115,7 @@ func (m *Model) renderMultiPanelView(sharedStyles *shared.Styles) string {
 		ViewMode:       m.viewMode,
 		HelpStyle:      m.styles.Help,
 		CursorOnHeader: m.cursorOnHeader,
+		ActivePanel:    m.activePanel,
 	})
 }
 
@@ -153,53 +155,158 @@ func (m *Model) renderTaskListPanel(styles *shared.Styles, width, height int) st
 func (m *Model) renderTaskDetailsPanel(styles *shared.Styles, width, height int) string {
 	contentWidth := width - 2
 
-	// Get the appropriate task to display based on cursor position
+	// Get the appropriate task to display based on which panel is active and its cursor position
 	var selectedTask *task.Task
-	if !m.cursorOnHeader && m.cursor < len(m.tasks) && m.cursor >= 0 {
-		// Find which section the selected task belongs to and get the correct task
-		taskID := m.tasks[m.cursor].ID
+	var details string
 
-		// First check todoTasks
-		for i, t := range m.todoTasks {
-			if t.ID == taskID {
-				selectedTask = &m.todoTasks[i]
-				break
+	// Check if we're viewing a section header in any panel
+	isHeaderSelected := false
+	selectedSectionName := ""
+
+	// Handle different panels with different logic
+	switch m.activePanel {
+	case 2: // Timeline panel
+		if m.timelineCursorOnHeader {
+			// If on a header, record that for special message
+			isHeaderSelected = true
+
+			// Determine which section header is selected
+			if m.timelineCollapsibleMgr != nil {
+				section := m.timelineCollapsibleMgr.GetSectionAtIndex(m.timelineCursor)
+				if section != nil {
+					switch section.Type {
+					case hooks.SectionTypeOverdue:
+						selectedSectionName = "Overdue"
+					case hooks.SectionTypeToday:
+						selectedSectionName = "Today"
+					case hooks.SectionTypeUpcoming:
+						selectedSectionName = "Upcoming"
+					}
+				}
 			}
-		}
+		} else {
+			// Not on a header, get the task from the cursor
+			taskID := m.getTimelineTaskID()
 
-		// If not found, check projectTasks
-		if selectedTask == nil {
-			for i, t := range m.projectTasks {
-				if t.ID == taskID {
-					selectedTask = &m.projectTasks[i]
-					break
+			// Only proceed if we have a valid task ID
+			if taskID > 0 {
+				// Check each of the dedicated timeline task categories
+				// First check overdue tasks
+				for i, t := range m.overdueTasks {
+					if t.ID == taskID {
+						selectedTask = &m.overdueTasks[i]
+						break
+					}
+				}
+
+				// Then check today tasks if not found
+				if selectedTask == nil {
+					for i, t := range m.todayTasks {
+						if t.ID == taskID {
+							selectedTask = &m.todayTasks[i]
+							break
+						}
+					}
+				}
+
+				// Then check upcoming tasks if not found
+				if selectedTask == nil {
+					for i, t := range m.upcomingTasks {
+						if t.ID == taskID {
+							selectedTask = &m.upcomingTasks[i]
+							break
+						}
+					}
+				}
+
+				// If still not found, try the main task list as a fallback
+				if selectedTask == nil {
+					for i, t := range m.tasks {
+						if t.ID == taskID {
+							selectedTask = &m.tasks[i]
+							break
+						}
+					}
 				}
 			}
 		}
 
-		// If still not found, check completedTasks
-		if selectedTask == nil {
-			for i, t := range m.completedTasks {
+	case 0: // Task list panel
+		if m.cursorOnHeader {
+			// We're on a section header in the task list panel
+			isHeaderSelected = true
+
+			// Get the section name
+			if m.collapsibleManager != nil {
+				section := m.collapsibleManager.GetSectionAtIndex(m.visualCursor)
+				if section != nil {
+					switch section.Type {
+					case hooks.SectionTypeTodo:
+						selectedSectionName = "Todo"
+					case hooks.SectionTypeProjects:
+						selectedSectionName = "Projects"
+					case hooks.SectionTypeCompleted:
+						selectedSectionName = "Completed"
+					}
+				}
+			}
+		} else if m.cursor < len(m.tasks) && m.cursor >= 0 {
+			// Not on a header, get the task from the cursor
+			taskID := m.tasks[m.cursor].ID
+
+			// First check todoTasks
+			for i, t := range m.todoTasks {
 				if t.ID == taskID {
-					selectedTask = &m.completedTasks[i]
+					selectedTask = &m.todoTasks[i]
 					break
+				}
+			}
+
+			// If not found, check projectTasks
+			if selectedTask == nil {
+				for i, t := range m.projectTasks {
+					if t.ID == taskID {
+						selectedTask = &m.projectTasks[i]
+						break
+					}
+				}
+			}
+
+			// If still not found, check completedTasks
+			if selectedTask == nil {
+				for i, t := range m.completedTasks {
+					if t.ID == taskID {
+						selectedTask = &m.completedTasks[i]
+						break
+					}
 				}
 			}
 		}
 	}
 
-	details := panels.RenderTaskDetails(panels.TaskDetailsProps{
-		Tasks:          m.tasks,
-		Cursor:         m.cursor,
-		SelectedTask:   selectedTask,
-		Offset:         m.taskDetailsOffset,
-		Width:          contentWidth,
-		Height:         height - 2,
-		Styles:         styles,
-		IsActive:       m.activePanel == 1,
-		CursorOnHeader: m.cursorOnHeader,
-	})
-	
+	if isHeaderSelected {
+		details = panels.RenderSectionHeaderMessage(panels.SectionHeaderMessageProps{
+			SectionName: selectedSectionName,
+			Width:       contentWidth,
+			Height:      height - 2,
+			Styles:      styles,
+			Offset:      m.taskDetailsOffset, // Use the same offset variable for consistent scrolling
+			IsActive:    m.activePanel == 1,   // Pass active state for proper styling
+		})
+	} else {
+		details = panels.RenderTaskDetails(panels.TaskDetailsProps{
+			Tasks:          m.tasks,
+			Cursor:         m.cursor,
+			SelectedTask:   selectedTask,
+			Offset:         m.taskDetailsOffset,
+			Width:          contentWidth,
+			Height:         height - 2,
+			Styles:         styles,
+			IsActive:       m.activePanel == 1,
+			CursorOnHeader: m.cursorOnHeader,
+		})
+	}
+
 	return shared.RenderPanel(shared.PanelProps{
 		Content:     details,
 		Width:       width,
@@ -213,13 +320,24 @@ func (m *Model) renderTaskDetailsPanel(styles *shared.Styles, width, height int)
 func (m *Model) renderTimelinePanel(styles *shared.Styles, width, height int) string {
 	contentWidth := width - 2
 	
+	// Initialize timeline collapsible sections if needed
+	if m.timelineCollapsibleMgr == nil {
+		m.initTimelineCollapsibleSections()
+	}
+	
 	timeline := panels.RenderTimeline(panels.TimelineProps{
-		Tasks:    m.tasks,
-		Offset:   m.timelineOffset,
-		Width:    contentWidth,
-		Height:   height - 2,
-		Styles:   styles,
-		IsActive: m.activePanel == 2,
+		// Pass the categorized task slices instead of the entire task list
+		OverdueTasks:    m.overdueTasks,
+		TodayTasks:      m.todayTasks,
+		UpcomingTasks:   m.upcomingTasks,
+		Offset:          m.timelineOffset,
+		Width:           contentWidth,
+		Height:          height - 2,
+		Styles:          styles,
+		IsActive:        m.activePanel == 2,
+		CollapsibleMgr:  m.timelineCollapsibleMgr,
+		CursorPosition:  m.timelineCursor,
+		CursorOnHeader:  m.timelineCursorOnHeader,
 	})
 	
 	return shared.RenderPanel(shared.PanelProps{

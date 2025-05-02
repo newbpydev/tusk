@@ -24,8 +24,9 @@ type FooterProps struct {
 	Width          int
 	ViewMode       string
 	HelpStyle      lipgloss.Style
-	CursorOnHeader bool // Whether cursor is on a section header
+	CursorOnHeader bool   // Whether cursor is on a section header
 	CustomHelpText string // Optional custom help text to override defaults
+	ActivePanel    int    // The currently active panel (0: task list, 1: task details, 2: timeline)
 }
 
 // RenderFooter renders the help text footer for the current view mode
@@ -36,20 +37,28 @@ func RenderFooter(props FooterProps) string {
 	if props.CustomHelpText != "" {
 		help = props.CustomHelpText
 	} else {
-		// Default help text based on view mode
+		// Default help text based on view mode and active panel
 		switch props.ViewMode {
 		case "list":
-			if props.CursorOnHeader {
-				// When cursor is on a section header, show different actions
-				help = "j/k: navigate • h/l or ←/→: switch panels • enter/space: expand/collapse • n: new task • 1/2/3: toggle columns • q: quit"
-			} else {
-				// Normal task item actions
-				help = "j/k: navigate • h/l or ←/→: switch panels • enter: view details • c: toggle completion • n: new task • 1/2/3: toggle columns • q: quit"
+			// Different help texts based on which panel is active
+			switch props.ActivePanel {
+			case 0: // Task list panel
+				if props.CursorOnHeader {
+					// When cursor is on a section header
+					help = "j/k: navigate • tab/l/→: next panel • enter: expand/collapse • n: new task • 1/2/3: toggle panels • q: quit"
+				} else {
+					// Normal task item actions
+					help = "j/k: navigate • tab/l/→: next panel • enter: view details • space: toggle completion • e: edit • n: new task • q: quit"
+				}
+			case 1: // Task details panel
+				help = "j/k: scroll • tab/l/→: next panel • shift+tab/h/←/esc: prev panel • e: edit • r: refresh • 1/2/3: toggle panels • q: quit"
+			case 2: // Timeline panel
+				help = "j/k: scroll • shift+tab/h/←/esc: prev panel • r: refresh • 1/2/3: toggle panels • q: quit"
 			}
 		case "detail":
-			help = "esc: back • h/l or ←/→: switch panels • e: edit • c: toggle completion • d: delete • n: new task"
+			help = "esc: back • e: edit • r: refresh • q: quit"
 		case "edit":
-			help = "esc: cancel • enter: save changes"
+			help = "tab: next field • enter: save changes • esc: cancel"
 		case "create":
 			help = "tab: next field • enter: submit • esc: cancel • space: cycle priority"
 		default:

@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Domain Models
@@ -21,6 +21,18 @@ The [Task model](mdc:internal/core/task/model.go) is the primary entity represen
 
 The [User model](mdc:internal/core/user/model.go) manages authentication and user preferences.
 
+## Domain Logic Guidelines
+
+- Keep domain models focused on business logic, not infrastructure concerns
+- Implement domain validation directly in model methods
+- Use value objects for complex properties (e.g., TaskStatus, Priority)
+- Encapsulate business rules in domain methods, not in services
+- Keep models immutable when possible, use constructor methods for validation
+
 ## Error Handling
 
 Domain-specific errors are defined in [internal/core/errors](mdc:internal/core/errors) to provide rich error context.
+
+## Domain Events
+
+Consider using domain events for cross-cutting concerns like task status changes or completion updates that affect parent tasks.
