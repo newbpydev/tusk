@@ -261,21 +261,78 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 				dueDate = fmt.Sprintf("Today (%dh %dm left)", hours, minutes)
 
 			case hooks.SectionTypeUpcoming:
-				// Show days until due
-				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-				daysUntil := int(taskDueDate.Sub(todayDate).Hours() / 24)
-				if daysUntil == 1 {
-					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
-				} else if daysUntil == 0 {
+				// Show days until due with improved formatting
+				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, time.UTC)
+				todayUTC := time.Date(todayDate.Year(), todayDate.Month(), todayDate.Day(), 0, 0, 0, 0, time.UTC)
+				
+				// Calculate days until more reliably by comparing calendar dates
+				daysUntil := 0
+				testDate := todayUTC
+				for !testDate.After(taskDueDate) {
+					if testDate.Equal(taskDueDate) {
+						break
+					}
+					testDate = testDate.AddDate(0, 0, 1)
+					daysUntil++
+				}
+				
+				// Format based on how far in the future
+				switch {
+				case daysUntil == 0:
 					// Edge case: It might be later today
 					dueDate = fmt.Sprintf("%s (Later today)", dueDate)
-				} else {
-					// Handle singular/plural correctly
-					dayText := "days"
-					if daysUntil == 1 {
-						dayText = "day"
+					
+				case daysUntil == 1:
+					// Tomorrow
+					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
+					
+				case daysUntil <= 7:
+					// Within a week - show "In X days"
+					dueDate = fmt.Sprintf("%s (In %d days)", dueDate, daysUntil)
+					
+				case daysUntil <= 30:
+					// Show weeks for tasks within a month
+					weeks := daysUntil / 7
+					remainderDays := daysUntil % 7
+					
+					if weeks == 1 {
+						if remainderDays == 0 {
+							dueDate = fmt.Sprintf("%s (In 1 week)", dueDate)
+						} else if remainderDays == 1 {
+							dueDate = fmt.Sprintf("%s (In 1 week and 1 day)", dueDate)
+						} else {
+							dueDate = fmt.Sprintf("%s (In 1 week and %d days)", dueDate, remainderDays)
+						}
+					} else {
+						if remainderDays == 0 {
+							dueDate = fmt.Sprintf("%s (In %d weeks)", dueDate, weeks)
+						} else if remainderDays == 1 {
+							dueDate = fmt.Sprintf("%s (In %d weeks and 1 day)", dueDate, weeks)
+						} else {
+							dueDate = fmt.Sprintf("%s (In %d weeks and %d days)", dueDate, weeks, remainderDays)
+						}
 					}
-					dueDate = fmt.Sprintf("%s (in %d %s)", dueDate, daysUntil, dayText)
+					
+				default:
+					// Show months for farther-out tasks
+					months := daysUntil / 30 // Approximate
+					remainingDays := daysUntil % 30
+					
+					if months == 1 {
+						if remainingDays == 0 {
+							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
+						} else if remainingDays > 15 {
+							dueDate = fmt.Sprintf("%s (In almost 2 months)", dueDate)
+						} else {
+							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
+						}
+					} else {
+						if remainingDays > 15 {
+							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months+1)
+						} else {
+							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months)
+						}
+					}
 				}
 			}
 		}
@@ -460,31 +517,79 @@ func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.T
 				// Get the date components only for reliable day comparison
 				now := time.Now()
 				todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-				tomorrowDate := todayDate.AddDate(0, 0, 1)
 				taskDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
 
-				if taskDate.Equal(tomorrowDate) {
+				// Calculate days difference more reliably by comparing calendar dates in UTC
+				taskDateUTC := time.Date(taskDate.Year(), taskDate.Month(), taskDate.Day(), 0, 0, 0, 0, time.UTC)
+				todayUTC := time.Date(todayDate.Year(), todayDate.Month(), todayDate.Day(), 0, 0, 0, 0, time.UTC)
+				
+				daysUntil := 0
+				testDate := todayUTC
+				for !testDate.After(taskDateUTC) {
+					if testDate.Equal(taskDateUTC) {
+						break
+					}
+					testDate = testDate.AddDate(0, 0, 1)
+					daysUntil++
+				}
+				
+				// Format based on how far in the future (matching the main timeline format)
+				switch {
+				case daysUntil == 0:
+					// Edge case: It might be later today
+					dueDate = fmt.Sprintf("%s (Later today)", dueDate)
+					
+				case daysUntil == 1:
+					// Tomorrow
 					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
-				} else {
-					// Calculate days difference using manual counting for accuracy
-
-					// Add a failsafe: manually calculate day difference to ensure accuracy
-					days := 0
-					testDate := todayDate
-					for !testDate.After(taskDate) {
-						if testDate.Equal(taskDate) {
-							break
+					
+				case daysUntil <= 7:
+					// Within a week - show "In X days"
+					dueDate = fmt.Sprintf("%s (In %d days)", dueDate, daysUntil)
+					
+				case daysUntil <= 30:
+					// Show weeks for tasks within a month
+					weeks := daysUntil / 7
+					remainderDays := daysUntil % 7
+					
+					if weeks == 1 {
+						if remainderDays == 0 {
+							dueDate = fmt.Sprintf("%s (In 1 week)", dueDate)
+						} else if remainderDays == 1 {
+							dueDate = fmt.Sprintf("%s (In 1 week and 1 day)", dueDate)
+						} else {
+							dueDate = fmt.Sprintf("%s (In 1 week and %d days)", dueDate, remainderDays)
 						}
-						testDate = testDate.AddDate(0, 0, 1)
-						days++
+					} else {
+						if remainderDays == 0 {
+							dueDate = fmt.Sprintf("%s (In %d weeks)", dueDate, weeks)
+						} else if remainderDays == 1 {
+							dueDate = fmt.Sprintf("%s (In %d weeks and 1 day)", dueDate, weeks)
+						} else {
+							dueDate = fmt.Sprintf("%s (In %d weeks and %d days)", dueDate, weeks, remainderDays)
+						}
 					}
-
-					// Handle singular/plural correctly
-					dayText := "days"
-					if days == 1 {
-						dayText = "day"
+					
+				default:
+					// Show months for farther-out tasks
+					months := daysUntil / 30 // Approximate
+					remainingDays := daysUntil % 30
+					
+					if months == 1 {
+						if remainingDays == 0 {
+							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
+						} else if remainingDays > 15 {
+							dueDate = fmt.Sprintf("%s (In almost 2 months)", dueDate)
+						} else {
+							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
+						}
+					} else {
+						if remainingDays > 15 {
+							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months+1)
+						} else {
+							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months)
+						}
 					}
-					dueDate = fmt.Sprintf("%s (in %d %s)", dueDate, days, dayText)
 				}
 			}
 
