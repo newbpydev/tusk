@@ -45,3 +45,46 @@ func formatDate(t time.Time) string {
 func parseDate(dateStr string) (time.Time, error) {
 	return time.Parse("2006-01-02", dateStr)
 }
+
+// isSameDay compares two time.Time values to determine if they represent the same calendar day,
+// ignoring time components and timezone differences.
+func isSameDay(date1, date2 time.Time) bool {
+	// Convert both dates to UTC to avoid timezone issues
+	utc1 := date1.UTC()
+	utc2 := date2.UTC()
+
+	// Compare year, month, and day only
+	return utc1.Year() == utc2.Year() &&
+		utc1.Month() == utc2.Month() &&
+		utc1.Day() == utc2.Day()
+}
+
+// isBeforeDay determines if date1 is strictly before date2 in calendar days,
+// ignoring time components and timezone differences.
+func isBeforeDay(date1, date2 time.Time) bool {
+	// Convert both dates to UTC to avoid timezone issues
+	utc1 := date1.UTC()
+	utc2 := date2.UTC()
+
+	// Extract date components only
+	date1Midnight := time.Date(utc1.Year(), utc1.Month(), utc1.Day(), 0, 0, 0, 0, time.UTC)
+	date2Midnight := time.Date(utc2.Year(), utc2.Month(), utc2.Day(), 0, 0, 0, 0, time.UTC)
+
+	// Compare dates by using Unix timestamps at midnight
+	return date1Midnight.Unix() < date2Midnight.Unix()
+}
+
+// isAfterDay determines if date1 is strictly after date2 in calendar days,
+// ignoring time components and timezone differences.
+func isAfterDay(date1, date2 time.Time) bool {
+	// Convert both dates to UTC to avoid timezone issues
+	utc1 := date1.UTC()
+	utc2 := date2.UTC()
+
+	// Extract date components only
+	date1Midnight := time.Date(utc1.Year(), utc1.Month(), utc1.Day(), 0, 0, 0, 0, time.UTC)
+	date2Midnight := time.Date(utc2.Year(), utc2.Month(), utc2.Day(), 0, 0, 0, 0, time.UTC)
+
+	// Compare dates by using Unix timestamps at midnight
+	return date1Midnight.Unix() > date2Midnight.Unix()
+}

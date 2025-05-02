@@ -17,7 +17,6 @@ package panels
 
 import (
 	"fmt"
-	"math"
 	"strings"
 	"time"
 
@@ -30,22 +29,22 @@ import (
 // TimelineProps contains all properties needed to render the timeline panel
 type TimelineProps struct {
 	// Task category slices (replaces the single Tasks field)
-	OverdueTasks    []task.Task
-	TodayTasks      []task.Task
-	UpcomingTasks   []task.Task
-	
+	OverdueTasks  []task.Task
+	TodayTasks    []task.Task
+	UpcomingTasks []task.Task
+
 	// For backwards compatibility, still accept a single Tasks list
 	// which will be used if the categorized slices are not provided
-	Tasks           []task.Task
-	
-	Offset          int
-	Width           int
-	Height          int
-	Styles          *shared.Styles
-	IsActive        bool
-	CollapsibleMgr  *hooks.CollapsibleManager
-	CursorPosition  int  // Position for scrolling and highlighting
-	CursorOnHeader  bool // Whether the cursor is on a section header
+	Tasks []task.Task
+
+	Offset         int
+	Width          int
+	Height         int
+	Styles         *shared.Styles
+	IsActive       bool
+	CollapsibleMgr *hooks.CollapsibleManager
+	CursorPosition int  // Position for scrolling and highlighting
+	CursorOnHeader bool // Whether the cursor is on a section header
 }
 
 // RenderTimeline renders the timeline panel with a fixed header and scrollable content
@@ -53,7 +52,7 @@ func RenderTimeline(props TimelineProps) string {
 	// Get the current date for comparison is now done in each helper function
 	var scrollableContent strings.Builder
 	var overdue, today, upcoming []task.Task
-	
+
 	// Use the dedicated category slices if they are provided, otherwise use the legacy behavior
 	if len(props.OverdueTasks) > 0 || len(props.TodayTasks) > 0 || len(props.UpcomingTasks) > 0 {
 		// Use the pre-categorized tasks from the model
@@ -64,13 +63,13 @@ func RenderTimeline(props TimelineProps) string {
 		// Fall back to categorizing the tasks in the component
 		overdue, today, upcoming = getTasksByTimeCategory(props.Tasks)
 	}
-	
+
 	// Check if we have a valid collapsible manager
 	if props.CollapsibleMgr == nil {
 		// Fall back to the old non-collapsible rendering if manager isn't available
 		return renderLegacyTimeline(props, overdue, today, upcoming)
 	}
-	
+
 	// Calculate viewport constraints for scrolling
 	const scrollPadding = 3            // Number of lines to keep visible above/below selection
 	viewportHeight := props.Height - 4 // Account for borders and header
@@ -78,7 +77,7 @@ func RenderTimeline(props TimelineProps) string {
 	// Render the collapsible sections
 	// First, get all the sections from the manager
 	totalVisibleItems := props.CollapsibleMgr.GetItemCount()
-	
+
 	// Check if the Overdue section is expanded
 	overdueSection := props.CollapsibleMgr.GetSection(hooks.SectionTypeOverdue)
 	if overdueSection != nil {
@@ -87,10 +86,10 @@ func RenderTimeline(props TimelineProps) string {
 		if !overdueSection.IsExpanded {
 			expansionIndicator = "▶"
 		}
-		
+
 		// Create the section header with count
 		headerText := fmt.Sprintf("%s Overdue (%d)", expansionIndicator, len(overdue))
-		
+
 		// Apply styling based on whether it's selected
 		if props.CursorOnHeader && props.CursorPosition == props.CollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeOverdue) {
 			// This section header is selected
@@ -99,17 +98,17 @@ func RenderTimeline(props TimelineProps) string {
 			// Normal styling for section header
 			headerText = props.Styles.HighPriority.Bold(true).Render(headerText)
 		}
-		
+
 		scrollableContent.WriteString(headerText + "\n")
-		
+
 		// If the section is expanded, render its tasks
 		if overdueSection.IsExpanded {
 			renderTasksWithHighlight(&scrollableContent, overdue, props, props.Styles.HighPriority, hooks.SectionTypeOverdue)
 		}
-		
+
 		scrollableContent.WriteString("\n")
 	}
-	
+
 	// Check if the Today section is expanded
 	todaySection := props.CollapsibleMgr.GetSection(hooks.SectionTypeToday)
 	if todaySection != nil {
@@ -118,10 +117,10 @@ func RenderTimeline(props TimelineProps) string {
 		if !todaySection.IsExpanded {
 			expansionIndicator = "▶"
 		}
-		
+
 		// Create the section header with count
 		headerText := fmt.Sprintf("%s Today (%d)", expansionIndicator, len(today))
-		
+
 		// Apply styling based on whether it's selected
 		if props.CursorOnHeader && props.CursorPosition == props.CollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeToday) {
 			// This section header is selected
@@ -130,17 +129,17 @@ func RenderTimeline(props TimelineProps) string {
 			// Normal styling for section header
 			headerText = props.Styles.MediumPriority.Bold(true).Render(headerText)
 		}
-		
+
 		scrollableContent.WriteString(headerText + "\n")
-		
+
 		// If the section is expanded, render its tasks
 		if todaySection.IsExpanded {
 			renderTasksWithHighlight(&scrollableContent, today, props, props.Styles.MediumPriority, hooks.SectionTypeToday)
 		}
-		
+
 		scrollableContent.WriteString("\n")
 	}
-	
+
 	// Check if the Upcoming section is expanded
 	upcomingSection := props.CollapsibleMgr.GetSection(hooks.SectionTypeUpcoming)
 	if upcomingSection != nil {
@@ -149,10 +148,10 @@ func RenderTimeline(props TimelineProps) string {
 		if !upcomingSection.IsExpanded {
 			expansionIndicator = "▶"
 		}
-		
+
 		// Create the section header with count
 		headerText := fmt.Sprintf("%s Upcoming (%d)", expansionIndicator, len(upcoming))
-		
+
 		// Apply styling based on whether it's selected
 		if props.CursorOnHeader && props.CursorPosition == props.CollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeUpcoming) {
 			// This section header is selected
@@ -161,9 +160,9 @@ func RenderTimeline(props TimelineProps) string {
 			// Normal styling for section header
 			headerText = props.Styles.LowPriority.Bold(true).Render(headerText)
 		}
-		
+
 		scrollableContent.WriteString(headerText + "\n")
-		
+
 		// If the section is expanded, render its tasks
 		if upcomingSection.IsExpanded {
 			renderTasksWithHighlight(&scrollableContent, upcoming, props, props.Styles.LowPriority, hooks.SectionTypeUpcoming)
@@ -173,11 +172,11 @@ func RenderTimeline(props TimelineProps) string {
 	// Calculate the optimal offset to keep selection centered
 	halfViewport := (viewportHeight - scrollPadding) / 2
 	targetOffset := max(0, props.CursorPosition-halfViewport)
-	
+
 	// Don't scroll past the end
 	maxOffset := max(0, totalVisibleItems-viewportHeight+scrollPadding)
 	targetOffset = min(targetOffset, maxOffset)
-	
+
 	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
 		Title:             "Timeline",
 		HeaderContent:     "",
@@ -200,11 +199,11 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 		sb.WriteString("  " + props.Styles.Help.Render("No tasks in this section\n"))
 		return
 	}
-	
+
 	// Get the current date for date formatting
 	now := time.Now()
 	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	
+
 	for i, t := range tasks {
 		// Calculate the visual index of this task
 		visualTaskIndex := -1
@@ -212,7 +211,7 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 		if sectionIndex >= 0 {
 			visualTaskIndex = sectionIndex + 1 + i // Header index + 1 (to skip header) + task offset
 		}
-		
+
 		// Prepare the status symbol
 		var statusSymbol string
 		switch t.Status {
@@ -223,19 +222,33 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 		default:
 			statusSymbol = "[ ]"
 		}
-		
+
 		// Format due date with appropriate styling based on section
 		dueDate := ""
 		if t.DueDate != nil {
 			dueDate = t.DueDate.Format("2006-01-02")
-			
+
 			switch sectionType {
 			case hooks.SectionTypeOverdue:
 				// Calculate days overdue
 				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-				daysOverdue := int(todayDate.Sub(taskDueDate).Hours() / 24)
-				dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysOverdue)
-				
+				// Check if the task is actually due today (this shouldn't happen with fixed categorization)
+				if taskDueDate.Equal(todayDate) {
+					// If a task due today somehow got into the Overdue section, show appropriate message
+					endOfDay := todayDate.Add(24 * time.Hour)
+					remaining := endOfDay.Sub(now)
+					if remaining < 0 {
+						remaining = 0
+					}
+					hours := int(remaining.Hours())
+					minutes := int(remaining.Minutes()) % 60
+					dueDate = fmt.Sprintf("Today (%dh %dm left)", hours, minutes)
+				} else {
+					// Only calculate days overdue for truly overdue tasks
+					daysOverdue := int(todayDate.Sub(taskDueDate).Hours() / 24)
+					dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysOverdue)
+				}
+
 			case hooks.SectionTypeToday:
 				// Show remaining time in day
 				endOfDay := todayDate.Add(24 * time.Hour)
@@ -246,26 +259,91 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 				hours := int(remaining.Hours())
 				minutes := int(remaining.Minutes()) % 60
 				dueDate = fmt.Sprintf("Today (%dh %dm left)", hours, minutes)
-				
+
 			case hooks.SectionTypeUpcoming:
-				// Show days until due
-				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-				daysUntil := int(taskDueDate.Sub(todayDate).Hours() / 24)
-				if daysUntil == 1 {
+				// Show days until due with improved formatting
+				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, time.UTC)
+				todayUTC := time.Date(todayDate.Year(), todayDate.Month(), todayDate.Day(), 0, 0, 0, 0, time.UTC)
+				
+				// Calculate days until more reliably by comparing calendar dates
+				daysUntil := 0
+				testDate := todayUTC
+				for !testDate.After(taskDueDate) {
+					if testDate.Equal(taskDueDate) {
+						break
+					}
+					testDate = testDate.AddDate(0, 0, 1)
+					daysUntil++
+				}
+				
+				// Format based on how far in the future
+				switch {
+				case daysUntil == 0:
+					// Edge case: It might be later today
+					dueDate = fmt.Sprintf("%s (Later today)", dueDate)
+					
+				case daysUntil == 1:
+					// Tomorrow
 					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
-				} else {
-					dueDate = fmt.Sprintf("%s (in %d days)", dueDate, daysUntil)
+					
+				case daysUntil <= 7:
+					// Within a week - show "In X days"
+					dueDate = fmt.Sprintf("%s (In %d days)", dueDate, daysUntil)
+					
+				case daysUntil <= 30:
+					// Show weeks for tasks within a month
+					weeks := daysUntil / 7
+					remainderDays := daysUntil % 7
+					
+					if weeks == 1 {
+						if remainderDays == 0 {
+							dueDate = fmt.Sprintf("%s (In 1 week)", dueDate)
+						} else if remainderDays == 1 {
+							dueDate = fmt.Sprintf("%s (In 1 week and 1 day)", dueDate)
+						} else {
+							dueDate = fmt.Sprintf("%s (In 1 week and %d days)", dueDate, remainderDays)
+						}
+					} else {
+						if remainderDays == 0 {
+							dueDate = fmt.Sprintf("%s (In %d weeks)", dueDate, weeks)
+						} else if remainderDays == 1 {
+							dueDate = fmt.Sprintf("%s (In %d weeks and 1 day)", dueDate, weeks)
+						} else {
+							dueDate = fmt.Sprintf("%s (In %d weeks and %d days)", dueDate, weeks, remainderDays)
+						}
+					}
+					
+				default:
+					// Show months for farther-out tasks
+					months := daysUntil / 30 // Approximate
+					remainingDays := daysUntil % 30
+					
+					if months == 1 {
+						if remainingDays == 0 {
+							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
+						} else if remainingDays > 15 {
+							dueDate = fmt.Sprintf("%s (In almost 2 months)", dueDate)
+						} else {
+							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
+						}
+					} else {
+						if remainingDays > 15 {
+							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months+1)
+						} else {
+							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months)
+						}
+					}
 				}
 			}
 		}
-		
+
 		// Handle status symbol highlighting
 		var renderedStatusSymbol string
 		var titlePart string
-		
+
 		// Check if this item is selected
 		isSelected := !props.CursorOnHeader && props.CursorPosition == visualTaskIndex
-		
+
 		if isSelected {
 			// When selected, only highlight the status symbol
 			renderedStatusSymbol = props.Styles.SelectedItem.Render(statusSymbol)
@@ -277,17 +355,17 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 			// Add normal spacing without cursor
 			renderedStatusSymbol = "  " + renderedStatusSymbol
 		}
-		
+
 		// Build title part and due date
 		titlePart = " " + t.Title
 		if dueDate != "" {
 			titlePart += fmt.Sprintf(" (%s)", sectionStyle.Render(dueDate))
 		}
-		
+
 		// Combine all parts with proper indentation
 		taskLine := renderedStatusSymbol + titlePart
 		sb.WriteString(taskLine + "\n")
-		
+
 		// Add a short description if available
 		if t.Description != nil && *t.Description != "" {
 			desc := *t.Description
@@ -296,7 +374,7 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 			}
 			sb.WriteString(fmt.Sprintf("     %s\n", props.Styles.Help.Render(desc)))
 		}
-		
+
 		// Add a separator between tasks except for the last one
 		if i < len(tasks)-1 {
 			sb.WriteString("     ---\n")
@@ -310,9 +388,9 @@ func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.T
 	// Get the current date for consistent comparison throughout the function
 	now := time.Now()
 	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-	
+
 	var scrollableContent strings.Builder
-	
+
 	// Create a visually rich timeline that's worth scrolling through
 	scrollableContent.WriteString(props.Styles.HighPriority.Bold(true).Render("Overdue:") + "\n")
 	if len(overdue) > 0 {
@@ -320,19 +398,28 @@ func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.T
 			dueDate := ""
 			if t.DueDate != nil {
 				dueDate = t.DueDate.Format("2006-01-02")
-				
+
 				// For overdue tasks, calculate days since due
 				// CRITICAL: Only tasks with dates STRICTLY BEFORE today should be here
 				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-				
+
 				// Double-check that this task is truly overdue
 				if taskDueDate.Before(todayDate) {
 					daysOverdue := int(todayDate.Sub(taskDueDate).Hours() / 24)
 					dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysOverdue)
+				} else if taskDueDate.Equal(todayDate) {
+					// For a task due today that got categorized as overdue, show time left
+					endOfDay := todayDate.Add(24 * time.Hour)
+					remaining := endOfDay.Sub(now)
+					if remaining < 0 {
+						remaining = 0
+					}
+					hours := int(remaining.Hours())
+					minutes := int(remaining.Minutes()) % 60
+					dueDate = fmt.Sprintf("%s (Today: %dh %dm left)", dueDate, hours, minutes)
 				} else {
-					// This should never happen if categorization is working correctly
-					// But as a safeguard, if a today task gets into overdue section, fix it
-					dueDate = fmt.Sprintf("%s (Today)", dueDate)
+					// This should never happen - future tasks should never be in overdue section
+					dueDate = fmt.Sprintf("%s (Upcoming)", dueDate)
 				}
 			}
 
@@ -430,26 +517,79 @@ func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.T
 				// Get the date components only for reliable day comparison
 				now := time.Now()
 				todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-				tomorrowDate := todayDate.AddDate(0, 0, 1)
 				taskDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
+
+				// Calculate days difference more reliably by comparing calendar dates in UTC
+				taskDateUTC := time.Date(taskDate.Year(), taskDate.Month(), taskDate.Day(), 0, 0, 0, 0, time.UTC)
+				todayUTC := time.Date(todayDate.Year(), todayDate.Month(), todayDate.Day(), 0, 0, 0, 0, time.UTC)
 				
-				if taskDate.Equal(tomorrowDate) {
-					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
-				} else {
-					// Calculate days difference using manual counting for accuracy
+				daysUntil := 0
+				testDate := todayUTC
+				for !testDate.After(taskDateUTC) {
+					if testDate.Equal(taskDateUTC) {
+						break
+					}
+					testDate = testDate.AddDate(0, 0, 1)
+					daysUntil++
+				}
+				
+				// Format based on how far in the future (matching the main timeline format)
+				switch {
+				case daysUntil == 0:
+					// Edge case: It might be later today
+					dueDate = fmt.Sprintf("%s (Later today)", dueDate)
 					
-					// Add a failsafe: manually calculate day difference to ensure accuracy
-					days := 0
-					testDate := todayDate
-					for !testDate.After(taskDate) {
-						if testDate.Equal(taskDate) {
-							break
+				case daysUntil == 1:
+					// Tomorrow
+					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
+					
+				case daysUntil <= 7:
+					// Within a week - show "In X days"
+					dueDate = fmt.Sprintf("%s (In %d days)", dueDate, daysUntil)
+					
+				case daysUntil <= 30:
+					// Show weeks for tasks within a month
+					weeks := daysUntil / 7
+					remainderDays := daysUntil % 7
+					
+					if weeks == 1 {
+						if remainderDays == 0 {
+							dueDate = fmt.Sprintf("%s (In 1 week)", dueDate)
+						} else if remainderDays == 1 {
+							dueDate = fmt.Sprintf("%s (In 1 week and 1 day)", dueDate)
+						} else {
+							dueDate = fmt.Sprintf("%s (In 1 week and %d days)", dueDate, remainderDays)
 						}
-						testDate = testDate.AddDate(0, 0, 1)
-						days++
+					} else {
+						if remainderDays == 0 {
+							dueDate = fmt.Sprintf("%s (In %d weeks)", dueDate, weeks)
+						} else if remainderDays == 1 {
+							dueDate = fmt.Sprintf("%s (In %d weeks and 1 day)", dueDate, weeks)
+						} else {
+							dueDate = fmt.Sprintf("%s (In %d weeks and %d days)", dueDate, weeks, remainderDays)
+						}
 					}
 					
-					dueDate = fmt.Sprintf("%s (in %d days)", dueDate, days)
+				default:
+					// Show months for farther-out tasks
+					months := daysUntil / 30 // Approximate
+					remainingDays := daysUntil % 30
+					
+					if months == 1 {
+						if remainingDays == 0 {
+							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
+						} else if remainingDays > 15 {
+							dueDate = fmt.Sprintf("%s (In almost 2 months)", dueDate)
+						} else {
+							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
+						}
+					} else {
+						if remainingDays > 15 {
+							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months+1)
+						} else {
+							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months)
+						}
+					}
 				}
 			}
 
@@ -521,9 +661,8 @@ func getTasksByTimeCategory(tasks []task.Task) ([]task.Task, []task.Task, []task
 	var overdue, todayTasks, upcoming []task.Task
 
 	// Use local time for consistency
-	today := time.Now().In(time.Local)
-	todayDate := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, time.Local)
-	
+	now := time.Now()
+
 	for _, t := range tasks {
 		// Skip tasks that don't have a due date
 		if t.DueDate == nil {
@@ -535,23 +674,30 @@ func getTasksByTimeCategory(tasks []task.Task) ([]task.Task, []task.Task, []task
 			continue
 		}
 
-		// Normalize the task's due date using time.Local
-		taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, time.Local)
+		// Use a consistent approach to date comparison that ignores time components
+		// and handles timezone differences properly
 
-		// Compute the difference in days between today and the task due date
-		diff := todayDate.Sub(taskDueDate).Hours() / 24
-		if math.Abs(diff) < 0.01 {
-			// Due today (allowing a small tolerance)
-			todayTasks = append(todayTasks, t)
-		} else if diff > 0 {
-			// Overdue: taskDueDate is strictly before today
+		// First, extract year, month, day components from both dates
+		taskYear, taskMonth, taskDay := t.DueDate.Date()
+		nowYear, nowMonth, nowDay := now.Date()
+
+		// Create date-only values (midnight) in UTC timezone for comparison
+		taskDate := time.Date(taskYear, taskMonth, taskDay, 0, 0, 0, 0, time.UTC)
+		todayDate := time.Date(nowYear, nowMonth, nowDay, 0, 0, 0, 0, time.UTC)
+
+		// Compare dates directly using Unix timestamps
+		if taskDate.Unix() < todayDate.Unix() {
+			// Task is due before today = overdue
 			overdue = append(overdue, t)
+		} else if taskDate.Unix() == todayDate.Unix() {
+			// Task is due today = today section
+			todayTasks = append(todayTasks, t)
 		} else {
-			// Upcoming: taskDueDate is after today
+			// Task is due after today = upcoming
 			upcoming = append(upcoming, t)
 		}
 	}
-	
+
 	return overdue, todayTasks, upcoming
 }
 
