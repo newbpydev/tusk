@@ -27,6 +27,31 @@ func (m *Model) initTimelineCollapsibleSections() {
 	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeOverdue, "Overdue", len(m.overdueTasks), 0)
 	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeToday, "Today", len(m.todayTasks), len(m.overdueTasks))
 	m.timelineCollapsibleMgr.AddSection(hooks.SectionTypeUpcoming, "Upcoming", len(m.upcomingTasks), len(m.overdueTasks)+len(m.todayTasks))
+	
+	// Make all sections expanded by default (better UX)
+	// First call toggleSection for each section to ensure they're all expanded
+	for _, sectionType := range []hooks.SectionType{hooks.SectionTypeOverdue, hooks.SectionTypeToday, hooks.SectionTypeUpcoming} {
+		// Find if the section is already expanded
+		expanded := false
+		for _, section := range m.timelineCollapsibleMgr.Sections {
+			if section.Type == sectionType {
+				expanded = section.IsExpanded
+				break
+			}
+		}
+		
+		// If not expanded, toggle it to expand
+		if !expanded {
+			m.timelineCollapsibleMgr.ToggleSection(sectionType)
+		}
+	}
+	
+	// Initialize the cursor to the first section header if it's not set
+	if m.timelineCursor == 0 && m.timelineCursorOnHeader == false {
+		// Place cursor on the first section header (Overdue)
+		m.timelineCursor = 0
+		m.timelineCursorOnHeader = true
+	}
 }
 
 // categorizeTimelineTasks separates tasks into timeline categories (overdue, today, upcoming)
