@@ -109,6 +109,85 @@ func (m *Model) getTimelineFilteredTasks() ([]task.Task, []task.Task, []task.Tas
 	return m.overdueTasks, m.todayTasks, m.upcomingTasks
 }
 
+// resetTimelineCursorForTask finds a task in the timeline sections and resets the
+// cursor to position on that task. This is used when a task's status changes,
+// particularly when a task is unchecked and needs to be accessible in the timeline.
+func (m *Model) resetTimelineCursorForTask(taskID int32) {
+	// Early return if task ID is invalid
+	if taskID <= 0 {
+		return
+	}
+
+	// Get the current task categories
+	overdue, today, upcoming := m.getTimelineFilteredTasks()
+
+	// Search for the task in all sections
+	found := false
+	var sectionType hooks.SectionType // Initialize as empty string
+	indexInSection := -1
+
+	// Check overdue section
+	for i, t := range overdue {
+		if t.ID == taskID {
+			found = true
+			sectionType = hooks.SectionTypeOverdue
+			indexInSection = i
+			break
+		}
+	}
+
+	// If not found in overdue, check today section
+	if !found {
+		for i, t := range today {
+			if t.ID == taskID {
+				found = true
+				sectionType = hooks.SectionTypeToday
+				indexInSection = i
+				break
+			}
+		}
+	}
+
+	// If not found in today, check upcoming section
+	if !found {
+		for i, t := range upcoming {
+			if t.ID == taskID {
+				found = true
+				sectionType = hooks.SectionTypeUpcoming
+				indexInSection = i
+				break
+			}
+		}
+	}
+
+	// If the task wasn't found in any section, do nothing
+	if !found || indexInSection < 0 {
+		return
+	}
+
+	// Make sure the section is expanded
+	if section := m.timelineCollapsibleMgr.GetSection(sectionType); section != nil {
+		if !section.IsExpanded {
+			// Expand the section if it's collapsed
+			m.timelineCollapsibleMgr.ToggleSection(sectionType)
+		}
+
+		// Calculate the absolute position in the timeline
+		// The position is the section header index plus the index in section plus 1 to skip the header
+		sectionHeaderIndex := m.timelineCollapsibleMgr.GetSectionHeaderIndex(sectionType)
+		if sectionHeaderIndex >= 0 {
+			// Set the cursor to the task
+			m.timelineCursor = sectionHeaderIndex + 1 + indexInSection
+			m.timelineCursorOnHeader = false
+
+			// Also adjust the timeline offset to ensure the task is visible
+			half := (m.height - 4) / 2 // Approximate half viewport height
+			// Set offset to position the task in the middle of the viewport if possible
+			m.timelineOffset = max(0, m.timelineCursor - half)
+		}
+	}
+}
+
 // toggleTimelineTaskCompletion toggles the completion status of the task selected in the timeline
 func (m *Model) toggleTimelineTaskCompletion() tea.Cmd {
 	// Get the task ID from the current timeline cursor position

@@ -8,6 +8,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
+	"github.com/newbpydev/tusk/internal/core/task"
 )
 
 // Update implements tea.Model Update, handling all message types.
@@ -64,6 +65,10 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		originalCursor := m.cursor
 		originalVisualCursor := m.visualCursor
 		originalCursorOnHeader := m.cursorOnHeader
+		
+		// Store the current timeline cursor positions
+		originalTimelineCursor := m.timelineCursor
+		originalTimelineCursorOnHeader := m.timelineCursorOnHeader
 
 		// Re-categorize tasks with updated data
 		m.categorizeTasks(m.tasks)
@@ -71,11 +76,30 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Also update timeline categories to ensure proper timeline display
 		// This is critical when toggling task completion status
 		m.overdueTasks, m.todayTasks, m.upcomingTasks = m.categorizeTimelineTasks(m.tasks)
+		
+		// Fully reinitialize timeline sections to ensure proper cursor mapping
+		// This fixes the bug where unchecked tasks aren't selectable in timeline
+		m.initTimelineCollapsibleSections()
 
 		// Restore cursor positions
 		m.cursor = originalCursor
 		m.visualCursor = originalVisualCursor
 		m.cursorOnHeader = originalCursorOnHeader
+		
+		// If we were in the timeline and the task status changed, 
+		// ensure the cursor state is properly reset for the updated sections
+		if m.activePanel == 2 { // Panel 2 is the timeline
+			// When a task is unchecked, we need to reset the timeline cursor
+			// to ensure it can be selected in its new section
+			if msg.Task.Status == task.StatusTodo && m.timelineCursor != 0 {
+				// If it's a task being unchecked, find it in the timeline section
+				m.resetTimelineCursorForTask(updatedTaskID)
+			} else {
+				// Otherwise restore original cursor position
+				m.timelineCursor = originalTimelineCursor
+				m.timelineCursorOnHeader = originalTimelineCursorOnHeader
+			}
+		}
 
 		// Refresh the visual cursor from task cursor to ensure consistency
 		// This is important for cases where the task moves between sections
