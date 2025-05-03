@@ -33,6 +33,14 @@ const (
 	DateModeMinuteEdit
 )
 
+// Helper constants to define groups of modes
+const (
+	// DateGroup represents date editing modes
+	DateGroupDate = 1
+	// DateGroupTime represents time editing modes
+	DateGroupTime = 2
+)
+
 // predefined time hours for quick selection
 var timeHourOptions = []int{0, 2, 6, 8, 10, 12, 14, 16, 18, 20, 22}
 
@@ -361,7 +369,7 @@ func (d *DateInput) ComponentDecrement() {
 	}
 }
 
-// EnterNextMode advances to the next editing mode
+// EnterNextMode advances to the next editing mode based on the current section
 func (d *DateInput) EnterNextMode() {
 	if !d.HasValue {
 		d.SetToToday()
@@ -370,21 +378,32 @@ func (d *DateInput) EnterNextMode() {
 	
 	switch d.Mode {
 	case DateModeEmpty, DateModeView:
+		// Start with date editing by default
 		d.Mode = DateModeDateEdit
+		
 	case DateModeDateEdit:
-		d.Mode = DateModeTimeEdit
-	case DateModeTimeEdit:
+		// When on date section and pressing Enter, go directly to year edit
 		d.Mode = DateModeYearEdit
+		
+	case DateModeTimeEdit:
+		// When on time section and pressing Enter, go directly to hour edit
+		d.Mode = DateModeHourEdit
+		
+	// Date component progression
 	case DateModeYearEdit:
 		d.Mode = DateModeMonthEdit
 	case DateModeMonthEdit:
 		d.Mode = DateModeDayEdit
 	case DateModeDayEdit:
-		d.Mode = DateModeHourEdit
+		// When done with day, return to date edit mode rather than going to time
+		d.Mode = DateModeDateEdit
+		
+	// Time component progression
 	case DateModeHourEdit:
 		d.Mode = DateModeMinuteEdit
 	case DateModeMinuteEdit:
-		d.Mode = DateModeView
+		// When done with minute, return to time edit mode rather than continuing
+		d.Mode = DateModeTimeEdit
 	}
 }
 
@@ -405,6 +424,12 @@ func (d *DateInput) HandleInput(msg tea.KeyMsg) {
 			d.Mode = DateModeView
 		}
 		return
+	case tea.KeyLeft, tea.KeyRight:
+		// Handle left/right navigation between date and time sections
+		if d.HasValue {
+			d.handleLeftRightNavigation(msg.Type)
+			return
+		}
 	}
 
 	// Then handle specific keys for different operations
@@ -455,6 +480,88 @@ func (d *DateInput) SetValueFromString(dateStr string) error {
 	return nil
 }
 
+// getEditingGroup returns which group (date or time) the current mode belongs to
+func (d *DateInput) getEditingGroup() int {
+	switch d.Mode {
+	case DateModeDateEdit, DateModeYearEdit, DateModeMonthEdit, DateModeDayEdit:
+		return DateGroupDate
+	case DateModeTimeEdit, DateModeHourEdit, DateModeMinuteEdit:
+		return DateGroupTime
+	default:
+		return 0 // Not in an editing group
+	}
+}
+
+// handleLeftRightNavigation handles all left/right arrow navigation
+func (d *DateInput) handleLeftRightNavigation(keyType tea.KeyType) {
+	// Only handle left/right in view mode or when already in an edit mode
+	if d.Mode == DateModeEmpty {
+		return
+	}
+
+	// First handle the base view mode - this lets users select date or time
+	if d.Mode == DateModeView {
+		if keyType == tea.KeyLeft {
+			// Left arrow from view mode goes to date editing
+			d.Mode = DateModeDateEdit
+		} else if keyType == tea.KeyRight {
+			// Right arrow from view mode goes to time editing
+			d.Mode = DateModeTimeEdit
+		}
+		return
+	}
+
+	// Then handle the top-level editing modes (date vs time)
+	if d.Mode == DateModeDateEdit || d.Mode == DateModeTimeEdit {
+		if keyType == tea.KeyLeft && d.Mode == DateModeTimeEdit {
+			// Switch from time to date editing
+			d.Mode = DateModeDateEdit
+			return
+		} else if keyType == tea.KeyRight && d.Mode == DateModeDateEdit {
+			// Switch from date to time editing
+			d.Mode = DateModeTimeEdit
+			return
+		}
+	}
+
+	// Then handle the detailed date component navigation
+	if d.Mode >= DateModeYearEdit && d.Mode <= DateModeDayEdit {
+		if keyType == tea.KeyLeft {
+			// Move to previous date component
+			switch d.Mode {
+			case DateModeMonthEdit:
+				d.Mode = DateModeYearEdit
+			case DateModeDayEdit:
+				d.Mode = DateModeMonthEdit
+			}
+		} else if keyType == tea.KeyRight {
+			// Move to next date component
+			switch d.Mode {
+			case DateModeYearEdit:
+				d.Mode = DateModeMonthEdit
+			case DateModeMonthEdit:
+				d.Mode = DateModeDayEdit
+			}
+		}
+		return
+	}
+
+	// Finally handle time component navigation
+	if d.Mode >= DateModeHourEdit && d.Mode <= DateModeMinuteEdit {
+		if keyType == tea.KeyLeft {
+			// Move to hour when on minute
+			if d.Mode == DateModeMinuteEdit {
+				d.Mode = DateModeHourEdit
+			}
+		} else if keyType == tea.KeyRight {
+			// Move to minute when on hour
+			if d.Mode == DateModeHourEdit {
+				d.Mode = DateModeMinuteEdit
+			}
+		}
+	}
+}
+
 // View renders the date input component
 func (d *DateInput) View() string {
 	var content string
@@ -463,24 +570,24 @@ func (d *DateInput) View() string {
 		// Format with a consistent format that always shows date and time
 		switch d.Mode {
 		case DateModeView:
-			// Always show the time along with the date
+			// In view mode, show date and time without brackets, simple dash like priority field
 			formattedDate := d.DateString()
 			formattedTime := d.TimeString()
-			content = fmt.Sprintf("%s %s", formattedDate, formattedTime)
+			content = fmt.Sprintf("%s %s - ← → to select", formattedDate, formattedTime)
 		case DateModeDateEdit:
-			content = fmt.Sprintf("[%s] %s", d.DateString(), d.TimeString())
+			content = fmt.Sprintf("[%s] %s - Enter to edit date components", d.DateString(), d.TimeString())
 		case DateModeTimeEdit:
-			content = fmt.Sprintf("%s [%s]", d.DateString(), d.TimeString())
+			content = fmt.Sprintf("%s [%s] - Enter to edit time components", d.DateString(), d.TimeString())
 		case DateModeYearEdit:
-			content = fmt.Sprintf("[%s]-%s-%s %s", d.YearString(), d.MonthString(), d.DayString(), d.TimeString())
+			content = fmt.Sprintf("[%s]-%s-%s %s - ← → to navigate", d.YearString(), d.MonthString(), d.DayString(), d.TimeString())
 		case DateModeMonthEdit:
-			content = fmt.Sprintf("%s-[%s]-%s %s", d.YearString(), d.MonthString(), d.DayString(), d.TimeString())
+			content = fmt.Sprintf("%s-[%s]-%s %s - ← → to navigate", d.YearString(), d.MonthString(), d.DayString(), d.TimeString())
 		case DateModeDayEdit:
-			content = fmt.Sprintf("%s-%s-[%s] %s", d.YearString(), d.MonthString(), d.DayString(), d.TimeString())
+			content = fmt.Sprintf("%s-%s-[%s] %s - ← → to navigate", d.YearString(), d.MonthString(), d.DayString(), d.TimeString())
 		case DateModeHourEdit:
-			content = fmt.Sprintf("%s [%s]:%s", d.DateString(), d.HourString(), d.MinuteString())
+			content = fmt.Sprintf("%s [%s]:%s - ← → to navigate", d.DateString(), d.HourString(), d.MinuteString())
 		case DateModeMinuteEdit:
-			content = fmt.Sprintf("%s %s:[%s]", d.DateString(), d.HourString(), d.MinuteString())
+			content = fmt.Sprintf("%s %s:[%s] - ← → to navigate", d.DateString(), d.HourString(), d.MinuteString())
 		}
 	} else {
 		content = "Optional - Space to set today's date"

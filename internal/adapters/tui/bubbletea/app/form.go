@@ -5,6 +5,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
@@ -56,11 +57,23 @@ func (m *Model) handleDateField(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.formDueDate = ""
 	}
 	
-	// Make sure navigation keys (Tab/Esc) are properly handled at the form level too
-	// This ensures we can always exit the date input component
+	// Special case handling for navigation keys
 	switch msg.Type {
-	case tea.KeyEsc, tea.KeyTab, tea.KeyShiftTab:
-		// These are handled at the form navigation level
+	case tea.KeyEsc:
+		dateInput := m.dateInputHandler.GetInput("dueDate")
+		
+		// If already in view mode or no date, let the form handler handle Esc (to exit form)
+		if !dateInput.HasValue || dateInput.Mode == 1 { // 1 is DateModeView
+			// Pass through to form navigation
+			return m, nil
+		}
+		
+		// Otherwise, just reset to view mode but stay in the date field
+		// This allows for a double-escape pattern: first Esc exits edit mode, second Esc exits form
+		return m, nil
+		
+	case tea.KeyTab, tea.KeyShiftTab:
+		// These are always handled at the form navigation level
 		// The component has already reset edit mode before we get here
 		return m, nil
 	}
