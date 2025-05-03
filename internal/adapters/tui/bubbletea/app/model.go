@@ -11,6 +11,7 @@ import (
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/handlers"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/keymap"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/styles"
 )
@@ -55,6 +56,11 @@ type Model struct {
 	modal           shared.ModalModel
 	showModal       bool
 	modalBackground string
+	
+	// Help and keymap state
+	activeKeyMap    *keymap.KeyMap
+	helpModel       shared.HelpModel
+	showFullHelp    bool
 	statusMessage string
 	statusType    string
 	statusExpiry  time.Time
@@ -108,6 +114,8 @@ func NewModel(ctx context.Context, svc taskService.Service, userID int64) *Model
 		collapsibleManager:    hooks.NewCollapsibleManager(),
 		timelineCollapsibleMgr: hooks.NewCollapsibleManager(),
 		dateInputHandler:      handlers.NewDateInputHandler(),
+		activeKeyMap:          keymap.GlobalKeyMap,
+		helpModel:             shared.NewHelpModel(),
 	}
 
 	// Setup initial collapsible sections

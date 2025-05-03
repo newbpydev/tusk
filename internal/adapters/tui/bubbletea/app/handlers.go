@@ -8,18 +8,29 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/keymap"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
 // handleKeyPress delegates keyboard input based on current view mode and active panel
 func (m *Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// Global key handlers that work in any mode
-	switch msg.String() {
-	case "q", "ctrl+c":
-		return m, tea.Quit
-	case "ctrl+m":
-		// Show sample modal with Ctrl+M
-		return m, shared.ShowSampleModal("Sample Modal", "This is a reusable modal component that can be used throughout the application. Press ESC or click Cancel to close.")
+	// Check if this key matches any global key binding
+	if keymap.GlobalKeyMap.HandleKey(msg) {
+		// Get the help text for the key to determine what to do
+		keyName, _ := keymap.GlobalKeyMap.FindKeyHelp(msg)
+		
+		switch keyName {
+		case "q", "ctrl+c":
+			return m, tea.Quit
+		case "m":
+			// Show sample modal with M key
+			return m, shared.ShowSampleModal("Sample Modal", "This is a reusable modal component that can be used throughout the application. Press ESC or click Cancel to close.")
+		case "?":
+			// Toggle help view
+			m.showFullHelp = !m.showFullHelp
+			return m, nil
+		}
 	}
 
 	switch m.viewMode {
