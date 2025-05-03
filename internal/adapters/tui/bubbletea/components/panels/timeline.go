@@ -165,8 +165,41 @@ func RenderTimeline(props TimelineProps) string {
 		}
 	}
 
-	// Simple direct approach - Use props.Offset directly passed from the model
-	// The navigation handlers will update the offset directly based on cursor movement
+	// ROBUST APPROACH: Ensure cursor visibility in all cases
+	// This approach guarantees the cursor remains in view even during window resizing
+	// or when the viewport dimensions change for any reason
+	
+	// Calculate how many lines each task takes based on its content
+	contentLines := strings.Split(scrollableContent.String(), "\n")
+	totalLines := len(contentLines)
+	
+	// If we have a cursor position, explicitly ensure it's visible
+	if props.CursorPosition >= 0 && totalLines > 0 {
+		// Calculate maximum lines that can be displayed in the viewport
+		// Account for borders, padding, and scroll indicators
+		availableHeight := props.Height - 4 // Subtract borders and padding
+		if availableHeight < 1 {
+			availableHeight = 1 // Safety minimum
+		}
+		
+		// Calculate current visible window
+		visibleStart := props.Offset
+		visibleEnd := min(visibleStart + availableHeight, totalLines)
+		
+		// Check if cursor is outside visible area
+		if props.CursorPosition < visibleStart {
+			// Cursor is above viewport - adjust offset to show cursor
+			props.Offset = max(0, props.CursorPosition)
+		} else if props.CursorPosition >= visibleEnd {
+			// Cursor is below viewport - adjust offset to show cursor at bottom
+			// Leave some context space if possible
+			props.Offset = max(0, props.CursorPosition - availableHeight + 1)
+		}
+		
+		// Final bounds check
+		maxOffset := max(0, totalLines - availableHeight)
+		props.Offset = min(props.Offset, maxOffset)
+	}
 	
 	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
 		Title:             "Timeline",

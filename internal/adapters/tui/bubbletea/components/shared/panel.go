@@ -59,6 +59,7 @@ func max(a, b int) int {
 }
 
 // CreateScrollableContent creates a scrollable view of given content
+// This version guarantees cursor visibility and proper scrolling behavior
 func CreateScrollableContent(content string, offset int, maxHeight int, styles *Styles, cursorPosition ...int) string {
 	// Guard against negative height which causes panic
 	if maxHeight <= 0 {
@@ -73,10 +74,25 @@ func CreateScrollableContent(content string, offset int, maxHeight int, styles *
 		return content
 	}
 
-	// Calculate maximum valid offset
+	// CRITICAL: Check if we need to ensure cursor visibility
+	cursorPos := -1
+	if len(cursorPosition) > 0 && cursorPosition[0] >= 0 {
+		cursorPos = cursorPosition[0]
+		
+		// If cursor exists, ALWAYS prioritize keeping it visible
+		// This is the key improvement that ensures cursor is never off-screen
+		if cursorPos < offset {
+			// Cursor is above visible area, scroll up to show it
+			offset = max(0, cursorPos)
+		} else if cursorPos >= offset+maxHeight {
+			// Cursor is below visible area, scroll down to show it
+			// Position cursor with some context around it
+			offset = max(0, cursorPos - maxHeight + 1)
+		}
+	}
+	
+	// Calculate maximum valid offset and clamp within valid range
 	maxOffset := max(0, contentHeight-maxHeight)
-
-	// Clamp offset within valid range
 	offset = min(offset, maxOffset)
 	offset = max(0, offset)
 

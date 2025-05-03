@@ -303,21 +303,35 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			// This means the cursor will follow more closely with each keypress
 			offsetIncrement := 1
 			
-			// Check if cursor is about to move beyond visible area
+			// ROBUST CURSOR TRACKING: Always ensure cursor stays in viewport
+			// Calculate exact cursor position relative to viewport
 			relativePos := m.timelineCursor - m.timelineOffset
 			
-			// If cursor moves too far down, scroll to keep it visible
-			if relativePos > visibleHeight / 2 {
-				// Move the offset by exactly one item to create smooth scrolling
+			// CRITICAL: Always adjust offset to keep cursor visible when scrolling down
+			// Maintain cursor in the middle half of the viewport when possible
+			if relativePos > (visibleHeight * 2/3) {
+				// For smoother scrolling, move in single-line increments
 				m.timelineOffset += offsetIncrement
 				
-				// Special case: ensure we can see all of the current item
-				// If we're on a task with description, may need extra scroll offset
-				if cursorItemHeight == 3 && relativePos > visibleHeight - 2 {
-					// Add one more to ensure the full item is visible
-					m.timelineOffset += 1
+				// Special handling for taller items (with descriptions)
+				if cursorItemHeight >= 3 {
+					// Ensure we can see the full item including description
+					// The key is to make sure we scroll enough to see the entire item
+					visibleBottom := m.timelineOffset + visibleHeight
+					itemBottom := m.timelineCursor + cursorItemHeight - 1
+					
+					// If any part of the item is beyond visible area, scroll more
+					if itemBottom > visibleBottom {
+						needExtraScroll := itemBottom - visibleBottom
+						m.timelineOffset += needExtraScroll
+					}
 				}
 			}
+			
+			// Safety guard: never scroll past the last item
+			// Use explicit assignment since maxOffset might be already defined elsewhere
+			maxOffsetValue := max(0, m.timelineCollapsibleMgr.GetItemCount() - visibleHeight)
+			m.timelineOffset = min(m.timelineOffset, maxOffsetValue)
 			
 			// Bounds check to prevent scrolling past the end
 			maxItems := m.timelineCollapsibleMgr.GetItemCount()
@@ -349,8 +363,8 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 					m.taskDetailsOffset = 0
 				}
 
-				// For upward navigation, we need a similar approach to downward scrolling
-				// but with adjustments for keeping the cursor visible at the top
+				// ROBUST CURSOR TRACKING FOR UPWARD NAVIGATION
+				// This matches the downward approach for consistency and complete visibility
 				
 				// First, determine the exact height of the current item
 				cursorItemHeight := 1 // Default for section headers
@@ -377,28 +391,41 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 					}
 				}
 				
-				// Account for scroll indicators, same as in downward navigation
-				// We're using a direct approach for upward scrolling without needing to calculate visible height
+				// Calculate actual visible height accounting for borders, padding and scroll indicators
+				// Subtract 2 for possible scroll indicators (▲ and ▼)
+				actualHeight := m.height - 12 // 10 for borders/padding + 2 for scroll indicators
 				
-				// Use smaller increments for smoother scrolling
-				offsetIncrement := 1
+				// Convert to logical items (divide by approximate average item height)
+				visibleHeight := actualHeight / 2
 				
-				// Check cursor position relative to viewport
+				// Calculate cursor position relative to viewport
 				relativePos := m.timelineCursor - m.timelineOffset
 				
-				// If cursor is near the top, scroll up by one increment
-				// We want to keep at least 2 items visible at the top 
-				if relativePos < 2 {
-					// Move offset up by exactly one to create smooth scrolling
-					m.timelineOffset = max(0, m.timelineOffset - offsetIncrement)
+				// CRITICAL: Always ensure cursor stays in view when navigating up
+				// The top of the viewport requires special attention
+				if relativePos < visibleHeight/3 {
+					// Calculate how much to scroll to keep cursor in optimal position
+					// Use smaller increments for smoother scrolling
+					m.timelineOffset = max(0, m.timelineOffset - 1)
 					
-					// Special case: if we're on a task with description
-					// Make sure we keep enough space to see it
-					if cursorItemHeight == 3 && m.timelineOffset > 0 {
-						// Add one more offset to account for the taller item
-						m.timelineOffset = max(0, m.timelineOffset - 1)
+					// Special case: ensure full visibility for taller items (with descriptions)
+					if cursorItemHeight >= 3 {
+						// Check if the entire item is visible at the top of viewport
+						itemTop := m.timelineCursor
+						itemBottom := itemTop + cursorItemHeight - 1
+						visibleTop := m.timelineOffset
+						visibleBottom := visibleTop + visibleHeight - 1
+						
+						// If any part of the item would be cut off, scroll to show it completely
+						if itemTop < visibleTop || itemBottom > visibleBottom {
+							// Position item toward the top with some context
+							m.timelineOffset = max(0, itemTop - 1)
+						}
 					}
 				}
+				
+				// Safety guard: never scroll before the first item
+				m.timelineOffset = max(0, m.timelineOffset)
 			}
 		} else {
 			// Fall back to just scrolling if no collapsible sections

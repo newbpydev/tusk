@@ -113,3 +113,40 @@ func (m *Model) Init() tea.Cmd {
 		return messages.TickMsg(t)
 	})
 }
+
+// Apply size changes based on window resize event
+func (m *Model) handleWindowResize(msg tea.WindowSizeMsg) {
+	// Store previous dimensions to detect changes
+	prevHeight := m.height
+	
+	// Update dimensions
+	m.width = msg.Width
+	m.height = msg.Height
+	
+	// CRITICAL FIX: Ensure cursor visibility after resize
+	// This guarantees that the cursor stays visible when window dimensions change
+	if m.height != prevHeight {
+		// Timeline view specific adjustments - use the numerical panel index (2 for timeline)
+		if m.activePanel == 2 && m.timelineCollapsibleMgr.GetItemCount() > 0 {
+			// Calculate visible height based on new window size
+			visibleHeight := (m.height - 10) / 2
+			
+			// Current cursor position
+			cursorPos := m.timelineCursor
+			currentOffset := m.timelineOffset
+			
+			// Check if cursor is outside visible area after resize
+			if cursorPos < currentOffset {
+				// Cursor is above visible area, adjust offset
+				m.timelineOffset = max(0, cursorPos)
+			} else if cursorPos >= (currentOffset + visibleHeight) {
+				// Cursor is below visible area, adjust offset
+				m.timelineOffset = max(0, cursorPos - visibleHeight + 1)
+			}
+			
+			// Final bounds check
+			maxOffsetValue := max(0, m.timelineCollapsibleMgr.GetItemCount() - visibleHeight)
+			m.timelineOffset = min(m.timelineOffset, maxOffsetValue)
+		}
+	}
+}

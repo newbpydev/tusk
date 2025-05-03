@@ -20,9 +20,9 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return newModel, cmd
 
 	case tea.WindowSizeMsg:
-		// Update window dimensions for layout calculations
-		m.width = msg.Width
-		m.height = msg.Height
+		// Call our enhanced window resize handler to ensure cursor visibility
+		// This is critical for preventing the cursor from going offscreen during resize
+		m.handleWindowResize(msg)
 		return m, nil
 
 	case messages.TickMsg:
