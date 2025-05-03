@@ -75,11 +75,12 @@ func NewDateInput(label string) *DateInput {
 	}
 }
 
-// Value returns the current date as string
+// StringValue returns the current date as formatted string with both date and time
 func (d *DateInput) StringValue() string {
 	if !d.HasValue {
 		return ""
 	}
+	// Always include time in the output for consistency
 	return d.Value.Format("2006-01-02 15:04")
 }
 
@@ -459,10 +460,13 @@ func (d *DateInput) View() string {
 	var content string
 	
 	if d.HasValue {
+		// Format with a consistent format that always shows date and time
 		switch d.Mode {
 		case DateModeView:
-			// In view mode, no cursor indicator
-			content = fmt.Sprintf("%s %s", d.DateString(), d.TimeString())
+			// Always show the time along with the date
+			formattedDate := d.DateString()
+			formattedTime := d.TimeString()
+			content = fmt.Sprintf("%s %s", formattedDate, formattedTime)
 		case DateModeDateEdit:
 			content = fmt.Sprintf("[%s] %s", d.DateString(), d.TimeString())
 		case DateModeTimeEdit:
@@ -479,7 +483,6 @@ func (d *DateInput) View() string {
 			content = fmt.Sprintf("%s %s:[%s]", d.DateString(), d.HourString(), d.MinuteString())
 		}
 	} else {
-		// No cursor in empty state
 		content = "Optional - Space to set today's date"
 	}
 	
@@ -494,6 +497,7 @@ func (d *DateInput) View() string {
 	// Render the label and content with highlighted label when focused
 	var field string
 	if d.Focused {
+		// Use blue text for the label when focused to match other fields
 		labelStyle := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#0D6EFD"))
 		field = fmt.Sprintf("%s: %s", labelStyle.Render(d.Label), style.Render(content))
 	} else {

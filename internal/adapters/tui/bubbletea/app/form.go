@@ -207,11 +207,13 @@ func (m *Model) loadTaskIntoForm(t task.Task) {
 	
 	m.formPriority = string(t.Priority)
 	
-	// Format the date as YYYY-MM-DD if it exists
+	// Load the due date if it exists
 	if t.DueDate != nil && !t.DueDate.IsZero() {
-		// Set the date in both the form field (for backward compatibility)
-		// and in the interactive date input component
-		m.formDueDate = t.DueDate.Format("2006-01-02")
+		// For both form field and input component, always include time for consistency
+		// Format with both date and time
+		m.formDueDate = t.DueDate.Format("2006-01-02 15:04")
+		
+		// Set the interactive component with the full date/time
 		m.dateInputHandler.SetValue("dueDate", *t.DueDate)
 	} else {
 		m.formDueDate = ""

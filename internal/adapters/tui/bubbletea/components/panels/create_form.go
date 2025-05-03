@@ -18,6 +18,7 @@ package panels
 import (
 	"fmt"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/input"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/core/task"
@@ -43,6 +44,14 @@ func RenderCreateForm(props CreateFormProps) string {
 		s += props.Styles.HighPriority.Render(fmt.Sprintf("Error: %v\n\n", props.Error))
 	}
 
+	// Prepare the due date display format
+	// Always include time if available for consistency
+	dueDateDisplay := props.FormDueDate
+	if props.ActiveDateInput != nil && props.ActiveDateInput.HasValue {
+		// Use the full date+time string from the date input for consistency
+		dueDateDisplay = props.ActiveDateInput.StringValue()
+	}
+
 	// Form fields
 	formFields := []struct {
 		label    string
@@ -53,7 +62,7 @@ func RenderCreateForm(props CreateFormProps) string {
 		{"Title", props.FormTitle, props.ActiveField == 0, true},
 		{"Description", props.FormDescription, props.ActiveField == 1, false},
 		{"Priority", props.FormPriority, props.ActiveField == 2, false},
-		{"Due Date (YYYY-MM-DD)", props.FormDueDate, props.ActiveField == 3, false},
+		{"Due Date", dueDateDisplay, props.ActiveField == 3, false},
 	}
 
 	// Render each field
@@ -76,15 +85,19 @@ func RenderCreateForm(props CreateFormProps) string {
 			}
 		}
 
+		// Style the label - use blue text color for active fields
 		if field.active {
-			s += props.Styles.SelectedItem.Render(fieldLabel) + ": "
+			// Create blue text style for the label without background
+			blueLabel := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#0D6EFD")).Render(fieldLabel)
+			s += blueLabel + ": "
 		} else {
 			s += props.Styles.Title.Render(fieldLabel) + ": "
 		}
 
-		// Field value
+		// Field value with cursor when active
 		if field.active {
-			s += props.Styles.SelectedItem.Render(field.value + "█") // Add cursor
+			// Don't use background color, just add cursor
+			s += field.value + "█"
 		} else {
 			s += field.value
 		}

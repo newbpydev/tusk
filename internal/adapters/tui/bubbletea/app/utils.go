@@ -43,6 +43,13 @@ func formatDate(t time.Time) string {
 
 // parseDate attempts to parse a date string into a time.Time
 func parseDate(dateStr string) (time.Time, error) {
+	// Try to parse with time component first
+	t, err := time.Parse("2006-01-02 15:04", dateStr)
+	if err == nil {
+		return t, nil
+	}
+	
+	// Fall back to date-only format
 	return time.Parse("2006-01-02", dateStr)
 }
 
