@@ -220,10 +220,13 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "shift+tab", "left", "h":
 		// Move to previous panel if available
 		prevPanel := m.activePanel
-		if m.showTaskDetails {
-			m.activePanel = 0
-		} else if m.activePanel == 2 && m.showTaskDetails {
+		// When in timeline panel (panel 2), first check if task details panel is available
+		if m.activePanel == 2 && m.showTaskDetails {
+			// Go to task details panel
 			m.activePanel = 1
+		} else if m.showTaskList {
+			// Otherwise go to task list panel if it's visible
+			m.activePanel = 0
 		} else {
 			// If no panels are available to switch to, just do nothing
 		}

@@ -9,23 +9,8 @@ import (
 // resetPanelState handles panel state synchronization when switching between panels
 // This ensures that task details are properly displayed regardless of which panel is active
 func (m *Model) resetPanelState(fromPanel, toPanel int) {
-	// Special handling for timeline panel to task details panel
-	if fromPanel == 2 && toPanel == 1 { // Timeline to task details
-		// If we have a valid task selected in the timeline (not a header)
-		if !m.timelineCursorOnHeader {
-			taskID := m.getTimelineTaskID()
-			if taskID > 0 {
-				// Find the task in the main task list and update the main cursor
-				for i, t := range m.tasks {
-					if t.ID == taskID {
-						m.cursor = i
-						m.cursorOnHeader = false
-						break
-					}
-				}
-			}
-		}
-	} else if fromPanel == 0 && toPanel == 2 { // Task list to timeline
+	// When switching to the timeline panel from tasks list
+	if fromPanel == 0 && toPanel == 2 { // Task list to timeline
 		// If we're coming from task list panel and had a task selected (not a header)
 		if !m.cursorOnHeader && m.cursor < len(m.tasks) && m.cursor >= 0 {
 			taskID := m.tasks[m.cursor].ID
@@ -33,6 +18,13 @@ func (m *Model) resetPanelState(fromPanel, toPanel int) {
 			// Try to find and select this task in the timeline
 			m.selectTaskInTimeline(taskID)
 		}
+	}
+	
+	// When switching to the task details panel
+	if toPanel == 1 {
+		// When coming from task list, task details should already be correct
+		// When coming from timeline, we should NOT update the selection
+		// No action needed as task list selection is preserved
 	}
 	
 	// Reset scroll offset when switching panels
