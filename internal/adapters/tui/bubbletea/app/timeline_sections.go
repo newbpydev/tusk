@@ -65,23 +65,34 @@ func (m *Model) categorizeTimelineTasks(tasks []task.Task) ([]task.Task, []task.
 
 	// Loop through all tasks and categorize
 	for _, t := range tasks {
-		// Skip tasks without due dates
-		if t.DueDate == nil {
-			continue
-		}
-
 		// Skip completed tasks for timeline view
 		if t.Status == task.StatusDone || t.IsCompleted {
 			continue
 		}
 
+		// Add tasks without due dates to Today section
+		if t.DueDate == nil {
+			// Todo items without due dates should be in Today section
+			todayTasks = append(todayTasks, t)
+			continue
+		}
+
 		// Use utility functions for consistent and reliable date comparison
-		// This handles timezone issues, ignores time components, and prevents tasks due today
-		// from incorrectly showing in the Overdue section
-		if isBeforeDay(*t.DueDate, now) {
+		// This handles timezone issues, ignores time components, and ensures tasks due today
+		// remain in Today section until the end of the day
+		
+		// Get the dates at midnight for proper comparison
+		dueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
+		
+		// Get today's date at midnight
+		today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+		
+		// Note: Tomorrow and yesterday calculations will be done in the UI formatter
+		
+		if dueDate.Before(today) {
 			// Task is due before today = overdue
 			overdueTasks = append(overdueTasks, t)
-		} else if isSameDay(*t.DueDate, now) {
+		} else if dueDate.Equal(today) {
 			// Task is due today = today section
 			todayTasks = append(todayTasks, t)
 		} else {

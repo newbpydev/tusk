@@ -200,9 +200,7 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 		return
 	}
 
-	// Get the current date for date formatting
-	now := time.Now()
-	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	// FormatDueDate handles date formatting internally with its own time.Now() call
 
 	for i, t := range tasks {
 		// Calculate the visual index of this task
@@ -230,110 +228,19 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 
 			switch sectionType {
 			case hooks.SectionTypeOverdue:
-				// Calculate days overdue
-				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-				// Check if the task is actually due today (this shouldn't happen with fixed categorization)
-				if taskDueDate.Equal(todayDate) {
-					// If a task due today somehow got into the Overdue section, show appropriate message
-					endOfDay := todayDate.Add(24 * time.Hour)
-					remaining := endOfDay.Sub(now)
-					if remaining < 0 {
-						remaining = 0
-					}
-					hours := int(remaining.Hours())
-					minutes := int(remaining.Minutes()) % 60
-					dueDate = fmt.Sprintf("Today (%dh %dm left)", hours, minutes)
-				} else {
-					// Only calculate days overdue for truly overdue tasks
-					daysOverdue := int(todayDate.Sub(taskDueDate).Hours() / 24)
-					dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysOverdue)
-				}
+				// Use the improved shared.FormatDueDate function for consistent formatting
+				formattedDate, _ := shared.FormatDueDate(t.DueDate, string(t.Status))
+				dueDate = formattedDate
 
 			case hooks.SectionTypeToday:
-				// Show remaining time in day
-				endOfDay := todayDate.Add(24 * time.Hour)
-				remaining := endOfDay.Sub(now)
-				if remaining < 0 {
-					remaining = 0
-				}
-				hours := int(remaining.Hours())
-				minutes := int(remaining.Minutes()) % 60
-				dueDate = fmt.Sprintf("Today (%dh %dm left)", hours, minutes)
+				// Use the improved shared.FormatDueDate function for consistent formatting
+				formattedDate, _ := shared.FormatDueDate(t.DueDate, string(t.Status))
+				dueDate = formattedDate
 
 			case hooks.SectionTypeUpcoming:
-				// Show days until due with improved formatting
-				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, time.UTC)
-				todayUTC := time.Date(todayDate.Year(), todayDate.Month(), todayDate.Day(), 0, 0, 0, 0, time.UTC)
-				
-				// Calculate days until more reliably by comparing calendar dates
-				daysUntil := 0
-				testDate := todayUTC
-				for !testDate.After(taskDueDate) {
-					if testDate.Equal(taskDueDate) {
-						break
-					}
-					testDate = testDate.AddDate(0, 0, 1)
-					daysUntil++
-				}
-				
-				// Format based on how far in the future
-				switch {
-				case daysUntil == 0:
-					// Edge case: It might be later today
-					dueDate = fmt.Sprintf("%s (Later today)", dueDate)
-					
-				case daysUntil == 1:
-					// Tomorrow
-					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
-					
-				case daysUntil <= 7:
-					// Within a week - show "In X days"
-					dueDate = fmt.Sprintf("%s (In %d days)", dueDate, daysUntil)
-					
-				case daysUntil <= 30:
-					// Show weeks for tasks within a month
-					weeks := daysUntil / 7
-					remainderDays := daysUntil % 7
-					
-					if weeks == 1 {
-						if remainderDays == 0 {
-							dueDate = fmt.Sprintf("%s (In 1 week)", dueDate)
-						} else if remainderDays == 1 {
-							dueDate = fmt.Sprintf("%s (In 1 week and 1 day)", dueDate)
-						} else {
-							dueDate = fmt.Sprintf("%s (In 1 week and %d days)", dueDate, remainderDays)
-						}
-					} else {
-						if remainderDays == 0 {
-							dueDate = fmt.Sprintf("%s (In %d weeks)", dueDate, weeks)
-						} else if remainderDays == 1 {
-							dueDate = fmt.Sprintf("%s (In %d weeks and 1 day)", dueDate, weeks)
-						} else {
-							dueDate = fmt.Sprintf("%s (In %d weeks and %d days)", dueDate, weeks, remainderDays)
-						}
-					}
-					
-				default:
-					// Show months for farther-out tasks
-					months := daysUntil / 30 // Approximate
-					remainingDays := daysUntil % 30
-					
-					if months == 1 {
-						if remainingDays == 0 {
-							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
-						} else if remainingDays > 15 {
-							dueDate = fmt.Sprintf("%s (In almost 2 months)", dueDate)
-						} else {
-							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
-						}
-					} else {
-						if remainingDays > 15 {
-							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months+1)
-						} else {
-							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months)
-						}
-					}
-				}
+				// Use the improved shared.FormatDueDate function for consistent formatting
+				formattedDate, _ := shared.FormatDueDate(t.DueDate, string(t.Status))
+				dueDate = formattedDate
 			}
 		}
 
@@ -385,9 +292,7 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 // renderLegacyTimeline renders the timeline panel without using collapsible sections
 // This is the original timeline implementation before the refactoring
 func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.Task) string {
-	// Get the current date for consistent comparison throughout the function
-	now := time.Now()
-	todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	// FormatDueDate will handle date formatting with its own time.Now() call
 
 	var scrollableContent strings.Builder
 
@@ -397,30 +302,9 @@ func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.T
 		for i, t := range overdue {
 			dueDate := ""
 			if t.DueDate != nil {
-				dueDate = t.DueDate.Format("2006-01-02")
-
-				// For overdue tasks, calculate days since due
-				// CRITICAL: Only tasks with dates STRICTLY BEFORE today should be here
-				taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-
-				// Double-check that this task is truly overdue
-				if taskDueDate.Before(todayDate) {
-					daysOverdue := int(todayDate.Sub(taskDueDate).Hours() / 24)
-					dueDate = fmt.Sprintf("%s (%d days overdue)", dueDate, daysOverdue)
-				} else if taskDueDate.Equal(todayDate) {
-					// For a task due today that got categorized as overdue, show time left
-					endOfDay := todayDate.Add(24 * time.Hour)
-					remaining := endOfDay.Sub(now)
-					if remaining < 0 {
-						remaining = 0
-					}
-					hours := int(remaining.Hours())
-					minutes := int(remaining.Minutes()) % 60
-					dueDate = fmt.Sprintf("%s (Today: %dh %dm left)", dueDate, hours, minutes)
-				} else {
-					// This should never happen - future tasks should never be in overdue section
-					dueDate = fmt.Sprintf("%s (Upcoming)", dueDate)
-				}
+				// Use the improved shared.FormatDueDate function for consistent formatting
+				formattedDate, _ := shared.FormatDueDate(t.DueDate, string(t.Status))
+				dueDate = formattedDate
 			}
 
 			// Add status indicator
@@ -470,20 +354,11 @@ func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.T
 				statusSymbol = "[ ]"
 			}
 
-			// For today's tasks, show the remaining time until the end of the day
+			// Use the improved shared.FormatDueDate function for consistent formatting
 			dueDateStr := ""
 			if t.DueDate != nil {
-				// Compute the end of day based on current time
-				now := time.Now()
-				todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-				endOfDay := todayDate.Add(24 * time.Hour)
-				remaining := endOfDay.Sub(now)
-				if remaining < 0 {
-					remaining = 0
-				}
-				hours := int(remaining.Hours())
-				minutes := int(remaining.Minutes()) % 60
-				dueDateStr = fmt.Sprintf("Today (%dh %dm left)", hours, minutes)
+				formattedDate, _ := shared.FormatDueDate(t.DueDate, string(t.Status))
+				dueDateStr = formattedDate
 			}
 
 			line := fmt.Sprintf("  %s %s %s\n", statusSymbol, t.Title, props.Styles.MediumPriority.Render(dueDateStr))
@@ -513,84 +388,9 @@ func renderLegacyTimeline(props TimelineProps, overdue, today, upcoming []task.T
 		for i, t := range upcoming {
 			dueDate := ""
 			if t.DueDate != nil {
-				dueDate = t.DueDate.Format("2006-01-02")
-				// Get the date components only for reliable day comparison
-				now := time.Now()
-				todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
-				taskDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, t.DueDate.Location())
-
-				// Calculate days difference more reliably by comparing calendar dates in UTC
-				taskDateUTC := time.Date(taskDate.Year(), taskDate.Month(), taskDate.Day(), 0, 0, 0, 0, time.UTC)
-				todayUTC := time.Date(todayDate.Year(), todayDate.Month(), todayDate.Day(), 0, 0, 0, 0, time.UTC)
-				
-				daysUntil := 0
-				testDate := todayUTC
-				for !testDate.After(taskDateUTC) {
-					if testDate.Equal(taskDateUTC) {
-						break
-					}
-					testDate = testDate.AddDate(0, 0, 1)
-					daysUntil++
-				}
-				
-				// Format based on how far in the future (matching the main timeline format)
-				switch {
-				case daysUntil == 0:
-					// Edge case: It might be later today
-					dueDate = fmt.Sprintf("%s (Later today)", dueDate)
-					
-				case daysUntil == 1:
-					// Tomorrow
-					dueDate = fmt.Sprintf("%s (Tomorrow)", dueDate)
-					
-				case daysUntil <= 7:
-					// Within a week - show "In X days"
-					dueDate = fmt.Sprintf("%s (In %d days)", dueDate, daysUntil)
-					
-				case daysUntil <= 30:
-					// Show weeks for tasks within a month
-					weeks := daysUntil / 7
-					remainderDays := daysUntil % 7
-					
-					if weeks == 1 {
-						if remainderDays == 0 {
-							dueDate = fmt.Sprintf("%s (In 1 week)", dueDate)
-						} else if remainderDays == 1 {
-							dueDate = fmt.Sprintf("%s (In 1 week and 1 day)", dueDate)
-						} else {
-							dueDate = fmt.Sprintf("%s (In 1 week and %d days)", dueDate, remainderDays)
-						}
-					} else {
-						if remainderDays == 0 {
-							dueDate = fmt.Sprintf("%s (In %d weeks)", dueDate, weeks)
-						} else if remainderDays == 1 {
-							dueDate = fmt.Sprintf("%s (In %d weeks and 1 day)", dueDate, weeks)
-						} else {
-							dueDate = fmt.Sprintf("%s (In %d weeks and %d days)", dueDate, weeks, remainderDays)
-						}
-					}
-					
-				default:
-					// Show months for farther-out tasks
-					months := daysUntil / 30 // Approximate
-					remainingDays := daysUntil % 30
-					
-					if months == 1 {
-						if remainingDays == 0 {
-							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
-						} else if remainingDays > 15 {
-							dueDate = fmt.Sprintf("%s (In almost 2 months)", dueDate)
-						} else {
-							dueDate = fmt.Sprintf("%s (In about 1 month)", dueDate)
-						}
-					} else {
-						if remainingDays > 15 {
-							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months+1)
-						} else {
-							dueDate = fmt.Sprintf("%s (In about %d months)", dueDate, months)
-						}
-					}
-				}
+				// Use the improved shared.FormatDueDate function for consistent formatting
+				formattedDate, _ := shared.FormatDueDate(t.DueDate, string(t.Status))
+				dueDate = formattedDate
 			}
 
 			// Add status indicator
@@ -677,19 +477,15 @@ func getTasksByTimeCategory(tasks []task.Task) ([]task.Task, []task.Task, []task
 		// Use a consistent approach to date comparison that ignores time components
 		// and handles timezone differences properly
 
-		// First, extract year, month, day components from both dates
-		taskYear, taskMonth, taskDay := t.DueDate.Date()
-		nowYear, nowMonth, nowDay := now.Date()
+		// Create date-only values (midnight) in local timezone for comparison
+		taskDueDate := time.Date(t.DueDate.Year(), t.DueDate.Month(), t.DueDate.Day(), 0, 0, 0, 0, time.Local)
+		todayDate := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
 
-		// Create date-only values (midnight) in UTC timezone for comparison
-		taskDate := time.Date(taskYear, taskMonth, taskDay, 0, 0, 0, 0, time.UTC)
-		todayDate := time.Date(nowYear, nowMonth, nowDay, 0, 0, 0, 0, time.UTC)
-
-		// Compare dates directly using Unix timestamps
-		if taskDate.Unix() < todayDate.Unix() {
+		// Compare dates directly
+		if taskDueDate.Before(todayDate) {
 			// Task is due before today = overdue
 			overdue = append(overdue, t)
-		} else if taskDate.Unix() == todayDate.Unix() {
+		} else if taskDueDate.Equal(todayDate) {
 			// Task is due today = today section
 			todayTasks = append(todayTasks, t)
 		} else {

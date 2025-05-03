@@ -78,10 +78,16 @@ func (m *Model) handleTaskListPanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case "tab", "right", "l":
 		// Move to next panel if available
+		prevPanel := m.activePanel 
 		if m.showTaskDetails {
 			m.activePanel = 1
 		} else if m.showTimeline {
 			m.activePanel = 2
+		}
+		
+		// If we changed panels, reset certain state to ensure proper task selection
+		if prevPanel != m.activePanel {
+			m.resetPanelState(prevPanel, m.activePanel)
 		}
 		return m, nil
 
@@ -211,12 +217,20 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 
 	switch msg.String() {
-	case "shift+tab", "left", "h", "esc":
-		// Move to previous panel
+	case "shift+tab", "left", "h":
+		// Move to previous panel if available
+		prevPanel := m.activePanel
 		if m.showTaskDetails {
-			m.activePanel = 1
-		} else if m.showTaskList {
 			m.activePanel = 0
+		} else if m.activePanel == 2 && m.showTaskDetails {
+			m.activePanel = 1
+		} else {
+			// If no panels are available to switch to, just do nothing
+		}
+		
+		// If we changed panels, reset certain state to ensure proper task selection
+		if prevPanel != m.activePanel {
+			m.resetPanelState(prevPanel, m.activePanel)
 		}
 		return m, nil
 
