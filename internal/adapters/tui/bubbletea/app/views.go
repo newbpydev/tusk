@@ -285,13 +285,16 @@ func (m *Model) renderTaskDetailsPanel(styles *shared.Styles, width, height int)
 	}
 
 	if isHeaderSelected {
+		// Show informative message about the selected section
+		
+		// Render the section header message with additional context
 		details = panels.RenderSectionHeaderMessage(panels.SectionHeaderMessageProps{
-			SectionName: selectedSectionName,
+			SectionName: selectedSectionName, 
 			Width:       contentWidth,
 			Height:      height - 2,
 			Styles:      styles,
-			Offset:      m.taskDetailsOffset, // Use the same offset variable for consistent scrolling
-			IsActive:    m.activePanel == 1,   // Pass active state for proper styling
+			Offset:      m.taskDetailsOffset,
+			IsActive:    m.activePanel == 1,
 		})
 	} else {
 		details = panels.RenderTaskDetails(panels.TaskDetailsProps{

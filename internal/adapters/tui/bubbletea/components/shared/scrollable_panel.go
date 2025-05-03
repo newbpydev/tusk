@@ -90,6 +90,65 @@ func RenderScrollablePanel(props ScrollablePanelProps) string {
 		)
 	}
 
+	// CRITICAL SECTION: Guarantee cursor visibility at all times - highest priority
+	// This approach ensures the cursor is always visible during scrolling and window resize
+	if props.CursorPosition >= 0 {
+		// Split content into lines for accurate calculations
+		contentLines := strings.Split(props.ScrollableContent, "\n")
+		totalContentLines := len(contentLines)
+		
+		// Calculate available space for content, accounting for margins and indicators
+		// Subtract 4 for panel borders & padding and potentially 2 more for scroll indicators
+		reservedSpace := 4
+		if props.Height < 10 { // Extra minimal height protection
+			reservedSpace = 2
+		}
+		availableViewportHeight := max(1, props.Height - reservedSpace)
+		
+		// Count how many visible lines we can show (max viewport capacity)
+		// This is critical for determining if scrolling is needed
+		maxVisibleLines := availableViewportHeight
+		
+		// If content is smaller than viewport, no scrolling needed
+		if totalContentLines <= maxVisibleLines {
+			props.Offset = 0
+		} else {
+			// Calculate the valid offset range
+			maxValidOffset := max(0, totalContentLines - maxVisibleLines)
+			
+			// Calculate current visible range
+			visibleStart := props.Offset
+			visibleEnd := min(visibleStart + maxVisibleLines, totalContentLines)
+			
+			// CRITICAL CHECK: Is cursor within visible area?
+			if props.CursorPosition < visibleStart {
+				// Cursor is above viewport - scroll up to show it
+				// Place cursor at top with context above if possible
+				cursorTopPosition := max(0, props.CursorPosition - 1)
+				props.Offset = cursorTopPosition
+			} else if props.CursorPosition >= visibleEnd {
+				// Cursor is below viewport - scroll down to show it
+				// Place cursor toward bottom with context below if possible
+				cursorBottomPosition := min(maxValidOffset, 
+					props.CursorPosition - maxVisibleLines + 2)
+				props.Offset = cursorBottomPosition
+			}
+			
+			// Ensure offset is always within valid range
+			// This is our final safety check
+			props.Offset = max(0, min(props.Offset, maxValidOffset))
+		}
+	}
+	
+	// Re-render the scrollable content with our guaranteed-valid offset
+	scrollableSection = CreateScrollableContent(
+		props.ScrollableContent,
+		props.Offset,
+		contentHeight,
+		props.Styles,
+		props.CursorPosition,
+	)
+	
 	// Add the scrollable section to the full content
 	fullContent.WriteString(scrollableSection)
 

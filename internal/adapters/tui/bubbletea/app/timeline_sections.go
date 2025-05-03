@@ -65,19 +65,18 @@ func (m *Model) categorizeTimelineTasks(tasks []task.Task) ([]task.Task, []task.
 
 	// Loop through all tasks and categorize
 	for _, t := range tasks {
-		// Skip tasks without due dates
-		if t.DueDate == nil {
-			continue
-		}
-
 		// Skip completed tasks for timeline view
 		if t.Status == task.StatusDone || t.IsCompleted {
 			continue
 		}
 
-		// Use utility functions for consistent and reliable date comparison
-		// This handles timezone issues, ignores time components, and prevents tasks due today
-		// from incorrectly showing in the Overdue section
+		// Skip tasks without due dates - they should not appear in timeline at all
+		if t.DueDate == nil {
+			continue
+		}
+
+		// Use the utility functions from utils.go for consistent date comparison that properly handles timezones
+		// These functions normalize dates to UTC to avoid timezone-related issues
 		if isBeforeDay(*t.DueDate, now) {
 			// Task is due before today = overdue
 			overdueTasks = append(overdueTasks, t)
