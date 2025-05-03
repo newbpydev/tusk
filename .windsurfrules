@@ -1,58 +1,57 @@
-# Go Code Style and Formatting Rules
+# Tusk-Go Code Quality Guidelines
 
-## General
-- Follow standard Go formatting conventions (gofmt)
-- Line length should not exceed 100 characters
+## Code Refactoring
+- Break down large files (>300 lines) into smaller, focused modules
+- Move handler functions from app/handlers.go to dedicated handler files
+- Extract task-related logic from tasks.go and timeline_tasks.go into services
+- Refactor update.go into smaller, purpose-specific update handlers
+- Move timeline section logic into a dedicated service package
+- Use consistent error handling patterns across the codebase
+- Extract repeated code blocks into reusable utility functions
+
+## Code Organization
+- Model-View-Update functions must be strictly separated
+- Follow component-based architecture for UI elements
+- Move UI state management to dedicated state packages
+- Keep business logic in service packages, not UI components
+- Organize imports in standard order: stdlib, external, internal
+- Store model state in model.go, not in handler or update files
+- Keep file size <300 lines when possible, never exceed 500 lines
+
+## Optimization
+- Cache expensive rendering operations
+- Minimize allocations in hot paths (Update method)
+- Use efficient data structures for frequently accessed data
+- Implement lazy loading for timeline sections
+- Optimize cursor management and visual cursor updates
+- Reduce unnecessary renders when state hasn't changed
+- Employ efficient string building techniques in view code
+
+## Reusability
+- Create composable components with clear responsibilities
+- Define service interfaces in internal/ports
+- Extract common UI patterns into shared components
+- Build stateless components that accept model and return views
+- Use dependency injection for services
+- Create testable business logic separated from UI
+- Document component usage with examples
+
+## Go Best Practices
 - Use tabs for indentation, not spaces
-- Always run `go fmt` before committing code
+- Follow Go naming conventions (CamelCase for exported, camelCase for internal)
+- Document all exported functions, types, and variables
+- Handle errors explicitly, no panics in production code
+- Write table-driven tests for all business logic
+- Use interfaces for dependency injection and testing
+- Follow the single responsibility principle
+- Use consistent comments that begin with the function/item name
 
-## Naming
-- Use camelCase for variable and function names
-- Use PascalCase for exported functions, types, and variables
-- Use snake_case for file names
-- Package names should be lowercase, single-word nouns
-- Acronyms should be capitalized (e.g., HTTP, URL, ID)
+## Performance Requirements
+- UI must remain responsive during intensive operations
+- Update loop must complete in <16ms for 60 FPS rendering
+- Network operations must be non-blocking with clear feedback
+- Minimize memory usage by avoiding unnecessary allocations
+- State updates must be atomic and consistent
+- Preserve cursor state correctly during model updates
+- Implement efficient section management with proper cursor handling
 
-## Organization
-- Group imports: standard library, third-party, internal packages
-- Within functions, declare variables close to their use
-- Place related functions close to each other
-
-## Comments
-- Begin all packages with a package comment
-- Comment all exported functions, types, and variables
-- Use complete sentences with proper punctuation
-- Don't add unnecessary comments for obvious code
-
-## Error Handling
-- Check errors immediately after function calls
-- Don't use `_` to ignore errors without explanation
-- Prefer returning errors over panicking
-- Use custom error types when appropriate
-
-## Testing
-- Test files should end with _test.go
-- Test functions should be named TestXxx
-- Write table-driven tests when appropriate
-- Cover edge cases in tests
-
-## Concurrency
-- Prefer explicit context passing for cancelation
-- Document channel ownership clearly
-- Always close channels when done with them
-- Use mutexes for simple shared state
-
-## Interfaces
-- Keep interfaces small and focused
-- Define interfaces where they're used, not implemented
-- Name interfaces appropriately (er suffix for single method interfaces)
-
-## Dependencies
-- Minimize external dependencies
-- Pin dependency versions in go.mod
-- Regularly update dependencies
-
-## Logging
-- Use structured logging when possible
-- Include relevant context in log messages
-- Use appropriate log levels
