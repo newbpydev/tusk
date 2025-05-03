@@ -389,6 +389,24 @@ func (d *DateInput) EnterNextMode() {
 
 // HandleInput processes keyboard input for the date input
 func (d *DateInput) HandleInput(msg tea.KeyMsg) {
+	// First handle special keys that should always work in any mode
+	switch msg.Type {
+	case tea.KeyEsc:
+		// Always reset to view mode on escape
+		if d.HasValue {
+			d.Mode = DateModeView
+		}
+		return
+	case tea.KeyTab, tea.KeyShiftTab:
+		// Tab navigation is handled at a higher level, but we should make sure
+		// we're not in edit mode when tabbing away
+		if d.HasValue {
+			d.Mode = DateModeView
+		}
+		return
+	}
+
+	// Then handle specific keys for different operations
 	switch msg.String() {
 	case " ":
 		if !d.HasValue {
@@ -400,8 +418,6 @@ func (d *DateInput) HandleInput(msg tea.KeyMsg) {
 		d.ComponentIncrement()
 	case "down":
 		d.ComponentDecrement()
-	case "esc":
-		d.Mode = DateModeView
 	case "backspace":
 		// Handle backspace to clear field
 		if d.HasValue && d.Mode == DateModeView {
@@ -445,6 +461,7 @@ func (d *DateInput) View() string {
 	if d.HasValue {
 		switch d.Mode {
 		case DateModeView:
+			// In view mode, no cursor indicator
 			content = fmt.Sprintf("%s %s", d.DateString(), d.TimeString())
 		case DateModeDateEdit:
 			content = fmt.Sprintf("[%s] %s", d.DateString(), d.TimeString())
@@ -462,6 +479,7 @@ func (d *DateInput) View() string {
 			content = fmt.Sprintf("%s %s:[%s]", d.DateString(), d.HourString(), d.MinuteString())
 		}
 	} else {
+		// No cursor in empty state
 		content = "Optional - Space to set today's date"
 	}
 	
@@ -473,9 +491,15 @@ func (d *DateInput) View() string {
 		style = d.ErrorStyle
 	}
 	
-	// Render the label and content
-	labelStyle := lipgloss.NewStyle().Bold(true)
-	field := fmt.Sprintf("%s: %s", labelStyle.Render(d.Label), style.Render(content))
+	// Render the label and content with highlighted label when focused
+	var field string
+	if d.Focused {
+		labelStyle := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#0D6EFD"))
+		field = fmt.Sprintf("%s: %s", labelStyle.Render(d.Label), style.Render(content))
+	} else {
+		labelStyle := lipgloss.NewStyle().Bold(true)
+		field = fmt.Sprintf("%s: %s", labelStyle.Render(d.Label), style.Render(content))
+	}
 	
 	// Add error message if present
 	if d.Error != "" {

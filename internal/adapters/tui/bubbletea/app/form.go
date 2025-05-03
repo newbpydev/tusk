@@ -56,6 +56,15 @@ func (m *Model) handleDateField(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.formDueDate = ""
 	}
 	
+	// Make sure navigation keys (Tab/Esc) are properly handled at the form level too
+	// This ensures we can always exit the date input component
+	switch msg.Type {
+	case tea.KeyEsc, tea.KeyTab, tea.KeyShiftTab:
+		// These are handled at the form navigation level
+		// The component has already reset edit mode before we get here
+		return m, nil
+	}
+	
 	return m, cmd
 }
 
@@ -108,14 +117,39 @@ func (m *Model) handleFormInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m *Model) handleFormNavigationAndSubmit(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.Type {
 	case tea.KeyEsc:
-		// Reset form state and return to list view
+		// If we're in the date field in edit mode, first reset to view mode
+		if m.activeField == 3 { // Due Date field
+			dateInput := m.dateInputHandler.GetInput("dueDate")
+			if dateInput.HasValue && dateInput.Mode > 1 { // If in any edit mode
+				// Reset to view mode but stay on the due date field
+				dateInput.Mode = 1 // DateModeView
+				return m, nil
+			}
+		}
+		// Otherwise reset form state and return to list view
 		m.resetForm()
 		m.viewMode = "list"
 		return m, nil
 	case tea.KeyTab:
+		// Exit date edit mode if we're in it before moving to next field
+		if m.activeField == 3 { // Due Date field
+			dateInput := m.dateInputHandler.GetInput("dueDate")
+			if dateInput.HasValue && dateInput.Mode > 1 { // If in any edit mode
+				// Reset to view mode
+				dateInput.Mode = 1 // DateModeView
+			}
+		}
 		m.activeField = (m.activeField + 1) % 5 // 5 fields: Title, Desc, Prio, DueDate, Submit
 		return m, nil
 	case tea.KeyShiftTab:
+		// Exit date edit mode if we're in it before moving to previous field
+		if m.activeField == 3 { // Due Date field
+			dateInput := m.dateInputHandler.GetInput("dueDate")
+			if dateInput.HasValue && dateInput.Mode > 1 { // If in any edit mode
+				// Reset to view mode
+				dateInput.Mode = 1 // DateModeView
+			}
+		}
 		m.activeField = (m.activeField - 1 + 5) % 5 // Wrap around correctly
 		return m, nil
 	case tea.KeyEnter:
@@ -131,8 +165,12 @@ func (m *Model) handleFormNavigationAndSubmit(msg tea.KeyMsg) (tea.Model, tea.Cm
 			} else {
 				return m, m.updateCurrentTask()
 			}
+		} else if m.activeField == 3 { // If on the date field
+			// The handleDateField already handles Enter for cycling modes
+			// This just prevents moving to the next field on Enter when in date field
+			return m, nil
 		} else {
-			// Move to next field on Enter if not on submit
+			// Move to next field on Enter if not on submit or date
 			m.activeField = (m.activeField + 1) % 5
 			return m, nil
 		}
@@ -198,9 +236,13 @@ func (m *Model) parseFormData() task.Task {
 	}
 	
 	// Get the due date from the date input handler
-	dueDate := m.dateInputHandler.GetValue("dueDate")
-	if dueDate != nil {
-		t.DueDate = dueDate
+	dateInput := m.dateInputHandler.GetInput("dueDate")
+	if dateInput != nil && dateInput.HasValue {
+		// Ensure we're using a clean date with proper formatting
+		// This avoids potential special characters that might cause UTF-8 encoding issues
+		formatted := dateInput.Value.Format("2006-01-02 15:04:05")
+		cleanDate, _ := time.Parse("2006-01-02 15:04:05", formatted)
+		t.DueDate = &cleanDate
 	} else if m.formDueDate != "" {
 		// Fallback to parsing from string (backward compatibility)
 		parsedDate, err := parseDate(m.formDueDate)
