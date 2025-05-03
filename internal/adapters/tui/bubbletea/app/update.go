@@ -7,12 +7,40 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
 // Update implements tea.Model Update, handling all message types.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// If modal is visible, handle ESC key globally to close it
+	if m.showModal {
+		if keyMsg, ok := msg.(tea.KeyMsg); ok && keyMsg.String() == "esc" {
+			m.showModal = false
+			return m, nil
+		}
+		
+		// If modal is visible, pass messages to modal unless it's a special modal message
+		switch msgType := msg.(type) {
+		case messages.HideModalMsg:
+			m.showModal = false
+			return m, nil
+		case shared.ModalCloseMsg:
+			m.showModal = false
+			return m, nil
+		case messages.ShowModalMsg, tea.WindowSizeMsg:
+			// These should be handled by the main update flow
+			// They're special cases even when a modal is visible
+		default:
+			_ = msgType // Avoid unused variable warning
+			// When modal is visible, pass all other messages to the modal
+			var cmd tea.Cmd
+			m.modal, cmd = m.modal.Update(msg)
+			return m, cmd
+		}
+	}
+	
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		// Delegate all keyboard handling to the handler functions in handlers.go
@@ -23,6 +51,18 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Call our enhanced window resize handler to ensure cursor visibility
 		// This is critical for preventing the cursor from going offscreen during resize
 		m.handleWindowResize(msg)
+		return m, nil
+	
+	case messages.ShowModalMsg:
+		// Show a modal with the provided content
+		m.modal = shared.NewModal(msg.Content, msg.Width, msg.Height)
+		m.modal.Show()
+		m.showModal = true
+		return m, nil
+		
+	case messages.HideModalMsg:
+		// Hide the modal
+		m.showModal = false
 		return m, nil
 
 	case messages.TickMsg:
@@ -44,6 +84,17 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.err = msg.Err
 		m.setErrorStatus(fmt.Sprintf("Error updating task '%s': %v", msg.TaskTitle, msg.Err))
 		return m, m.refreshTasks()
+		
+	case shared.SampleModalMsg:
+		// Handle sample modal action
+		if msg.Action == "ok" {
+			// Modal OK button was clicked - implement your action here
+			m.showModal = false
+			m.setSuccessStatus("Modal action completed successfully!")
+			return m, nil
+		}
+		// For any other action, just return the model as is
+		return m, nil
 
 	case messages.StatusUpdateSuccessMsg:
 		// Handle successful task update

@@ -8,6 +8,7 @@ import (
 	"github.com/newbpydev/tusk/internal/core/task"
 	taskService "github.com/newbpydev/tusk/internal/service/task"
 
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/handlers"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
@@ -49,6 +50,11 @@ type Model struct {
 
 	// Header status
 	currentTime   time.Time
+	
+	// Modal state
+	modal           shared.ModalModel
+	showModal       bool
+	modalBackground string
 	statusMessage string
 	statusType    string
 	statusExpiry  time.Time

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
@@ -16,6 +17,9 @@ func (m *Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "q", "ctrl+c":
 		return m, tea.Quit
+	case "ctrl+m":
+		// Show sample modal with Ctrl+M
+		return m, shared.ShowSampleModal("Sample Modal", "This is a reusable modal component that can be used throughout the application. Press ESC or click Cancel to close.")
 	}
 
 	switch m.viewMode {

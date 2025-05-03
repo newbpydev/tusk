@@ -27,7 +27,14 @@ func (m *Model) View() string {
 		m.initCollapsibleSections()
 	}
 	
-	// Use the view registry to render the appropriate view based on the current mode
-	// This centralizes all view rendering logic through a single entry point
-	return m.RenderMainView(sharedStyles)
+	// Render the main view first
+	mainView := m.RenderMainView(sharedStyles)
+	
+	// If a modal is active, render it on top of the main view
+	if m.showModal {
+		return m.modal.View(mainView, m.width, m.height)
+	}
+	
+	// Otherwise just return the main view
+	return mainView
 }
