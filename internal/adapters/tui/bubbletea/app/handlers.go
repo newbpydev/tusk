@@ -253,11 +253,77 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 				m.taskDetailsOffset = 0
 			}
 
-			// Adjust scroll offset to follow the cursor if needed
-			visibleHeight := m.height - 8
-			if m.timelineCursor > m.timelineOffset+visibleHeight {
-				m.timelineOffset = m.timelineCursor - visibleHeight
+			// Calculate visible height in terms of logical items, not raw lines
+			// Typical item height is ~2 lines, so divide available height by 2 for better estimation
+			visibleHeight := (m.height - 10) / 2 // Height in terms of logical items
+			
+			// Calculate position of cursor relative to visible region and adjust if needed
+			// The key is to account for varying item heights (headers vs tasks with/without descriptions)
+			
+			// For downward navigation, we need to keep items fully visible
+			// The key adjustments are:
+			// 1. Start scrolling with just a 1-item offset to be more responsive
+			// 2. Account for scroll indicators (▲ and ▼) that take up extra space
+			// 3. Consider the height of the current item to ensure it's fully visible
+			
+			// First, determine the exact height of the current item
+			cursorItemHeight := 1 // Default for section headers
+			
+			if !m.timelineCursorOnHeader {
+				// Tasks have variable heights depending on presence of description
+				taskID := m.getTimelineTaskID()
+				if taskID > 0 {
+					// Find the actual task to check its description
+					hasDescription := false
+					for _, tasks := range [][]task.Task{m.overdueTasks, m.todayTasks, m.upcomingTasks} {
+						for _, t := range tasks {
+							if t.ID == taskID && t.Description != nil && *t.Description != "" {
+								hasDescription = true
+								break
+							}
+						}
+					}
+					
+					if hasDescription {
+						cursorItemHeight = 3 // Title + description + separator
+					} else {
+						cursorItemHeight = 2 // Title + separator
+					}
+				}
 			}
+			
+			// Calculate actual visible height accounting for borders, padding and scroll indicators
+			// Subtract 2 for possible scroll indicators (▲ and ▼)
+			actualHeight := m.height - 12 // 10 for borders/padding + 2 for scroll indicators
+			
+			// Convert to logical items (divide by 2 as average item height)
+			visibleHeight = actualHeight / 2
+			
+			// Use a smaller offset increment for more responsive scrolling
+			// This means the cursor will follow more closely with each keypress
+			offsetIncrement := 1
+			
+			// Check if cursor is about to move beyond visible area
+			relativePos := m.timelineCursor - m.timelineOffset
+			
+			// If cursor moves too far down, scroll to keep it visible
+			if relativePos > visibleHeight / 2 {
+				// Move the offset by exactly one item to create smooth scrolling
+				m.timelineOffset += offsetIncrement
+				
+				// Special case: ensure we can see all of the current item
+				// If we're on a task with description, may need extra scroll offset
+				if cursorItemHeight == 3 && relativePos > visibleHeight - 2 {
+					// Add one more to ensure the full item is visible
+					m.timelineOffset += 1
+				}
+			}
+			
+			// Bounds check to prevent scrolling past the end
+			maxItems := m.timelineCollapsibleMgr.GetItemCount()
+			// Leave room for all remaining items
+			maxOffset := max(0, maxItems - visibleHeight)
+			m.timelineOffset = min(m.timelineOffset, maxOffset)
 		} else {
 			// Fall back to just scrolling if no collapsible sections
 			const maxTimelineScroll = 500
@@ -283,9 +349,55 @@ func (m *Model) handleTimelinePanelKeys(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 					m.taskDetailsOffset = 0
 				}
 
-				// Adjust scroll offset to follow the cursor if needed
-				if m.timelineCursor < m.timelineOffset+3 {
-					m.timelineOffset = int(math.Max(0, float64(m.timelineCursor-3)))
+				// For upward navigation, we need a similar approach to downward scrolling
+				// but with adjustments for keeping the cursor visible at the top
+				
+				// First, determine the exact height of the current item
+				cursorItemHeight := 1 // Default for section headers
+				
+				if !m.timelineCursorOnHeader {
+					// Tasks have variable heights depending on description
+					taskID := m.getTimelineTaskID()
+					if taskID > 0 {
+						hasDescription := false
+						for _, tasks := range [][]task.Task{m.overdueTasks, m.todayTasks, m.upcomingTasks} {
+							for _, t := range tasks {
+								if t.ID == taskID && t.Description != nil && *t.Description != "" {
+									hasDescription = true
+									break
+								}
+							}
+						}
+						
+						if hasDescription {
+							cursorItemHeight = 3 // Title + description + separator
+						} else {
+							cursorItemHeight = 2 // Title + separator
+						}
+					}
+				}
+				
+				// Account for scroll indicators, same as in downward navigation
+				// We're using a direct approach for upward scrolling without needing to calculate visible height
+				
+				// Use smaller increments for smoother scrolling
+				offsetIncrement := 1
+				
+				// Check cursor position relative to viewport
+				relativePos := m.timelineCursor - m.timelineOffset
+				
+				// If cursor is near the top, scroll up by one increment
+				// We want to keep at least 2 items visible at the top 
+				if relativePos < 2 {
+					// Move offset up by exactly one to create smooth scrolling
+					m.timelineOffset = max(0, m.timelineOffset - offsetIncrement)
+					
+					// Special case: if we're on a task with description
+					// Make sure we keep enough space to see it
+					if cursorItemHeight == 3 && m.timelineOffset > 0 {
+						// Add one more offset to account for the taller item
+						m.timelineOffset = max(0, m.timelineOffset - 1)
+					}
 				}
 			}
 		} else {

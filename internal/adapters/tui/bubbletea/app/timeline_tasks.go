@@ -7,6 +7,74 @@ import (
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
+// getTimelineTaskIDAtPosition finds the task ID of the task at the specified position in the timeline.
+// If the position is on a section header or invalid, returns 0 (invalid ID).
+func (m *Model) getTimelineTaskIDAtPosition(position int) int32 {
+	// If the position is on a header or invalid, return 0 (invalid ID)
+	if position < 0 || m.timelineCollapsibleMgr.IsSectionHeader(position) {
+		return int32(0) // No task selected
+	}
+
+	// Get overdue, today, and upcoming tasks
+	overdue, today, upcoming := m.getTimelineFilteredTasks()
+
+	// Map section headers to their start positions
+	sectionStartPositions := make(map[hooks.SectionType]int)
+
+	// Get individual section header indexes directly
+	overdueHeaderIndex := m.timelineCollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeOverdue)
+	todayHeaderIndex := m.timelineCollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeToday)
+	upcomingHeaderIndex := m.timelineCollapsibleMgr.GetSectionHeaderIndex(hooks.SectionTypeUpcoming)
+
+	if overdueHeaderIndex >= 0 {
+		sectionStartPositions[hooks.SectionTypeOverdue] = overdueHeaderIndex
+	}
+	if todayHeaderIndex >= 0 {
+		sectionStartPositions[hooks.SectionTypeToday] = todayHeaderIndex
+	}
+	if upcomingHeaderIndex >= 0 {
+		sectionStartPositions[hooks.SectionTypeUpcoming] = upcomingHeaderIndex
+	}
+
+	// Calculate task position in absolute terms
+	overdueStart := sectionStartPositions[hooks.SectionTypeOverdue] + 1   // +1 to skip header
+	todayStart := sectionStartPositions[hooks.SectionTypeToday] + 1       // +1 to skip header
+	upcomingStart := sectionStartPositions[hooks.SectionTypeUpcoming] + 1 // +1 to skip header
+
+	// Check if position is in overdue section
+	if overdueSection := m.timelineCollapsibleMgr.GetSection(hooks.SectionTypeOverdue); overdueSection != nil && overdueSection.IsExpanded {
+		if position >= overdueStart && position < overdueStart+len(overdue) {
+			taskIndex := position - overdueStart
+			if taskIndex >= 0 && taskIndex < len(overdue) {
+				return overdue[taskIndex].ID
+			}
+		}
+	}
+
+	// Check if position is in today section
+	if todaySection := m.timelineCollapsibleMgr.GetSection(hooks.SectionTypeToday); todaySection != nil && todaySection.IsExpanded {
+		if position >= todayStart && position < todayStart+len(today) {
+			taskIndex := position - todayStart
+			if taskIndex >= 0 && taskIndex < len(today) {
+				return today[taskIndex].ID
+			}
+		}
+	}
+
+	// Check if position is in upcoming section
+	if upcomingSection := m.timelineCollapsibleMgr.GetSection(hooks.SectionTypeUpcoming); upcomingSection != nil && upcomingSection.IsExpanded {
+		if position >= upcomingStart && position < upcomingStart+len(upcoming) {
+			taskIndex := position - upcomingStart
+			if taskIndex >= 0 && taskIndex < len(upcoming) {
+				return upcoming[taskIndex].ID
+			}
+		}
+	}
+
+	// No valid task found
+	return int32(0)
+}
+
 // getTimelineTaskID finds the task ID of the task at the current timeline cursor position.
 // If the cursor is on a section header or an invalid position, returns 0 (invalid ID).
 func (m *Model) getTimelineTaskID() int32 {

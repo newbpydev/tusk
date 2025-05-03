@@ -70,13 +70,9 @@ func RenderTimeline(props TimelineProps) string {
 		return renderLegacyTimeline(props, overdue, today, upcoming)
 	}
 
-	// Calculate viewport constraints for scrolling
-	const scrollPadding = 3            // Number of lines to keep visible above/below selection
-	viewportHeight := props.Height - 4 // Account for borders and header
-
 	// Render the collapsible sections
 	// First, get all the sections from the manager
-	totalVisibleItems := props.CollapsibleMgr.GetItemCount()
+	_ = props.CollapsibleMgr.GetItemCount()
 
 	// Check if the Overdue section is expanded
 	overdueSection := props.CollapsibleMgr.GetSection(hooks.SectionTypeOverdue)
@@ -169,14 +165,9 @@ func RenderTimeline(props TimelineProps) string {
 		}
 	}
 
-	// Calculate the optimal offset to keep selection centered
-	halfViewport := (viewportHeight - scrollPadding) / 2
-	targetOffset := max(0, props.CursorPosition-halfViewport)
-
-	// Don't scroll past the end
-	maxOffset := max(0, totalVisibleItems-viewportHeight+scrollPadding)
-	targetOffset = min(targetOffset, maxOffset)
-
+	// Simple direct approach - Use props.Offset directly passed from the model
+	// The navigation handlers will update the offset directly based on cursor movement
+	
 	return shared.RenderScrollablePanel(shared.ScrollablePanelProps{
 		Title:             "Timeline",
 		HeaderContent:     "",
@@ -184,8 +175,8 @@ func RenderTimeline(props TimelineProps) string {
 		EmptyMessage:      "No tasks with due dates",
 		Width:             props.Width,
 		Height:            props.Height,
-		Offset:            props.Offset,
-		CursorPosition:    -1, // No cursor in simple timeline
+		Offset:            props.Offset, // Use the exact offset passed from the model
+		CursorPosition:    props.CursorPosition, // Pass the cursor position for highlighting
 		Styles:            props.Styles,
 		IsActive:          props.IsActive,
 		BorderColor:       shared.ColorBorder,
@@ -273,13 +264,17 @@ func renderTasksWithHighlight(sb *strings.Builder, tasks []task.Task, props Time
 		taskLine := renderedStatusSymbol + titlePart
 		sb.WriteString(taskLine + "\n")
 
-		// Add a short description if available
+		// Always add a description line for consistent height (empty if not available)
 		if t.Description != nil && *t.Description != "" {
 			desc := *t.Description
+			// Ensure consistent line height by always limiting to one line
 			if len(desc) > 50 {
 				desc = desc[:47] + "..."
 			}
 			sb.WriteString(fmt.Sprintf("     %s\n", props.Styles.Help.Render(desc)))
+		} else {
+			// Add an empty description line for consistent height
+			sb.WriteString("     \n")
 		}
 
 		// Add a separator between tasks except for the last one
