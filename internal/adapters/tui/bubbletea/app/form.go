@@ -63,14 +63,15 @@ func (m *Model) handleDateField(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		dateInput := m.dateInputHandler.GetInput("dueDate")
 		
 		// If already in view mode or no date, let the form handler handle Esc (to exit form)
-		if !dateInput.HasValue || dateInput.Mode == 1 { // 1 is DateModeView
-			// Pass through to form navigation
+		// DateModeView is 1 in the input package
+		if !dateInput.HasValue || dateInput.Mode == 1 { // DateModeView 
+			// Pass through to form navigation to exit the form
 			return m, nil
 		}
 		
-		// Otherwise, just reset to view mode but stay in the date field
-		// This allows for a double-escape pattern: first Esc exits edit mode, second Esc exits form
-		return m, nil
+		// The component's HandleInput has already handled the Esc key for other modes
+		// by changing the mode appropriately. We just need to make sure we don't exit the form.
+		return m, cmd
 		
 	case tea.KeyTab, tea.KeyShiftTab:
 		// These are always handled at the form navigation level
@@ -130,19 +131,27 @@ func (m *Model) handleFormInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 func (m *Model) handleFormNavigationAndSubmit(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.Type {
 	case tea.KeyEsc:
-		// If we're in the date field in edit mode, first reset to view mode
+		// Special handling for the date input field
 		if m.activeField == 3 { // Due Date field
 			dateInput := m.dateInputHandler.GetInput("dueDate")
-			if dateInput.HasValue && dateInput.Mode > 1 { // If in any edit mode
-				// Reset to view mode but stay on the due date field
-				dateInput.Mode = 1 // DateModeView
+			
+			// The DateInput component already handles multi-level Esc behavior
+			// Here, we only need to check if we need to exit the form
+			if !dateInput.HasValue || dateInput.Mode <= 1 { // If empty or in view mode
+				// Exit the form
+				m.resetForm()
+				m.viewMode = "list"
+				return m, nil
+			} else {
+				// Otherwise, the component has handled the Esc key, just don't exit
 				return m, nil
 			}
+		} else {
+			// Not on date field, exit form normally
+			m.resetForm()
+			m.viewMode = "list"
+			return m, nil
 		}
-		// Otherwise reset form state and return to list view
-		m.resetForm()
-		m.viewMode = "list"
-		return m, nil
 	case tea.KeyTab:
 		// Exit date edit mode if we're in it before moving to next field
 		if m.activeField == 3 { // Due Date field

@@ -412,9 +412,23 @@ func (d *DateInput) HandleInput(msg tea.KeyMsg) {
 	// First handle special keys that should always work in any mode
 	switch msg.Type {
 	case tea.KeyEsc:
-		// Always reset to view mode on escape
+		// Handle Esc key with multiple levels
 		if d.HasValue {
-			d.Mode = DateModeView
+			// If in a deep editing mode (year/month/day or hour/minute), go up one level
+			if d.Mode >= DateModeYearEdit && d.Mode <= DateModeDayEdit {
+				// From date component editing, return to date selection
+				d.Mode = DateModeDateEdit
+				return
+			} else if d.Mode >= DateModeHourEdit && d.Mode <= DateModeMinuteEdit {
+				// From time component editing, return to time selection
+				d.Mode = DateModeTimeEdit
+				return
+			} else if d.Mode == DateModeDateEdit || d.Mode == DateModeTimeEdit {
+				// From date/time selection, return to view mode
+				d.Mode = DateModeView
+				return
+			}
+			// Otherwise (in view mode), let the form handle the Esc key
 		}
 		return
 	case tea.KeyTab, tea.KeyShiftTab:
