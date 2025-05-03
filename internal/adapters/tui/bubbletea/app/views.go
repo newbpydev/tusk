@@ -17,10 +17,12 @@ func (m *Model) renderFormView(sharedStyles *shared.Styles) string {
 		FormTitle:       m.formTitle,
 		FormDescription: m.formDescription,
 		FormPriority:    m.formPriority,
-		FormDueDate:     m.formDueDate,
+		FormDueDate:     m.formDueDate, // Keep for backward compatibility
 		ActiveField:     m.activeField,
 		Error:           m.err,
 		Styles:          sharedStyles,
+		// Add the interactive date input when on the date field
+		ActiveDateInput: m.dateInputHandler.GetInput("dueDate"),
 	}
 
 	// Render the form content

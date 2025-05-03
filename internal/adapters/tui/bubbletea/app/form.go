@@ -38,38 +38,25 @@ func (m *Model) handleInputField(msg tea.KeyMsg, field *string) (tea.Model, tea.
 	return m, nil
 }
 
-// handleDateField handles date input, allowing only digits and hyphens.
-// It also checks for navigation keys.
-func (m *Model) handleDateField(msg tea.KeyMsg, field *string) (tea.Model, tea.Cmd) {
-	switch msg.Type {
-	case tea.KeyRunes:
-		// Basic validation: allow only digits and hyphen
-		for _, r := range msg.Runes {
-			if (r >= '0' && r <= '9') || r == '-' {
-				*field += string(r)
-			}
-		}
-		// TODO: Add more robust date format validation (e.g., on Enter/submit)
-		return m, nil // Consume valid rune input
-	case tea.KeyBackspace:
-		if len(*field) > 0 {
-			*field = (*field)[:len(*field)-1]
-		}
-		return m, nil // Consume backspace
-	case tea.KeyEsc:
-		// Let the calling form handler handle Esc
-		return m, nil
-	case tea.KeyEnter:
-		// Let the calling form handler handle Enter
-		return m, nil
-	case tea.KeyTab:
-		// Let the calling form handler handle Tab
-		return m, nil
-	case tea.KeyShiftTab:
-		// Let the calling form handler handle Shift+Tab
-		return m, nil
+// handleDateField handles date input using the interactive date input component.
+// It processes keyboard events for date selection and manipulation.
+func (m *Model) handleDateField(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	// Focus the due date field in the date input handler
+	m.dateInputHandler.Focus("dueDate")
+	
+	// Handle the key message with the date input handler
+	cmd := m.dateInputHandler.HandleKey(msg, "dueDate")
+	
+	// Update the form's string representation of the date for backward compatibility
+	// This ensures existing code continues to work while we transition to the new system
+	dateInput := m.dateInputHandler.GetInput("dueDate")
+	if dateInput.HasValue {
+		m.formDueDate = dateInput.DateString()
+	} else {
+		m.formDueDate = ""
 	}
-	return m, nil
+	
+	return m, cmd
 }
 
 // handleFormKeys processes keyboard input for both create and edit forms
@@ -111,7 +98,7 @@ func (m *Model) handleFormInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			return m, nil // Allow navigation keys
 		}
 	case 3: // Due Date
-		return m.handleDateField(msg, &m.formDueDate)
+		return m.handleDateField(msg)
 	// case 4: // Submit button - No direct input handling needed here
 	}
 	return m, nil
@@ -162,6 +149,11 @@ func (m *Model) resetForm() {
 	m.formStatus = ""
 	m.activeField = 0
 	m.err = nil // Clear any previous form errors
+	
+	// Reset date input handler if it exists
+	if m.dateInputHandler != nil {
+		m.dateInputHandler.ResetAllInputs()  
+	}
 }
 
 // loadTaskIntoForm loads a task's data into the form fields for editing
@@ -179,9 +171,14 @@ func (m *Model) loadTaskIntoForm(t task.Task) {
 	
 	// Format the date as YYYY-MM-DD if it exists
 	if t.DueDate != nil && !t.DueDate.IsZero() {
+		// Set the date in both the form field (for backward compatibility)
+		// and in the interactive date input component
 		m.formDueDate = t.DueDate.Format("2006-01-02")
+		m.dateInputHandler.SetValue("dueDate", *t.DueDate)
 	} else {
 		m.formDueDate = ""
+		// Reset the date input component
+		m.dateInputHandler.GetInput("dueDate").Reset()
 	}
 	
 	m.formStatus = string(t.Status)
@@ -200,11 +197,15 @@ func (m *Model) parseFormData() task.Task {
 		Status:      task.Status(m.formStatus),
 	}
 	
-	// Parse the due date if provided
-	if m.formDueDate != "" {
-		dueDate, err := parseDate(m.formDueDate)
+	// Get the due date from the date input handler
+	dueDate := m.dateInputHandler.GetValue("dueDate")
+	if dueDate != nil {
+		t.DueDate = dueDate
+	} else if m.formDueDate != "" {
+		// Fallback to parsing from string (backward compatibility)
+		parsedDate, err := parseDate(m.formDueDate)
 		if err == nil {
-			t.DueDate = &dueDate
+			t.DueDate = &parsedDate
 		}
 	}
 	

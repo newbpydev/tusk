@@ -18,6 +18,7 @@ package panels
 import (
 	"fmt"
 
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/input"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
@@ -27,7 +28,8 @@ type CreateFormProps struct {
 	FormTitle       string
 	FormDescription string
 	FormPriority    string
-	FormDueDate     string
+	FormDueDate     string // Kept for backward compatibility
+	ActiveDateInput *input.DateInput // New interactive date input component
 	ActiveField     int
 	Error           error
 	Styles          *shared.Styles
@@ -60,6 +62,18 @@ func RenderCreateForm(props CreateFormProps) string {
 		fieldLabel := field.label
 		if field.required {
 			fieldLabel += " *"
+		}
+
+		// Special handling for due date field
+		if i == 3 { // Due Date field
+			// Use interactive date input if available
+			if props.ActiveField == 3 && props.ActiveDateInput != nil {
+				// Set focus state since this field is active
+				props.ActiveDateInput.Focused = true
+				s += props.ActiveDateInput.View() + "\n\n"
+				// Skip the rest of the rendering for this field
+				continue
+			}
 		}
 
 		if field.active {
@@ -98,7 +112,7 @@ func RenderCreateForm(props CreateFormProps) string {
 		s += "[Save Task]"
 	}
 
-	s += "\n\n" + props.Styles.Help.Render("Tab: next field • Enter: submit • Esc: cancel")
+	s += "\n\n" + props.Styles.Help.Render("Tab: next field • Enter: submit/cycle date mode • Space: set today's date • ↑↓: change date values • Esc: cancel")
 
 	return s
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/newbpydev/tusk/internal/core/task"
 	taskService "github.com/newbpydev/tusk/internal/service/task"
 
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/handlers"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/hooks"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/styles"
@@ -76,6 +77,9 @@ type Model struct {
 
 	// View registry for managing different views
 	viewRegistry ViewRegistry
+	
+	// Date input handler for interactive date fields
+	dateInputHandler *handlers.DateInputHandler
 }
 
 // NewModel initializes the bubbletea application model.
@@ -97,6 +101,7 @@ func NewModel(ctx context.Context, svc taskService.Service, userID int64) *Model
 		activePanel:           0,
 		collapsibleManager:    hooks.NewCollapsibleManager(),
 		timelineCollapsibleMgr: hooks.NewCollapsibleManager(),
+		dateInputHandler:      handlers.NewDateInputHandler(),
 	}
 
 	// Setup initial collapsible sections
@@ -109,6 +114,10 @@ func NewModel(ctx context.Context, svc taskService.Service, userID int64) *Model
 // Init implements tea.Model Init.
 func (m *Model) Init() tea.Cmd {
 	m.currentTime = time.Now()
+	
+	// Register the due date field with the date input handler
+	m.dateInputHandler.RegisterInput("dueDate", "Due Date")
+	
 	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
 		return messages.TickMsg(t)
 	})
