@@ -2,6 +2,8 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/charmbracelet/lipgloss"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/keymap"
@@ -42,7 +44,9 @@ func (m *Model) View() string {
 	}
 	
 	// Update help model with current keymap
-	m.helpModel.SetKeyMap(m.activeKeyMap)
+	// Create a context ID from view mode and active panel to detect context changes
+	contextID := m.viewMode + "-" + fmt.Sprintf("%d", m.activePanel)
+	m.helpModel.SetKeyMap(m.activeKeyMap, contextID)
 	m.helpModel.AddDelegateKeyMap(keymap.GlobalKeyMap)
 	m.helpModel.SetWidth(m.width)
 	
@@ -66,34 +70,31 @@ func (m *Model) View() string {
 		return m.modal.View(mainView, m.width, m.height)
 	}
 	
-	// Completely different approach to prevent text accumulation
-	// Define key dimensions
-	const helpFooterHeight = 1
-	contentHeight := m.height - helpFooterHeight
+	// Simple layout approach - mainView contains everything except help footer
+	// No fancy calculations, just static dimensions to prevent layout shifts
 	
-	// Step 1: Create the main content area with strict boundaries
-	contentStyle := lipgloss.NewStyle().
-		Width(m.width).
-		Height(contentHeight)
+	// Step 1: Create a content container with explicit height - this is crucial
+	// We use height-1 to reserve space for the footer and prevent jumps
+	contentHeight := m.height - 1 // Hard-coded 1 line for help footer
 	
-	// Render main content with strict size control
-	mainViewStyled := contentStyle.Render(mainView)
+	// Style the main content with fixed dimensions
+	mainContainer := lipgloss.NewStyle().
+		Width(m.width).       // Full width
+		Height(contentHeight) // Fixed height
 	
-	// Step 2: Create help footer with clear boundaries
-	// Get the help text - our HelpModel already handles width constraints
+	// Render the main content
+	mainViewStyled := mainContainer.Render(mainView)
+	
+	// Step 2: Get the help footer - this new implementation won't accumulate text
 	helpText := m.helpModel.View()
 	
-	// Style help footer with fixed dimensions
-	helpStyle := lipgloss.NewStyle().
-		Width(m.width).
-		Height(helpFooterHeight).
-		Foreground(lipgloss.Color("#a0aec0")).
-		Italic(true)
-	
-	helpStyled := helpStyle.Render(helpText)
-	
-	// Step 3: Use direct vertical joining with top alignment to prevent shifts
-	mainViewWithHelp := lipgloss.JoinVertical(lipgloss.Top, mainViewStyled, helpStyled)
+	// Step 3: Simply stack the two components vertically
+	// By using fixed heights, we prevent layout shifts
+	mainViewWithHelp := lipgloss.JoinVertical(
+		lipgloss.Top, // Top alignment for stability
+		mainViewStyled,
+		helpText,
+	)
 	
 	// Return the complete view
 	return mainViewWithHelp
