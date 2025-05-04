@@ -5,6 +5,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/styles"
 	"github.com/newbpydev/tusk/internal/core/task"
 	"time"
@@ -14,14 +15,6 @@ import (
 type ModalFormMsg struct {
 	Type    string
 	Payload interface{}
-}
-
-// ModalFormCloseMsg is sent when the modal form is closed without submitting
-type ModalFormCloseMsg struct{}
-
-// ModalFormSubmitMsg is sent when the form is submitted successfully
-type ModalFormSubmitMsg struct {
-	Task task.Task
 }
 
 // FormField represents a field in a form with validation and rendering capabilities
@@ -165,6 +158,19 @@ func NewModalFormModel(styles *styles.Styles, userID int32) *ModalFormModel {
 	priorityField.CycleField.SetValue(m.Priority)
 	m.FormFields["priority"] = priorityField
 	
+	// Add button fields to the form fields map so they're properly tracked
+	// This is important for proper focus handling and event processing
+	
+	// Create save button field
+	saveField := NewFormField("save", "Save", nil, false)
+	saveField.InputType = "button"
+	m.FormFields["save"] = saveField
+	
+	// Create cancel button field
+	cancelField := NewFormField("cancel", "Cancel", nil, false)
+	cancelField.InputType = "button"
+	m.FormFields["cancel"] = cancelField
+	
 	return m
 }
 
@@ -176,10 +182,45 @@ func (m *ModalFormModel) Init() tea.Cmd {
 // Update handles events for the modal form
 func (m *ModalFormModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.MouseMsg:
+		if msg.Type == tea.MouseLeft {
+			// Handle Cancel button click
+			if m.isClickOnCancelButton(msg) {
+				// First focus the cancel button for visual feedback
+				m.FocusedField = "cancel"
+				
+				// Send the close message directly without nesting commands
+				return m, func() tea.Msg { 
+					return messages.ModalFormCloseMsg{} 
+				}
+			}
+			
+			// Handle Save button click
+			if m.isClickOnSaveButton(msg) {
+				// First focus the save button for visual feedback
+				m.FocusedField = "save"
+				
+				// Only submit if validation passes
+				if m.Validate() {
+					// Create the task from form data
+					newTask := m.CreateTask()
+					
+					// Send the submit message directly without nesting commands
+					return m, func() tea.Msg { 
+						return messages.ModalFormSubmitMsg{Task: newTask} 
+					}
+				}
+			}
+		}
+		// No relevant mouse action, just return model unchanged
+		return m, nil
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "esc":
-			return m, func() tea.Msg { return ModalFormCloseMsg{} }
+			// Send close message directly
+			return m, func() tea.Msg { 
+				return messages.ModalFormCloseMsg{} 
+			}
 		case "tab":
 			m.NextField()
 			return m, nil
@@ -215,31 +256,47 @@ func (m *ModalFormModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 		case " ":
-			// Allow cycling through priorities with space key
+			// Space key handling
 			if m.FocusedField == "priority" {
-				// Get the cycle field and advance it
-				if field, ok := m.FormFields["priority"]; ok && field.CycleField != nil {
-					field.CycleField.Next()
-					// Update the model's value
-					m.UpdateField("priority", field.CycleField.CurrentValue())
-					m.FormFields["priority"] = field // Update the field in the map
+				// For priority field, cycle through available options
+				m.CyclePriority()
+				return m, nil
+			} else if m.FocusedField == "cancel" {
+				// When cancel button is pressed with space, close the modal (same as Enter)
+				return m, func() tea.Msg { 
+					return messages.ModalFormCloseMsg{} 
 				}
+			} else if m.FocusedField == "save" {
+				// When save button is pressed with space, validate and submit (same as Enter)
+				if m.Validate() {
+					newTask := m.CreateTask()
+					return m, func() tea.Msg { 
+						return messages.ModalFormSubmitMsg{Task: newTask} 
+					}
+				}
+				// If validation fails, remain on save button
 				return m, nil
 			}
 			return m, nil
 			
 		case "enter":
 			if m.FocusedField == "save" {
+				// When save button is pressed, validate and submit
 				if m.Validate() {
 					newTask := m.CreateTask()
-					return m, func() tea.Msg {
-						return ModalFormSubmitMsg{Task: newTask}
+					// Send the submit message directly
+					return m, func() tea.Msg { 
+						return messages.ModalFormSubmitMsg{Task: newTask} 
 					}
 				}
 				// If validation fails, remain on save button
 				return m, nil
 			} else if m.FocusedField == "cancel" {
-				return m, func() tea.Msg { return ModalFormCloseMsg{} }
+				// When cancel button is pressed, ensure we always close the modal
+				// Send the close message directly
+				return m, func() tea.Msg { 
+					return messages.ModalFormCloseMsg{} 
+				}
 			} else {
 				m.NextField()
 				return m, nil
@@ -628,6 +685,81 @@ func (m *ModalFormModel) renderButton(id, label string) string {
 	buttonStyle.FixedWidth = true
 	
 	return shared.Button(label, buttonStyle)
+}
+
+// isClickOnCancelButton checks if a mouse click is within the cancel button area
+func (m *ModalFormModel) isClickOnCancelButton(msg tea.MouseMsg) bool {
+	// Use the form dimensions to compute button positions
+	const (
+		formWidth    = 50   // Standard form width
+		buttonWidth  = 15   // Button width including padding
+		buttonHeight = 1    // Button height
+		buttonGap    = 5    // Gap between buttons
+	)
+	
+	// Calculate buttons row position
+	// The button row is always at the bottom of all form fields plus a margin
+	buttonsRowY := len(m.FieldIDs) + 2 // Fields + margin
+	
+	// Cancel button is on the left side of the button row
+	cancelX1 := 5                     // Left position
+	cancelX2 := cancelX1 + buttonWidth // Right position
+	cancelY  := buttonsRowY            // Y position
+	
+	// Check if click is within cancel button bounds
+	if msg.Y == cancelY && msg.X >= cancelX1 && msg.X < cancelX2 {
+		return true
+	}
+	
+	return false
+}
+
+// isClickOnSaveButton checks if a mouse click is within the save button area
+func (m *ModalFormModel) isClickOnSaveButton(msg tea.MouseMsg) bool {
+	// Use the form dimensions to compute button positions
+	const (
+		formWidth    = 50   // Standard form width
+		buttonWidth  = 15   // Button width including padding
+		buttonHeight = 1    // Button height
+		buttonGap    = 5    // Gap between buttons
+	)
+	
+	// Calculate buttons row position - same as cancel button
+	buttonsRowY := len(m.FieldIDs) + 2 // Fields + margin
+	
+	// Save button is on the right side of the button row
+	saveX1 := 25                    // Left position (after cancel button + gap)
+	saveX2 := saveX1 + buttonWidth  // Right position
+	saveY  := buttonsRowY           // Y position (same row as cancel)
+	
+	// Check if click is within save button bounds
+	if msg.Y == saveY && msg.X >= saveX1 && msg.X < saveX2 {
+		return true
+	}
+	
+	return false
+}
+
+// CyclePriority cycles through the available priority options
+func (m *ModalFormModel) CyclePriority() {
+	// Get the cycle field and advance it
+	if field, ok := m.FormFields["priority"]; ok && field.CycleField != nil {
+		field.CycleField.Next()
+		// Update the model's value
+		m.UpdateField("priority", field.CycleField.CurrentValue())
+		m.FormFields["priority"] = field // Update the field in the map
+	}
+}
+
+// CycleStatus cycles through the available status options
+func (m *ModalFormModel) CycleStatus() {
+	// Get the cycle field and advance it
+	if field, ok := m.FormFields["status"]; ok && field.CycleField != nil {
+		field.CycleField.Next()
+		// Update the model's value
+		m.UpdateField("status", field.CycleField.CurrentValue())
+		m.FormFields["status"] = field // Update the field in the map
+	}
 }
 
 // CreateTask creates a task from the form data

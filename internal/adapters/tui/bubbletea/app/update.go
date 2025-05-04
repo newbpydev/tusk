@@ -7,7 +7,6 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/form"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/core/task"
@@ -54,13 +53,51 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// These fall through to the main switch statement
 			_ = msgType // Avoid unused variable warning
 			
-		// All other messages go to the modal
+		// All other messages go to the modal when it's visible
 		default:
 			_ = msgType // Avoid unused variable warning
-			// Pass message to modal
-			var cmd tea.Cmd
-			m.modal, cmd = m.modal.Update(msg)
-			return m, cmd
+			
+			// Only pass the message to the modal if it's visible
+			if m.showModal {
+				// Pass message to modal, which will return updated modal and command
+				var cmd tea.Cmd
+				m.modal, cmd = m.modal.Update(msg)
+				
+				// Return both the modal's command and our own direct handler
+				return m, tea.Batch(
+					cmd,
+					// This direct handler processes modal events immediately
+					func() tea.Msg {
+						// No modal commands to process
+						if cmd == nil {
+							return nil
+						}
+						
+						// Run the modal's command to get its result message
+						msg := cmd()
+						
+						// Process special messages that require app-level handling
+						switch modalMsg := msg.(type) {
+						case messages.ModalFormCloseMsg:
+							// Handle modal close
+							m.modal.Hide()
+							m.showModal = false
+							return nil
+							
+						case messages.ModalFormSubmitMsg:
+							// Handle task form submission, but don't send multiple messages
+							m.modal.Hide()
+							m.showModal = false
+							
+							// Process the submitted task data (we'll let the normal handler do this)
+							return modalMsg
+						}
+						
+						// For other messages, let them flow through normally
+						return nil
+					},
+				)
+			}
 		}
 	}
 	
@@ -122,11 +159,11 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// For any other action, just return the model as is
 		return m, nil
 		
-	case form.ModalFormCloseMsg:
+	case messages.ModalFormCloseMsg:
 		// Handle modal form close message
 		return m.HandleModalFormClose()
 		
-	case form.ModalFormSubmitMsg:
+	case messages.ModalFormSubmitMsg:
 		// Handle modal form submission (task creation/update)
 		return m.HandleModalFormSubmit(msg.Task)
 
