@@ -78,7 +78,7 @@ type ModalFormModel struct {
 	Title        string
 	Description  string
 	Priority     string
-	DueDate      string
+	DueDate      string  // Kept for backward compatibility
 	ParentID     *int32
 	TaskID       *int32
 	
@@ -88,6 +88,9 @@ type ModalFormModel struct {
 	FieldIDs     []string             // Ordered list of field IDs for navigation
 	FormFields   map[string]FormField // Map of field objects by ID
 	Errors       map[string]string    // Legacy error map (for backward compatibility)
+	
+	// UI components
+	DueDateField DateField          // New component for due date input
 	
 	// Component dependencies
 	styles       *styles.Styles
@@ -115,7 +118,7 @@ func NewModalFormModel(styles *styles.Styles, userID int32) *ModalFormModel {
 		Title:        "",
 		Description:  "",
 		Priority:     string(task.PriorityLow),
-		DueDate:      "",
+		DueDate:      "", // Kept for backward compatibility
 		ParentID:     nil,
 		TaskID:       nil,
 		
@@ -134,21 +137,12 @@ func NewModalFormModel(styles *styles.Styles, userID int32) *ModalFormModel {
 	// Initialize form fields with pointers to the model's properties
 	m.FormFields["title"] = NewFormField("title", "Title", &m.Title, true)
 	m.FormFields["description"] = NewFormField("description", "Description", &m.Description, false)
-	m.FormFields["dueDate"] = NewFormField("dueDate", "Due Date (YYYY-MM-DD)", &m.DueDate, false)
 	
-	// Set special validation for date field - need to create a new field to assign function
-	datefield := m.FormFields["dueDate"]
-	datefield.Validate = func() string {
-		if m.DueDate == "" {
-			return ""
-		}
-		_, err := time.Parse("2006-01-02", m.DueDate)
-		if err != nil {
-			return "Invalid date format. Please use YYYY-MM-DD."
-		}
-		return ""
-	}
-	m.FormFields["dueDate"] = datefield
+	// Initialize the interactive date field component
+	m.DueDateField = NewDateField("Due Date", "dueDate", *styles, false)
+	
+	// Keep a legacy dueDate field in the map for backward compatibility
+	m.FormFields["dueDate"] = NewFormField("dueDate", "Due Date", &m.DueDate, false)
 	
 	// Priority field is special - it's a cycle field
 	priorityField := NewFormField("priority", "Priority", &m.Priority, false)
@@ -267,9 +261,21 @@ func (m *ModalFormModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case " ":
 			// Handle different space key actions based on focused field
 			switch m.FocusedField {
-			// For text input fields, add space to the field value
-			case "title", "description", "dueDate":
-				// Add space character to the field
+			case "dueDate":
+				// Handle date field input through the DateField component
+				updatedField, _ := m.DueDateField.Update(msg)
+				m.DueDateField = updatedField
+				
+				// Update legacy string field for compatibility
+				if dueDate := m.DueDateField.Value(); dueDate != nil {
+					m.DueDate = dueDate.Format("2006-01-02")
+				} else {
+					m.DueDate = ""
+				}
+				return m, nil
+				
+			case "title", "description":
+				// For standard text fields, add space to the field value
 				m.UpdateField(m.FocusedField, m.GetField(m.FocusedField)+" ")
 				return m, nil
 				
@@ -325,8 +331,20 @@ func (m *ModalFormModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		// Handle field input
-		if m.FocusedField == "title" || m.FocusedField == "description" || 
-		   m.FocusedField == "dueDate" || m.FocusedField == "priority" {
+		if m.FocusedField == "dueDate" {
+			// Handle date field input through the specialized component
+			updatedField, _ := m.DueDateField.Update(msg)
+			m.DueDateField = updatedField
+			
+			// Update legacy string field for compatibility
+			if dueDate := m.DueDateField.Value(); dueDate != nil {
+				m.DueDate = dueDate.Format("2006-01-02")
+			} else {
+				m.DueDate = ""
+			}
+			return m, nil
+		} else if m.FocusedField == "title" || m.FocusedField == "description" || 
+		        m.FocusedField == "priority" {
 			
 			switch msg.String() {
 			case "backspace":
@@ -400,10 +418,16 @@ func (m *ModalFormModel) LoadTask(t task.Task) {
 	}
 	m.Priority = string(t.Priority)
 	
+	// Set both the legacy string field and our new component
 	if t.DueDate != nil {
+		// Set the legacy string field for backward compatibility
 		m.DueDate = t.DueDate.Format("2006-01-02")
+		
+		// Set the value in our new date field component
+		m.DueDateField.SetValue(t.DueDate)
 	} else {
 		m.DueDate = ""
+		m.DueDateField.SetValue(nil)
 	}
 	
 	m.ParentID = t.ParentID
@@ -474,13 +498,25 @@ func (m *ModalFormModel) UpdateField(field, value string) {
 	case "description":
 		m.Description = value
 	case "dueDate":
+		// Update legacy string field
 		m.DueDate = value
+		
+		// Also update the field component if it's a valid date
+		if value != "" {
+			// Try to parse the date
+			if parsedDate, err := time.Parse("2006-01-02", value); err == nil {
+				m.DueDateField.SetValue(&parsedDate)
+			}
+		} else {
+			// Empty string, clear the field
+			m.DueDateField.SetValue(nil)
+		}
 	case "priority":
 		m.Priority = value
 	}
 }
 
-// Validate checks if the form data is valid using the FormField objects
+// Validate checks all form fields and returns whether the form is valid
 func (m *ModalFormModel) Validate() bool {
 	valid := true
 	m.Errors = make(map[string]string)
@@ -504,6 +540,13 @@ func (m *ModalFormModel) Validate() bool {
 			// Update the field with the error
 			m.FormFields[id] = fieldCopy
 		}
+	}
+	
+	// Validate the date field component
+	if !m.DueDateField.Validate() {
+		// Store the error in our error map
+		m.Errors["dueDate"] = m.DueDateField.Error
+		valid = false
 	}
 	
 	return valid
@@ -541,11 +584,10 @@ func (m *ModalFormModel) View() string {
 	
 	// Use the already defined formWidth from above
 	
-	// Render input fields using FormField objects
-	// Only render fields that have a field object (skip buttons and priority which is handled separately)
+	// Render standard text input fields using FormField objects
 	for _, fieldID := range m.FieldIDs {
-		// Skip rendering button fields and priority - they're handled separately
-		if fieldID == "save" || fieldID == "cancel" || fieldID == "priority" {
+		// Skip special fields that are handled separately
+		if fieldID == "save" || fieldID == "cancel" || fieldID == "priority" || fieldID == "dueDate" {
 			continue
 		}
 		
@@ -555,6 +597,25 @@ func (m *ModalFormModel) View() string {
 			s += m.renderFormField(field, formWidth)
 		}
 	}
+	
+	// Add due date field using our new component
+	// Update focus state based on current field focus
+	if m.FocusedField == "dueDate" {
+		m.DueDateField.Focus()
+	} else {
+		m.DueDateField.Blur()
+	}
+	
+	// Pass any validation errors to the date field
+	if errMsg, hasError := m.Errors["dueDate"]; hasError {
+		m.DueDateField.Error = errMsg
+	} else {
+		m.DueDateField.Error = ""
+	}
+	
+	// Add the date field to the form
+	// Position just after the text inputs, before the priority field
+	s += m.DueDateField.View() + "\n"
 	
 	// Priority is rendered as a cycle field
 	if priorityField, ok := m.FormFields["priority"]; ok && priorityField.CycleField != nil {
@@ -785,10 +846,11 @@ func (m *ModalFormModel) CycleStatus() {
 
 // CreateTask creates a task from the form data
 func (m *ModalFormModel) CreateTask() task.Task {
-	var dueDate *time.Time
-
-	// Convert date string to time.Time if provided
-	if m.DueDate != "" {
+	// Get due date directly from our date field component
+	dueDate := m.DueDateField.Value()
+	
+	// For backward compatibility, also try the string field if component has no value
+	if dueDate == nil && m.DueDate != "" {
 		parsed, err := time.Parse("2006-01-02", m.DueDate)
 		if err == nil {
 			dueDate = &parsed
