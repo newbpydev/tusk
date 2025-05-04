@@ -159,8 +159,8 @@ func NewModalFormModel(styles *styles.Styles, userID int32) *ModalFormModel {
 	// Priority field is special - it's a cycle field
 	priorityField := NewFormField("priority", "Priority", &m.Priority, false)
 	priorityField.InputType = "cycle"
-	// Create a cycle field with standard form width
-	priorityField.CycleField = CreatePriorityCycleField(40) // Standard form field width
+	// Create a cycle field with full form width to match other inputs
+	priorityField.CycleField = CreatePriorityCycleField(50) // Use the standard form width (matches the one in View method)
 	// Set the initial value
 	priorityField.CycleField.SetValue(m.Priority)
 	m.FormFields["priority"] = priorityField
@@ -464,10 +464,10 @@ func (m *ModalFormModel) View() string {
 	// Use the already defined formWidth from above
 	
 	// Render input fields using FormField objects
-	// Only render fields that have a field object (skip buttons)
+	// Only render fields that have a field object (skip buttons and priority which is handled separately)
 	for _, fieldID := range m.FieldIDs {
-		// Skip rendering button fields - they're handled separately
-		if fieldID == "save" || fieldID == "cancel" {
+		// Skip rendering button fields and priority - they're handled separately
+		if fieldID == "save" || fieldID == "cancel" || fieldID == "priority" {
 			continue
 		}
 		
@@ -478,8 +478,8 @@ func (m *ModalFormModel) View() string {
 		}
 	}
 	
-	// Priority is a special case since it's a cycle field - render it separately
-	if priorityField, ok := m.FormFields["priority"]; ok && priorityField.InputType == "cycle" && priorityField.CycleField != nil {
+	// Priority is rendered as a cycle field
+	if priorityField, ok := m.FormFields["priority"]; ok && priorityField.CycleField != nil {
 		// Create label with special handling for errors
 		displayLabel := priorityField.Label + " (press Space to cycle)"
 		if errMsg, hasError := m.Errors["priority"]; hasError {
