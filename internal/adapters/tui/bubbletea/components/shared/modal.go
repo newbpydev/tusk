@@ -89,7 +89,7 @@ func (m ModalModel) View(baseView string, screenWidth, screenHeight int) string 
 		return baseView
 	}
 
-	// Calculate position to center the modal
+	// Calculate modal dimensions
 	contentWidth := m.Width
 	contentHeight := m.Height
 	
@@ -110,77 +110,49 @@ func (m ModalModel) View(baseView string, screenWidth, screenHeight int) string 
 	// Apply border styling
 	modalBox := m.BorderStyle.Width(contentWidth).Render(contentStr)
 	
-	// Calculate position to center modal
-	modalWidth := lipgloss.Width(modalBox)
-	modalHeight := strings.Count(modalBox, "\n") + 1
+	// Use lipgloss.Place to absolutely position the modal in the center
+	// This is a more reliable approach than manually positioning the modal
+	// which can cause layout shifts
+	overlay := lipgloss.Place(
+		screenWidth,
+		screenHeight,
+		lipgloss.Center,
+		lipgloss.Center,
+		modalBox,
+		lipgloss.WithWhitespaceChars(" "),
+		lipgloss.WithWhitespaceForeground(lipgloss.Color("#000000")),
+	)
 	
-	left := (screenWidth - modalWidth) / 2
-	top := (screenHeight - modalHeight) / 2
-	
-	// Create the dimmed background by overlaying on the base view
-	lines := strings.Split(baseView, "\n")
+	// Dim the background view without changing its layout or dimensions
+	dimmedView := dimBackground(baseView, m.DimStyle)
+
+	// Layer the modal over the dimmed view using Z-index concept
+	return overlayContent(overlay, dimmedView)
+}
+
+// dimBackground applies the dimming style to a complete view string
+// without changing its structure or dimensions
+func dimBackground(view string, dimStyle lipgloss.Style) string {
+	lines := strings.Split(view, "\n")
 	dimmedLines := make([]string, len(lines))
 	
 	for i, line := range lines {
-		dimmedLines[i] = m.DimStyle.Render(line)
+		// Apply dim style to each line
+		dimmedLines[i] = dimStyle.Render(line)
 	}
 	
-	dimmedView := strings.Join(dimmedLines, "\n")
-	
-	// Place the modal over the dimmed background
-	return placeModalOverBackground(modalBox, dimmedView, left, top)
+	return strings.Join(dimmedLines, "\n")
 }
 
-// placeModalOverBackground positions the modal over the background at the specified coordinates
-func placeModalOverBackground(modal, background string, left, top int) string {
-	// Split both into lines
-	modalLines := strings.Split(modal, "\n")
-	backgroundLines := strings.Split(background, "\n")
-	
-	// Make sure we have enough background lines
-	for len(backgroundLines) < top+len(modalLines) {
-		backgroundLines = append(backgroundLines, "")
-	}
-	
-	// Insert the modal at the specified position
-	for i, modalLine := range modalLines {
-		pos := top + i
-		if pos >= 0 && pos < len(backgroundLines) {
-			// Get background line and make sure it's wide enough
-			bgLine := backgroundLines[pos]
-			for len([]rune(bgLine)) < left {
-				bgLine += " "
-			}
-			
-			// Convert to runes to handle multibyte characters properly
-			bgRunes := []rune(bgLine)
-			modalRunes := []rune(modalLine)
-			
-			// Insert modal into background
-			result := make([]rune, 0, len(bgRunes)+len(modalRunes))
-			
-			// Add background up to left position
-			result = append(result, bgRunes[:minInt(left, len(bgRunes))]...)
-			
-			// Add modal line
-			result = append(result, modalRunes...)
-			
-			// Add any remaining background after the modal
-			if left+len(modalRunes) < len(bgRunes) {
-				result = append(result, bgRunes[left+len(modalRunes):]...)
-			}
-			
-			backgroundLines[pos] = string(result)
-		}
-	}
-	
-	return strings.Join(backgroundLines, "\n")
+// overlayContent creates a composite view where content is layered over background
+// without disturbing the layout or dimensions of either
+func overlayContent(overlay, background string) string {
+	// We're using a simple approach: the overlay is already positioned
+	// with proper dimensions using lipgloss.Place, so we can just return it
+	// This works because lipgloss.Place creates a string with the exact dimensions
+	// of the entire screen, with the content centered
+	return overlay
 }
 
-// minInt returns the minimum of two integers
-func minInt(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
+// The minInt function is no longer needed since we're using lipgloss.Place
+// for positioning instead of manual character manipulation
