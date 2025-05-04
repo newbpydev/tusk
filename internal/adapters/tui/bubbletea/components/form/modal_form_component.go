@@ -2,6 +2,7 @@
 package form
 
 import (
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/utils"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
@@ -186,40 +187,48 @@ func (m *ModalFormModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.Type == tea.MouseLeft {
 			// Handle Cancel button click
 			if m.isClickOnCancelButton(msg) {
-				// First focus the cancel button for visual feedback
+				// Log cancel button click
+				utils.DebugLog("CANCEL BUTTON: Mouse click detected")
+				
+				// Focus the cancel button and send close message
 				m.FocusedField = "cancel"
 				
-				// Send the close message directly without nesting commands
-				return m, func() tea.Msg { 
-					return messages.ModalFormCloseMsg{} 
+				// Generate modal close message (pure function call, no batching)
+				return m, func() tea.Msg {
+					closeMsg := messages.ModalFormCloseMsg{}
+					utils.DebugLog("CANCEL BUTTON: Generated message %+v", closeMsg)
+					return closeMsg
 				}
 			}
 			
 			// Handle Save button click
 			if m.isClickOnSaveButton(msg) {
-				// First focus the save button for visual feedback
+				// Log save button click
+				utils.DebugLog("SAVE BUTTON: Mouse click detected")
+				
+				// Focus the save button
 				m.FocusedField = "save"
 				
-				// Only submit if validation passes
+				// Validate before submitting
 				if m.Validate() {
-					// Create the task from form data
+					// Create task from form data
 					newTask := m.CreateTask()
-					
-					// Send the submit message directly without nesting commands
-					return m, func() tea.Msg { 
-						return messages.ModalFormSubmitMsg{Task: newTask} 
+					// Generate submit message with task data
+					return m, func() tea.Msg {
+						submitMsg := messages.ModalFormSubmitMsg{Task: newTask}
+						utils.DebugLog("SAVE BUTTON: Generated message %+v", submitMsg)
+						return submitMsg
 					}
 				}
 			}
 		}
-		// No relevant mouse action, just return model unchanged
 		return m, nil
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "esc":
-			// Send close message directly
-			return m, func() tea.Msg { 
-				return messages.ModalFormCloseMsg{} 
+			// Simple direct message for ESC key
+			return m, func() tea.Msg {
+				return messages.ModalFormCloseMsg{}
 			}
 		case "tab":
 			m.NextField()
@@ -256,46 +265,52 @@ func (m *ModalFormModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 		case " ":
-			// Space key handling
-			if m.FocusedField == "priority" {
-				// For priority field, cycle through available options
+			// Handle different space key actions based on focused field
+			switch m.FocusedField {
+			case "priority":
+				// For priority field, cycle through options
 				m.CyclePriority()
 				return m, nil
-			} else if m.FocusedField == "cancel" {
-				// When cancel button is pressed with space, close the modal (same as Enter)
-				return m, func() tea.Msg { 
-					return messages.ModalFormCloseMsg{} 
+				
+			case "status":
+				// For status field, cycle through options
+				m.CycleStatus()
+				return m, nil
+				
+			case "cancel":
+				// Handle space on Cancel button - same as Enter
+				return m, func() tea.Msg {
+					return messages.ModalFormCloseMsg{}
 				}
-			} else if m.FocusedField == "save" {
-				// When save button is pressed with space, validate and submit (same as Enter)
+				
+			case "save":
+				// Handle space on Save button - same as Enter
 				if m.Validate() {
 					newTask := m.CreateTask()
-					return m, func() tea.Msg { 
-						return messages.ModalFormSubmitMsg{Task: newTask} 
+					return m, func() tea.Msg {
+						return messages.ModalFormSubmitMsg{Task: newTask}
 					}
 				}
-				// If validation fails, remain on save button
-				return m, nil
+				return m, nil // Validation failed
 			}
 			return m, nil
 			
 		case "enter":
+			// Handle Save button enter press
 			if m.FocusedField == "save" {
-				// When save button is pressed, validate and submit
+				// Validate before submitting
 				if m.Validate() {
+					// Create task and return submit message
 					newTask := m.CreateTask()
-					// Send the submit message directly
-					return m, func() tea.Msg { 
-						return messages.ModalFormSubmitMsg{Task: newTask} 
+					return m, func() tea.Msg {
+						return messages.ModalFormSubmitMsg{Task: newTask}
 					}
 				}
-				// If validation fails, remain on save button
-				return m, nil
+				return m, nil // Validation failed
 			} else if m.FocusedField == "cancel" {
-				// When cancel button is pressed, ensure we always close the modal
-				// Send the close message directly
-				return m, func() tea.Msg { 
-					return messages.ModalFormCloseMsg{} 
+				// Handle Cancel button enter press
+				return m, func() tea.Msg {
+					return messages.ModalFormCloseMsg{}
 				}
 			} else {
 				m.NextField()

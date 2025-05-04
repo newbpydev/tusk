@@ -3,6 +3,7 @@
 package app
 
 import (
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/utils"
 	"fmt"
 	"time"
 
@@ -14,6 +15,17 @@ import (
 
 // Update implements tea.Model Update, handling all message types.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// Log incoming messages to track flow
+	utils.DebugLog("APP: Received message type %T", msg)
+	
+	// Add specific logging for modal form messages
+	switch specificMsg := msg.(type) {
+	case messages.ModalFormCloseMsg:
+		utils.DebugLog("APP: Handling ModalFormCloseMsg")
+	case messages.ModalFormSubmitMsg:
+		utils.DebugLog("APP: Handling ModalFormSubmitMsg with task: %+v", specificMsg.Task)
+	}
+
 	// If modal is visible, we need to handle some messages specially
 	if m.showModal {
 		// Handle Escape key globally to close modal
@@ -22,9 +34,18 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		
-		// Handle special message types
+		// First check for direct modal form messages
 		switch msgType := msg.(type) {
-		// Messages that should close the modal
+		// Direct modal form messages
+		case messages.ModalFormCloseMsg:
+			// Pass directly to handler
+			return m.HandleModalFormClose()
+			
+		case messages.ModalFormSubmitMsg:
+			// Pass directly to handler with task data
+			return m.HandleModalFormSubmit(msgType.Task)
+			
+		// Messages that should close the modal 
 		case messages.HideModalMsg, shared.HideModalMessage, shared.ModalCloseMsg:
 			m.showModal = false
 			return m, nil
@@ -59,44 +80,13 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			
 			// Only pass the message to the modal if it's visible
 			if m.showModal {
-				// Pass message to modal, which will return updated modal and command
+				// Pass the message to the modal and get back updated modal and command
 				var cmd tea.Cmd
 				m.modal, cmd = m.modal.Update(msg)
 				
-				// Return both the modal's command and our own direct handler
-				return m, tea.Batch(
-					cmd,
-					// This direct handler processes modal events immediately
-					func() tea.Msg {
-						// No modal commands to process
-						if cmd == nil {
-							return nil
-						}
-						
-						// Run the modal's command to get its result message
-						msg := cmd()
-						
-						// Process special messages that require app-level handling
-						switch modalMsg := msg.(type) {
-						case messages.ModalFormCloseMsg:
-							// Handle modal close
-							m.modal.Hide()
-							m.showModal = false
-							return nil
-							
-						case messages.ModalFormSubmitMsg:
-							// Handle task form submission, but don't send multiple messages
-							m.modal.Hide()
-							m.showModal = false
-							
-							// Process the submitted task data (we'll let the normal handler do this)
-							return modalMsg
-						}
-						
-						// For other messages, let them flow through normally
-						return nil
-					},
-				)
+				// Just return the command directly without any transformation
+				// This allows messages to naturally bubble up from child components
+				return m, cmd
 			}
 		}
 	}
@@ -159,13 +149,8 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// For any other action, just return the model as is
 		return m, nil
 		
-	case messages.ModalFormCloseMsg:
-		// Handle modal form close message
-		return m.HandleModalFormClose()
-		
-	case messages.ModalFormSubmitMsg:
-		// Handle modal form submission (task creation/update)
-		return m.HandleModalFormSubmit(msg.Task)
+	// Modal form messages are now handled at the top of the Update method
+	// to ensure they're processed regardless of modal visibility
 
 	case messages.StatusUpdateSuccessMsg:
 		// Handle successful task update

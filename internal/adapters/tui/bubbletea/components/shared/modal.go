@@ -2,6 +2,7 @@
 package shared
 
 import (
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/utils"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -71,59 +72,44 @@ func (m ModalModel) Init() tea.Cmd {
 
 // Update handles events for the modal
 func (m ModalModel) Update(msg tea.Msg) (ModalModel, tea.Cmd) {
-	// Handle direct messages for the modal itself
+	// First, handle special messages directly at the modal level
+	utils.DebugLog("MODAL: Processing message of type %T", msg)
+	
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if msg.String() == "esc" {
-			// Always handle ESC at the modal level
+			// Handle ESC key press
+			utils.DebugLog("MODAL: ESC key pressed, closing modal")
 			m.Visible = false
 			return m, func() tea.Msg { return ModalCloseMsg{} }
 		}
+	
+	// Handle these special messages even when received from outside
+	case messages.ModalFormCloseMsg:
+		// Just hide and forward
+		utils.DebugLog("MODAL: Received ModalFormCloseMsg, forwarding up")
+		m.Visible = false
+		return m, func() tea.Msg { return msg }
+		
+	case messages.ModalFormSubmitMsg:
+		// Just hide and forward
+		utils.DebugLog("MODAL: Received ModalFormSubmitMsg, forwarding up")
+		m.Visible = false
+		return m, func() tea.Msg { return msg }
 	}
 
-	// Only process other messages when modal is visible
+	// Only process content messages when modal is visible
 	if !m.Visible {
 		return m, nil
 	}
 
 	// Pass the message to the content
 	var cmd tea.Cmd
-	var cmds []tea.Cmd
 	m.Content, cmd = m.Content.Update(msg)
 	
-	// If content returned a command, add it to our command list
-	if cmd != nil {
-		cmds = append(cmds, cmd)
-	}
-
-	// Add a command to check for special messages from the content
-	cmds = append(cmds, func() tea.Msg {
-		if cmd == nil {
-			return nil
-		}
-
-		// Run the content's command to see what message it returns
-		resultMsg := cmd()
-		
-		// Handle special messages
-		switch msg := resultMsg.(type) {
-		case messages.ModalFormCloseMsg:
-			// Hide modal and pass message upward
-			m.Visible = false
-			return msg
-
-		case messages.ModalFormSubmitMsg:
-			// Hide modal and pass message with data upward
-			m.Visible = false
-			return msg
-		}
-
-		// For other messages, just return nil to avoid double-processing
-		return nil
-	})
-
-	// Return all commands as a batch
-	return m, tea.Batch(cmds...)
+	// Just return the content's command - DO NOT TRANSFORM
+	// Let the messages bubble up naturally
+	return m, cmd
 }
 
 // View renders the modal or returns an empty string if not visible
