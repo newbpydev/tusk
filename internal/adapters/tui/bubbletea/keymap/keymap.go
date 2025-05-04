@@ -106,6 +106,10 @@ var GlobalKeyMap = &KeyMap{
 			key.WithHelp("q", "Quit"),
 		),
 		key.NewBinding(
+			key.WithKeys("c"),
+			key.WithHelp("c", "Create New Task"),
+		),
+		key.NewBinding(
 			key.WithKeys("m"),
 			key.WithHelp("m", "Show Sample Modal"),
 		),

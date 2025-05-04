@@ -7,6 +7,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/form"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
 	"github.com/newbpydev/tusk/internal/core/task"
@@ -120,6 +121,14 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		// For any other action, just return the model as is
 		return m, nil
+		
+	case form.ModalFormCloseMsg:
+		// Handle modal form close message
+		return m.HandleModalFormClose()
+		
+	case form.ModalFormSubmitMsg:
+		// Handle modal form submission (task creation/update)
+		return m.HandleModalFormSubmit(msg.Task)
 
 	case messages.StatusUpdateSuccessMsg:
 		// Handle successful task update

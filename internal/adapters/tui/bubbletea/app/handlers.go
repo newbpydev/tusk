@@ -26,6 +26,9 @@ func (m *Model) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		case "m":
 			// Show sample modal with M key
 			return m, shared.ShowSampleModal("Sample Modal", "This is a reusable modal component that can be used throughout the application. Press ESC or click Cancel to close.")
+		case "c":
+			// Show create task modal
+			return m, m.ShowCreateTaskModal()
 		case "?":
 			// Toggle help view
 			m.showFullHelp = !m.showFullHelp
