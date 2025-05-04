@@ -66,9 +66,20 @@ func (m *Model) View() string {
 		return m.modal.View(mainView, m.width, m.height)
 	}
 	
-	// Add help text at the bottom
+	// Style the help view as a clean footer with no background
+	helpFooterStyle := lipgloss.NewStyle().
+		Width(m.width).
+		Height(1).
+		Foreground(lipgloss.Color("#a0aec0"))
+	
+	// Get the help text from our help model
 	helpView := m.helpModel.View()
-	mainViewWithHelp := mainView + "\n" + helpView
+	
+	// Style and position the help footer
+	styledHelpView := helpFooterStyle.Render(helpView)
+	
+	// Correctly position the help view at the bottom of the screen
+	mainViewWithHelp := lipgloss.JoinVertical(lipgloss.Left, mainView, styledHelpView)
 	
 	// Return the complete view
 	return mainViewWithHelp

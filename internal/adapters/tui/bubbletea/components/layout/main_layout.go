@@ -18,21 +18,15 @@ type MainLayoutProps struct {
 
 	// Main content
 	Content string
-	
-	// Footer properties
-	ViewMode       string
-	HelpStyle      lipgloss.Style
-	CursorOnHeader bool
-	HelpText       string // Custom help text for the current view
-	ActivePanel    int    // The currently active panel (0: task list, 1: task details, 2: timeline)
 }
 
-// RenderMainLayout creates a consistent layout with header, content, and footer.
+// RenderMainLayout creates a consistent layout with header and content.
 // This serves as the main container for all screens in the application.
 func RenderMainLayout(props MainLayoutProps) string {
 	// Define layout constants
 	const headerHeight = 5
-	const footerHeight = 1
+	// Reserve space for help footer which will be rendered separately
+	const helpFooterHeight = 1
 	
 	// Render the header
 	header := RenderHeader(HeaderProps{
@@ -43,8 +37,8 @@ func RenderMainLayout(props MainLayoutProps) string {
 		IsLoading:     props.IsLoading,
 	})
 
-	// Calculate content height to fill available space
-	contentHeight := props.Height - headerHeight - footerHeight
+	// Calculate content height to fill available space between header and help footer
+	contentHeight := props.Height - headerHeight - helpFooterHeight
 	
 	// Create a style for the content to ensure it takes the full available height
 	contentStyle := lipgloss.NewStyle().
@@ -54,18 +48,8 @@ func RenderMainLayout(props MainLayoutProps) string {
 	// Style the content to ensure it takes the full available height
 	content := contentStyle.Render(props.Content)
 
-	// Render the footer with appropriate help text
-	footer := RenderFooter(FooterProps{
-		Width:          props.Width,
-		ViewMode:       props.ViewMode,
-		HelpStyle:      props.HelpStyle,
-		CursorOnHeader: props.CursorOnHeader,
-		ActivePanel:    props.ActivePanel,
-		CustomHelpText: props.HelpText,
-	})
-
-	// Combine all sections with proper vertical alignment
-	layout := lipgloss.JoinVertical(lipgloss.Left, header, content, footer)
+	// Combine header and content with proper vertical alignment
+	layout := lipgloss.JoinVertical(lipgloss.Left, header, content)
 	
 	// Create a full-screen container that ensures the layout takes up the entire screen
 	fullScreenStyle := lipgloss.NewStyle().

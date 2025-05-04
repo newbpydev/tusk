@@ -32,14 +32,8 @@ type HeaderProps struct {
 
 // RenderHeader creates a header with app name, time, and status information
 func RenderHeader(props HeaderProps) string {
-	// Set fixed dimensions for the header
-	headerHeight := 3
-
-	// Create a single background for the entire header
-	headerStyle := lipgloss.NewStyle().
-		Width(props.Width).
-		Height(headerHeight).
-		Background(lipgloss.Color("#2d3748"))
+	// Define the background color to use consistently
+	headerBgColor := lipgloss.Color("#2d3748")
 
 	// Calculate section widths
 	logoWidth := props.Width / 4                       // 25% for logo
@@ -52,14 +46,14 @@ func RenderHeader(props HeaderProps) string {
 		Foreground(lipgloss.Color("#48bb78")).
 		Width(logoWidth).
 		PaddingLeft(2).
-		Background(lipgloss.Color("#2d3748"))
+		Background(headerBgColor)
 
 	taglineStyle := lipgloss.NewStyle().
 		Italic(true).
 		Foreground(lipgloss.Color("#a0aec0")).
 		Width(logoWidth).
 		PaddingLeft(2).
-		Background(lipgloss.Color("#2d3748"))
+		Background(headerBgColor)
 
 	// 2. Middle Section - Time
 	timeStyle := lipgloss.NewStyle().
@@ -67,20 +61,20 @@ func RenderHeader(props HeaderProps) string {
 		Align(lipgloss.Center).
 		Bold(true).
 		Foreground(lipgloss.Color("#ffffff")).
-		Background(lipgloss.Color("#2d3748"))
+		Background(headerBgColor)
 
 	dateStyle := lipgloss.NewStyle().
 		Width(timeWidth).
 		Align(lipgloss.Center).
 		Foreground(lipgloss.Color("#a0aec0")).
-		Background(lipgloss.Color("#2d3748"))
+		Background(headerBgColor)
 
 	// 3. Right Section - Status
 	statusContainerStyle := lipgloss.NewStyle().
 		Width(statusWidth).
 		Align(lipgloss.Right).
 		PaddingRight(2).
-		Background(lipgloss.Color("#2d3748"))
+		Background(headerBgColor)
 
 	// Prepare row content
 	// First row: Logo + Time + Status
@@ -93,7 +87,7 @@ func RenderHeader(props HeaderProps) string {
 		loadingStyle := lipgloss.NewStyle().
 			Bold(true).
 			Foreground(lipgloss.Color("#90cdf4")).
-			Background(lipgloss.Color("#2d3748"))
+			Background(headerBgColor)
 		row1Right = statusContainerStyle.Render(loadingStyle.Render("Loading..."))
 	} else if props.StatusMessage != "" {
 		var msgStyle lipgloss.Style
@@ -104,24 +98,24 @@ func RenderHeader(props HeaderProps) string {
 			msgStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.Color("#48bb78")).
 				Bold(true).
-				Background(lipgloss.Color("#2d3748"))
+				Background(headerBgColor)
 			statusIcon = "✓"
 		case "error":
 			msgStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.Color("#f56565")).
 				Bold(true).
-				Background(lipgloss.Color("#2d3748"))
+				Background(headerBgColor)
 			statusIcon = "✗"
 		case "info":
 			msgStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.Color("#4299e1")).
 				Bold(true).
-				Background(lipgloss.Color("#2d3748"))
+				Background(headerBgColor)
 			statusIcon = "ℹ"
 		default:
 			msgStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.Color("#a0aec0")).
-				Background(lipgloss.Color("#2d3748"))
+				Background(headerBgColor)
 			statusIcon = "→"
 		}
 		row1Right = statusContainerStyle.Render(msgStyle.Render(statusIcon + " " + props.StatusMessage))
@@ -134,13 +128,27 @@ func RenderHeader(props HeaderProps) string {
 	row2Middle := dateStyle.Render(props.CurrentTime.Format("Monday, January 2, 2006"))
 	row2Right := statusContainerStyle.Render("") // Empty space or could be used for additional status info
 
-	// Construct each row
+	// Construct main content rows
 	row1 := lipgloss.JoinHorizontal(lipgloss.Top, row1Left, row1Middle, row1Right)
 	row2 := lipgloss.JoinHorizontal(lipgloss.Top, row2Left, row2Middle, row2Right)
+	
+	// Create single-line padding with the correct background color
+	padding := lipgloss.NewStyle().
+		Width(props.Width).
+		Height(1).
+		Background(headerBgColor).
+		Render("")
 
-	// Stack rows vertically
-	headerContent := lipgloss.JoinVertical(lipgloss.Left, row1, row2)
-
-	// Apply header background and return
-	return headerStyle.Render(headerContent)
+	// Create the final header with extra padding above the logo
+	// and one line of padding below the date
+	header := lipgloss.JoinVertical(
+		lipgloss.Left,
+		padding,     // First line of top padding
+		padding,     // Second line of top padding 
+		row1,        // Logo and time row
+		row2,        // Tagline and date row
+		padding,     // Bottom padding
+	)
+	
+	return header
 }

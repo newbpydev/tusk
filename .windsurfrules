@@ -1,5 +1,10 @@
 # Tusk-Go Code Quality Guidelines
 
+## Main Build Location
+- Build the application in the root directory of the project
+- The tui cli is on the cmd/cli directory
+- The api is on the cmd/api directory
+
 ## Code Refactoring
 - Break down large files (>300 lines) into smaller, focused modules
 - Move handler functions from app/handlers.go to dedicated handler files

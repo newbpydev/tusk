@@ -28,13 +28,7 @@ func (m *Model) renderFormView(sharedStyles *shared.Styles) string {
 	// Render the form content
 	formContent := panels.RenderCreateForm(formProps)
 	
-	// Define custom help text for the form
-	var helpText string
-	if m.viewMode == "create" {
-		helpText = "tab: next field • enter: create task • esc: cancel • space: cycle priority"
-	} else { // edit mode
-		helpText = "tab: next field • enter: update task • esc: cancel • space: cycle priority"
-	}
+	// Help text is now handled by the keymap system and doesn't need to be passed in props
 	
 	// Use the main layout for consistent UI
 	return layout.RenderMainLayout(layout.MainLayoutProps{
@@ -48,11 +42,6 @@ func (m *Model) renderFormView(sharedStyles *shared.Styles) string {
 		
 		// Main content
 		Content:       formContent,
-		
-		// Footer properties
-		ViewMode:      m.viewMode,
-		HelpStyle:     m.styles.Help,
-		HelpText:      helpText,
 	})
 }
 
@@ -62,9 +51,9 @@ func (m *Model) renderMultiPanelView(sharedStyles *shared.Styles) string {
 	var visiblePanelCount int
 	const headerHeight = 5 // These constants might become configurable
 	const headerGap = 0
-	const footerHeight = 1
-	const footerGap = 0
-	const totalOffset = headerHeight + headerGap + footerHeight + footerGap
+	// Reserve 1 line for our new help footer that will be added outside the layout
+	const helpFooterHeight = 1
+	const totalOffset = headerHeight + headerGap + helpFooterHeight
 	panelHeight := m.height - totalOffset
 	
 	if m.showTaskList {
@@ -112,12 +101,6 @@ func (m *Model) renderMultiPanelView(sharedStyles *shared.Styles) string {
 		
 		// Main content is the combined panels
 		Content:        panelsContent,
-		
-		// Footer properties
-		ViewMode:       m.viewMode,
-		HelpStyle:      m.styles.Help,
-		CursorOnHeader: m.cursorOnHeader,
-		ActivePanel:    m.activePanel,
 	})
 }
 
