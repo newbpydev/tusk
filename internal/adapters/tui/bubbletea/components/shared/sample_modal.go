@@ -6,12 +6,16 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/types"
 )
 
 // SampleModalMsg is sent when a button is clicked in the sample modal
 type SampleModalMsg struct {
 	Action string
 }
+
+// HideModalMessage is the message type to hide the modal
+type HideModalMessage struct{}
 
 // SampleModal is an example modal that can be used as a template
 type SampleModal struct {
@@ -58,7 +62,7 @@ func (m SampleModal) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				// Cancel button pressed
 				return m, func() tea.Msg {
-					return messages.HideModalMsg{}
+					return HideModalMessage{}
 				}
 			}
 		}
@@ -111,14 +115,25 @@ func (m SampleModal) View() string {
 	return strings.Join(centeredLines, "\n")
 }
 
-// ShowSampleModal creates a sample modal command
-func ShowSampleModal(title, description string) tea.Cmd {
+// ShowModalWithDisplayMode creates a sample modal and returns a command with the specified display mode
+func ShowModalWithDisplayMode(title, description string, displayMode types.ModalDisplayMode) tea.Cmd {
 	return func() tea.Msg {
 		modal := NewSampleModal(title, description)
-		return messages.ShowModalMsg{
-			Content: modal,
-			Width:   modal.width,
-			Height:  modal.height,
-		}
+		return messages.NewShowModalMsg(
+			modal,
+			modal.width,
+			modal.height,
+			displayMode,
+		)
 	}
+}
+
+// ShowSampleModal creates a sample modal command with default ContentArea display mode
+func ShowSampleModal(title, description string) tea.Cmd {
+	return ShowModalWithDisplayMode(title, description, types.ContentArea)
+}
+
+// ShowFullScreenModal creates a sample modal command with FullScreen display mode
+func ShowFullScreenModal(title, description string) tea.Cmd {
+	return ShowModalWithDisplayMode(title, description, types.FullScreen)
 }

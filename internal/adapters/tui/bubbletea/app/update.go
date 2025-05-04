@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/types"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
@@ -24,6 +25,9 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// If modal is visible, pass messages to modal unless it's a special modal message
 		switch msgType := msg.(type) {
 		case messages.HideModalMsg:
+			m.showModal = false
+			return m, nil
+		case shared.HideModalMessage:
 			m.showModal = false
 			return m, nil
 		case shared.ModalCloseMsg:
@@ -55,7 +59,11 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	
 	case messages.ShowModalMsg:
 		// Show a modal with the provided content
-		m.modal = shared.NewModal(msg.Content, msg.Width, msg.Height)
+		// Default to ContentArea display mode
+		displayMode := types.ContentArea
+		
+		// Create the modal with the appropriate display mode
+		m.modal = shared.NewModal(msg.Content, msg.Width, msg.Height, displayMode)
 		m.modal.Show()
 		m.showModal = true
 		return m, nil
