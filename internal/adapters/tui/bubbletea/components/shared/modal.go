@@ -94,47 +94,70 @@ func (m ModalModel) View(baseView string, screenWidth, screenHeight int) string 
 		return baseView
 	}
 
-	// Calculate modal dimensions
-	contentWidth := m.Width
-	contentHeight := m.Height
-	
-	// Ensure modal fits within screen bounds
-	if contentWidth > screenWidth {
-		contentWidth = screenWidth - 4
-	}
-	if contentHeight > screenHeight {
-		contentHeight = screenHeight - 4
-	}
-
-	// Render content inside modal with proper styling
-	contentStr := m.Content.View()
-	
-	// Apply content styling
-	contentStr = m.ContentStyle.Render(contentStr)
-	
-	// Apply border styling
-	modalBox := m.BorderStyle.Width(contentWidth).Render(contentStr)
-	
 	// Determine how to display the modal based on DisplayMode
 	if m.DisplayMode == types.ContentArea {
-		// For content area modals, we need to extract the header and footer from baseView
-		// We assume a standard layout with first 5 lines being header and last 1 line being footer
+		// For content area modals, we ONLY replace the main content area
+		// while preserving the header and footer exactly as they are
+		
+		// The header has a FIXED structure of 4 lines:
+		// 1. Empty padding line with background color
+		// 2. Logo + Time + Status line (contains "TUSK")
+		// 3. Tagline + Date line (contains "Task Management")
+		// 4. Empty padding line with background color
+		
+		// Split the view into lines
 		lines := strings.Split(baseView, "\n")
 		
-		// Only proceed if we have enough lines for a meaningful split
-		if len(lines) >= 7 { // At least header + 1 content line + footer
-			// Extract header (first 5 lines)
-			headerLines := lines[:5]
+		// ALWAYS use exactly 4 lines for the header - this is the fixed structure per user requirements
+		const headerHeight = 4
+		
+		// Detect the help footer line by looking for key binding patterns
+		footerStartIdx := len(lines) - 1 // Default to last line
+		for i := len(lines) - 1; i >= 0; i-- {
+			// Find the help line (contains key binding help)
+			if strings.Contains(lines[i], "[q]") || strings.Contains(lines[i], "[esc]") || 
+			   strings.Contains(lines[i], "[?") || strings.Contains(lines[i], "[enter]") {
+				footerStartIdx = i
+				break
+			}
+		}
+		
+		// Ensure we have enough lines for a meaningful layout
+		// We always need: 5 lines header + at least 1 line content + footer
+		if len(lines) >= (headerHeight + 1 + (len(lines) - footerStartIdx)) { 
+			// The header is EXACTLY the first 5 lines
+			headerLines := lines[:headerHeight]
 			header := strings.Join(headerLines, "\n")
 			
-			// Extract footer (last line)
-			footer := lines[len(lines)-1]
+			// The footer is from footerStartIdx to end
+			footer := lines[footerStartIdx:]
+			footerStr := strings.Join(footer, "\n")
 			
-			// Calculate content height (total height minus header and footer)
-			contentHeight := screenHeight - 5 - 1 // header (5) and footer (1)
+			// Calculate content area dimensions
+			footerHeight := len(lines) - footerStartIdx
+			contentHeight := screenHeight - headerHeight - footerHeight
 			
-			// Create the modal overlay for just the content area
-			contentAreaOverlay := lipgloss.Place(
+			// Calculate modal dimensions
+			modalWidth := m.Width
+			modalHeight := m.Height
+			
+			// Ensure modal fits within the content area bounds
+			if modalWidth > screenWidth {
+				modalWidth = screenWidth - 4
+			}
+			if modalHeight > contentHeight {
+				modalHeight = contentHeight - 2 // Leave some margin
+			}
+			
+			// Render content inside modal with proper styling
+			contentStr := m.Content.View()
+			contentStr = m.ContentStyle.Render(contentStr)
+			
+			// Apply border styling
+			modalBox := m.BorderStyle.Width(modalWidth).Render(contentStr)
+			
+			// Create a solid black background for the content area and place the modal on it
+			contentArea := lipgloss.Place(
 				screenWidth,
 				contentHeight,
 				lipgloss.Center,
@@ -144,23 +167,33 @@ func (m ModalModel) View(baseView string, screenWidth, screenHeight int) string 
 				lipgloss.WithWhitespaceForeground(lipgloss.Color("#000000")),
 			)
 			
-			// Extract the content section to dim it
-			contentLines := lines[5 : len(lines)-1]
-			contentView := strings.Join(contentLines, "\n")
-			
-			// Dim just the content area
-			dimmedContent := dimBackground(contentView, m.DimStyle)
-			
-			// Overlay the modal on the dimmed content
-			overlay := overlayContent(contentAreaOverlay, dimmedContent)
-			
-			// Reassemble with header and footer
-			return header + "\n" + overlay + "\n" + footer
+			// Assemble the view with the exact fixed header structure (5 lines),
+			// modal content area, and footer
+			return header + "\n" + contentArea + "\n" + footerStr
 		}
 	}
 	
-	// Default behavior for FullScreen mode or when parsing layout fails
-	// Use lipgloss.Place to absolutely position the modal in the center
+	// For fullscreen modals or if we couldn't properly split the view
+	// Simply render the modal over the entire view
+	modalWidth := m.Width
+	modalHeight := m.Height
+	
+	// Ensure modal fits within screen bounds
+	if modalWidth > screenWidth {
+		modalWidth = screenWidth - 4
+	}
+	if modalHeight > screenHeight {
+		modalHeight = screenHeight - 4
+	}
+	
+	// Render content inside modal with proper styling
+	contentStr := m.Content.View()
+	contentStr = m.ContentStyle.Render(contentStr)
+	
+	// Apply border styling
+	modalBox := m.BorderStyle.Width(modalWidth).Render(contentStr)
+	
+	// Use lipgloss.Place to position the modal in the center of the screen
 	overlay := lipgloss.Place(
 		screenWidth,
 		screenHeight,
@@ -171,10 +204,10 @@ func (m ModalModel) View(baseView string, screenWidth, screenHeight int) string 
 		lipgloss.WithWhitespaceForeground(lipgloss.Color("#000000")),
 	)
 	
-	// Dim the background view without changing its layout or dimensions
+	// Dim the background view
 	dimmedView := dimBackground(baseView, m.DimStyle)
-
-	// Layer the modal over the dimmed view using Z-index concept
+	
+	// Layer the modal over the dimmed view
 	return overlayContent(overlay, dimmedView)
 }
 

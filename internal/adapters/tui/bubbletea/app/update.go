@@ -9,36 +9,54 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/messages"
-	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/types"
 	"github.com/newbpydev/tusk/internal/core/task"
 )
 
 // Update implements tea.Model Update, handling all message types.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	// If modal is visible, handle ESC key globally to close it
+	// If modal is visible, we need to handle some messages specially
 	if m.showModal {
+		// Handle Escape key globally to close modal
 		if keyMsg, ok := msg.(tea.KeyMsg); ok && keyMsg.String() == "esc" {
 			m.showModal = false
 			return m, nil
 		}
 		
-		// If modal is visible, pass messages to modal unless it's a special modal message
+		// Handle special message types
 		switch msgType := msg.(type) {
-		case messages.HideModalMsg:
+		// Messages that should close the modal
+		case messages.HideModalMsg, shared.HideModalMessage, shared.ModalCloseMsg:
 			m.showModal = false
 			return m, nil
-		case shared.HideModalMessage:
-			m.showModal = false
-			return m, nil
-		case shared.ModalCloseMsg:
-			m.showModal = false
-			return m, nil
+			
+		// Time tick messages - allow these to update the main app first, then the modal
+		case messages.TickMsg:
+			// Update current time in the main app
+			m.currentTime = time.Now() 
+			// Check status expiry
+			if (!m.statusExpiry.IsZero()) && time.Now().After(m.statusExpiry) {
+				m.statusMessage = ""
+				m.statusType = ""
+				m.statusExpiry = time.Time{}
+			}
+			
+			// Also pass the tick to the modal, but discard any commands it returns
+			m.modal, _ = m.modal.Update(msg)
+			
+			// Keep ticking with our own timer command
+			return m, tea.Tick(time.Second, func(t time.Time) tea.Msg {
+				return messages.TickMsg(t)
+			})
+			
+		// Messages that should be handled by the main update method
 		case messages.ShowModalMsg, tea.WindowSizeMsg:
-			// These should be handled by the main update flow
-			// They're special cases even when a modal is visible
+			// These fall through to the main switch statement
+			_ = msgType // Avoid unused variable warning
+			
+		// All other messages go to the modal
 		default:
 			_ = msgType // Avoid unused variable warning
-			// When modal is visible, pass all other messages to the modal
+			// Pass message to modal
 			var cmd tea.Cmd
 			m.modal, cmd = m.modal.Update(msg)
 			return m, cmd
@@ -58,14 +76,13 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	
 	case messages.ShowModalMsg:
-		// Show a modal with the provided content
-		// Default to ContentArea display mode
-		displayMode := types.ContentArea
-		
-		// Create the modal with the appropriate display mode
-		m.modal = shared.NewModal(msg.Content, msg.Width, msg.Height, displayMode)
+		// Show a modal with the provided content - use the display mode from the message
+		m.modal = shared.NewModal(msg.Content, msg.Width, msg.Height, msg.DisplayMode)
 		m.modal.Show()
 		m.showModal = true
+		
+		// The help footer will remain visible because of how we've updated the modal implementation
+		// The modal.View method now correctly preserves the header and footer
 		return m, nil
 		
 	case messages.HideModalMsg:

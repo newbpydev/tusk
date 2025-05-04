@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/layout"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/components/shared"
 	"github.com/newbpydev/tusk/internal/adapters/tui/bubbletea/keymap"
 )
@@ -50,9 +51,6 @@ func (m *Model) View() string {
 	m.helpModel.AddDelegateKeyMap(keymap.GlobalKeyMap)
 	m.helpModel.SetWidth(m.width)
 	
-	// Render the main view first
-	mainView := m.RenderMainView(sharedStyles)
-	
 	// If full help is toggled, show the full help view
 	if m.showFullHelp {
 		centeredHelp := lipgloss.Place(
@@ -65,37 +63,64 @@ func (m *Model) View() string {
 		return centeredHelp
 	}
 	
-	// If a modal is active, render it on top of the main view
+	// *** NEW DIRECT LAYOUT APPROACH ***
+	// The key to preventing layout shifts is to ALWAYS build the layout 
+	// in the same order, with the same fixed dimensions, regardless of state
+	
+	// 1. HEADER - Always exactly 4 lines, fixed height
+	const headerHeight = 4
+	// Use the existing RenderHeader function from the layout package
+	header := layout.RenderHeader(layout.HeaderProps{
+		Width:         m.width,
+		CurrentTime:   m.currentTime,
+		StatusMessage: m.statusMessage,
+		StatusType:    m.statusType,
+		IsLoading:     m.isLoading,
+	})
+	
+	// 2. MAIN CONTENT - Calculate available space between header and footer
+	const footerHeight = 1
+	contentHeight := m.height - headerHeight - footerHeight
+	
+	// 3. Prepare the main content (which will either be normal view or modal)
+	var content string
 	if m.showModal {
-		return m.modal.View(mainView, m.width, m.height)
+		// For modal view, render the modal in ONLY the content area
+		// The modal never touches the header or footer
+		modalContent := m.modal.Content.View()
+		modalContent = m.modal.ContentStyle.Render(modalContent)
+		modalBox := m.modal.BorderStyle.Width(m.modal.Width).Render(modalContent)
+		
+		// Place the modal in center of content area only
+		content = lipgloss.Place(
+			m.width,
+			contentHeight,
+			lipgloss.Center,
+			lipgloss.Center,
+			modalBox,
+			lipgloss.WithWhitespaceChars(" "),
+			lipgloss.WithWhitespaceForeground(lipgloss.Color("#000000")),
+		)
+	} else {
+		// Normal view - render main content
+		mainView := m.RenderMainView(sharedStyles)
+		content = lipgloss.NewStyle().
+			Width(m.width).
+			Height(contentHeight).
+			Render(mainView)
 	}
 	
-	// Simple layout approach - mainView contains everything except help footer
-	// No fancy calculations, just static dimensions to prevent layout shifts
+	// 4. FOOTER - Always exactly 1 line at the bottom
+	footer := lipgloss.NewStyle().
+		Width(m.width).
+		Height(footerHeight).
+		Render(m.helpModel.View())
 	
-	// Step 1: Create a content container with explicit height - this is crucial
-	// We use height-1 to reserve space for the footer and prevent jumps
-	contentHeight := m.height - 1 // Hard-coded 1 line for help footer
-	
-	// Style the main content with fixed dimensions
-	mainContainer := lipgloss.NewStyle().
-		Width(m.width).       // Full width
-		Height(contentHeight) // Fixed height
-	
-	// Render the main content
-	mainViewStyled := mainContainer.Render(mainView)
-	
-	// Step 2: Get the help footer - this new implementation won't accumulate text
-	helpText := m.helpModel.View()
-	
-	// Step 3: Simply stack the two components vertically
-	// By using fixed heights, we prevent layout shifts
-	mainViewWithHelp := lipgloss.JoinVertical(
-		lipgloss.Top, // Top alignment for stability
-		mainViewStyled,
-		helpText,
+	// 5. Combine all three parts with consistent order and dimensions
+	return lipgloss.JoinVertical(
+		lipgloss.Top,
+		header,
+		content,
+		footer,
 	)
-	
-	// Return the complete view
-	return mainViewWithHelp
 }

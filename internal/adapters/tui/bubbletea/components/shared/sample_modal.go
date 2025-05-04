@@ -24,6 +24,8 @@ type SampleModal struct {
 	width       int
 	height      int
 	buttonFocus int
+	// Help information for the modal context
+	helpText     string
 }
 
 // NewSampleModal creates a new sample modal
@@ -34,6 +36,7 @@ func NewSampleModal(title, description string) *SampleModal {
 		width:       50,
 		height:      10,
 		buttonFocus: 0,
+		helpText:    "[tab] switch focus [enter] select [esc] close",
 	}
 }
 
@@ -74,7 +77,8 @@ func (m SampleModal) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m SampleModal) View() string {
 	// Styles
 	titleStyle := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FFFFFF")).MarginBottom(1)
-	descStyle := lipgloss.NewStyle().MarginBottom(2)
+	descStyle := lipgloss.NewStyle().MarginBottom(1)
+	helpStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Italic(true).MarginBottom(1)
 	
 	activeButtonStyle := lipgloss.NewStyle().
 		Background(lipgloss.Color("#1E88E5")).
@@ -99,9 +103,13 @@ func (m SampleModal) View() string {
 	
 	buttonRow := lipgloss.JoinHorizontal(lipgloss.Center, okButton, "  ", cancelButton)
 	
+	// Modal explanation text
+	modalHelp := "Use [tab] to switch buttons, [enter] to select, [esc] to close"
+	
 	// Content
 	content := titleStyle.Render(m.title) + "\n" +
 		descStyle.Render(m.description) + "\n" +
+		helpStyle.Render(modalHelp) + "\n" +
 		buttonRow
 	
 	// Center everything
@@ -136,4 +144,14 @@ func ShowSampleModal(title, description string) tea.Cmd {
 // ShowFullScreenModal creates a sample modal command with FullScreen display mode
 func ShowFullScreenModal(title, description string) tea.Cmd {
 	return ShowModalWithDisplayMode(title, description, types.FullScreen)
+}
+
+// HelpContext returns the help text for this modal
+func (m SampleModal) HelpContext() string {
+	return m.helpText
+}
+
+// SetHelpText updates the help text for this modal
+func (m *SampleModal) SetHelpText(help string) {
+	m.helpText = help
 }
