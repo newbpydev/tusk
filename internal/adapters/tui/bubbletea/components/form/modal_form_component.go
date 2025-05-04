@@ -267,6 +267,12 @@ func (m *ModalFormModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case " ":
 			// Handle different space key actions based on focused field
 			switch m.FocusedField {
+			// For text input fields, add space to the field value
+			case "title", "description", "dueDate":
+				// Add space character to the field
+				m.UpdateField(m.FocusedField, m.GetField(m.FocusedField)+" ")
+				return m, nil
+				
 			case "priority":
 				// For priority field, cycle through options
 				m.CyclePriority()

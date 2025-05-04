@@ -156,17 +156,22 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Handle successful task update
 		m.setSuccessStatus(msg.Message)
 
-		// Keep track of the updated task ID
-		updatedTaskID := msg.Task.ID
-
-		// Just update the task data in the main list without changing cursor position
+		// Update the task in the main list without changing cursor position
 		for i := range m.tasks {
-			if m.tasks[i].ID == updatedTaskID {
+			if m.tasks[i].ID == msg.Task.ID {
 				// Update the task with server data
 				m.tasks[i] = msg.Task
 				break
 			}
 		}
+		
+	case TaskCreatedMsg:
+		// Task was created successfully, set a success message
+		m.setSuccessStatus("Task created successfully")
+		
+		// Refresh the task list to show the newly created task
+		// This will trigger a TasksRefreshedMsg when completed
+		return m, m.refreshTasks()
 
 		// To ensure consistency, preserve the current cursor positions
 		originalCursor := m.cursor
@@ -200,7 +205,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// to ensure it can be selected in its new section
 			if msg.Task.Status == task.StatusTodo && m.timelineCursor != 0 {
 				// If it's a task being unchecked, find it in the timeline section
-				m.resetTimelineCursorForTask(updatedTaskID)
+				m.resetTimelineCursorForTask(msg.Task.ID)
 			} else {
 				// Otherwise restore original cursor position
 				m.timelineCursor = originalTimelineCursor
@@ -236,4 +241,6 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	default:
 		return m, nil
 	}
+	// This ensures all code paths return a value
+	return m, nil
 }
