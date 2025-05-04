@@ -34,18 +34,18 @@ func Button(label string, style ButtonStyle) string {
 	if style.Primary {
 		// Primary button (like Save)
 		if style.Focused {
-			// Primary button in focused state
+			// Primary button in focused state - blue highlight
 			buttonStyle = lipgloss.NewStyle().
 				Foreground(lipgloss.Color("#1E88E5")).
 				Border(lipgloss.RoundedBorder()).
 				BorderForeground(lipgloss.Color("#1E88E5")).
 				Padding(0, 2)
 		} else {
-			// Primary button in unfocused state
+			// Primary button in unfocused state - use normal (gray) color like other unfocused buttons
 			buttonStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.Color("#1976D2")).
+				Foreground(lipgloss.Color("#78909C")).
 				Border(lipgloss.RoundedBorder()).
-				BorderForeground(lipgloss.Color("#BBDEFB")).
+				BorderForeground(lipgloss.Color("#CCCCCC")).
 				Padding(0, 2)
 		}
 	} else {
