@@ -127,7 +127,7 @@ func (m *Model) toggleTimelineSection(sectionType hooks.SectionType) tea.Cmd {
 
 			// Show status message
 			if section.IsExpanded {
-				m.setStatusMessage("Collapsing "+sectionName+" section", "info", 1*time.Second)
+				// Status message removed as requested - no notification for section collapse
 			} else {
 				m.setStatusMessage("Expanding "+sectionName+" section", "info", 1*time.Second)
 			}

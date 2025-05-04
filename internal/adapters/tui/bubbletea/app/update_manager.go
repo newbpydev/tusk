@@ -162,16 +162,21 @@ func (m *UpdateManager) handleWindowSize(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // handleTick processes tick messages
 func (m *UpdateManager) handleTick(msg tea.Msg) (tea.Model, tea.Cmd) {
-	// Update current time
+	// Ensure we update current time using the current system time to prevent drift
 	m.model.currentTime = time.Now()
 	
-	// Clear expired status messages
+	// Check and clear expired status messages
 	if (!m.model.statusExpiry.IsZero()) && time.Now().After(m.model.statusExpiry) {
+		// Clear the status message fields
 		m.model.statusMessage = ""
 		m.model.statusType = ""
 		m.model.statusExpiry = time.Time{}
+		
+		// Debug log for status message expiry
+		// fmt.Println("Status message expired and cleared")
 	}
 	
+	// CRITICAL: Always return the tick command to ensure clock keeps updating
 	return m.model, tea.Tick(time.Second, func(t time.Time) tea.Msg {
 		return messages.TickMsg(t)
 	})

@@ -1,8 +1,6 @@
 package shared
 
 import (
-	"strings"
-
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/lipgloss"
@@ -68,38 +66,79 @@ func (c CustomKeyMap) FullHelp() [][]key.Binding {
 
 // View returns the rendered help bar
 func (m HelpModel) View() string {
-	// Collect all bindings from all keymaps
-	var allBindings []key.Binding
+	// Don't show any help if width is too narrow
+	if m.width < 20 {
+		return "" 
+	}
+
+	// Collect all bindings from all keymaps, prioritizing the primary keymap
+	var primaryBindings, delegateBindings []key.Binding
 	
-	// First add main keymap bindings
+	// First ensure we capture the primary (active panel) keymap bindings
 	if m.keyMap != nil {
-		// Use strings explicitly to ensure import is used
-		_ = strings.Split("a,b", ",")
-		allBindings = append(allBindings, m.keyMap.ShortHelp()...)
+		primaryBindings = m.keyMap.ShortHelp()
 	}
 	
-	// Then add delegate bindings
+	// Then collect delegate (global) bindings
 	for _, km := range m.delegateKeyMaps {
-		allBindings = append(allBindings, km.ShortHelp()...)
+		delegateBindings = append(delegateBindings, km.ShortHelp()...)
 	}
 	
-	// Create a custom keymap that implements help.KeyMap
-	customKeyMap := CustomKeyMap{bindings: allBindings}
+	// Calculate how many help items we can display
+	const keyHelpAvgWidth = 12 // Average width per key binding
+	maxBindings := m.width / keyHelpAvgWidth
 	
-	// Create a temporary help view and render it
-	h := help.New()
-	h.Width = m.width
-	h.ShowAll = false
+	// Ensure we always show primary bindings for the current context first
+	var selectedBindings []key.Binding
+	primaryCount := len(primaryBindings)
+	delegateCount := len(delegateBindings)
+	totalCount := primaryCount + delegateCount
 	
-	// Use the custom keymap for rendering
-	helpText := h.View(customKeyMap)
+	// If we can fit all bindings, use them all
+	if totalCount <= maxBindings {
+		selectedBindings = append(primaryBindings, delegateBindings...)
+	} else if primaryCount <= maxBindings {
+		// Show all primary bindings and as many delegate bindings as we can fit
+		selectedBindings = append(selectedBindings, primaryBindings...)
+		remaining := maxBindings - primaryCount
+		if remaining > 0 && delegateCount > 0 {
+			// Add as many delegate bindings as will fit
+			count := minInt(remaining, delegateCount)
+			selectedBindings = append(selectedBindings, delegateBindings[:count]...)
+		}
+	} else {
+		// Not enough space for all primary bindings, show as many as possible
+		count := minInt(maxBindings, primaryCount)
+		selectedBindings = primaryBindings[:count]
+	}
 	
-	// Style the help text
-	helpStyle := lipgloss.NewStyle().
+	// Create a custom keymap with our selected bindings
+	customKeyMap := CustomKeyMap{bindings: selectedBindings}
+	
+	// Configure the help view
+	m.help.Width = m.width
+	m.help.ShowAll = false
+	
+	// Get the help text
+	helpText := m.help.View(customKeyMap)
+	
+	// Center the help text
+	centeredHelpStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#747474")).
-		Italic(true)
+		Italic(true).
+		Align(lipgloss.Center).
+		Width(m.width)
 	
-	return helpStyle.Render(helpText)
+	return centeredHelpStyle.Render(helpText)
+}
+
+// minInt is a local helper that returns the minimum of two integers
+// We use a different name to avoid conflicts with the panel package
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 // ToggleFullHelp toggles between full and simplified help

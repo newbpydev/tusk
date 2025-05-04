@@ -66,20 +66,34 @@ func (m *Model) View() string {
 		return m.modal.View(mainView, m.width, m.height)
 	}
 	
-	// Style the help view as a clean footer with no background
-	helpFooterStyle := lipgloss.NewStyle().
+	// Completely different approach to prevent text accumulation
+	// Define key dimensions
+	const helpFooterHeight = 1
+	contentHeight := m.height - helpFooterHeight
+	
+	// Step 1: Create the main content area with strict boundaries
+	contentStyle := lipgloss.NewStyle().
 		Width(m.width).
-		Height(1).
-		Foreground(lipgloss.Color("#a0aec0"))
+		Height(contentHeight)
 	
-	// Get the help text from our help model
-	helpView := m.helpModel.View()
+	// Render main content with strict size control
+	mainViewStyled := contentStyle.Render(mainView)
 	
-	// Style and position the help footer
-	styledHelpView := helpFooterStyle.Render(helpView)
+	// Step 2: Create help footer with clear boundaries
+	// Get the help text - our HelpModel already handles width constraints
+	helpText := m.helpModel.View()
 	
-	// Correctly position the help view at the bottom of the screen
-	mainViewWithHelp := lipgloss.JoinVertical(lipgloss.Left, mainView, styledHelpView)
+	// Style help footer with fixed dimensions
+	helpStyle := lipgloss.NewStyle().
+		Width(m.width).
+		Height(helpFooterHeight).
+		Foreground(lipgloss.Color("#a0aec0")).
+		Italic(true)
+	
+	helpStyled := helpStyle.Render(helpText)
+	
+	// Step 3: Use direct vertical joining with top alignment to prevent shifts
+	mainViewWithHelp := lipgloss.JoinVertical(lipgloss.Top, mainViewStyled, helpStyled)
 	
 	// Return the complete view
 	return mainViewWithHelp
