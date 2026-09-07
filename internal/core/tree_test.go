@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"strings"
 	"testing"
 	"time"
 
@@ -140,7 +141,7 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 		t.Errorf("expected ErrCyclicDependency for 1001-node cyclic loop, got %v", err)
 	}
 
-	// Fake chain exceeding maxTraversalSteps returns ErrTraversalLimitExceeded
+	// Acyclic chain exceeding MaxHierarchyDepth returns ErrMaxDepthExceeded
 	acyclicParents := make(map[string]*string)
 	for i := 2; i <= 1005; i++ {
 		acyclicParents[fmt.Sprintf("A%d", i)] = ptr(fmt.Sprintf("A%d", i-1))
@@ -151,7 +152,7 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	}
 	err = core.ValidateHierarchyDepth(0, "A1005", lookupAcyclic)
 	if !errors.Is(err, core.ErrMaxDepthExceeded) {
-		t.Errorf("expected ErrMaxDepthExceeded for >1000-deep chain, got %v", err)
+		t.Errorf("expected ErrMaxDepthExceeded for over-MaxHierarchyDepth chain, got %v", err)
 	}
 
 	// Infinite chain exceeding maxTraversalSteps returns ErrTraversalLimitExceeded
@@ -510,5 +511,24 @@ func TestDetectCycles_TraversalLimitExceeded(t *testing.T) {
 	err := core.DetectCycles("target", &start, lookupInfinite)
 	if !errors.Is(err, core.ErrTraversalLimitExceeded) {
 		t.Errorf("expected ErrTraversalLimitExceeded, got %v", err)
+	}
+}
+
+func TestTree_LookupParentError(t *testing.T) {
+	dbErr := errors.New("database connection failed")
+	lookupErr := func(id string) (*string, error) {
+		return nil, dbErr
+	}
+
+	// DetectCycles wraps lookupParent error with failing ancestor ID
+	err := core.DetectCycles("task-1", ptr("parent-1"), lookupErr)
+	if !errors.Is(err, dbErr) || !strings.Contains(err.Error(), "parent-1") {
+		t.Errorf("expected wrapped db error with parent-1 in DetectCycles, got %v", err)
+	}
+
+	// ValidateHierarchyDepth wraps lookupParent error with failing ancestor ID
+	err = core.ValidateHierarchyDepth(0, "parent-1", lookupErr)
+	if !errors.Is(err, dbErr) || !strings.Contains(err.Error(), "parent-1") {
+		t.Errorf("expected wrapped db error with parent-1 in ValidateHierarchyDepth, got %v", err)
 	}
 }

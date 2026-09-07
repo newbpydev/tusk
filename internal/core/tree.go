@@ -7,6 +7,10 @@ import (
 
 const (
 	MaxHierarchyDepth = 10
+	// maxTraversalSteps bounds cycle and depth traversal.
+	// Valid hierarchies are bounded by MaxHierarchyDepth (10 lookups).
+	// A 10,000-step bound ensures long cycles (e.g. 1000+ nodes) in corrupt or imported graphs
+	// are fully detected and classified as ErrCyclicDependency before falling back to ErrTraversalLimitExceeded.
 	maxTraversalSteps = 10000
 )
 
