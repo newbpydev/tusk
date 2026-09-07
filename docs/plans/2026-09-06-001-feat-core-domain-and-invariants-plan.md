@@ -24,9 +24,9 @@ Provide the pure Go business logic and domain core for Tusk in `internal/core/`.
 - Tag value object with normalization rules (lowercase, alphanumeric + dashes, trimmed, deduped).
 - Validated state transition machine with automatic `CompletedAt` lifecycle management.
 - Mathematical subtask progress rollup calculation with deterministic integer floor arithmetic.
-- Recursive tree model, acyclic cycle detection (`ErrCyclicDependency`), and max hierarchy depth enforcement (`ErrMaxDepthExceeded`).
+- Recursive tree model, acyclic cycle detection (`ErrCyclicDependency`), and defensive hierarchy depth ceiling (`ErrMaxDepthExceeded`, default 10 levels) preventing recursive stack overflow and terminal indentation clipping.
 - Task filtering query criteria and deterministic multi-key sorting rules.
-- Strongly typed domain sentinel errors and error validation helpers.
+- Strongly typed domain sentinel errors.
 
 ### Out of Scope
 - Persistence mechanisms, SQL queries, or SQLite drivers (owned by Feature 002).
@@ -61,6 +61,7 @@ var (
 	ErrSelfParenting           = errors.New("task cannot reference itself as parent")
 	ErrMaxDepthExceeded        = errors.New("maximum subtask hierarchy depth exceeded")
 	ErrInvalidTag              = errors.New("invalid tag format: tags must be alphanumeric with hyphens")
+	ErrInvalidProgress         = errors.New("task progress must be an integer between 0 and 100")
 )
 ```
 
@@ -151,18 +152,22 @@ type NewTaskParams struct {
 func NewTask(params NewTaskParams) (*Task, error)
 func (t *Task) TransitionTo(next Status, now time.Time) error
 func (t *Task) Update(title, desc string, priority Priority, tags []Tag, dueDate *time.Time, now time.Time) error
+func (t *Task) SetParent(parentID *string, now time.Time) error
 func (t *Task) SetProgress(progress int, now time.Time) error
 func (t *Task) IsRoot() bool
 func (t *Task) IsDone() bool
 ```
+**Entity Mutation Contracts**:
+- `SetParent` reassigns `ParentID` and updates `UpdatedAt = now`. Returns `ErrSelfParenting` if `parentID != nil && *parentID == t.ID`.
+- `SetProgress` validates that `progress >= 0 && progress <= 100`, returning `ErrInvalidProgress` on out-of-bounds inputs, and updates `UpdatedAt = now`.
 
 ### 2.5 Progress Rollup Engine (`internal/core/rollup.go`)
 ```go
-func CalculateProgress(subtasks []Task) int
+func CalculateProgress(task Task, subtasks []Task) int
 ```
 **Mathematical Rules**:
 1. If `len(subtasks) == 0`:
-   $$\text{Progress} = \begin{cases} 100 & \text{if } t.\text{Status} == \text{StatusDone} \\ 0 & \text{otherwise} \end{cases}$$
+   $$\text{Progress} = \begin{cases} 100 & \text{if } task.\text{Status} == \text{StatusDone} \\ task.\text{Progress} & \text{otherwise (preserves assigned manual progress, 0--99)} \end{cases}$$
 2. If `len(subtasks) > 0`:
    $$\text{Progress} = \left\lfloor \frac{1}{N} \sum_{i=1}^N \text{subtask}_i.\text{Progress} \right\rfloor$$
    Clamped between $0$ and $100$.
@@ -180,15 +185,21 @@ type TaskNode struct {
 }
 
 func BuildTree(tasks []Task) ([]*TaskNode, error)
-func DetectCycles(taskID string, proposedParentID string, lookupParent func(id string) (*string, error)) error
-func ValidateHierarchyDepth(taskID string, proposedParentID string, lookupParent func(id string) (*string, error)) error
+func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id string) (*string, error)) error
+func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, lookupParent func(id string) (*string, error)) error
 ```
+**Hierarchy & Tree Contracts**:
+- `MaxHierarchyDepth = 10`: While Tusk guarantees arbitrary n-level recursive trees conceptually, the domain core enforces a defensive ceiling of 10 levels to protect against runaway recursion, stack overflow, and visual terminal line truncation during tree indentation. Cycles are strictly detected via `DetectCycles` regardless of depth.
+- `DetectCycles`: When `proposedParentID == nil`, returns `nil` immediately (root tasks have no parent and cannot introduce cycles).
+- `ValidateHierarchyDepth`: `taskSubtreeDepth` is the maximum depth of existing descendants below the moving task (0 for leaf tasks). The check validates that `parentDepth + 1 + taskSubtreeDepth <= MaxHierarchyDepth`.
+- `BuildTree`: Returns `ErrTaskNotFound` if any non-root task's `ParentID` references an ID absent from the slice, and `ErrCyclicDependency` if unrooted loops or cycles are detected within the slice.
 
 ### 2.7 Filter & Sorting Models (`internal/core/filter.go`)
 ```go
 type SortField string
 
 const (
+	SortByID        SortField = "id"
 	SortByPriority  SortField = "priority"
 	SortByDueDate   SortField = "due_date"
 	SortByCreatedAt SortField = "created_at"
@@ -212,6 +223,7 @@ type TaskFilter struct {
 	Priorities []Priority
 	Tags       []Tag
 	ParentID   *string
+	RootOnly   bool
 	DueBefore  *time.Time
 	DueAfter   *time.Time
 	SearchTerm string
@@ -220,6 +232,10 @@ type TaskFilter struct {
 func FilterTasks(tasks []Task, filter TaskFilter) []Task
 func SortTasks(tasks []Task, order []SortOrder)
 ```
+**Filter & Sorting Contracts**:
+- **Operational Boundary**: `FilterTasks` and `SortTasks` operate in-memory on task slices, specifically providing instant sub-millisecond filtering and sorting for interactive Bubble Tea TUI views (live search while typing) and CLI tree transformations without issuing database round-trips. Primary persistence queries and persistent filtering remain the responsibility of `ports.TaskRepository` via SQLite `sqlc`.
+- `FilterTasks`: When `RootOnly` is true, matches root tasks (`ParentID == nil`). When `RootOnly` is false and `ParentID != nil`, matches that specific parent. When `!RootOnly && ParentID == nil`, parentage filter is unconstrained (matches any task).
+- `SortTasks`: `SortByDueDate` places tasks with `nil` `DueDate` last when `Direction` is `SortAsc` (and first when `SortDesc`). `SortTasks` always appends `SortOrder{Field: SortByID, Direction: SortAsc}` as an implicit deterministic final tie-breaker if not already specified.
 
 ---
 
@@ -236,7 +252,7 @@ graph TD
 ```
 
 ### Unit 001-1: Domain Sentinels and Error Taxonomy
-- **Goal**: Define domain error sentinels and validation helper predicates.
+- **Goal**: Define domain error sentinels.
 - **Files**:
   - `internal/core/errors.go`
   - `internal/core/errors_test.go`
@@ -270,7 +286,9 @@ graph TD
   - `TestNewTask_Validation`: Reject empty title (`ErrEmptyTitle`), title > 255 chars (`ErrTitleTooLong`).
   - `TestTask_TransitionToDone`: Transitioning to `StatusDone` sets `CompletedAt` to `now`.
   - `TestTask_Reopen`: Transitioning from `StatusDone` to `StatusInProgress` clears `CompletedAt` (sets to `nil`).
-- **Verification**: `go test -v -run TestTask ./internal/core/...`
+  - `TestTask_SetParent`: Reassigning parent updates `ParentID` and `UpdatedAt`; self-parenting returns `ErrSelfParenting`.
+  - `TestTask_SetProgress_Validation`: Valid percentages update `Progress` and `UpdatedAt`; values < 0 or > 100 return `ErrInvalidProgress`.
+Verification: `go test -v -run TestTask ./internal/core/...`
 - **Review Lenses**: Data integrity, state machine correctness.
 
 ### Unit 001-4: Mathematical Progress Rollup Engine
@@ -279,10 +297,9 @@ graph TD
   - `internal/core/rollup.go`
   - `internal/core/rollup_test.go`
 - **Dependencies**: Unit 001-3.
-- **Red Tests**:
-  - `TestCalculateProgress_Leaf`: 0% when `todo`, 100% when `done`.
-  - `TestCalculateProgress_Subtasks`: 3 subtasks (100%, 50%, 0%) -> average is 50%.
-  - `TestCalculateProgress_FloorRounding`: 3 subtasks (100%, 0%, 0%) -> 33% (integer floor).
+  - `TestCalculateProgress_Leaf`: 0% when `todo`, preserves manual progress (e.g. 50% when in-progress), 100% when `done`.
+  - `TestCalculateProgress_Subtasks`: Parent task with 3 subtasks (100%, 50%, 0%) -> average is 50%.
+  - `TestCalculateProgress_FloorRounding`: Parent task with 3 subtasks (100%, 0%, 0%) -> 33% (integer floor).
   - `TestCalculateProgress_AllDone`: All subtasks done -> strictly 100%.
 - **Verification**: `go test -v -run TestCalculateProgress ./internal/core/...`
 - **Review Lenses**: Mathematical accuracy, boundaries.
@@ -293,13 +310,14 @@ graph TD
   - `internal/core/tree.go`
   - `internal/core/tree_test.go`
 - **Dependencies**: Unit 001-3.
-- **Red Tests**:
   - `TestDetectCycles_DirectSelf`: Setting `taskA.parent = taskA` returns `ErrSelfParenting`.
+  - `TestDetectCycles_RootPromotion`: Passing `nil` proposedParentID returns `nil` without calling lookupParent.
   - `TestDetectCycles_TwoNodeLoop`: `taskA -> taskB`, setting `taskB -> taskA` returns `ErrCyclicDependency`.
   - `TestDetectCycles_DeepLoop`: 5-node chain `A -> B -> C -> D -> E`, setting `A.parent = E` returns `ErrCyclicDependency`.
-  - `TestValidateHierarchyDepth`: Exceeding depth 10 returns `ErrMaxDepthExceeded`.
+  - `TestValidateHierarchyDepth_Subtree`: Moving a subtree where `parentDepth + 1 + subtreeDepth > 10` returns `ErrMaxDepthExceeded`.
   - `TestBuildTree_Forest`: Correctly groups multiple roots and nested child slices.
-- **Verification**: `go test -v -run "TestDetectCycles|TestBuildTree" ./internal/core/...`
+  - `TestBuildTree_Errors`: Orphaned `ParentID` returns `ErrTaskNotFound`; cyclic loops return `ErrCyclicDependency`.
+- Verification: `go test -v -run "TestDetectCycles|TestBuildTree|TestValidateHierarchyDepth" ./internal/core/...`
 - **Review Lenses**: Algorithmic correctness, performance.
 
 ### Unit 001-6: Task Filtering and Sorting Engine
@@ -308,15 +326,14 @@ graph TD
   - `internal/core/filter.go`
   - `internal/core/filter_test.go`
 - **Dependencies**: Unit 001-4, Unit 001-5.
-- **Red Tests**:
-  - `TestFilterTasks`: Matches by Status, Priority, Tags, and substring SearchTerm in title.
-  - `TestSortTasks_MultiKey`: Sort by Priority DESC, then DueDate ASC, then CreatedAt ASC. Verifies deterministic order.
+  - `TestFilterTasks`: Matches by Status, Priority, Tags, RootOnly, ParentID, and substring SearchTerm in title.
+  - `TestSortTasks_MultiKey`: Sort by DueDate ASC (nil DueDate sorts last), then Priority DESC, with deterministic ID tie-breaking.
 - **Verification**: `go test -v -run "TestFilter|TestSort" ./internal/core/...`
 - **Review Lenses**: Simplicity, deterministic behavior.
 
 ---
 
-## 4. Verification Matrix
+## 4. Verification Matrix & Scenario Registry
 
 | Requirement | Unit | Scenario IDs | Evidence Tier |
 | :--- | :--- | :--- | :--- |
@@ -326,6 +343,34 @@ graph TD
 | **Tag Normalization** | Unit 001-2 | CORE-TAG-N1, CORE-TAG-B1 | Focused unit |
 | **Task Lifecycle & Dates** | Unit 001-3 | CORE-TSK-N1, CORE-TSK-B1, CORE-TSK-R1 | Focused unit |
 | **Progress Rollup Math** | Unit 001-4 | CORE-ROL-N1, CORE-ROL-B1, CORE-ROL-P1 | Focused property/table |
-| **Cycle & Tree Invariants** | Unit 001-5 | CORE-TRE-N1, CORE-TRE-B1, CORE-TRE-F1 | Focused graph/benchmark |
+| **Cycle & Tree Invariants** | Unit 001-5 | CORE-TRE-N1, CORE-TRE-B1, CORE-TRE-F1, CORE-TRE-BM1 | Focused graph/benchmark |
 | **Filtering & Sorting** | Unit 001-6 | CORE-FLT-N1, CORE-FLT-B1, CORE-FLT-C1 | Focused unit |
-| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` |
+| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (100% coverage enforced) |
+
+### Scenario Mapping Registry
+
+| Scenario ID | Target Behavior | Executable Test Name | Command |
+| :--- | :--- | :--- | :--- |
+| `CORE-ERR-N1` | Unique sentinel errors with non-empty error strings | `TestErrorsExist` | `go test -v -run TestErrors ./internal/core/...` |
+| `CORE-ERR-B1` | Identity comparisons work with `errors.Is` | `TestErrors_SentinelIntegrity` | `go test -v -run TestErrors ./internal/core/...` |
+| `CORE-STS-N1` | Parse valid status enum strings | `TestParseStatus` | `go test -v -run TestParseStatus ./internal/core/...` |
+| `CORE-STS-B1` | Invalid status string returns `ErrInvalidStatus` | `TestParseStatus_Invalid` | `go test -v -run TestParseStatus ./internal/core/...` |
+| `CORE-STS-F1` | Reopening allowed, done -> blocked rejected | `TestStatusTransitions` | `go test -v -run TestStatusTransitions ./internal/core/...` |
+| `CORE-PRI-N1` | Parse valid priority weights 1–4 and names | `TestParsePriority` | `go test -v -run TestParsePriority ./internal/core/...` |
+| `CORE-PRI-B1` | Invalid priority integers/names return `ErrInvalidPriority` | `TestParsePriority_Invalid` | `go test -v -run TestParsePriority ./internal/core/...` |
+| `CORE-TAG-N1` | Normalization lowercases, trims `#`, strips whitespace, dedupes | `TestNormalizeTag` | `go test -v -run TestNormalizeTag ./internal/core/...` |
+| `CORE-TAG-B1` | Tags with invalid characters return `ErrInvalidTag` | `TestNormalizeTag_Invalid` | `go test -v -run TestNormalizeTag ./internal/core/...` |
+| `CORE-TSK-N1` | NewTask validates title length 1–255, sets initial timestamps | `TestNewTask_Validation` | `go test -v -run TestNewTask ./internal/core/...` |
+| `CORE-TSK-B1` | TransitionTo sets/clears CompletedAt appropriately | `TestTask_TransitionToDone`, `TestTask_Reopen` | `go test -v -run TestTask ./internal/core/...` |
+| `CORE-TSK-R1` | SetParent updates UpdatedAt; self-parenting returns ErrSelfParenting | `TestTask_SetParent` | `go test -v -run TestTask ./internal/core/...` |
+| `CORE-ROL-N1` | Leaf task progress preserves manual progress or 100 on done | `TestCalculateProgress_Leaf` | `go test -v -run TestCalculateProgress ./internal/core/...` |
+| `CORE-ROL-B1` | Floor integer arithmetic rounds down proportionally | `TestCalculateProgress_FloorRounding` | `go test -v -run TestCalculateProgress ./internal/core/...` |
+| `CORE-ROL-P1` | Rollup average of subtasks clamped to 0–100 | `TestCalculateProgress_Subtasks`, `TestCalculateProgress_AllDone` | `go test -v -run TestCalculateProgress ./internal/core/...` |
+| `CORE-TRE-N1` | BuildTree groups roots and children into hierarchical forest | `TestBuildTree_Forest` | `go test -v -run TestBuildTree ./internal/core/...` |
+| `CORE-TRE-B1` | Root promotion with nil proposedParentID succeeds; subtree depth validated | `TestDetectCycles_RootPromotion`, `TestValidateHierarchyDepth_Subtree` | `go test -v -run "TestDetectCycles\|TestValidateHierarchyDepth" ./internal/core/...` |
+| `CORE-TRE-F1` | Cyclic references return ErrCyclicDependency; orphans return ErrTaskNotFound | `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestBuildTree_Errors` | `go test -v -run "TestDetectCycles\|TestBuildTree" ./internal/core/...` |
+| `CORE-TRE-BM1` | Tree traversal micro-benchmark scales under 1000 nodes | `BenchmarkTreeTraversal` | `go test -bench=BenchmarkTreeTraversal ./internal/core/...` |
+| `CORE-FLT-N1` | FilterTasks evaluates Status, Priority, Tags, SearchTerm, and RootOnly | `TestFilterTasks` | `go test -v -run TestFilterTasks ./internal/core/...` |
+| `CORE-FLT-B1` | SortTasks sorts nil DueDate last on ASC, with deterministic ID tie-breaking | `TestSortTasks_MultiKey` | `go test -v -run TestSortTasks ./internal/core/...` |
+| `CORE-FLT-C1` | Zero-match queries return empty non-nil slices | `TestFilterTasks_EmptyResults` | `go test -v -run TestFilterTasks ./internal/core/...` |
+| `CORE-AGG-ALL` | Full test suite, race detector, static analysis, 100% coverage gate | All tests in `internal/core` | `make validate && go test -cover -race ./internal/core/...` |

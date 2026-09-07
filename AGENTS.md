@@ -84,7 +84,7 @@ MANDATORY EXECUTION DIRECTIVE:
 2. BEFORE taking any action or writing code, every agent MUST inspect `MASTERPLAN.md` to locate the current **Active Phase** and **Active Implementation Target**.
 3. Work ONLY on the active implementation target designated by `MASTERPLAN.md`. Jumping ahead, implementing out-of-order, or starting unapproved phases is strictly prohibited.
 4. IMMEDIATELY upon finishing and verifying an implementation unit, verification scenario, or phase with `make validate`, you MUST update the checklist in `MASTERPLAN.md` (checking the item `[x]` and updating the active pointers).
-5. Every feature implementation plan must be accompanied by its corresponding Ultrathink verification plan (`docs/verification-plans/`) and issue workorder (`docs/workorders/`).
+5. **Planning Triplet Synchrony**: Every feature plan (`docs/plans/`) forms an inviolable triplet with its corresponding Ultrathink verification plan (`docs/verification-plans/`) and issue workorder (`docs/workorders/`). Whenever a plan is reviewed, amended, or updated, agents MUST review and update its paired verification plan and workorder in lockstep. Leaving verification plans or workorders stale, contradictory, or desynchronized with the active feature plan is strictly prohibited.
 </masterplan_and_orchestration_protocol>
 
 ---
@@ -98,3 +98,4 @@ MANDATORY EXECUTION DIRECTIVE:
 - NEVER jump ahead or execute out-of-order without explicit orchestrator direction.
 - NEVER introduce reflection-heavy ORMs; use compile-time verified `sqlc`.
 - NEVER use unhandled goroutine pools or custom `sync.Map` caches in the service layer.
+- NEVER leave verification plans (`docs/verification-plans/`) or workorders (`docs/workorders/`) desynchronized after modifying a feature plan.

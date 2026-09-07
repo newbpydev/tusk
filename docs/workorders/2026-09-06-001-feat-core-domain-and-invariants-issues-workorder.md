@@ -16,7 +16,15 @@ evidence-scope: Planning findings only
 | **CORE-ISS-002** | Deepening Audit | Performance / Graph Theory | P2 | Fixed in Plan | Legacy had no cycle detection on subtask reparenting, risking infinite UI loops. | Specified `DetectCycles` with depth limits in `internal/core/tree.go`. | Unit 001-5 test suite (`TestDetectCycles`). |
 | **CORE-ISS-003** | Deepening Audit | Data Integrity / Rollup Math | P2 | Fixed in Plan | Ambiguity in progress integer rounding when division has fractional remainder. | Defined integer floor policy ($\lfloor \frac{\sum P}{N} \rfloor$). | Unit 001-4 test suite (`TestCalculateProgress`). |
 | **CORE-ISS-004** | Deepening Audit | Domain Boundaries / Coupling | P1 | Fixed in Plan | Legacy mixed natural language date parsing inside domain entities. | Clarified that natural date parsing belongs to Feature 003 service layer; `Task` accepts pure `time.Time`. | Architecture boundary review in Unit 001-3. |
-
+| **CORE-ISS-005** | Doc Review | Contract / Rollup Math | P1 | Fixed in Plan | `CalculateProgress` signature lacked task context & wiped out leaf manual progress. | Updated signature to `CalculateProgress(task Task, subtasks []Task) int`; leaf preserves manual progress (0–99). | Unit 001-4 tests (`TestCalculateProgress_Leaf`, `CORE-ROL-N1`). |
+| **CORE-ISS-006** | Doc Review | API Ambiguity / Filtering | P1 | Fixed in Plan | `TaskFilter.ParentID *string` could not distinguish root tasks from unconstrained queries. | Added `RootOnly bool` to `TaskFilter` with explicit matching semantics. | Unit 001-6 tests (`TestFilterTasks`, `CORE-FLT-N1`). |
+| **CORE-ISS-007** | Doc Review | Error Taxonomy / Validation | P2 | Fixed in Plan | `SetProgress` lacked a typed sentinel error for out-of-bounds percentage values. | Added `ErrInvalidProgress = errors.New(...)` to domain sentinels in Section 2.1. | Unit 001-3 tests (`TestTask_SetProgress_Validation`, `CORE-ERR-N1`). |
+| **CORE-ISS-008** | Doc Review | Graph Invariants / Reparenting | P1 | Fixed in Plan | `ValidateHierarchyDepth` only traversed upward, ignoring descendant subtree depth during reparenting. | Updated signature to accept `taskSubtreeDepth int` and validate `parentDepth + 1 + subtreeDepth <= MaxHierarchyDepth`. | Unit 001-5 tests (`TestValidateHierarchyDepth_Subtree`, `CORE-TRE-B1`). |
+| **CORE-ISS-009** | Doc Review | API Ergonomics / Graph | P2 | Fixed in Plan | `DetectCycles` required string parameter, preventing callers passing `nil` on root promotion. | Changed `proposedParentID` to `*string`; `nil` returns `nil` immediately. | Unit 001-5 tests (`TestDetectCycles_RootPromotion`, `CORE-TRE-B1`). |
+| **CORE-ISS-010** | Doc Review | Error Contracts / Tree | P1 | Fixed in Plan | `BuildTree` error conditions on orphaned parents and cyclic loops were undefined. | Specified `BuildTree` returns `ErrTaskNotFound` on missing parents, `ErrCyclicDependency` on loops. | Unit 001-5 tests (`TestBuildTree_Errors`, `CORE-TRE-F1`). |
+| **CORE-ISS-011** | Doc Review | Determinism / Sorting | P2 | Fixed in Plan | `SortTasks` with `SortByDueDate` lacked nulls-last ordering and deterministic tie-breaker. | Specified nulls-last on `SortAsc` and implicit `SortByID ASC` final tie-breaker. | Unit 001-6 tests (`TestSortTasks_MultiKey`, `CORE-FLT-B1`). |
+| **CORE-ISS-012** | Doc Review | Lifecycle / Entity Mutation | P2 | Fixed in Plan | `Task` entity omitted dedicated `SetParent` method, risking stale `UpdatedAt` on reparenting. | Added `func (t *Task) SetParent(parentID *string, now time.Time) error` with `ErrSelfParenting` check. | Unit 001-3 tests (`TestTask_SetParent`, `CORE-TSK-R1`). |
+| **CORE-ISS-013** | Doc Review | Architecture / Query Boundaries | P2 | Fixed in Plan | In-memory filtering and sorting created apparent duplication with SQLite storage queries. | Delineated operational boundary: in-memory for TUI live search; primary persistence queries in storage repository. | Architecture boundary review in Section 2.7. |
 ---
 
 ## 2. Issue Details
@@ -61,6 +69,95 @@ evidence-scope: Planning findings only
 - **Decision & Fix**: `internal/core/` only knows `time.Time`. Natural language date parsing (`today`, `tomorrow`, `+2d`) is isolated in `internal/service/dateparse/` (Feature 003).
 - **Retest / Closure Evidence**: Verified `internal/core` has zero regex/time-parsing dependencies outside standard `time.Time`.
 
+### CORE-ISS-005: CalculateProgress Leaf Task Contract & Signature
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Coherence, Feasibility, Adversarial, Product-Lens, Whole-Doc
+- **Severity**: P1
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-4 (`internal/core/rollup.go`)
+- **Planning Gap**: `CalculateProgress(subtasks []Task)` did not take the target task, making Rule 1 (`if len(subtasks) == 0: 100 if t.Status == StatusDone else 0`) unimplementable, and overwrote manual progress on leaf tasks.
+- **Decision & Fix**: Updated signature to `func CalculateProgress(task Task, subtasks []Task) int`. Rule 1 updated to preserve explicitly assigned manual progress ($0 \le \text{progress} \le 99$) on non-done leaf tasks.
+- **Retest / Closure Evidence**: Unit test `TestCalculateProgress_Leaf` and scenario `CORE-ROL-N1`.
+
+### CORE-ISS-006: TaskFilter Root Task Disambiguation
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Feasibility & Coherence Lenses
+- **Severity**: P1
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-6 (`internal/core/filter.go`)
+- **Planning Gap**: `TaskFilter.ParentID *string` defaulting to `nil` made it impossible to distinguish between filtering for root tasks (`parent_id IS NULL`) and not filtering by parentage at all.
+- **Decision & Fix**: Added `RootOnly bool` to `TaskFilter`. Documented that `RootOnly: true` filters for roots (`ParentID == nil`), while `!RootOnly && ParentID == nil` leaves parentage unconstrained.
+- **Retest / Closure Evidence**: Unit test `TestFilterTasks` and scenario `CORE-FLT-N1`.
+
+### CORE-ISS-007: Out-of-Bounds Progress Sentinel
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Feasibility Lens
+- **Severity**: P2
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-1 & Unit 001-3 (`internal/core/errors.go`, `internal/core/task.go`)
+- **Planning Gap**: `Task.SetProgress` lacked a typed domain sentinel error for percentages outside the 0–100 range.
+- **Decision & Fix**: Added `ErrInvalidProgress = errors.New("task progress must be an integer between 0 and 100")` to Section 2.1 domain sentinels and enforced in `SetProgress`.
+- **Retest / Closure Evidence**: Unit test `TestTask_SetProgress_Validation` and scenario `CORE-ERR-N1`.
+
+### CORE-ISS-008: ValidateHierarchyDepth Subtree Reparenting
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Adversarial & Feasibility Lenses
+- **Severity**: P1
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-5 (`internal/core/tree.go`)
+- **Planning Gap**: Upward traversal from `proposedParentID` failed to inspect existing descendant depth below the moving task, allowing reparented subtrees to silently exceed `MaxHierarchyDepth`.
+- **Decision & Fix**: Updated signature to `func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, lookupParent func(id string) (*string, error)) error` checking `parentDepth + 1 + taskSubtreeDepth <= MaxHierarchyDepth`.
+- **Retest / Closure Evidence**: Unit test `TestValidateHierarchyDepth_Subtree` and scenario `CORE-TRE-B1`.
+
+### CORE-ISS-009: DetectCycles Root Promotion Pointer Parameter
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Adversarial Lens
+- **Severity**: P2
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-5 (`internal/core/tree.go`)
+- **Planning Gap**: `DetectCycles` accepted `proposedParentID string`, preventing callers promoting tasks to root from passing `nil` and causing spurious lookup errors on empty strings.
+- **Decision & Fix**: Changed signature to `func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id string) (*string, error)) error`. When `proposedParentID == nil`, returns `nil` immediately.
+- **Retest / Closure Evidence**: Unit test `TestDetectCycles_RootPromotion` and scenario `CORE-TRE-B1`.
+
+### CORE-ISS-010: BuildTree Error Conditions & Orphan Handling
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Feasibility & Whole-Doc Lenses
+- **Severity**: P1
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-5 (`internal/core/tree.go`)
+- **Planning Gap**: `BuildTree` declared an `error` return without specifying failure modes for orphaned nodes or circular references.
+- **Decision & Fix**: Specified that `BuildTree` returns `ErrTaskNotFound` if non-root tasks reference missing parent IDs, and `ErrCyclicDependency` if cyclic loops are detected.
+- **Retest / Closure Evidence**: Unit test `TestBuildTree_Errors` and scenario `CORE-TRE-F1`.
+
+### CORE-ISS-011: SortTasks Nulls-Last & Deterministic Tie-Breaker
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Feasibility & Whole-Doc Lenses
+- **Severity**: P2
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-6 (`internal/core/filter.go`)
+- **Planning Gap**: `SortByDueDate` lacked null pointer comparison rules, risking runtime panics, and lacked a deterministic final tie-breaker on identical sort keys.
+- **Decision & Fix**: Defined that `nil` due dates sort last on `SortAsc` (first on `SortDesc`), and `SortTasks` always appends `SortByID ASC` as an implicit deterministic final tie-breaker.
+- **Retest / Closure Evidence**: Unit test `TestSortTasks_MultiKey` and scenario `CORE-FLT-B1`.
+
+### CORE-ISS-012: Task.SetParent Method and Lifecycle
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Coherence Lens
+- **Severity**: P2
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-3 (`internal/core/task.go`)
+- **Planning Gap**: `Task` lacked a managed `SetParent` method, risking stale `UpdatedAt` timestamps and bypassing `ErrSelfParenting` validation during task reparenting.
+- **Decision & Fix**: Added `func (t *Task) SetParent(parentID *string, now time.Time) error` to Section 2.4, updating `UpdatedAt = now` and validating against self-parenting.
+- **Retest / Closure Evidence**: Unit test `TestTask_SetParent` and scenario `CORE-TSK-R1`.
+
+### CORE-ISS-013: Delineation of In-Memory Filtering vs Storage Queries
+- **Phase Found**: Planning / Document Review
+- **Owner / Review Lens**: Adversarial & Product-Lens Lenses
+- **Severity**: P2
+- **Status**: Fixed in Plan
+- **Affected Requirement / Unit**: Unit 001-6 (`internal/core/filter.go`)
+- **Planning Gap**: In-memory `FilterTasks` and `SortTasks` raised questions about architectural duplication with SQLite `sqlc` queries.
+- **Decision & Fix**: Delineated operational boundary: `core.FilterTasks` serves client-side in-memory live search in the Bubble Tea TUI without database round-trips; storage queries remain in `ports.TaskRepository`.
+- **Retest / Closure Evidence**: Architectural boundary review in Section 2.7.
 ---
 
 ## 3. Review-Lens Sign-Offs
