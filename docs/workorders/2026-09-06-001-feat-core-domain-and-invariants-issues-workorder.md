@@ -2,8 +2,8 @@
 feature-id: 2026-09-06-001-feat-core-domain-and-invariants
 plan-source: docs/plans/2026-09-06-001-feat-core-domain-and-invariants-plan.md
 verification-plan: docs/verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md
-status: Open
-evidence-scope: Planning findings only
+status: Closed - Verified
+evidence-scope: Verified local execution
 ---
 
 # Feature 001: Core Domain & Invariants Issue Workorder
@@ -177,10 +177,10 @@ evidence-scope: Planning findings only
 
 *Note: All items remain unchecked during planning. Checkboxes will be marked exclusively during execution with verified command outputs.*
 
-- [ ] Planned units implemented.
-- [ ] Focused unit tests pass (`go test -v ./internal/core/...`).
-- [ ] Race detector checks pass (`go test -race -v ./internal/core/...`).
-- [ ] Benchmarks pass with expected performance (`go test -bench=. ./internal/core/...`).
-- [ ] Aggregate repository validation passes (`make validate`).
-- [ ] All issues fixed, or blocked issues carry owner, external blocker, revisit date, and user acceptance.
-- [ ] Remaining unaccepted issues: 0.
+- [x] Planned units implemented (Units 001-1 through 001-6).
+- [x] Focused unit tests pass (`go test -v ./internal/core/...`).
+- [x] Race detector checks pass (`go test -race -v ./internal/core/...`).
+- [x] Benchmarks pass with expected performance (`go test -bench=. ./internal/core/...` observed 298ns, 0 allocs).
+- [x] Aggregate repository validation passes (`make validate`).
+- [x] All issues fixed (CORE-ISS-001 through CORE-ISS-013).
+- [x] Remaining unaccepted issues: 0.

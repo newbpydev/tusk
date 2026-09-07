@@ -1,9 +1,9 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development  
-**Active Phase**: Phase 1: Core Domain & Invariants  
-**Active Implementation Target**: Unit 001-6 (Task Filtering & Sorting Engine)  
-**Overall Completion**: 14% (1 of 7 Phases Complete)  
+**Active Phase**: Phase 2: SQLite Storage & Repository  
+**Active Implementation Target**: Unit 002-1 (Migration Engine & Embedded Schema)  
+**Overall Completion**: 29% (2 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
 
 ---
@@ -57,12 +57,12 @@ graph TD
 ---
 
 ### Phase 1: Feature 001 - Core Domain & Invariants
-- **Status**: 🚀 **ACTIVE / READY FOR IMPLEMENTATION**
+- **Status**: ✅ **COMPLETED** (2026-09-06)
 - **Plan**: `docs/plans/2026-09-06-001-feat-core-domain-and-invariants-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md`
 
-- [ ] **1.1 Planning Pack (Ultrathink)**
+- [x] **1.1 Planning Pack (Ultrathink)**
   - [x] Deepened Implementation Plan with concrete Go signatures and algorithms
   - [x] Comprehensive Verification Plan covering all scenarios (Normal, Boundary, Injected Failure, Recovery, Benchmark)
   - [x] Issue Workorder with review lens sign-offs and empty release gate
@@ -87,20 +87,20 @@ graph TD
   - [x] Implementation: `tree.go` (`TaskNode`, `BuildTree`, `DetectCycles`, `ValidateHierarchyDepth` with stack buffer optimization)
   - [x] Benchmark: `BenchmarkTreeTraversal` verifying 298ns (< 500ns, 0 allocs)
   - [x] Green Verification: `go test -v -run "TestDetectCycles|TestBuildTree|TestValidateHierarchyDepth" ./internal/core/...`
-- [ ] **1.7 Unit 001-6: Task Filtering and Sorting Engine**
-  - [ ] Red Tests: `filter_test.go` (`TestFilterTasks`, `TestSortTasks_MultiKey`)
-  - [ ] Implementation: `filter.go` (`TaskFilter`, `FilterTasks`, `SortTasks`)
-  - [ ] Green Verification: `go test -v -run "TestFilter|TestSort" ./internal/core/...`
-- [ ] **1.8 Phase 1 Quality Gate & Release Sign-off**
-  - [ ] `go test -race -v ./internal/core/...` passes with zero data races
-  - [ ] `make validate` exits 0 cleanly
-  - [ ] Populate execution record in `docs/verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md`
-  - [ ] Complete release gate checkboxes in `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md`
+- [x] **1.7 Unit 001-6: Task Filtering and Sorting Engine**
+  - [x] Red Tests: `filter_test.go` (`TestFilterTasks`, `TestSortTasks_MultiKey`)
+  - [x] Implementation: `filter.go` (`TaskFilter`, `FilterTasks`, `SortTasks`)
+  - [x] Green Verification: `go test -v -run "TestFilter|TestSort" ./internal/core/...`
+- [x] **1.8 Phase 1 Quality Gate & Release Sign-off**
+  - [x] `go test -race -v ./internal/core/...` passes with zero data races
+  - [x] `make validate` exits 0 cleanly
+  - [x] Populate execution record in `docs/verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md`
+  - [x] Complete release gate checkboxes in `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md`
 
 ---
 
 ### Phase 2: Feature 002 - SQLite Storage & Repository
-- **Status**: ⏳ **PLANNED** (Pending Phase 1 Completion)
+- **Status**: 🚀 **ACTIVE / READY FOR PLANNING**
 - **Plan**: `docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md`
 
 - [ ] **2.1 Ultrathink Planning Pack**

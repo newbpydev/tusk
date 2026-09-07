@@ -2,8 +2,8 @@
 feature-id: 2026-09-06-001-feat-core-domain-and-invariants
 plan-source: docs/plans/2026-09-06-001-feat-core-domain-and-invariants-plan.md
 surface-profiles: [library-core-domain]
-status: Draft - not executed
-evidence-scope: Planning only
+status: Verified - Passed
+evidence-scope: Verified local execution
 ---
 
 # Feature 001: Core Domain & Invariants Verification Plan
@@ -46,38 +46,38 @@ evidence-scope: Planning only
 ## 3. Scenarios
 
 ### Error Taxonomy
-- [ ] **CORE-ERR-N1 Normal Path**: All 11 error sentinels (`ErrTaskNotFound`, `ErrCyclicDependency`, `ErrInvalidProgress`, etc.) have distinct error string representations and non-nil identity.
-- [ ] **CORE-ERR-B1 Boundary**: Wrapped errors (`fmt.Errorf("context: %w", ErrEmptyTitle)`) correctly unwrap and match via `errors.Is`.
+- [x] **CORE-ERR-N1 Normal Path**: All 11 error sentinels (`ErrTaskNotFound`, `ErrCyclicDependency`, `ErrInvalidProgress`, etc.) have distinct error string representations and non-nil identity.
+- [x] **CORE-ERR-B1 Boundary**: Wrapped errors (`fmt.Errorf("context: %w", ErrEmptyTitle)`) correctly unwrap and match via `errors.Is`.
 
 ### Value Objects (`Status`, `Priority`, `Tag`)
-- [ ] **CORE-STS-N1 Normal Path**: `ParseStatus` converts `"todo"`, `"in-progress"`, `"blocked"`, `"done"` to valid enums.
-- [ ] **CORE-STS-B1 Boundary**: `ParseStatus` trims whitespace and handles case insensitivity (`"TODO"` -> `StatusTodo`).
-- [ ] **CORE-STS-F1 Injected Failure**: Invalid string `"review"` returns `ErrInvalidStatus`. Invalid transition `done -> blocked` returns `ErrInvalidStatusTransition`. Reopening `done -> in-progress` succeeds.
-- [ ] **CORE-PRI-N1 Normal Path**: `ParsePriority` converts `"urgent"`, `"high"`, `"medium"`, `"low"` and integers 1–4 to `Priority` enums.
-- [ ] **CORE-PRI-B1 Boundary**: Invalid priority strings or integers outside 1–4 return `ErrInvalidPriority`.
-- [ ] **CORE-TAG-N1 Normal Path**: `NormalizeTag` converts `"#Backend"` to `Tag("backend")`. Deduplicates duplicate tags in slice and sorts lexicographically.
-- [ ] **CORE-TAG-B1 Boundary**: Tag containing spaces or invalid symbols returns `ErrInvalidTag`. Tags exceeding 32 characters are rejected.
+- [x] **CORE-STS-N1 Normal Path**: `ParseStatus` converts `"todo"`, `"in-progress"`, `"blocked"`, `"done"` to valid enums.
+- [x] **CORE-STS-B1 Boundary**: `ParseStatus` trims whitespace and handles case insensitivity (`"TODO"` -> `StatusTodo`).
+- [x] **CORE-STS-F1 Injected Failure**: Invalid string `"review"` returns `ErrInvalidStatus`. Invalid transition `done -> blocked` returns `ErrInvalidStatusTransition`. Reopening `done -> in-progress` succeeds.
+- [x] **CORE-PRI-N1 Normal Path**: `ParsePriority` converts `"urgent"`, `"high"`, `"medium"`, `"low"` and integers 1–4 to `Priority` enums.
+- [x] **CORE-PRI-B1 Boundary**: Invalid priority strings or integers outside 1–4 return `ErrInvalidPriority`.
+- [x] **CORE-TAG-N1 Normal Path**: `NormalizeTag` converts `"#Backend"` to `Tag("backend")`. Deduplicates duplicate tags in slice and sorts lexicographically.
+- [x] **CORE-TAG-B1 Boundary**: Tag containing spaces or invalid symbols returns `ErrInvalidTag`. Tags exceeding 32 characters are rejected.
 
 ### Task Entity & State Transitions
-- [ ] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, and non-zero `CreatedAt`/`UpdatedAt`.
-- [ ] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 100$, rejecting out-of-bounds with `ErrInvalidProgress`.
-- [ ] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil` and updates `UpdatedAt`. `SetParent` updates `ParentID` and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
+- [x] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, and non-zero `CreatedAt`/`UpdatedAt`.
+- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 100$, rejecting out-of-bounds with `ErrInvalidProgress`.
+- [x] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil` and updates `UpdatedAt`. `SetParent` updates `ParentID` and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
 
 ### Mathematical Progress Rollup
-- [ ] **CORE-ROL-N1 Normal Path**: Leaf task preserves explicitly assigned manual progress ($0 \le \text{progress} \le 99$) or evaluates to $100\%$ when `StatusDone`.
-- [ ] **CORE-ROL-B1 Boundary**: Integer floor rounding: subtasks with progresses [100, 0, 0] calculate parent progress as $\lfloor \frac{100}{3} \rfloor = 33\%$.
-- [ ] **CORE-ROL-P1 Property Invariant**: If all direct subtasks have `status == StatusDone`, rollup progress is strictly $100\%$ regardless of individual child progress integers.
+- [x] **CORE-ROL-N1 Normal Path**: Leaf task preserves explicitly assigned manual progress ($0 \le \text{progress} \le 99$) or evaluates to $100\%$ when `StatusDone`.
+- [x] **CORE-ROL-B1 Boundary**: Integer floor rounding: subtasks with progresses [100, 0, 0] calculate parent progress as $\lfloor \frac{100}{3} \rfloor = 33\%$.
+- [x] **CORE-ROL-P1 Property Invariant**: If all direct subtasks have `status == StatusDone`, rollup progress is strictly $100\%$ regardless of individual child progress integers.
 
 ### Tree Traversal, Hierarchy & Cycle Prevention
-- [ ] **CORE-TRE-N1 Normal Path**: `BuildTree` assembles a list of flat tasks into a forest of `TaskNode` trees with correct `Depth` attributes.
-- [ ] **CORE-TRE-B1 Boundary**: Root promotion with `nil` `proposedParentID` returns `nil` without invoking lookup. Subtree reparenting validates `parentDepth + 1 + taskSubtreeDepth <= MaxHierarchyDepth`, returning `ErrMaxDepthExceeded` if exceeded.
-- [ ] **CORE-TRE-F1 Cycle & Orphan Injection**: In an existing tree `A -> B -> C`, attempting to set `A.ParentID = &C` fails cycle check with `ErrCyclicDependency`. `BuildTree` returns `ErrTaskNotFound` if parent ID is missing from slice.
-- [ ] **CORE-TRE-BM1 Benchmark**: `DetectCycles` traversal on a 10-level hierarchy completes in $< 500\text{ns}$ per check.
+- [x] **CORE-TRE-N1 Normal Path**: `BuildTree` assembles a list of flat tasks into a forest of `TaskNode` trees with correct `Depth` attributes.
+- [x] **CORE-TRE-B1 Boundary**: Root promotion with `nil` `proposedParentID` returns `nil` without invoking lookup. Subtree reparenting validates `parentDepth + 1 + taskSubtreeDepth <= MaxHierarchyDepth`, returning `ErrMaxDepthExceeded` if exceeded.
+- [x] **CORE-TRE-F1 Cycle & Orphan Injection**: In an existing tree `A -> B -> C`, attempting to set `A.ParentID = &C` fails cycle check with `ErrCyclicDependency`. `BuildTree` returns `ErrTaskNotFound` if parent ID is missing from slice.
+- [x] **CORE-TRE-BM1 Benchmark**: `DetectCycles` traversal on a 10-level hierarchy completes in $< 500\text{ns}$ per check (observed 298ns, 0 allocs).
 
 ### Filtering & Sorting
-- [ ] **CORE-FLT-N1 Normal Path**: `FilterTasks` accurately filters a list by status slice, priority slice, tag intersection, title substring, and `RootOnly` flag.
-- [ ] **CORE-FLT-B1 Boundary & Sorting**: Multi-key sort with `SortByDueDate` places `nil` due dates last on `SortAsc` (first on `SortDesc`), with `SortByID ASC` deterministic final tie-breaker.
-- [ ] **CORE-FLT-C1 Zero-Match Edge Case**: Queries matching zero tasks return empty non-nil slices.
+- [x] **CORE-FLT-N1 Normal Path**: `FilterTasks` accurately filters a list by status slice, priority slice, tag intersection, title substring, and `RootOnly` flag.
+- [x] **CORE-FLT-B1 Boundary & Sorting**: Multi-key sort with `SortByDueDate` places `nil` due dates last on `SortAsc` (first on `SortDesc`), with `SortByID ASC` deterministic final tie-breaker.
+- [x] **CORE-FLT-C1 Zero-Match Edge Case**: Queries matching zero tasks return empty non-nil slices.
 
 ---
 
@@ -104,6 +104,6 @@ evidence-scope: Planning only
 
 *(This section will be populated with execution timestamps, commit SHAs, and test outputs during the implementation phase.)*
 
-| Date | Commit SHA | Environment | Command | Result | Evidence Ref |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| *Planned* | *Pending* | Go 1.24 Linux x86_64 | `go test -v ./internal/core/...` | *Pending* | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `HEAD` | Go 1.24 Linux x86_64 | `make validate` | Pass (0 race, 0 vet) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `HEAD` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (97.2% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `HEAD` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal ./internal/core/...` | Pass (298ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
