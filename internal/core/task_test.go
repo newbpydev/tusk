@@ -442,6 +442,13 @@ func TestTask_SetRollupProgress(t *testing.T) {
 	if parent.Progress != 100 {
 		t.Errorf("expected parent.Progress = 100 on done task, got %d", parent.Progress)
 	}
+
+	// Parent with invalid status enum is rejected with ErrInvalidStatus
+	badParent := core.Task{ID: "bad", Title: "Bad", Status: core.Status("archived"), Progress: 50}
+	err = badParent.SetRollupProgress(50, subtasks, now.Add(25*time.Minute))
+	if !errors.Is(err, core.ErrInvalidStatus) {
+		t.Errorf("expected ErrInvalidStatus when parent has invalid status, got %v", err)
+	}
 }
 
 func TestTask_RollupSubtasksRemoved(t *testing.T) {

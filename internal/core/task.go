@@ -198,16 +198,21 @@ func (t *Task) SetProgress(progress int, now time.Time) error {
 }
 
 // SetRollupProgress sets progress computed by the rollup engine (0-100).
-// For non-done tasks with subtasks, every subtask must carry a valid status enum
-// and every non-done subtask must carry valid stored progress (0-100); progress
-// must match CalculateProgress(*t, subtasks).
+// The parent task must carry a valid status enum; for non-done tasks with
+// subtasks, every subtask must carry a valid status enum and every non-done
+// subtask must carry valid stored progress (0-100); progress must match
+// CalculateProgress(*t, subtasks).
 // CalculateProgress clamps corrupt values for display purposes only; this setter
 // rejects corrupt child data so invalid rows cannot enter the persisted rollup lifecycle.
 // Setting 100 on a non-done parent requires complete subtasks.
-// Returns ErrInvalidStatus on invalid child status enums, ErrInvalidProgress on
-// out-of-bounds inputs, corrupt subtask progress, value mismatches with subtasks,
-// or if attempting to set 100 on a non-done parent without complete subtasks.
+// Returns ErrInvalidStatus on invalid parent or child status enums,
+// ErrInvalidProgress on out-of-bounds inputs, corrupt subtask progress,
+// value mismatches with subtasks, or if attempting to set 100 on a non-done
+// parent without complete subtasks.
 func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) error {
+	if !t.Status.IsValid() {
+		return fmt.Errorf("task %s has invalid status %q: %w", t.ID, string(t.Status), ErrInvalidStatus)
+	}
 	if progress < 0 || progress > 100 {
 		return ErrInvalidProgress
 	}

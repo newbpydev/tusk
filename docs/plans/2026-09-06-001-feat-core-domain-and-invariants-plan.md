@@ -174,8 +174,8 @@ func (t *Task) ResetLeaf(manualProgress int, subtasks []Task, now time.Time) err
 ```
 **Entity Mutation Contracts**:
 - `SetParent` reassigns `ParentID` and updates `UpdatedAt = now`. Returns `ErrSelfParenting` if `parentID != nil && *parentID == t.ID`.
-- `SetProgress` sets manual leaf progress ($0 \le \text{progress} \le 99$ for non-done tasks, strictly $100$ for done tasks), returning `ErrInvalidProgress` on out-of-bounds inputs or when attempting to set 100 on a non-done task, and updates `UpdatedAt = now`.
-- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). For non-done tasks with subtasks, every subtask must carry a valid status enum and every non-done subtask must carry valid stored progress ($0 \le \text{progress} \le 100$), and progress must match `CalculateProgress(*t, subtasks)`, returning `ErrInvalidStatus` on corrupt child status or `ErrInvalidProgress` on corrupt child data or value mismatches. Setting 100 on a non-done parent requires subtasks to be provided and all complete.
+- `SetProgress` sets manual leaf progress ($0 \le \text{progress} \le 99$ for non-done tasks, strictly $100$ for done tasks), returning `ErrInvalidProgress` on out-of-bounds inputs or when attempting to set 100 on a non-done task, and updates `UpdatedAt = now`. Leaf-only precondition: the core entity cannot see its subtask set, so callers must route parent updates through `SetRollupProgress` (or guarded `ResetLeaf` for leaf resets); the service boundary owns this routing.
+- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). The parent must carry a valid status enum, and for non-done tasks with subtasks, every subtask must carry a valid status enum and every non-done subtask must carry valid stored progress ($0 \le \text{progress} \le 100$), and progress must match `CalculateProgress(*t, subtasks)`, returning `ErrInvalidStatus` on corrupt parent or child status or `ErrInvalidProgress` on corrupt child data or value mismatches. Setting 100 on a non-done parent requires subtasks to be provided and all complete.
 - `ResetLeaf` resets a task whose subtasks were removed back to leaf status with explicit manual progress ($0 \le \text{progress} \le 99$ on non-done, $100$ on done). Requires subtasks to be provided and empty (`len(subtasks) == 0`). Non-restorative child deletion policy: Because SQLite persistence stores a single progress column, child removal does not preserve historical pre-rollup manual values across restarts; `ResetLeaf` explicitly resets leaf progress to a caller-supplied baseline.
 - `Clone` returns a deep copy of `Task` with independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`).
 
@@ -361,8 +361,8 @@ Verification: `go test -v -run TestTask ./internal/core/...`
 | **Status State Machine** | Unit 001-2 | CORE-STS-N1, CORE-STS-B1, CORE-STS-F1 | Focused unit |
 | **Priority Weighting** | Unit 001-2 | CORE-PRI-N1, CORE-PRI-B1 | Focused unit |
 | **Tag Normalization** | Unit 001-2 | CORE-TAG-N1, CORE-TAG-B1 | Focused unit |
-| **Task Lifecycle & Dates** | Unit 001-3 | CORE-TSK-N1, CORE-TSK-B1, CORE-TSK-R1 | Focused unit |
-| **Progress Rollup Math** | Unit 001-4 | CORE-ROL-N1, CORE-ROL-B1, CORE-ROL-P1 | Focused property/table |
+| **Task Lifecycle & Dates** | Unit 001-3 | CORE-TSK-N1, CORE-TSK-B1, CORE-TSK-C1, CORE-TSK-R1 | Focused unit |
+| **Progress Rollup Math** | Unit 001-4 | CORE-ROL-N1, CORE-ROL-B1, CORE-ROL-P1, CORE-ROL-P2 | Focused property/table |
 | **Cycle & Tree Invariants** | Unit 001-5 | CORE-TRE-N1, CORE-TRE-B1, CORE-TRE-F1, CORE-TRE-BM1 | Focused graph/benchmark |
 | **Filtering & Sorting** | Unit 001-6 | CORE-FLT-N1, CORE-FLT-B1, CORE-FLT-C1 | Focused unit |
 | **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ target; 98.2% measured) |
@@ -382,10 +382,12 @@ Verification: `go test -v -run TestTask ./internal/core/...`
 | `CORE-TAG-B1` | Tags with invalid characters return `ErrInvalidTag` | `TestNormalizeTag_Invalid` | `go test -v -run TestNormalizeTag ./internal/core/...` |
 | `CORE-TSK-N1` | NewTask validates title length 1–255, sets initial timestamps | `TestNewTask_Validation` | `go test -v -run TestNewTask ./internal/core/...` |
 | `CORE-TSK-B1` | TransitionTo sets/clears CompletedAt appropriately | `TestTask_TransitionToDone_And_Reopen` | `go test -v -run TestTask ./internal/core/...` |
+| `CORE-TSK-C1` | Task.Clone returns fully independent pointer and slice fields with nil-vs-empty preservation | `TestTask_Clone`, `TestTask_Clone_NilFields`, `TestTask_Clone_FieldExhaustiveness` | `go test -v -run TestTask_Clone ./internal/core/...` |
 | `CORE-TSK-R1` | SetParent updates UpdatedAt; self-parenting returns ErrSelfParenting | `TestTask_SetParent` | `go test -v -run TestTask ./internal/core/...` |
 | `CORE-ROL-N1` | Leaf task progress preserves manual progress or 100 on done | `TestCalculateProgress_Leaf` | `go test -v -run TestCalculateProgress ./internal/core/...` |
 | `CORE-ROL-B1` | Floor integer arithmetic rounds down proportionally | `TestCalculateProgress_FloorRounding` | `go test -v -run TestCalculateProgress ./internal/core/...` |
 | `CORE-ROL-P1` | Rollup average of subtasks clamped to 0–100 | `TestCalculateProgress_Subtasks`, `TestCalculateProgress_AllDone` | `go test -v -run TestCalculateProgress ./internal/core/...` |
+| `CORE-ROL-P2` | Intermediate rolled-up 100% progress preserved through nested grandparent rollup | `TestCalculateProgress_NestedHierarchy100` | `go test -v -run TestCalculateProgress ./internal/core/...` |
 | `CORE-TRE-N1` | BuildTree groups roots and children into hierarchical forest | `TestBuildTree_Forest` | `go test -v -run TestBuildTree ./internal/core/...` |
 | `CORE-TRE-B1` | Root promotion with nil proposedParentID succeeds; subtree depth validated | `TestDetectCycles_RootPromotion`, `TestValidateHierarchyDepth_Subtree` | `go test -v -run "TestDetectCycles\|TestValidateHierarchyDepth" ./internal/core/...` |
 | `CORE-TRE-F1` | Cyclic references return ErrCyclicDependency; orphans return ErrTaskNotFound | `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestBuildTree_Errors` | `go test -v -run "TestDetectCycles\|TestBuildTree" ./internal/core/...` |
