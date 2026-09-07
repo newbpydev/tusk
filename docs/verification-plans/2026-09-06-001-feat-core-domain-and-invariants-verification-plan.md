@@ -12,7 +12,7 @@ evidence-scope: Verified local execution
 
 - **Behavior Under Test**: Pure Go domain logic, strongly typed value objects (`Status`, `Priority`, `Tag`), task state machine lifecycle with timestamp tracking, integer mathematical progress rollup, cycle-free recursive tree validation, and deterministic filtering/sorting.
 - **Public Contracts**:
-  - `internal/core/errors.go`: 15 domain error sentinels (including `ErrInvalidProgress`).
+  - `internal/core/errors.go`: 14 domain error sentinels (including `ErrInvalidProgress`).
   - `internal/core/status.go`: `ParseStatus`, `Status.CanTransitionTo`.
   - `internal/core/priority.go`: `ParsePriority`, `Priority.Weight`.
   - `internal/core/tag.go`: `NormalizeTag`, `NormalizeTags`, `NormalizeTagSlice`.
@@ -46,7 +46,7 @@ evidence-scope: Verified local execution
 ## 3. Scenarios
 
 ### Error Taxonomy
-- [x] **CORE-ERR-N1 Normal Path**: All 15 error sentinels (`ErrTaskNotFound`, `ErrCyclicDependency`, `ErrInvalidProgress`, `ErrInvalidTaskID`, `ErrDuplicateTaskID`, `ErrInvalidDepth`, `ErrTraversalLimitExceeded`, etc.) have distinct error string representations and non-nil identity.
+- [x] **CORE-ERR-N1 Normal Path**: All 14 error sentinels (`ErrTaskNotFound`, `ErrCyclicDependency`, `ErrInvalidProgress`, `ErrInvalidTaskID`, `ErrDuplicateTaskID`, `ErrInvalidDepth`, `ErrSelfParenting`, etc.) have distinct error string representations and non-nil identity.
 - [x] **CORE-ERR-B1 Boundary**: Wrapped errors (`fmt.Errorf("context: %w", ErrEmptyTitle)`) correctly unwrap and match via `errors.Is`.
 
 ### Value Objects (`Status`, `Priority`, `Tag`)
@@ -60,7 +60,7 @@ evidence-scope: Verified local execution
 
 ### Task Entity & State Transitions
 - [x] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, non-zero `CreatedAt`/`UpdatedAt`, `IsRoot() == true` (`ParentID == nil`), and `IsDone() == false`.
-- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` enforces exact match against `CalculateProgress` when subtasks are supplied to non-done tasks, and requires complete subtasks when setting 100 on a non-done parent. `ResetLeaf` restores manual leaf progress when subtasks are empty (`len(subtasks) == 0`).
+- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` enforces exact match against `CalculateProgress` when subtasks are supplied to non-done tasks, and requires complete subtasks when setting 100 on a non-done parent. `ResetLeaf` explicitly resets leaf progress under non-restorative deletion policy when subtasks are empty (`len(subtasks) == 0`).
 - [x] **CORE-TSK-C1 Defensive Copying**: `Task.Clone` returns fully independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`), with nil-vs-empty slice preservation and reflection-based field-exhaustiveness enforcement.
 - [x] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil`, `IsDone() == false`, and updates `UpdatedAt`. Transition to `StatusDone` sets `IsDone() == true`. `SetParent` updates `ParentID`, `IsRoot() == (ParentID == nil)`, and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
 

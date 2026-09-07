@@ -16,6 +16,10 @@ type TaskNode struct {
 // DetectCycles traverses the ancestor chain of proposedParentID using lookupParent
 // to verify that attaching taskID under proposedParentID does not create a cycle.
 //
+// Graph Finiteness Assumption:
+// In storage-backed operation, the task graph is finite; traversal is guaranteed to
+// terminate either by reaching a root (ancestorID == nil) or by revisiting an ancestor (ErrCyclicDependency).
+//
 // Rules:
 // 1. If proposedParentID == nil, returns nil immediately (root promotion is always cycle-free).
 // 2. If taskID == *proposedParentID, returns ErrSelfParenting.
@@ -77,6 +81,10 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 
 // ValidateHierarchyDepth validates that attaching a task (with descendant depth taskSubtreeDepth)
 // under proposedParentID will not violate MaxHierarchyDepth.
+//
+// Graph Finiteness Assumption:
+// In storage-backed operation, the task graph is finite; traversal is guaranteed to
+// terminate either by reaching a root (ancestorID == nil) or by revisiting an ancestor (ErrCyclicDependency).
 //
 // Depth of root = 1.
 // parentDepth = depth of proposedParentID from its root.

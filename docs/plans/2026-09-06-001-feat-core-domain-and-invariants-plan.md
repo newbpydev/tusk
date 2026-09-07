@@ -72,7 +72,6 @@ const (
 	ErrInvalidTaskID           = Error("invalid task id: id cannot be empty")
 	ErrDuplicateTaskID         = Error("duplicate task id in hierarchy")
 	ErrInvalidDepth            = Error("invalid hierarchy depth: depth cannot be negative")
-	ErrTraversalLimitExceeded  = Error("hierarchy traversal limit exceeded")
 )
 ```
 
@@ -177,7 +176,7 @@ func (t *Task) ResetLeaf(manualProgress int, subtasks []Task, now time.Time) err
 - `SetParent` reassigns `ParentID` and updates `UpdatedAt = now`. Returns `ErrSelfParenting` if `parentID != nil && *parentID == t.ID`.
 - `SetProgress` sets manual leaf progress ($0 \le \text{progress} \le 99$ for non-done tasks, strictly $100$ for done tasks), returning `ErrInvalidProgress` on out-of-bounds inputs or when attempting to set 100 on a non-done task, and updates `UpdatedAt = now`.
 - `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). For non-done tasks with subtasks, progress must match `CalculateProgress(*t, subtasks)`, returning `ErrInvalidProgress` on value mismatches. Setting 100 on a non-done parent requires subtasks to be provided and all complete.
-- `ResetLeaf` resets a task whose subtasks were removed back to leaf status with explicit manual progress ($0 \le \text{progress} \le 99$ on non-done, $100$ on done). Requires subtasks to be provided and empty (`len(subtasks) == 0`).
+- `ResetLeaf` resets a task whose subtasks were removed back to leaf status with explicit manual progress ($0 \le \text{progress} \le 99$ on non-done, $100$ on done). Requires subtasks to be provided and empty (`len(subtasks) == 0`). Non-restorative child deletion policy: Because SQLite persistence stores a single progress column, child removal does not preserve historical pre-rollup manual values across restarts; `ResetLeaf` explicitly resets leaf progress to a caller-supplied baseline.
 - `Clone` returns a deep copy of `Task` with independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`).
 
 ### 2.5 Progress Rollup Engine (`internal/core/rollup.go`)

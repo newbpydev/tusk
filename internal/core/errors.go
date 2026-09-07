@@ -23,7 +23,6 @@ const (
 	ErrInvalidTaskID           = Error("invalid task id: id cannot be empty")
 	ErrDuplicateTaskID         = Error("duplicate task id in hierarchy")
 	ErrInvalidDepth            = Error("invalid hierarchy depth: depth cannot be negative")
-	ErrTraversalLimitExceeded  = Error("hierarchy traversal limit exceeded")
 )
 
 type SelfParentingError string

@@ -25,7 +25,7 @@ evidence-scope: Verified local execution
 | **CORE-ISS-011** | Doc Review | Determinism / Sorting | P2 | Fixed in Plan | `SortTasks` with `SortByDueDate` lacked nulls-last ordering and deterministic tie-breaker. | Specified nulls-last on `SortAsc` and implicit `SortByID ASC` final tie-breaker. | Unit 001-6 tests (`TestSortTasks_MultiKey`, `CORE-FLT-B1`). |
 | **CORE-ISS-012** | Doc Review | Lifecycle / Entity Mutation | P2 | Fixed in Plan | `Task` entity omitted dedicated `SetParent` method, risking stale `UpdatedAt` on reparenting. | Added `func (t *Task) SetParent(parentID *string, now time.Time) error` with `ErrSelfParenting` check. | Unit 001-3 tests (`TestTask_SetParent`, `CORE-TSK-R1`). |
 | **CORE-ISS-013** | Doc Review | Architecture / Query Boundaries | P2 | Fixed in Plan | In-memory filtering and sorting created apparent duplication with SQLite storage queries. | Delineated operational boundary: in-memory for TUI live search; primary persistence queries in storage repository. | Architecture boundary review in Section 2.7. |
-| **CORE-ISS-014** | Code Review | Error Taxonomy / Hierarchy Guards | P1 | Verified | Missing explicit domain sentinels for empty task IDs, duplicate IDs in trees, negative subtree depths, and traversal exhaustion. | Added `ErrInvalidTaskID`, `ErrDuplicateTaskID`, `ErrInvalidDepth`, and `ErrTraversalLimitExceeded` (15 total sentinels). | Unit tests in `errors_test.go`, `task_test.go`, and `tree_test.go`. |
+| **CORE-ISS-014** | Code Review | Error Taxonomy / Hierarchy Guards | P1 | Verified | Missing explicit domain sentinels for empty task IDs, duplicate IDs in trees, and negative subtree depths. | Added `ErrInvalidTaskID`, `ErrDuplicateTaskID`, and `ErrInvalidDepth` (14 total sentinels). | Unit tests in `errors_test.go`, `task_test.go`, and `tree_test.go`. |
 | **CORE-ISS-015** | Code Review | Defensive Copying / Pointers | P1 | Verified | Value copies in tree/filter paths aliased pointers and slices. | Added `Task.Clone() Task` with nil-preservation and reflection-based field-exhaustiveness test. | Unit tests in `task_test.go` and `filter_test.go` (`CORE-TSK-C1`). |
 | **CORE-ISS-016** | Code Review | Tag Normalization / Triplet | P2 | Verified | Tag slice normalization lacked explicit contract in planning triplet. | Documented `NormalizeTagSlice` in feature plan and verification plan with deduplication and sorting tests. | Unit tests in `tag_test.go` (`CORE-TAG-N1`). |
 ---
@@ -99,7 +99,7 @@ evidence-scope: Verified local execution
 - **Status**: Fixed in Plan
 - **Affected Requirement / Unit**: Unit 001-1 & Unit 001-3 (`internal/core/errors.go`, `internal/core/task.go`)
 - **Planning Gap**: `Task.SetProgress` lacked a typed domain sentinel error and clear separation between manual leaf progress updates and service-layer subtask rollup updates.
-- **Decision & Fix**: Added immutable `ErrInvalidProgress = Error("task progress must be an integer between 0 and 100")`. Specified `SetProgress` for manual leaf updates ($0 \le \text{progress} \le 99$ on non-done tasks, $100$ strictly on done tasks), `SetRollupProgress` for service-layer rollup calculations ($0 \le \text{progress} \le 100$, enforcing exact match with `CalculateProgress(*t, subtasks)` on non-done tasks with subtasks), and `ResetLeaf` to restore manual leaf progress when children are removed.
+- **Decision & Fix**: Added immutable `ErrInvalidProgress = Error("task progress must be an integer between 0 and 100")`. Specified `SetProgress` for manual leaf updates ($0 \le \text{progress} \le 99$ on non-done tasks, $100$ strictly on done tasks), `SetRollupProgress` for service-layer rollup calculations ($0 \le \text{progress} \le 100$, enforcing exact match with `CalculateProgress(*t, subtasks)` on non-done tasks with subtasks), and `ResetLeaf` under a non-restorative deletion policy to assign leaf progress when subtasks are empty (`len(subtasks) == 0`).
 - **Retest / Closure Evidence**: Unit tests `TestTask_SetProgress_Validation`, `TestTask_SetRollupProgress`, `TestTask_ResetLeaf`, and scenarios `CORE-ERR-N1`, `CORE-TSK-B1`, `CORE-ROL-P2`.
 
 ### CORE-ISS-008: ValidateHierarchyDepth Subtree Reparenting
@@ -162,14 +162,14 @@ evidence-scope: Verified local execution
 - **Decision & Fix**: Delineated operational boundary: `core.FilterTasks` serves client-side in-memory live search in the Bubble Tea TUI without database round-trips; storage queries remain in `ports.TaskRepository`.
 - **Retest / Closure Evidence**: Architectural boundary review in Section 2.7.
 
-### CORE-ISS-014: Extension of Domain Error Taxonomy to 15 Sentinels
+### CORE-ISS-014: Extension of Domain Error Taxonomy to 14 Sentinels
 - **Phase Found**: Code Review Audit
 - **Owner / Review Lens**: Correctness & Reliability Lens
 - **Severity**: P1
 - **Status**: Closed - Verified
 - **Affected Requirement / Unit**: Unit 001-1 (`internal/core/errors.go`), Unit 001-3 (`task.go`), Unit 001-5 (`tree.go`)
 - **Defect**: Tree and task validation lacked explicit typed sentinels for empty IDs, duplicate task IDs in trees, negative subtree depths, and traversal-step exhaustion, causing silent misreporting or masking defects as generic cycles.
-- **Decision & Fix**: Defined and tested 4 dedicated sentinels: `ErrInvalidTaskID`, `ErrDuplicateTaskID`, `ErrInvalidDepth`, and `ErrTraversalLimitExceeded`, expanding the taxonomy to 15 sentinels.
+- **Decision & Fix**: Defined and tested dedicated sentinels: `ErrInvalidTaskID`, `ErrDuplicateTaskID`, and `ErrInvalidDepth`, expanding the taxonomy to 14 sentinels while detecting cycles of arbitrary depth without traversal caps.
 - **Retest / Closure Evidence**: Unit tests in `errors_test.go`, `task_test.go`, and `tree_test.go` verifying clean sentinel typing and matching.
 ---
 

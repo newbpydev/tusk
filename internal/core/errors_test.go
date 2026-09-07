@@ -28,7 +28,6 @@ func TestErrorsExist(t *testing.T) {
 		{"ErrInvalidTaskID", core.ErrInvalidTaskID, "invalid task id: id cannot be empty"},
 		{"ErrDuplicateTaskID", core.ErrDuplicateTaskID, "duplicate task id in hierarchy"},
 		{"ErrInvalidDepth", core.ErrInvalidDepth, "invalid hierarchy depth: depth cannot be negative"},
-		{"ErrTraversalLimitExceeded", core.ErrTraversalLimitExceeded, "hierarchy traversal limit exceeded"},
 	}
 
 	seen := make(map[error]string)
@@ -69,7 +68,6 @@ func TestErrors_SentinelIntegrity(t *testing.T) {
 		core.ErrInvalidTaskID,
 		core.ErrDuplicateTaskID,
 		core.ErrInvalidDepth,
-		core.ErrTraversalLimitExceeded,
 	}
 
 	for _, s := range sentinels {
