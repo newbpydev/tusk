@@ -364,6 +364,25 @@ func TestTask_SetRollupProgress(t *testing.T) {
 		t.Errorf("expected ErrInvalidProgress when subtask has corrupt progress > 100, got %v", err)
 	}
 
+	// When subtasks are provided, progress must match CalculateProgress
+	// childWith20 has 20% progress; passing 99% must be rejected
+	childWith20, _ := core.NewTask(core.NewTaskParams{ID: "c-20", Title: "C20", Now: now})
+	_ = childWith20.TransitionTo(core.StatusInProgress, now)
+	_ = childWith20.SetProgress(20, now)
+	err = parent.SetRollupProgress(99, []core.Task{*childWith20}, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when progress 99 does not match subtasks rollup 20, got %v", err)
+	}
+
+	// Passing matching progress 20 succeeds
+	err = parent.SetRollupProgress(20, []core.Task{*childWith20}, now)
+	if err != nil {
+		t.Errorf("expected matching rollup progress 20 to succeed, got %v", err)
+	}
+	if parent.Progress != 20 {
+		t.Errorf("parent.Progress = %d, want 20", parent.Progress)
+	}
+
 	// Setting 100 on non-done parent with complete subtasks succeeds
 	tUpdate := now.Add(5 * time.Minute)
 	err = parent.SetRollupProgress(100, subtasks, tUpdate)

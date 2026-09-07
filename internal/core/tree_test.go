@@ -134,6 +134,40 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	if !errors.Is(err, core.ErrCyclicDependency) {
 		t.Errorf("expected ErrCyclicDependency for 11-node cyclic loop, got %v", err)
 	}
+
+	// 1001-node cyclic loop: L1001 -> L1000 -> ... -> L1 -> L1001
+	// Must return ErrCyclicDependency, detecting cycle closing on traversal boundary
+	cycle1001Parents := make(map[string]*string)
+	for i := 1; i <= 1001; i++ {
+		var next string
+		if i == 1 {
+			next = "L1001"
+		} else {
+			next = fmt.Sprintf("L%d", i-1)
+		}
+		cycle1001Parents[fmt.Sprintf("L%d", i)] = ptr(next)
+	}
+	lookup1001Cycle := func(id string) (*string, error) {
+		return cycle1001Parents[id], nil
+	}
+	err = core.ValidateHierarchyDepth(0, "L1001", lookup1001Cycle)
+	if !errors.Is(err, core.ErrCyclicDependency) {
+		t.Errorf("expected ErrCyclicDependency for 1001-node cyclic loop, got %v", err)
+	}
+
+	// Fake chain exceeding maxTraversalSteps returns ErrTraversalLimitExceeded
+	acyclicParents := make(map[string]*string)
+	for i := 2; i <= 1005; i++ {
+		acyclicParents[fmt.Sprintf("A%d", i)] = ptr(fmt.Sprintf("A%d", i-1))
+	}
+	acyclicParents["A1"] = nil
+	lookupAcyclic := func(id string) (*string, error) {
+		return acyclicParents[id], nil
+	}
+	err = core.ValidateHierarchyDepth(0, "A1005", lookupAcyclic)
+	if !errors.Is(err, core.ErrTraversalLimitExceeded) {
+		t.Errorf("expected ErrTraversalLimitExceeded for >1000-deep chain, got %v", err)
+	}
 }
 
 func TestBuildTree_Forest(t *testing.T) {
@@ -220,6 +254,21 @@ func TestBuildTree_Errors(t *testing.T) {
 	_, err = core.BuildTree(chainTasks)
 	if !errors.Is(err, core.ErrMaxDepthExceeded) {
 		t.Errorf("expected ErrMaxDepthExceeded for 11-level chain, got %v", err)
+	}
+
+	// Graph containing BOTH an 11-level rooted chain AND a disconnected cycle
+	// Cycle detection must take precedence over depth limits (returns ErrCyclicDependency, not ErrMaxDepthExceeded)
+	chainWithCycle := make([]core.Task, len(chainTasks))
+	copy(chainWithCycle, chainTasks)
+	c1P := "cycle-2"
+	c2P := "cycle-1"
+	chainWithCycle = append(chainWithCycle,
+		core.Task{ID: "cycle-1", Title: "C1", ParentID: &c1P},
+		core.Task{ID: "cycle-2", Title: "C2", ParentID: &c2P},
+	)
+	_, err = core.BuildTree(chainWithCycle)
+	if !errors.Is(err, core.ErrCyclicDependency) {
+		t.Errorf("expected ErrCyclicDependency when both deep chain and cycle are present, got %v", err)
 	}
 
 	// Empty ID in BuildTree

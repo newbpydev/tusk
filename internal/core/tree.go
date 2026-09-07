@@ -97,8 +97,11 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 		visited[currentID] = struct{}{}
 
 		if step == maxTraversalSteps-1 {
-			if parentDepth > MaxHierarchyDepth {
-				return ErrMaxDepthExceeded
+			nextAncestor, err := lookupParent(currentID)
+			if err == nil && nextAncestor != nil {
+				if _, loop := visited[*nextAncestor]; loop {
+					return ErrCyclicDependency
+				}
 			}
 			return ErrTraversalLimitExceeded
 		}
@@ -165,6 +168,42 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 				return nil, fmt.Errorf("task %s references unknown parent %s: %w", id, parentID, ErrTaskNotFound)
 			}
 			parent.Children = append(parent.Children, node)
+		}
+	}
+
+	// Cycle check: verify the entire graph is acyclic before evaluating component depth limits.
+	// 0 = unvisited, 1 = visiting (in current ancestor stack), 2 = visited (known acyclic)
+	cycleState := make(map[string]int, len(tasks))
+	for _, t := range tasks {
+		id := strings.TrimSpace(t.ID)
+		if cycleState[id] == 2 {
+			continue
+		}
+		curr := id
+		for curr != "" {
+			st := cycleState[curr]
+			if st == 1 {
+				return nil, ErrCyclicDependency
+			}
+			if st == 2 {
+				break
+			}
+			cycleState[curr] = 1
+			node := taskMap[curr]
+			if node.Task.ParentID == nil {
+				break
+			}
+			curr = strings.TrimSpace(*node.Task.ParentID)
+		}
+		// Mark all nodes traversed in this chain as visited (2)
+		curr = id
+		for curr != "" && cycleState[curr] == 1 {
+			cycleState[curr] = 2
+			node := taskMap[curr]
+			if node.Task.ParentID == nil {
+				break
+			}
+			curr = strings.TrimSpace(*node.Task.ParentID)
 		}
 	}
 

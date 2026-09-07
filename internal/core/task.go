@@ -115,7 +115,7 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 		completed := now
 		t.CompletedAt = &completed
 		t.Progress = 100
-	} else if prevStatus == StatusDone {
+	} else if prevStatus == StatusDone || t.CompletedAt != nil {
 		t.CompletedAt = nil
 		t.Progress = 0
 	}
@@ -198,8 +198,9 @@ func (t *Task) SetProgress(progress int, now time.Time) error {
 }
 
 // SetRollupProgress sets progress computed by the rollup engine (0-100).
-// Setting 100 on a non-done parent requires subtasks to be provided and all complete.
-// Returns ErrInvalidProgress if progress < 0, progress > 100, progress != 100 on a done task,
+// When subtasks are provided, progress must match CalculateProgress(*t, subtasks).
+// Setting 100 on a non-done parent requires complete subtasks.
+// Returns ErrInvalidProgress on out-of-bounds inputs, value mismatches with subtasks,
 // or if attempting to set 100 on a non-done parent without complete subtasks.
 func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) error {
 	if progress < 0 || progress > 100 {
@@ -208,15 +209,13 @@ func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) e
 	if t.Status == StatusDone && progress != 100 {
 		return ErrInvalidProgress
 	}
-	if t.Status != StatusDone && progress == 100 {
-		if len(subtasks) == 0 {
-			return fmt.Errorf("setting 100 on non-done task requires complete subtasks: %w", ErrInvalidProgress)
+	if len(subtasks) > 0 {
+		expected := CalculateProgress(*t, subtasks)
+		if progress != expected {
+			return fmt.Errorf("provided progress %d does not match calculated rollup %d: %w", progress, expected, ErrInvalidProgress)
 		}
-		for _, s := range subtasks {
-			if s.Status != StatusDone && s.Progress != 100 {
-				return fmt.Errorf("subtask %s is incomplete: %w", s.ID, ErrInvalidProgress)
-			}
-		}
+	} else if t.Status != StatusDone && progress == 100 {
+		return fmt.Errorf("setting 100 on non-done task requires complete subtasks: %w", ErrInvalidProgress)
 	}
 
 	t.Progress = progress

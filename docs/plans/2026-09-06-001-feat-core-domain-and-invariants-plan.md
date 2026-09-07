@@ -123,6 +123,7 @@ type Tag string
 
 func NormalizeTag(raw string) (Tag, error)
 func NormalizeTags(raw []string) ([]Tag, error)
+func NormalizeTagSlice(raw []Tag) ([]Tag, error)
 func (t Tag) String() string
 ```
 **Normalization Rules**:

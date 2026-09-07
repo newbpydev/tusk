@@ -27,6 +27,7 @@ evidence-scope: Verified local execution
 | **CORE-ISS-013** | Doc Review | Architecture / Query Boundaries | P2 | Fixed in Plan | In-memory filtering and sorting created apparent duplication with SQLite storage queries. | Delineated operational boundary: in-memory for TUI live search; primary persistence queries in storage repository. | Architecture boundary review in Section 2.7. |
 | **CORE-ISS-014** | Code Review | Error Taxonomy / Hierarchy Guards | P1 | Verified | Missing explicit domain sentinels for empty task IDs, duplicate IDs in trees, negative subtree depths, and traversal exhaustion. | Added `ErrInvalidTaskID`, `ErrDuplicateTaskID`, `ErrInvalidDepth`, and `ErrTraversalLimitExceeded` (15 total sentinels). | Unit tests in `errors_test.go`, `task_test.go`, and `tree_test.go`. |
 | **CORE-ISS-015** | Code Review | Defensive Copying / Pointers | P1 | Verified | Value copies in tree/filter paths aliased pointers and slices. | Added `Task.Clone() Task` with nil-preservation and reflection-based field-exhaustiveness test. | Unit tests in `task_test.go` and `filter_test.go` (`CORE-TSK-C1`). |
+| **CORE-ISS-016** | Code Review | Tag Normalization / Triplet | P2 | Verified | Tag slice normalization lacked explicit contract in planning triplet. | Documented `NormalizeTagSlice` in feature plan and verification plan with deduplication and sorting tests. | Unit tests in `tag_test.go` (`CORE-TAG-N1`). |
 ---
 
 ## 2. Issue Details
@@ -194,5 +195,5 @@ evidence-scope: Verified local execution
 - [x] Race detector checks pass (`go test -race -v ./internal/core/...`).
 - [x] Benchmarks pass with expected performance (`go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` observed 301ns/op, 0 allocs; `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` observed 37.8µs/op, 481 allocs across 100 tasks).
 - [x] Aggregate repository validation passes (`make validate`).
-- [x] All issues fixed (CORE-ISS-001 through CORE-ISS-015).
+- [x] All issues fixed (CORE-ISS-001 through CORE-ISS-016).
 - [x] Remaining unaccepted issues: 0.
