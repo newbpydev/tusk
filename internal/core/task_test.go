@@ -411,6 +411,16 @@ func TestTask_SetRollupProgress(t *testing.T) {
 	if !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress when setting <100 on done task, got %v", err)
 	}
+
+	// On a done task, SetRollupProgress(100, incompleteSubtasks, now) succeeds
+	// even if subtasks are incomplete (a done task is definitionally 100)
+	err = parent.SetRollupProgress(100, []core.Task{*childWith20}, now.Add(20*time.Minute))
+	if err != nil {
+		t.Errorf("expected SetRollupProgress(100) on done task with incomplete subtasks to succeed, got %v", err)
+	}
+	if parent.Progress != 100 {
+		t.Errorf("expected parent.Progress = 100 on done task, got %d", parent.Progress)
+	}
 }
 
 func TestTask_DescriptionPreservesMarkdownIndentation(t *testing.T) {

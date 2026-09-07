@@ -75,6 +75,9 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 	if taskSubtreeDepth < 0 {
 		return ErrInvalidDepth
 	}
+	if taskSubtreeDepth > MaxHierarchyDepth {
+		return ErrMaxDepthExceeded
+	}
 	parentDepth := 1
 	currentID := proposedParentID
 
@@ -98,7 +101,10 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 
 		if step == maxTraversalSteps-1 {
 			nextAncestor, err := lookupParent(currentID)
-			if err == nil && nextAncestor != nil {
+			if err != nil {
+				return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
+			}
+			if nextAncestor != nil {
 				if _, loop := visited[*nextAncestor]; loop {
 					return ErrCyclicDependency
 				}
@@ -107,11 +113,7 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 		}
 	}
 
-	if parentDepth > MaxHierarchyDepth {
-		return ErrMaxDepthExceeded
-	}
-
-	if parentDepth+1+taskSubtreeDepth > MaxHierarchyDepth {
+	if parentDepth > MaxHierarchyDepth || taskSubtreeDepth > MaxHierarchyDepth-parentDepth-1 {
 		return ErrMaxDepthExceeded
 	}
 
@@ -215,6 +217,7 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 		if depth > MaxHierarchyDepth {
 			return ErrMaxDepthExceeded
 		}
+		// Defense-in-depth: cycleState check above already guarantees graph is acyclic.
 		if _, seen := visitedNodes[n.Task.ID]; seen {
 			return ErrCyclicDependency
 		}
@@ -236,6 +239,7 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 		}
 	}
 
+	// Defense-in-depth: cycleState and parent existence guarantee all tasks are reachable from roots.
 	if visitedCount != len(tasks) {
 		return nil, ErrCyclicDependency
 	}

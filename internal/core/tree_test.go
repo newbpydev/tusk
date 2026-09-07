@@ -3,6 +3,8 @@ package core_test
 import (
 	"errors"
 	"fmt"
+	"math"
+	"strings"
 	"testing"
 	"time"
 
@@ -167,6 +169,27 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	err = core.ValidateHierarchyDepth(0, "A1005", lookupAcyclic)
 	if !errors.Is(err, core.ErrTraversalLimitExceeded) {
 		t.Errorf("expected ErrTraversalLimitExceeded for >1000-deep chain, got %v", err)
+	}
+
+	// Overflow guard: taskSubtreeDepth = math.MaxInt must return ErrMaxDepthExceeded
+	err = core.ValidateHierarchyDepth(math.MaxInt, "A1005", lookupAcyclic)
+	if !errors.Is(err, core.ErrMaxDepthExceeded) {
+		t.Errorf("expected ErrMaxDepthExceeded for math.MaxInt taskSubtreeDepth, got %v", err)
+	}
+
+	// Boundary lookup failure at step maxTraversalSteps-1 propagates underlying error
+	stepCount := 0
+	lookupFailAtBoundary := func(id string) (*string, error) {
+		stepCount++
+		if stepCount >= 1000 {
+			return nil, errors.New("db connection failure at boundary")
+		}
+		next := fmt.Sprintf("B%d", stepCount)
+		return &next, nil
+	}
+	err = core.ValidateHierarchyDepth(0, "B0", lookupFailAtBoundary)
+	if err == nil || !strings.Contains(err.Error(), "db connection failure at boundary") {
+		t.Errorf("expected boundary lookup error propagation, got %v", err)
 	}
 }
 

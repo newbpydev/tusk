@@ -198,7 +198,7 @@ func (t *Task) SetProgress(progress int, now time.Time) error {
 }
 
 // SetRollupProgress sets progress computed by the rollup engine (0-100).
-// When subtasks are provided, progress must match CalculateProgress(*t, subtasks).
+// For non-done tasks with subtasks, progress must match CalculateProgress(*t, subtasks).
 // Setting 100 on a non-done parent requires complete subtasks.
 // Returns ErrInvalidProgress on out-of-bounds inputs, value mismatches with subtasks,
 // or if attempting to set 100 on a non-done parent without complete subtasks.
@@ -209,13 +209,15 @@ func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) e
 	if t.Status == StatusDone && progress != 100 {
 		return ErrInvalidProgress
 	}
-	if len(subtasks) > 0 {
-		expected := CalculateProgress(*t, subtasks)
-		if progress != expected {
-			return fmt.Errorf("provided progress %d does not match calculated rollup %d: %w", progress, expected, ErrInvalidProgress)
+	if t.Status != StatusDone {
+		if len(subtasks) > 0 {
+			expected := CalculateProgress(*t, subtasks)
+			if progress != expected {
+				return fmt.Errorf("provided progress %d does not match calculated rollup %d: %w", progress, expected, ErrInvalidProgress)
+			}
+		} else if progress == 100 {
+			return fmt.Errorf("setting 100 on non-done task requires complete subtasks: %w", ErrInvalidProgress)
 		}
-	} else if t.Status != StatusDone && progress == 100 {
-		return fmt.Errorf("setting 100 on non-done task requires complete subtasks: %w", ErrInvalidProgress)
 	}
 
 	t.Progress = progress
