@@ -229,6 +229,28 @@ func TestTask_TransitionTo_IdempotentRepair(t *testing.T) {
 	if staleTask.Progress != 0 {
 		t.Errorf("expected Progress to reset to 0 on repair, got %d", staleTask.Progress)
 	}
+	if !staleTask.UpdatedAt.Equal(now.Add(time.Hour)) {
+		t.Errorf("expected UpdatedAt to advance on repair, got %v", staleTask.UpdatedAt)
+	}
+
+	// Repair preserves valid manual progress: stale CompletedAt with 75% keeps 75%
+	staleValid := core.Task{
+		ID:          "stale-valid",
+		Title:       "Stale Valid",
+		Status:      core.StatusInProgress,
+		Progress:    75,
+		CompletedAt: &completedAt,
+		UpdatedAt:   now,
+	}
+	if err := staleValid.TransitionTo(core.StatusInProgress, now.Add(time.Hour)); err != nil {
+		t.Fatalf("idempotent transition failed: %v", err)
+	}
+	if staleValid.CompletedAt != nil {
+		t.Errorf("expected stale CompletedAt to be cleared, got %v", staleValid.CompletedAt)
+	}
+	if staleValid.Progress != 75 {
+		t.Errorf("expected valid Progress 75 to be preserved on repair, got %d", staleValid.Progress)
+	}
 
 	// Hydrated done task with nil CompletedAt is repaired on idempotent transition
 	doneTask := core.Task{
@@ -249,13 +271,21 @@ func TestTask_TransitionTo_IdempotentRepair(t *testing.T) {
 		t.Errorf("expected Progress to be 100, got %d", doneTask.Progress)
 	}
 
-	// Consistent tasks pass through idempotent transitions untouched
-	cleanTask, _ := core.NewTask(core.NewTaskParams{ID: "clean", Title: "Clean", Now: now})
-	if err := cleanTask.TransitionTo(core.StatusTodo, now); err != nil {
-		t.Fatalf("idempotent transition on clean task failed: %v", err)
+	// Consistent done task passes through idempotent transitions untouched
+	consistentDoneAt := now.Add(-2 * time.Hour)
+	consistentDone := core.Task{
+		ID:          "done-clean",
+		Title:       "Done",
+		Status:      core.StatusDone,
+		Progress:    100,
+		CompletedAt: &consistentDoneAt,
+		UpdatedAt:   now,
 	}
-	if cleanTask.CompletedAt != nil || cleanTask.Progress != 0 {
-		t.Errorf("clean task was modified by idempotent transition: %+v", cleanTask)
+	if err := consistentDone.TransitionTo(core.StatusDone, now.Add(3*time.Hour)); err != nil {
+		t.Fatalf("idempotent transition on consistent done task failed: %v", err)
+	}
+	if !consistentDone.CompletedAt.Equal(consistentDoneAt) || consistentDone.Progress != 100 || !consistentDone.UpdatedAt.Equal(now) {
+		t.Errorf("consistent done task was modified by idempotent transition: %+v", consistentDone)
 	}
 }
 
