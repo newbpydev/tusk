@@ -116,6 +116,8 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 			if t.Progress < 0 || t.Progress > 99 {
 				t.Progress = 0
 			}
+		} else if t.Progress < 0 || t.Progress > 99 {
+			t.Progress = 0
 		} else {
 			return nil
 		}
@@ -133,9 +135,14 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 		completed := now
 		t.CompletedAt = &completed
 		t.Progress = 100
-	} else if prevStatus == StatusDone || t.CompletedAt != nil {
+	} else if prevStatus == StatusDone {
 		t.CompletedAt = nil
 		t.Progress = 0
+	} else if t.CompletedAt != nil {
+		t.CompletedAt = nil
+		if t.Progress < 0 || t.Progress > 99 {
+			t.Progress = 0
+		}
 	}
 
 	return nil

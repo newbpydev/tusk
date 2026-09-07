@@ -289,6 +289,72 @@ func TestTask_TransitionTo_IdempotentRepair(t *testing.T) {
 	}
 }
 
+func TestTask_TransitionTo_NonDoneRepair(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	completedAt := now.Add(-time.Hour)
+
+	// Non-done to non-done transition with stale CompletedAt preserves valid progress
+	staleValid := core.Task{
+		ID:          "stale-valid",
+		Title:       "Stale Valid",
+		Status:      core.StatusInProgress,
+		Progress:    75,
+		CompletedAt: &completedAt,
+		UpdatedAt:   now,
+	}
+	if err := staleValid.TransitionTo(core.StatusBlocked, now.Add(time.Hour)); err != nil {
+		t.Fatalf("transition failed: %v", err)
+	}
+	if staleValid.CompletedAt != nil {
+		t.Errorf("expected stale CompletedAt to be cleared, got %v", staleValid.CompletedAt)
+	}
+	if staleValid.Progress != 75 {
+		t.Errorf("expected valid Progress 75 to be preserved, got %d", staleValid.Progress)
+	}
+
+	// Non-done to non-done transition with stale CompletedAt and corrupt progress resets to 0
+	staleCorrupt := core.Task{
+		ID:          "stale-corrupt",
+		Title:       "Stale Corrupt",
+		Status:      core.StatusInProgress,
+		Progress:    150,
+		CompletedAt: &completedAt,
+		UpdatedAt:   now,
+	}
+	if err := staleCorrupt.TransitionTo(core.StatusBlocked, now.Add(time.Hour)); err != nil {
+		t.Fatalf("transition failed: %v", err)
+	}
+	if staleCorrupt.CompletedAt != nil || staleCorrupt.Progress != 0 {
+		t.Errorf("expected cleared CompletedAt and reset Progress 0, got %+v", staleCorrupt)
+	}
+
+	// Idempotent non-done transition repairs invalid progress without a stale timestamp
+	badProgress := core.Task{
+		ID:        "bad-progress",
+		Title:     "Bad Progress",
+		Status:    core.StatusInProgress,
+		Progress:  100,
+		UpdatedAt: now,
+	}
+	if err := badProgress.TransitionTo(core.StatusInProgress, now.Add(time.Hour)); err != nil {
+		t.Fatalf("idempotent transition failed: %v", err)
+	}
+	if badProgress.Progress != 0 {
+		t.Errorf("expected corrupt Progress 100 to be repaired to 0, got %d", badProgress.Progress)
+	}
+
+	// Idempotent non-done transition with valid progress stays untouched
+	steadyTask, _ := core.NewTask(core.NewTaskParams{ID: "steady", Title: "Steady", Now: now})
+	_ = steadyTask.TransitionTo(core.StatusInProgress, now)
+	_ = steadyTask.SetProgress(40, now)
+	if err := steadyTask.TransitionTo(core.StatusInProgress, now.Add(time.Hour)); err != nil {
+		t.Fatalf("idempotent transition failed: %v", err)
+	}
+	if steadyTask.Progress != 40 || !steadyTask.UpdatedAt.Equal(now) {
+		t.Errorf("valid idempotent task was modified: %+v", steadyTask)
+	}
+}
+
 func TestTask_ZeroStatusRejected(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
 
