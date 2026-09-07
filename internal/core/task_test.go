@@ -423,7 +423,7 @@ func TestTask_SetRollupProgress(t *testing.T) {
 	}
 }
 
-func TestTask_ResetLeaf(t *testing.T) {
+func TestTask_RollupSubtasksRemoved(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
 	parent, _ := core.NewTask(core.NewTaskParams{ID: "p", Title: "Parent", Now: now})
 	_ = parent.TransitionTo(core.StatusInProgress, now)
@@ -437,16 +437,20 @@ func TestTask_ResetLeaf(t *testing.T) {
 		t.Fatalf("expected rollup progress 100, got %d", parent.Progress)
 	}
 
-	// Child is removed: call ResetLeaf to restore manual progress baseline
-	err := parent.ResetLeaf(20, now.Add(10*time.Minute))
+	// Child is removed: SetRollupProgress with nil/empty subtasks resets leaf progress
+	tReset := now.Add(10 * time.Minute)
+	err := parent.SetRollupProgress(20, nil, tReset)
 	if err != nil {
-		t.Fatalf("ResetLeaf failed: %v", err)
+		t.Fatalf("SetRollupProgress with empty subtasks failed: %v", err)
 	}
 	if parent.Progress != 20 {
-		t.Errorf("parent.Progress after ResetLeaf = %d, want 20", parent.Progress)
+		t.Errorf("parent.Progress after child removal = %d, want 20", parent.Progress)
+	}
+	if !parent.UpdatedAt.Equal(tReset) {
+		t.Errorf("parent.UpdatedAt = %v, want %v", parent.UpdatedAt, tReset)
 	}
 	if got := core.CalculateProgress(*parent, nil); got != 20 {
-		t.Errorf("CalculateProgress after ResetLeaf = %d, want 20", got)
+		t.Errorf("CalculateProgress after child removal = %d, want 20", got)
 	}
 }
 

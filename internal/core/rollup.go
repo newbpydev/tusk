@@ -16,10 +16,10 @@ package core
 //     progress is strictly 100%, preserving nested completion without degradation.
 //   - Otherwise, the integer floor average is clamped to a maximum of 99% when any subtask remains incomplete.
 func CalculateProgress(task Task, subtasks []Task) int {
+	if task.Status == StatusDone {
+		return 100
+	}
 	if len(subtasks) == 0 {
-		if task.Status == StatusDone {
-			return 100
-		}
 		if task.Progress >= 100 {
 			return 99
 		}

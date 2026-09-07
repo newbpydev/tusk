@@ -189,3 +189,18 @@ func TestCalculateProgress_NestedHierarchy100(t *testing.T) {
 		t.Errorf("expected grandparent CalculateProgress = 100 with 100%% intermediate subtasks, got %d", got)
 	}
 }
+
+func TestCalculateProgress_DoneParentIncompleteSubtasks(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	parent, _ := core.NewTask(core.NewTaskParams{ID: "p", Title: "Parent", Now: now})
+	_ = parent.TransitionTo(core.StatusDone, now)
+
+	childIncomplete, _ := core.NewTask(core.NewTaskParams{ID: "c", Title: "Child", Now: now})
+	_ = childIncomplete.TransitionTo(core.StatusInProgress, now)
+	_ = childIncomplete.SetProgress(20, now)
+
+	// Even though child is 20%, done parent must evaluate to 100%
+	if got := core.CalculateProgress(*parent, []core.Task{*childIncomplete}); got != 100 {
+		t.Errorf("expected done parent with incomplete child to evaluate to 100, got %d", got)
+	}
+}
