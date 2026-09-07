@@ -381,13 +381,13 @@ Verification: `go test -v -run TestTask ./internal/core/...`
 | `CORE-TAG-N1` | Normalization lowercases, trims `#`, strips whitespace, dedupes | `TestNormalizeTag` | `go test -v -run TestNormalizeTag ./internal/core/...` |
 | `CORE-TAG-B1` | Tags with invalid characters return `ErrInvalidTag` | `TestNormalizeTag_Invalid` | `go test -v -run TestNormalizeTag ./internal/core/...` |
 | `CORE-TSK-N1` | NewTask validates title length 1–255, sets initial timestamps | `TestNewTask_Validation` | `go test -v -run TestNewTask ./internal/core/...` |
-| `CORE-TSK-B1` | TransitionTo sets/clears CompletedAt appropriately | `TestTask_TransitionToDone_And_Reopen` | `go test -v -run TestTask ./internal/core/...` |
-| `CORE-TSK-C1` | Task.Clone returns fully independent pointer and slice fields with nil-vs-empty preservation | `TestTask_Clone`, `TestTask_Clone_NilFields`, `TestTask_Clone_FieldExhaustiveness` | `go test -v -run TestTask_Clone ./internal/core/...` |
+| `CORE-TSK-B1` | TransitionTo sets/clears CompletedAt and repairs lifecycle on idempotent calls; SetProgress/SetRollupProgress validate status enums and progress | `TestTask_TransitionToDone_And_Reopen`, `TestTask_TransitionTo_IdempotentRepair`, `TestTask_SetProgress_Validation`, `TestTask_SetRollupProgress`, `TestTask_ResetLeaf`, `TestTask_ZeroStatusRejected` | `make test` |
+| `CORE-TSK-C1` | Task.Clone returns fully independent pointer and slice fields with nil-vs-empty preservation | `TestTask_Clone`, `TestTask_Clone_NilFields`, `TestTask_Clone_FieldExhaustiveness` | `make test` |
 | `CORE-TSK-R1` | SetParent updates UpdatedAt; self-parenting returns ErrSelfParenting | `TestTask_SetParent` | `go test -v -run TestTask ./internal/core/...` |
 | `CORE-ROL-N1` | Leaf task progress preserves manual progress or 100 on done | `TestCalculateProgress_Leaf` | `go test -v -run TestCalculateProgress ./internal/core/...` |
 | `CORE-ROL-B1` | Floor integer arithmetic rounds down proportionally | `TestCalculateProgress_FloorRounding` | `go test -v -run TestCalculateProgress ./internal/core/...` |
 | `CORE-ROL-P1` | Rollup average of subtasks clamped to 0–100 | `TestCalculateProgress_Subtasks`, `TestCalculateProgress_AllDone` | `go test -v -run TestCalculateProgress ./internal/core/...` |
-| `CORE-ROL-P2` | Intermediate rolled-up 100% progress preserved through nested grandparent rollup | `TestCalculateProgress_NestedHierarchy100` | `go test -v -run TestCalculateProgress ./internal/core/...` |
+| `CORE-ROL-P2` | Intermediate rolled-up 100% progress preserved through nested grandparent rollup | `TestCalculateProgress_NestedHierarchy100` | `make test` |
 | `CORE-TRE-N1` | BuildTree groups roots and children into hierarchical forest | `TestBuildTree_Forest` | `go test -v -run TestBuildTree ./internal/core/...` |
 | `CORE-TRE-B1` | Root promotion with nil proposedParentID succeeds; subtree depth validated | `TestDetectCycles_RootPromotion`, `TestValidateHierarchyDepth_Subtree` | `go test -v -run "TestDetectCycles\|TestValidateHierarchyDepth" ./internal/core/...` |
 | `CORE-TRE-F1` | Cyclic references return ErrCyclicDependency; orphans return ErrTaskNotFound | `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestBuildTree_Errors` | `go test -v -run "TestDetectCycles\|TestBuildTree" ./internal/core/...` |

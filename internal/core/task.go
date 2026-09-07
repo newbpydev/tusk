@@ -102,6 +102,19 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 		return ErrInvalidStatusTransition
 	}
 	if t.Status == next {
+		now = normalizeTime(now)
+		if next == StatusDone {
+			if t.CompletedAt == nil {
+				t.CompletedAt = &now
+			}
+			t.Progress = 100
+		} else if t.CompletedAt != nil {
+			t.CompletedAt = nil
+			t.Progress = 0
+		} else {
+			return nil
+		}
+		t.UpdatedAt = now
 		return nil
 	}
 

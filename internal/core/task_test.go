@@ -207,6 +207,79 @@ func TestTask_TransitionToDone_And_Reopen(t *testing.T) {
 	}
 }
 
+func TestTask_TransitionTo_IdempotentRepair(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+
+	// Hydrated in-progress task with stale CompletedAt is repaired on idempotent transition
+	completedAt := now.Add(-time.Hour)
+	staleTask := core.Task{
+		ID:          "stale",
+		Title:       "Stale",
+		Status:      core.StatusInProgress,
+		Progress:    100,
+		CompletedAt: &completedAt,
+		UpdatedAt:   now,
+	}
+	if err := staleTask.TransitionTo(core.StatusInProgress, now.Add(time.Hour)); err != nil {
+		t.Fatalf("idempotent transition failed: %v", err)
+	}
+	if staleTask.CompletedAt != nil {
+		t.Errorf("expected stale CompletedAt to be cleared, got %v", staleTask.CompletedAt)
+	}
+	if staleTask.Progress != 0 {
+		t.Errorf("expected Progress to reset to 0 on repair, got %d", staleTask.Progress)
+	}
+
+	// Hydrated done task with nil CompletedAt is repaired on idempotent transition
+	doneTask := core.Task{
+		ID:        "done-nil",
+		Title:     "Done",
+		Status:    core.StatusDone,
+		Progress:  100,
+		UpdatedAt: now,
+	}
+	tDone := now.Add(2 * time.Hour)
+	if err := doneTask.TransitionTo(core.StatusDone, tDone); err != nil {
+		t.Fatalf("idempotent done transition failed: %v", err)
+	}
+	if doneTask.CompletedAt == nil || !doneTask.CompletedAt.Equal(tDone) {
+		t.Errorf("expected CompletedAt to be set to %v, got %v", tDone, doneTask.CompletedAt)
+	}
+	if doneTask.Progress != 100 {
+		t.Errorf("expected Progress to be 100, got %d", doneTask.Progress)
+	}
+
+	// Consistent tasks pass through idempotent transitions untouched
+	cleanTask, _ := core.NewTask(core.NewTaskParams{ID: "clean", Title: "Clean", Now: now})
+	if err := cleanTask.TransitionTo(core.StatusTodo, now); err != nil {
+		t.Fatalf("idempotent transition on clean task failed: %v", err)
+	}
+	if cleanTask.CompletedAt != nil || cleanTask.Progress != 0 {
+		t.Errorf("clean task was modified by idempotent transition: %+v", cleanTask)
+	}
+}
+
+func TestTask_ZeroStatusRejected(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+
+	// Zero-value status (missing on hydration) is rejected by all progress setters
+	zeroTask := core.Task{ID: "zero", Title: "Zero", Progress: 10, UpdatedAt: now}
+	if err := zeroTask.SetProgress(50, now); !errors.Is(err, core.ErrInvalidStatus) {
+		t.Errorf("expected ErrInvalidStatus for SetProgress with zero status, got %v", err)
+	}
+	child := core.Task{ID: "c", Title: "C", Status: core.StatusTodo}
+	if err := zeroTask.SetRollupProgress(50, []core.Task{child}, now); !errors.Is(err, core.ErrInvalidStatus) {
+		t.Errorf("expected ErrInvalidStatus for SetRollupProgress with zero parent status, got %v", err)
+	}
+
+	parent, _ := core.NewTask(core.NewTaskParams{ID: "p", Title: "Parent", Now: now})
+	_ = parent.TransitionTo(core.StatusInProgress, now)
+	zeroChild := core.Task{ID: "zc", Title: "ZC", Progress: 100}
+	if err := parent.SetRollupProgress(100, []core.Task{zeroChild}, now); !errors.Is(err, core.ErrInvalidStatus) {
+		t.Errorf("expected ErrInvalidStatus for zero-status child, got %v", err)
+	}
+}
+
 func TestTask_SetParent(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
 	task, err := core.NewTask(core.NewTaskParams{

@@ -14,7 +14,7 @@ run_tree() {
     echo "$output" | awk '
     /^BenchmarkTreeTraversal/ {
         seen++
-        sum_ns += $3
+        vals[seen] = $3 + 0.0
         if (($7 + 0) > max_allocs) { max_allocs = $7 + 0 }
     }
     END {
@@ -22,10 +22,16 @@ run_tree() {
             print "Error: no BenchmarkTreeTraversal results parsed"
             exit 1
         }
-        mean_ns = sum_ns / seen
-        printf "Samples: %d, mean %.1fns/op, max %d allocs/op\n", seen, mean_ns, max_allocs
-        if (mean_ns >= 500.0) {
-            printf "Error: BenchmarkTreeTraversal mean %.1fns/op over %d samples exceeds budget of 500ns\n", mean_ns, seen
+        # Median of up to 3 samples resists a single noisy outlier in either direction
+        for (i = 1; i <= seen; i++) {
+            for (j = i + 1; j <= seen; j++) {
+                if (vals[j] < vals[i]) { tmp = vals[i]; vals[i] = vals[j]; vals[j] = tmp }
+            }
+        }
+        median_ns = vals[int((seen + 1) / 2)]
+        printf "Samples: %d, median %.1fns/op, max %d allocs/op\n", seen, median_ns, max_allocs
+        if (median_ns >= 500.0) {
+            printf "Error: BenchmarkTreeTraversal median %.1fns/op over %d samples exceeds budget of 500ns\n", median_ns, seen
             failed = 1
         }
         if (max_allocs > 0) {
@@ -47,7 +53,7 @@ run_build() {
     echo "$output" | awk '
     /^BenchmarkBuildTree/ {
         seen++
-        sum_ns += $3
+        vals[seen] = $3 + 0.0
         if (($7 + 0) > max_allocs) { max_allocs = $7 + 0 }
     }
     END {
@@ -55,11 +61,17 @@ run_build() {
             print "Error: no BenchmarkBuildTree results parsed"
             exit 1
         }
-        mean_ns = sum_ns / seen
-        printf "Samples: %d, mean %.1fns/op, max %d allocs/op\n", seen, mean_ns, max_allocs
-        # 100 tasks per op: budget < 1us/task (< 100,000ns mean) and < 5 allocs/task (< 500 allocs)
-        if (mean_ns >= 100000.0) {
-            printf "Error: BenchmarkBuildTree mean %.1fns/op over %d samples exceeds budget of 100,000ns (<1us/task)\n", mean_ns, seen
+        # Median of up to 3 samples resists a single noisy outlier in either direction
+        for (i = 1; i <= seen; i++) {
+            for (j = i + 1; j <= seen; j++) {
+                if (vals[j] < vals[i]) { tmp = vals[i]; vals[i] = vals[j]; vals[j] = tmp }
+            }
+        }
+        median_ns = vals[int((seen + 1) / 2)]
+        printf "Samples: %d, median %.1fns/op, max %d allocs/op\n", seen, median_ns, max_allocs
+        # 100 tasks per op: budget < 1us/task (< 100,000ns median) and < 5 allocs/task (< 500 allocs)
+        if (median_ns >= 100000.0) {
+            printf "Error: BenchmarkBuildTree median %.1fns/op over %d samples exceeds budget of 100,000ns (<1us/task)\n", median_ns, seen
             failed = 1
         }
         if (max_allocs >= 500) {
