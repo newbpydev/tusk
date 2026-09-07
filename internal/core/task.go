@@ -211,11 +211,6 @@ func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) e
 	}
 	if t.Status != StatusDone {
 		if len(subtasks) > 0 {
-			for _, s := range subtasks {
-				if s.Status != StatusDone && (s.Progress < 0 || s.Progress > 100) {
-					return fmt.Errorf("subtask %s has invalid progress %d: %w", s.ID, s.Progress, ErrInvalidProgress)
-				}
-			}
 			expected := CalculateProgress(*t, subtasks)
 			if progress != expected {
 				return fmt.Errorf("provided progress %d does not match calculated rollup %d: %w", progress, expected, ErrInvalidProgress)

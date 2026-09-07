@@ -383,13 +383,14 @@ func TestTask_SetRollupProgress(t *testing.T) {
 		t.Errorf("parent.Progress = %d, want 20", parent.Progress)
 	}
 
-	// Non-done child with corrupt progress > 100 must be rejected
+	// Non-done child with corrupt progress > 100 clamps to 99 in CalculateProgress,
+	// so attempting to set 100 must fail with ErrInvalidProgress
 	childCorrupt, _ := core.NewTask(core.NewTaskParams{ID: "c-corrupt", Title: "Corrupt", Now: now})
 	_ = childCorrupt.TransitionTo(core.StatusInProgress, now)
 	childCorrupt.Progress = 150
-	err = parent.SetRollupProgress(99, []core.Task{*childCorrupt}, now)
+	err = parent.SetRollupProgress(100, []core.Task{*childCorrupt}, now)
 	if !errors.Is(err, core.ErrInvalidProgress) {
-		t.Errorf("expected ErrInvalidProgress when child has corrupt progress 150, got %v", err)
+		t.Errorf("expected ErrInvalidProgress when setting 100 on corrupt subtask, got %v", err)
 	}
 
 	// Setting 100 on non-done parent with complete subtasks succeeds

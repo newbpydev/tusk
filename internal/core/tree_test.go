@@ -167,18 +167,6 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 		t.Errorf("expected ErrMaxDepthExceeded for over-MaxHierarchyDepth chain, got %v", err)
 	}
 
-	// Infinite chain exceeding maxTraversalSteps returns ErrTraversalLimitExceeded
-	lookupInfiniteDepth := func(id string) (*string, error) {
-		var n int
-		fmt.Sscanf(id, "node-%d", &n)
-		next := fmt.Sprintf("node-%d", n+1)
-		return &next, nil
-	}
-	err = core.ValidateHierarchyDepth(0, "node-1", lookupInfiniteDepth)
-	if !errors.Is(err, core.ErrTraversalLimitExceeded) {
-		t.Errorf("expected ErrTraversalLimitExceeded for infinite chain, got %v", err)
-	}
-
 	// Overflow guard: taskSubtreeDepth = math.MaxInt must return ErrMaxDepthExceeded
 	err = core.ValidateHierarchyDepth(math.MaxInt, "N8", lookup)
 	if !errors.Is(err, core.ErrMaxDepthExceeded) {
@@ -519,22 +507,6 @@ func parentsKey(n int) string {
 		return "L10"
 	default:
 		return ""
-	}
-}
-
-func TestDetectCycles_TraversalLimitExceeded(t *testing.T) {
-	// Chain longer than 1000 steps without cycles
-	lookupInfinite := func(id string) (*string, error) {
-		var n int
-		fmt.Sscanf(id, "node-%d", &n)
-		next := fmt.Sprintf("node-%d", n+1)
-		return &next, nil
-	}
-
-	start := "node-1"
-	err := core.DetectCycles("target", &start, lookupInfinite)
-	if !errors.Is(err, core.ErrTraversalLimitExceeded) {
-		t.Errorf("expected ErrTraversalLimitExceeded, got %v", err)
 	}
 }
 

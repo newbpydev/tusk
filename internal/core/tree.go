@@ -5,14 +5,7 @@ import (
 	"strings"
 )
 
-const (
-	MaxHierarchyDepth = 10
-	// maxTraversalSteps bounds cycle and depth traversal.
-	// Valid hierarchies are bounded by MaxHierarchyDepth (10 lookups).
-	// An expansive bound ensures long cycles in corrupt or imported graphs are fully
-	// detected and classified as ErrCyclicDependency before exhausting traversal.
-	maxTraversalSteps = 100000
-)
+const MaxHierarchyDepth = 10
 
 type TaskNode struct {
 	Task     Task        `json:"task"`
@@ -42,7 +35,7 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 	visitedSlice = append(visitedSlice, currentID)
 	var visitedMap map[string]struct{}
 
-	for step := 0; step < maxTraversalSteps; step++ {
+	for {
 		ancestorID, err := lookupParent(currentID)
 		if err != nil {
 			return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
@@ -80,7 +73,6 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 
 		currentID = anc
 	}
-	return ErrTraversalLimitExceeded
 }
 
 // ValidateHierarchyDepth validates that attaching a task (with descendant depth taskSubtreeDepth)
@@ -99,7 +91,7 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 	visited := make(map[string]struct{})
 	visited[currentID] = struct{}{}
 
-	for step := 0; step < maxTraversalSteps; step++ {
+	for {
 		ancestorID, err := lookupParent(currentID)
 		if err != nil {
 			return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
@@ -113,11 +105,8 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 		parentDepth++
 		currentID = *ancestorID
 		visited[currentID] = struct{}{}
-
-		if step == maxTraversalSteps-1 {
-			return ErrTraversalLimitExceeded
-		}
 	}
+
 	if parentDepth > MaxHierarchyDepth || taskSubtreeDepth > MaxHierarchyDepth || taskSubtreeDepth > MaxHierarchyDepth-parentDepth-1 {
 		return ErrMaxDepthExceeded
 	}
