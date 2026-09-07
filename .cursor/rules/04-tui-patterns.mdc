@@ -1,0 +1,25 @@
+---
+description: Charm Bubble Tea, Lipgloss, and Bubbles TUI design patterns and constraints
+globs: internal/tui/**/*.go
+alwaysApply: true
+---
+
+# Bubble Tea TUI Architectural Invariants
+
+The Terminal User Interface (TUI) in `internal/tui/` is built on Charm's Bubble Tea, Lipgloss, and Bubbles.
+
+## Strict Invariants
+
+1. **Pure `View()` Method**:
+   - `func (m Model) View() string` MUST BE 100% PURE AND IDEMPOTENT.
+   - Never mutate struct fields, slice pointers, or map values inside `View()`.
+   - Never initialize components, styles, or managers inside `View()`.
+   - All initialization and state changes belong exclusively in `Init()` and `Update(tea.Msg)`.
+2. **Unidirectional Concurrency via `tea.Cmd`**:
+   - Never launch arbitrary unmanaged goroutines (`go func() { ... }()`) in UI models.
+   - Dispatch background work (database operations, file access, timers) as a `tea.Cmd` that produces a `tea.Msg` consumed by `Update()`.
+3. **Deterministic Layout & Zero Jitter**:
+   - Respond to `tea.WindowSizeMsg` to dynamically compute panel dimensions.
+   - Use fixed or flex-bounded widths and heights to ensure borders and footers do not shift during user interaction.
+4. **Synthetic Message Testing**:
+   - Test UI models headlessly by sending `tea.KeyMsg` or custom domain messages directly to `Update(msg)` and asserting the returned model state and `tea.Cmd`.

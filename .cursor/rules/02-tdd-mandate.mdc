@@ -1,0 +1,28 @@
+---
+description: Test-Driven Development (TDD) protocol, edge case testing, and verification requirements
+globs: **/*_test.go, internal/**/*.go
+alwaysApply: true
+---
+
+# Test-Driven Development (TDD) Mandate
+
+Every feature addition, bugfix, or behavioral modification in Tusk must strictly follow the Red-Green-Refactor protocol.
+
+## Protocol Steps
+
+1. **Red (Failing Test First)**:
+   - Identify the required behavior or bug.
+   - Write an isolated unit test, integration test, or property test in the appropriate package.
+   - Run the test using `go test -v ./...` and confirm the failure is caused specifically by the missing functionality or defect.
+2. **Green (Minimal Implementation)**:
+   - Write the simplest code necessary to make the test pass.
+   - Run the test again to confirm it passes.
+3. **Refactor (Clean & Robust)**:
+   - Refactor for clarity, performance, and simplicity without altering the observable contract.
+   - Ensure the entire test suite (`make test` and `make race`) passes cleanly.
+
+## Non-Negotiable Edge Cases
+- **Acyclic Hierarchies**: Rejecting parent loops (`A -> B -> A`) with `ErrCyclicDependency`.
+- **Progress Calculations**: Empty subtasks, single subtask, multiple nested subtasks.
+- **TUI Purity**: Multiple consecutive calls to `View()` must never alter the receiver model.
+- **CLI Exit Codes**: Correct exit codes (0 for success, 1 for operational error, 2 for flag/syntax error).

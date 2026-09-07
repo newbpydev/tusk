@@ -1,0 +1,25 @@
+---
+description: High-level architecture, module boundaries, and file organization for Tusk
+globs: **/*.go, Makefile, go.mod
+alwaysApply: true
+---
+
+# Tusk Project Overview & Architecture Boundaries
+
+Tusk is a keyboard-driven, single-binary task management CLI and TUI written in Go.
+
+## Architectural Layers
+
+- `cmd/tusk/`: Application entrypoint. Wires CLI commands and starts the application.
+- `internal/core/`: Pure domain logic. Entities (`Task`), validation, acyclic tree algorithms, progress rollup. ZERO imports from database, CLI, or TUI.
+- `internal/ports/`: Canonical interfaces for inbound services (`TaskService`) and outbound repositories (`TaskRepository`).
+- `internal/storage/`: Embedded SQLite storage engine, schema migrations, and `sqlc` generated query execution.
+- `internal/service/`: Application use-case orchestrators, natural language date parser, and subtask progress rollup coordination.
+- `internal/cli/`: Cobra CLI commands, flag parsers, tabular formatting, and `--json` machine-readable outputs.
+- `internal/tui/`: Bubble Tea interactive UI, Lipgloss themes, Bubbles components, and keymaps.
+
+## Golden Rules
+1. Never import `internal/storage`, `internal/cli`, or `internal/tui` inside `internal/core`.
+2. All database interactions must pass through `ports.TaskRepository`.
+3. Startup time for `tusk --help` must be under 5ms with zero database initialization.
+4. Always consult and update `MASTERPLAN.md` at the repository root to verify and maintain active task orchestration.

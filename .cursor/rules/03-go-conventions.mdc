@@ -1,0 +1,26 @@
+---
+description: Go 1.24+ coding idioms, error handling, naming conventions, and dependency patterns
+globs: **/*.go
+alwaysApply: true
+---
+
+# Go Coding Conventions & Idiomatic Patterns
+
+All Go code written for Tusk must adhere to modern Go 1.24+ standards.
+
+## Code Guidelines
+
+1. **Explicit Error Handling**:
+   - Return typed sentinel errors from `internal/core/errors.go` (e.g., `ErrTaskNotFound`).
+   - Wrap lower-level system or database errors with context using `fmt.Errorf("action description: %w", err)`.
+   - Never use `panic()` for control flow.
+2. **Context Propagation**:
+   - The first argument for any I/O, database, or service method must be `ctx context.Context`.
+   - Respect context cancellation and deadlines.
+3. **No Global State**:
+   - Never declare mutable package-level variables (`var db *sql.DB` or `var pool *pgxpool.Pool`).
+   - Inject dependencies through explicit constructor functions (`NewTaskService(repo ports.TaskRepository)`).
+4. **No Naked Returns**:
+   - Named return parameters may be used for documentation, but return statements must explicitly state returned values.
+5. **Clean Formatting**:
+   - All code must pass `gofmt -s -w` and `go vet ./...`.

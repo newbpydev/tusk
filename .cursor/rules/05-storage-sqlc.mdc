@@ -1,0 +1,31 @@
+---
+description: SQLite storage engine, schema migrations, and sqlc v2 query conventions
+globs: internal/storage/**/*.go, db/**/*.sql, sqlc.yaml
+alwaysApply: true
+---
+
+# SQLite Storage & sqlc Directives
+
+Tusk utilizes embedded SQLite for instant, zero-configuration local persistence.
+
+## Directives & Standards
+
+1. **Schema Migrations**:
+   - Store SQL migration files in `db/migrations/` sequentially named (e.g., `001_initial_schema.sql`).
+   - All migrations must be idempotent and support clean rollback.
+   - Embed migrations into the Go binary using `//go:embed` to ensure the binary is self-contained.
+2. **Type-Safe Queries via `sqlc`**:
+   - All SQL queries must reside in `db/queries.sql` with explicit annotations (`-- name: ListTasks :many`).
+   - Run `sqlc generate` to produce Go types. Never edit generated code manually.
+3. **Database Pragmas & Concurrency**:
+   - Always initialize SQLite connections with:
+     ```sql
+     PRAGMA journal_mode = WAL;
+     PRAGMA synchronous = NORMAL;
+     PRAGMA foreign_keys = ON;
+     PRAGMA busy_timeout = 5000;
+     ```
+   - Restrict writer pool to 1 connection to prevent database lock contention.
+4. **Testing with In-Memory Databases**:
+   - Write integration tests using in-memory SQLite (`file::memory:?cache=shared`).
+   - Always run migrations in test setup to verify clean schema application.
