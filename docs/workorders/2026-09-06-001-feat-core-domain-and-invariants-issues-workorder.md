@@ -191,9 +191,10 @@ evidence-scope: Verified local execution
 *Note: All items remain unchecked during planning. Checkboxes will be marked exclusively during execution with verified command outputs.*
 
 - [x] Planned units implemented (Units 001-1 through 001-6).
-- [x] Focused unit tests pass (`go test -v ./internal/core/...`).
-- [x] Race detector checks pass (`go test -race -v ./internal/core/...`).
-- [x] Benchmarks pass with expected performance (`go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` observed 301ns/op, 0 allocs; `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` observed 37.8µs/op, 481 allocs across 100 tasks).
+- [x] Focused unit tests pass (`make test`).
+- [x] Race detector checks pass (`make race`).
+- [x] Benchmarks pass with expected performance (`make bench-tree` observed 314ns/op, 0 allocs; `make bench-build` observed 73.6µs/op, 484 allocs across 100 tasks).
+- [x] Domain test coverage satisfies $\ge 95\%$ mandate (`make coverage` observed 98.2% under `-race`).
 - [x] Aggregate repository validation passes (`make validate`).
 - [x] All issues fixed (CORE-ISS-001 through CORE-ISS-016).
 - [x] Remaining unaccepted issues: 0.

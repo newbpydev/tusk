@@ -16,7 +16,7 @@ evidence-scope: Verified local execution
   - `internal/core/status.go`: `ParseStatus`, `Status.CanTransitionTo`.
   - `internal/core/priority.go`: `ParsePriority`, `Priority.Weight`.
   - `internal/core/tag.go`: `NormalizeTag`, `NormalizeTags`, `NormalizeTagSlice`.
-  - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`, `Task.SetRollupProgress`, `Task.ResetLeaf`, `Task.Clone`.
+  - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`, `Task.SetRollupProgress`, `Task.ResetLeaf`, `Task.IsRoot`, `Task.IsDone`, `Task.Clone`.
   - `internal/core/rollup.go`: `CalculateProgress(task Task, subtasks []Task) int`.
   - `internal/core/tree.go`: `BuildTree`, `DetectCycles(taskID string, proposedParentID *string, ...) error`, `ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, ...) error`.
   - `internal/core/filter.go`: `FilterTasks(tasks []Task, filter TaskFilter) []Task`, `SortTasks(tasks []Task, order []SortOrder)`. `TaskFilter` with `RootOnly bool`, `SortByID` in `SortField`.
@@ -55,14 +55,14 @@ evidence-scope: Verified local execution
 - [x] **CORE-STS-F1 Injected Failure**: Invalid string `"review"` returns `ErrInvalidStatus`. Invalid transition `done -> blocked` returns `ErrInvalidStatusTransition`. Reopening `done -> in-progress` succeeds.
 - [x] **CORE-PRI-N1 Normal Path**: `ParsePriority` converts `"urgent"`, `"high"`, `"medium"`, `"low"` and integers 1–4 to `Priority` enums.
 - [x] **CORE-PRI-B1 Boundary**: Invalid priority strings or integers outside 1–4 return `ErrInvalidPriority`.
-- [x] **CORE-TAG-N1 Normal Path**: `NormalizeTag` converts `"#Backend"` to `Tag("backend")`. `NormalizeTags` and `NormalizeTagSlice` deduplicate duplicate tags in slice, sort lexicographically, and return an empty non-nil slice for nil or empty inputs.
+- [x] **CORE-TAG-N1 Normal Path**: `NormalizeTag` trims leading/trailing whitespace, strips leading `#`, trims whitespace again (e.g. `"  #Backend  "` -> `Tag("backend")`), lowercases, and validates characters. `NormalizeTags` and `NormalizeTagSlice` deduplicate duplicate tags in slice, sort lexicographically, and return an empty non-nil slice for nil or empty inputs.
 - [x] **CORE-TAG-B1 Boundary**: Tag containing spaces or invalid symbols returns `ErrInvalidTag`. Tags exceeding 32 characters are rejected.
 
 ### Task Entity & State Transitions
-- [x] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, and non-zero `CreatedAt`/`UpdatedAt`.
-- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` enforces exact match against `CalculateProgress` when subtasks are supplied to non-done tasks, and requires complete subtasks when setting 100 on a non-done parent. `ResetLeaf` restores manual leaf progress.
+- [x] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, non-zero `CreatedAt`/`UpdatedAt`, `IsRoot() == true` (`ParentID == nil`), and `IsDone() == false`.
+- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` enforces exact match against `CalculateProgress` when subtasks are supplied to non-done tasks, and requires complete subtasks when setting 100 on a non-done parent. `ResetLeaf` restores manual leaf progress when subtasks are empty (`len(subtasks) == 0`).
 - [x] **CORE-TSK-C1 Defensive Copying**: `Task.Clone` returns fully independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`), with nil-vs-empty slice preservation and reflection-based field-exhaustiveness enforcement.
-- [x] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil` and updates `UpdatedAt`. `SetParent` updates `ParentID` and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
+- [x] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil`, `IsDone() == false`, and updates `UpdatedAt`. Transition to `StatusDone` sets `IsDone() == true`. `SetParent` updates `ParentID`, `IsRoot() == (ParentID == nil)`, and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
 
 ### Mathematical Progress Rollup
 - [x] **CORE-ROL-N1 Normal Path**: Leaf task preserves explicitly assigned manual progress ($0 \le \text{progress} \le 99$) or evaluates to $100\%$ when `StatusDone`.
@@ -110,7 +110,8 @@ evidence-scope: Verified local execution
 | Date | Commit SHA | Environment | Command | Result | Evidence Ref |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `make validate` | Pass (0 race, 0 vet) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-07 | `b248bb2` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` | Pass (37.8µs/100 tasks, 481 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-07 | `f829d98` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (96.8% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `make coverage` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `make bench-tree` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-07 | `b248bb2` | Go 1.24 Linux x86_64 | `make bench-build` | Pass (37.8µs/100 tasks, 481 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-07 | `f829d98` | Go 1.24 Linux x86_64 | `make coverage` | Pass (96.8% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-07 | `c2cb494` | Go 1.24 Linux x86_64 | `make coverage && make bench-tree && make bench-build` | Pass (98.2% coverage, 314ns/op, 73.6µs/op) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |

@@ -127,11 +127,12 @@ func NormalizeTagSlice(raw []Tag) ([]Tag, error)
 func (t Tag) String() string
 ```
 **Normalization Rules**:
-1. Strip leading `#` if present.
-2. Trim whitespace.
-3. Convert to lowercase ASCII.
-4. Validate regex: `^[a-z0-9]+(-[a-z0-9]+)*$` (length 1–32 chars).
-5. Deduplicate and sort lexicographically.
+1. Trim leading and trailing whitespace.
+2. Strip optional leading `#` prefix.
+3. Trim leading and trailing whitespace again (supporting padded prefixes such as `"  #Backend  "` -> `Tag("backend")`).
+4. Convert to lowercase ASCII.
+5. Validate pattern: `^[a-z0-9]+(-[a-z0-9]+)*$` (length 1–32 chars).
+6. Deduplicate and sort lexicographically; returns an empty non-nil slice for nil or empty inputs.
 
 ### 2.4 Task Entity (`internal/core/task.go`)
 ```go
@@ -170,13 +171,13 @@ func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) e
 func (t *Task) IsRoot() bool
 func (t *Task) IsDone() bool
 func (t Task) Clone() Task
-func (t *Task) ResetLeaf(manualProgress int, now time.Time) error
+func (t *Task) ResetLeaf(manualProgress int, subtasks []Task, now time.Time) error
 ```
 **Entity Mutation Contracts**:
 - `SetParent` reassigns `ParentID` and updates `UpdatedAt = now`. Returns `ErrSelfParenting` if `parentID != nil && *parentID == t.ID`.
 - `SetProgress` sets manual leaf progress ($0 \le \text{progress} \le 99$ for non-done tasks, strictly $100$ for done tasks), returning `ErrInvalidProgress` on out-of-bounds inputs or when attempting to set 100 on a non-done task, and updates `UpdatedAt = now`.
 - `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). For non-done tasks with subtasks, progress must match `CalculateProgress(*t, subtasks)`, returning `ErrInvalidProgress` on value mismatches. Setting 100 on a non-done parent requires subtasks to be provided and all complete.
-- `ResetLeaf` resets a task whose subtasks were removed back to leaf status with explicit manual progress ($0 \le \text{progress} \le 99$ on non-done, $100$ on done).
+- `ResetLeaf` resets a task whose subtasks were removed back to leaf status with explicit manual progress ($0 \le \text{progress} \le 99$ on non-done, $100$ on done). Requires subtasks to be provided and empty (`len(subtasks) == 0`).
 - `Clone` returns a deep copy of `Task` with independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`).
 
 ### 2.5 Progress Rollup Engine (`internal/core/rollup.go`)
@@ -184,12 +185,12 @@ func (t *Task) ResetLeaf(manualProgress int, now time.Time) error
 func CalculateProgress(task Task, subtasks []Task) int
 ```
 **Mathematical Rules**:
-1. If `len(subtasks) == 0`:
-   $$\text{Progress} = \begin{cases} 100 & \text{if } task.\text{Status} == \text{StatusDone} \\ task.\text{Progress} & \text{otherwise (preserves assigned manual progress, 0--99)} \end{cases}$$
-2. If `len(subtasks) > 0`:
-   $$\text{Progress} = \left\lfloor \frac{1}{N} \sum_{i=1}^N \text{subtask}_i.\text{Progress} \right\rfloor$$
-   Clamped between $0$ and $100$.
-3. If all subtasks are `StatusDone`, rollup progress is guaranteed to be $100\%$.
+1. If `task.Status == StatusDone`:
+   $$\text{Progress} = 100 \quad \text{(strictly 100\% regardless of subtask presence or individual child progress)}$$
+2. If `task.Status != StatusDone`:
+   - If `len(subtasks) == 0`: preserves assigned manual progress ($0 \le \text{progress} \le 99$).
+   - If `len(subtasks) > 0`: floor average $\left\lfloor \frac{1}{N} \sum_{i=1}^N \text{subtask}_i.\text{Progress} \right\rfloor$, clamped between $0$ and $100$.
+3. If all direct subtasks are `StatusDone` or complete, rollup progress is guaranteed to be $100\%$.
 4. Reopening any subtask recalculates the parent's progress proportionally.
 
 ### 2.6 Tree Hierarchy & Cycle Detection (`internal/core/tree.go`)

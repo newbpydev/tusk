@@ -464,9 +464,9 @@ func TestTask_ResetLeaf(t *testing.T) {
 	parent, _ := core.NewTask(core.NewTaskParams{ID: "p", Title: "Parent", Now: now})
 	_ = parent.TransitionTo(core.StatusInProgress, now)
 
-	// Happy path: set leaf progress to 50
+	// Happy path: set leaf progress to 50 with nil/empty subtasks
 	t1 := now.Add(5 * time.Minute)
-	err := parent.ResetLeaf(50, t1)
+	err := parent.ResetLeaf(50, nil, t1)
 	if err != nil {
 		t.Fatalf("ResetLeaf(50) failed: %v", err)
 	}
@@ -477,26 +477,44 @@ func TestTask_ResetLeaf(t *testing.T) {
 		t.Errorf("parent.UpdatedAt = %v, want %v", parent.UpdatedAt, t1)
 	}
 
+	// Negative path: cannot reset to leaf when task still has subtasks
+	child, _ := core.NewTask(core.NewTaskParams{ID: "c", Title: "Child", Now: now})
+	err = parent.ResetLeaf(50, []core.Task{*child}, now.Add(6*time.Minute))
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when resetting with non-empty subtasks, got %v", err)
+	}
+	// Assert failed call left state untouched
+	if parent.Progress != 50 || !parent.UpdatedAt.Equal(t1) {
+		t.Errorf("failed ResetLeaf mutated state: Progress=%d, UpdatedAt=%v", parent.Progress, parent.UpdatedAt)
+	}
+
 	// Negative path: setting 100 on non-done task fails
-	err = parent.ResetLeaf(100, now)
+	err = parent.ResetLeaf(100, nil, now.Add(7*time.Minute))
 	if !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress when setting 100 on non-done task via ResetLeaf, got %v", err)
 	}
+	// Assert failed call left state untouched
+	if parent.Progress != 50 || !parent.UpdatedAt.Equal(t1) {
+		t.Errorf("failed ResetLeaf mutated state: Progress=%d, UpdatedAt=%v", parent.Progress, parent.UpdatedAt)
+	}
 
 	// Negative path: out of bounds < 0 or > 100
-	if err := parent.ResetLeaf(-1, now); !errors.Is(err, core.ErrInvalidProgress) {
+	if err := parent.ResetLeaf(-1, nil, now); !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress for -1, got %v", err)
 	}
-	if err := parent.ResetLeaf(101, now); !errors.Is(err, core.ErrInvalidProgress) {
+	if err := parent.ResetLeaf(101, nil, now); !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress for 101, got %v", err)
+	}
+	if parent.Progress != 50 || !parent.UpdatedAt.Equal(t1) {
+		t.Errorf("failed ResetLeaf mutated state: Progress=%d, UpdatedAt=%v", parent.Progress, parent.UpdatedAt)
 	}
 
 	// On done task: must be exactly 100
 	_ = parent.TransitionTo(core.StatusDone, now.Add(10*time.Minute))
-	if err := parent.ResetLeaf(50, now); !errors.Is(err, core.ErrInvalidProgress) {
+	if err := parent.ResetLeaf(50, nil, now); !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress for < 100 on done task via ResetLeaf, got %v", err)
 	}
-	if err := parent.ResetLeaf(100, now.Add(15*time.Minute)); err != nil {
+	if err := parent.ResetLeaf(100, nil, now.Add(15*time.Minute)); err != nil {
 		t.Errorf("expected ResetLeaf(100) on done task to succeed, got %v", err)
 	}
 }

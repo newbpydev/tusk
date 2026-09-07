@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"os"
+	"os/exec"
 	"strings"
 	"testing"
 )
@@ -43,5 +45,18 @@ func TestRunHelp(t *testing.T) {
 				t.Fatalf("expected help banner in output, got %q", output)
 			}
 		})
+	}
+}
+
+func TestMainExecution(t *testing.T) {
+	if os.Getenv("TEST_MAIN_EXEC") == "1" {
+		main()
+		return
+	}
+	cmd := exec.Command(os.Args[0], "-test.run=TestMainExecution")
+	cmd.Env = append(os.Environ(), "TEST_MAIN_EXEC=1")
+	err := cmd.Run()
+	if err != nil {
+		t.Fatalf("process execution failed: %v", err)
 	}
 }
