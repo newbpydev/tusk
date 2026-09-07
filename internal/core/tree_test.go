@@ -114,6 +114,26 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	if !errors.Is(err, core.ErrInvalidDepth) {
 		t.Errorf("expected ErrInvalidDepth for negative subtree depth, got %v", err)
 	}
+
+	// 11-node cyclic loop: L11 -> L10 -> ... -> L1 -> L11
+	// Must return ErrCyclicDependency, NOT ErrMaxDepthExceeded
+	cycleParents := make(map[string]*string)
+	for i := 1; i <= 11; i++ {
+		var next string
+		if i == 1 {
+			next = "L11"
+		} else {
+			next = fmt.Sprintf("L%d", i-1)
+		}
+		cycleParents[fmt.Sprintf("L%d", i)] = ptr(next)
+	}
+	lookupCycle := func(id string) (*string, error) {
+		return cycleParents[id], nil
+	}
+	err = core.ValidateHierarchyDepth(0, "L11", lookupCycle)
+	if !errors.Is(err, core.ErrCyclicDependency) {
+		t.Errorf("expected ErrCyclicDependency for 11-node cyclic loop, got %v", err)
+	}
 }
 
 func TestBuildTree_Forest(t *testing.T) {

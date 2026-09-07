@@ -175,8 +175,9 @@ func TestCalculateProgress_NestedHierarchy100(t *testing.T) {
 	// Intermediate parent whose subtasks are done: has progress 100 via rollup
 	parent, _ := core.NewTask(core.NewTaskParams{ID: "p", Title: "Parent", Now: now})
 	_ = parent.TransitionTo(core.StatusInProgress, now)
-	_ = parent.SetRollupProgress(100, now)
-
+	childOfParent, _ := core.NewTask(core.NewTaskParams{ID: "c-p", Title: "CP", Now: now})
+	_ = childOfParent.TransitionTo(core.StatusDone, now)
+	_ = parent.SetRollupProgress(100, []core.Task{*childOfParent}, now)
 	// Direct child that is done
 	childDone, _ := core.NewTask(core.NewTaskParams{ID: "c-done", Title: "Child Done", Now: now})
 	_ = childDone.TransitionTo(core.StatusDone, now)

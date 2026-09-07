@@ -16,7 +16,7 @@ evidence-scope: Verified local execution
   - `internal/core/status.go`: `ParseStatus`, `Status.CanTransitionTo`.
   - `internal/core/priority.go`: `ParsePriority`, `Priority.Weight`.
   - `internal/core/tag.go`: `NormalizeTag`, `NormalizeTags`.
-  - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`, `Task.SetRollupProgress`.
+  - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`, `Task.SetRollupProgress`, `Task.Clone`.
   - `internal/core/rollup.go`: `CalculateProgress(task Task, subtasks []Task) int`.
   - `internal/core/tree.go`: `BuildTree`, `DetectCycles(taskID string, proposedParentID *string, ...) error`, `ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, ...) error`.
   - `internal/core/filter.go`: `FilterTasks(tasks []Task, filter TaskFilter) []Task`, `SortTasks(tasks []Task, order []SortOrder)`. `TaskFilter` with `RootOnly bool`, `SortByID` in `SortField`.
@@ -60,7 +60,8 @@ evidence-scope: Verified local execution
 
 ### Task Entity & State Transitions
 - [x] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, and non-zero `CreatedAt`/`UpdatedAt`.
-- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` permits 100 on non-done parents whose subtasks have completed.
+- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` requires complete subtasks when setting 100 on a non-done parent.
+- [x] **CORE-TSK-C1 Defensive Copying**: `Task.Clone` returns fully independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`), with nil-vs-empty slice preservation and reflection-based field-exhaustiveness enforcement.
 - [x] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil` and updates `UpdatedAt`. `SetParent` updates `ParentID` and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
 
 ### Mathematical Progress Rollup
@@ -71,7 +72,7 @@ evidence-scope: Verified local execution
 
 ### Tree Traversal, Hierarchy & Cycle Prevention
 - [x] **CORE-TRE-N1 Normal Path**: `BuildTree` assembles a list of flat tasks into a forest of `TaskNode` trees with correct `Depth` attributes.
-- [x] **CORE-TRE-B1 Boundary**: Root promotion with `nil` `proposedParentID` returns `nil` without invoking lookup. Subtree reparenting validates `parentDepth + 1 + taskSubtreeDepth <= MaxHierarchyDepth`, returning `ErrMaxDepthExceeded` if exceeded.
+- [x] **CORE-TRE-B1 Boundary**: Root promotion with `nil` `proposedParentID` returns `nil` without invoking lookup. Subtree reparenting validates `parentDepth + 1 + taskSubtreeDepth <= MaxHierarchyDepth`, prioritizing cycle detection over depth limits for cycles $\ge 11$ nodes (returns `ErrCyclicDependency`).
 - [x] **CORE-TRE-F1 Cycle & Orphan Injection**: In an existing tree `A -> B -> C`, attempting to set `A.ParentID = &C` fails cycle check with `ErrCyclicDependency`. `BuildTree` returns `ErrTaskNotFound` if parent ID is missing from slice.
 - [x] **CORE-TRE-BM1 Benchmark**: `DetectCycles` traversal on a 10-level hierarchy completes in $< 500\text{ns}$ per check (observed 301ns/op, 0 allocs).
 

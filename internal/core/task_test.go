@@ -310,20 +310,39 @@ func TestTask_SetRollupProgress(t *testing.T) {
 	parent, _ := core.NewTask(core.NewTaskParams{ID: "parent", Title: "Parent", Now: now})
 	_ = parent.TransitionTo(core.StatusInProgress, now)
 
+	child1, _ := core.NewTask(core.NewTaskParams{ID: "c1", Title: "C1", Now: now})
+	_ = child1.TransitionTo(core.StatusDone, now)
+	subtasks := []core.Task{*child1}
+
 	// Out of bounds < 0
-	err := parent.SetRollupProgress(-1, now)
+	err := parent.SetRollupProgress(-1, subtasks, now)
 	if !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress for -1, got %v", err)
 	}
 
 	// Out of bounds > 100
-	err = parent.SetRollupProgress(101, now)
+	err = parent.SetRollupProgress(101, subtasks, now)
 	if !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress for 101, got %v", err)
 	}
 
+	// Setting 100 on non-done parent without subtasks fails
+	err = parent.SetRollupProgress(100, nil, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting 100 without subtasks, got %v", err)
+	}
+
+	// Setting 100 on non-done parent with incomplete subtasks fails
+	childIncomplete, _ := core.NewTask(core.NewTaskParams{ID: "c2", Title: "C2", Now: now})
+	_ = childIncomplete.TransitionTo(core.StatusInProgress, now)
+	err = parent.SetRollupProgress(100, []core.Task{*childIncomplete}, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when subtasks incomplete, got %v", err)
+	}
+
+	// Setting 100 on non-done parent with complete subtasks succeeds
 	tUpdate := now.Add(5 * time.Minute)
-	err = parent.SetRollupProgress(100, tUpdate)
+	err = parent.SetRollupProgress(100, subtasks, tUpdate)
 	if err != nil {
 		t.Errorf("expected SetRollupProgress(100) on non-done parent to succeed, got %v", err)
 	}
@@ -335,7 +354,7 @@ func TestTask_SetRollupProgress(t *testing.T) {
 	}
 
 	// Zero time normalizes to current UTC time
-	err = parent.SetRollupProgress(80, time.Time{})
+	err = parent.SetRollupProgress(80, nil, time.Time{})
 	if err != nil {
 		t.Errorf("SetRollupProgress with zero time failed: %v", err)
 	}
@@ -345,7 +364,7 @@ func TestTask_SetRollupProgress(t *testing.T) {
 
 	// On a done task, progress must be 100
 	_ = parent.TransitionTo(core.StatusDone, now.Add(10*time.Minute))
-	err = parent.SetRollupProgress(50, now.Add(15*time.Minute))
+	err = parent.SetRollupProgress(50, nil, now.Add(15*time.Minute))
 	if !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress when setting <100 on done task, got %v", err)
 	}

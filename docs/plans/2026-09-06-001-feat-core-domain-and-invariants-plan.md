@@ -48,24 +48,31 @@ Provide the pure Go business logic and domain core for Tusk in `internal/core/`.
 ```go
 package core
 
-import "errors"
+type Error string
 
-var (
-	ErrTaskNotFound            = errors.New("task not found")
-	ErrEmptyTitle              = errors.New("task title cannot be empty")
-	ErrTitleTooLong            = errors.New("task title exceeds maximum length of 255 characters")
-	ErrInvalidStatus           = errors.New("invalid task status")
-	ErrInvalidPriority         = errors.New("invalid task priority")
-	ErrInvalidStatusTransition = errors.New("invalid status transition")
-	ErrCyclicDependency        = errors.New("cyclic dependency detected: a task cannot be its own ancestor")
-	ErrSelfParenting           = errors.New("task cannot reference itself as parent")
-	ErrMaxDepthExceeded        = errors.New("maximum subtask hierarchy depth exceeded")
-	ErrInvalidTag              = errors.New("invalid tag format: tags must be alphanumeric with hyphens")
-	ErrInvalidProgress         = errors.New("task progress must be an integer between 0 and 100")
-	ErrInvalidTaskID           = errors.New("invalid task id: id cannot be empty")
-	ErrDuplicateTaskID         = errors.New("duplicate task id in hierarchy")
-	ErrInvalidDepth            = errors.New("invalid hierarchy depth: depth cannot be negative")
-	ErrTraversalLimitExceeded  = errors.New("hierarchy traversal limit exceeded")
+func (e Error) Error() string
+
+type SelfParentingError string
+
+func (e SelfParentingError) Error() string
+func (e SelfParentingError) Is(target error) bool
+
+const (
+	ErrTaskNotFound            = Error("task not found")
+	ErrEmptyTitle              = Error("task title cannot be empty")
+	ErrTitleTooLong            = Error("task title exceeds maximum length of 255 characters")
+	ErrInvalidStatus           = Error("invalid task status")
+	ErrInvalidPriority         = Error("invalid task priority")
+	ErrInvalidStatusTransition = Error("invalid status transition")
+	ErrCyclicDependency        = Error("cyclic dependency detected: a task cannot be its own ancestor")
+	ErrSelfParenting           = SelfParentingError("task cannot reference itself as parent")
+	ErrMaxDepthExceeded        = Error("maximum subtask hierarchy depth exceeded")
+	ErrInvalidTag              = Error("invalid tag format: tags must be alphanumeric with hyphens")
+	ErrInvalidProgress         = Error("task progress must be an integer between 0 and 100")
+	ErrInvalidTaskID           = Error("invalid task id: id cannot be empty")
+	ErrDuplicateTaskID         = Error("duplicate task id in hierarchy")
+	ErrInvalidDepth            = Error("invalid hierarchy depth: depth cannot be negative")
+	ErrTraversalLimitExceeded  = Error("hierarchy traversal limit exceeded")
 )
 ```
 
@@ -158,14 +165,16 @@ func (t *Task) TransitionTo(next Status, now time.Time) error
 func (t *Task) Update(title, desc string, priority Priority, tags []Tag, dueDate *time.Time, now time.Time) error
 func (t *Task) SetParent(parentID *string, now time.Time) error
 func (t *Task) SetProgress(progress int, now time.Time) error
-func (t *Task) SetRollupProgress(progress int, now time.Time) error
+func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) error
 func (t *Task) IsRoot() bool
 func (t *Task) IsDone() bool
+func (t Task) Clone() Task
 ```
 **Entity Mutation Contracts**:
 - `SetParent` reassigns `ParentID` and updates `UpdatedAt = now`. Returns `ErrSelfParenting` if `parentID != nil && *parentID == t.ID`.
 - `SetProgress` sets manual leaf progress ($0 \le \text{progress} \le 99$ for non-done tasks, strictly $100$ for done tasks), returning `ErrInvalidProgress` on out-of-bounds inputs or when attempting to set 100 on a non-done task, and updates `UpdatedAt = now`.
-- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$), permitting 100 on a non-done parent whose direct subtasks have all completed.
+- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). Setting 100 on a non-done parent requires subtasks to be provided and all complete.
+- `Clone` returns a deep copy of `Task` with independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`).
 
 ### 2.5 Progress Rollup Engine (`internal/core/rollup.go`)
 ```go

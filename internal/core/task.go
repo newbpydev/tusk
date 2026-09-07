@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -138,11 +139,7 @@ func (t *Task) Update(title, desc string, priority Priority, tags []Tag, dueDate
 		return err
 	}
 
-	if now.IsZero() {
-		now = time.Now().UTC()
-	} else {
-		now = now.UTC()
-	}
+	now = normalizeTime(now)
 
 	var copiedDue *time.Time
 	if dueDate != nil {
@@ -184,24 +181,13 @@ func (t *Task) SetParent(parentID *string, now time.Time) error {
 // Returns ErrInvalidProgress if progress < 0, progress > 100, progress == 100 on a non-done task,
 // or progress != 100 on a done task.
 func (t *Task) SetProgress(progress int, now time.Time) error {
-	return t.setProgress(progress, now, false)
-}
-
-// SetRollupProgress sets progress computed by the rollup engine (0-100),
-// permitting 100 on a non-done parent whose direct subtasks have all completed.
-// Returns ErrInvalidProgress if progress < 0, progress > 100, or progress != 100 on a done task.
-func (t *Task) SetRollupProgress(progress int, now time.Time) error {
-	return t.setProgress(progress, now, true)
-}
-
-func (t *Task) setProgress(progress int, now time.Time, allowNonDoneHundred bool) error {
 	if progress < 0 || progress > 100 {
 		return ErrInvalidProgress
 	}
 	if t.Status == StatusDone && progress != 100 {
 		return ErrInvalidProgress
 	}
-	if !allowNonDoneHundred && t.Status != StatusDone && progress == 100 {
+	if t.Status != StatusDone && progress == 100 {
 		return ErrInvalidProgress
 	}
 
@@ -210,6 +196,32 @@ func (t *Task) setProgress(progress int, now time.Time, allowNonDoneHundred bool
 	return nil
 }
 
+// SetRollupProgress sets progress computed by the rollup engine (0-100).
+// Setting 100 on a non-done parent requires subtasks to be provided and all complete.
+// Returns ErrInvalidProgress if progress < 0, progress > 100, progress != 100 on a done task,
+// or if attempting to set 100 on a non-done parent without complete subtasks.
+func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) error {
+	if progress < 0 || progress > 100 {
+		return ErrInvalidProgress
+	}
+	if t.Status == StatusDone && progress != 100 {
+		return ErrInvalidProgress
+	}
+	if t.Status != StatusDone && progress == 100 {
+		if len(subtasks) == 0 {
+			return fmt.Errorf("setting 100 on non-done task requires complete subtasks: %w", ErrInvalidProgress)
+		}
+		for _, s := range subtasks {
+			if s.Status != StatusDone && s.Progress < 100 {
+				return fmt.Errorf("subtask %s is incomplete: %w", s.ID, ErrInvalidProgress)
+			}
+		}
+	}
+
+	t.Progress = progress
+	t.UpdatedAt = normalizeTime(now)
+	return nil
+}
 func normalizeTime(t time.Time) time.Time {
 	if t.IsZero() {
 		return time.Now().UTC()

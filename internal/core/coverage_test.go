@@ -2,6 +2,7 @@ package core_test
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -147,9 +148,9 @@ func TestCoverage_RollupClamping(t *testing.T) {
 	// Subtask progress clamped
 	parent := core.Task{Status: core.StatusInProgress}
 	sub1 := core.Task{Status: core.StatusInProgress, Progress: -20} // clamped to 0
-	sub2 := core.Task{Status: core.StatusInProgress, Progress: 200} // clamped to 100
-	if got := core.CalculateProgress(parent, []core.Task{sub1, sub2}); got != 50 {
-		t.Errorf("CalculateProgress clamped subtasks = %d, want 50", got)
+	sub2 := core.Task{Status: core.StatusInProgress, Progress: 200} // non-done clamped to 99
+	if got := core.CalculateProgress(parent, []core.Task{sub1, sub2}); got != 49 {
+		t.Errorf("CalculateProgress clamped subtasks = %d, want 49", got)
 	}
 }
 
@@ -218,7 +219,7 @@ func TestCoverage_TreeErrorsAndLoops(t *testing.T) {
 		if count > 15 {
 			return nil, nil
 		}
-		next := parentsKey(count)
+		next := fmt.Sprintf("P%d", count)
 		return &next, nil
 	})
 	if !errors.Is(err, core.ErrMaxDepthExceeded) {

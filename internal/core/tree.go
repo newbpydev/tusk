@@ -5,7 +5,10 @@ import (
 	"strings"
 )
 
-const MaxHierarchyDepth = 10
+const (
+	MaxHierarchyDepth = 10
+	maxTraversalSteps = 1000
+)
 
 type TaskNode struct {
 	Task     Task        `json:"task"`
@@ -35,7 +38,6 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 	visited := visitedBuf[:0]
 	visited = append(visited, currentID)
 
-	const maxTraversalSteps = 1000
 	for step := 0; step < maxTraversalSteps; step++ {
 		ancestorID, err := lookupParent(currentID)
 		if err != nil {
@@ -79,7 +81,7 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 	visited := make(map[string]struct{})
 	visited[currentID] = struct{}{}
 
-	for {
+	for step := 0; step < maxTraversalSteps; step++ {
 		ancestorID, err := lookupParent(currentID)
 		if err != nil {
 			return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
@@ -94,9 +96,13 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 		currentID = *ancestorID
 		visited[currentID] = struct{}{}
 
-		if parentDepth > MaxHierarchyDepth {
-			return ErrMaxDepthExceeded
+		if step == maxTraversalSteps-1 {
+			return ErrTraversalLimitExceeded
 		}
+	}
+
+	if parentDepth > MaxHierarchyDepth {
+		return ErrMaxDepthExceeded
 	}
 
 	if parentDepth+1+taskSubtreeDepth > MaxHierarchyDepth {
