@@ -197,7 +197,9 @@ func (t *Task) SetProgress(progress int, now time.Time) error {
 	if progress < 0 || progress > 100 {
 		return ErrInvalidProgress
 	}
-
+	if t.Status == StatusDone && progress != 100 {
+		return ErrInvalidProgress
+	}
 	if now.IsZero() {
 		now = time.Now().UTC()
 	} else {

@@ -272,6 +272,19 @@ func TestTask_SetProgress_Validation(t *testing.T) {
 	if !task.UpdatedAt.Equal(t1) {
 		t.Errorf("task.UpdatedAt = %v, want %v", task.UpdatedAt, t1)
 	}
+
+	// Invariant: Once done, progress cannot be set below 100
+	t2 := t1.Add(10 * time.Minute)
+	_ = task.TransitionTo(core.StatusDone, t2)
+	err = task.SetProgress(50, t2.Add(5*time.Minute))
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting <100 on done task, got %v", err)
+	}
+	// Setting 100 on done task succeeds
+	err = task.SetProgress(100, t2.Add(10*time.Minute))
+	if err != nil {
+		t.Errorf("expected SetProgress(100) on done task to succeed, got %v", err)
+	}
 }
 
 func TestTask_Update(t *testing.T) {
