@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development  
 **Active Phase**: Phase 1: Core Domain & Invariants  
-**Active Implementation Target**: Unit 001-3 (Task Entity & Lifecycle)  
+**Active Implementation Target**: Unit 001-4 (Mathematical Progress Rollup Engine)  
 **Overall Completion**: 14% (1 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
 
@@ -74,10 +74,10 @@ graph TD
   - [x] Red Tests: `status_test.go`, `priority_test.go`, `tag_test.go`
   - [x] Implementation: `status.go` (state machine, `CanTransitionTo`), `priority.go` (weights 1–4), `tag.go` (normalization, regex, deduplication)
   - [x] Green Verification: `go test -v -run "TestParse|TestNormalize|TestStatus" ./internal/core/...`
-- [ ] **1.4 Unit 001-3: Core Task Entity & Lifecycle**
-  - [ ] Red Tests: `task_test.go` (`TestNewTask_Validation`, `TestTask_TransitionToDone`, `TestTask_Reopen`)
-  - [ ] Implementation: `task.go` (`Task` struct, `NewTask`, `TransitionTo`, `Update`, `CompletedAt` lifecycle)
-  - [ ] Green Verification: `go test -v -run TestTask ./internal/core/...`
+- [x] **1.4 Unit 001-3: Core Task Entity & Lifecycle**
+  - [x] Red Tests: `task_test.go` (`TestNewTask_Validation`, `TestTask_TransitionToDone`, `TestTask_Reopen`, `TestTask_SetParent`, `TestTask_SetProgress_Validation`)
+  - [x] Implementation: `task.go` (`Task` struct, `NewTask`, `TransitionTo`, `Update`, `SetParent`, `SetProgress`, `CompletedAt` lifecycle)
+  - [x] Green Verification: `go test -v -run TestTask ./internal/core/...`
 - [ ] **1.5 Unit 001-4: Mathematical Progress Rollup Engine**
   - [ ] Red Tests: `rollup_test.go` (`TestCalculateProgress_Leaf`, `TestCalculateProgress_Subtasks`, `TestCalculateProgress_FloorRounding`, `TestCalculateProgress_AllDone`)
   - [ ] Implementation: `rollup.go` ($\lfloor \frac{\sum P}{N} \rfloor$ integer floor arithmetic)
