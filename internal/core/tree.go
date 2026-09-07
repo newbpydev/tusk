@@ -57,7 +57,7 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 		visited = append(visited, currentID)
 	}
 
-	return ErrCyclicDependency
+	return ErrTraversalLimitExceeded
 }
 
 // ValidateHierarchyDepth validates that attaching a task (with descendant depth taskSubtreeDepth)
@@ -67,6 +67,9 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 // parentDepth = depth of proposedParentID from its root.
 // Invariant: parentDepth + 1 + taskSubtreeDepth <= MaxHierarchyDepth.
 func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, lookupParent func(id string) (*string, error)) error {
+	if taskSubtreeDepth < 0 {
+		return ErrInvalidDepth
+	}
 	parentDepth := 1
 	currentID := proposedParentID
 
@@ -114,6 +117,9 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 
 	taskMap := make(map[string]*TaskNode, len(tasks))
 	for _, t := range tasks {
+		if _, exists := taskMap[t.ID]; exists {
+			return nil, fmt.Errorf("task with id %s already exists: %w", t.ID, ErrDuplicateTaskID)
+		}
 		taskMap[t.ID] = &TaskNode{
 			Task:     t,
 			Children: []*TaskNode{},
@@ -140,6 +146,9 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 	visitedNodes := make(map[string]struct{}, len(tasks))
 
 	setDepth = func(n *TaskNode, depth int) error {
+		if depth > MaxHierarchyDepth {
+			return ErrMaxDepthExceeded
+		}
 		if _, seen := visitedNodes[n.Task.ID]; seen {
 			return ErrCyclicDependency
 		}

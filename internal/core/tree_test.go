@@ -2,6 +2,7 @@ package core_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -107,6 +108,12 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	if !errors.Is(err, core.ErrMaxDepthExceeded) {
 		t.Errorf("expected ErrMaxDepthExceeded, got %v", err)
 	}
+
+	// Negative subtree depth must be rejected with ErrInvalidDepth
+	err = core.ValidateHierarchyDepth(-1, "N8", lookup)
+	if !errors.Is(err, core.ErrInvalidDepth) {
+		t.Errorf("expected ErrInvalidDepth for negative subtree depth, got %v", err)
+	}
 }
 
 func TestBuildTree_Forest(t *testing.T) {
@@ -171,6 +178,29 @@ func TestBuildTree_Errors(t *testing.T) {
 	if !errors.Is(err, core.ErrCyclicDependency) {
 		t.Errorf("expected ErrCyclicDependency for unrooted cycle, got %v", err)
 	}
+
+	// Duplicate task ID in tasks slice
+	tDup1, _ := core.NewTask(core.NewTaskParams{ID: "dup-id", Title: "Task 1", Now: now})
+	tDup2, _ := core.NewTask(core.NewTaskParams{ID: "dup-id", Title: "Task 2", Now: now})
+	_, err = core.BuildTree([]core.Task{*tDup1, *tDup2})
+	if !errors.Is(err, core.ErrDuplicateTaskID) {
+		t.Errorf("expected ErrDuplicateTaskID, got %v", err)
+	}
+
+	// Chain of 11 tasks exceeding MaxHierarchyDepth (10)
+	var chainTasks []core.Task
+	root, _ := core.NewTask(core.NewTaskParams{ID: "d1", Title: "Depth 1", Now: now})
+	chainTasks = append(chainTasks, *root)
+	for i := 2; i <= 11; i++ {
+		parentID := fmt.Sprintf("d%d", i-1)
+		currID := fmt.Sprintf("d%d", i)
+		tChild, _ := core.NewTask(core.NewTaskParams{ID: currID, Title: currID, ParentID: &parentID, Now: now})
+		chainTasks = append(chainTasks, *tChild)
+	}
+	_, err = core.BuildTree(chainTasks)
+	if !errors.Is(err, core.ErrMaxDepthExceeded) {
+		t.Errorf("expected ErrMaxDepthExceeded for 11-level chain, got %v", err)
+	}
 }
 
 func BenchmarkTreeTraversal(b *testing.B) {
@@ -186,6 +216,7 @@ func BenchmarkTreeTraversal(b *testing.B) {
 		return parents[id], nil
 	}
 
+	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = core.DetectCycles("new-task", ptr("L10"), lookup)
@@ -220,5 +251,21 @@ func parentsKey(n int) string {
 		return "L10"
 	default:
 		return ""
+	}
+}
+
+func TestDetectCycles_TraversalLimitExceeded(t *testing.T) {
+	// Chain longer than 1000 steps without cycles
+	lookupInfinite := func(id string) (*string, error) {
+		var n int
+		fmt.Sscanf(id, "node-%d", &n)
+		next := fmt.Sprintf("node-%d", n+1)
+		return &next, nil
+	}
+
+	start := "node-1"
+	err := core.DetectCycles("target", &start, lookupInfinite)
+	if !errors.Is(err, core.ErrTraversalLimitExceeded) {
+		t.Errorf("expected ErrTraversalLimitExceeded, got %v", err)
 	}
 }

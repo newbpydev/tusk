@@ -25,6 +25,10 @@ func TestErrorsExist(t *testing.T) {
 		{"ErrMaxDepthExceeded", core.ErrMaxDepthExceeded, "maximum subtask hierarchy depth exceeded"},
 		{"ErrInvalidTag", core.ErrInvalidTag, "invalid tag format: tags must be alphanumeric with hyphens"},
 		{"ErrInvalidProgress", core.ErrInvalidProgress, "task progress must be an integer between 0 and 100"},
+		{"ErrInvalidTaskID", core.ErrInvalidTaskID, "invalid task id: id cannot be empty"},
+		{"ErrDuplicateTaskID", core.ErrDuplicateTaskID, "duplicate task id in hierarchy"},
+		{"ErrInvalidDepth", core.ErrInvalidDepth, "invalid hierarchy depth: depth cannot be negative"},
+		{"ErrTraversalLimitExceeded", core.ErrTraversalLimitExceeded, "hierarchy traversal limit exceeded"},
 	}
 
 	seen := make(map[error]string)
@@ -57,6 +61,10 @@ func TestErrors_SentinelIntegrity(t *testing.T) {
 		core.ErrMaxDepthExceeded,
 		core.ErrInvalidTag,
 		core.ErrInvalidProgress,
+		core.ErrInvalidTaskID,
+		core.ErrDuplicateTaskID,
+		core.ErrInvalidDepth,
+		core.ErrTraversalLimitExceeded,
 	}
 
 	for _, s := range sentinels {

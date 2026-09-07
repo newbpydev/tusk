@@ -1,7 +1,6 @@
 package core
 
 import (
-	"strconv"
 	"strings"
 )
 
@@ -26,14 +25,6 @@ func ParsePriority(s string) (Priority, error) {
 	case "urgent", "4":
 		return PriorityUrgent, nil
 	}
-
-	if n, err := strconv.Atoi(norm); err == nil {
-		p := Priority(n)
-		if p.IsValid() {
-			return p, nil
-		}
-	}
-
 	return 0, ErrInvalidPriority
 }
 

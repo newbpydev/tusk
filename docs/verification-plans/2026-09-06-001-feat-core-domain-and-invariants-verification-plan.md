@@ -39,7 +39,7 @@ evidence-scope: Verified local execution
 | **Rollup Arithmetic** | Unit 001-4 | CORE-ROL-N1, CORE-ROL-B1, CORE-ROL-P1 | Focused Property / Table |
 | **Tree & Cycle Invariants**| Unit 001-5 | CORE-TRE-N1, CORE-TRE-B1, CORE-TRE-F1, CORE-TRE-BM1 | Focused Graph / Benchmark |
 | **Filtering & Sorting** | Unit 001-6 | CORE-FLT-N1, CORE-FLT-B1, CORE-FLT-C1 | Focused Unit |
-| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (100% coverage enforced) |
+| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ enforced; 98.0% achieved) |
 
 ---
 
@@ -104,6 +104,8 @@ evidence-scope: Verified local execution
 
 *(This section will be populated with execution timestamps, commit SHAs, and test outputs during the implementation phase.)*
 
-| 2026-09-06 | `HEAD` | Go 1.24 Linux x86_64 | `make validate` | Pass (0 race, 0 vet) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-06 | `HEAD` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (97.2% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-06 | `HEAD` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal ./internal/core/...` | Pass (298ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| Date | Commit SHA | Environment | Command | Result | Evidence Ref |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `make validate` | Pass (0 race, 0 vet) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |

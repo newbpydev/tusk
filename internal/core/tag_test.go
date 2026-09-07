@@ -29,10 +29,12 @@ func TestNormalizeTag(t *testing.T) {
 		{"-leading-dash", "", true},
 		{"trailing-dash-", "", true},
 		{"double--dash", "", true},
+		{"# backend", "", true},
+		{"##backend", "", true},
+		{"#--backend", "", true},
 		{strings.Repeat("a", 33), "", true},
 		{strings.Repeat("a", 32), core.Tag(strings.Repeat("a", 32)), false},
 	}
-
 	for _, tc := range tests {
 		t.Run(tc.input, func(t *testing.T) {
 			got, err := core.NormalizeTag(tc.input)
@@ -84,5 +86,23 @@ func TestNormalizeTags(t *testing.T) {
 	}
 	if len(empty) != 0 {
 		t.Errorf("expected empty slice, got %v", empty)
+	}
+}
+
+func TestNormalizeTagSlice(t *testing.T) {
+	raw := []core.Tag{core.Tag("frontend"), core.Tag("backend"), core.Tag("backend")}
+	want := []core.Tag{core.Tag("backend"), core.Tag("frontend")}
+
+	got, err := core.NormalizeTagSlice(raw)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("NormalizeTagSlice() = %v, want %v", got, want)
+	}
+
+	empty, err := core.NormalizeTagSlice(nil)
+	if err != nil || len(empty) != 0 {
+		t.Errorf("NormalizeTagSlice(nil) failed: %v", err)
 	}
 }

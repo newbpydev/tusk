@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development  
 **Active Phase**: Phase 2: SQLite Storage & Repository  
-**Active Implementation Target**: Unit 002-1 (Migration Engine & Embedded Schema)  
+**Active Implementation Target**: 2.1 Ultrathink Planning Pack
 **Overall Completion**: 29% (2 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
 
@@ -14,8 +14,8 @@ The Tusk reboot follows an uncompromising, evidence-first execution sequence. Wo
 
 ```mermaid
 graph TD
-    P0[Phase 0: Foundation & Setup<br/>✅ COMPLETE] --> P1[Phase 1: Core Domain & Invariants<br/>🚀 ACTIVE]
-    P1 --> P2[Phase 2: SQLite Storage & Repo<br/>⏳ PLANNED]
+    P0[Phase 0: Foundation & Setup<br/>✅ COMPLETE] --> P1[Phase 1: Core Domain & Invariants<br/>✅ COMPLETE]
+    P1 --> P2[Phase 2: SQLite Storage & Repo<br/>🚀 ACTIVE]
     P2 --> P3[Phase 3: Task Service Engine<br/>⏳ PLANNED]
     P3 --> P4[Phase 4: CLI & Scripting<br/>⏳ PLANNED]
     P3 --> P5[Phase 5: Interactive TUI<br/>⏳ PLANNED]
@@ -75,7 +75,7 @@ graph TD
   - [x] Implementation: `status.go` (state machine, `CanTransitionTo`), `priority.go` (weights 1–4), `tag.go` (normalization, regex, deduplication)
   - [x] Green Verification: `go test -v -run "TestParse|TestNormalize|TestStatus" ./internal/core/...`
 - [x] **1.4 Unit 001-3: Core Task Entity & Lifecycle**
-  - [x] Red Tests: `task_test.go` (`TestNewTask_Validation`, `TestTask_TransitionToDone`, `TestTask_Reopen`, `TestTask_SetParent`, `TestTask_SetProgress_Validation`)
+  - [x] Red Tests: `task_test.go` (`TestNewTask_Validation`, `TestTask_TransitionToDone_And_Reopen`, `TestTask_SetParent`, `TestTask_SetProgress_Validation`)
   - [x] Implementation: `task.go` (`Task` struct, `NewTask`, `TransitionTo`, `Update`, `SetParent`, `SetProgress`, `CompletedAt` lifecycle)
   - [x] Green Verification: `go test -v -run TestTask ./internal/core/...`
 - [x] **1.5 Unit 001-4: Mathematical Progress Rollup Engine**

@@ -111,7 +111,16 @@ func TestFilterTasks(t *testing.T) {
 		t.Errorf("FilterTasks with zero matches expected empty non-nil slice, got %v", got)
 	}
 
-	// 9. Empty tasks slice returns empty non-nil slice
+	// 9. Conflicting criteria: RootOnly and ParentID both set returns empty slice
+	got = core.FilterTasks(tasks, core.TaskFilter{
+		RootOnly: true,
+		ParentID: &parentID,
+	})
+	if got == nil || len(got) != 0 {
+		t.Errorf("FilterTasks with conflicting RootOnly and ParentID expected empty, got %v", got)
+	}
+
+	// 10. Empty tasks slice returns empty non-nil slice
 	empty := core.FilterTasks(nil, core.TaskFilter{})
 	if empty == nil || len(empty) != 0 {
 		t.Errorf("FilterTasks on nil tasks expected empty non-nil slice, got %v", empty)

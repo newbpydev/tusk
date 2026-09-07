@@ -3,6 +3,7 @@ package core
 import (
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 type Task struct {
@@ -32,26 +33,43 @@ type NewTaskParams struct {
 }
 
 func NewTask(params NewTaskParams) (*Task, error) {
+	id := strings.TrimSpace(params.ID)
+	if id == "" {
+		return nil, ErrInvalidTaskID
+	}
+
 	title := strings.TrimSpace(params.Title)
 	if title == "" {
 		return nil, ErrEmptyTitle
 	}
-	if len(title) > 255 {
+	if utf8.RuneCountInString(title) > 255 {
 		return nil, ErrTitleTooLong
 	}
 
-	if params.ParentID != nil && *params.ParentID == params.ID {
-		return nil, ErrSelfParenting
+	var parentID *string
+	if params.ParentID != nil {
+		p := strings.TrimSpace(*params.ParentID)
+		if p == "" {
+			return nil, ErrInvalidTaskID
+		}
+		if p == id {
+			return nil, ErrSelfParenting
+		}
+		parentID = &p
 	}
 
 	priority := params.Priority
-	if !priority.IsValid() {
+	if priority == 0 {
 		priority = PriorityMedium
+	} else if !priority.IsValid() {
+		return nil, ErrInvalidPriority
 	}
 
 	now := params.Now
 	if now.IsZero() {
 		now = time.Now().UTC()
+	} else {
+		now = now.UTC()
 	}
 
 	tags, err := NormalizeTags(params.Tags)
@@ -59,16 +77,22 @@ func NewTask(params NewTaskParams) (*Task, error) {
 		return nil, err
 	}
 
+	var dueDate *time.Time
+	if params.DueDate != nil {
+		d := params.DueDate.UTC()
+		dueDate = &d
+	}
+
 	task := &Task{
-		ID:          params.ID,
+		ID:          id,
 		Title:       title,
 		Description: strings.TrimSpace(params.Description),
 		Status:      StatusTodo,
 		Priority:    priority,
-		ParentID:    params.ParentID,
+		ParentID:    parentID,
 		Progress:    0,
 		Tags:        tags,
-		DueDate:     params.DueDate,
+		DueDate:     dueDate,
 		CreatedAt:   now,
 		UpdatedAt:   now,
 		CompletedAt: nil,
@@ -87,6 +111,8 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 
 	if now.IsZero() {
 		now = time.Now().UTC()
+	} else {
+		now = now.UTC()
 	}
 
 	t.Status = next
@@ -98,6 +124,7 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 		t.Progress = 100
 	} else if t.CompletedAt != nil {
 		t.CompletedAt = nil
+		t.Progress = 0
 	}
 
 	return nil
@@ -108,37 +135,60 @@ func (t *Task) Update(title, desc string, priority Priority, tags []Tag, dueDate
 	if trimmedTitle == "" {
 		return ErrEmptyTitle
 	}
-	if len(trimmedTitle) > 255 {
+	if utf8.RuneCountInString(trimmedTitle) > 255 {
 		return ErrTitleTooLong
 	}
 	if !priority.IsValid() {
 		return ErrInvalidPriority
 	}
 
+	normTags, err := NormalizeTagSlice(tags)
+	if err != nil {
+		return err
+	}
+
 	if now.IsZero() {
 		now = time.Now().UTC()
+	} else {
+		now = now.UTC()
+	}
+
+	var copiedDue *time.Time
+	if dueDate != nil {
+		d := dueDate.UTC()
+		copiedDue = &d
 	}
 
 	t.Title = trimmedTitle
 	t.Description = strings.TrimSpace(desc)
 	t.Priority = priority
-	t.Tags = tags
-	t.DueDate = dueDate
+	t.Tags = normTags
+	t.DueDate = copiedDue
 	t.UpdatedAt = now
 
 	return nil
 }
 
 func (t *Task) SetParent(parentID *string, now time.Time) error {
-	if parentID != nil && *parentID == t.ID {
-		return ErrSelfParenting
+	if parentID != nil {
+		p := strings.TrimSpace(*parentID)
+		if p == "" {
+			return ErrInvalidTaskID
+		}
+		if p == t.ID {
+			return ErrSelfParenting
+		}
+		t.ParentID = &p
+	} else {
+		t.ParentID = nil
 	}
 
 	if now.IsZero() {
 		now = time.Now().UTC()
+	} else {
+		now = now.UTC()
 	}
 
-	t.ParentID = parentID
 	t.UpdatedAt = now
 	return nil
 }

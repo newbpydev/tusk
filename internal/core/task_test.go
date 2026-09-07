@@ -21,6 +21,38 @@ func TestNewTask_Validation(t *testing.T) {
 	if !errors.Is(err, core.ErrEmptyTitle) {
 		t.Errorf("expected ErrEmptyTitle, got %v", err)
 	}
+	// Empty ID
+	_, err = core.NewTask(core.NewTaskParams{
+		ID:    "  ",
+		Title: "Valid Title",
+		Now:   now,
+	})
+	if !errors.Is(err, core.ErrInvalidTaskID) {
+		t.Errorf("expected ErrInvalidTaskID, got %v", err)
+	}
+
+	// Empty parent ID
+	emptyParent := "   "
+	_, err = core.NewTask(core.NewTaskParams{
+		ID:       "task-1",
+		Title:    "Valid Title",
+		ParentID: &emptyParent,
+		Now:      now,
+	})
+	if !errors.Is(err, core.ErrInvalidTaskID) {
+		t.Errorf("expected ErrInvalidTaskID for empty parent, got %v", err)
+	}
+
+	// Non-zero invalid priority
+	_, err = core.NewTask(core.NewTaskParams{
+		ID:       "task-1",
+		Title:    "Valid Title",
+		Priority: core.Priority(99),
+		Now:      now,
+	})
+	if !errors.Is(err, core.ErrInvalidPriority) {
+		t.Errorf("expected ErrInvalidPriority for Priority(99), got %v", err)
+	}
 
 	// Title too long (> 255 characters)
 	_, err = core.NewTask(core.NewTaskParams{
@@ -32,6 +64,26 @@ func TestNewTask_Validation(t *testing.T) {
 		t.Errorf("expected ErrTitleTooLong, got %v", err)
 	}
 
+	// Multi-byte runes UTF-8: 255 non-ASCII runes should pass (takes > 255 bytes)
+	multiRuneTitle := strings.Repeat("世", 255)
+	_, err = core.NewTask(core.NewTaskParams{
+		ID:    "task-multibyte",
+		Title: multiRuneTitle,
+		Now:   now,
+	})
+	if err != nil {
+		t.Fatalf("expected 255-rune title to pass, got: %v", err)
+	}
+
+	// 256 multi-byte runes should fail
+	_, err = core.NewTask(core.NewTaskParams{
+		ID:    "task-multibyte-too-long",
+		Title: strings.Repeat("世", 256),
+		Now:   now,
+	})
+	if !errors.Is(err, core.ErrTitleTooLong) {
+		t.Errorf("expected ErrTitleTooLong for 256 runes, got %v", err)
+	}
 	// Title exactly 255 characters (should pass)
 	task, err := core.NewTask(core.NewTaskParams{
 		ID:       "task-1",
@@ -130,6 +182,9 @@ func TestTask_TransitionToDone_And_Reopen(t *testing.T) {
 	}
 	if task.CompletedAt != nil {
 		t.Errorf("expected CompletedAt to be cleared to nil, got %v", task.CompletedAt)
+	}
+	if task.Progress != 0 {
+		t.Errorf("expected Progress to be reset to 0 on reopen, got %d", task.Progress)
 	}
 	if !task.UpdatedAt.Equal(t4) {
 		t.Errorf("expected UpdatedAt = %v, got %v", t4, task.UpdatedAt)
@@ -259,5 +314,62 @@ func TestTask_Update(t *testing.T) {
 	err = task.Update("  ", "", core.PriorityLow, nil, nil, t1)
 	if !errors.Is(err, core.ErrEmptyTitle) {
 		t.Errorf("expected ErrEmptyTitle, got %v", err)
+	}
+
+	// Update with invalid tags fails
+	err = task.Update("Valid", "", core.PriorityLow, []core.Tag{core.Tag("invalid tag")}, nil, t1)
+	if !errors.Is(err, core.ErrInvalidTag) {
+		t.Errorf("expected ErrInvalidTag for update, got %v", err)
+	}
+
+	// SetParent with empty string fails
+	emptyP := "   "
+	err = task.SetParent(&emptyP, t1)
+	if !errors.Is(err, core.ErrInvalidTaskID) {
+		t.Errorf("expected ErrInvalidTaskID for SetParent empty, got %v", err)
+	}
+}
+
+func TestTask_DefensiveCopiesAndUTC(t *testing.T) {
+	// Local timezone
+	loc := time.FixedZone("EST", -5*3600)
+	localTime := time.Date(2026, 9, 6, 12, 0, 0, 0, loc)
+
+	parentOriginal := "parent-1"
+	parentPtr := &parentOriginal
+	dueOriginal := localTime.Add(24 * time.Hour)
+	duePtr := &dueOriginal
+
+	task, err := core.NewTask(core.NewTaskParams{
+		ID:       "task-defensive",
+		Title:    "Defensive Task",
+		ParentID: parentPtr,
+		DueDate:  duePtr,
+		Now:      localTime,
+	})
+	if err != nil {
+		t.Fatalf("NewTask failed: %v", err)
+	}
+
+	// Mutate external pointers
+	parentOriginal = "mutated-parent"
+	*duePtr = localTime.Add(48 * time.Hour)
+
+	if *task.ParentID != "parent-1" {
+		t.Errorf("task.ParentID was mutated externally to %q", *task.ParentID)
+	}
+	if !task.DueDate.Equal(localTime.Add(24 * time.Hour)) {
+		t.Errorf("task.DueDate was mutated externally to %v", task.DueDate)
+	}
+
+	// Invariant: Timestamps must be in UTC
+	if task.CreatedAt.Location() != time.UTC {
+		t.Errorf("expected CreatedAt in UTC, got location: %v", task.CreatedAt.Location())
+	}
+	if task.UpdatedAt.Location() != time.UTC {
+		t.Errorf("expected UpdatedAt in UTC, got location: %v", task.UpdatedAt.Location())
+	}
+	if task.DueDate.Location() != time.UTC {
+		t.Errorf("expected DueDate in UTC, got location: %v", task.DueDate.Location())
 	}
 }

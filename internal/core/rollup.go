@@ -35,10 +35,12 @@ func CalculateProgress(task Task, subtasks []Task) int {
 		p := subtask.Progress
 		if subtask.Status == StatusDone {
 			p = 100
-		} else if p < 0 {
-			p = 0
-		} else if p > 100 {
-			p = 100
+		} else {
+			if p < 0 {
+				p = 0
+			} else if p >= 100 {
+				p = 99
+			}
 		}
 		sum += p
 	}
@@ -51,8 +53,8 @@ func CalculateProgress(task Task, subtasks []Task) int {
 	if avg < 0 {
 		return 0
 	}
-	if avg > 100 {
-		return 100
+	if avg >= 100 {
+		return 99
 	}
 	return avg
 }

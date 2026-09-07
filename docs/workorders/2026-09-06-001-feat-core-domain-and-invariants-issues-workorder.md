@@ -180,7 +180,7 @@ evidence-scope: Verified local execution
 - [x] Planned units implemented (Units 001-1 through 001-6).
 - [x] Focused unit tests pass (`go test -v ./internal/core/...`).
 - [x] Race detector checks pass (`go test -race -v ./internal/core/...`).
-- [x] Benchmarks pass with expected performance (`go test -bench=. ./internal/core/...` observed 298ns, 0 allocs).
+- [x] Benchmarks pass with expected performance (`go test -bench=. -benchmem ./internal/core/...` observed 301ns/op, 0 allocs).
 - [x] Aggregate repository validation passes (`make validate`).
 - [x] All issues fixed (CORE-ISS-001 through CORE-ISS-013).
 - [x] Remaining unaccepted issues: 0.

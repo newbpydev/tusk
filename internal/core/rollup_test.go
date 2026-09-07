@@ -113,3 +113,18 @@ func TestCalculateProgress_AllDone(t *testing.T) {
 		t.Errorf("CalculateProgress after reopen = %d, want 70", gotReopened)
 	}
 }
+
+func TestCalculateProgress_NonDoneSubtaskAt100(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	parent, _ := core.NewTask(core.NewTaskParams{ID: "parent", Title: "Parent", Now: now})
+
+	child, _ := core.NewTask(core.NewTaskParams{ID: "c1", Title: "C1", Now: now})
+	_ = child.TransitionTo(core.StatusInProgress, now)
+	_ = child.SetProgress(100, now)
+
+	// Single non-done subtask with progress 100 must produce 99%, never 100%
+	got := core.CalculateProgress(*parent, []core.Task{*child})
+	if got != 99 {
+		t.Errorf("CalculateProgress with non-done subtask at 100 = %d, want 99", got)
+	}
+}

@@ -45,10 +45,16 @@ func FilterTasks(tasks []Task, filter TaskFilter) []Task {
 		return []Task{}
 	}
 
+	if filter.RootOnly && filter.ParentID != nil {
+		return []Task{}
+	}
+
+	searchTerm := strings.ToLower(strings.TrimSpace(filter.SearchTerm))
+
 	result := make([]Task, 0, len(tasks))
 
 	for _, task := range tasks {
-		if !matchesFilter(task, filter) {
+		if !matchesFilter(task, filter, searchTerm) {
 			continue
 		}
 		result = append(result, task)
@@ -57,7 +63,7 @@ func FilterTasks(tasks []Task, filter TaskFilter) []Task {
 	return result
 }
 
-func matchesFilter(task Task, f TaskFilter) bool {
+func matchesFilter(task Task, f TaskFilter, searchTerm string) bool {
 	if len(f.Statuses) > 0 {
 		matched := false
 		for _, s := range f.Statuses {
@@ -99,6 +105,9 @@ func matchesFilter(task Task, f TaskFilter) bool {
 		}
 	}
 
+	if f.RootOnly && f.ParentID != nil {
+		return false
+	}
 	if f.RootOnly {
 		if task.ParentID != nil {
 			return false
@@ -120,12 +129,11 @@ func matchesFilter(task Task, f TaskFilter) bool {
 		}
 	}
 
-	if term := strings.TrimSpace(f.SearchTerm); term != "" {
-		lowerTerm := strings.ToLower(term)
-		lowerTitle := strings.ToLower(task.Title)
-		lowerDesc := strings.ToLower(task.Description)
-		if !strings.Contains(lowerTitle, lowerTerm) && !strings.Contains(lowerDesc, lowerTerm) {
-			return false
+	if searchTerm != "" {
+		if !strings.Contains(strings.ToLower(task.Title), searchTerm) {
+			if task.Description == "" || !strings.Contains(strings.ToLower(task.Description), searchTerm) {
+				return false
+			}
 		}
 	}
 

@@ -28,6 +28,9 @@ func TestParsePriority(t *testing.T) {
 		{"0", 0, 0, "", true},
 		{"5", 0, 0, "", true},
 		{"critical", 0, 0, "", true},
+		{"+1", 0, 0, "", true},
+		{"01", 0, 0, "", true},
+		{"004", 0, 0, "", true},
 		{"", 0, 0, "", true},
 	}
 
