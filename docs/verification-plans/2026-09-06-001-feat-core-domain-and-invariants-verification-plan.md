@@ -39,14 +39,14 @@ evidence-scope: Verified local execution
 | **Rollup Arithmetic** | Unit 001-4 | CORE-ROL-N1, CORE-ROL-B1, CORE-ROL-P1 | Focused Property / Table |
 | **Tree & Cycle Invariants**| Unit 001-5 | CORE-TRE-N1, CORE-TRE-B1, CORE-TRE-F1, CORE-TRE-BM1 | Focused Graph / Benchmark |
 | **Filtering & Sorting** | Unit 001-6 | CORE-FLT-N1, CORE-FLT-B1, CORE-FLT-C1 | Focused Unit |
-| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ enforced; 98.0% achieved) |
+| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ target; 98.0% measured) |
 
 ---
 
 ## 3. Scenarios
 
 ### Error Taxonomy
-- [x] **CORE-ERR-N1 Normal Path**: All 11 error sentinels (`ErrTaskNotFound`, `ErrCyclicDependency`, `ErrInvalidProgress`, etc.) have distinct error string representations and non-nil identity.
+- [x] **CORE-ERR-N1 Normal Path**: All 15 error sentinels (`ErrTaskNotFound`, `ErrCyclicDependency`, `ErrInvalidProgress`, `ErrInvalidTaskID`, `ErrDuplicateTaskID`, `ErrInvalidDepth`, `ErrTraversalLimitExceeded`, etc.) have distinct error string representations and non-nil identity.
 - [x] **CORE-ERR-B1 Boundary**: Wrapped errors (`fmt.Errorf("context: %w", ErrEmptyTitle)`) correctly unwrap and match via `errors.Is`.
 
 ### Value Objects (`Status`, `Priority`, `Tag`)
@@ -88,7 +88,7 @@ evidence-scope: Verified local execution
 | **Focused Unit** | `go test -v ./internal/core/...` | Local Linux/Darwin/Win | All unit tests pass in $< 1\text{s}$ |
 | **Race Detector** | `go test -race -v ./internal/core/...` | Local Linux/Darwin | Zero data race conditions detected |
 | **Benchmarks** | `go test -bench=. -benchmem ./internal/core/...` | Local Linux | Sub-microsecond execution, $< 5$ allocations |
-| **Aggregate Gate**| `make validate && go test -cover -race ./internal/core/...` | Local | Strict format, vet, unit tests, race checks, and 100% coverage threshold |
+| **Aggregate Gate**| `make validate && go test -cover -race ./internal/core/...` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage threshold |
 
 ---
 
@@ -107,5 +107,5 @@ evidence-scope: Verified local execution
 | Date | Commit SHA | Environment | Command | Result | Evidence Ref |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `make validate` | Pass (0 race, 0 vet) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |

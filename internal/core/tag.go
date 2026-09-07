@@ -32,8 +32,8 @@ func isValidTag(s string) bool {
 func NormalizeTag(raw string) (Tag, error) {
 	trimmed := strings.TrimSpace(raw)
 	trimmed = strings.TrimPrefix(trimmed, "#")
+	trimmed = strings.TrimSpace(trimmed)
 	normalized := strings.ToLower(trimmed)
-
 	if len(normalized) < 1 || len(normalized) > 32 {
 		return "", ErrInvalidTag
 	}

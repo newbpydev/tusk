@@ -29,7 +29,7 @@ func TestNormalizeTag(t *testing.T) {
 		{"-leading-dash", "", true},
 		{"trailing-dash-", "", true},
 		{"double--dash", "", true},
-		{"# backend", "", true},
+		{"# backend", core.Tag("backend"), false},
 		{"##backend", "", true},
 		{"#--backend", "", true},
 		{strings.Repeat("a", 33), "", true},

@@ -62,6 +62,10 @@ var (
 	ErrMaxDepthExceeded        = errors.New("maximum subtask hierarchy depth exceeded")
 	ErrInvalidTag              = errors.New("invalid tag format: tags must be alphanumeric with hyphens")
 	ErrInvalidProgress         = errors.New("task progress must be an integer between 0 and 100")
+	ErrInvalidTaskID           = errors.New("invalid task id: id cannot be empty")
+	ErrDuplicateTaskID         = errors.New("duplicate task id in hierarchy")
+	ErrInvalidDepth            = errors.New("invalid hierarchy depth: depth cannot be negative")
+	ErrTraversalLimitExceeded  = errors.New("hierarchy traversal limit exceeded")
 )
 ```
 

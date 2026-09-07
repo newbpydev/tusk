@@ -25,6 +25,7 @@ evidence-scope: Verified local execution
 | **CORE-ISS-011** | Doc Review | Determinism / Sorting | P2 | Fixed in Plan | `SortTasks` with `SortByDueDate` lacked nulls-last ordering and deterministic tie-breaker. | Specified nulls-last on `SortAsc` and implicit `SortByID ASC` final tie-breaker. | Unit 001-6 tests (`TestSortTasks_MultiKey`, `CORE-FLT-B1`). |
 | **CORE-ISS-012** | Doc Review | Lifecycle / Entity Mutation | P2 | Fixed in Plan | `Task` entity omitted dedicated `SetParent` method, risking stale `UpdatedAt` on reparenting. | Added `func (t *Task) SetParent(parentID *string, now time.Time) error` with `ErrSelfParenting` check. | Unit 001-3 tests (`TestTask_SetParent`, `CORE-TSK-R1`). |
 | **CORE-ISS-013** | Doc Review | Architecture / Query Boundaries | P2 | Fixed in Plan | In-memory filtering and sorting created apparent duplication with SQLite storage queries. | Delineated operational boundary: in-memory for TUI live search; primary persistence queries in storage repository. | Architecture boundary review in Section 2.7. |
+| **CORE-ISS-014** | Code Review | Error Taxonomy / Hierarchy Guards | P1 | Verified | Missing explicit domain sentinels for empty task IDs, duplicate IDs in trees, negative subtree depths, and traversal exhaustion. | Added `ErrInvalidTaskID`, `ErrDuplicateTaskID`, `ErrInvalidDepth`, and `ErrTraversalLimitExceeded` (15 total sentinels). | Unit tests in `errors_test.go`, `task_test.go`, and `tree_test.go`. |
 ---
 
 ## 2. Issue Details
@@ -158,6 +159,16 @@ evidence-scope: Verified local execution
 - **Planning Gap**: In-memory `FilterTasks` and `SortTasks` raised questions about architectural duplication with SQLite `sqlc` queries.
 - **Decision & Fix**: Delineated operational boundary: `core.FilterTasks` serves client-side in-memory live search in the Bubble Tea TUI without database round-trips; storage queries remain in `ports.TaskRepository`.
 - **Retest / Closure Evidence**: Architectural boundary review in Section 2.7.
+
+### CORE-ISS-014: Extension of Domain Error Taxonomy to 15 Sentinels
+- **Phase Found**: Code Review Audit
+- **Owner / Review Lens**: Correctness & Reliability Lens
+- **Severity**: P1
+- **Status**: Closed - Verified
+- **Affected Requirement / Unit**: Unit 001-1 (`internal/core/errors.go`), Unit 001-3 (`task.go`), Unit 001-5 (`tree.go`)
+- **Defect**: Tree and task validation lacked explicit typed sentinels for empty IDs, duplicate task IDs in trees, negative subtree depths, and traversal-step exhaustion, causing silent misreporting or masking defects as generic cycles.
+- **Decision & Fix**: Defined and tested 4 dedicated sentinels: `ErrInvalidTaskID`, `ErrDuplicateTaskID`, `ErrInvalidDepth`, and `ErrTraversalLimitExceeded`, expanding the taxonomy to 15 sentinels.
+- **Retest / Closure Evidence**: Unit tests in `errors_test.go`, `task_test.go`, and `tree_test.go` verifying clean sentinel typing and matching.
 ---
 
 ## 3. Review-Lens Sign-Offs
@@ -182,5 +193,5 @@ evidence-scope: Verified local execution
 - [x] Race detector checks pass (`go test -race -v ./internal/core/...`).
 - [x] Benchmarks pass with expected performance (`go test -bench=. -benchmem ./internal/core/...` observed 301ns/op, 0 allocs).
 - [x] Aggregate repository validation passes (`make validate`).
-- [x] All issues fixed (CORE-ISS-001 through CORE-ISS-013).
+- [x] All issues fixed (CORE-ISS-001 through CORE-ISS-014).
 - [x] Remaining unaccepted issues: 0.

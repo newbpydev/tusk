@@ -68,7 +68,7 @@ graph TD
   - [x] Issue Workorder with review lens sign-offs and empty release gate
 - [x] **1.2 Unit 001-1: Domain Sentinels and Error Taxonomy**
   - [x] Red Test: `internal/core/errors_test.go` (`TestErrorsExist`, `TestErrors_SentinelIntegrity`)
-  - [x] Implementation: `internal/core/errors.go` (11 sentinel errors)
+  - [x] Implementation: `internal/core/errors.go` (15 sentinel errors)
   - [x] Green Verification: `go test -v -run TestErrors ./internal/core/...`
 - [x] **1.3 Unit 001-2: Strongly Typed Value Objects (`Status`, `Priority`, `Tag`)**
   - [x] Red Tests: `status_test.go`, `priority_test.go`, `tag_test.go`
