@@ -72,7 +72,7 @@ evidence-scope: Verified local execution
 - [x] **CORE-TRE-N1 Normal Path**: `BuildTree` assembles a list of flat tasks into a forest of `TaskNode` trees with correct `Depth` attributes.
 - [x] **CORE-TRE-B1 Boundary**: Root promotion with `nil` `proposedParentID` returns `nil` without invoking lookup. Subtree reparenting validates `parentDepth + 1 + taskSubtreeDepth <= MaxHierarchyDepth`, returning `ErrMaxDepthExceeded` if exceeded.
 - [x] **CORE-TRE-F1 Cycle & Orphan Injection**: In an existing tree `A -> B -> C`, attempting to set `A.ParentID = &C` fails cycle check with `ErrCyclicDependency`. `BuildTree` returns `ErrTaskNotFound` if parent ID is missing from slice.
-- [x] **CORE-TRE-BM1 Benchmark**: `DetectCycles` traversal on a 10-level hierarchy completes in $< 500\text{ns}$ per check (observed 298ns, 0 allocs).
+- [x] **CORE-TRE-BM1 Benchmark**: `DetectCycles` traversal on a 10-level hierarchy completes in $< 500\text{ns}$ per check (observed 301ns/op, 0 allocs).
 
 ### Filtering & Sorting
 - [x] **CORE-FLT-N1 Normal Path**: `FilterTasks` accurately filters a list by status slice, priority slice, tag intersection, title substring, and `RootOnly` flag.

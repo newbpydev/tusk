@@ -130,7 +130,7 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 				return nil, ErrInvalidTaskID
 			}
 			if parentID == id {
-				return nil, ErrSelfParenting
+				return nil, fmt.Errorf("task %s references itself as parent: %w", id, ErrSelfParenting)
 			}
 		}
 		if _, exists := taskMap[id]; exists {

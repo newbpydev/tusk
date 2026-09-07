@@ -86,7 +86,7 @@ func NewTask(params NewTaskParams) (*Task, error) {
 	task := &Task{
 		ID:          id,
 		Title:       title,
-		Description: strings.TrimSpace(params.Description),
+		Description: params.Description,
 		Status:      StatusTodo,
 		Priority:    priority,
 		ParentID:    parentID,
@@ -160,7 +160,7 @@ func (t *Task) Update(title, desc string, priority Priority, tags []Tag, dueDate
 	}
 
 	t.Title = trimmedTitle
-	t.Description = strings.TrimSpace(desc)
+	t.Description = desc
 	t.Priority = priority
 	t.Tags = normTags
 	t.DueDate = copiedDue

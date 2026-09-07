@@ -287,6 +287,33 @@ func TestTask_SetProgress_Validation(t *testing.T) {
 	}
 }
 
+func TestTask_DescriptionPreservesMarkdownIndentation(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	markdownDesc := "    code block\n    continued"
+
+	task, err := core.NewTask(core.NewTaskParams{
+		ID:          "task-md",
+		Title:       "Markdown Task",
+		Description: markdownDesc,
+		Now:         now,
+	})
+	if err != nil {
+		t.Fatalf("NewTask failed: %v", err)
+	}
+	if task.Description != markdownDesc {
+		t.Errorf("expected Description to preserve indentation, got %q", task.Description)
+	}
+
+	updatedMD := "  * list item\n  * nested"
+	err = task.Update("Title", updatedMD, core.PriorityMedium, nil, nil, now)
+	if err != nil {
+		t.Fatalf("Update failed: %v", err)
+	}
+	if task.Description != updatedMD {
+		t.Errorf("expected Update to preserve indentation, got %q", task.Description)
+	}
+}
+
 func TestTask_Update(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
 	task, err := core.NewTask(core.NewTaskParams{
