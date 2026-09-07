@@ -7,7 +7,7 @@ import (
 
 const (
 	MaxHierarchyDepth = 10
-	maxTraversalSteps = 1000
+	maxTraversalSteps = 10000
 )
 
 type TaskNode struct {
@@ -32,11 +32,11 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 	if taskID == parentID {
 		return ErrSelfParenting
 	}
-
 	currentID := parentID
 	var visitedBuf [16]string
-	visited := visitedBuf[:0]
-	visited = append(visited, currentID)
+	visitedSlice := visitedBuf[:0]
+	visitedSlice = append(visitedSlice, currentID)
+	var visitedMap map[string]struct{}
 
 	for step := 0; step < maxTraversalSteps; step++ {
 		ancestorID, err := lookupParent(currentID)
@@ -52,33 +52,29 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 			return ErrCyclicDependency
 		}
 
-		for _, v := range visited {
-			if v == anc {
+		if visitedMap != nil {
+			if _, loop := visitedMap[anc]; loop {
 				return ErrCyclicDependency
+			}
+			visitedMap[anc] = struct{}{}
+		} else {
+			for _, v := range visitedSlice {
+				if v == anc {
+					return ErrCyclicDependency
+				}
+			}
+			if len(visitedSlice) < cap(visitedBuf) {
+				visitedSlice = append(visitedSlice, anc)
+			} else {
+				visitedMap = make(map[string]struct{}, 32)
+				for _, v := range visitedSlice {
+					visitedMap[v] = struct{}{}
+				}
+				visitedMap[anc] = struct{}{}
 			}
 		}
 
 		currentID = anc
-		visited = append(visited, currentID)
-
-		if step == maxTraversalSteps-1 {
-			nextAncestor, err := lookupParent(currentID)
-			if err != nil {
-				return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
-			}
-			if nextAncestor != nil {
-				next := *nextAncestor
-				if next == taskID {
-					return ErrCyclicDependency
-				}
-				for _, v := range visited {
-					if v == next {
-						return ErrCyclicDependency
-					}
-				}
-			}
-			return ErrTraversalLimitExceeded
-		}
 	}
 
 	return ErrTraversalLimitExceeded
@@ -116,15 +112,6 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 		visited[currentID] = struct{}{}
 
 		if step == maxTraversalSteps-1 {
-			nextAncestor, err := lookupParent(currentID)
-			if err != nil {
-				return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
-			}
-			if nextAncestor != nil {
-				if _, loop := visited[*nextAncestor]; loop {
-					return ErrCyclicDependency
-				}
-			}
 			return ErrTraversalLimitExceeded
 		}
 	}
