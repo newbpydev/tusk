@@ -398,6 +398,12 @@ func TestTask_SetRollupProgress(t *testing.T) {
 		t.Errorf("expected ErrInvalidProgress when setting clamped 99 on corrupt subtask, got %v", err)
 	}
 
+	// Child with invalid status enum and Progress == 100 is rejected with ErrInvalidStatus
+	childBadStatus := core.Task{ID: "c-badstatus", Title: "Bad", Status: core.Status("archived"), Progress: 100}
+	err = parent.SetRollupProgress(100, []core.Task{childBadStatus}, now)
+	if !errors.Is(err, core.ErrInvalidStatus) {
+		t.Errorf("expected ErrInvalidStatus when child has invalid status, got %v", err)
+	}
 	// Setting 100 on non-done parent with complete subtasks succeeds
 	tUpdate := now.Add(5 * time.Minute)
 	err = parent.SetRollupProgress(100, subtasks, tUpdate)
