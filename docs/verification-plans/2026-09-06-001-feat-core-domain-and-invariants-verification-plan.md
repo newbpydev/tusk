@@ -110,8 +110,8 @@ evidence-scope: Verified local execution
 | Date | Commit SHA | Environment | Command | Result | Evidence Ref |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `make validate` | Pass (0 race, 0 vet) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `make coverage` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `make bench-tree` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-07 | `b248bb2` | Go 1.24 Linux x86_64 | `make bench-build` | Pass (37.8µs/100 tasks, 481 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
-| 2026-09-07 | `f829d98` | Go 1.24 Linux x86_64 | `make coverage` | Pass (96.8% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-07 | `b248bb2` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` | Pass (37.8µs/100 tasks, 481 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-07 | `f829d98` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (96.8% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
 | 2026-09-07 | `c2cb494` | Go 1.24 Linux x86_64 | `make coverage && make bench-tree && make bench-build` | Pass (98.2% coverage, 314ns/op, 73.6µs/op) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
