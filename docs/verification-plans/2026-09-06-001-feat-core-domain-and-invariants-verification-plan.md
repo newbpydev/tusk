@@ -13,9 +13,9 @@ evidence-scope: Verified local execution
 - **Behavior Under Test**: Pure Go domain logic, strongly typed value objects (`Status`, `Priority`, `Tag`), task state machine lifecycle with timestamp tracking, integer mathematical progress rollup, cycle-free recursive tree validation, and deterministic filtering/sorting.
 - **Public Contracts**:
   - `internal/core/errors.go`: 14 domain error sentinels (including `ErrInvalidProgress`).
-  - `internal/core/status.go`: `ParseStatus`, `Status.CanTransitionTo`.
-  - `internal/core/priority.go`: `ParsePriority`, `Priority.Weight`.
-  - `internal/core/tag.go`: `NormalizeTag`, `NormalizeTags`, `NormalizeTagSlice`.
+  - `internal/core/status.go`: `ParseStatus`, `Status.CanTransitionTo`, `Status.IsValid`, `Status.IsTerminal`.
+  - `internal/core/priority.go`: `ParsePriority`, `Priority.Weight`, `Priority.String`, `Priority.IsValid`.
+  - `internal/core/tag.go`: `NormalizeTag`, `NormalizeTags`, `NormalizeTagSlice`, `Tag.String`.
   - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`, `Task.SetRollupProgress`, `Task.ResetLeaf`, `Task.IsRoot`, `Task.IsDone`, `Task.Clone`.
   - `internal/core/rollup.go`: `CalculateProgress(task Task, subtasks []Task) int`.
   - `internal/core/tree.go`: `BuildTree`, `DetectCycles(taskID string, proposedParentID *string, ...) error`, `ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, ...) error`.
@@ -50,12 +50,12 @@ evidence-scope: Verified local execution
 - [x] **CORE-ERR-B1 Boundary**: Wrapped errors (`fmt.Errorf("context: %w", ErrEmptyTitle)`) correctly unwrap and match via `errors.Is`.
 
 ### Value Objects (`Status`, `Priority`, `Tag`)
-- [x] **CORE-STS-N1 Normal Path**: `ParseStatus` converts `"todo"`, `"in-progress"`, `"blocked"`, `"done"` to valid enums.
+- [x] **CORE-STS-N1 Normal Path**: `ParseStatus` converts `"todo"`, `"in-progress"`, `"blocked"`, `"done"` to valid enums; validates `IsValid() == true` and `IsTerminal() == true` solely for `StatusDone`.
 - [x] **CORE-STS-B1 Boundary**: `ParseStatus` trims whitespace and handles case insensitivity (`"TODO"` -> `StatusTodo`).
 - [x] **CORE-STS-F1 Injected Failure**: Invalid string `"review"` returns `ErrInvalidStatus`. Invalid transition `done -> blocked` returns `ErrInvalidStatusTransition`. Reopening `done -> in-progress` succeeds.
-- [x] **CORE-PRI-N1 Normal Path**: `ParsePriority` converts `"urgent"`, `"high"`, `"medium"`, `"low"` and integers 1–4 to `Priority` enums.
+- [x] **CORE-PRI-N1 Normal Path**: `ParsePriority` converts `"urgent"`, `"high"`, `"medium"`, `"low"` and integers 1–4 to `Priority` enums; validates `IsValid() == true` and `String()` formatting.
 - [x] **CORE-PRI-B1 Boundary**: Invalid priority strings or integers outside 1–4 return `ErrInvalidPriority`.
-- [x] **CORE-TAG-N1 Normal Path**: `NormalizeTag` trims leading/trailing whitespace, strips leading `#`, trims whitespace again (e.g. `"  #Backend  "` -> `Tag("backend")`), lowercases, and validates characters. `NormalizeTags` and `NormalizeTagSlice` deduplicate duplicate tags in slice, sort lexicographically, and return an empty non-nil slice for nil or empty inputs.
+- [x] **CORE-TAG-N1 Normal Path**: `NormalizeTag` trims leading/trailing whitespace, strips leading `#`, trims whitespace again (e.g. `"  #Backend  "` -> `Tag("backend")`), lowercases, and validates characters; `Tag.String()` returns string value. `NormalizeTags` and `NormalizeTagSlice` deduplicate duplicate tags in slice, sort lexicographically, and return an empty non-nil slice for nil or empty inputs.
 - [x] **CORE-TAG-B1 Boundary**: Tag containing spaces or invalid symbols returns `ErrInvalidTag`. Tags exceeding 32 characters are rejected.
 
 ### Task Entity & State Transitions
@@ -87,11 +87,11 @@ evidence-scope: Verified local execution
 
 | Tier | Command | Environment | Planned Evidence |
 | :--- | :--- | :--- | :--- |
-| **Focused Unit** | `go test -v ./internal/core/...` | Local Linux/Darwin/Win | All unit tests pass in $< 1\text{s}$ |
-| **Race Detector** | `go test -race -v ./internal/core/...` | Local Linux/Darwin | Zero data race conditions detected |
-| **Tree Traversal Benchmark** | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Local Linux | Sub-microsecond execution (< 500ns, 0 allocs; observed 301ns/op) |
-| **Tree Build Benchmark** | `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` | Local Linux | Scalable forest allocation (< 1µs/task, < 5 allocs/task; observed ~38µs/100 tasks, 481 allocs) |
-| **Aggregate Gate**| `make validate && go test -cover -race ./internal/core/...` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage target (96.8% measured under `-race`) |
+| **Focused Unit** | `make test` | Local Linux/Darwin/Win | All unit tests pass in $< 1\text{s}$ |
+| **Race Detector** | `make race` | Local Linux/Darwin | Zero data race conditions detected |
+| **Tree Traversal Benchmark** | `make bench-tree` | Local Linux | Sub-microsecond execution (< 500ns, 0 allocs; observed 314ns/op) |
+| **Tree Build Benchmark** | `make bench-build` | Local Linux | Scalable forest allocation (< 1µs/task, < 5 allocs/task; observed ~51µs/100 tasks, 484 allocs) |
+| **Aggregate Gate**| `make validate && make coverage` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage target (98.2% measured under `-race`) |
 
 ---
 

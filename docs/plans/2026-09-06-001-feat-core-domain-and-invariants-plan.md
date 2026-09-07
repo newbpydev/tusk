@@ -393,4 +393,4 @@ Verification: `go test -v -run TestTask ./internal/core/...`
 | `CORE-FLT-N1` | FilterTasks evaluates Status, Priority, Tags, SearchTerm, and RootOnly | `TestFilterTasks` | `go test -v -run TestFilterTasks ./internal/core/...` |
 | `CORE-FLT-B1` | SortTasks sorts nil DueDate last on ASC, with deterministic ID tie-breaking | `TestSortTasks_MultiKey` | `go test -v -run TestSortTasks ./internal/core/...` |
 | `CORE-FLT-C1` | Zero-match queries return empty non-nil slices | `TestFilterTasks_EmptyResults` | `go test -v -run TestFilterTasks ./internal/core/...` |
-| `CORE-AGG-ALL` | Full test suite, race detector, static analysis, $\ge 95\%$ domain coverage target | All tests in `internal/core` | `make validate && go test -cover -race ./internal/core/...` |
+| `CORE-AGG-ALL` | Full test suite, race detector, static analysis, $\ge 95\%$ domain coverage target | All tests in `internal/core` | `make validate && make coverage` |
