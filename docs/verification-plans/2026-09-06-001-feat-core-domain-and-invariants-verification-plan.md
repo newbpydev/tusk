@@ -16,7 +16,7 @@ evidence-scope: Verified local execution
   - `internal/core/status.go`: `ParseStatus`, `Status.CanTransitionTo`.
   - `internal/core/priority.go`: `ParsePriority`, `Priority.Weight`.
   - `internal/core/tag.go`: `NormalizeTag`, `NormalizeTags`.
-  - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`.
+  - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`, `Task.SetRollupProgress`.
   - `internal/core/rollup.go`: `CalculateProgress(task Task, subtasks []Task) int`.
   - `internal/core/tree.go`: `BuildTree`, `DetectCycles(taskID string, proposedParentID *string, ...) error`, `ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, ...) error`.
   - `internal/core/filter.go`: `FilterTasks(tasks []Task, filter TaskFilter) []Task`, `SortTasks(tasks []Task, order []SortOrder)`. `TaskFilter` with `RootOnly bool`, `SortByID` in `SortField`.
@@ -60,13 +60,14 @@ evidence-scope: Verified local execution
 
 ### Task Entity & State Transitions
 - [x] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, and non-zero `CreatedAt`/`UpdatedAt`.
-- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 100$, rejecting out-of-bounds with `ErrInvalidProgress`.
+- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` permits 100 on non-done parents whose subtasks have completed.
 - [x] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil` and updates `UpdatedAt`. `SetParent` updates `ParentID` and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
 
 ### Mathematical Progress Rollup
 - [x] **CORE-ROL-N1 Normal Path**: Leaf task preserves explicitly assigned manual progress ($0 \le \text{progress} \le 99$) or evaluates to $100\%$ when `StatusDone`.
 - [x] **CORE-ROL-B1 Boundary**: Integer floor rounding: subtasks with progresses [100, 0, 0] calculate parent progress as $\lfloor \frac{100}{3} \rfloor = 33\%$.
 - [x] **CORE-ROL-P1 Property Invariant**: If all direct subtasks have `status == StatusDone`, rollup progress is strictly $100\%$ regardless of individual child progress integers.
+- [x] **CORE-ROL-P2 Nested Hierarchy Invariant**: Intermediate non-done parent reporting rolled-up 100% progress preserves its full 100% contribution to grandparent rollup calculations without degradation to 99%.
 
 ### Tree Traversal, Hierarchy & Cycle Prevention
 - [x] **CORE-TRE-N1 Normal Path**: `BuildTree` assembles a list of flat tasks into a forest of `TaskNode` trees with correct `Depth` attributes.

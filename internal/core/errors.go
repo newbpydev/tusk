@@ -1,6 +1,7 @@
 package core
 
 // Error represents an immutable domain error sentinel.
+// All Error sentinels must have globally unique message strings to prevent accidental aliasing under errors.Is / == matching.
 type Error string
 
 func (e Error) Error() string {
@@ -15,7 +16,7 @@ const (
 	ErrInvalidPriority         = Error("invalid task priority")
 	ErrInvalidStatusTransition = Error("invalid status transition")
 	ErrCyclicDependency        = Error("cyclic dependency detected: a task cannot be its own ancestor")
-	ErrSelfParenting           = selfParentingError("task cannot reference itself as parent")
+	ErrSelfParenting           = SelfParentingError("task cannot reference itself as parent")
 	ErrMaxDepthExceeded        = Error("maximum subtask hierarchy depth exceeded")
 	ErrInvalidTag              = Error("invalid tag format: tags must be alphanumeric with hyphens")
 	ErrInvalidProgress         = Error("task progress must be an integer between 0 and 100")
@@ -25,12 +26,12 @@ const (
 	ErrTraversalLimitExceeded  = Error("hierarchy traversal limit exceeded")
 )
 
-type selfParentingError string
+type SelfParentingError string
 
-func (e selfParentingError) Error() string {
+func (e SelfParentingError) Error() string {
 	return string(e)
 }
 
-func (e selfParentingError) Is(target error) bool {
+func (e SelfParentingError) Is(target error) bool {
 	return target == ErrCyclicDependency || target == ErrSelfParenting
 }

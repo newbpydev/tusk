@@ -32,6 +32,7 @@ func TestErrorsExist(t *testing.T) {
 	}
 
 	seen := make(map[error]string)
+	seenMsg := make(map[string]string)
 	for _, tc := range sentinels {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.err == nil {
@@ -43,7 +44,11 @@ func TestErrorsExist(t *testing.T) {
 			if other, exists := seen[tc.err]; exists {
 				t.Errorf("%s and %s share identical error instance", tc.name, other)
 			}
+			if other, exists := seenMsg[tc.msg]; exists {
+				t.Errorf("%s and %s share identical error message %q", tc.name, other, tc.msg)
+			}
 			seen[tc.err] = tc.name
+			seenMsg[tc.msg] = tc.name
 		})
 	}
 }
@@ -82,5 +87,11 @@ func TestErrors_SentinelIntegrity(t *testing.T) {
 	// Invariant from AGENTS.md: self-parenting must match ErrCyclicDependency
 	if !errors.Is(core.ErrSelfParenting, core.ErrCyclicDependency) {
 		t.Errorf("expected ErrSelfParenting to match ErrCyclicDependency via errors.Is")
+	}
+
+	// Verify SelfParentingError is an exported type that can be declared and matched
+	var typedErr core.SelfParentingError = core.ErrSelfParenting
+	if typedErr.Error() != "task cannot reference itself as parent" {
+		t.Errorf("SelfParentingError message mismatch: got %q", typedErr.Error())
 	}
 }

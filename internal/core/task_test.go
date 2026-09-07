@@ -322,13 +322,25 @@ func TestTask_SetRollupProgress(t *testing.T) {
 		t.Errorf("expected ErrInvalidProgress for 101, got %v", err)
 	}
 
-	// Setting 100 on non-done parent succeeds for rollup calculation
-	err = parent.SetRollupProgress(100, now.Add(5*time.Minute))
+	tUpdate := now.Add(5 * time.Minute)
+	err = parent.SetRollupProgress(100, tUpdate)
 	if err != nil {
 		t.Errorf("expected SetRollupProgress(100) on non-done parent to succeed, got %v", err)
 	}
 	if parent.Progress != 100 {
 		t.Errorf("parent.Progress = %d, want 100", parent.Progress)
+	}
+	if !parent.UpdatedAt.Equal(tUpdate) {
+		t.Errorf("parent.UpdatedAt = %v, want %v", parent.UpdatedAt, tUpdate)
+	}
+
+	// Zero time normalizes to current UTC time
+	err = parent.SetRollupProgress(80, time.Time{})
+	if err != nil {
+		t.Errorf("SetRollupProgress with zero time failed: %v", err)
+	}
+	if parent.UpdatedAt.IsZero() || parent.UpdatedAt.Location() != time.UTC {
+		t.Errorf("expected non-zero UTC UpdatedAt, got %v", parent.UpdatedAt)
 	}
 
 	// On a done task, progress must be 100

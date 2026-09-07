@@ -113,22 +113,6 @@ func TestCalculateProgress_AllDone(t *testing.T) {
 		t.Errorf("CalculateProgress after reopen = %d, want 70", gotReopened)
 	}
 }
-
-func TestCalculateProgress_NonDoneSubtaskAt100(t *testing.T) {
-	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
-	parent, _ := core.NewTask(core.NewTaskParams{ID: "parent", Title: "Parent", Now: now})
-
-	child, _ := core.NewTask(core.NewTaskParams{ID: "c1", Title: "C1", Now: now})
-	_ = child.TransitionTo(core.StatusInProgress, now)
-	child.Progress = 100 // simulate external/storage loaded non-done task with progress 100
-
-	// Single non-done subtask with progress 100 must produce 99%, never 100%
-	got := core.CalculateProgress(*parent, []core.Task{*child})
-	if got != 99 {
-		t.Errorf("CalculateProgress with non-done subtask at 100 = %d, want 99", got)
-	}
-}
-
 func TestCalculateProgress_Mutations(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
 	parent, _ := core.NewTask(core.NewTaskParams{ID: "parent", Title: "Parent", Now: now})
@@ -181,5 +165,26 @@ func TestCalculateProgress_Mutations(t *testing.T) {
 	subtasks = []core.Task{}
 	if got := core.CalculateProgress(*parent, subtasks); got != 20 {
 		t.Errorf("after removing all subtasks: got %d, want 20", got)
+	}
+}
+
+func TestCalculateProgress_NestedHierarchy100(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	grandparent, _ := core.NewTask(core.NewTaskParams{ID: "gp", Title: "Grandparent", Now: now})
+
+	// Intermediate parent whose subtasks are done: has progress 100 via rollup
+	parent, _ := core.NewTask(core.NewTaskParams{ID: "p", Title: "Parent", Now: now})
+	_ = parent.TransitionTo(core.StatusInProgress, now)
+	_ = parent.SetRollupProgress(100, now)
+
+	// Direct child that is done
+	childDone, _ := core.NewTask(core.NewTaskParams{ID: "c-done", Title: "Child Done", Now: now})
+	_ = childDone.TransitionTo(core.StatusDone, now)
+
+	// Grandparent subtasks are [parent (progress 100, in-progress), childDone (done)]
+	gpSubtasks := []core.Task{*parent, *childDone}
+	got := core.CalculateProgress(*grandparent, gpSubtasks)
+	if got != 100 {
+		t.Errorf("expected grandparent CalculateProgress = 100 with 100%% intermediate subtasks, got %d", got)
 	}
 }

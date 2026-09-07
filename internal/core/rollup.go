@@ -26,29 +26,28 @@ func CalculateProgress(task Task, subtasks []Task) int {
 		return task.Progress
 	}
 
-	allDone := true
+	allComplete := true
 	sum := 0
 	for _, subtask := range subtasks {
-		if subtask.Status != StatusDone {
-			allDone = false
-		}
 		p := subtask.Progress
 		if subtask.Status == StatusDone {
 			p = 100
 		} else {
 			if p < 0 {
 				p = 0
-			} else if p >= 100 {
-				p = 99
+			} else if p > 100 {
+				p = 100
+			}
+			if p < 100 {
+				allComplete = false
 			}
 		}
 		sum += p
 	}
 
-	if allDone {
+	if allComplete {
 		return 100
 	}
-
 	avg := sum / len(subtasks)
 	if avg < 0 {
 		return 0

@@ -158,12 +158,14 @@ func (t *Task) TransitionTo(next Status, now time.Time) error
 func (t *Task) Update(title, desc string, priority Priority, tags []Tag, dueDate *time.Time, now time.Time) error
 func (t *Task) SetParent(parentID *string, now time.Time) error
 func (t *Task) SetProgress(progress int, now time.Time) error
+func (t *Task) SetRollupProgress(progress int, now time.Time) error
 func (t *Task) IsRoot() bool
 func (t *Task) IsDone() bool
 ```
 **Entity Mutation Contracts**:
 - `SetParent` reassigns `ParentID` and updates `UpdatedAt = now`. Returns `ErrSelfParenting` if `parentID != nil && *parentID == t.ID`.
-- `SetProgress` validates that `progress >= 0 && progress <= 100`, returning `ErrInvalidProgress` on out-of-bounds inputs, and updates `UpdatedAt = now`.
+- `SetProgress` sets manual leaf progress ($0 \le \text{progress} \le 99$ for non-done tasks, strictly $100$ for done tasks), returning `ErrInvalidProgress` on out-of-bounds inputs or when attempting to set 100 on a non-done task, and updates `UpdatedAt = now`.
+- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$), permitting 100 on a non-done parent whose direct subtasks have all completed.
 
 ### 2.5 Progress Rollup Engine (`internal/core/rollup.go`)
 ```go
@@ -291,7 +293,8 @@ graph TD
   - `TestTask_TransitionToDone`: Transitioning to `StatusDone` sets `CompletedAt` to `now`.
   - `TestTask_Reopen`: Transitioning from `StatusDone` to `StatusInProgress` clears `CompletedAt` (sets to `nil`).
   - `TestTask_SetParent`: Reassigning parent updates `ParentID` and `UpdatedAt`; self-parenting returns `ErrSelfParenting`.
-  - `TestTask_SetProgress_Validation`: Valid percentages update `Progress` and `UpdatedAt`; values < 0 or > 100 return `ErrInvalidProgress`.
+  - `TestTask_SetProgress_Validation`: Valid percentages update `Progress` and `UpdatedAt`; values < 0 or > 100 return `ErrInvalidProgress`; setting 100 on non-done task returns `ErrInvalidProgress`.
+  - `TestTask_SetRollupProgress`: Rollup-calculated progress allows 100 on non-done parent; values < 0 or > 100 return `ErrInvalidProgress`.
 Verification: `go test -v -run TestTask ./internal/core/...`
 - **Review Lenses**: Data integrity, state machine correctness.
 
@@ -305,6 +308,7 @@ Verification: `go test -v -run TestTask ./internal/core/...`
   - `TestCalculateProgress_Subtasks`: Parent task with 3 subtasks (100%, 50%, 0%) -> average is 50%.
   - `TestCalculateProgress_FloorRounding`: Parent task with 3 subtasks (100%, 0%, 0%) -> 33% (integer floor).
   - `TestCalculateProgress_AllDone`: All subtasks done -> strictly 100%.
+  - `TestCalculateProgress_NestedHierarchy100`: Intermediate parent with rolled-up 100% progress preserves 100% contribution to grandparent rollup without degradation.
 - **Verification**: `go test -v -run TestCalculateProgress ./internal/core/...`
 - **Review Lenses**: Mathematical accuracy, boundaries.
 

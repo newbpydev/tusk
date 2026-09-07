@@ -65,12 +65,7 @@ func NewTask(params NewTaskParams) (*Task, error) {
 		return nil, ErrInvalidPriority
 	}
 
-	now := params.Now
-	if now.IsZero() {
-		now = time.Now().UTC()
-	} else {
-		now = now.UTC()
-	}
+	now := normalizeTime(params.Now)
 
 	tags, err := NormalizeTags(params.Tags)
 	if err != nil {
@@ -109,11 +104,7 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 		return nil
 	}
 
-	if now.IsZero() {
-		now = time.Now().UTC()
-	} else {
-		now = now.UTC()
-	}
+	now = normalizeTime(now)
 
 	t.Status = next
 	t.UpdatedAt = now
@@ -183,55 +174,47 @@ func (t *Task) SetParent(parentID *string, now time.Time) error {
 		t.ParentID = nil
 	}
 
-	if now.IsZero() {
-		now = time.Now().UTC()
-	} else {
-		now = now.UTC()
-	}
+	now = normalizeTime(now)
 
 	t.UpdatedAt = now
 	return nil
 }
 
+// SetProgress sets explicit manual progress (0-99 for non-done tasks, strictly 100 for done tasks).
+// Returns ErrInvalidProgress if progress < 0, progress > 100, progress == 100 on a non-done task,
+// or progress != 100 on a done task.
 func (t *Task) SetProgress(progress int, now time.Time) error {
+	return t.setProgress(progress, now, false)
+}
+
+// SetRollupProgress sets progress computed by the rollup engine (0-100),
+// permitting 100 on a non-done parent whose direct subtasks have all completed.
+// Returns ErrInvalidProgress if progress < 0, progress > 100, or progress != 100 on a done task.
+func (t *Task) SetRollupProgress(progress int, now time.Time) error {
+	return t.setProgress(progress, now, true)
+}
+
+func (t *Task) setProgress(progress int, now time.Time, allowNonDoneHundred bool) error {
 	if progress < 0 || progress > 100 {
 		return ErrInvalidProgress
 	}
 	if t.Status == StatusDone && progress != 100 {
 		return ErrInvalidProgress
 	}
-	if t.Status != StatusDone && progress == 100 {
+	if !allowNonDoneHundred && t.Status != StatusDone && progress == 100 {
 		return ErrInvalidProgress
-	}
-	if now.IsZero() {
-		now = time.Now().UTC()
-	} else {
-		now = now.UTC()
 	}
 
 	t.Progress = progress
-	t.UpdatedAt = now
+	t.UpdatedAt = normalizeTime(now)
 	return nil
 }
 
-// SetRollupProgress sets the rollup-calculated progress (0-100) on a task,
-// allowing 100 on a non-done parent whose direct subtasks have all completed.
-func (t *Task) SetRollupProgress(progress int, now time.Time) error {
-	if progress < 0 || progress > 100 {
-		return ErrInvalidProgress
+func normalizeTime(t time.Time) time.Time {
+	if t.IsZero() {
+		return time.Now().UTC()
 	}
-	if t.Status == StatusDone && progress != 100 {
-		return ErrInvalidProgress
-	}
-	if now.IsZero() {
-		now = time.Now().UTC()
-	} else {
-		now = now.UTC()
-	}
-
-	t.Progress = progress
-	t.UpdatedAt = now
-	return nil
+	return t.UTC()
 }
 
 func (t *Task) IsRoot() bool {
