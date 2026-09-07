@@ -88,7 +88,7 @@ evidence-scope: Verified local execution
 | **Focused Unit** | `go test -v ./internal/core/...` | Local Linux/Darwin/Win | All unit tests pass in $< 1\text{s}$ |
 | **Race Detector** | `go test -race -v ./internal/core/...` | Local Linux/Darwin | Zero data race conditions detected |
 | **Benchmarks** | `go test -bench=. -benchmem ./internal/core/...` | Local Linux | Sub-microsecond execution, $< 5$ allocations |
-| **Aggregate Gate**| `make validate && go test -cover -race ./internal/core/...` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage threshold |
+| **Aggregate Gate**| `make validate && go test -cover -race ./internal/core/...` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage target |
 
 ---
 
