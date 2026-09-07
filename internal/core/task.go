@@ -225,6 +225,12 @@ func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) e
 	return nil
 }
 
+// ResetLeaf resets a task whose subtasks were removed back to leaf status with explicit manual progress.
+// For non-done tasks, progress must be between 0 and 99; for done tasks, progress must be 100.
+func (t *Task) ResetLeaf(manualProgress int, now time.Time) error {
+	return t.SetProgress(manualProgress, now)
+}
+
 func normalizeTime(t time.Time) time.Time {
 	if t.IsZero() {
 		return time.Now().UTC()

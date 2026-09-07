@@ -436,10 +436,15 @@ func TestTask_RollupSubtasksRemoved(t *testing.T) {
 	if parent.Progress != 100 {
 		t.Fatalf("expected rollup progress 100, got %d", parent.Progress)
 	}
+	// Setting 100 without subtasks on non-done parent fails
+	tReset := now.Add(10 * time.Minute)
+	err := parent.SetRollupProgress(100, nil, tReset)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting 100 without subtasks, got %v", err)
+	}
 
 	// Child is removed: SetRollupProgress with nil/empty subtasks resets leaf progress
-	tReset := now.Add(10 * time.Minute)
-	err := parent.SetRollupProgress(20, nil, tReset)
+	err = parent.SetRollupProgress(20, nil, tReset)
 	if err != nil {
 		t.Fatalf("SetRollupProgress with empty subtasks failed: %v", err)
 	}
@@ -451,6 +456,48 @@ func TestTask_RollupSubtasksRemoved(t *testing.T) {
 	}
 	if got := core.CalculateProgress(*parent, nil); got != 20 {
 		t.Errorf("CalculateProgress after child removal = %d, want 20", got)
+	}
+}
+
+func TestTask_ResetLeaf(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	parent, _ := core.NewTask(core.NewTaskParams{ID: "p", Title: "Parent", Now: now})
+	_ = parent.TransitionTo(core.StatusInProgress, now)
+
+	// Happy path: set leaf progress to 50
+	t1 := now.Add(5 * time.Minute)
+	err := parent.ResetLeaf(50, t1)
+	if err != nil {
+		t.Fatalf("ResetLeaf(50) failed: %v", err)
+	}
+	if parent.Progress != 50 {
+		t.Errorf("parent.Progress = %d, want 50", parent.Progress)
+	}
+	if !parent.UpdatedAt.Equal(t1) {
+		t.Errorf("parent.UpdatedAt = %v, want %v", parent.UpdatedAt, t1)
+	}
+
+	// Negative path: setting 100 on non-done task fails
+	err = parent.ResetLeaf(100, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting 100 on non-done task via ResetLeaf, got %v", err)
+	}
+
+	// Negative path: out of bounds < 0 or > 100
+	if err := parent.ResetLeaf(-1, now); !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress for -1, got %v", err)
+	}
+	if err := parent.ResetLeaf(101, now); !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress for 101, got %v", err)
+	}
+
+	// On done task: must be exactly 100
+	_ = parent.TransitionTo(core.StatusDone, now.Add(10*time.Minute))
+	if err := parent.ResetLeaf(50, now); !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress for < 100 on done task via ResetLeaf, got %v", err)
+	}
+	if err := parent.ResetLeaf(100, now.Add(15*time.Minute)); err != nil {
+		t.Errorf("expected ResetLeaf(100) on done task to succeed, got %v", err)
 	}
 }
 

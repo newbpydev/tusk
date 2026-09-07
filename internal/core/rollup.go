@@ -4,11 +4,12 @@ package core
 // for a task based on its status and any child subtasks.
 //
 // Mathematical Rules:
-// 1. If len(subtasks) == 0:
-//   - If task.Status == StatusDone: 100%
-//   - Otherwise: preserves assigned manual progress (task.Progress, 0-99).
+// 1. If task.Status == StatusDone:
+//   - Strictly 100% regardless of subtask presence or individual child progress.
 //
-// 2. If len(subtasks) > 0:
+// 2. If task.Status != StatusDone:
+//   - If len(subtasks) == 0: preserves assigned manual progress (task.Progress, 0-99).
+//   - If len(subtasks) > 0:
 //   - Floor average: floor((1/N) * sum(subtask_i.Progress))
 //   - Subtask progress is normalized: negative values clamp to 0; corrupt non-done values > 100 clamp to 99.
 //   - If all direct subtasks are StatusDone, progress is strictly 100%.
