@@ -309,6 +309,57 @@ func BenchmarkTreeTraversal(b *testing.B) {
 	}
 }
 
+func BenchmarkBuildTree(b *testing.B) {
+	// 100 tasks: 10 roots each with a 9-level subtree
+	tasks := make([]core.Task, 0, 100)
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	tags := []core.Tag{core.Tag("core"), core.Tag("benchmark")}
+
+	for r := range 10 {
+		rootID := fmt.Sprintf("root-%d", r)
+		tasks = append(tasks, core.Task{
+			ID:        rootID,
+			Title:     "Root Task",
+			Status:    core.StatusTodo,
+			Priority:  core.PriorityHigh,
+			Tags:      tags,
+			CreatedAt: now,
+			UpdatedAt: now,
+		})
+		for c := 1; c < 10; c++ {
+			childID := fmt.Sprintf("child-%d-%d", r, c)
+			var parentID string
+			if c == 1 {
+				parentID = rootID
+			} else {
+				parentID = fmt.Sprintf("child-%d-%d", r, c-1)
+			}
+			dueDate := now.Add(time.Duration(c) * 24 * time.Hour)
+			p := parentID
+			tasks = append(tasks, core.Task{
+				ID:        childID,
+				Title:     "Child Task",
+				ParentID:  &p,
+				Status:    core.StatusInProgress,
+				Priority:  core.PriorityMedium,
+				Tags:      tags,
+				DueDate:   &dueDate,
+				CreatedAt: now,
+				UpdatedAt: now,
+			})
+		}
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for range b.N {
+		_, err := core.BuildTree(tasks)
+		if err != nil {
+			b.Fatalf("BuildTree failed: %v", err)
+		}
+	}
+}
+
 func ptr(s string) *string {
 	return &s
 }

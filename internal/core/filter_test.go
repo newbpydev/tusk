@@ -200,3 +200,49 @@ func extractIDs(tasks []core.Task) []string {
 	}
 	return ids
 }
+
+func TestFilterTasks_DeepCopy(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	parentID := "p1"
+	dueDate := now.Add(24 * time.Hour)
+	completedAt := now.Add(12 * time.Hour)
+	tags := []core.Tag{core.Tag("work")}
+
+	task := core.Task{
+		ID:          "task-1",
+		Title:       "Original",
+		Status:      core.StatusTodo,
+		Priority:    core.PriorityHigh,
+		ParentID:    &parentID,
+		Tags:        tags,
+		DueDate:     &dueDate,
+		CompletedAt: &completedAt,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+
+	filtered := core.FilterTasks([]core.Task{task}, core.TaskFilter{})
+	if len(filtered) != 1 {
+		t.Fatalf("expected 1 filtered task, got %d", len(filtered))
+	}
+
+	// Mutate filtered task reference fields
+	*filtered[0].ParentID = "mutated-parent"
+	*filtered[0].DueDate = dueDate.Add(48 * time.Hour)
+	*filtered[0].CompletedAt = completedAt.Add(48 * time.Hour)
+	filtered[0].Tags[0] = core.Tag("mutated-tag")
+
+	// Verify original task fields are untouched
+	if *task.ParentID != "p1" {
+		t.Errorf("original ParentID was mutated to %s", *task.ParentID)
+	}
+	if !task.DueDate.Equal(now.Add(24 * time.Hour)) {
+		t.Errorf("original DueDate was mutated to %v", task.DueDate)
+	}
+	if !task.CompletedAt.Equal(now.Add(12 * time.Hour)) {
+		t.Errorf("original CompletedAt was mutated to %v", task.CompletedAt)
+	}
+	if task.Tags[0] != core.Tag("work") {
+		t.Errorf("original Tag was mutated to %s", task.Tags[0])
+	}
+}

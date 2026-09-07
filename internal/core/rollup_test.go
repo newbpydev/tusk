@@ -120,7 +120,7 @@ func TestCalculateProgress_NonDoneSubtaskAt100(t *testing.T) {
 
 	child, _ := core.NewTask(core.NewTaskParams{ID: "c1", Title: "C1", Now: now})
 	_ = child.TransitionTo(core.StatusInProgress, now)
-	_ = child.SetProgress(100, now)
+	child.Progress = 100 // simulate external/storage loaded non-done task with progress 100
 
 	// Single non-done subtask with progress 100 must produce 99%, never 100%
 	got := core.CalculateProgress(*parent, []core.Task{*child})

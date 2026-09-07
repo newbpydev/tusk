@@ -57,7 +57,7 @@ func FilterTasks(tasks []Task, filter TaskFilter) []Task {
 		if !matchesFilter(task, filter, searchTerm) {
 			continue
 		}
-		result = append(result, task)
+		result = append(result, task.Clone())
 	}
 
 	return result

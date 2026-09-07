@@ -2,6 +2,7 @@ package core_test
 
 import (
 	"errors"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -285,6 +286,23 @@ func TestTask_SetProgress_Validation(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected SetProgress(100) on done task to succeed, got %v", err)
 	}
+
+	// Invariant: Non-done task cannot have progress 100
+	nonDoneTask, _ := core.NewTask(core.NewTaskParams{ID: "nd-1", Title: "Non-Done", Now: now})
+	err = nonDoneTask.SetProgress(100, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting 100 on non-done task, got %v", err)
+	}
+	_ = nonDoneTask.TransitionTo(core.StatusInProgress, now)
+	err = nonDoneTask.SetProgress(100, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting 100 on in-progress task, got %v", err)
+	}
+	_ = nonDoneTask.TransitionTo(core.StatusBlocked, now)
+	err = nonDoneTask.SetProgress(100, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting 100 on blocked task, got %v", err)
+	}
 }
 
 func TestTask_DescriptionPreservesMarkdownIndentation(t *testing.T) {
@@ -436,13 +454,30 @@ func TestTask_Clone(t *testing.T) {
 	}
 
 	clone := task.Clone()
+	// 1. Fidelity: clone equals the original pre-mutation
+	if !reflect.DeepEqual(clone, task) {
+		t.Errorf("clone does not equal original task: got %+v, want %+v", clone, task)
+	}
 
-	// Mutate task
+	// 2. Distinct pointer / slice backing memory
+	if clone.ParentID == task.ParentID {
+		t.Errorf("clone.ParentID shares pointer address with original")
+	}
+	if clone.DueDate == task.DueDate {
+		t.Errorf("clone.DueDate shares pointer address with original")
+	}
+	if clone.CompletedAt == task.CompletedAt {
+		t.Errorf("clone.CompletedAt shares pointer address with original")
+	}
+	if len(clone.Tags) > 0 && &clone.Tags[0] == &task.Tags[0] {
+		t.Errorf("clone.Tags shares slice backing array with original")
+	}
+
+	// 3. Independence: mutate task and verify clone is untouched
 	parentID = "p2"
 	dueDate = dueDate.Add(24 * time.Hour)
 	completedAt = completedAt.Add(24 * time.Hour)
 	tags[0] = core.Tag("home")
-
 	if *clone.ParentID != "p1" {
 		t.Errorf("clone.ParentID mutated: got %s, want p1", *clone.ParentID)
 	}
@@ -454,5 +489,49 @@ func TestTask_Clone(t *testing.T) {
 	}
 	if clone.Tags[0] != core.Tag("work") {
 		t.Errorf("clone.Tags mutated: got %s, want work", clone.Tags[0])
+	}
+}
+
+func TestTask_Clone_FieldExhaustiveness(t *testing.T) {
+	taskType := reflect.TypeOf(core.Task{})
+	expectedFields := map[string]reflect.Kind{
+		"ID":          reflect.String,
+		"Title":       reflect.String,
+		"Description": reflect.String,
+		"Status":      reflect.String,
+		"Priority":    reflect.Int,
+		"ParentID":    reflect.Pointer,
+		"Progress":    reflect.Int,
+		"Tags":        reflect.Slice,
+		"DueDate":     reflect.Pointer,
+		"CreatedAt":   reflect.Struct,
+		"UpdatedAt":   reflect.Struct,
+		"CompletedAt": reflect.Pointer,
+	}
+
+	if taskType.NumField() != len(expectedFields) {
+		t.Fatalf("Task has %d fields, expected %d. If you added a new field, ensure Task.Clone() explicitly handles it to prevent accidental aliasing!",
+			taskType.NumField(), len(expectedFields))
+	}
+
+	for i := range taskType.NumField() {
+		field := taskType.Field(i)
+		expectedKind, ok := expectedFields[field.Name]
+		if !ok {
+			t.Errorf("unexpected field %s in Task", field.Name)
+			continue
+		}
+		if field.Type.Kind() != expectedKind {
+			t.Errorf("field %s kind is %v, expected %v", field.Name, field.Type.Kind(), expectedKind)
+		}
+		switch field.Type.Kind() {
+		case reflect.Pointer, reflect.Slice, reflect.Map, reflect.Interface, reflect.Chan, reflect.Func:
+			switch field.Name {
+			case "ParentID", "DueDate", "CompletedAt", "Tags":
+				// Explicitly cloned in Task.Clone()
+			default:
+				t.Errorf("field %s is a reference type (%v) not accounted for in Task.Clone() deep-copy logic", field.Name, field.Type.Kind())
+			}
+		}
 	}
 }
