@@ -31,7 +31,7 @@ bench-tree:
 bench-build:
 	go test -bench=BenchmarkBuildTree -run=^$$ -benchmem ./internal/core/...
 
-validate: fmt vet test race coverage
+validate: fmt vet test coverage
 	@echo "All canonical quality gates passed."
 
 build:
@@ -50,7 +50,7 @@ help:
 	@echo "make test      - Run all tests"
 	@echo "make test-unit - Run short unit tests"
 	@echo "make race      - Run tests with data race detector"
-	@echo "make validate  - Run full verification suite (fmt, vet, test, race)"
+	@echo "make validate    - Run full verification suite (fmt, vet, test, coverage)"
 	@echo "make coverage    - Run coverage check with race detector"
 	@echo "make bench       - Run all core micro-benchmarks"
 	@echo "make bench-tree  - Run tree traversal micro-benchmark"

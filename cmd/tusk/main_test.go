@@ -2,10 +2,12 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"os"
 	"os/exec"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestRunVersion(t *testing.T) {
@@ -53,10 +55,16 @@ func TestMainExecution(t *testing.T) {
 		main()
 		return
 	}
-	cmd := exec.Command(os.Args[0], "-test.run=TestMainExecution")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=TestMainExecution")
 	cmd.Env = append(os.Environ(), "TEST_MAIN_EXEC=1")
-	err := cmd.Run()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("process execution failed: %v", err)
+		t.Fatalf("process execution failed: %v, output: %s", err, string(output))
+	}
+	if !strings.Contains(string(output), "Tusk - Zero-friction terminal task management system") {
+		t.Errorf("expected help banner in main output, got %q", string(output))
 	}
 }

@@ -1,16 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-output=$(go test -cover -race ./...)
+if ! output=$(go test -cover -race ./... 2>&1); then
+    echo "$output"
+    exit 1
+fi
 echo "$output"
 
 echo "$output" | awk '
+/\[no test files\]/ {
+    print "Error: package has no test files: " $0
+    failed = 1
+}
 /coverage: [0-9.]+%/ {
-    match($0, /coverage: ([0-9.]+)%/, m)
-    cov = m[1] + 0.0
-    if (cov < 95.0) {
-        printf "Error: package coverage %.1f%% is below mandated 95.0%% threshold\n", cov > "/dev/stderr"
-        failed = 1
+    for (i = 1; i <= NF; i++) {
+        if ($i ~ /^[0-9.]+%$/) {
+            cov = substr($i, 1, length($i)-1) + 0.0
+            if (cov < 95.0) {
+                print "Error: package coverage " cov "% is below mandated 95.0% threshold"
+                failed = 1
+            }
+        }
     }
 }
 END {

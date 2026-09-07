@@ -383,6 +383,15 @@ func TestTask_SetRollupProgress(t *testing.T) {
 		t.Errorf("parent.Progress = %d, want 20", parent.Progress)
 	}
 
+	// Non-done child with corrupt progress > 100 must be rejected
+	childCorrupt, _ := core.NewTask(core.NewTaskParams{ID: "c-corrupt", Title: "Corrupt", Now: now})
+	_ = childCorrupt.TransitionTo(core.StatusInProgress, now)
+	childCorrupt.Progress = 150
+	err = parent.SetRollupProgress(99, []core.Task{*childCorrupt}, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when child has corrupt progress 150, got %v", err)
+	}
+
 	// Setting 100 on non-done parent with complete subtasks succeeds
 	tUpdate := now.Add(5 * time.Minute)
 	err = parent.SetRollupProgress(100, subtasks, tUpdate)
@@ -514,8 +523,15 @@ func TestTask_ResetLeaf(t *testing.T) {
 	if err := parent.ResetLeaf(50, nil, now); !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress for < 100 on done task via ResetLeaf, got %v", err)
 	}
-	if err := parent.ResetLeaf(100, nil, now.Add(15*time.Minute)); err != nil {
+	tDone := now.Add(15 * time.Minute)
+	if err := parent.ResetLeaf(100, nil, tDone); err != nil {
 		t.Errorf("expected ResetLeaf(100) on done task to succeed, got %v", err)
+	}
+	if parent.Progress != 100 {
+		t.Errorf("parent.Progress = %d, want 100", parent.Progress)
+	}
+	if !parent.UpdatedAt.Equal(tDone) {
+		t.Errorf("parent.UpdatedAt = %v, want %v", parent.UpdatedAt, tDone)
 	}
 }
 
