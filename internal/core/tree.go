@@ -60,6 +60,25 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 
 		currentID = anc
 		visited = append(visited, currentID)
+
+		if step == maxTraversalSteps-1 {
+			nextAncestor, err := lookupParent(currentID)
+			if err != nil {
+				return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
+			}
+			if nextAncestor != nil {
+				next := *nextAncestor
+				if next == taskID {
+					return ErrCyclicDependency
+				}
+				for _, v := range visited {
+					if v == next {
+						return ErrCyclicDependency
+					}
+				}
+			}
+			return ErrTraversalLimitExceeded
+		}
 	}
 
 	return ErrTraversalLimitExceeded
@@ -74,9 +93,6 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, lookupParent func(id string) (*string, error)) error {
 	if taskSubtreeDepth < 0 {
 		return ErrInvalidDepth
-	}
-	if taskSubtreeDepth > MaxHierarchyDepth {
-		return ErrMaxDepthExceeded
 	}
 	parentDepth := 1
 	currentID := proposedParentID
@@ -113,7 +129,7 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 		}
 	}
 
-	if parentDepth > MaxHierarchyDepth || taskSubtreeDepth > MaxHierarchyDepth-parentDepth-1 {
+	if parentDepth > MaxHierarchyDepth || taskSubtreeDepth > MaxHierarchyDepth || taskSubtreeDepth > MaxHierarchyDepth-parentDepth-1 {
 		return ErrMaxDepthExceeded
 	}
 

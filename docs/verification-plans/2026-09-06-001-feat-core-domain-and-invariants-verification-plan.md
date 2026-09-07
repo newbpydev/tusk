@@ -12,7 +12,7 @@ evidence-scope: Verified local execution
 
 - **Behavior Under Test**: Pure Go domain logic, strongly typed value objects (`Status`, `Priority`, `Tag`), task state machine lifecycle with timestamp tracking, integer mathematical progress rollup, cycle-free recursive tree validation, and deterministic filtering/sorting.
 - **Public Contracts**:
-  - `internal/core/errors.go`: 11 domain error sentinels (including `ErrInvalidProgress`).
+  - `internal/core/errors.go`: 15 domain error sentinels (including `ErrInvalidProgress`).
   - `internal/core/status.go`: `ParseStatus`, `Status.CanTransitionTo`.
   - `internal/core/priority.go`: `ParsePriority`, `Priority.Weight`.
   - `internal/core/tag.go`: `NormalizeTag`, `NormalizeTags`, `NormalizeTagSlice`.

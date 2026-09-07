@@ -78,6 +78,25 @@ func TestDetectCycles_DeepLoop(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected valid attachment, got %v", err)
 	}
+
+	// 1001-node ring in DetectCycles must return ErrCyclicDependency
+	cycle1001 := make(map[string]*string)
+	for i := 1; i <= 1001; i++ {
+		var next string
+		if i == 1 {
+			next = "L1001"
+		} else {
+			next = fmt.Sprintf("L%d", i-1)
+		}
+		cycle1001[fmt.Sprintf("L%d", i)] = ptr(next)
+	}
+	lookup1001 := func(id string) (*string, error) {
+		return cycle1001[id], nil
+	}
+	err = core.DetectCycles("new-task", ptr("L1001"), lookup1001)
+	if !errors.Is(err, core.ErrCyclicDependency) {
+		t.Errorf("expected ErrCyclicDependency for 1001-node ring in DetectCycles, got %v", err)
+	}
 }
 
 func TestValidateHierarchyDepth_Subtree(t *testing.T) {
@@ -172,7 +191,7 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	}
 
 	// Overflow guard: taskSubtreeDepth = math.MaxInt must return ErrMaxDepthExceeded
-	err = core.ValidateHierarchyDepth(math.MaxInt, "A1005", lookupAcyclic)
+	err = core.ValidateHierarchyDepth(math.MaxInt, "N8", lookup)
 	if !errors.Is(err, core.ErrMaxDepthExceeded) {
 		t.Errorf("expected ErrMaxDepthExceeded for math.MaxInt taskSubtreeDepth, got %v", err)
 	}
@@ -181,7 +200,7 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	stepCount := 0
 	lookupFailAtBoundary := func(id string) (*string, error) {
 		stepCount++
-		if stepCount >= 1000 {
+		if stepCount > 1000 {
 			return nil, errors.New("db connection failure at boundary")
 		}
 		next := fmt.Sprintf("B%d", stepCount)
@@ -190,6 +209,19 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	err = core.ValidateHierarchyDepth(0, "B0", lookupFailAtBoundary)
 	if err == nil || !strings.Contains(err.Error(), "db connection failure at boundary") {
 		t.Errorf("expected boundary lookup error propagation, got %v", err)
+	}
+
+	// When taskSubtreeDepth > MaxHierarchyDepth and parent is cyclic,
+	// cycle detection takes precedence over depth rejection
+	cyclicParent := map[string]*string{
+		"B": ptr("B"),
+	}
+	lookupSelf := func(id string) (*string, error) {
+		return cyclicParent[id], nil
+	}
+	err = core.ValidateHierarchyDepth(11, "B", lookupSelf)
+	if !errors.Is(err, core.ErrCyclicDependency) {
+		t.Errorf("expected ErrCyclicDependency to take precedence over oversized subtree depth, got %v", err)
 	}
 }
 
