@@ -128,3 +128,58 @@ func TestCalculateProgress_NonDoneSubtaskAt100(t *testing.T) {
 		t.Errorf("CalculateProgress with non-done subtask at 100 = %d, want 99", got)
 	}
 }
+
+func TestCalculateProgress_Mutations(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	parent, _ := core.NewTask(core.NewTaskParams{ID: "parent", Title: "Parent", Now: now})
+	_ = parent.TransitionTo(core.StatusInProgress, now)
+	_ = parent.SetProgress(20, now) // initial manual progress 20%
+
+	// 1. Initial state without subtasks: preserves manual progress
+	if got := core.CalculateProgress(*parent, nil); got != 20 {
+		t.Errorf("expected 20%% manual progress, got %d", got)
+	}
+
+	// 2. Add subtask 1 (in-progress, 60%)
+	c1, _ := core.NewTask(core.NewTaskParams{ID: "c1", Title: "C1", Now: now})
+	_ = c1.TransitionTo(core.StatusInProgress, now)
+	_ = c1.SetProgress(60, now)
+	subtasks := []core.Task{*c1}
+	if got := core.CalculateProgress(*parent, subtasks); got != 60 {
+		t.Errorf("after adding c1: got %d, want 60", got)
+	}
+
+	// 3. Add subtask 2 (todo, 0%)
+	c2, _ := core.NewTask(core.NewTaskParams{ID: "c2", Title: "C2", Now: now})
+	subtasks = append(subtasks, *c2)
+	if got := core.CalculateProgress(*parent, subtasks); got != 30 {
+		t.Errorf("after adding c2: got %d, want 30", got)
+	}
+
+	// 4. Mark both subtasks done -> strictly 100%
+	_ = c1.TransitionTo(core.StatusDone, now)
+	_ = c2.TransitionTo(core.StatusDone, now)
+	subtasks = []core.Task{*c1, *c2}
+	if got := core.CalculateProgress(*parent, subtasks); got != 100 {
+		t.Errorf("after marking all done: got %d, want 100", got)
+	}
+
+	// 5. Reopen subtask 1 to in-progress -> progress resets to 0, parent drops to 50%
+	_ = c1.TransitionTo(core.StatusInProgress, now)
+	subtasks = []core.Task{*c1, *c2}
+	if got := core.CalculateProgress(*parent, subtasks); got != 50 {
+		t.Errorf("after reopening c1: got %d, want 50", got)
+	}
+
+	// 6. Delete/remove subtask 1 -> remaining subtask c2 is done -> parent becomes 100%
+	subtasks = []core.Task{*c2}
+	if got := core.CalculateProgress(*parent, subtasks); got != 100 {
+		t.Errorf("after removing c1: got %d, want 100", got)
+	}
+
+	// 7. Delete/remove all subtasks -> parent preserves manual progress
+	subtasks = []core.Task{}
+	if got := core.CalculateProgress(*parent, subtasks); got != 20 {
+		t.Errorf("after removing all subtasks: got %d, want 20", got)
+	}
+}

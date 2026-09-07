@@ -1,6 +1,9 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 const MaxHierarchyDepth = 10
 
@@ -117,10 +120,23 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 
 	taskMap := make(map[string]*TaskNode, len(tasks))
 	for _, t := range tasks {
-		if _, exists := taskMap[t.ID]; exists {
-			return nil, fmt.Errorf("task with id %s already exists: %w", t.ID, ErrDuplicateTaskID)
+		id := strings.TrimSpace(t.ID)
+		if id == "" {
+			return nil, ErrInvalidTaskID
 		}
-		taskMap[t.ID] = &TaskNode{
+		if t.ParentID != nil {
+			parentID := strings.TrimSpace(*t.ParentID)
+			if parentID == "" {
+				return nil, ErrInvalidTaskID
+			}
+			if parentID == id {
+				return nil, ErrSelfParenting
+			}
+		}
+		if _, exists := taskMap[id]; exists {
+			return nil, fmt.Errorf("task with id %s already exists: %w", id, ErrDuplicateTaskID)
+		}
+		taskMap[id] = &TaskNode{
 			Task:     t,
 			Children: []*TaskNode{},
 			Depth:    1,

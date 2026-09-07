@@ -201,6 +201,26 @@ func TestBuildTree_Errors(t *testing.T) {
 	if !errors.Is(err, core.ErrMaxDepthExceeded) {
 		t.Errorf("expected ErrMaxDepthExceeded for 11-level chain, got %v", err)
 	}
+
+	// Empty ID in BuildTree
+	_, err = core.BuildTree([]core.Task{{ID: ""}})
+	if !errors.Is(err, core.ErrInvalidTaskID) {
+		t.Errorf("expected ErrInvalidTaskID for empty task ID, got %v", err)
+	}
+
+	// Empty ParentID in BuildTree
+	emptyP := "   "
+	_, err = core.BuildTree([]core.Task{{ID: "valid", ParentID: &emptyP}})
+	if !errors.Is(err, core.ErrInvalidTaskID) {
+		t.Errorf("expected ErrInvalidTaskID for empty parent ID, got %v", err)
+	}
+
+	// Self parent in BuildTree
+	selfP := "self"
+	_, err = core.BuildTree([]core.Task{{ID: "self", ParentID: &selfP}})
+	if !errors.Is(err, core.ErrCyclicDependency) || !errors.Is(err, core.ErrSelfParenting) {
+		t.Errorf("expected ErrCyclicDependency/ErrSelfParenting, got %v", err)
+	}
 }
 
 func BenchmarkTreeTraversal(b *testing.B) {

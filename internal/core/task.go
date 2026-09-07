@@ -200,6 +200,8 @@ func (t *Task) SetProgress(progress int, now time.Time) error {
 
 	if now.IsZero() {
 		now = time.Now().UTC()
+	} else {
+		now = now.UTC()
 	}
 
 	t.Progress = progress

@@ -78,4 +78,9 @@ func TestErrors_SentinelIntegrity(t *testing.T) {
 			}
 		})
 	}
+
+	// Invariant from AGENTS.md: self-parenting must match ErrCyclicDependency
+	if !errors.Is(core.ErrSelfParenting, core.ErrCyclicDependency) {
+		t.Errorf("expected ErrSelfParenting to match ErrCyclicDependency via errors.Is")
+	}
 }
