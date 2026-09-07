@@ -214,6 +214,26 @@ func (t *Task) SetProgress(progress int, now time.Time) error {
 	return nil
 }
 
+// SetRollupProgress sets the rollup-calculated progress (0-100) on a task,
+// allowing 100 on a non-done parent whose direct subtasks have all completed.
+func (t *Task) SetRollupProgress(progress int, now time.Time) error {
+	if progress < 0 || progress > 100 {
+		return ErrInvalidProgress
+	}
+	if t.Status == StatusDone && progress != 100 {
+		return ErrInvalidProgress
+	}
+	if now.IsZero() {
+		now = time.Now().UTC()
+	} else {
+		now = now.UTC()
+	}
+
+	t.Progress = progress
+	t.UpdatedAt = now
+	return nil
+}
+
 func (t *Task) IsRoot() bool {
 	return t.ParentID == nil
 }

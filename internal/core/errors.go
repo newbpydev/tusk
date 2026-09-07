@@ -1,29 +1,34 @@
 package core
 
-import "errors"
+// Error represents an immutable domain error sentinel.
+type Error string
 
-var (
-	ErrTaskNotFound                  = errors.New("task not found")
-	ErrEmptyTitle                    = errors.New("task title cannot be empty")
-	ErrTitleTooLong                  = errors.New("task title exceeds maximum length of 255 characters")
-	ErrInvalidStatus                 = errors.New("invalid task status")
-	ErrInvalidPriority               = errors.New("invalid task priority")
-	ErrInvalidStatusTransition       = errors.New("invalid status transition")
-	ErrCyclicDependency              = errors.New("cyclic dependency detected: a task cannot be its own ancestor")
-	ErrSelfParenting           error = selfParentingError{}
-	ErrMaxDepthExceeded              = errors.New("maximum subtask hierarchy depth exceeded")
-	ErrInvalidTag                    = errors.New("invalid tag format: tags must be alphanumeric with hyphens")
-	ErrInvalidProgress               = errors.New("task progress must be an integer between 0 and 100")
-	ErrInvalidTaskID                 = errors.New("invalid task id: id cannot be empty")
-	ErrDuplicateTaskID               = errors.New("duplicate task id in hierarchy")
-	ErrInvalidDepth                  = errors.New("invalid hierarchy depth: depth cannot be negative")
-	ErrTraversalLimitExceeded        = errors.New("hierarchy traversal limit exceeded")
+func (e Error) Error() string {
+	return string(e)
+}
+
+const (
+	ErrTaskNotFound            = Error("task not found")
+	ErrEmptyTitle              = Error("task title cannot be empty")
+	ErrTitleTooLong            = Error("task title exceeds maximum length of 255 characters")
+	ErrInvalidStatus           = Error("invalid task status")
+	ErrInvalidPriority         = Error("invalid task priority")
+	ErrInvalidStatusTransition = Error("invalid status transition")
+	ErrCyclicDependency        = Error("cyclic dependency detected: a task cannot be its own ancestor")
+	ErrSelfParenting           = selfParentingError("task cannot reference itself as parent")
+	ErrMaxDepthExceeded        = Error("maximum subtask hierarchy depth exceeded")
+	ErrInvalidTag              = Error("invalid tag format: tags must be alphanumeric with hyphens")
+	ErrInvalidProgress         = Error("task progress must be an integer between 0 and 100")
+	ErrInvalidTaskID           = Error("invalid task id: id cannot be empty")
+	ErrDuplicateTaskID         = Error("duplicate task id in hierarchy")
+	ErrInvalidDepth            = Error("invalid hierarchy depth: depth cannot be negative")
+	ErrTraversalLimitExceeded  = Error("hierarchy traversal limit exceeded")
 )
 
-type selfParentingError struct{}
+type selfParentingError string
 
 func (e selfParentingError) Error() string {
-	return "task cannot reference itself as parent"
+	return string(e)
 }
 
 func (e selfParentingError) Is(target error) bool {

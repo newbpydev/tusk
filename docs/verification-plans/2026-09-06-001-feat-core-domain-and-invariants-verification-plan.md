@@ -87,7 +87,8 @@ evidence-scope: Verified local execution
 | :--- | :--- | :--- | :--- |
 | **Focused Unit** | `go test -v ./internal/core/...` | Local Linux/Darwin/Win | All unit tests pass in $< 1\text{s}$ |
 | **Race Detector** | `go test -race -v ./internal/core/...` | Local Linux/Darwin | Zero data race conditions detected |
-| **Benchmarks** | `go test -bench=. -benchmem ./internal/core/...` | Local Linux | Sub-microsecond execution, $< 5$ allocations |
+| **Tree Traversal Benchmark** | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Local Linux | Sub-microsecond execution (< 500ns, 0 allocs; observed 301ns/op) |
+| **Tree Build Benchmark** | `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` | Local Linux | Scalable forest allocation (< 1µs/task, < 5 allocs/task; observed ~38µs/100 tasks, 481 allocs) |
 | **Aggregate Gate**| `make validate && go test -cover -race ./internal/core/...` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage target |
 
 ---
@@ -109,3 +110,4 @@ evidence-scope: Verified local execution
 | 2026-09-06 | `3eeedf4` | Go 1.24 Linux x86_64 | `make validate` | Pass (0 race, 0 vet) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
 | 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
 | 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-07 | `b248bb2` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` | Pass (37.8µs/100 tasks, 481 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |

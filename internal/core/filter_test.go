@@ -245,4 +245,31 @@ func TestFilterTasks_DeepCopy(t *testing.T) {
 	if task.Tags[0] != core.Tag("work") {
 		t.Errorf("original Tag was mutated to %s", task.Tags[0])
 	}
+
+	// Exercise nil and empty reference fields
+	minimalTask := core.Task{
+		ID:        "min-1",
+		Title:     "Minimal",
+		Status:    core.StatusTodo,
+		Priority:  core.PriorityLow,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+	emptyTagsTask := minimalTask
+	emptyTagsTask.ID = "empty-tags"
+	emptyTagsTask.Tags = []core.Tag{}
+
+	filteredBatch := core.FilterTasks([]core.Task{minimalTask, emptyTagsTask}, core.TaskFilter{})
+	if len(filteredBatch) != 2 {
+		t.Fatalf("expected 2 filtered tasks, got %d", len(filteredBatch))
+	}
+
+	// Assert nil fields remain nil
+	if filteredBatch[0].ParentID != nil || filteredBatch[0].DueDate != nil || filteredBatch[0].CompletedAt != nil || filteredBatch[0].Tags != nil {
+		t.Errorf("expected nil reference fields on minimal task, got %+v", filteredBatch[0])
+	}
+	// Assert empty slice remains empty non-nil
+	if filteredBatch[1].Tags == nil || len(filteredBatch[1].Tags) != 0 {
+		t.Errorf("expected empty non-nil Tags, got %v", filteredBatch[1].Tags)
+	}
 }

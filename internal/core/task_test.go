@@ -305,6 +305,40 @@ func TestTask_SetProgress_Validation(t *testing.T) {
 	}
 }
 
+func TestTask_SetRollupProgress(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	parent, _ := core.NewTask(core.NewTaskParams{ID: "parent", Title: "Parent", Now: now})
+	_ = parent.TransitionTo(core.StatusInProgress, now)
+
+	// Out of bounds < 0
+	err := parent.SetRollupProgress(-1, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress for -1, got %v", err)
+	}
+
+	// Out of bounds > 100
+	err = parent.SetRollupProgress(101, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress for 101, got %v", err)
+	}
+
+	// Setting 100 on non-done parent succeeds for rollup calculation
+	err = parent.SetRollupProgress(100, now.Add(5*time.Minute))
+	if err != nil {
+		t.Errorf("expected SetRollupProgress(100) on non-done parent to succeed, got %v", err)
+	}
+	if parent.Progress != 100 {
+		t.Errorf("parent.Progress = %d, want 100", parent.Progress)
+	}
+
+	// On a done task, progress must be 100
+	_ = parent.TransitionTo(core.StatusDone, now.Add(10*time.Minute))
+	err = parent.SetRollupProgress(50, now.Add(15*time.Minute))
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting <100 on done task, got %v", err)
+	}
+}
+
 func TestTask_DescriptionPreservesMarkdownIndentation(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
 	markdownDesc := "    code block\n    continued"
@@ -489,6 +523,51 @@ func TestTask_Clone(t *testing.T) {
 	}
 	if clone.Tags[0] != core.Tag("work") {
 		t.Errorf("clone.Tags mutated: got %s, want work", clone.Tags[0])
+	}
+}
+
+func TestTask_Clone_NilFields(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	minimalTask := core.Task{
+		ID:        "min-1",
+		Title:     "Minimal",
+		Status:    core.StatusTodo,
+		Priority:  core.PriorityLow,
+		CreatedAt: now,
+		UpdatedAt: now,
+		// ParentID, DueDate, CompletedAt, Tags are all nil
+	}
+
+	clone := minimalTask.Clone()
+
+	if clone.ParentID != nil {
+		t.Errorf("expected clone.ParentID to be nil, got %v", clone.ParentID)
+	}
+	if clone.DueDate != nil {
+		t.Errorf("expected clone.DueDate to be nil, got %v", clone.DueDate)
+	}
+	if clone.CompletedAt != nil {
+		t.Errorf("expected clone.CompletedAt to be nil, got %v", clone.CompletedAt)
+	}
+	if clone.Tags != nil {
+		t.Errorf("expected clone.Tags to be nil, got %v", clone.Tags)
+	}
+	if !reflect.DeepEqual(clone, minimalTask) {
+		t.Errorf("clone does not equal minimal task: got %+v, want %+v", clone, minimalTask)
+	}
+
+	// Also verify empty (non-nil) Tags preservation:
+	emptyTagsTask := minimalTask
+	emptyTagsTask.Tags = []core.Tag{}
+	cloneEmpty := emptyTagsTask.Clone()
+	if cloneEmpty.Tags == nil {
+		t.Errorf("expected cloneEmpty.Tags to be empty non-nil slice, got nil")
+	}
+	if len(cloneEmpty.Tags) != 0 {
+		t.Errorf("expected cloneEmpty.Tags length 0, got %d", len(cloneEmpty.Tags))
+	}
+	if !reflect.DeepEqual(cloneEmpty, emptyTagsTask) {
+		t.Errorf("cloneEmpty does not equal emptyTagsTask: got %+v, want %+v", cloneEmpty, emptyTagsTask)
 	}
 }
 
