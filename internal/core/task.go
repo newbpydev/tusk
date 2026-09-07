@@ -179,9 +179,13 @@ func (t *Task) SetParent(parentID *string, now time.Time) error {
 }
 
 // SetProgress sets explicit manual progress (0-99 for non-done tasks, strictly 100 for done tasks).
-// Returns ErrInvalidProgress if progress < 0, progress > 100, progress == 100 on a non-done task,
-// or progress != 100 on a done task.
+// The task must carry a valid status enum; ResetLeaf inherits this check via delegation.
+// Returns ErrInvalidStatus on invalid task status, ErrInvalidProgress if progress < 0,
+// progress > 100, progress == 100 on a non-done task, or progress != 100 on a done task.
 func (t *Task) SetProgress(progress int, now time.Time) error {
+	if !t.Status.IsValid() {
+		return fmt.Errorf("task %s has invalid status %q: %w", t.ID, string(t.Status), ErrInvalidStatus)
+	}
 	if progress < 0 || progress > 100 {
 		return ErrInvalidProgress
 	}

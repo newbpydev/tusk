@@ -318,6 +318,15 @@ func TestTask_SetProgress_Validation(t *testing.T) {
 	if !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress when setting 100 on blocked task, got %v", err)
 	}
+	// Invariant: task with invalid status enum is rejected before mutation
+	badStatusTask := core.Task{ID: "bad-1", Title: "Bad", Status: core.Status("archived"), Progress: 10, UpdatedAt: now}
+	err = badStatusTask.SetProgress(50, now.Add(time.Hour))
+	if !errors.Is(err, core.ErrInvalidStatus) {
+		t.Errorf("expected ErrInvalidStatus when task has invalid status, got %v", err)
+	}
+	if badStatusTask.Progress != 10 || !badStatusTask.UpdatedAt.Equal(now) {
+		t.Errorf("failed SetProgress mutated state: Progress=%d, UpdatedAt=%v", badStatusTask.Progress, badStatusTask.UpdatedAt)
+	}
 }
 
 func TestTask_SetRollupProgress(t *testing.T) {
