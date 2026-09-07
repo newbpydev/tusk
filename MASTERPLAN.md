@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development  
 **Active Phase**: Phase 1: Core Domain & Invariants  
-**Active Implementation Target**: Unit 001-5 (Hierarchical Tree Traversal & Acyclic Cycle Detection)  
+**Active Implementation Target**: Unit 001-6 (Task Filtering & Sorting Engine)  
 **Overall Completion**: 14% (1 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
 
@@ -82,11 +82,11 @@ graph TD
   - [x] Red Tests: `rollup_test.go` (`TestCalculateProgress_Leaf`, `TestCalculateProgress_Subtasks`, `TestCalculateProgress_FloorRounding`, `TestCalculateProgress_AllDone`)
   - [x] Implementation: `rollup.go` ($\lfloor \frac{\sum P}{N} \rfloor$ integer floor arithmetic)
   - [x] Green Verification: `go test -v -run TestCalculateProgress ./internal/core/...`
-- [ ] **1.6 Unit 001-5: Hierarchical Tree Traversal & Acyclic Cycle Detection**
-  - [ ] Red Tests: `tree_test.go` (`TestDetectCycles_DirectSelf`, `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestValidateHierarchyDepth`, `TestBuildTree_Forest`)
-  - [ ] Implementation: `tree.go` (`TaskNode`, `BuildTree`, `DetectCycles` with depth limits)
-  - [ ] Benchmark: `BenchmarkDetectCycles` verifying $< 500\text{ns}$
-  - [ ] Green Verification: `go test -v -run "TestDetectCycles|TestBuildTree" ./internal/core/...`
+- [x] **1.6 Unit 001-5: Hierarchical Tree Traversal & Acyclic Cycle Detection**
+  - [x] Red Tests: `tree_test.go` (`TestDetectCycles_DirectSelf`, `TestDetectCycles_RootPromotion`, `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestValidateHierarchyDepth_Subtree`, `TestBuildTree_Forest`, `TestBuildTree_Errors`)
+  - [x] Implementation: `tree.go` (`TaskNode`, `BuildTree`, `DetectCycles`, `ValidateHierarchyDepth` with stack buffer optimization)
+  - [x] Benchmark: `BenchmarkTreeTraversal` verifying 298ns (< 500ns, 0 allocs)
+  - [x] Green Verification: `go test -v -run "TestDetectCycles|TestBuildTree|TestValidateHierarchyDepth" ./internal/core/...`
 - [ ] **1.7 Unit 001-6: Task Filtering and Sorting Engine**
   - [ ] Red Tests: `filter_test.go` (`TestFilterTasks`, `TestSortTasks_MultiKey`)
   - [ ] Implementation: `filter.go` (`TaskFilter`, `FilterTasks`, `SortTasks`)
