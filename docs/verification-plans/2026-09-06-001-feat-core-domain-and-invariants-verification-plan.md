@@ -16,7 +16,7 @@ evidence-scope: Verified local execution
   - `internal/core/status.go`: `ParseStatus`, `Status.CanTransitionTo`.
   - `internal/core/priority.go`: `ParsePriority`, `Priority.Weight`.
   - `internal/core/tag.go`: `NormalizeTag`, `NormalizeTags`, `NormalizeTagSlice`.
-  - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`, `Task.SetRollupProgress`, `Task.Clone`.
+  - `internal/core/task.go`: `NewTask`, `Task.TransitionTo`, `Task.Update`, `Task.SetParent`, `Task.SetProgress`, `Task.SetRollupProgress`, `Task.ResetLeaf`, `Task.Clone`.
   - `internal/core/rollup.go`: `CalculateProgress(task Task, subtasks []Task) int`.
   - `internal/core/tree.go`: `BuildTree`, `DetectCycles(taskID string, proposedParentID *string, ...) error`, `ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, ...) error`.
   - `internal/core/filter.go`: `FilterTasks(tasks []Task, filter TaskFilter) []Task`, `SortTasks(tasks []Task, order []SortOrder)`. `TaskFilter` with `RootOnly bool`, `SortByID` in `SortField`.
@@ -60,7 +60,7 @@ evidence-scope: Verified local execution
 
 ### Task Entity & State Transitions
 - [x] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, and non-zero `CreatedAt`/`UpdatedAt`.
-- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` enforces exact match against `CalculateProgress` when subtasks are supplied, and requires complete subtasks when setting 100 on a non-done parent.
+- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` enforces exact match against `CalculateProgress` when subtasks are supplied to non-done tasks, and requires complete subtasks when setting 100 on a non-done parent. `ResetLeaf` restores manual leaf progress.
 - [x] **CORE-TSK-C1 Defensive Copying**: `Task.Clone` returns fully independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`), with nil-vs-empty slice preservation and reflection-based field-exhaustiveness enforcement.
 - [x] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil` and updates `UpdatedAt`. `SetParent` updates `ParentID` and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
 
@@ -91,7 +91,7 @@ evidence-scope: Verified local execution
 | **Race Detector** | `go test -race -v ./internal/core/...` | Local Linux/Darwin | Zero data race conditions detected |
 | **Tree Traversal Benchmark** | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Local Linux | Sub-microsecond execution (< 500ns, 0 allocs; observed 301ns/op) |
 | **Tree Build Benchmark** | `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` | Local Linux | Scalable forest allocation (< 1µs/task, < 5 allocs/task; observed ~38µs/100 tasks, 481 allocs) |
-| **Aggregate Gate**| `make validate && go test -cover -race ./internal/core/...` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage target |
+| **Aggregate Gate**| `make validate && go test -cover -race ./internal/core/...` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage target (96.8% measured under `-race`) |
 
 ---
 
@@ -113,3 +113,4 @@ evidence-scope: Verified local execution
 | 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (98.0% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
 | 2026-09-06 | `9ab407c` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkTreeTraversal -benchmem ./internal/core/...` | Pass (301ns/op, 0 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
 | 2026-09-07 | `b248bb2` | Go 1.24 Linux x86_64 | `go test -bench=BenchmarkBuildTree -benchmem ./internal/core/...` | Pass (37.8µs/100 tasks, 481 allocs) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |
+| 2026-09-07 | `f829d98` | Go 1.24 Linux x86_64 | `go test -cover -race ./internal/core/...` | Pass (96.8% coverage) | `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md` |

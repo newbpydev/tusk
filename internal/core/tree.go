@@ -7,11 +7,11 @@ import (
 
 const (
 	MaxHierarchyDepth = 10
-	// maxTraversalSteps bounds initial cycle and depth traversal.
+	// maxTraversalSteps bounds cycle and depth traversal.
 	// Valid hierarchies are bounded by MaxHierarchyDepth (10 lookups).
-	// Finite rings of up to 20,000 nodes are fully detected via cycle closure before
-	// falling back to ErrTraversalLimitExceeded for infinite non-repeating streams.
-	maxTraversalSteps = 10000
+	// An expansive bound ensures long cycles in corrupt or imported graphs are fully
+	// detected and classified as ErrCyclicDependency before exhausting traversal.
+	maxTraversalSteps = 100000
 )
 
 type TaskNode struct {
@@ -80,33 +80,6 @@ func DetectCycles(taskID string, proposedParentID *string, lookupParent func(id 
 
 		currentID = anc
 	}
-	// Beyond maxTraversalSteps: continue cycle closure detection to classify finite rings
-	// rather than misclassifying them as traversal limit exhaustion.
-	if visitedMap == nil {
-		visitedMap = make(map[string]struct{}, len(visitedSlice))
-		for _, v := range visitedSlice {
-			visitedMap[v] = struct{}{}
-		}
-	}
-	for extra := 0; extra < maxTraversalSteps; extra++ {
-		ancestorID, err := lookupParent(currentID)
-		if err != nil {
-			return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
-		}
-		if ancestorID == nil {
-			return nil
-		}
-		anc := *ancestorID
-		if anc == taskID {
-			return ErrCyclicDependency
-		}
-		if _, loop := visitedMap[anc]; loop {
-			return ErrCyclicDependency
-		}
-		visitedMap[anc] = struct{}{}
-		currentID = anc
-	}
-
 	return ErrTraversalLimitExceeded
 }
 
@@ -141,28 +114,10 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 		currentID = *ancestorID
 		visited[currentID] = struct{}{}
 
-	}
-
-	// Beyond maxTraversalSteps: continue cycle closure detection to classify finite rings
-	if parentDepth > maxTraversalSteps {
-		for extra := 0; extra < maxTraversalSteps; extra++ {
-			ancestorID, err := lookupParent(currentID)
-			if err != nil {
-				return fmt.Errorf("parent lookup failed for %s: %w", currentID, err)
-			}
-			if ancestorID == nil {
-				return ErrMaxDepthExceeded
-			}
-			if _, loop := visited[*ancestorID]; loop {
-				return ErrCyclicDependency
-			}
-			parentDepth++
-			currentID = *ancestorID
-			visited[currentID] = struct{}{}
+		if step == maxTraversalSteps-1 {
+			return ErrTraversalLimitExceeded
 		}
-		return ErrTraversalLimitExceeded
 	}
-
 	if parentDepth > MaxHierarchyDepth || taskSubtreeDepth > MaxHierarchyDepth || taskSubtreeDepth > MaxHierarchyDepth-parentDepth-1 {
 		return ErrMaxDepthExceeded
 	}

@@ -423,6 +423,33 @@ func TestTask_SetRollupProgress(t *testing.T) {
 	}
 }
 
+func TestTask_ResetLeaf(t *testing.T) {
+	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
+	parent, _ := core.NewTask(core.NewTaskParams{ID: "p", Title: "Parent", Now: now})
+	_ = parent.TransitionTo(core.StatusInProgress, now)
+	_ = parent.SetProgress(20, now)
+
+	// Add completed child and update rollup progress to 100
+	child, _ := core.NewTask(core.NewTaskParams{ID: "c", Title: "Child", Now: now})
+	_ = child.TransitionTo(core.StatusDone, now)
+	_ = parent.SetRollupProgress(100, []core.Task{*child}, now.Add(5*time.Minute))
+	if parent.Progress != 100 {
+		t.Fatalf("expected rollup progress 100, got %d", parent.Progress)
+	}
+
+	// Child is removed: call ResetLeaf to restore manual progress baseline
+	err := parent.ResetLeaf(20, now.Add(10*time.Minute))
+	if err != nil {
+		t.Fatalf("ResetLeaf failed: %v", err)
+	}
+	if parent.Progress != 20 {
+		t.Errorf("parent.Progress after ResetLeaf = %d, want 20", parent.Progress)
+	}
+	if got := core.CalculateProgress(*parent, nil); got != 20 {
+		t.Errorf("CalculateProgress after ResetLeaf = %d, want 20", got)
+	}
+}
+
 func TestTask_DescriptionPreservesMarkdownIndentation(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
 	markdownDesc := "    code block\n    continued"

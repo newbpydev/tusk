@@ -35,7 +35,7 @@ Provide the pure Go business logic and domain core for Tusk in `internal/core/`.
 - CLI flag parsing and Cobra command definitions (owned by Feature 004).
 
 ### Surface Profiles
-- **Library / Core Domain**: Pure Go exports, deterministic algorithms, thread-safe value copies, zero allocations on hot paths, $\ge 95\%$ domain test coverage target (98.0% measured).
+- **Library / Core Domain**: Pure Go exports, deterministic algorithms, thread-safe value copies, zero allocations on hot paths, $\ge 95\%$ domain test coverage target (96.8% measured under `-race`).
 
 ### Evidence Boundary
 - **Local Evidence Only**: Pure Go unit tests (`go test -v ./internal/core/...`), race detection (`go test -race ./internal/core/...`), property-based assertions, and micro-benchmarks (`go test -bench=. ./internal/core/...`). No external infrastructure, daemons, or network access required.
@@ -170,11 +170,13 @@ func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) e
 func (t *Task) IsRoot() bool
 func (t *Task) IsDone() bool
 func (t Task) Clone() Task
+func (t *Task) ResetLeaf(manualProgress int, now time.Time) error
 ```
 **Entity Mutation Contracts**:
 - `SetParent` reassigns `ParentID` and updates `UpdatedAt = now`. Returns `ErrSelfParenting` if `parentID != nil && *parentID == t.ID`.
 - `SetProgress` sets manual leaf progress ($0 \le \text{progress} \le 99$ for non-done tasks, strictly $100$ for done tasks), returning `ErrInvalidProgress` on out-of-bounds inputs or when attempting to set 100 on a non-done task, and updates `UpdatedAt = now`.
-- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). When subtasks are provided, progress must match `CalculateProgress(*t, subtasks)`, returning `ErrInvalidProgress` on value mismatches. Setting 100 on a non-done parent requires subtasks to be provided and all complete.
+- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). For non-done tasks with subtasks, progress must match `CalculateProgress(*t, subtasks)`, returning `ErrInvalidProgress` on value mismatches. Setting 100 on a non-done parent requires subtasks to be provided and all complete.
+- `ResetLeaf` resets a task whose subtasks were removed back to leaf status with explicit manual progress ($0 \le \text{progress} \le 99$ on non-done, $100$ on done).
 - `Clone` returns a deep copy of `Task` with independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`).
 
 ### 2.5 Progress Rollup Engine (`internal/core/rollup.go`)
