@@ -1,7 +1,12 @@
 package core
 
 // Error represents an immutable domain error sentinel.
-// All Error sentinels must have globally unique message strings to prevent accidental aliasing under errors.Is / == matching.
+// All Error sentinels must have globally unique message strings: matching is by
+// message value under errors.Is / ==, so external code must use the exported
+// sentinels rather than constructing Error values with colliding messages.
+// Value (not pointer-identity) semantics are the deliberate trade-off for
+// immutability: Go constants cannot hold identity-bearing values, and the
+// planning triplet mandates immutable sentinels over reassignable vars.
 type Error string
 
 func (e Error) Error() string {

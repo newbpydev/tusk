@@ -5,11 +5,15 @@ TARGET="${1:-all}"
 
 run_tree() {
     echo "==> Running tree traversal benchmark..."
-    output=$(go test -bench=BenchmarkTreeTraversal -run=^$ -benchmem ./internal/core/...)
+    if ! output=$(go test -bench=^BenchmarkTreeTraversal$ -run=^$ -benchmem ./internal/core/... 2>&1); then
+        echo "$output"
+        exit 1
+    fi
     echo "$output"
 
     echo "$output" | awk '
-    /BenchmarkTreeTraversal/ {
+    /^BenchmarkTreeTraversal/ {
+        seen++
         ns = $3 + 0.0
         allocs = $7 + 0
         if (ns >= 500.0) {
@@ -22,20 +26,28 @@ run_tree() {
         }
     }
     END {
+        if (!seen) {
+            print "Error: no BenchmarkTreeTraversal results parsed"
+            exit 1
+        }
         if (failed) exit 1
     }'
 }
 
 run_build() {
     echo "==> Running tree build benchmark..."
-    output=$(go test -bench=BenchmarkBuildTree -run=^$ -benchmem ./internal/core/...)
+    if ! output=$(go test -bench=^BenchmarkBuildTree$ -run=^$ -benchmem ./internal/core/... 2>&1); then
+        echo "$output"
+        exit 1
+    fi
     echo "$output"
 
     echo "$output" | awk '
-    /BenchmarkBuildTree/ {
+    /^BenchmarkBuildTree/ {
+        seen++
         ns = $3 + 0.0
         allocs = $7 + 0
-        # 100 tasks per op: budget < 1µs/task (< 100,000ns) and < 5 allocs/task (< 500 allocs)
+        # 100 tasks per op: budget < 1us/task (< 100,000ns) and < 5 allocs/task (< 500 allocs)
         if (ns >= 100000.0) {
             printf "Error: BenchmarkBuildTree %.1fns/op exceeds budget of 100,000ns (<1us/task)\n", ns
             failed = 1
@@ -46,6 +58,10 @@ run_build() {
         }
     }
     END {
+        if (!seen) {
+            print "Error: no BenchmarkBuildTree results parsed"
+            exit 1
+        }
         if (failed) exit 1
     }'
 }

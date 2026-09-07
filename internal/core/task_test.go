@@ -383,8 +383,9 @@ func TestTask_SetRollupProgress(t *testing.T) {
 		t.Errorf("parent.Progress = %d, want 20", parent.Progress)
 	}
 
-	// Non-done child with corrupt progress > 100 clamps to 99 in CalculateProgress:
-	// 1. Setting 100 fails with ErrInvalidProgress because clamped rollup is 99
+	// Non-done child with corrupt progress > 100 is rejected outright: the setter
+	// validates child ranges before consulting CalculateProgress, so neither 100
+	// nor the clamped 99 may be persisted from corrupt child data.
 	childCorrupt, _ := core.NewTask(core.NewTaskParams{ID: "c-corrupt", Title: "Corrupt", Now: now})
 	_ = childCorrupt.TransitionTo(core.StatusInProgress, now)
 	childCorrupt.Progress = 150
@@ -392,14 +393,9 @@ func TestTask_SetRollupProgress(t *testing.T) {
 	if !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress when setting 100 on corrupt subtask, got %v", err)
 	}
-
-	// 2. Setting matching clamped rollup 99 succeeds and sets parent.Progress == 99
 	err = parent.SetRollupProgress(99, []core.Task{*childCorrupt}, now)
-	if err != nil {
-		t.Errorf("expected SetRollupProgress(99) with corrupt child to succeed via clamping, got %v", err)
-	}
-	if parent.Progress != 99 {
-		t.Errorf("parent.Progress = %d, want 99", parent.Progress)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when setting clamped 99 on corrupt subtask, got %v", err)
 	}
 
 	// Setting 100 on non-done parent with complete subtasks succeeds
