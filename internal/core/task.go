@@ -107,6 +107,7 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 
 	now = normalizeTime(now)
 
+	prevStatus := t.Status
 	t.Status = next
 	t.UpdatedAt = now
 
@@ -114,7 +115,7 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 		completed := now
 		t.CompletedAt = &completed
 		t.Progress = 100
-	} else if t.CompletedAt != nil {
+	} else if prevStatus == StatusDone {
 		t.CompletedAt = nil
 		t.Progress = 0
 	}
@@ -212,7 +213,7 @@ func (t *Task) SetRollupProgress(progress int, subtasks []Task, now time.Time) e
 			return fmt.Errorf("setting 100 on non-done task requires complete subtasks: %w", ErrInvalidProgress)
 		}
 		for _, s := range subtasks {
-			if s.Status != StatusDone && s.Progress < 100 {
+			if s.Status != StatusDone && s.Progress != 100 {
 				return fmt.Errorf("subtask %s is incomplete: %w", s.ID, ErrInvalidProgress)
 			}
 		}

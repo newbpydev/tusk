@@ -190,6 +190,21 @@ func TestTask_TransitionToDone_And_Reopen(t *testing.T) {
 	if !task.UpdatedAt.Equal(t4) {
 		t.Errorf("expected UpdatedAt = %v, got %v", t4, task.UpdatedAt)
 	}
+
+	// Reopening a done task hydrated without CompletedAt (nil CompletedAt) still resets Progress to 0
+	hydratedDoneTask := core.Task{
+		ID:          "done-nil-completed",
+		Title:       "Done Hydrated",
+		Status:      core.StatusDone,
+		Progress:    100,
+		CompletedAt: nil,
+	}
+	if err := hydratedDoneTask.TransitionTo(core.StatusInProgress, t4); err != nil {
+		t.Fatalf("reopening hydrated done task failed: %v", err)
+	}
+	if hydratedDoneTask.Progress != 0 {
+		t.Errorf("expected Progress to reset to 0 when reopening hydrated done task with nil CompletedAt, got %d", hydratedDoneTask.Progress)
+	}
 }
 
 func TestTask_SetParent(t *testing.T) {
@@ -338,6 +353,15 @@ func TestTask_SetRollupProgress(t *testing.T) {
 	err = parent.SetRollupProgress(100, []core.Task{*childIncomplete}, now)
 	if !errors.Is(err, core.ErrInvalidProgress) {
 		t.Errorf("expected ErrInvalidProgress when subtasks incomplete, got %v", err)
+	}
+
+	// Subtask with corrupt progress > 100 (e.g. 150) must be rejected
+	childOver, _ := core.NewTask(core.NewTaskParams{ID: "c-over", Title: "Over", Now: now})
+	_ = childOver.TransitionTo(core.StatusInProgress, now)
+	childOver.Progress = 150
+	err = parent.SetRollupProgress(100, []core.Task{*childOver}, now)
+	if !errors.Is(err, core.ErrInvalidProgress) {
+		t.Errorf("expected ErrInvalidProgress when subtask has corrupt progress > 100, got %v", err)
 	}
 
 	// Setting 100 on non-done parent with complete subtasks succeeds

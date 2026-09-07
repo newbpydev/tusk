@@ -97,6 +97,9 @@ func ValidateHierarchyDepth(taskSubtreeDepth int, proposedParentID string, looku
 		visited[currentID] = struct{}{}
 
 		if step == maxTraversalSteps-1 {
+			if parentDepth > MaxHierarchyDepth {
+				return ErrMaxDepthExceeded
+			}
 			return ErrTraversalLimitExceeded
 		}
 	}
