@@ -413,3 +413,46 @@ func TestTask_DefensiveCopiesAndUTC(t *testing.T) {
 		t.Errorf("expected DueDate in UTC, got location: %v", task.DueDate.Location())
 	}
 }
+
+func TestTask_Clone(t *testing.T) {
+	parentID := "p1"
+	dueDate := time.Date(2026, 9, 10, 0, 0, 0, 0, time.UTC)
+	completedAt := time.Date(2026, 9, 8, 0, 0, 0, 0, time.UTC)
+	tags := []core.Tag{core.Tag("work")}
+
+	task := core.Task{
+		ID:          "task-1",
+		Title:       "Title",
+		Description: "Desc",
+		Status:      core.StatusTodo,
+		Priority:    core.PriorityHigh,
+		ParentID:    &parentID,
+		Progress:    50,
+		Tags:        tags,
+		DueDate:     &dueDate,
+		CreatedAt:   time.Date(2026, 9, 6, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:   time.Date(2026, 9, 6, 0, 0, 0, 0, time.UTC),
+		CompletedAt: &completedAt,
+	}
+
+	clone := task.Clone()
+
+	// Mutate task
+	parentID = "p2"
+	dueDate = dueDate.Add(24 * time.Hour)
+	completedAt = completedAt.Add(24 * time.Hour)
+	tags[0] = core.Tag("home")
+
+	if *clone.ParentID != "p1" {
+		t.Errorf("clone.ParentID mutated: got %s, want p1", *clone.ParentID)
+	}
+	if !clone.DueDate.Equal(time.Date(2026, 9, 10, 0, 0, 0, 0, time.UTC)) {
+		t.Errorf("clone.DueDate mutated: got %v", clone.DueDate)
+	}
+	if !clone.CompletedAt.Equal(time.Date(2026, 9, 8, 0, 0, 0, 0, time.UTC)) {
+		t.Errorf("clone.CompletedAt mutated: got %v", clone.CompletedAt)
+	}
+	if clone.Tags[0] != core.Tag("work") {
+		t.Errorf("clone.Tags mutated: got %s, want work", clone.Tags[0])
+	}
+}

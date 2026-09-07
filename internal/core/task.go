@@ -218,3 +218,25 @@ func (t *Task) IsRoot() bool {
 func (t *Task) IsDone() bool {
 	return t.Status == StatusDone
 }
+
+// Clone returns a deep copy of the Task with independent pointer and slice fields.
+func (t Task) Clone() Task {
+	clone := t
+	if t.ParentID != nil {
+		p := *t.ParentID
+		clone.ParentID = &p
+	}
+	if t.DueDate != nil {
+		d := *t.DueDate
+		clone.DueDate = &d
+	}
+	if t.CompletedAt != nil {
+		c := *t.CompletedAt
+		clone.CompletedAt = &c
+	}
+	if t.Tags != nil {
+		clone.Tags = make([]Tag, len(t.Tags))
+		copy(clone.Tags, t.Tags)
+	}
+	return clone
+}

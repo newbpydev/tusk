@@ -137,7 +137,7 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 			return nil, fmt.Errorf("task with id %s already exists: %w", id, ErrDuplicateTaskID)
 		}
 		taskMap[id] = &TaskNode{
-			Task:     t,
+			Task:     t.Clone(),
 			Children: []*TaskNode{},
 			Depth:    1,
 		}

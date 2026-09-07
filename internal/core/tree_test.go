@@ -236,6 +236,59 @@ func TestBuildTree_Errors(t *testing.T) {
 	}
 }
 
+func TestBuildTree_DeepCopy(t *testing.T) {
+	parentID := "root"
+	dueDate := time.Date(2026, 9, 10, 0, 0, 0, 0, time.UTC)
+	completedAt := time.Date(2026, 9, 8, 0, 0, 0, 0, time.UTC)
+	tags := []core.Tag{core.Tag("work")}
+
+	tasks := []core.Task{
+		{
+			ID:    "root",
+			Title: "Root",
+		},
+		{
+			ID:          "child",
+			Title:       "Child",
+			ParentID:    &parentID,
+			DueDate:     &dueDate,
+			CompletedAt: &completedAt,
+			Tags:        tags,
+		},
+	}
+
+	forest, err := core.BuildTree(tasks)
+	if err != nil {
+		t.Fatalf("BuildTree failed: %v", err)
+	}
+
+	if len(forest) != 1 || len(forest[0].Children) != 1 {
+		t.Fatalf("expected 1 root with 1 child")
+	}
+
+	childNode := forest[0].Children[0]
+
+	// Mutate input tasks pointers/slices
+	parentID = "mutated"
+	dueDate = dueDate.Add(24 * time.Hour)
+	completedAt = completedAt.Add(24 * time.Hour)
+	tags[0] = core.Tag("mutated")
+
+	// Verify childNode.Task remained untouched
+	if *childNode.Task.ParentID != "root" {
+		t.Errorf("childNode.Task.ParentID mutated: got %s, want root", *childNode.Task.ParentID)
+	}
+	if !childNode.Task.DueDate.Equal(time.Date(2026, 9, 10, 0, 0, 0, 0, time.UTC)) {
+		t.Errorf("childNode.Task.DueDate mutated: got %v", childNode.Task.DueDate)
+	}
+	if !childNode.Task.CompletedAt.Equal(time.Date(2026, 9, 8, 0, 0, 0, 0, time.UTC)) {
+		t.Errorf("childNode.Task.CompletedAt mutated: got %v", childNode.Task.CompletedAt)
+	}
+	if childNode.Task.Tags[0] != core.Tag("work") {
+		t.Errorf("childNode.Task.Tags mutated: got %s, want work", childNode.Task.Tags[0])
+	}
+}
+
 func BenchmarkTreeTraversal(b *testing.B) {
 	// 10-level chain: L10 -> L9 -> ... -> L1 (root)
 	parents := make(map[string]*string)
