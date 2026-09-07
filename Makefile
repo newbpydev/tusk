@@ -23,14 +23,13 @@ race:
 coverage:
 	@./scripts/coverage.sh
 bench:
-	go test -bench=. -run=^$$ -benchmem ./internal/core/...
+	@./scripts/bench.sh all
 
 bench-tree:
-	go test -bench=BenchmarkTreeTraversal -run=^$$ -benchmem ./internal/core/...
+	@./scripts/bench.sh tree
 
 bench-build:
-	go test -bench=BenchmarkBuildTree -run=^$$ -benchmem ./internal/core/...
-
+	@./scripts/bench.sh build
 validate: fmt vet test coverage
 	@echo "All canonical quality gates passed."
 

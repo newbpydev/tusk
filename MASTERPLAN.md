@@ -85,7 +85,7 @@ graph TD
 - [x] **1.6 Unit 001-5: Hierarchical Tree Traversal & Acyclic Cycle Detection**
   - [x] Red Tests: `tree_test.go` (`TestDetectCycles_DirectSelf`, `TestDetectCycles_RootPromotion`, `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestValidateHierarchyDepth_Subtree`, `TestBuildTree_Forest`, `TestBuildTree_Errors`)
   - [x] Implementation: `tree.go` (`TaskNode`, `BuildTree`, `DetectCycles`, `ValidateHierarchyDepth` with stack buffer optimization)
-  - [x] Benchmark: `BenchmarkTreeTraversal` verifying 301ns/op (< 500ns, 0 allocs)
+  - [x] Benchmark: `BenchmarkTreeTraversal` verifying 314ns/op (< 500ns, 0 allocs)
   - [x] Green Verification: `go test -v -run "TestDetectCycles|TestBuildTree|TestValidateHierarchyDepth" ./internal/core/...`
 - [x] **1.7 Unit 001-6: Task Filtering and Sorting Engine**
   - [x] Red Tests: `filter_test.go` (`TestFilterTasks`, `TestSortTasks_MultiKey`)

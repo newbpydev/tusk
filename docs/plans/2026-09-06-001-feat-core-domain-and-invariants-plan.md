@@ -35,7 +35,7 @@ Provide the pure Go business logic and domain core for Tusk in `internal/core/`.
 - CLI flag parsing and Cobra command definitions (owned by Feature 004).
 
 ### Surface Profiles
-- **Library / Core Domain**: Pure Go exports, deterministic algorithms, thread-safe value copies, zero allocations on hot paths, $\ge 95\%$ domain test coverage target (96.8% measured under `-race`).
+- **Library / Core Domain**: Pure Go exports, deterministic algorithms, thread-safe value copies, zero allocations on hot paths, $\ge 95\%$ domain test coverage target (98.1% measured under `-race`).
 
 ### Evidence Boundary
 - **Local Evidence Only**: Pure Go unit tests (`go test -v ./internal/core/...`), race detection (`go test -race ./internal/core/...`), property-based assertions, and micro-benchmarks (`go test -bench=. ./internal/core/...`). No external infrastructure, daemons, or network access required.
@@ -365,7 +365,7 @@ Verification: `go test -v -run TestTask ./internal/core/...`
 | **Progress Rollup Math** | Unit 001-4 | CORE-ROL-N1, CORE-ROL-B1, CORE-ROL-P1 | Focused property/table |
 | **Cycle & Tree Invariants** | Unit 001-5 | CORE-TRE-N1, CORE-TRE-B1, CORE-TRE-F1, CORE-TRE-BM1 | Focused graph/benchmark |
 | **Filtering & Sorting** | Unit 001-6 | CORE-FLT-N1, CORE-FLT-B1, CORE-FLT-C1 | Focused unit |
-| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ target; 98.0% measured) |
+| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ target; 98.1% measured) |
 
 ### Scenario Mapping Registry
 
@@ -393,4 +393,4 @@ Verification: `go test -v -run TestTask ./internal/core/...`
 | `CORE-FLT-N1` | FilterTasks evaluates Status, Priority, Tags, SearchTerm, and RootOnly | `TestFilterTasks` | `go test -v -run TestFilterTasks ./internal/core/...` |
 | `CORE-FLT-B1` | SortTasks sorts nil DueDate last on ASC, with deterministic ID tie-breaking | `TestSortTasks_MultiKey` | `go test -v -run TestSortTasks ./internal/core/...` |
 | `CORE-FLT-C1` | Zero-match queries return empty non-nil slices | `TestFilterTasks_EmptyResults` | `go test -v -run TestFilterTasks ./internal/core/...` |
-| `CORE-AGG-ALL` | Full test suite, race detector, static analysis, $\ge 95\%$ domain coverage target | All tests in `internal/core` | `make validate && make coverage` |
+| `CORE-AGG-ALL` | Full test suite, race detector, static analysis, $\ge 95\%$ domain coverage target | All tests in `internal/core` | `make validate` |
