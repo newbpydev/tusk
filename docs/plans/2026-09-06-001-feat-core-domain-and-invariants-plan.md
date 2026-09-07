@@ -174,7 +174,7 @@ func (t Task) Clone() Task
 **Entity Mutation Contracts**:
 - `SetParent` reassigns `ParentID` and updates `UpdatedAt = now`. Returns `ErrSelfParenting` if `parentID != nil && *parentID == t.ID`.
 - `SetProgress` sets manual leaf progress ($0 \le \text{progress} \le 99$ for non-done tasks, strictly $100$ for done tasks), returning `ErrInvalidProgress` on out-of-bounds inputs or when attempting to set 100 on a non-done task, and updates `UpdatedAt = now`.
-- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). Setting 100 on a non-done parent requires subtasks to be provided and all complete.
+- `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). When subtasks are provided, progress must match `CalculateProgress(*t, subtasks)`, returning `ErrInvalidProgress` on value mismatches. Setting 100 on a non-done parent requires subtasks to be provided and all complete.
 - `Clone` returns a deep copy of `Task` with independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`).
 
 ### 2.5 Progress Rollup Engine (`internal/core/rollup.go`)

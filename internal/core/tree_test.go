@@ -90,6 +90,12 @@ func TestDetectCycles_DeepLoop(t *testing.T) {
 	if !errors.Is(err, core.ErrCyclicDependency) {
 		t.Errorf("expected ErrCyclicDependency for 1002-node ring in DetectCycles, got %v", err)
 	}
+
+	// 10001-node ring in DetectCycles must return ErrCyclicDependency
+	err = core.DetectCycles("new-task", ptr("L10001"), makeCycleLookup(10001))
+	if !errors.Is(err, core.ErrCyclicDependency) {
+		t.Errorf("expected ErrCyclicDependency for 10001-node ring in DetectCycles, got %v", err)
+	}
 }
 
 func TestValidateHierarchyDepth_Subtree(t *testing.T) {
@@ -177,6 +183,12 @@ func TestValidateHierarchyDepth_Subtree(t *testing.T) {
 	err = core.ValidateHierarchyDepth(0, "L1002", makeCycleLookup(1002))
 	if !errors.Is(err, core.ErrCyclicDependency) {
 		t.Errorf("expected ErrCyclicDependency for 1002-node ring in ValidateHierarchyDepth, got %v", err)
+	}
+
+	// 10001-node ring in ValidateHierarchyDepth must return ErrCyclicDependency
+	err = core.ValidateHierarchyDepth(0, "L10001", makeCycleLookup(10001))
+	if !errors.Is(err, core.ErrCyclicDependency) {
+		t.Errorf("expected ErrCyclicDependency for 10001-node ring in ValidateHierarchyDepth, got %v", err)
 	}
 	// When taskSubtreeDepth > MaxHierarchyDepth and parent is cyclic,
 	// cycle detection takes precedence over depth rejection

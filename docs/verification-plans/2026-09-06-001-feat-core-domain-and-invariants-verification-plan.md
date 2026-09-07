@@ -55,12 +55,12 @@ evidence-scope: Verified local execution
 - [x] **CORE-STS-F1 Injected Failure**: Invalid string `"review"` returns `ErrInvalidStatus`. Invalid transition `done -> blocked` returns `ErrInvalidStatusTransition`. Reopening `done -> in-progress` succeeds.
 - [x] **CORE-PRI-N1 Normal Path**: `ParsePriority` converts `"urgent"`, `"high"`, `"medium"`, `"low"` and integers 1–4 to `Priority` enums.
 - [x] **CORE-PRI-B1 Boundary**: Invalid priority strings or integers outside 1–4 return `ErrInvalidPriority`.
-- [x] **CORE-TAG-N1 Normal Path**: `NormalizeTag` converts `"#Backend"` to `Tag("backend")`. `NormalizeTags` and `NormalizeTagSlice` deduplicate duplicate tags in slice, sort lexicographically, and preserve nil-vs-empty slices.
+- [x] **CORE-TAG-N1 Normal Path**: `NormalizeTag` converts `"#Backend"` to `Tag("backend")`. `NormalizeTags` and `NormalizeTagSlice` deduplicate duplicate tags in slice, sort lexicographically, and return an empty non-nil slice for nil or empty inputs.
 - [x] **CORE-TAG-B1 Boundary**: Tag containing spaces or invalid symbols returns `ErrInvalidTag`. Tags exceeding 32 characters are rejected.
 
 ### Task Entity & State Transitions
 - [x] **CORE-TSK-N1 Normal Path**: `NewTask` creates valid entity with `StatusTodo`, `Progress = 0`, and non-zero `CreatedAt`/`UpdatedAt`.
-- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` requires complete subtasks when setting 100 on a non-done parent.
+- [x] **CORE-TSK-B1 Boundary**: Empty title returns `ErrEmptyTitle`. Title of 256 characters returns `ErrTitleTooLong`. `SetProgress` validates $0 \le \text{progress} \le 99$ for non-done tasks (100 strictly on done), rejecting out-of-bounds with `ErrInvalidProgress`. `SetRollupProgress` enforces exact match against `CalculateProgress` when subtasks are supplied, and requires complete subtasks when setting 100 on a non-done parent.
 - [x] **CORE-TSK-C1 Defensive Copying**: `Task.Clone` returns fully independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`), with nil-vs-empty slice preservation and reflection-based field-exhaustiveness enforcement.
 - [x] **CORE-TSK-R1 Recovery / Reopen**: Moving status from `StatusDone` to `StatusInProgress` sets `CompletedAt = nil` and updates `UpdatedAt`. `SetParent` updates `ParentID` and `UpdatedAt`, rejecting self-parenting with `ErrSelfParenting`.
 

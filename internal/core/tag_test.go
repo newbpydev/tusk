@@ -79,13 +79,13 @@ func TestNormalizeTags(t *testing.T) {
 		t.Errorf("NormalizeTags with invalid tag expected ErrInvalidTag, got %v", err)
 	}
 
-	// Empty slice
+	// Empty slice returns non-nil empty slice
 	empty, err := core.NormalizeTags(nil)
 	if err != nil {
 		t.Fatalf("NormalizeTags(nil) unexpected error: %v", err)
 	}
-	if len(empty) != 0 {
-		t.Errorf("expected empty slice, got %v", empty)
+	if empty == nil || len(empty) != 0 {
+		t.Errorf("expected empty non-nil slice, got %v", empty)
 	}
 }
 
@@ -102,7 +102,7 @@ func TestNormalizeTagSlice(t *testing.T) {
 	}
 
 	empty, err := core.NormalizeTagSlice(nil)
-	if err != nil || len(empty) != 0 {
-		t.Errorf("NormalizeTagSlice(nil) failed: %v", err)
+	if err != nil || empty == nil || len(empty) != 0 {
+		t.Errorf("NormalizeTagSlice(nil) expected empty non-nil slice, got %v", empty)
 	}
 }
