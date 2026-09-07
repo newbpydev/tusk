@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development  
 **Active Phase**: Phase 1: Core Domain & Invariants  
-**Active Implementation Target**: Unit 001-1 (Domain Sentinels & Error Taxonomy)  
+**Active Implementation Target**: Unit 001-2 (Value Objects Status, Priority, Tag)  
 **Overall Completion**: 14% (1 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
 
@@ -66,10 +66,10 @@ graph TD
   - [x] Deepened Implementation Plan with concrete Go signatures and algorithms
   - [x] Comprehensive Verification Plan covering all scenarios (Normal, Boundary, Injected Failure, Recovery, Benchmark)
   - [x] Issue Workorder with review lens sign-offs and empty release gate
-- [ ] **1.2 Unit 001-1: Domain Sentinels and Error Taxonomy**
-  - [ ] Red Test: `internal/core/errors_test.go` (`TestErrorsExist`, `TestErrorsUnwrap`)
-  - [ ] Implementation: `internal/core/errors.go` (10 sentinel errors)
-  - [ ] Green Verification: `go test -v -run TestErrors ./internal/core/...`
+- [x] **1.2 Unit 001-1: Domain Sentinels and Error Taxonomy**
+  - [x] Red Test: `internal/core/errors_test.go` (`TestErrorsExist`, `TestErrors_SentinelIntegrity`)
+  - [x] Implementation: `internal/core/errors.go` (11 sentinel errors)
+  - [x] Green Verification: `go test -v -run TestErrors ./internal/core/...`
 - [ ] **1.3 Unit 001-2: Strongly Typed Value Objects (`Status`, `Priority`, `Tag`)**
   - [ ] Red Tests: `status_test.go`, `priority_test.go`, `tag_test.go`
   - [ ] Implementation: `status.go` (state machine, `CanTransitionTo`), `priority.go` (weights 1–4), `tag.go` (normalization, regex, deduplication)
