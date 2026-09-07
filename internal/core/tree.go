@@ -121,12 +121,12 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 	taskMap := make(map[string]*TaskNode, len(tasks))
 	for _, t := range tasks {
 		id := strings.TrimSpace(t.ID)
-		if id == "" {
+		if id == "" || t.ID != id {
 			return nil, ErrInvalidTaskID
 		}
 		if t.ParentID != nil {
 			parentID := strings.TrimSpace(*t.ParentID)
-			if parentID == "" {
+			if parentID == "" || *t.ParentID != parentID {
 				return nil, ErrInvalidTaskID
 			}
 			if parentID == id {
@@ -145,13 +145,15 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 
 	var roots []*TaskNode
 	for _, t := range tasks {
-		node := taskMap[t.ID]
+		id := strings.TrimSpace(t.ID)
+		node := taskMap[id]
 		if t.ParentID == nil {
 			roots = append(roots, node)
 		} else {
-			parent, exists := taskMap[*t.ParentID]
+			parentID := strings.TrimSpace(*t.ParentID)
+			parent, exists := taskMap[parentID]
 			if !exists {
-				return nil, fmt.Errorf("task %s references unknown parent %s: %w", t.ID, *t.ParentID, ErrTaskNotFound)
+				return nil, fmt.Errorf("task %s references unknown parent %s: %w", id, parentID, ErrTaskNotFound)
 			}
 			parent.Children = append(parent.Children, node)
 		}

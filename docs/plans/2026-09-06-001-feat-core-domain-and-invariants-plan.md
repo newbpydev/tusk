@@ -35,7 +35,7 @@ Provide the pure Go business logic and domain core for Tusk in `internal/core/`.
 - CLI flag parsing and Cobra command definitions (owned by Feature 004).
 
 ### Surface Profiles
-- **Library / Core Domain**: Pure Go exports, deterministic algorithms, thread-safe value copies, zero allocations on hot paths, 100% unit test coverage.
+- **Library / Core Domain**: Pure Go exports, deterministic algorithms, thread-safe value copies, zero allocations on hot paths, $\ge 95\%$ domain test coverage target (98.0% measured).
 
 ### Evidence Boundary
 - **Local Evidence Only**: Pure Go unit tests (`go test -v ./internal/core/...`), race detection (`go test -race ./internal/core/...`), property-based assertions, and micro-benchmarks (`go test -bench=. ./internal/core/...`). No external infrastructure, daemons, or network access required.

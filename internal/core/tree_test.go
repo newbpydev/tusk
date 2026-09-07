@@ -221,6 +221,19 @@ func TestBuildTree_Errors(t *testing.T) {
 	if !errors.Is(err, core.ErrCyclicDependency) || !errors.Is(err, core.ErrSelfParenting) {
 		t.Errorf("expected ErrCyclicDependency/ErrSelfParenting, got %v", err)
 	}
+
+	// Whitespace-padded ID in BuildTree
+	_, err = core.BuildTree([]core.Task{{ID: " root "}})
+	if !errors.Is(err, core.ErrInvalidTaskID) {
+		t.Errorf("expected ErrInvalidTaskID for whitespace-padded ID, got %v", err)
+	}
+
+	// Whitespace-padded ParentID in BuildTree
+	padP := " parent "
+	_, err = core.BuildTree([]core.Task{{ID: "child", ParentID: &padP}})
+	if !errors.Is(err, core.ErrInvalidTaskID) {
+		t.Errorf("expected ErrInvalidTaskID for whitespace-padded ParentID, got %v", err)
+	}
 }
 
 func BenchmarkTreeTraversal(b *testing.B) {
