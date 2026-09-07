@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development  
 **Active Phase**: Phase 1: Core Domain & Invariants  
-**Active Implementation Target**: Unit 001-2 (Value Objects Status, Priority, Tag)  
+**Active Implementation Target**: Unit 001-3 (Task Entity & Lifecycle)  
 **Overall Completion**: 14% (1 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
 
@@ -70,10 +70,10 @@ graph TD
   - [x] Red Test: `internal/core/errors_test.go` (`TestErrorsExist`, `TestErrors_SentinelIntegrity`)
   - [x] Implementation: `internal/core/errors.go` (11 sentinel errors)
   - [x] Green Verification: `go test -v -run TestErrors ./internal/core/...`
-- [ ] **1.3 Unit 001-2: Strongly Typed Value Objects (`Status`, `Priority`, `Tag`)**
-  - [ ] Red Tests: `status_test.go`, `priority_test.go`, `tag_test.go`
-  - [ ] Implementation: `status.go` (state machine, `CanTransitionTo`), `priority.go` (weights 1–4), `tag.go` (normalization, regex, deduplication)
-  - [ ] Green Verification: `go test -v -run "TestParse|TestNormalize|TestStatus" ./internal/core/...`
+- [x] **1.3 Unit 001-2: Strongly Typed Value Objects (`Status`, `Priority`, `Tag`)**
+  - [x] Red Tests: `status_test.go`, `priority_test.go`, `tag_test.go`
+  - [x] Implementation: `status.go` (state machine, `CanTransitionTo`), `priority.go` (weights 1–4), `tag.go` (normalization, regex, deduplication)
+  - [x] Green Verification: `go test -v -run "TestParse|TestNormalize|TestStatus" ./internal/core/...`
 - [ ] **1.4 Unit 001-3: Core Task Entity & Lifecycle**
   - [ ] Red Tests: `task_test.go` (`TestNewTask_Validation`, `TestTask_TransitionToDone`, `TestTask_Reopen`)
   - [ ] Implementation: `task.go` (`Task` struct, `NewTask`, `TransitionTo`, `Update`, `CompletedAt` lifecycle)
