@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development  
 **Active Phase**: Phase 1: Core Domain & Invariants  
-**Active Implementation Target**: Unit 001-4 (Mathematical Progress Rollup Engine)  
+**Active Implementation Target**: Unit 001-5 (Hierarchical Tree Traversal & Acyclic Cycle Detection)  
 **Overall Completion**: 14% (1 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
 
@@ -78,10 +78,10 @@ graph TD
   - [x] Red Tests: `task_test.go` (`TestNewTask_Validation`, `TestTask_TransitionToDone`, `TestTask_Reopen`, `TestTask_SetParent`, `TestTask_SetProgress_Validation`)
   - [x] Implementation: `task.go` (`Task` struct, `NewTask`, `TransitionTo`, `Update`, `SetParent`, `SetProgress`, `CompletedAt` lifecycle)
   - [x] Green Verification: `go test -v -run TestTask ./internal/core/...`
-- [ ] **1.5 Unit 001-4: Mathematical Progress Rollup Engine**
-  - [ ] Red Tests: `rollup_test.go` (`TestCalculateProgress_Leaf`, `TestCalculateProgress_Subtasks`, `TestCalculateProgress_FloorRounding`, `TestCalculateProgress_AllDone`)
-  - [ ] Implementation: `rollup.go` ($\lfloor \frac{\sum P}{N} \rfloor$ integer floor arithmetic)
-  - [ ] Green Verification: `go test -v -run TestCalculateProgress ./internal/core/...`
+- [x] **1.5 Unit 001-4: Mathematical Progress Rollup Engine**
+  - [x] Red Tests: `rollup_test.go` (`TestCalculateProgress_Leaf`, `TestCalculateProgress_Subtasks`, `TestCalculateProgress_FloorRounding`, `TestCalculateProgress_AllDone`)
+  - [x] Implementation: `rollup.go` ($\lfloor \frac{\sum P}{N} \rfloor$ integer floor arithmetic)
+  - [x] Green Verification: `go test -v -run TestCalculateProgress ./internal/core/...`
 - [ ] **1.6 Unit 001-5: Hierarchical Tree Traversal & Acyclic Cycle Detection**
   - [ ] Red Tests: `tree_test.go` (`TestDetectCycles_DirectSelf`, `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestValidateHierarchyDepth`, `TestBuildTree_Forest`)
   - [ ] Implementation: `tree.go` (`TaskNode`, `BuildTree`, `DetectCycles` with depth limits)
