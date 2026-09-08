@@ -20,7 +20,7 @@ The acyclic directed tree structure formed by a root task and all of its recursi
 
 ### Rollup Progress
 An integer percentage ($0\% - 100\%$) representing the completion status of a task:
-- For a leaf task (no subtasks): $100\%$ if `done`, otherwise $0\%$.
+- For a leaf task (no subtasks): $100\%$ if `done`, otherwise explicitly assigned manual progress ($0\%$–$99\%$, default $0\%$ on creation).
 - For a parent task: the mathematical average of its immediate child subtasks' progress values:
   $$\text{Progress} = \left\lfloor \frac{\sum_{i=1}^{N} \text{subtask}_i.\text{Progress}}{N} \right\rfloor$$
 

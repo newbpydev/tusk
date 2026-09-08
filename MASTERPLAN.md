@@ -1,9 +1,9 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development  
-**Active Phase**: Phase 1: Core Domain & Invariants  
-**Active Implementation Target**: Unit 001-1 (Domain Sentinels & Error Taxonomy)  
-**Overall Completion**: 14% (1 of 7 Phases Complete)  
+**Active Phase**: Phase 2: SQLite Storage & Repository  
+**Active Implementation Target**: 2.1 Ultrathink Planning Pack
+**Overall Completion**: 29% (2 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
 
 ---
@@ -14,8 +14,8 @@ The Tusk reboot follows an uncompromising, evidence-first execution sequence. Wo
 
 ```mermaid
 graph TD
-    P0[Phase 0: Foundation & Setup<br/>✅ COMPLETE] --> P1[Phase 1: Core Domain & Invariants<br/>🚀 ACTIVE]
-    P1 --> P2[Phase 2: SQLite Storage & Repo<br/>⏳ PLANNED]
+    P0[Phase 0: Foundation & Setup<br/>✅ COMPLETE] --> P1[Phase 1: Core Domain & Invariants<br/>✅ COMPLETE]
+    P1 --> P2[Phase 2: SQLite Storage & Repo<br/>🚀 ACTIVE]
     P2 --> P3[Phase 3: Task Service Engine<br/>⏳ PLANNED]
     P3 --> P4[Phase 4: CLI & Scripting<br/>⏳ PLANNED]
     P3 --> P5[Phase 5: Interactive TUI<br/>⏳ PLANNED]
@@ -57,50 +57,50 @@ graph TD
 ---
 
 ### Phase 1: Feature 001 - Core Domain & Invariants
-- **Status**: 🚀 **ACTIVE / READY FOR IMPLEMENTATION**
+- **Status**: ✅ **COMPLETED** (2026-09-06)
 - **Plan**: `docs/plans/2026-09-06-001-feat-core-domain-and-invariants-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md`
 
-- [ ] **1.1 Planning Pack (Ultrathink)**
+- [x] **1.1 Planning Pack (Ultrathink)**
   - [x] Deepened Implementation Plan with concrete Go signatures and algorithms
   - [x] Comprehensive Verification Plan covering all scenarios (Normal, Boundary, Injected Failure, Recovery, Benchmark)
   - [x] Issue Workorder with review lens sign-offs and empty release gate
-- [ ] **1.2 Unit 001-1: Domain Sentinels and Error Taxonomy**
-  - [ ] Red Test: `internal/core/errors_test.go` (`TestErrorsExist`, `TestErrorsUnwrap`)
-  - [ ] Implementation: `internal/core/errors.go` (10 sentinel errors)
-  - [ ] Green Verification: `go test -v -run TestErrors ./internal/core/...`
-- [ ] **1.3 Unit 001-2: Strongly Typed Value Objects (`Status`, `Priority`, `Tag`)**
-  - [ ] Red Tests: `status_test.go`, `priority_test.go`, `tag_test.go`
-  - [ ] Implementation: `status.go` (state machine, `CanTransitionTo`), `priority.go` (weights 1–4), `tag.go` (normalization, regex, deduplication)
-  - [ ] Green Verification: `go test -v -run "TestParse|TestNormalize|TestStatus" ./internal/core/...`
-- [ ] **1.4 Unit 001-3: Core Task Entity & Lifecycle**
-  - [ ] Red Tests: `task_test.go` (`TestNewTask_Validation`, `TestTask_TransitionToDone`, `TestTask_Reopen`)
-  - [ ] Implementation: `task.go` (`Task` struct, `NewTask`, `TransitionTo`, `Update`, `CompletedAt` lifecycle)
-  - [ ] Green Verification: `go test -v -run TestTask ./internal/core/...`
-- [ ] **1.5 Unit 001-4: Mathematical Progress Rollup Engine**
-  - [ ] Red Tests: `rollup_test.go` (`TestCalculateProgress_Leaf`, `TestCalculateProgress_Subtasks`, `TestCalculateProgress_FloorRounding`, `TestCalculateProgress_AllDone`)
-  - [ ] Implementation: `rollup.go` ($\lfloor \frac{\sum P}{N} \rfloor$ integer floor arithmetic)
-  - [ ] Green Verification: `go test -v -run TestCalculateProgress ./internal/core/...`
-- [ ] **1.6 Unit 001-5: Hierarchical Tree Traversal & Acyclic Cycle Detection**
-  - [ ] Red Tests: `tree_test.go` (`TestDetectCycles_DirectSelf`, `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestValidateHierarchyDepth`, `TestBuildTree_Forest`)
-  - [ ] Implementation: `tree.go` (`TaskNode`, `BuildTree`, `DetectCycles` with depth limits)
-  - [ ] Benchmark: `BenchmarkDetectCycles` verifying $< 500\text{ns}$
-  - [ ] Green Verification: `go test -v -run "TestDetectCycles|TestBuildTree" ./internal/core/...`
-- [ ] **1.7 Unit 001-6: Task Filtering and Sorting Engine**
-  - [ ] Red Tests: `filter_test.go` (`TestFilterTasks`, `TestSortTasks_MultiKey`)
-  - [ ] Implementation: `filter.go` (`TaskFilter`, `FilterTasks`, `SortTasks`)
-  - [ ] Green Verification: `go test -v -run "TestFilter|TestSort" ./internal/core/...`
-- [ ] **1.8 Phase 1 Quality Gate & Release Sign-off**
-  - [ ] `go test -race -v ./internal/core/...` passes with zero data races
-  - [ ] `make validate` exits 0 cleanly
-  - [ ] Populate execution record in `docs/verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md`
-  - [ ] Complete release gate checkboxes in `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md`
+- [x] **1.2 Unit 001-1: Domain Sentinels and Error Taxonomy**
+  - [x] Red Test: `internal/core/errors_test.go` (`TestErrorsExist`, `TestErrors_SentinelIntegrity`)
+  - [x] Implementation: `internal/core/errors.go` (14 sentinel errors)
+  - [x] Green Verification: `go test -v -run TestErrors ./internal/core/...`
+- [x] **1.3 Unit 001-2: Strongly Typed Value Objects (`Status`, `Priority`, `Tag`)**
+  - [x] Red Tests: `status_test.go`, `priority_test.go`, `tag_test.go`
+  - [x] Implementation: `status.go` (state machine, `CanTransitionTo`), `priority.go` (weights 1–4), `tag.go` (normalization, regex, deduplication)
+  - [x] Green Verification: `go test -v -run "TestParse|TestNormalize|TestStatus" ./internal/core/...`
+- [x] **1.4 Unit 001-3: Core Task Entity & Lifecycle**
+  - [x] Red Tests: `task_test.go` (`TestNewTask_Validation`, `TestTask_TransitionToDone_And_Reopen`, `TestTask_SetParent`, `TestTask_SetProgress_Validation`)
+  - [x] Implementation: `task.go` (`Task` struct, `NewTask`, `TransitionTo`, `Update`, `SetParent`, `SetProgress`, `CompletedAt` lifecycle)
+  - [x] Green Verification: `go test -v -run TestTask ./internal/core/...`
+- [x] **1.5 Unit 001-4: Mathematical Progress Rollup Engine**
+  - [x] Red Tests: `rollup_test.go` (`TestCalculateProgress_Leaf`, `TestCalculateProgress_Subtasks`, `TestCalculateProgress_FloorRounding`, `TestCalculateProgress_AllDone`)
+  - [x] Implementation: `rollup.go` ($\lfloor \frac{\sum P}{N} \rfloor$ integer floor arithmetic)
+  - [x] Green Verification: `go test -v -run TestCalculateProgress ./internal/core/...`
+- [x] **1.6 Unit 001-5: Hierarchical Tree Traversal & Acyclic Cycle Detection**
+  - [x] Red Tests: `tree_test.go` (`TestDetectCycles_DirectSelf`, `TestDetectCycles_RootPromotion`, `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestValidateHierarchyDepth_Subtree`, `TestBuildTree_Forest`, `TestBuildTree_Errors`)
+  - [x] Implementation: `tree.go` (`TaskNode`, `BuildTree`, `DetectCycles`, `ValidateHierarchyDepth` with stack buffer optimization)
+  - [x] Benchmark: `BenchmarkTreeTraversal` verifying 314ns/op (< 500ns, 0 allocs)
+  - [x] Green Verification: `go test -v -run "TestDetectCycles|TestBuildTree|TestValidateHierarchyDepth" ./internal/core/...`
+- [x] **1.7 Unit 001-6: Task Filtering and Sorting Engine**
+  - [x] Red Tests: `filter_test.go` (`TestFilterTasks`, `TestSortTasks_MultiKey`)
+  - [x] Implementation: `filter.go` (`TaskFilter`, `FilterTasks`, `SortTasks`)
+  - [x] Green Verification: `go test -v -run "TestFilter|TestSort" ./internal/core/...`
+- [x] **1.8 Phase 1 Quality Gate & Release Sign-off**
+  - [x] `go test -race -v ./internal/core/...` passes with zero data races
+  - [x] `make validate` exits 0 cleanly
+  - [x] Populate execution record in `docs/verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md`
+  - [x] Complete release gate checkboxes in `docs/workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md`
 
 ---
 
 ### Phase 2: Feature 002 - SQLite Storage & Repository
-- **Status**: ⏳ **PLANNED** (Pending Phase 1 Completion)
+- **Status**: 🚀 **ACTIVE / READY FOR PLANNING**
 - **Plan**: `docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md`
 
 - [ ] **2.1 Ultrathink Planning Pack**

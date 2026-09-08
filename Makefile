@@ -1,4 +1,4 @@
-.PHONY: all setup fmt vet test test-unit race validate build clean help
+.PHONY: all setup fmt vet test test-unit race validate coverage bench bench-tree bench-build build clean help
 
 all: validate build
 
@@ -20,7 +20,17 @@ test-unit:
 race:
 	go test -race -v ./...
 
-validate: fmt vet test race
+coverage:
+	@./scripts/coverage.sh
+bench:
+	@./scripts/bench.sh all
+
+bench-tree:
+	@./scripts/bench.sh tree
+
+bench-build:
+	@./scripts/bench.sh build
+validate: fmt vet test race coverage
 	@echo "All canonical quality gates passed."
 
 build:
@@ -39,6 +49,10 @@ help:
 	@echo "make test      - Run all tests"
 	@echo "make test-unit - Run short unit tests"
 	@echo "make race      - Run tests with data race detector"
-	@echo "make validate  - Run full verification suite (fmt, vet, test, race)"
+	@echo "make validate    - Run full verification suite (fmt, vet, test, race, coverage)"
+	@echo "make coverage    - Run coverage check with race detector"
+	@echo "make bench       - Run all core micro-benchmarks"
+	@echo "make bench-tree  - Run tree traversal micro-benchmark"
+	@echo "make bench-build - Run tree build micro-benchmark"
 	@echo "make build     - Compile binary to bin/tusk"
 	@echo "make clean     - Clean temporary build artifacts"
