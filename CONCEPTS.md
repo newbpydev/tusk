@@ -13,7 +13,7 @@ The fundamental unit of work within Tusk. A task possesses a title, optional mar
 A top-level task that has no parent (`parent_id == nil`). Root tasks represent major workstreams, epics, or standalone tasks.
 
 ### Subtask
-A task that references another task as its parent (`parent_id != nil`). Subtasks can themselves act as parents to nested subtasks, enabling arbitrary recursive n-level hierarchies.
+A task that references another task as its parent (`parent_id != nil`). Subtasks can themselves act as parents. The current core supports up to 10 levels, counting a root as depth 1.
 
 ### Task Tree
 The acyclic directed tree structure formed by a root task and all of its recursive child subtasks. Cycles (e.g., a task acting as an ancestor of itself) are strictly forbidden and rejected at the domain validation boundary.
@@ -26,10 +26,15 @@ An integer percentage ($0\% - 100\%$) representing the completion status of a ta
 
 ### Display Order
 The deterministic sort order applied when displaying tasks in the CLI or TUI:
-1. Pinned / Active focus
-2. Priority (Urgent > High > Medium > Low)
-3. Due Date (Earliest to Latest, Overdue first)
-4. Creation Date (Chronological)
+1. Priority (Urgent > High > Medium > Low)
+2. Due Date (Earliest to Latest, missing dates last)
+3. Creation Date (Chronological)
+4. ID (Ascending deterministic tie-breaker)
+
+Apply the same order to siblings in a tree. Pinned/active ordering is reserved terminology; the current product contract has no persisted pin capability.
+
+### Task Event (Planned)
+A timeline entry recording the kind, changed field names, sequence, and time of a task mutation. Task events do not store old notes or reconstruct task state. Deleting a task deletes its events. The [product plan](docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md) defines the planned event contract; persistence is not implemented yet.
 
 ---
 

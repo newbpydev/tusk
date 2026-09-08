@@ -8,8 +8,8 @@ This directory contains the canonical Brainstorm specification, modular implemen
 
 ```mermaid
 graph TD
-    B[Brainstorm: Modern Task System<br/>2026-09-06-001-feat-tusk-modern-task-system-plan.md] --> P0[Plan 000: Setup & Multi-Agent Foundation<br/>Active Foundation - Complete]
-    P0 --> P1[Plan 001: Core Domain & Invariants<br/>Ultrathink Planning Pack Ready]
+    B[Product: Modern Task System<br/>Deepened contract with phase gates] --> P0[Plan 000: Setup & Multi-Agent Foundation<br/>Recorded Complete]
+    P0 --> P1[Plan 001: Core Domain & Invariants<br/>Recorded Complete]
     P1 --> P2[Plan 002: SQLite Storage & Repository]
     P2 --> P3[Plan 003: Task Service Engine]
     P3 --> P4[Plan 004: CLI Interface & Scripting]
@@ -22,11 +22,13 @@ graph TD
 
 | Plan ID | Title | Implementation Plan | Verification Plan | Issue Workorder | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Brainstorm** | Modern Task System | [Brainstorm Plan](2026-09-06-001-feat-tusk-modern-task-system-plan.md) | — | — | `approved` |
+| **TUSK / Product** | Modern Task System | [Product Plan](2026-09-06-001-feat-tusk-modern-task-system-plan.md) | [Verification Plan](../verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md) | [Workorder](../workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md) | `deepened; phase gates open` |
 | **000** | Setup & Multi-Agent Foundation | [Plan 000](2026-09-06-000-feat-setup-and-multi-agent-foundation-plan.md) | Embedded in Plan | Tested by scripts | `completed` |
-| **001** | Core Domain & Invariants | [Plan 001](2026-09-06-001-feat-core-domain-and-invariants-plan.md) | [Verification Plan](../verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md) | [Workorder](../workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md) | `ready` |
-| **002** | SQLite Storage & Repository | [Plan 002](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) | Planned | Planned | `pending` |
+| **001** | Core Domain & Invariants | [Plan 001](2026-09-06-001-feat-core-domain-and-invariants-plan.md) | [Verification Plan](../verification-plans/2026-09-06-001-feat-core-domain-and-invariants-verification-plan.md) | [Workorder](../workorders/2026-09-06-001-feat-core-domain-and-invariants-issues-workorder.md) | `completed; historical evidence` |
+| **002** | SQLite Storage & Repository | [Plan 002](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) | Planned | Planned | `active planning: 2.1` |
 | **003** | Task Service Engine | [Plan 003](2026-09-06-003-feat-task-service-engine-plan.md) | Planned | Planned | `pending` |
 | **004** | CLI Interface & Scripting | [Plan 004](2026-09-06-004-feat-cli-interface-and-scripting-plan.md) | Planned | Planned | `pending` |
 | **005** | Interactive TUI Application | [Plan 005](2026-09-06-005-feat-interactive-tui-application-plan.md) | Planned | Planned | `pending` |
 | **006** | Automation, Packaging & Release | [Plan 006](2026-09-06-006-feat-automation-packaging-and-release-plan.md) | Planned | Planned | `pending` |
+
+The product triplet defines cross-phase contracts and acceptance; it does not substitute for Feature 002–006 triplets. Their existing outline frontmatter is not proof of readiness. Consult `MASTERPLAN.md` and close the applicable product workorder gates before implementing. Product scenarios remain unexecuted; recorded Phase 0/1 completion was not rerun by the 2026-09-08 documentation pass.

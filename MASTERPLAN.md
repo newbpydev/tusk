@@ -4,7 +4,13 @@
 **Active Phase**: Phase 2: SQLite Storage & Repository  
 **Active Implementation Target**: 2.1 Ultrathink Planning Pack
 **Overall Completion**: 29% (2 of 7 Phases Complete)  
-**Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector)
+**Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
+
+### Product planning reconciliation (2026-09-08)
+
+The requested [Modern Task System product plan](docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md) now has a synchronized [verification plan](docs/verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md) and [issue workorder](docs/workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md): 29 requirements, 23 cross-phase handoff units, and 73 planned scenarios.
+
+This is a product-level planning baseline, not completion of **2.1** or implementation authorization. The active phase/target above remain unchanged. Phase 2 planning must reconcile transaction-scoped ports, metadata-only task history, migration/embedding ownership, real disk WAL evidence, and the patched SQLite/Go compatibility decision before implementation. Feature 002–006 outline metadata alone is not implementation readiness; each needs its own synchronized triplet under gate G1. Product workorder gates remain open, and no new implementation, verification-scenario, or release checkbox was checked in this planning pass.
 
 ---
 
