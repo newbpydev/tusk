@@ -2,20 +2,21 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 verification-plan: docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md
-status: Planning corrections recorded - implementation pending
-evidence-scope: Planning findings only
+status: U6 locally accepted; U1 active
+evidence-scope: Planning findings and local U6 execution
 ---
 
 # Feature 002 Issue Workorder
 
 This register accompanies the [implementation plan](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) and [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md). **Fixed in plan** means a planning gap was resolved in these documents, not that code was fixed or tests passed.
 
-The request authorizes completing and reviewing the Feature 002 planning pack. Ordinary technical corrections are incorporated under that scope. Go 1.25 is a selected planning default based on the pinned manifests and the product plan's recommendation; it is not labeled as an explicit user-approved decision. U6 owns runtime compatibility proof before migration implementation. No implementation/release gate is closed by this register.
+The original request authorized completing and reviewing the Feature 002 planning pack. The subsequent `ce-work` invocation authorizes implementation in masterplan order. Go 1.25 is the selected technical default; U6 owns runtime compatibility proof before migration implementation. No implementation/release gate is closed by this register.
 
 ## Issue register
 
 | ID | Source / lens | Owner | Severity | Status | Next action and evidence |
 | --- | --- | --- | --- | --- | --- |
+| 002-ISS-021 | Runtime compatibility: lock wait ignores short context deadline | Feature 002 implementer; U6 | P1 | Resolved locally | KTD4 wrapper passes original cancellation regression, replacement/negative/recovery tests, Go 1.25 compatibility, five-target builds and make validate; see resolution receipt. |
 | 002-ISS-001 | Coherence: Readiness advertised without an executable pack | Feature 002 implementer / named review lens | P1 | Fixed in plan | Set execution: code only with the complete contract, mapped scenarios and reviewed triplet; masterplan points to the first pending unit. Evidence: R21/R22; all units; 002-V67/002-V68. |
 | 002-ISS-002 | Feasibility/dependencies: Go and SQLite minimum was unresolved | Feature 002 implementer / named review lens | P1 | Fixed in plan | Select Go 1.25.0, sqlite v1.58.0, libc v1.75.6 as the technical planning default; U6 must prove engine/graph/minimum compiler before U1. Evidence: R1; U6; 002-V01/002-V02/002-V07. |
 | 002-ISS-003 | Feasibility: Generator minimum would contaminate runtime tooling | Feature 002 implementer / named review lens | P1 | Fixed in plan | Pin the prebuilt executable separately and commit generated output; ordinary build/test uses no source-built generator. Evidence: R18; U2; 002-V25/002-V28. |
@@ -257,6 +258,20 @@ Planning checklist 2.1 is complete after the documentation audit. All six implem
 
 ## Implementation and release gate
 
+### 002-ISS-021. Pinned driver's lock wait outlives the context deadline
+
+- **Observed:** 2026-09-08 on clean base `4bbc639`, with uncommitted U6 changes on `feat/sqlite-storage-repository`.
+- **Contract:** R16/R20, KTD4/KTD9; U6; 002-V05/002-V06. The plan explicitly makes failed compatibility proof a stop before U1.
+- **Reproduction:** Two independently opened single-connection pools on a temporary disk WAL database, both configured with `_txlock=immediate` and `busy_timeout=5000`. Writer A holds a transaction; writer B calls `BeginTx` with a 100-ms deadline. B returns `database is locked (5) (SQLITE_BUSY)` after 5.03763051s on Go 1.25.0 and 5.009708107s on installed Go 1.27.1. Releasing A permits a later B transaction. The race run reproduces the same failure after 5.05168653s.
+- **Source inspection:** Pinned [tx.go](https://github.com/modernc-org/sqlite/blob/v1.58.0/tx.go) executes begin through `sqlite3_exec`, arranges interruption for canceled contexts, and returns the SQLite error. The measured behavior does not satisfy the promised short-deadline lock cancellation; source inspection alone does not establish a safe fix.
+- **Changes retained:** Pinned go.mod/go.sum, private no-I/O connector, compatibility regressions, stricter Go-minimum setup fixtures, and canonical compatibility/cross-build targets. No schema, public opener, repository, service, CLI or TUI implementation was added.
+- **Validation:** Engine/minimum compiler and individual basic connection probes pass. `make test-compat`, `make validate` and separately `make race` fail the retained regression; coverage was not reached. The setup script suite passes 9/9. Full evidence is in the paired verification record.
+- **Cross-build proof:** `GOTOOLCHAIN=go1.25.0 make build-storage` exits 0 for the native package and all five CGO-disabled targets. This does not close the failed runtime gate or establish native Windows/macOS behavior.
+- **Resolution in progress:** Following the user's instruction to continue with engineering judgment, KTD4 now selects a connection-local cancellable acquisition wrapper. The default busy timeout and total lock budget remain five seconds; only acquisition temporarily uses 25-ms waits, with context checks between failed driver BeginTx attempts. Restore the default before returning a connection/transaction; discard on restoration failure. No manual SQL BEGIN, dependency change, callback/statement replay or relaxed cancellation assertion. Added negative/recovery tests must prove this before closing the issue.
+- **Resume:** Resolve this incompatibility, finish the remaining U6 mode/portability probes, and pass minimum/current `make test-compat`, `make build-storage`, full/race and `make validate`. Until then, U6 and all downstream units remain unchecked; no commit or publication performed.
+
+### Gate checklist
+
 - [ ] U6, U1, U2, U3, U4 and U5 implemented in masterplan order.
 - [ ] Each behavioral change has observed red-first evidence and focused green proof.
 - [ ] Minimum Go/compiler and pinned SQLite/libc engine proof passed.
@@ -267,3 +282,15 @@ Planning checklist 2.1 is complete after the documentation audit. All six implem
 - [ ] All runtime findings resolved with fresh retest evidence.
 - [ ] Phase 3 handoff and masterplan pointers synchronized.
 - [ ] Remaining unaccepted implementation issues: 0.
+
+### 002-ISS-021 resolution receipt
+
+Resolved locally on 2026-09-08. The connection wrapper retries only failed acquisition before user work, restores busy_timeout=5000, preserves all driver pool interfaces, and poisons a connection when restoration fails. Both cancellation regressions pass around 100 ms, and fault/budget/replacement tests pass. Explicit Go 1.25 compatibility and five-target builds pass; make validate passes with 97.8% storage coverage. Earlier failure/stop notes above remain historical evidence. U6 is accepted and U1 becomes active. No commit or publication occurred.
+
+
+
+
+
+### U6 commit reconstruction — 2026-09-08
+
+The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.

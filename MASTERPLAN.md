@@ -1,10 +1,14 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: 🟢 Active Development  
+**Current Status**: 🟢 Active Development
 **Active Phase**: Phase 2: SQLite Storage & Repository  
-**Active Implementation Target**: 2.2 — Unit 002-6 / U6: Pinned Storage Runtime & Compatibility Proof
+**Active Implementation Target**: 2.2 — Unit 002-1 / U1
 **Overall Completion**: 29% (2 of 7 Phases Complete)  
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
+
+### Feature 002 execution finding (2026-09-08)
+
+U6 locally accepted; U1 active. Each reconstructed unit is validated in isolation before its local commit. No native/hosted execution is claimed.
 
 ### Product planning reconciliation (2026-09-08)
 
@@ -106,7 +110,7 @@ graph TD
 ---
 
 ### Phase 2: Feature 002 - SQLite Storage & Repository
-- **Status**: 🚀 **ACTIVE / PLANNING COMPLETE; IMPLEMENTATION PENDING**
+- **Status**: 🚀 **U6 COMPLETE; U1 ACTIVE**
 - **Plan**: `docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md`
@@ -116,7 +120,7 @@ graph TD
   - [x] Verification Plan (`docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md`)
   - [x] Issue Workorder (`docs/workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md`)
 - [ ] **2.2 Implementation Units**
-  - [ ] Unit 002-6 / U6: Pinned Storage Runtime & Compatibility Proof (Go 1.25, SQLite 3.53.4, transaction modes, five CGO-disabled target builds; prerequisite to 002-1)
+  - [x] Unit 002-6 / U6: Pinned Storage Runtime & Compatibility Proof (Go 1.25, SQLite 3.53.4, transaction modes, five CGO-disabled target builds; prerequisite to 002-1)
   - [ ] Unit 002-1: Migration Engine & Embedded Schema (`db/migrations/001_initial_schema.sql`)
   - [ ] Unit 002-2: Pinned sqlc v1.31.1 Queries & Reproducible Generation (configuration format v2)
   - [ ] Unit 002-3: SQLite Connection Manager (WAL mode, busy timeout 5000ms, single-writer pool)
@@ -224,3 +228,7 @@ All AI coding agents (Codex, Opencode, Kilo, OMP, Claude Code, Cursor) must foll
    - Check off the completed unit in `MASTERPLAN.md`.
    - If a phase is completed, update the **Active Phase** and **Active Implementation Target** pointers in this document.
    - Update the companion issue workorder with verification evidence.
+
+### U6 commit reconstruction — 2026-09-08
+
+The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.

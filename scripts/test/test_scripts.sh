@@ -43,6 +43,18 @@ assert_eq 1 "$EXIT_CODE" "setup.sh exits 1 when Go is missing"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "${TMP_DIR}"' EXIT
 
+# TestSetupGoMinimum: setup must reject unsupported and malformed toolchains.
+for version in go1.24.9 go1.25.0 go1.27.1 malformed; do
+    fake_go="${TMP_DIR}/go"
+    printf '#!/usr/bin/env bash\nprintf "%%s\\n" "go version %s linux/amd64"\n' "$version" > "$fake_go"
+    chmod +x "$fake_go"
+    expected=0
+    case "$version" in go1.24.9|malformed) expected=1 ;; esac
+    result=0
+    TUSK_GO_BIN="$fake_go" "${ROOT_DIR}/scripts/setup.sh" >"${TMP_DIR}/setup-output" 2>&1 || result=$?
+    assert_eq "$expected" "$result" "TestSetupGoMinimum: $version"
+done
+
 TEST_GO_FILE="${TMP_DIR}/bad_format.go"
 cat << 'EOF' > "${TEST_GO_FILE}"
 package main

@@ -2,8 +2,8 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 surface-profiles: [library-sdk, data-persistence-migration, infrastructure-operations]
-status: Planned - not executed
-evidence-scope: Planning only
+status: U6 locally accepted; U1 active
+evidence-scope: Local U6 execution; remaining units not executed
 ---
 
 # Feature 002 Verification Plan
@@ -45,25 +45,27 @@ The implementation's minimum compiler is Go 1.25; its exact engine/graph must ma
 
 ## Scenarios
 
-Every checkbox is unexecuted. Each test name is a planned test or benchmark identifier, not an observed result. The unit's Files field owns the test location. Combine table-driven cases where useful, while keeping scenario evidence traceable.
+Checkboxes record accepted scenarios after the owning unit's canonical gate. U6 is accepted after the canonical gate; the execution record retains its original failures and resolution. Test names outside U6 remain planned identifiers. The unit's Files field owns the test location.
 
 ### U6. Runtime compatibility
 
-- [ ] 002-V01 **Compatibility — TestSQLiteCompatibility** (covers R1, R21). Inspect the resolved module graph and query sqlite_version() through the selected driver under an explicitly selected Go 1.25 compiler. **Expect:** Require sqlite v1.58.0, libc v1.75.6, SQLite 3.53.4; a different graph or engine fails. Record compiler identity separately from the installed Go 1.27 result.
+002-ISS-021 resolution adds cancellation without a deadline, lock release during acquisition, bounded busy exhaustion, and timeout restoration after success/failure. Inject configuration/restore/rollback failures to prove poisoned connections are discarded. The 100-ms regression remains unchanged. Only failed driver BeginTx before a callback may be retried; no statement/callback replay is permitted.
 
-- [ ] 002-V02 **Boundary — TestSetupGoMinimum** (covers R1, R21). Use fake Go executables reporting missing, malformed, 1.24, 1.25, and newer versions in the setup script fixture. **Expect:** Missing, malformed, and 1.24 fail clearly; 1.25 and newer pass. Setup must not download a compiler or dependency.
+- [x] 002-V01 **Compatibility — TestSQLiteCompatibility** (covers R1, R21). Inspect the resolved module graph and query sqlite_version() through the selected driver under an explicitly selected Go 1.25 compiler. **Expect:** Require sqlite v1.58.0, libc v1.75.6, SQLite 3.53.4; a different graph or engine fails. Record compiler identity separately from the installed Go 1.27 result.
 
-- [ ] 002-V03 **Purity — TestConnectorConstruction_NoIO** (covers R2, R5). Construct two connectors using literal temporary paths without opening or pinging them. **Expect:** No file/directory appears and no network call occurs; the connectors carry independent immutable configuration.
+- [x] 002-V02 **Boundary — TestSetupGoMinimum** (covers R1, R21). Use fake Go executables reporting missing, malformed, 1.24, 1.25, and newer versions in the setup script fixture. **Expect:** Missing, malformed, and 1.24 fail clearly; 1.25 and newer pass. Setup must not download a compiler or dependency.
 
-- [ ] 002-V04 **Protection — TestReaderConnection_QueryOnly** (covers R14, R17). Open a reader physical connection and begin a deferred read transaction; attempt a write through a test-only raw handle. **Expect:** query_only rejects mutation, while normal reads work. ReadOnly transaction options alone are not accepted as the protection.
+- [x] 002-V03 **Purity — TestConnectorConstruction_NoIO** (covers R2, R5). Construct two connectors using literal temporary paths without opening or pinging them. **Expect:** No file/directory appears and no network call occurs; the connectors carry independent immutable configuration.
 
-- [ ] 002-V05 **Locking — TestWriterConnection_BeginsImmediate** (covers R14, R20). Hold an IMMEDIATE transaction on writer A; begin writer B before any application read using a bounded deadline. **Expect:** B cannot enter its callback until A releases the writer lock. A deferred transaction that reaches the callback prematurely fails this test.
+- [x] 002-V04 **Protection — TestReaderConnection_QueryOnly** (covers R14, R17). Open a reader physical connection and begin a deferred read transaction; attempt a write through a test-only raw handle. **Expect:** query_only rejects mutation, while normal reads work. ReadOnly transaction options alone are not accepted as the protection.
 
-- [ ] 002-V06 **Cancellation — TestAcquire_CanceledContext** (covers R5, R16, R20). Cancel before pool acquisition, then occupy a single writer and cancel a waiting second acquisition; separately hold a SQLite writer lock from another connection and use a 100-ms deadline. **Expect:** Canceled acquisitions invoke no callback; the SQLite lock wait returns the context error before the 5000-ms busy limit. A later acquisition succeeds. Failure blocks U1 until compatibility behavior is resolved.
+- [x] 002-V05 **Locking — TestWriterConnection_BeginsImmediate** (covers R14, R20). Hold an IMMEDIATE transaction on writer A; begin writer B before any application read using a bounded deadline. **Expect:** B cannot enter its callback until A releases the writer lock. A deferred transaction that reaches the callback prematurely fails this test.
 
-- [ ] 002-V07 **Cross-build — BuildStorageTargets** (covers R1, R22). Use make build-storage to compile storage with CGO disabled for linux amd64/arm64, darwin amd64/arm64, windows amd64. **Expect:** Every target builds; capture exact compiler and dependencies. Cross-built output is not native execution evidence.
+- [x] 002-V06 **Cancellation — TestAcquire_CanceledContext** (covers R5, R16, R20). Cancel before pool acquisition, then occupy a single writer and cancel a waiting second acquisition; separately hold a SQLite writer lock from another connection and use a 100-ms deadline. **Expect:** Canceled acquisitions invoke no callback; the SQLite lock wait returns the context error before the 5000-ms busy limit. A later acquisition succeeds. Failure blocks U1 until compatibility behavior is resolved.
 
-- [ ] 002-V08 **Replacement — TestConnectionFactory_Pragmas** (covers R5, R14, R20). Retire and reopen physical writer/reader connections through the private factory. **Expect:** Each replacement has foreign_keys=1, busy_timeout=5000, synchronous=NORMAL and the correct query_only/begin mode; no process-global configuration changes.
+- [x] 002-V07 **Cross-build — BuildStorageTargets** (covers R1, R22). Use make build-storage to compile storage with CGO disabled for linux amd64/arm64, darwin amd64/arm64, windows amd64. **Expect:** Every target builds; capture exact compiler and dependencies. Cross-built output is not native execution evidence.
+
+- [x] 002-V08 **Replacement — TestConnectionFactory_Pragmas** (covers R5, R14, R20). Retire and reopen physical writer/reader connections through the private factory. **Expect:** Each replacement has foreign_keys=1, busy_timeout=5000, synchronous=NORMAL and the correct query_only/begin mode; no process-global configuration changes.
 
 ### U1. Schema and migrations
 
@@ -202,9 +204,9 @@ Every checkbox is unexecuted. Each test name is a planned test or benchmark iden
 | `make setup` | Exists; U6 raises version validation | Prerequisite check only; no module/tool download |
 | `make test-unit` | Exists | Short tests; disk/process exclusions cannot establish full acceptance |
 | `make test`, `make race` | Exist | All storage suites, including disk/process cases; record selected test names |
-| `make validate` | Exists; U2 adds script gate | fmt/vet/full/race/coverage; >=95% handwritten nonexempt packages |
-| `make test-compat` | Planned U6 | Driver/engine/transaction smoke plus fake minimum-version rejection |
-| `make build-storage` | Planned U6 | CGO-disabled native and five-target storage compilation |
+| `make validate` | Exists; U6 adds existing setup-script checks, U2 extends them | fmt/vet/full/race/coverage; >=95% handwritten nonexempt packages |
+| `make test-compat` | Implemented U6; passes after 002-ISS-021 resolution | Driver/engine/transaction smoke plus fake minimum-version rejection |
+| `make build-storage` | Implemented U6 | CGO-disabled native and five-target storage compilation |
 | `make setup-sqlc` | Planned U2 | Explicit pinned tool download/install when needed; digest checked |
 | `make generate` | Planned U2 | Scratch generation then replacement of only owned generated outputs |
 | `make check-generated` | Planned U2 | Non-mutating full-directory comparison, including untracked/obsolete files |
@@ -232,10 +234,27 @@ The baseline Makefile has no supported TEST/PKG/RUN filter variables. New target
 
 ## Execution record
 
-All 002-V01–002-V68 are **not executed**. Document audits belong in the workorder's planning record.
+U6 locally accepted; U1 active. Native Windows/macOS execution remains pending.
 
 | Date | Revision and dirty scope | Unit/scenario | Compiler and OS/arch | Command | Red/green/result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| — | — | — | — | — | Not executed | — |
+| 2026-09-08 | Base `4bbc639`, uncommitted U6 files on `feat/sqlite-storage-repository` | U6 initial red | Installed Go 1.27.1, linux/amd64 | `make test` | Expected compile failure | `compatibility_test.go`: `undefined: newConnector`, before production implementation |
+| 2026-09-08 | Same U6 scope | 002-V02 red/green | Fake toolchains + installed Go, linux/amd64 | Temporary Make recipes `test-setup-red`, then `test-setup-proof`, running `scripts/test/test_scripts.sh` | Red: Go 1.24.9 incorrectly accepted; green: 9/9 script checks | Missing, malformed and 1.24 rejected; 1.25/newer accepted after setup change |
+| 2026-09-08 | Same U6 scope | 002-V01/03/04/08, pool portion of V06 | Explicit `go1.25.0`, linux/amd64 | `GOTOOLCHAIN=go1.25.0 make test-compat` | Individual probes pass; target fails lock cancellation | Module assertions match sqlite v1.58.0/libc v1.75.6; engine 3.53.4; no-I/O construction, query-only reader, replacement pragmas and canceled pool acquisition pass. Deferred reader mode/replacement lock-mode proof is not yet complete. |
+| 2026-09-08 | Same U6 scope | 002-V05/V06 lock probe | Go 1.25.0 / installed Go 1.27.1, linux/amd64 | Minimum and installed `make test-compat` | FAIL | `TestWriterConnection_BeginsImmediate`: 100-ms deadline returns `SQLITE_BUSY` after 5.03763051s / 5.009708107s; rollback then new writer succeeds. No early writer entry. |
+| 2026-09-08 | Same U6 scope | U6 aggregate | Installed Go 1.27.1, linux/amd64 | `make validate`; `make race` | FAIL | fmt/vet pass; validate stops at full test failure (5.03194221s lock wait); separate race run fails same assertion (5.05168653s), no race report. Coverage gate not reached. |
+| 2026-09-08 | Same U6 scope | 002-V07 | Explicit Go 1.25.0, linux/amd64 host | `GOTOOLCHAIN=go1.25.0 make build-storage` | PASS, exit 0 | CGO disabled: native storage build plus linux/amd64, linux/arm64, darwin/amd64, darwin/arm64, windows/amd64. Compilation only; native execution is not proved. |
 
 Record exact tests run and any short/native exclusions. A later source change invalidates affected proof and requires a focused rerun before aggregate closure. Hosted, native manual, publication, and local results use separate rows. Do not check a scenario merely because its test file exists.
+
+### U6 resolution receipt (2026-09-08)
+
+Observed red: the original 100-ms probe and new cancellation-without-deadline probe both returned SQLITE_BUSY after about 5 seconds. Green: original probe returns DeadlineExceeded after 102.319619 ms; cancellation without deadline and restoration to 5000 pass. Fault tests cover configure/begin/restore/rollback and incompatible/failed connections. Real SQLite tests cover five-second busy exhaustion, replacement deferred/query-only readers while a WAL writer holds its lock, and replacement writers acquiring after release. `GOTOOLCHAIN=go1.25.0 make test-compat build-storage` exits 0. Final `make validate` exits 0, including full/race, setup fixtures 9/9, and storage coverage 97.8%. U6 acceptance is local on base 4bbc639 plus the uncommitted U6 files; no native cross-target runtime or hosted proof.
+
+
+
+
+
+### U6 commit reconstruction — 2026-09-08
+
+The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.

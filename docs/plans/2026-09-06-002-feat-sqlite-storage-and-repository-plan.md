@@ -118,7 +118,7 @@ The current Makefile has no test filtering variables or generation targets. `mak
 - KTD1. **Pin the runtime graph.** Select Go 1.25.0 minimum, `modernc.org/sqlite v1.58.0`, and its required `modernc.org/libc v1.75.6`. The driver documents SQLite 3.53.4 on the five product targets, beyond the WAL-reset fix. This is the recommended technical planning default, not a claim of explicit user approval or completed compatibility tests. U6 proves the selected graph, exact engine, and minimum toolchain before schema implementation. Sources: [driver](https://pkg.go.dev/modernc.org/sqlite@v1.58.0), [module](https://proxy.golang.org/modernc.org/sqlite/@v/v1.58.0.mod), [libc module](https://proxy.golang.org/modernc.org/libc/@v/v1.75.6.mod), [WAL fix](https://www.sqlite.org/wal.html#walresetbug). Governs R1/R20/R21.
 - KTD2. **Keep the generator outside the runtime module.** Use prebuilt sqlc v1.31.1 and config format `version: "2"`; commit generated Go. Its source module requires Go 1.26, so do not add a tool dependency to Tusk's Go 1.25 module. Verify the downloaded archive against the release asset digest in the tool table. Sources: [release](https://github.com/sqlc-dev/sqlc/releases/tag/v1.31.1), [generator module](https://proxy.golang.org/github.com/sqlc-dev/sqlc/@v/v1.31.1.mod). Governs R18.
 - KTD3. **Separate open policy from connection mechanics.** A private connector factory builds writer/read-only reader configurations; `storage.Open` owns paths, compatibility, migration, and cleanup. Use `sqlite.NewConnector` with `sql.OpenDB`, without registering per-repository drivers or global hooks. Connector DSNs contain only encoded filenames and application-owned parameters. Governs R2–R5.
-- KTD4. **Use driver-backed transactions.** Writer connections set `_txlock=immediate`; reader connections use deferred transactions and `query_only=ON`. The driver's read-only transaction flag controls begin mode but does not enforce write protection by itself. Use `database/sql` transaction ownership, never mix manual BEGIN with `sql.Tx`. Sources: [transaction source](https://github.com/modernc-org/sqlite/blob/v1.58.0/tx.go), [connector source](https://github.com/modernc-org/sqlite/blob/v1.58.0/connector.go). Governs R14–R16/R20.
+- KTD4. **Use driver-backed transactions.** Writer connections set `_txlock=immediate`; reader connections use deferred transactions and `query_only=ON`. The driver's read-only transaction flag controls begin mode but does not enforce write protection by itself. Use `database/sql` transaction ownership, never mix manual BEGIN with `sql.Tx`. Execution reconciliation for 002-ISS-021: cancellable writer acquisition uses a private connector wrapper with at most 25-ms SQLite busy waits and a five-second total acquisition budget. Retry only a failed driver BeginTx returning primary SQLITE_BUSY, before any callback or application statement; check context between attempts. Restore busy_timeout=5000 before exposing the transaction or returning the connection. Cleanup failure discards the physical connection. Never retry application statements, callbacks or commits. Sources: [transaction source](https://github.com/modernc-org/sqlite/blob/v1.58.0/tx.go), [connector source](https://github.com/modernc-org/sqlite/blob/v1.58.0/connector.go), [SQLite busy handler](https://www.sqlite.org/c3ref/busy_handler.html). Governs R14–R16/R20.
 - KTD5. **Store explicit, canonical records.** Use STRICT tables and the schema/codec contract below. Store UTC dates as fixed-width TEXT rather than driver-interpreted DATETIME; use core parsing/validation without changing valid user content. Governs R8/R9/R17.
 - KTD6. **Make migrations transactional and identifiable.** Use application ID `0x5455534B`, a SHA-256 ledger, and sequential embedded forward SQL. `db/embed.go` owns the compiler-populated, unexported read-only `embed.FS`; never export or reassign that asset binding. Runtime connections, clocks, maps, and callbacks remain instance-owned. Sources: [Go embed](https://pkg.go.dev/embed), [SQLite application ID](https://www.sqlite.org/pragma.html#pragma_application_id). Governs R6/R7.
 - KTD7. **Keep ports small and transaction-scoped.** Readers expose materialized domain values; writers add CRUD and event append. No SQL handles, generated structs, open cursors, or concrete driver errors cross the port. Full operation semantics are in the boundary table. Governs R10–R17.
@@ -158,7 +158,7 @@ Decode requires exactly that canonical stored representation, including a parse-
 
 Event kinds are `create`, `metadata`, `status`, `move`, `progress`, `rollup`. Changed-field names are a sorted nonempty unique subset of `title`, `description`, `status`, `priority`, `parent_id`, `progress`, `tags`, `due_date`, `completed_at`. Store no previous text, values, snapshots, or delete tombstones. The service supplies which event applies and when; the repository validates and appends it, without automatic event generation or no-op inference. AUTOINCREMENT prevents reuse of a committed sequence after deletion; gaps and rolled-back allocations are not event counts.
 
-Migration idempotency is enforced by the ledger: re-open runs no already-applied migration. Before any pending SQL, validate filenames, uniqueness, contiguity, hashes, and exact applied-prefix equality. Unknown files, missing versions, edited bytes, or unknown database objects fail closed. Ledger creation, application ID, all pending DDL/data changes, and ledger inserts share the same transaction. Do not hide drift with unconditional `IF NOT EXISTS`. A migration fixture failing on its second statement or ledger insert must restore the prior logical database. On a newly created file, failure may leave an empty file/directories; it never deletes them automatically.
+Migration idempotency is enforced by the ledger: re-open runs no already-applied migration. Before any pending SQL, validate filenames, uniqueness, contiguity, hashes, and exact applied-prefix equality. Identity, ledger and catalog inspection share one read snapshot; recheck them in the write transaction. Compare catalog definitions against the applied canonical migration prefix evaluated in an isolated private memory database, avoiding a second handwritten schema definition. Unknown files, missing versions, edited bytes, or unknown database objects fail closed. Ledger creation, application ID, all pending DDL/data changes, and ledger inserts share the same transaction. Do not hide drift with unconditional `IF NOT EXISTS`. A migration fixture failing on its second statement or ledger insert must restore the prior logical database. On a newly created file, failure may leave an empty file/directories; it never deletes them automatically.
 
 ### Repository boundary
 
@@ -303,7 +303,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** Completed Feature 001 and this reviewed planning pack. U6 is a newly split prerequisite, so the existing U1–U5 IDs do not move.
 
-**Files:** `go.mod`, new `go.sum`, `scripts/setup.sh`, `scripts/test/test_scripts.sh`, `Makefile`, new `internal/storage/connection.go`, `internal/storage/compatibility_test.go`. Own only compatibility/connection primitives; do not add schema or public file-opening policy here.
+**Files:** `go.mod`, new `go.sum`, `scripts/setup.sh`, `scripts/test/test_scripts.sh`, `Makefile`, new `internal/storage/connection.go`, `internal/storage/compatibility_test.go`, `internal/storage/connection_test.go`. Own only compatibility/connection primitives; do not add schema or public file-opening policy here.
 
 **Approach:** Introduce the private connector factory, pinned graph, and canonical compatibility/build targets. Update Go-minimum diagnostics and fake-toolchain fixtures. Keep runtime global settings untouched.
 
@@ -329,7 +329,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U6 proves the driver and supplies private connection primitives; no public opener or generated queries is needed to test migration mechanics.
 
-**Files:** New `.gitattributes`, `db/embed.go`, `db/embed_test.go`, `db/migrations/001_initial_schema.sql`, `internal/storage/migrations.go`, `internal/storage/migrations_test.go`, `internal/storage/schema_test.go`, and fixture migrations under `internal/storage/testdata/migrations/`.
+**Files:** New `.gitattributes`, `db/embed.go`, `db/embed_test.go`, `db/migrations/001_initial_schema.sql`, `internal/storage/migrations.go`, `internal/storage/migrations_test.go`, `internal/storage/schema_test.go`, `internal/storage/migration_fault_test.go`, `internal/storage/migration_process_test.go`, and fixture migrations under `internal/storage/testdata/migrations/`.
 
 **Approach:** Separate immutable inventory validation, compatibility inspection, and transaction application. Test against injected fixture filesystems and disposable real databases. Cover the `db` package with inventory/content tests instead of excluding it from coverage.
 
@@ -356,7 +356,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U1 supplies canonical schema; U6 supplies test connections.
 
-**Files:** New `db/queries.sql`, `sqlc.yaml`, `internal/storage/sqlc/`, `internal/storage/queries_test.go`, `scripts/sqlc.sh`; modify `Makefile`, `scripts/test/test_scripts.sh`, and `.gitignore` only if the local tool path is not already ignored.
+**Files:** New `db/queries.sql`, `sqlc.yaml`, `internal/storage/sqlc/`, `internal/storage/queries_test.go`, `scripts/sqlc.sh`, `scripts/test/test_sqlc.sh`; modify `Makefile`, `scripts/test/test_scripts.sh`, `scripts/coverage.sh` (correct Go output parsing while preserving existing exemptions), and `.gitignore` only if the local tool path is not already ignored.
 
 **Approach:** Generate fixed CRUD, filtered candidate, children/subtree/ancestor, and event queries. Keep migration ledger and PRAGMA/transaction control in the migration/connection owner because those bootstrap operations precede generation. Add pinned setup/generation/check targets and negative script fixtures.
 
@@ -382,7 +382,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U1 migration and U6 connection primitives. Execute after U2 to preserve the phase's established order.
 
-**Files:** New `internal/storage/path.go`, `internal/storage/path_test.go`, `internal/storage/open.go`, `internal/storage/open_test.go`, `internal/storage/path_unix_test.go`, `internal/storage/path_windows_test.go`; adapt private connection/migration files only to integrate their decided contracts.
+**Files:** New `internal/storage/path.go`, `internal/storage/path_test.go`, `internal/storage/open.go`, `internal/storage/open_test.go`, `internal/storage/path_unix_test.go`, `internal/storage/path_windows_test.go`, `internal/storage/path_unix.go`, `internal/storage/path_windows.go`, `internal/storage/open_fault_test.go`, `internal/storage/memory_test.go`; adapt private connection/migration files only to integrate their decided contracts.
 
 **Approach:** Implement the lifecycle specified above, with injected path inputs and a private constructor seam for connector failures. Keep public user configuration distinct from internal memory-fixture configuration. Do not wire `cmd/tusk` to storage in this phase.
 
@@ -459,6 +459,8 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 ## Verification Contract
 
+**Execution update, 2026-09-08:** U6 locally accepted; U1 active. See paired execution receipts.
+
 The [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md) owns 002-V01–002-V68 fixtures, failure placement, and evidence tiers. The [workorder](../workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md) records planning corrections separately from runtime findings.
 
 Existing canonical commands are `make setup`, `make test-unit`, `make test`, `make race`, `make coverage`, `make validate`, and `make build`. Test-unit may skip disk/process tests, but full/race must include them. Tests must assert that the intended cases ran. Existing targets accept no filtering variables; use the suite until a documented new target exists.
@@ -474,3 +476,8 @@ Every unit needs observed red evidence before implementation changes, focused gr
 Feature 002 is complete when all six units and local scenarios have recorded execution evidence, the repository boundary matches this plan, generated output is reproducible, and the canonical gates pass on the actual candidate revision. Remove abandoned experimental code and fixtures containing user data. Close planning/runtime issues only with their required evidence and synchronize the triplet and masterplan.
 
 Native Windows/macOS execution and release-target runtime acceptance remain explicit Phase 6 gates. Phase 2 supplies portable tests and CGO-disabled cross-build proof; Linux execution cannot check native evidence boxes. Feature 003 planning may begin only after Phase 2 local acceptance and a recorded handoff. CLI latency, full user workflows, hosted CI, and publication remain with their owning phases.
+
+
+### U6 commit reconstruction — 2026-09-08
+
+The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
