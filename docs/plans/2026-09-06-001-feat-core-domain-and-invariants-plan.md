@@ -20,7 +20,7 @@ Provide the pure Go business logic and domain core for Tusk in `internal/core/`.
 
 ### In Scope
 - Strongly typed domain enums: `Status` (`todo`, `in-progress`, `blocked`, `done`) and `Priority` (`urgent`, `high`, `medium`, `low`).
-- Entity definition: `Task` with ULID/UUID identifier, metadata, timestamps, and parent linkage.
+- Entity definition: `Task` with opaque string identifier (non-empty; canonical ULID/UUID generation and format enforcement live at the storage/service boundary, Features 002/003), metadata, timestamps, and parent linkage.
 - Tag value object with normalization rules (lowercase, alphanumeric + dashes, trimmed, deduped).
 - Validated state transition machine with automatic `CompletedAt` lifecycle management.
 - Mathematical subtask progress rollup calculation with deterministic integer floor arithmetic.
@@ -178,6 +178,7 @@ func (t *Task) ResetLeaf(manualProgress int, subtasks []Task, now time.Time) err
 - `SetRollupProgress` sets progress computed by the rollup engine ($0 \le \text{progress} \le 100$). The parent must carry a valid status enum, and for non-done tasks with subtasks, every subtask must carry a valid status enum and every non-done subtask must carry valid stored progress ($0 \le \text{progress} \le 100$), and progress must match `CalculateProgress(*t, subtasks)`, returning `ErrInvalidStatus` on corrupt parent or child status or `ErrInvalidProgress` on corrupt child data or value mismatches. Setting 100 on a non-done parent requires subtasks to be provided and all complete.
 - `ResetLeaf` resets a task whose subtasks were removed back to leaf status with explicit manual progress ($0 \le \text{progress} \le 99$ on non-done, $100$ on done). Requires subtasks to be provided and empty (`len(subtasks) == 0`). Non-restorative child deletion policy: Because SQLite persistence stores a single progress column, child removal does not preserve historical pre-rollup manual values across restarts; `ResetLeaf` explicitly resets leaf progress to a caller-supplied baseline.
 - `Clone` returns a deep copy of `Task` with independent pointer and slice fields (`ParentID`, `DueDate`, `CompletedAt`, `Tags`).
+- `ID`: core accepts any opaque non-empty string and rejects empty or whitespace-padded IDs with `ErrInvalidTaskID`; canonical ULID/UUID generation and strict format validation are owned by the storage/service boundary (Features 002/003), keeping `internal/core` free of identifier-scheme coupling.
 
 ### 2.5 Progress Rollup Engine (`internal/core/rollup.go`)
 ```go
@@ -391,7 +392,7 @@ Verification: `go test -v -run TestTask ./internal/core/...`
 | `CORE-TRE-N1` | BuildTree groups roots and children into hierarchical forest | `TestBuildTree_Forest` | `go test -v -run TestBuildTree ./internal/core/...` |
 | `CORE-TRE-B1` | Root promotion with nil proposedParentID succeeds; subtree depth validated | `TestDetectCycles_RootPromotion`, `TestValidateHierarchyDepth_Subtree` | `go test -v -run "TestDetectCycles\|TestValidateHierarchyDepth" ./internal/core/...` |
 | `CORE-TRE-F1` | Cyclic references return ErrCyclicDependency; orphans return ErrTaskNotFound | `TestDetectCycles_TwoNodeLoop`, `TestDetectCycles_DeepLoop`, `TestBuildTree_Errors` | `go test -v -run "TestDetectCycles\|TestBuildTree" ./internal/core/...` |
-| `CORE-TRE-BM1` | Tree traversal micro-benchmark scales under 1000 nodes | `BenchmarkTreeTraversal` | `go test -bench=BenchmarkTreeTraversal ./internal/core/...` |
+| `CORE-TRE-BM1` | Tree traversal micro-benchmark on a 10-level hierarchy completes in < 500ns with 0 allocs | `BenchmarkTreeTraversal` | `make bench-tree` |
 | `CORE-FLT-N1` | FilterTasks evaluates Status, Priority, Tags, SearchTerm, and RootOnly | `TestFilterTasks` | `go test -v -run TestFilterTasks ./internal/core/...` |
 | `CORE-FLT-B1` | SortTasks sorts nil DueDate last on ASC, with deterministic ID tie-breaking | `TestSortTasks_MultiKey` | `go test -v -run TestSortTasks ./internal/core/...` |
 | `CORE-FLT-C1` | Zero-match queries return empty non-nil slices | `TestFilterTasks_EmptyResults` | `go test -v -run TestFilterTasks ./internal/core/...` |
