@@ -35,7 +35,7 @@ Provide the pure Go business logic and domain core for Tusk in `internal/core/`.
 - CLI flag parsing and Cobra command definitions (owned by Feature 004).
 
 ### Surface Profiles
-- **Library / Core Domain**: Pure Go exports, deterministic algorithms, thread-safe value copies, zero allocations on hot paths, $\ge 95\%$ domain test coverage target (98.2% measured under `-race`).
+- **Library / Core Domain**: Pure Go exports, deterministic algorithms, thread-safe value copies, zero allocations on hot paths, $\ge 95\%$ domain test coverage target (98.2% measured under `-race`, Go 1.27.1).
 
 ### Evidence Boundary
 - **Local Evidence Only**: Pure Go unit tests (`go test -v ./internal/core/...`), race detection (`go test -race ./internal/core/...`), property-based assertions, and micro-benchmarks (`go test -bench=. ./internal/core/...`). No external infrastructure, daemons, or network access required.
@@ -365,7 +365,7 @@ Verification: `go test -v -run TestTask ./internal/core/...`
 | **Progress Rollup Math** | Unit 001-4 | CORE-ROL-N1, CORE-ROL-B1, CORE-ROL-P1, CORE-ROL-P2 | Focused property/table |
 | **Cycle & Tree Invariants** | Unit 001-5 | CORE-TRE-N1, CORE-TRE-B1, CORE-TRE-F1, CORE-TRE-BM1 | Focused graph/benchmark |
 | **Filtering & Sorting** | Unit 001-6 | CORE-FLT-N1, CORE-FLT-B1, CORE-FLT-C1 | Focused unit |
-| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ target; 98.2% measured) |
+| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ target; 98.2% measured, Go 1.27.1) |
 
 ### Scenario Mapping Registry
 

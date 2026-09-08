@@ -39,7 +39,7 @@ evidence-scope: Verified local execution
 | **Rollup Arithmetic** | Unit 001-4 | CORE-ROL-N1, CORE-ROL-B1, CORE-ROL-P1, CORE-ROL-P2 | Focused Property / Table |
 | **Tree & Cycle Invariants**| Unit 001-5 | CORE-TRE-N1, CORE-TRE-B1, CORE-TRE-F1, CORE-TRE-BM1 | Focused Graph / Benchmark |
 | **Filtering & Sorting** | Unit 001-6 | CORE-FLT-N1, CORE-FLT-B1, CORE-FLT-C1 | Focused Unit |
-| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ target; 98.2% measured) |
+| **Aggregate Domain Suite** | All | CORE-AGG-ALL | Aggregate `make validate` (domain coverage threshold $\ge 95\%$ target; 98.2% measured, Go 1.27.1) |
 
 ---
 
@@ -91,7 +91,7 @@ evidence-scope: Verified local execution
 | **Race Detector** | `make race` | Local Linux/Darwin | Zero data race conditions detected |
 | **Tree Traversal Benchmark** | `make bench-tree` | Local Linux | Sub-microsecond execution (< 500ns, 0 allocs; observed 314ns/op) |
 | **Tree Build Benchmark** | `make bench-build` | Local Linux | Scalable forest allocation (< 1µs/task, < 5 allocs/task; observed 73.6µs/100 tasks, 484 allocs) |
-| **Aggregate Gate**| `make validate` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage target (98.2% measured under `-race`) |
+| **Aggregate Gate**| `make validate` | Local | Strict format, vet, unit tests, race checks, and $\ge 95\%$ domain coverage target (98.2% measured under `-race`, Go 1.27.1) |
 
 ---
 

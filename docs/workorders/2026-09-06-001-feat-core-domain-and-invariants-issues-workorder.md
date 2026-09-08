@@ -194,7 +194,7 @@ evidence-scope: Verified local execution
 - [x] Focused unit tests pass (`make test`).
 - [x] Race detector checks pass (`make race`).
 - [x] Benchmarks pass with expected performance (`make bench-tree` observed 314ns/op, 0 allocs; `make bench-build` observed 73.6µs/op, 484 allocs across 100 tasks).
-- [x] Domain test coverage satisfies $\ge 95\%$ mandate (`make coverage` observed 98.2% under `-race`).
+- [x] Domain test coverage satisfies $\ge 95\%$ mandate (`make coverage` observed 98.2% under `-race`, Go 1.27.1).
 - [x] Aggregate repository validation passes (`make validate`).
 - [x] All issues fixed (CORE-ISS-001 through CORE-ISS-016).
 - [x] Remaining unaccepted issues: 0.

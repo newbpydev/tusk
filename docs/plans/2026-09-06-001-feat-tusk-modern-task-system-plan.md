@@ -50,7 +50,7 @@ Tusk 2026 solves this by separating concerns cleanly: an embedded local SQLite e
 - `status`: Strongly typed enum: `todo`, `in-progress`, `blocked`, `done`.
 - `priority`: Strongly typed enum: `low` (1), `medium` (2), `high` (3), `urgent` (4).
 - `parent_id`: Nullable ID referencing parent task. Null designates a Root Task.
-- `progress`: Integer percentage (0–100) automatically calculated from subtasks or completion status.
+- `progress`: Integer percentage (0–100): manually assigned on leaf tasks (0–99, default 0% on creation), automatically calculated from subtasks on parent tasks, $100\%$ when `status == done`.
 - `tags`: Set of normalized lowercase alphanumeric strings (`#backend`, `#bug`).
 - `due_date`: Nullable UTC timestamp parsed from natural language input.
 - `created_at`: UTC timestamp set on entity creation.
@@ -61,7 +61,7 @@ Tusk 2026 solves this by separating concerns cleanly: an embedded local SQLite e
 - **Recursive Depth**: Arbitrary n-level parent-child tree.
 - **Acyclic Enforcement**: Cycle detection on creation/move; an ancestor can never become its own descendant.
 - **Progress Calculation**:
-  - Leaf Task: $0\%$ if `status != done`, $100\%$ if `status == done`.
+  - Leaf Task: explicitly assigned manual progress ($0\%$–$99\%$) if `status != done` (fresh tasks default $0\%$), $100\%$ if `status == done`.
   - Parent Task: $\lfloor \frac{1}{N} \sum_{i=1}^N \text{subtask}_i.\text{progress} \rfloor$.
   - State Sync: When all child subtasks are marked `done`, the parent status can optionally auto-transition to `done`. If any subtask is reopened, a `done` parent reverts to `in-progress`.
 
