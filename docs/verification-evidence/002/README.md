@@ -44,3 +44,7 @@ Native Windows/macOS runtime, hosted checks and CLI latency remain unexecuted. C
 ### Verdict
 
 The review's two required fixes are applied with red/green evidence. Final aggregate acceptance and its code fingerprint are recorded in the paired verification plan and `acceptance.json`; no push, PR, merge or release is implied.
+
+## Publication review — 2026-09-08
+
+The user subsequently authorized simplify, review, compound and commit/push/PR. The [fresh review](publication-review.json) covers origin/main through U5, including both earlier fixes: zero actionable findings. Reuse, quality and efficiency passes found no worthwhile changes. make validate check-generated build passes (storage 97.6%). Both external routes again failed without usable review evidence; local passes are not independent corroboration. Publication state is tracked in MASTERPLAN target 2.4.

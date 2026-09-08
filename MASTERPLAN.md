@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 3: Task Service Engine (planning)
-**Active Implementation Target**: 3.1 — Deepen the Feature 003 planning triplet before implementation
+**Active Phase**: Phase 2: SQLite Storage & Repository (publication follow-up)
+**Active Implementation Target**: 2.4 — User-authorized simplification, review, learning capture and PR publication
 **Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -133,6 +133,12 @@ graph TD
   - [x] Real disk WAL, concurrency, cancellation, process recovery and integrity scenarios pass under full/race gates
   - [x] CGO-disabled five-target storage builds pass; native target runtime proof remains a Phase 6 gate
   - [x] `make validate` passes
+
+- [ ] **2.4 Post-acceptance publication follow-up (user authorized 2026-09-08)**
+  - [x] Simplification: reuse, quality and efficiency passes; no behavior-preserving change warranted
+  - [x] Fresh code review and verification: zero actionable findings (independent review unavailable; recorded in publication-review.json)
+  - [ ] Capture durable learning and commit verified follow-up separately
+  - [ ] Push branch and open PR; inspect hosted review/check state
 
 ---
 
