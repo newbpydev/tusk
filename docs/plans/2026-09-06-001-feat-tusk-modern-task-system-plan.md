@@ -21,7 +21,7 @@ Give developers a local task manager usable immediately from a terminal, shell s
 - **Surfaces:** CLI/TUI, internal library/service, persistence/migration, packaging/operations, documentation.
 - **Artifact triplet:** This plan, its [verification plan](../verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md), and [issue workorder](../workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md), under `docs/` in this first-party repository.
 - **Readiness:** Deepened product planning baseline with explicit gates. This umbrella remains `requirements-only` as an execution entrypoint. It does not replace the phase-specific triplets or authorize implementation.
-- **Current handoff:** Phase 2, target **2.1 Ultrathink Planning Pack**. Reconcile Feature 002 against this contract before starting its units. Later phases remain ordered by the masterplan.
+- **Current handoff:** [Feature 002](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) now owns the executable storage pack. Its first unit is **002-6 / feature U6**, the compatibility prerequisite added before migrations. Product U24 maps that new unit; product U6 still means the Phase 3 service contract. Later phases remain ordered by the masterplan.
 
 ## Product Contract
 
@@ -129,7 +129,7 @@ Planning defaults are R9 opt-in completion, R15 date times, R17 retained-task me
 
 ### Technical decisions
 
-- KTD1. **Phase plans own execution.** Units below are handoffs. Feature 002–006 stubs currently claim `implementation-ready` but lack full triplets. Gate G1 prevents premature execution. Follow the masterplan's phase order even where its DAG allows concurrency.
+- KTD1. **Phase plans own execution.** Units below are handoffs. Feature 002 has its complete execution triplet; Feature 003–006 outline metadata is not readiness. Gate G1 applies per feature. Follow the masterplan's phase order even where its DAG allows concurrency.
 - KTD2. **Choose modernc SQLite, subject to G2.** Keep `database/sql` in storage. Require a patched SQLite engine and matching driver/libc/toolchain. No dependencies are installed in this pass.
 - KTD3. **Migration-owning `db` package.** `db/embed.go` embeds adjacent `migrations/*.sql`; storage imports it. Embedding `../../db` from storage is invalid. Generate queries into `internal/storage/sqlc/`; test generated behavior through the adapter. [Go embed](https://pkg.go.dev/embed), [sqlc configuration](https://docs.sqlc.dev/en/latest/reference/config.html).
 - KTD4. **One writer, bounded readers.** Use one writer connection and up to four reader connections. Begin writes IMMEDIATE before reading graph state; read snapshots use separate deferred transactions. Configure connection-scoped pragmas for every new/replacement connection. No transaction callback may borrow another write connection. Verify cancellation and driver transaction options at G2. Create new application-owned directories as 0700 and database files as 0600 on POSIX; preserve existing parent permissions and use the user's private profile ACL on Windows. Reject symlink/non-regular database targets; encode path characters as literal filename data when constructing an internal DSN. This is a single-user boundary, not protection against a malicious process with the same OS identity. [Driver documentation](https://pkg.go.dev/modernc.org/sqlite).
@@ -230,14 +230,14 @@ One `d` opens confirmation; another `d` is not consent. Default button is Cancel
 
 | Gate | Owner and closure evidence | Blocking effect |
 | --- | --- | --- |
-| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Blocks that feature's implementation; Phase 2 stays at 2.1 |
-| G2 | Phase 2 maintainer records patched engine/driver/libc/toolchain choice and explicit Go minimum; U1 then proves it | Decision blocks beginning U1; U1 compatibility smoke blocks production storage work. Inspected modernc v1.58.0 needs Go 1.25.0; current module says 1.24.0 |
+| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002 pack completed; remains open for Features 003–006 |
+| G2 | Feature 002 KTD1 selects Go 1.25.0, modernc v1.58.0, libc v1.75.6 and SQLite 3.53.4; product U24 / feature U6 proves it | Planning choice recorded; compatibility smoke blocks production schema work in U1. Actual module remains unchanged until implementation |
 | G3 | Phase 4/5 owners pin CLI/UI dependencies before their first unit; U15/U20 add benchmark runners and evidence | Dependency choice blocks U11/U16; measurement blocks phase acceptance, not earlier implementation units or storage planning |
 | G4 | Phase 6 maintainer proves exact candidate on OS/architectures and terminals, licenses, distribution destination, release metadata | Blocks publication; local green/cross-compilation are insufficient |
 
-G2 evidence: inspected modernc v1.46.1 supports Go 1.24 and reports SQLite 3.51.2. Inspected v1.46.2, v1.47.0, v1.48.0, v1.49.0, v1.57.0, v1.58.0 require Go 1.25. WAL-reset fix is in SQLite 3.51.3+ or documented backports. Recommended resolution: deliberately raise the minimum in the Phase 2 pack; if Go 1.24 must remain, research a patched compatible driver. This is an unresolved compatibility decision, not proof no alternative exists or permission to choose an affected engine. [Affected engine](https://pkg.go.dev/modernc.org/sqlite@v1.46.1), [WAL fix](https://www.sqlite.org/wal.html#walresetbug), [v1.58.0 module](https://proxy.golang.org/modernc.org/sqlite/@v/v1.58.0.mod).
+G2 planning choice is now owned by [Feature 002 KTD1](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md#key-technical-decisions): raise the build minimum to Go 1.25 with the pinned patched driver/libc. This is a technical planning default, not a claim of explicit user approval or executed compatibility proof. The earlier affected Go 1.24 candidate is not selected. [Affected engine](https://pkg.go.dev/modernc.org/sqlite@v1.46.1), [WAL fix](https://www.sqlite.org/wal.html#walresetbug), [selected module](https://proxy.golang.org/modernc.org/sqlite/@v/v1.58.0.mod).
 
-`sqlc` configuration `version: "2"` is a config format. The inspected tool release is [v1.31.1](https://github.com/sqlc-dev/sqlc/releases/tag/v1.31.1), not a v2 executable. Pin executable/checksum during Feature 002 planning.
+`sqlc` configuration `version: "2"` is a config format. Feature 002 pins the prebuilt [v1.31.1](https://github.com/sqlc-dev/sqlc/releases/tag/v1.31.1) executable and five host archive digests; its Go 1.26 source-build minimum stays outside the Go 1.25 runtime module.
 
 First data command creates an empty database. Current installations check compatibility before migration. Later data-bearing upgrades require a consistent offline backup; down migrations only prove reversibility in test fixtures. Downgrade does not rewrite schema. Legacy PostgreSQL import needs a separate plan. Removing/replacing a binary must not delete data. Release automation must not publish without the release action being authorized.
 
@@ -247,7 +247,8 @@ These units are handoff contracts, not completed work or activation of future ph
 
 | Unit | Feature unit | Responsibility / primary files | Depends on |
 | --- | --- | --- | --- |
-| U1 | 002-1 | Embedded schema and atomic migrations: `db/embed.go` | G1 cleared; G2 decision recorded; existing Feature 001 |
+| U24 | 002-6 | Pinned runtime and compatibility proof: `internal/storage/compatibility_test.go` | Feature 002 G1 and G2 planning choices; existing Feature 001 |
+| U1 | 002-1 | Embedded schema and atomic migrations: `db/embed.go` | U24 compatibility proof |
 | U2 | 002-2 | Reproducible sqlc queries: `db/queries.sql` | U1 |
 | U3 | 002-3 | Connection and file lifecycle: `internal/storage/open.go` | U1/U2 |
 | U4 | 002-4 | Repository and transaction contracts: `internal/ports/task_repository.go` | U3 |
@@ -271,14 +272,25 @@ These units are handoff contracts, not completed work or activation of future ph
 | U22 | 006-2 | Release artifacts and installation lifecycle: `.goreleaser.yaml` | U21; G4 distribution decisions |
 | U23 | 006-3 | Completions, documentation and final handoff: `internal/cli/completion.go` | U22 |
 
+### U24. Pinned storage runtime and compatibility proof
+
+- **Goal / requirements:** Prove the selected runtime before schema code; R12, R27, R29. Feature unit 002-6 / Feature 002 U6.
+- **Dependencies:** Feature 002 planning pack, G2 planning choice, existing Feature 001.
+- **Ownership:** `go.mod`, `go.sum`, `scripts/setup.sh`, `scripts/test/test_scripts.sh`, `Makefile`, `internal/storage/connection.go`, `internal/storage/compatibility_test.go`.
+- **Approach:** Feature 002 KTD1/KTD3/KTD4 define the pinned graph and private connection factory. Prove engine version, minimum compiler, transaction mode, query-only readers and replacement pragmas before U1.
+- **Red-first test:** TestSQLiteCompatibility fails on the absent driver/factory; fake setup compiler 1.24 is rejected. Record actual observations during execution.
+- **Verification:** make test-compat and make build-storage (add here), make test, make race, make validate. TUSK-V01 and Feature 002 V01–V08; cross-builds do not prove native target execution.
+- **Failure / recovery:** Failed compatibility blocks migration implementation; no silent pin or minimum change.
+- **Reviews:** Feasibility, dependencies, concurrency, portability, evidence quality.
+
 ### U1. Embedded schema and atomic migrations
 
 - **Goal / requirements:** Embedded schema and atomic migrations; R3–R12, R18, R29. Feature unit 002-1.
-- **Dependencies:** G1 cleared; G2 decision recorded; existing Feature 001.
-- **Ownership:** `db/embed.go`, `db/embed_test.go`, `db/migrations/`, `internal/storage/compatibility_test.go`, `internal/storage/migrations.go`, `internal/storage/migrations_test.go`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
-- **Approach:** First establish the G2 pinned-engine compatibility test through the canonical Makefile; record the failing prerequisite before dependency changes and passing engine/version proof before production schema code. Then KTD3/KTD6/KTD7/KTD9: ledger, tasks and task_events schema; transactional up/down fixture behavior; reject changed checksums and newer versions before persistent changes. `db/embed_test.go` proves migration inventory/content rather than adding a coverage exemption.
+- **Dependencies:** U24 compatibility proof.
+- **Ownership:** `.gitattributes`, `db/embed.go`, `db/embed_test.go`, `db/migrations/`, `internal/storage/migrations.go`, `internal/storage/migrations_test.go`, `internal/storage/schema_test.go`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
+- **Approach:** KTD3/KTD6/KTD7/KTD9: ledger, tasks and task_events schema; transactional up/down fixture behavior; reject foreign/newer schemas before intentional persistent changes. Feature 002 adds application identity and LF-controlled migration hashes. `db/embed_test.go` proves inventory/content rather than adding a coverage exemption.
 - **Red-first test:** TestMigrate_FailurePreservesPreviousVersion and TestMigrate_NewerSchemaUnchanged: missing migrator first fails to compile; injected second-statement failure must later leave old rows/schema/version intact.
-- **Verification:** make test; make race. Scenarios TUSK-V01, TUSK-V02, TUSK-V03, TUSK-V04. Record actual red/green evidence during execution; these are expected failures, not observed results.
+- **Verification:** make test; make race. Scenarios TUSK-V02, TUSK-V03, TUSK-V04. Record actual red/green evidence during execution; these are expected failures, not observed results.
 - **Failure / recovery:** Rollback the migration and retain original files; no automatic down-migration or delete/recreate on installed data.
 - **Reviews:** Architecture, data integrity, migration, reliability. Close the unit only with the applicable aggregate gate and phase triplet/master checklist update.
 
@@ -286,10 +298,10 @@ These units are handoff contracts, not completed work or activation of future ph
 
 - **Goal / requirements:** Reproducible sqlc queries; R10–R14, R18, R29. Feature unit 002-2.
 - **Dependencies:** U1.
-- **Ownership:** `db/queries.sql`, `sqlc.yaml`, `internal/storage/sqlc/`, `internal/storage/queries_test.go`, `Makefile`, `scripts/test/test_scripts.sh`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
+- **Ownership:** `db/queries.sql`, `sqlc.yaml`, `internal/storage/sqlc/`, `internal/storage/queries_test.go`, `scripts/sqlc.sh`, `Makefile`, `scripts/test/test_scripts.sh`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
 - **Approach:** KTD3/KTD8: pin generator/checksum, compile SQLite queries, isolate generated output; add canonical generate/check-generated targets with script tests. Include transactional row/event and subtree/ancestor queries.
 - **Red-first test:** TestQueries_FilterAndSubtreeParity fails on missing queries; malformed SQL fixture must make generation fail; stale generated output must fail check-generated.
-- **Verification:** make test; make generate and make check-generated (add here). Scenarios TUSK-V05, TUSK-V06, TUSK-V07. Record actual red/green evidence during execution; these are expected failures, not observed results.
+- **Verification:** make test; make setup-sqlc, make generate, make check-generated and make test-scripts (add here). Scenarios TUSK-V05, TUSK-V06, TUSK-V07. Record actual red/green evidence during execution; these are expected failures, not observed results.
 - **Failure / recovery:** Generation failure cannot overwrite checked-in output with partial files; preserve source and regenerate deterministically.
 - **Reviews:** API contract, SQL correctness, performance, maintainability. Close the unit only with the applicable aggregate gate and phase triplet/master checklist update.
 
@@ -319,7 +331,7 @@ These units are handoff contracts, not completed work or activation of future ph
 
 - **Goal / requirements:** Disk concurrency and recovery proof; R10–R12, R28, R29. Feature unit 002-5.
 - **Dependencies:** U4.
-- **Ownership:** `internal/storage/concurrency_test.go`, `internal/storage/recovery_test.go`, `internal/storage/testdata/`, `phase 002 triplet`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
+- **Ownership:** `internal/storage/concurrency_test.go`, `internal/storage/recovery_test.go`, `internal/storage/storage_bench_test.go`, `internal/storage/testdata/`, `docs/storage.md`, `Makefile`, `phase 002 triplet`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
 - **Approach:** Use deterministic lock barriers, two independent process connections, temporary disk files, crash checkpoints and SQLite integrity checks; memory tests never stand in for WAL evidence.
 - **Red-first test:** TestConcurrentWriters_NoLostUpdate and TestRecovery_KilledWriterAtomic expose incomplete isolation/recovery. If existing behavior already passes, record characterization; introduce no implementation change without a distinct failing case.
 - **Verification:** make test; make race; make validate. Scenarios TUSK-V16, TUSK-V17, TUSK-V18, TUSK-V19. Record actual red/green evidence during execution; these are expected failures, not observed results.
@@ -530,7 +542,7 @@ The [verification plan](../verification-plans/2026-09-06-001-feat-tusk-modern-ta
 
 Existing commands: `make setup`, `make test-unit`, `make test`, `make race`, `make validate`, `make build`, `make coverage`, `make bench-tree`, `make bench-build`. The Makefile has no TEST/PKG/RUN filtering variables; do not pass ignored variables as supposed focused proof. Run the canonical suite containing the named red test until filtering support is deliberately added and tested.
 
-Planned additions, not available now: `make generate`, `make check-generated`, `make test-cli`, `make bench-cli`, `make bench-tui`, `make release-check`, `make release-snapshot`, `make test-completions`. Ownership is in the units. Current build is native-only. Never expand `make clean` to remove an installed database.
+Planned additions, not available now: `make test-compat`, `make build-storage`, `make setup-sqlc`, `make generate`, `make check-generated`, `make test-scripts`, `make bench-storage`, `make test-cli`, `make bench-cli`, `make bench-tui`, `make release-check`, `make release-snapshot`, `make test-completions`. Ownership is in the units. Current build is native-only. Never expand `make clean` to remove an installed database.
 
 This planning pass inspects documents/source/manifests and audits links, IDs, tables, status, and whitespace. It does not run application tests or install dependencies. Execution records later require date, exact revision, environment, command, red/green result, and evidence location. Test-file presence is not a passing scenario.
 

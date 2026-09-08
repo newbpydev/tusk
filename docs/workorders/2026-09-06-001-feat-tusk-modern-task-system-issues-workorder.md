@@ -12,14 +12,14 @@ This register accompanies the [product plan](../plans/2026-09-06-001-feat-tusk-m
 
 **Fixed in plan** means the document now decides the behavior; it does not mean implemented or tested. **Open gate/decision** means the named owner must supply the stated evidence before the dependent unit/phase proceeds. Owners are accountable project roles, not claims that a human has accepted an assignment. G1–G4 are the plan's shared gate IDs.
 
-Gate sequencing: G2's compatibility decision must precede U1; U1's first red/green compatibility fixture then supplies runtime proof before production schema code. G3's dependency decisions precede U11/U16, while U15/U20 close its measurement portions before phase acceptance. G4 distribution decisions precede packaging; hosted/manual/publication evidence follows the candidate artifact. These gates do not require a later unit's evidence before the unit producing it can begin.
+Gate sequencing: Feature 002 now selects G2's compatibility baseline. New product U24 / Feature 002 U6 supplies its red/green runtime proof before production schema work in U1. Feature 002's executable [plan](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md), [verification](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md), and [workorder](2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md) own that handoff. G3's dependency choices precede U11/U16, while U15/U20 supply measurement before phase acceptance. G4 distribution choices precede packaging; hosted/manual/publication evidence follows the candidate artifact.
 
 ## Issue register
 
 | ID | Gate | Source / lens | Owner | Severity | Status | Next action and retest |
 | --- | --- | --- | --- | --- | --- | --- |
-| TUSK-ISS-001 | G1 | Architecture/status | Each Feature 002–006 owner | P1 | Open gate | Keep umbrella requirements-only; reconcile and complete only the active feature triplet before moving its master pointer. Evidence: All applicable R/U/scenario mappings, complete phase units and synchronized checklist; first closure is Phase 2 target 2.1. |
-| TUSK-ISS-002 | G2 | Dependency/security | Phase 2 maintainer | P1 | Open decision | Resolve minimum Go/toolchain policy before installing dependencies. Recommended: deliberate minimum raise plus pinned patched modernc/libc; otherwise research a patched Go 1.24-compatible driver. Evidence: Pinned manifests and supported targets, engine version including WAL fix, actual canonical build/integration proof after authorization. Do not infer no alternative exists. |
+| TUSK-ISS-001 | G1 | Architecture/status | Each Feature 002–006 owner | P1 | Open for 003–006 | Feature 002 has a complete, audited six-unit, 68-scenario triplet; planning target 2.1 is complete and 002-6 / U6 is next. The umbrella stays requirements-only. Later feature owners must complete their own triplets. |
+| TUSK-ISS-002 | G2 | Dependency/security | Phase 2 implementer | P1 | Choice recorded; proof pending | Feature 002 KTD1 selects Go 1.25.0, modernc v1.58.0, libc v1.75.6 / SQLite 3.53.4 as the technical planning default. Product U24 / feature U6 must supply exact minimum-toolchain, engine and target-build evidence before U1. No runtime graph was installed or tested. |
 | TUSK-ISS-003 | G3 | Dependency/performance | Phase 4/5 owners | P2 | Open gate | Pin compatible Cobra/Charm/calendar zone dependencies and implement named Make targets in U15/U20, with the reference environment declared before measurement. Evidence: Exact dependency graph, canonical target tests, raw CLI/TUI samples and v1 API proof; close separately for each phase. |
 | TUSK-ISS-004 | G4 | Release/operations | Phase 6 release maintainer | P2 | Open gate | Establish release candidate and destination/ownership/license/version policy; run hosted/manual matrix before publication. Evidence: Candidate SHA, job URLs, binary hashes, manual terminal record, checksums/notices and actual authorized publication result when released. |
 | TUSK-ISS-005 | — | Core contract/coherence | Core/service reviewers | P1 | Fixed in plan | Retain shipped core; update product R5/R6 and map integration tests without reopening completed Phase 1 work. Evidence: Planning source comparison completed; runtime regression evidence remains Phase 3 execution. |
@@ -43,21 +43,21 @@ Gate sequencing: G2's compatibility decision must precede U1; U1's first red/gre
 
 ### TUSK-ISS-001. Architecture/status
 
-- **Found:** Planning/source review on 2026-09-08; severity P1; Open gate.
+- **Found:** Planning/source review on 2026-09-08; severity P1; Open for Features 003–006.
 - **Owner / affected contract:** Each Feature 002–006 owner; R29; all units; TUSK-V73.
-- **Evidence / gap:** Feature stubs claim readiness without their own completed triplets.
-- **Decision / next action:** Keep umbrella requirements-only; reconcile and complete only the active feature triplet before moving its master pointer.
-- **Retest / closure:** All applicable R/U/scenario mappings, complete phase units and synchronized checklist; first closure is Phase 2 target 2.1.
-- **Blocking boundary:** G1; revisit when the responsible phase enters planning, before dependent implementation or acceptance. G2 needs the maintainer's compatibility decision; other gates need the identified phase artifacts/evidence. No waiver or user acceptance of an unfulfilled gate is recorded.
+- **Evidence / gap:** Feature 003–006 stubs still lack completed triplets; Feature 002 now has its executable pack.
+- **Decision / next action:** Keep umbrella requirements-only; Feature 002's pack audit passed and its master pointer now names 002-6 / U6. Apply G1 separately to each later phase.
+- **Retest / closure:** Feature 002's six units, 22 requirements and 68 scenarios are mapped; the final planning audit is recorded in its workorder. Later G1 closures need their own evidence.
+- **Blocking boundary:** G1 still blocks Features 003–006 until their packs exist. Feature 002's next boundary is U24 compatibility proof under G2; no runtime waiver is recorded.
 
 ### TUSK-ISS-002. Dependency/security
 
-- **Found:** Planning/source review on 2026-09-08; severity P1; Open decision.
-- **Owner / affected contract:** Phase 2 maintainer; R12, R29; U1–U5; TUSK-V01.
+- **Found:** Planning/source review on 2026-09-08; severity P1; Choice recorded, runtime proof pending.
+- **Owner / affected contract:** Phase 2 implementer; R12, R29; U24 then U1–U5; TUSK-V01.
 - **Evidence / gap:** Current Go 1.24 module conflicts with inspected patched modernc candidates requiring Go 1.25; v1.46.1 embeds affected SQLite 3.51.2.
-- **Decision / next action:** Resolve minimum Go/toolchain policy before installing dependencies. Recommended: deliberate minimum raise plus pinned patched modernc/libc; otherwise research a patched Go 1.24-compatible driver.
-- **Retest / closure:** Pinned manifests and supported targets, engine version including WAL fix, actual canonical build/integration proof after authorization. Do not infer no alternative exists.
-- **Blocking boundary:** G2; revisit when the responsible phase enters planning, before dependent implementation or acceptance. G2 needs the maintainer's compatibility decision; other gates need the identified phase artifacts/evidence. No waiver or user acceptance of an unfulfilled gate is recorded.
+- **Decision / next action:** Feature 002 KTD1 selects the previously recommended Go 1.25 raise with pinned sqlite v1.58.0/libc v1.75.6. It is a technical planning default, not a session-settled user choice.
+- **Retest / closure:** Product U24 / Feature 002 U6 proves exact module/engine, minimum compiler, transaction behavior and CGO-disabled target builds. Native runtime acceptance remains with Phase 6.
+- **Blocking boundary:** G2 runtime proof blocks schema implementation U1; it does not block the prerequisite unit that produces that proof. No runtime gate waiver is recorded.
 
 ### TUSK-ISS-003. Dependency/performance
 
@@ -66,7 +66,7 @@ Gate sequencing: G2's compatibility decision must precede U1; U1's first red/gre
 - **Evidence / gap:** CLI/TUI combined dependencies, canonical process benchmarks and reference performance environment do not yet exist.
 - **Decision / next action:** Pin compatible Cobra/Charm/calendar zone dependencies and implement named Make targets in U15/U20, with the reference environment declared before measurement.
 - **Retest / closure:** Exact dependency graph, canonical target tests, raw CLI/TUI samples and v1 API proof; close separately for each phase.
-- **Blocking boundary:** G3; revisit when the responsible phase enters planning, before dependent implementation or acceptance. G2 needs the maintainer's compatibility decision; other gates need the identified phase artifacts/evidence. No waiver or user acceptance of an unfulfilled gate is recorded.
+- **Blocking boundary:** G3 dependency choices precede the owning CLI/TUI units; their measurements precede phase acceptance. Feature 002's recorded G2 choice does not close either part of G3.
 
 ### TUSK-ISS-004. Release/operations
 
@@ -75,7 +75,7 @@ Gate sequencing: G2's compatibility decision must precede U1; U1's first red/gre
 - **Evidence / gap:** No hosted matrix, architecture execution, terminal acceptance or distribution metadata exists.
 - **Decision / next action:** Establish release candidate and destination/ownership/license/version policy; run hosted/manual matrix before publication.
 - **Retest / closure:** Candidate SHA, job URLs, binary hashes, manual terminal record, checksums/notices and actual authorized publication result when released.
-- **Blocking boundary:** G4; revisit when the responsible phase enters planning, before dependent implementation or acceptance. G2 needs the maintainer's compatibility decision; other gates need the identified phase artifacts/evidence. No waiver or user acceptance of an unfulfilled gate is recorded.
+- **Blocking boundary:** G4 remains a Phase 6 release gate. Feature 002 compatibility evidence will not substitute for candidate native/hosted/manual acceptance or publication authority.
 
 ### TUSK-ISS-005. Core contract/coherence
 
@@ -220,9 +220,9 @@ Reviewed in the main thread under the repository's sequential-agent tool mapping
 | CLI/API compatibility | Reviewed | DTOs/nulls/arrays, full command grammar, clear intent, exit/stream split | V39–V53 |
 | TUI interaction/accessibility | Reviewed with manual gate | Pure View, request generations, form focus, tiny sizes, Unicode, terminal restoration | V54–V66 |
 | Portability/deployment | Reviewed with hosted gate | CGO/race separation, five release targets, Bash/Make prerequisite, data preservation | G4; V67–V72 |
-| Test strategy/evidence | Reviewed | 29 requirements mapped to 23 units and 73 unexecuted scenarios; no proxy proof | All scenario execution records |
+| Test strategy/evidence | Reviewed | 29 requirements mapped to 24 product handoff units and 73 unexecuted scenarios; Feature 002 adds its six-unit execution pack | All scenario execution records |
 | Simplicity/maintainability | Reviewed | No plugin framework, global cache, event sourcing, or adapter duplication; small history table serves original scope | Ownership/dependency review at implementation |
-| Documentation coherence | Audited | 6 Markdown files, 38 local links, ID/table/fence/whitespace checks; active pointers and implementation checkboxes preserved | Reaudit affected documents after amendments |
+| Documentation coherence | Audited | Original product pass: six Markdown files and 38 local links. Feature 002 reconciliation: nine Markdown/MDC files and 55 links; ID/table/fence/whitespace checks passed, implementation checkboxes preserved | Current audit recorded in the Feature 002 workorder |
 
 ## Planning evidence record
 
@@ -235,6 +235,8 @@ Reviewed in the main thread under the repository's sequential-agent tool mapping
 - Fresh local software validation: **not run**. Historical Phase 001 evidence remains historical. Hosted/manual/release evidence: **not run**.
 
 ## Implementation release gate
+
+Feature 002 reconciliation (2026-09-08): G1 is satisfied for its reviewed pack, G2's planning choice is recorded, and new product U24 precedes U1. Updated compatibility ownership, ignored-operation/unknown-commit handling, supplied storage fixture rollups, and planned Make targets in all affected product artifacts. The preceding planning evidence record describes the original 23-unit pass; the latest Feature 002 workorder owns the new audit result. No product scenario or runtime gate is checked by this reconciliation.
 
 Leave every item unchecked during planning.
 

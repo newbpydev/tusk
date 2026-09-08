@@ -1,0 +1,269 @@
+---
+feature-id: "002"
+plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
+verification-plan: docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md
+status: Planning corrections recorded - implementation pending
+evidence-scope: Planning findings only
+---
+
+# Feature 002 Issue Workorder
+
+This register accompanies the [implementation plan](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) and [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md). **Fixed in plan** means a planning gap was resolved in these documents, not that code was fixed or tests passed.
+
+The request authorizes completing and reviewing the Feature 002 planning pack. Ordinary technical corrections are incorporated under that scope. Go 1.25 is a selected planning default based on the pinned manifests and the product plan's recommendation; it is not labeled as an explicit user-approved decision. U6 owns runtime compatibility proof before migration implementation. No implementation/release gate is closed by this register.
+
+## Issue register
+
+| ID | Source / lens | Owner | Severity | Status | Next action and evidence |
+| --- | --- | --- | --- | --- | --- |
+| 002-ISS-001 | Coherence: Readiness advertised without an executable pack | Feature 002 implementer / named review lens | P1 | Fixed in plan | Set execution: code only with the complete contract, mapped scenarios and reviewed triplet; masterplan points to the first pending unit. Evidence: R21/R22; all units; 002-V67/002-V68. |
+| 002-ISS-002 | Feasibility/dependencies: Go and SQLite minimum was unresolved | Feature 002 implementer / named review lens | P1 | Fixed in plan | Select Go 1.25.0, sqlite v1.58.0, libc v1.75.6 as the technical planning default; U6 must prove engine/graph/minimum compiler before U1. Evidence: R1; U6; 002-V01/002-V02/002-V07. |
+| 002-ISS-003 | Feasibility: Generator minimum would contaminate runtime tooling | Feature 002 implementer / named review lens | P1 | Fixed in plan | Pin the prebuilt executable separately and commit generated output; ordinary build/test uses no source-built generator. Evidence: R18; U2; 002-V25/002-V28. |
+| 002-ISS-004 | Architecture: Migration asset ownership and mutable state | Feature 002 implementer / named review lens | P2 | Fixed in plan | Place compiler-populated read-only embed.FS in db/embed.go; keep it private and never reassign it; test inventory rather than exempt db from coverage. Evidence: R7/R21; U1; 002-V09/002-V20. |
+| 002-ISS-005 | Feasibility/portability: Checkout line endings could invalidate migrations | Feature 002 implementer / named review lens | P1 | Fixed in plan | U1 owns .gitattributes LF normalization for migration SQL; verify stable bytes and rejection of a deliberately changed digest. Evidence: R6/R7/R18; U1; 002-V12. |
+| 002-ISS-006 | Security/migration: Foreign or newer databases could be changed during Open | Feature 002 implementer / named review lens | P1 | Fixed in plan | Require application ID, recognized schema and applied-prefix ledger; inspect read-only before writer/journal changes; distinguish transient SHM from main/WAL mutation. Evidence: R6/R7; U1/U3; 002-V13/002-V14/002-V39. |
+| 002-ISS-007 | Data integrity: Migration failure had no atomic ledger contract | Feature 002 implementer / named review lens | P1 | Fixed in plan | One transaction owns identity, all pending SQL and ledger rows; preserve installed data and use inverse scripts only in disposable fixtures. Evidence: R6/R7/R16; U1; 002-V15/002-V16/002-V17. |
+| 002-ISS-008 | Test strategy: Memory tests were incorrectly treated as WAL evidence | Feature 002 implementer / named review lens | P1 | Fixed in plan | Use unique memory names and an anchor for semantics; real temp disk and helper processes prove WAL/locking/recovery. Evidence: R19/R20; U3/U5; 002-V37/002-V60/002-V62/002-V63. |
+| 002-ISS-009 | Security: Path overrides could be interpreted as DSNs | Feature 002 implementer / named review lens | P1 | Fixed in plan | Encode literal paths, reject unsafe final targets, inject lookup inputs and prove no fallback; preserve existing permissions. Evidence: R3/R4; U3; 002-V29/002-V30/002-V31/002-V32/002-V35. |
+| 002-ISS-010 | Feasibility/concurrency: Reader flags and replacement pragmas were underspecified | Feature 002 implementer / named review lens | P1 | Fixed in plan | Use query_only readers and per-connection DSNs; writer IMMEDIATE mode and every replacement are compatibility probes. Evidence: R5/R14/R20; U6/U3; 002-V04/002-V05/002-V08/002-V36. |
+| 002-ISS-011 | Adversarial/reliability: Commit failure was ambiguous about persisted state | Feature 002 implementer / named review lens | P1 | Fixed in plan | Return unknown outcome after uncertain commit/rollback, discard poisoned physical connections and require readback; never replay callbacks. Evidence: R14/R16; U4/U5; 002-V52/002-V55/002-V56/002-V57/002-V64. |
+| 002-ISS-012 | Adversarial: Ignored callback operation errors could commit partial work | Feature 002 implementer / named review lens | P1 | Fixed in plan | Latch the first write-handle operation error; refuse later operations and roll back even if the callback returns nil. Evidence: R14/R15/R16; U4; 002-V54. |
+| 002-ISS-013 | Correctness: Stored row decoding could apply domain defaults | Feature 002 implementer / named review lens | P1 | Fixed in plan | Use strict canonical codecs, validate whole results, preserve NULL/empty distinction and reject corruption without defaults or repair. Evidence: R8/R9/R11; U4; 002-V40/002-V41/002-V42/002-V43. |
+| 002-ISS-014 | Coherence/correctness: SQL filters could diverge from core semantics | Feature 002 implementer / named review lens | P1 | Fixed in plan | Use a bound candidate superset then exact core filtering/sorting; invalid values do not match but valid alternatives still may. Evidence: R12/R13; U2/U4; 002-V23/002-V24/002-V44/002-V45. |
+| 002-ISS-015 | Reliability/API: Transaction misuse lacked lifetime and failure rules | Feature 002 implementer / named review lens | P1 | Fixed in plan | Validate callbacks, carry transaction context, guard handles, reject nesting/concurrent use and wait for admitted operations before cleanup. Evidence: R15/R16; U4; 002-V53/002-V57. |
+| 002-ISS-016 | Scope/data integrity: Storage acceptance could falsely claim business invariants | Feature 002 implementer / named review lens | P1 | Fixed in plan | Define the trusted storage boundary and structural delete safeguard; keep business validation and final service integration in Phase 3. Evidence: R13/R17/R22; U4/U5; 002-V19/002-V47/002-V49/002-V68. |
+| 002-ISS-017 | Security/reproducibility: Tool installation and generation could leave partial artifacts | Feature 002 implementer / named review lens | P1 | Fixed in plan | Use release asset digests, safe single-executable extraction and scratch generation; compare entire output sets without Git dependence. Evidence: R18; U2; 002-V25/002-V26/002-V27/002-V28. |
+| 002-ISS-018 | Reliability: Close could reject admitted work or wait for itself | Feature 002 implementer / named review lens | P1 | Fixed in plan | Use instance-owned admission tracking; allow admitted handles to finish, reject new work and prohibit owner Close from a callback. Evidence: R5/R15/R16; U3/U4; 002-V38/002-V53. |
+| 002-ISS-019 | Test evidence/operations: Verification claims and canonical commands were conflated | Feature 002 implementer / named review lens | P1 | Fixed in plan | Label new Make target owners; leave all software scenarios unchecked; separate local, minimum-toolchain, cross-build, native and hosted records. Evidence: R1/R18/R21/R22; U6/U2/U5; 002-V07/002-V33/002-V66/002-V67/002-V68. |
+| 002-ISS-020 | Architecture/sequencing: Migration unit depended on an unproved driver foundation | Feature 002 implementer / named review lens | P1 | Fixed in plan | Add stable unit U6/002-6 before U1; retain original U1–U5 IDs and synchronize product handoff, triplets and masterplan. Evidence: R1/R14/R21; U6/U1; 002-V01–002-V08. |
+
+## Issue details
+
+### 002-ISS-001. Readiness advertised without an executable pack
+
+- **Found:** Planning/source review on 2026-09-08; P1; Coherence.
+- **Owner:** Feature 002 implementer; Metadata and original outline.
+- **Affected contract / retest:** R21/R22; all units; 002-V67/002-V68.
+- **Evidence / planning gap:** The original frontmatter claimed implementation-ready while execution mode, concrete units and both companion artifacts were absent.
+- **Correction:** Set execution: code only with the complete contract, mapped scenarios and reviewed triplet; masterplan points to the first pending unit.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-002. Go and SQLite minimum was unresolved
+
+- **Found:** Planning/source review on 2026-09-08; P1; Feasibility/dependencies.
+- **Owner:** Feature 002 implementer; Product G2 and KTD1.
+- **Affected contract / retest:** R1; U6; 002-V01/002-V02/002-V07.
+- **Evidence / planning gap:** The module declares Go 1.24, while the selected patched driver and libc manifests declare Go 1.25.
+- **Correction:** Select Go 1.25.0, sqlite v1.58.0, libc v1.75.6 as the technical planning default; U6 must prove engine/graph/minimum compiler before U1.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-003. Generator minimum would contaminate runtime tooling
+
+- **Found:** Planning/source review on 2026-09-08; P1; Feasibility.
+- **Owner:** Feature 002 implementer; KTD2 and generator module.
+- **Affected contract / retest:** R18; U2; 002-V25/002-V28.
+- **Evidence / planning gap:** sqlc v1.31.1 source requires Go 1.26; putting it in the runtime module would undermine the Go 1.25 minimum.
+- **Correction:** Pin the prebuilt executable separately and commit generated output; ordinary build/test uses no source-built generator.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-004. Migration asset ownership and mutable state
+
+- **Found:** Planning/source review on 2026-09-08; P2; Architecture.
+- **Owner:** Feature 002 implementer; KTD6 and db package.
+- **Affected contract / retest:** R7/R21; U1; 002-V09/002-V20.
+- **Evidence / planning gap:** Embedding from storage cannot reach ../../db and an exported asset variable would weaken state ownership.
+- **Correction:** Place compiler-populated read-only embed.FS in db/embed.go; keep it private and never reassign it; test inventory rather than exempt db from coverage.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-005. Checkout line endings could invalidate migrations
+
+- **Found:** Planning/source review on 2026-09-08; P1; Feasibility/portability.
+- **Owner:** Feature 002 implementer; Schema and record codecs.
+- **Affected contract / retest:** R6/R7/R18; U1; 002-V12.
+- **Evidence / planning gap:** Applied SQL bytes never change, but the initial draft had no rule preventing Windows checkout from converting LF to CRLF.
+- **Correction:** U1 owns .gitattributes LF normalization for migration SQL; verify stable bytes and rejection of a deliberately changed digest.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-006. Foreign or newer databases could be changed during Open
+
+- **Found:** Planning/source review on 2026-09-08; P1; Security/migration.
+- **Owner:** Feature 002 implementer; Open lifecycle and AE2.
+- **Affected contract / retest:** R6/R7; U1/U3; 002-V13/002-V14/002-V39.
+- **Evidence / planning gap:** The outline ran migrations at initialization without an application identity or read-only compatibility guard.
+- **Correction:** Require application ID, recognized schema and applied-prefix ledger; inspect read-only before writer/journal changes; distinguish transient SHM from main/WAL mutation.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-007. Migration failure had no atomic ledger contract
+
+- **Found:** Planning/source review on 2026-09-08; P1; Data integrity.
+- **Owner:** Feature 002 implementer; KTD6 and migration lifecycle.
+- **Affected contract / retest:** R6/R7/R16; U1; 002-V15/002-V16/002-V17.
+- **Evidence / planning gap:** Clean rollback was asserted without a ledger schema, changed-checksum handling or failure at the ledger/commit boundary.
+- **Correction:** One transaction owns identity, all pending SQL and ledger rows; preserve installed data and use inverse scripts only in disposable fixtures.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-008. Memory tests were incorrectly treated as WAL evidence
+
+- **Found:** Planning/source review on 2026-09-08; P1; Test strategy.
+- **Owner:** Feature 002 implementer; Original verification scenario 4.
+- **Affected contract / retest:** R19/R20; U3/U5; 002-V37/002-V60/002-V62/002-V63.
+- **Evidence / planning gap:** The same anonymous shared-memory URI appeared as the concurrency test environment despite memory journal differences and fixture collisions.
+- **Correction:** Use unique memory names and an anchor for semantics; real temp disk and helper processes prove WAL/locking/recovery.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-009. Path overrides could be interpreted as DSNs
+
+- **Found:** Planning/source review on 2026-09-08; P1; Security.
+- **Owner:** Feature 002 implementer; R3/R4 and path lifecycle.
+- **Affected contract / retest:** R3/R4; U3; 002-V29/002-V30/002-V31/002-V32/002-V35.
+- **Evidence / planning gap:** The outline did not separate user filesystem paths from internal memory/connection URI parameters.
+- **Correction:** Encode literal paths, reject unsafe final targets, inject lookup inputs and prove no fallback; preserve existing permissions.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-010. Reader flags and replacement pragmas were underspecified
+
+- **Found:** Planning/source review on 2026-09-08; P1; Feasibility/concurrency.
+- **Owner:** Feature 002 implementer; Driver tx.go and KTD4.
+- **Affected contract / retest:** R5/R14/R20; U6/U3; 002-V04/002-V05/002-V08/002-V36.
+- **Evidence / planning gap:** Driver ReadOnly only changes begin mode; new pooled connections do not inherit another connection's PRAGMA state.
+- **Correction:** Use query_only readers and per-connection DSNs; writer IMMEDIATE mode and every replacement are compatibility probes.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-011. Commit failure was ambiguous about persisted state
+
+- **Found:** Planning/source review on 2026-09-08; P1; Adversarial/reliability.
+- **Owner:** Feature 002 implementer; Error and outcome contract.
+- **Affected contract / retest:** R14/R16; U4/U5; 002-V52/002-V55/002-V56/002-V57/002-V64.
+- **Evidence / planning gap:** A driver may commit before an injected acknowledgment failure; an error does not prove no mutation happened.
+- **Correction:** Return unknown outcome after uncertain commit/rollback, discard poisoned physical connections and require readback; never replay callbacks.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-012. Ignored callback operation errors could commit partial work
+
+- **Found:** Planning/source review on 2026-09-08; P1; Adversarial.
+- **Owner:** Feature 002 implementer; Repository boundary.
+- **Affected contract / retest:** R14/R15/R16; U4; 002-V54.
+- **Evidence / planning gap:** The first draft rolled back callback errors but did not define an ignored failed event append followed by callback nil.
+- **Correction:** Latch the first write-handle operation error; refuse later operations and roll back even if the callback returns nil.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-013. Stored row decoding could apply domain defaults
+
+- **Found:** Planning/source review on 2026-09-08; P1; Correctness.
+- **Owner:** Feature 002 implementer; KTD5 and current core/task.go.
+- **Affected contract / retest:** R8/R9/R11; U4; 002-V40/002-V41/002-V42/002-V43.
+- **Evidence / planning gap:** NewTask supplies defaults and may consult time.Now; it cannot safely decode persisted state without changing meaning.
+- **Correction:** Use strict canonical codecs, validate whole results, preserve NULL/empty distinction and reject corruption without defaults or repair.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-014. SQL filters could diverge from core semantics
+
+- **Found:** Planning/source review on 2026-09-08; P1; Coherence/correctness.
+- **Owner:** Feature 002 implementer; List contract and core/filter.go.
+- **Affected contract / retest:** R12/R13; U2/U4; 002-V23/002-V24/002-V44/002-V45.
+- **Evidence / planning gap:** LIKE/NOCASE and blanket rejection of mixed invalid enum filters do not match the shipped core filter.
+- **Correction:** Use a bound candidate superset then exact core filtering/sorting; invalid values do not match but valid alternatives still may.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-015. Transaction misuse lacked lifetime and failure rules
+
+- **Found:** Planning/source review on 2026-09-08; P1; Reliability/API.
+- **Owner:** Feature 002 implementer; Repository boundary and verification 002-V53.
+- **Affected contract / retest:** R15/R16; U4; 002-V53/002-V57.
+- **Evidence / planning gap:** Nil callbacks, retained handles, concurrent calls and callback completion during an admitted operation were not all specified.
+- **Correction:** Validate callbacks, carry transaction context, guard handles, reject nesting/concurrent use and wait for admitted operations before cleanup.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-016. Storage acceptance could falsely claim business invariants
+
+- **Found:** Planning/source review on 2026-09-08; P1; Scope/data integrity.
+- **Owner:** Feature 002 implementer; R17 and product Phase 3 ownership.
+- **Affected contract / retest:** R13/R17/R22; U4/U5; 002-V19/002-V47/002-V49/002-V68.
+- **Evidence / planning gap:** FK/CHECK and traversal tests cannot prove service rollup, opposite-move prevention, stale edits or confirmation semantics.
+- **Correction:** Define the trusted storage boundary and structural delete safeguard; keep business validation and final service integration in Phase 3.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-017. Tool installation and generation could leave partial artifacts
+
+- **Found:** Planning/source review on 2026-09-08; P1; Security/reproducibility.
+- **Owner:** Feature 002 implementer; Generator and build tooling.
+- **Affected contract / retest:** R18; U2; 002-V25/002-V26/002-V27/002-V28.
+- **Evidence / planning gap:** The outline had no executable pin/digest or non-mutating stale-output check, and Git diff would miss untracked generated files.
+- **Correction:** Use release asset digests, safe single-executable extraction and scratch generation; compare entire output sets without Git dependence.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-018. Close could reject admitted work or wait for itself
+
+- **Found:** Planning/source review on 2026-09-08; P1; Reliability.
+- **Owner:** Feature 002 implementer; Connection and filesystem lifecycle.
+- **Affected contract / retest:** R5/R15/R16; U3/U4; 002-V38/002-V53.
+- **Evidence / planning gap:** Marking the repository closed before admitted callbacks finish needs an admission distinction, and Close inside a callback deadlocks.
+- **Correction:** Use instance-owned admission tracking; allow admitted handles to finish, reject new work and prohibit owner Close from a callback.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-019. Verification claims and canonical commands were conflated
+
+- **Found:** Planning/source review on 2026-09-08; P1; Test evidence/operations.
+- **Owner:** Feature 002 implementer; Verification Contract and baseline Makefile.
+- **Affected contract / retest:** R1/R18/R21/R22; U6/U2/U5; 002-V07/002-V33/002-V66/002-V67/002-V68.
+- **Evidence / planning gap:** Future targets were absent, core history was not fresh evidence, and cross-builds cannot establish native platform or CLI latency acceptance.
+- **Correction:** Label new Make target owners; leave all software scenarios unchecked; separate local, minimum-toolchain, cross-build, native and hosted records.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+### 002-ISS-020. Migration unit depended on an unproved driver foundation
+
+- **Found:** Planning/source review on 2026-09-08; P1; Architecture/sequencing.
+- **Owner:** Feature 002 implementer; Original U1 compatibility work and phase order.
+- **Affected contract / retest:** R1/R14/R21; U6/U1; 002-V01–002-V08.
+- **Evidence / planning gap:** The original five-unit split folded driver selection/proof into schema work with no independently verifiable prerequisite.
+- **Correction:** Add stable unit U6/002-6 before U1; retain original U1–U5 IDs and synchronize product handoff, triplets and masterplan.
+- **Status:** Fixed in plan. Review the owning plan section and cited scenario for closure; runtime execution remains pending.
+
+## Review coverage and planning receipt
+
+The composing workflow is ce-plan → plan-ultrathink deepening → ce-doc-review in non-interactive mode → synchronized pack audit. The full document-review workflow was adapted to the repository's explicit instruction to run subagent work sequentially in the main thread. No subagents or external model processes were dispatched, and no independence/consensus promotion is claimed.
+
+| Pass / lens | Scope and reason | Result | Follow-up evidence |
+| --- | --- | --- | --- |
+| ce-plan repository grounding | Live core, Makefile, active master target, clean HEAD 21bb210; no storage implementation exists | Captured in Planning Contract | Recheck facts before implementation |
+| ce-plan external grounding | Driver/libc manifests, SQLite behavior, sqlc source minimum and release digests | Pins and failure semantics decided | U6 compatibility and U2 generator tests |
+| Deepening: KTDs and dependencies | Initial outline had driver/tool alternatives and missing prerequisites | U6 split, KTD1–KTD10 selected | 002-ISS-002/003/020 |
+| Deepening: implementation/verification | Units lacked ownership, red-first proof and concrete failure cases | Six units and 68 scenarios mapped | All scenarios remain not executed |
+| Deepening: risks and operations | Foreign DB, schema drift, WAL/cancellation and native evidence missing | Lifecycle, error and handoff contracts added | U1/U3/U5 gates |
+| ce-doc-review coherence | Always-on; full unified-plan and both companions | Corrected filter wording and callback/verification agreement | 002-ISS-014/015 |
+| ce-doc-review feasibility | Always-on; compare design with driver/source/tool manifests | Corrected migration byte portability | 002-ISS-005 |
+| ce-doc-review scope guardian | 22 requirements and future-phase boundaries | Business rules and host acceptance stay with owners | 002-ISS-016/019 |
+| ce-doc-review security | File-access boundary and downloaded executable trust | Literal paths, restrictive new files, digest checks and error redaction covered | 002-ISS-006/009/017 |
+| ce-doc-review adversarial | Data migrations and new transaction abstraction | Corrected swallowed-operation failure and Close admission | 002-ISS-012/018 |
+| Data integrity / migration | Required ultrathink persistence lens | Atomic ledger, events and rollback/readback covered | U1/U4/U5 scenarios |
+| Test strategy / performance | Required evidence and latency ownership lens | Real disk evidence; local benchmarks do not claim CLI/native success | 002-ISS-008/019 |
+| Simplicity / maintainability | Required core lens | No ORM, custom worker pool, network analyzer, cache or migration framework | Reassess abstractions during implementation |
+| Cross-model corroboration | Would activate for adversarial/security | Not run: project requires sequential main-thread review | No independent-review claim |
+| Product/design personas | No new product-position decision or UI behavior in this feature | Not activated; product traceability checked above | Later service/CLI/TUI plans own their reviews |
+
+The first review pass applied five concrete corrections to the drafted pack: LF-controlled migration hashes, latched transaction failures, Close admission rules, mixed enum filter semantics, and complete callback-lifetime rules. The broader register also retains the earlier outline/grounding findings. These are document fixes, not implementation results.
+
+Non-interactive review envelope: five fixes applied; no remaining proposed fix or user-judgment finding against the selected technical plan; no cross-model result. Routine execution-time compatibility, performance and native-platform evidence are planned gates, not unresolved architecture questions. Final correction readback and structural audit are recorded below.
+
+## Planning audit record
+
+| Date | Scope | Method | Result |
+| --- | --- | --- | --- |
+| 2026-09-08 | Live baseline and official dependency/tool sources | Read-only inspection; no tests/install/build/generation | Captured in plan; runtime proof pending |
+| 2026-09-08 | Final triplet and connected authority documents | Markdown/link/traceability/status audit through a temporary `planning-audit-002` recipe supplied to the canonical Makefile with `--eval`; no repository target added | Passed: nine Markdown/MDC files, 55 local links, 22 requirements, six ordered units, 68 unique unchecked scenarios and 20 issue records; product retains 29 requirements/73 unchecked scenarios and now has 24 units; documentation-only diff and `git diff --check` passed |
+| 2026-09-08 | Correction readback and handoff | Rechecked the five draft corrections across contracts, scenarios and issue records; compared masterplan checks to HEAD | Planning 2.1 and its three artifact checks complete; next target 002-6 / U6; no implementation, scenario or release check advanced |
+
+Planning checklist 2.1 is complete after the documentation audit. All six implementation units, every 002-V scenario, phase acceptance and product runtime gate G2 remain unexecuted. `make validate` was not run: this pass changed planning documents and storage guidance only, and makes no application verification claim.
+
+## Implementation and release gate
+
+- [ ] U6, U1, U2, U3, U4 and U5 implemented in masterplan order.
+- [ ] Each behavioral change has observed red-first evidence and focused green proof.
+- [ ] Minimum Go/compiler and pinned SQLite/libc engine proof passed.
+- [ ] Generated output and negative script checks passed.
+- [ ] Full, race and required per-package coverage passed through Make.
+- [ ] Applicable local disk/process scenarios executed and recovery demonstrated.
+- [ ] Native Windows/macOS and hosted evidence recorded separately, or retained as named Phase 6 gates.
+- [ ] All runtime findings resolved with fresh retest evidence.
+- [ ] Phase 3 handoff and masterplan pointers synchronized.
+- [ ] Remaining unaccepted implementation issues: 0.

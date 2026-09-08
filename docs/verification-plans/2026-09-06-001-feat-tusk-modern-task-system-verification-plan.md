@@ -14,7 +14,7 @@ This is the product-level companion to the [plan](../plans/2026-09-06-001-feat-t
 
 Behavior under test: R1–R29, F1–F4 and the CLI wire/key/mutation contracts. Existing core evidence is historical; all scenarios in this document are unexecuted. Public machines consume CLI DTOs, not internal struct tags. Native Linux/macOS/Windows and the five release targets require separate evidence. No browser/device scenarios are needed for a terminal application.
 
-Local tiers are focused assertions within canonical suites, aggregate quality gates, disk/process integration, and benchmarks. Hosted tiers prove exact-revision OS/architecture behavior. Manual tiers prove actual terminal/lifecycle usability. Module/document inspection cannot close runtime gates. Phase G2 must settle toolchain/driver compatibility before storage implementation.
+Local tiers are focused assertions within canonical suites, aggregate quality gates, disk/process integration, and benchmarks. Hosted tiers prove exact-revision OS/architecture behavior. Manual tiers prove actual terminal/lifecycle usability. Module/document inspection cannot close runtime gates. Feature 002 has selected G2's pins and owns six executable units; product U24 / feature U6 supplies compatibility proof before schema work. The product pack now has 24 handoff units and retains all 73 scenario IDs.
 
 ## Requirement coverage
 
@@ -31,7 +31,7 @@ Local tiers are focused assertions within canonical suites, aggregate quality ga
 | R9 | U6, U8, U11 | TUSK-V29, TUSK-V41, TUSK-V64 | Local/process/UI |
 | R10 | U1, U4, U5, U8, U10 | TUSK-V14, TUSK-V16, TUSK-V18, TUSK-V31, TUSK-V38 | Disk/concurrency/process |
 | R11 | U1, U3, U22 | TUSK-V02, TUSK-V03, TUSK-V04, TUSK-V70 | Disk/recovery/hosted |
-| R12 | U3, U5, U21 | TUSK-V01, TUSK-V10, TUSK-V11, TUSK-V16, TUSK-V17, TUSK-V18, TUSK-V19, TUSK-V67 | Disk/process/hosted |
+| R12 | U24, U3, U5, U21 | TUSK-V01, TUSK-V10, TUSK-V11, TUSK-V16, TUSK-V17, TUSK-V18, TUSK-V19, TUSK-V67 | Disk/process/hosted |
 | R13 | U2, U4, U9, U13, U17 | TUSK-V07, TUSK-V32, TUSK-V46, TUSK-V56 | Local/integration/UI |
 | R14 | U2, U9, U14, U17 | TUSK-V07, TUSK-V32, TUSK-V46, TUSK-V56 | Local/process/UI |
 | R15 | U7, U9, U18 | TUSK-V22, TUSK-V23, TUSK-V24, TUSK-V59 | Local/portability |
@@ -46,7 +46,7 @@ Local tiers are focused assertions within canonical suites, aggregate quality ga
 | R24 | U16, U17, U18, U19, U20 | TUSK-V54, TUSK-V57, TUSK-V58, TUSK-V64, TUSK-V65 | Synthetic/race/benchmark |
 | R25 | U17, U19, U20 | TUSK-V57, TUSK-V58, TUSK-V62, TUSK-V63, TUSK-V64 | Synthetic/integration/manual |
 | R26 | U16, U17, U18, U19, U20 | TUSK-V55, TUSK-V56, TUSK-V59, TUSK-V61, TUSK-V66 | Synthetic/manual |
-| R27 | U21, U22, U23 | TUSK-V67, TUSK-V68, TUSK-V69, TUSK-V70, TUSK-V71, TUSK-V72 | Hosted/manual/release |
+| R27 | U24, U21, U22, U23 | TUSK-V01, TUSK-V67, TUSK-V68, TUSK-V69, TUSK-V70, TUSK-V71, TUSK-V72 | Local cross-build/hosted/manual/release |
 | R28 | U5, U15, U20 | TUSK-V19, TUSK-V51, TUSK-V65 | Benchmark |
 | R29 | All units | TUSK-V01, TUSK-V05, TUSK-V67, TUSK-V73 | Local/hosted/documentation |
 
@@ -54,9 +54,12 @@ Local tiers are focused assertions within canonical suites, aggregate quality ga
 
 Each scenario includes its fixture/action and expected outcome. The unit's named test/owned test paths locate the executable assertions. Test names and failures are planned, not observed. Broad scenarios must be split into table cases at implementation; no single happy-path E2E test can replace them.
 
+### U24. Pinned storage runtime and compatibility proof
+
+- [ ] TUSK-V01 **Compatibility / runtime:** Feature 002 U6 proves Go 1.25 minimum, modernc v1.58.0, libc v1.75.6 and SQLite 3.53.4 through named compatibility tests and five CGO-disabled target builds. Native runtime engine proof on each target remains a later hosted/platform gate. Version manifests and cross-builds alone cannot check native acceptance.
+
 ### U1. Embedded schema and atomic migrations
 
-- [ ] TUSK-V01 **Compatibility / migration:** Inspect pinned driver, libc and toolchain; runtime reports a WAL-fixed SQLite version on every target. Reject the inspected incompatible/affected combinations at G2. Evidence must include versions, not only a successful build.
 - [ ] TUSK-V02 **Normal / migration:** On a fresh temporary file, open twice: tasks, task_events, indexes and migration ledger exist once; the second open performs no migration write and preserves inserted data.
 - [ ] TUSK-V03 **Failure / migration:** Inject failure after the first DDL/data statement and before ledger commit; then reopen. Old tables/rows/version remain, no partial new schema/event table exists, and a corrected migration can succeed.
 - [ ] TUSK-V04 **Compatibility / recovery:** Present a future schema version and an altered applied checksum. Both fail without DDL or journal-mode changes. A down/up cycle on a disposable fixture is reversible; installed-data downgrade is refused.
@@ -78,12 +81,12 @@ Each scenario includes its fixture/action and expected outcome. The unit's named
 
 - [ ] TUSK-V12 **Normal / repository:** Round-trip every field, UTC nanoseconds, nulls, empty notes/tags and 255-code-point Unicode title; returned copies do not alias earlier reads or inputs. Canonical IDs persist unchanged.
 - [ ] TUSK-V13 **Failure / integrity:** Inject invalid enum/progress/tag JSON/timestamp/UTF-8 rows in a disposable fixture through a controlled test seam. Decode must fail with context; no silent coercion, clamp-and-save, skipped bad row, or fabricated empty list.
-- [ ] TUSK-V14 **Failure / transaction:** Within one callback insert a task and event, then inject child/ancestor/event/commit failure. No partial operation is visible. Verify rollback error preserves the primary failure and unusable connections are discarded.
+- [ ] TUSK-V14 **Failure / transaction:** Within one callback insert a task and event, then inject child/ancestor/event/commit failure, including an ignored statement error. No partial operation is visible. Unknown commit/rollback outcomes require readback rather than an assumed rollback; preserve mapped primary errors and discard unusable connections. Feature 002 V52–V57 owns these cases.
 - [ ] TUSK-V15 **Error mapping / recovery:** Exercise missing row, duplicate ID, missing parent, self-parent, children-present, nested transaction, cancellation and busy errors. Assert errors.Is/typed errors, no deadlock, and a subsequent valid transaction succeeds.
 
 ### U5. Disk concurrency and recovery proof
 
-- [ ] TUSK-V16 **Concurrency / committed snapshot:** With barriers, hold a read snapshot while another connection commits; the old snapshot remains consistent and a new reader sees the commit. Two writers updating distinct children under the same parent preserve both changes and correct rollup.
+- [ ] TUSK-V16 **Concurrency / committed snapshot:** With barriers, hold a read snapshot while another connection commits; the old snapshot remains consistent and a new reader sees the commit. Two fixture callbacks updating distinct children under the same parent preserve both changes and their supplied ancestor results. Phase 3 separately proves the service computes those rollups correctly.
 - [ ] TUSK-V17 **Failure / cancellation:** Hold an independent process writer lock. A short-deadline operation returns cancellation before the 5000-ms busy limit within documented scheduling tolerance; an uncancelled contender times out as busy. Release lock and prove the next write succeeds.
 - [ ] TUSK-V18 **Recovery / process crash:** Kill a fixture writer at defined points before commit, during a multi-row mutation, and after acknowledged commit. Reopen through Tusk; compare complete old/new graph and event sets, then run quick_check and foreign_key_check. No test unlinks WAL/SHM.
 - [ ] TUSK-V19 **Performance / WAL growth:** Hold a reader while writes grow WAL, release it, then verify automatic checkpoint progress and file reopen. Record bounded connection count and query plan. Integrity must hold; this does not claim power-loss durability.
@@ -207,6 +210,9 @@ Each scenario includes its fixture/action and expected outcome. The unit's named
 | Binary | `make build` | Exists; native build; subprocess fixtures invoke this once through Make |
 | Core regression | `make bench-tree`, `make bench-build` | Exists; historical core benchmarks, not CLI latency proof |
 | SQL generation | `make generate`, `make check-generated` | Planned in U2; not executable now |
+| Storage compatibility | `make test-compat`, `make build-storage` | Planned in product U24 / Feature 002 U6; minimum compiler and cross-build evidence |
+| SQL tool and scripts | `make setup-sqlc`, `make test-scripts` | Planned in U2; explicit pinned tool installation and negative fixtures |
+| Storage cost | `make bench-storage` | Planned in U5; does not prove CLI latency |
 | CLI process/performance | `make test-cli`, `make bench-cli` | Planned in U15; not executable now |
 | TUI performance | `make bench-tui` | Planned in U20; not executable now |
 | Release | `make release-check`, `make release-snapshot` | Planned in U22; snapshot does not publish |
