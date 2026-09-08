@@ -210,7 +210,8 @@ func TestTask_TransitionToDone_And_Reopen(t *testing.T) {
 func TestTask_TransitionTo_IdempotentRepair(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)
 
-	// Hydrated in-progress task with stale CompletedAt is repaired on idempotent transition
+	// Hydrated in-progress task with stale CompletedAt is repaired on idempotent transition.
+	// Progress == 100 may be a legitimate persisted rollup, so it is preserved.
 	completedAt := now.Add(-time.Hour)
 	staleTask := core.Task{
 		ID:          "stale",
@@ -226,13 +227,28 @@ func TestTask_TransitionTo_IdempotentRepair(t *testing.T) {
 	if staleTask.CompletedAt != nil {
 		t.Errorf("expected stale CompletedAt to be cleared, got %v", staleTask.CompletedAt)
 	}
-	if staleTask.Progress != 0 {
-		t.Errorf("expected Progress to reset to 0 on repair, got %d", staleTask.Progress)
+	if staleTask.Progress != 100 {
+		t.Errorf("expected legitimate rollup Progress 100 to be preserved on repair, got %d", staleTask.Progress)
 	}
 	if !staleTask.UpdatedAt.Equal(now.Add(time.Hour)) {
 		t.Errorf("expected UpdatedAt to advance on repair, got %v", staleTask.UpdatedAt)
 	}
 
+	// Repair resets only progress no setter can produce (< 0 or > 100)
+	staleCorrupt := core.Task{
+		ID:          "stale-corrupt",
+		Title:       "Stale Corrupt",
+		Status:      core.StatusInProgress,
+		Progress:    150,
+		CompletedAt: &completedAt,
+		UpdatedAt:   now,
+	}
+	if err := staleCorrupt.TransitionTo(core.StatusInProgress, now.Add(time.Hour)); err != nil {
+		t.Fatalf("idempotent transition failed: %v", err)
+	}
+	if staleCorrupt.CompletedAt != nil || staleCorrupt.Progress != 0 {
+		t.Errorf("expected cleared CompletedAt and reset Progress 0, got %+v", staleCorrupt)
+	}
 	// Repair preserves valid manual progress: stale CompletedAt with 75% keeps 75%
 	staleValid := core.Task{
 		ID:          "stale-valid",
@@ -328,7 +344,7 @@ func TestTask_TransitionTo_NonDoneRepair(t *testing.T) {
 		t.Errorf("expected cleared CompletedAt and reset Progress 0, got %+v", staleCorrupt)
 	}
 
-	// Idempotent non-done transition repairs invalid progress without a stale timestamp
+	// Idempotent non-done transition preserves Progress == 100 (possible legitimate rollup)
 	badProgress := core.Task{
 		ID:        "bad-progress",
 		Title:     "Bad Progress",
@@ -339,8 +355,38 @@ func TestTask_TransitionTo_NonDoneRepair(t *testing.T) {
 	if err := badProgress.TransitionTo(core.StatusInProgress, now.Add(time.Hour)); err != nil {
 		t.Fatalf("idempotent transition failed: %v", err)
 	}
-	if badProgress.Progress != 0 {
-		t.Errorf("expected corrupt Progress 100 to be repaired to 0, got %d", badProgress.Progress)
+	if badProgress.Progress != 100 || !badProgress.UpdatedAt.Equal(now) {
+		t.Errorf("rollup Progress 100 was modified by idempotent transition: %+v", badProgress)
+	}
+
+	// Idempotent non-done transition repairs out-of-range progress without a stale timestamp
+	outOfRange := core.Task{
+		ID:        "out-of-range",
+		Title:     "Out Of Range",
+		Status:    core.StatusInProgress,
+		Progress:  150,
+		UpdatedAt: now,
+	}
+	if err := outOfRange.TransitionTo(core.StatusInProgress, now.Add(time.Hour)); err != nil {
+		t.Fatalf("idempotent transition failed: %v", err)
+	}
+	if outOfRange.Progress != 0 {
+		t.Errorf("expected out-of-range Progress 150 to be repaired to 0, got %d", outOfRange.Progress)
+	}
+
+	// Real non-done transition repairs out-of-range progress without a stale timestamp
+	realCorrupt := core.Task{
+		ID:        "real-corrupt",
+		Title:     "Real Corrupt",
+		Status:    core.StatusInProgress,
+		Progress:  -3,
+		UpdatedAt: now,
+	}
+	if err := realCorrupt.TransitionTo(core.StatusBlocked, now.Add(time.Hour)); err != nil {
+		t.Fatalf("transition failed: %v", err)
+	}
+	if realCorrupt.Status != core.StatusBlocked || realCorrupt.Progress != 0 {
+		t.Errorf("expected status change with repaired Progress 0, got %+v", realCorrupt)
 	}
 
 	// Idempotent non-done transition with valid progress stays untouched

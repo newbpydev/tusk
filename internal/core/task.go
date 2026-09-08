@@ -111,15 +111,16 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 				t.CompletedAt = &now
 			}
 			t.Progress = 100
-		} else if t.CompletedAt != nil {
+		} else if t.CompletedAt == nil && t.Progress >= 0 && t.Progress <= 100 {
+			return nil
+		} else {
+			// Repair: clear stale completion timestamp; reset only progress that
+			// no setter can produce (< 0 or > 100). Progress == 100 may be a
+			// legitimate persisted rollup on a non-done parent, so preserve it.
 			t.CompletedAt = nil
-			if t.Progress < 0 || t.Progress > 99 {
+			if t.Progress < 0 || t.Progress > 100 {
 				t.Progress = 0
 			}
-		} else if t.Progress < 0 || t.Progress > 99 {
-			t.Progress = 0
-		} else {
-			return nil
 		}
 		t.UpdatedAt = now
 		return nil
@@ -138,9 +139,12 @@ func (t *Task) TransitionTo(next Status, now time.Time) error {
 	} else if prevStatus == StatusDone {
 		t.CompletedAt = nil
 		t.Progress = 0
-	} else if t.CompletedAt != nil {
+	} else {
+		// Non-done to non-done: clear stale completion timestamp and reconcile
+		// progress no setter can produce (< 0 or > 100). Progress == 100 may be
+		// a legitimate persisted rollup on a non-done parent, so preserve it.
 		t.CompletedAt = nil
-		if t.Progress < 0 || t.Progress > 99 {
+		if t.Progress < 0 || t.Progress > 100 {
 			t.Progress = 0
 		}
 	}
