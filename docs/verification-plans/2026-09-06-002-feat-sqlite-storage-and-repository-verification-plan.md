@@ -2,7 +2,7 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 surface-profiles: [library-sdk, data-persistence-migration, infrastructure-operations]
-status: U6/U1/U2 locally accepted; U3 active
+status: U6/U1/U2/U3 locally accepted; U4 active
 evidence-scope: Local U6 execution; remaining units not executed
 ---
 
@@ -113,27 +113,27 @@ Checkboxes record accepted scenarios after the owning unit's canonical gate. U6 
 
 ### U3. Open and file lifecycle
 
-- [ ] 002-V29 **Configuration — TestResolvePath_Precedence** (covers R2, R3). Inject override/XDG/home/cwd combinations, including empty override, relative override, relative XDG, missing home and missing cwd when needed. **Expect:** Follow exact precedence and relative-path contract; irrelevant failed fallback lookups do not prevent a valid explicit path.
+- [x] 002-V29 **Configuration — TestResolvePath_Precedence** (covers R2, R3). Inject override/XDG/home/cwd combinations, including empty override, relative override, relative XDG, missing home and missing cwd when needed. **Expect:** Follow exact precedence and relative-path contract; irrelevant failed fallback lookups do not prevent a valid explicit path.
 
-- [ ] 002-V30 **Literal paths — TestOpen_LiteralFilename** (covers R3, R4). Use spaces, Unicode, percent, #, ?, = and a filename beginning file: or equal to :memory: where the host permits. **Expect:** Create only the literal intended file, never a URI-selected memory DB or alternate mode. Host-invalid names return a path error.
+- [x] 002-V30 **Literal paths — TestOpen_LiteralFilename** (covers R3, R4). Use spaces, Unicode, percent, #, ?, = and a filename beginning file: or equal to :memory: where the host permits. **Expect:** Create only the literal intended file, never a URI-selected memory DB or alternate mode. Host-invalid names return a path error.
 
-- [ ] 002-V31 **Invalid targets — TestOpen_RejectsUnsafeTarget** (covers R3, R4). Try empty resolved path, invalid UTF-8, NUL, directory, FIFO/non-regular target, final symlink, and a read-only invalid path. **Expect:** Refuse before DB use and never select another path. Ancestor symlinks that resolve to legitimate directories remain permitted.
+- [x] 002-V31 **Invalid targets — TestOpen_RejectsUnsafeTarget** (covers R3, R4). Try empty resolved path, invalid UTF-8, NUL, directory, FIFO/non-regular target, final symlink, and a read-only invalid path. **Expect:** Refuse before DB use and never select another path. Ancestor symlinks that resolve to legitimate directories remain permitted.
 
-- [ ] 002-V32 **POSIX permissions — TestOpen_POSIXPermissions** (covers R4). With restrictive and permissive umasks, create a new app directory/file; also open an existing regular file and symlinked ancestor. **Expect:** New permissions are no broader than 0700/0600; existing directory/file modes are preserved. Privileged runners use injected denial rather than claim mode-bit denial.
+- [x] 002-V32 **POSIX permissions — TestOpen_POSIXPermissions** (covers R4). With restrictive and permissive umasks, create a new app directory/file; also open an existing regular file and symlinked ancestor. **Expect:** New permissions are no broader than 0700/0600; existing directory/file modes are preserved. Privileged runners use injected denial rather than claim mode-bit denial.
 
 - [ ] 002-V33 **Native Windows — TestOpen_WindowsPathsAndReparse** (covers R3, R4, R22). On Windows, exercise drive paths, spaces/Unicode, reserved filenames, final reparse targets and inherited private-profile ACLs. **Expect:** Literal path policy and unsafe-target refusal hold. Linux and cross-build results leave this native acceptance record pending for Phase 6.
 
-- [ ] 002-V34 **Open failure — TestOpen_ClosesPartialResources** (covers R5, R7, R16). Fail each directory/file/compatibility/WAL/migration/writer/reader stage via private filesystem or connector seams. **Expect:** All opened handles close, existing files and sidecars remain, primary error stays visible, and a subsequent valid Open succeeds.
+- [x] 002-V34 **Open failure — TestOpen_ClosesPartialResources** (covers R5, R7, R16). Fail each directory/file/compatibility/WAL/migration/writer/reader stage via private filesystem or connector seams. **Expect:** All opened handles close, existing files and sidecars remain, primary error stays visible, and a subsequent valid Open succeeds.
 
-- [ ] 002-V35 **No fallback — TestOpen_InvalidOverrideNeverFallsBack** (covers R3, R4, R16). Set an explicit unwritable/invalid path while valid XDG/home alternatives exist. **Expect:** Return the override error and create no fallback DB/directories. Diagnostics contain no note contents or raw DSN.
+- [x] 002-V35 **No fallback — TestOpen_InvalidOverrideNeverFallsBack** (covers R3, R4, R16). Set an explicit unwritable/invalid path while valid XDG/home alternatives exist. **Expect:** Return the override error and create no fallback DB/directories. Diagnostics contain no note contents or raw DSN.
 
-- [ ] 002-V36 **Pool integration — TestOpen_ReplacementConnectionPragmas** (covers R5, R14, R20). Open disk storage, force writer/read physical replacement, inspect pool bounds and connection settings. **Expect:** Writer max-open=1, readers max-open=4; each replacement remains configured and readers stay query-only.
+- [x] 002-V36 **Pool integration — TestOpen_ReplacementConnectionPragmas** (covers R5, R14, R20). Open disk storage, force writer/read physical replacement, inspect pool bounds and connection settings. **Expect:** Writer max-open=1, readers max-open=4; each replacement remains configured and readers stay query-only.
 
-- [ ] 002-V37 **Memory isolation — TestOpen_MemoryLifetimeAndIsolation** (covers R5, R19). Run two uniquely named memory fixtures in parallel, close readers, replace a reader, and finally close the writer anchor. **Expect:** Fixtures never share rows; MEMORY journal is observed; data persists until all fixture handles close. No global name counter/state is required.
+- [x] 002-V37 **Memory isolation — TestOpen_MemoryLifetimeAndIsolation** (covers R5, R19). Run two uniquely named memory fixtures in parallel, close readers, replace a reader, and finally close the writer anchor. **Expect:** Fixtures never share rows; MEMORY journal is observed; data persists until all fixture handles close. No global name counter/state is required.
 
-- [ ] 002-V38 **Close lifecycle — TestOpen_CloseAdmissionAndIdempotency** (covers R5, R15, R16). Hold an admitted callback, start Close, attempt a new repository operation, then release callback and repeat Close. **Expect:** Existing callback finishes; new admission fails; all pools close; second Close is safe; post-close calls return closed-repository. Close is never invoked inside a callback.
+- [x] 002-V38 **Close lifecycle — TestOpen_CloseAdmissionAndIdempotency** (covers R5, R15, R16). Hold an admitted callback, start Close, attempt a new repository operation, then release callback and repeat Close. **Expect:** Existing callback finishes; new admission fails; all pools close; second Close is safe; post-close calls return closed-repository. Close is never invoked inside a callback.
 
-- [ ] 002-V39 **Current schema — TestOpen_CurrentSchemaNoMigrationWrite** (covers R6, R7). Open current and newer schema fixtures while another process has the write lock and inspect compatibility access. **Expect:** Current-schema inspection does not take an unnecessary migration writer transaction; newer refusal does not change journal mode or task/ledger/main-WAL bytes.
+- [x] 002-V39 **Current schema — TestOpen_CurrentSchemaNoMigrationWrite** (covers R6, R7). Open current and newer schema fixtures while another process has the write lock and inspect compatibility access. **Expect:** Current-schema inspection does not take an unnecessary migration writer transaction; newer refusal does not change journal mode or task/ledger/main-WAL bytes.
 
 ### U4. Repository contracts
 
@@ -234,7 +234,7 @@ The baseline Makefile has no supported TEST/PKG/RUN filter variables. New target
 
 ## Execution record
 
-U6/U1/U2 locally accepted; U3 active. Native Windows/macOS execution remains pending.
+U6/U1/U2/U3 locally accepted; U4 active. Native Windows/macOS execution remains pending.
 
 | Date | Revision and dirty scope | Unit/scenario | Compiler and OS/arch | Command | Red/green/result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -259,8 +259,11 @@ Base 4bbc639 plus uncommitted U6/U1 changes. Red-first: missing db/Migrations pa
 
 Red: missing generated package and scripts/sqlc.sh; first real generation rejected ambiguous recursive ID references, corrected by qualification. Installed sqlc v1.31.1 archive matched the pinned linux/amd64 SHA-256. make generate and check-generated pass. TestQueries_CRUDAndCounts covers bound SQL-like text, nullable values, update/delete counts and metadata sequence/cascade; TestQueries_TreeSets covers depth ten, unrelated root, children and cyclic recursive-query termination; TestQueries_CandidateSuperset compares 112 enum/parent/date/search combinations to core. Script fixtures prove version/host/digest/truncated archive/extra member/path traversal/symlink/download refusal and prior-tool preservation; fake partial generation preserves prior output; whole-directory comparison detects stale/extra/missing output in a fixture with no Git metadata. A new red fixture exposed coverage.sh misreading Go output for packages without tests; the parser now honors the existing exact sqlc exemption while still rejecting a similarly named handwritten package at 0%. Final make validate check-generated passes: handwritten storage 96.1%, db 100%, script base 11/11 plus sqlc fixtures. All proof is local and uncommitted.
 
+### U3 execution receipt (2026-09-08)
+
+Red: undefined Open, Options, path inputs and connection roles. Local green: TestResolvePath_Precedence, TestOpen_LiteralFilename/RejectsUnsafeTarget/POSIXPermissions/ClosesPartialResources/FailureStagesReleaseEveryHandle/CanceledAndInvalidOverrideNeverFallsBack/ReplacementConnectionPragmas/MemoryLifetimeAndIsolation/CloseAdmissionAndIdempotency/CurrentSchemaNoMigrationWrite. These prove lazy fallback lookup, literal punctuation, symlink/FIFO refusal, restrictive new and preserved existing permissions, no fallback on invalid override, configured replacement pools, private memory anchors, admitted-work close behavior and current-schema opening during a held writer. Fault fixtures count every opened/closed physical handle across inspection connect/begin/catalog/close, WAL configuration, migration and reader ping failures; retry succeeds. make build-storage validate check-generated passes, storage coverage 95.7%. 002-V33 remains unchecked: the Windows test compiles, but native reparse/path/ACL proof belongs to Phase 6. U3 is locally accepted; final review remains pending.
 
 
-### U2 commit reconstruction — 2026-09-08
+### U3 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.

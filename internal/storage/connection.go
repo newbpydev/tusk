@@ -15,13 +15,32 @@ import (
 // newConnector configures physical connections without accessing the filesystem.
 // Its caller supplies an absolute literal path and owns opening and closing pools.
 func newConnector(path string, reader bool) (driver.Connector, error) {
+	role := writerConnection
+	if reader {
+		role = readerConnection
+	}
+	return connectorFor(path, role)
+}
+
+type connectionRole uint8
+
+const (
+	writerConnection connectionRole = iota
+	readerConnection
+	inspectionConnection
+)
+
+func connectorFor(path string, role connectionRole) (driver.Connector, error) {
 	params := url.Values{
 		"_pragma": {"foreign_keys(1)", "busy_timeout(5000)", "synchronous(NORMAL)"},
 		"_txlock": {"immediate"},
 	}
-	if reader {
+	if role != writerConnection {
 		params.Add("_pragma", "query_only(1)")
 		params.Set("_txlock", "deferred")
+	}
+	if role == inspectionConnection {
+		params.Set("mode", "ro")
 	}
 	literal := filepath.ToSlash(path)
 	if filepath.VolumeName(path) != "" && len(literal) > 0 && literal[0] != '/' {

@@ -2,7 +2,7 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 verification-plan: docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md
-status: U6/U1/U2 locally accepted; U3 active
+status: U6/U1/U2/U3 locally accepted; U4 active
 evidence-scope: Planning findings and local U6 execution
 ---
 
@@ -295,8 +295,11 @@ U1 accepted after final make validate on 2026-09-08 (storage 96.1%, db 100%). Da
 
 U2 accepted on 2026-09-08 after make validate check-generated. Official prebuilt sqlc v1.31.1 installation verified the pinned digest; generated output is reproducible. SQL correctness/injection, recursive termination, candidate parity and tooling recovery fixtures pass. Resolved two observed implementation findings: ambiguous recursive ID references and coverage-script package-column parsing. Existing generated-code exemptions were preserved, not broadened. Whole-directory checks work without Git; generation and installation failures preserve old output/tool. Paired verification record owns details; masterplan advances to U3.
 
+### U3 execution and review receipt
+
+U3 locally accepted after make build-storage validate check-generated; storage coverage 95.7%. Filesystem/privacy, resource ownership, concurrency and portability checks are represented by the paired path/open/fault/memory tests. No implicit CLI database access was introduced. Every counted physical handle closes on injected failure and a subsequent Open succeeds. Native Windows 002-V33 remains a Phase 6 obligation. Masterplan advances to U4.
 
 
-### U2 commit reconstruction — 2026-09-08
+### U3 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
