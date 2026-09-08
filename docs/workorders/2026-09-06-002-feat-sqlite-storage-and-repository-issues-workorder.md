@@ -2,7 +2,7 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 verification-plan: docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md
-status: U6 locally accepted; U1 active
+status: U6/U1 locally accepted; U2 active
 evidence-scope: Planning findings and local U6 execution
 ---
 
@@ -287,10 +287,13 @@ Planning checklist 2.1 is complete after the documentation audit. All six implem
 
 Resolved locally on 2026-09-08. The connection wrapper retries only failed acquisition before user work, restores busy_timeout=5000, preserves all driver pool interfaces, and poisons a connection when restoration fails. Both cancellation regressions pass around 100 ms, and fault/budget/replacement tests pass. Explicit Go 1.25 compatibility and five-target builds pass; make validate passes with 97.8% storage coverage. Earlier failure/stop notes above remain historical evidence. U6 is accepted and U1 becomes active. No commit or publication occurred.
 
+### U1 execution and review receipt
+
+U1 accepted after final make validate on 2026-09-08 (storage 96.1%, db 100%). Data-integrity/migration review exercised atomic DDL+ledger+task rollback, foreign/newer/drift refusal and constraints. Adversarial tests reproduced and fixed two implementation findings: wildcard catalog exclusion (sqliteXsecret) and split-snapshot identity/catalog inspection. Failure injection distinguishes commit acknowledgment loss from pre-commit failure and proves recovery; two-process tests prove serialized initialization. Source inventory and disposable inverse fixtures are isolated. ce-simplify-code was performed inline under project instructions, with no edits needed. See paired verification receipt for exact test names. Masterplan advances to U2; final feature review and downstream acceptance remain pending.
 
 
 
 
-### U6 commit reconstruction — 2026-09-08
+### U1 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.

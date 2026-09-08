@@ -2,7 +2,7 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 surface-profiles: [library-sdk, data-persistence-migration, infrastructure-operations]
-status: U6 locally accepted; U1 active
+status: U6/U1 locally accepted; U2 active
 evidence-scope: Local U6 execution; remaining units not executed
 ---
 
@@ -69,29 +69,29 @@ Checkboxes record accepted scenarios after the owning unit's canonical gate. U6 
 
 ### U1. Schema and migrations
 
-- [ ] 002-V09 **Normal — TestMigrate_EmptyDatabase** (covers R6, R7, R8, R10). Migrate a new disk file and a unique memory fixture. **Expect:** Expect application ID, three application tables, required indexes/constraints, one matching ledger entry and no fixture-only SQL.
+- [x] 002-V09 **Normal — TestMigrate_EmptyDatabase** (covers R6, R7, R8, R10). Migrate a new disk file and a unique memory fixture. **Expect:** Expect application ID, three application tables, required indexes/constraints, one matching ledger entry and no fixture-only SQL.
 
-- [ ] 002-V10 **Idempotency — TestMigrate_ReopenDoesNothing** (covers R6, R7). Populate a migrated fixture, capture logical schema/ledger/tasks/events, and open repeatedly. **Expect:** The migration callback executes zero already-applied scripts; all captured values and applied-at times remain equal.
+- [x] 002-V10 **Idempotency — TestMigrate_ReopenDoesNothing** (covers R6, R7). Populate a migrated fixture, capture logical schema/ledger/tasks/events, and open repeatedly. **Expect:** The migration callback executes zero already-applied scripts; all captured values and applied-at times remain equal.
 
-- [ ] 002-V11 **Malformed inventory — TestMigrationInventory_Invalid** (covers R6, R7). Inject filesystems with duplicate numeric prefixes, missing 001, a gap, invalid suffix, empty SQL, and forbidden transaction-control migration content. **Expect:** Validation fails before schema writes; report the offending bounded filename/version without user data.
+- [x] 002-V11 **Malformed inventory — TestMigrationInventory_Invalid** (covers R6, R7). Inject filesystems with duplicate numeric prefixes, missing 001, a gap, invalid suffix, empty SQL, and forbidden transaction-control migration content. **Expect:** Validation fails before schema writes; report the offending bounded filename/version without user data.
 
-- [ ] 002-V12 **Compatibility — TestMigrationInventory_StableBytes** (covers R6, R7, R18). Compare canonical embedded SQL bytes with LF-controlled source and change one applied script byte in a fixture. **Expect:** Canonical checkout/builds preserve SHA-256 across platforms; a changed applied digest refuses open without modifying the existing database.
+- [x] 002-V12 **Compatibility — TestMigrationInventory_StableBytes** (covers R6, R7, R18). Compare canonical embedded SQL bytes with LF-controlled source and change one applied script byte in a fixture. **Expect:** Canonical checkout/builds preserve SHA-256 across platforms; a changed applied digest refuses open without modifying the existing database.
 
-- [ ] 002-V13 **Refusal — TestMigrate_RefusesForeignOrNewer** (covers R6, R7). Open fixtures with another application ID, unbranded user tables, and a newer well-formed Tusk ledger using read-only inspection. **Expect:** Fail before intentional journal-mode/schema/data writes; compare main/WAL hashes and logical data, excluding transient SHM locks. Never initialize over foreign data.
+- [x] 002-V13 **Refusal — TestMigrate_RefusesForeignOrNewer** (covers R6, R7). Open fixtures with another application ID, unbranded user tables, and a newer well-formed Tusk ledger using read-only inspection. **Expect:** Fail before intentional journal-mode/schema/data writes; compare main/WAL hashes and logical data, excluding transient SHM locks. Never initialize over foreign data.
 
-- [ ] 002-V14 **Corruption — TestMigrate_BrokenLedger** (covers R6, R7, R9). Supply a branded DB with missing/malformed ledger, non-prefix versions, conflicting filenames, invalid hashes, or missing required schema objects. **Expect:** Return corruption/incompatible-schema as specified; preserve files and never accept a partial ledger as fresh initialization.
+- [x] 002-V14 **Corruption — TestMigrate_BrokenLedger** (covers R6, R7, R9). Supply a branded DB with missing/malformed ledger, non-prefix versions, conflicting filenames, invalid hashes, or missing required schema objects. **Expect:** Return corruption/incompatible-schema as specified; preserve files and never accept a partial ledger as fresh initialization.
 
-- [ ] 002-V15 **Partial failure — TestMigrate_FailurePreservesPreviousVersion** (covers R7). Start at schema 001 with sentinel rows and inject fixture 002 that changes data then fails on its next statement. **Expect:** Reopen shows exactly schema 001, old rows/events and old ledger; no partial column/index/data change survives.
+- [x] 002-V15 **Partial failure — TestMigrate_FailurePreservesPreviousVersion** (covers R7). Start at schema 001 with sentinel rows and inject fixture 002 that changes data then fails on its next statement. **Expect:** Reopen shows exactly schema 001, old rows/events and old ledger; no partial column/index/data change survives.
 
-- [ ] 002-V16 **Ledger failure — TestMigrate_LedgerInsertRollback** (covers R7, R16). Let pending DDL succeed then fail its ledger insert through the private test connector. **Expect:** Rollback restores prior schema/data and returns failure; the next correct migration attempt succeeds once.
+- [x] 002-V16 **Ledger failure — TestMigrate_LedgerInsertRollback** (covers R7, R16). Let pending DDL succeed then fail its ledger insert through the private test connector. **Expect:** Rollback restores prior schema/data and returns failure; the next correct migration attempt succeeds once.
 
-- [ ] 002-V17 **Commit failure — TestMigrate_CommitOutcome** (covers R7, R16). Inject commit failure before forwarding and an acknowledgment failure after a real commit. **Expect:** Both report no confirmed success; outcome is unknown where needed. Reopen establishes old-or-new atomic state, never a mixed ledger/schema.
+- [x] 002-V17 **Commit failure — TestMigrate_CommitOutcome** (covers R7, R16). Inject commit failure before forwarding and an acknowledgment failure after a real commit. **Expect:** Both report no confirmed success; outcome is unknown where needed. Reopen establishes old-or-new atomic state, never a mixed ledger/schema.
 
-- [ ] 002-V18 **Concurrency — TestMigrate_ConcurrentInitializers** (covers R6, R7, R20). Use two processes and handshakes to initialize the same new file or advance the same old fixture. **Expect:** Exactly one applies each migration; the second rechecks the ledger under its lock. An observed busy failure is bounded and leaves a valid database.
+- [x] 002-V18 **Concurrency — TestMigrate_ConcurrentInitializers** (covers R6, R7, R20). Use two processes and handshakes to initialize the same new file or advance the same old fixture. **Expect:** Exactly one applies each migration; the second rechecks the ledger under its lock. An observed busy failure is bounded and leaves a valid database.
 
-- [ ] 002-V19 **Constraints — TestSchema_RejectsInvalidRows** (covers R8, R10, R17). Attempt raw inserts with null/duplicate IDs, empty/long title, invalid status/priority/progress, invalid JSON shape, self/missing parent, and inconsistent completion. **Expect:** CHECK/FK/NOT NULL reject local violations. Open-parent progress 100 is permitted; cross-row cycle/rollup prevention is not attributed to these constraints.
+- [x] 002-V19 **Constraints — TestSchema_RejectsInvalidRows** (covers R8, R10, R17). Attempt raw inserts with null/duplicate IDs, empty/long title, invalid status/priority/progress, invalid JSON shape, self/missing parent, and inconsistent completion. **Expect:** CHECK/FK/NOT NULL reject local violations. Open-parent progress 100 is permitted; cross-row cycle/rollup prevention is not attributed to these constraints.
 
-- [ ] 002-V20 **Fixture isolation — TestEmbed_ForwardOnly** (covers R7, R18). Read the embedded inventory and sqlc schema inputs, then exercise the disposable inverse fixture on a temporary DB. **Expect:** Only forward production migrations are embedded/generated; inverse fixture cleans its disposable schema and is never used for installed-data recovery.
+- [x] 002-V20 **Fixture isolation — TestEmbed_ForwardOnly** (covers R7, R18). Read the embedded inventory and sqlc schema inputs, then exercise the disposable inverse fixture on a temporary DB. **Expect:** Only forward production migrations are embedded/generated; inverse fixture cleans its disposable schema and is never used for installed-data recovery.
 
 ### U2. Generated queries and tooling
 
@@ -234,7 +234,7 @@ The baseline Makefile has no supported TEST/PKG/RUN filter variables. New target
 
 ## Execution record
 
-U6 locally accepted; U1 active. Native Windows/macOS execution remains pending.
+U6/U1 locally accepted; U2 active. Native Windows/macOS execution remains pending.
 
 | Date | Revision and dirty scope | Unit/scenario | Compiler and OS/arch | Command | Red/green/result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -251,10 +251,13 @@ Record exact tests run and any short/native exclusions. A later source change in
 
 Observed red: the original 100-ms probe and new cancellation-without-deadline probe both returned SQLITE_BUSY after about 5 seconds. Green: original probe returns DeadlineExceeded after 102.319619 ms; cancellation without deadline and restoration to 5000 pass. Fault tests cover configure/begin/restore/rollback and incompatible/failed connections. Real SQLite tests cover five-second busy exhaustion, replacement deferred/query-only readers while a WAL writer holds its lock, and replacement writers acquiring after release. `GOTOOLCHAIN=go1.25.0 make test-compat build-storage` exits 0. Final `make validate` exits 0, including full/race, setup fixtures 9/9, and storage coverage 97.8%. U6 acceptance is local on base 4bbc639 plus the uncommitted U6 files; no native cross-target runtime or hosted proof.
 
+### U1 execution receipt (2026-09-08)
+
+Base 4bbc639 plus uncommitted U6/U1 changes. Red-first: missing db/Migrations package and migrator; missing disposable inverse fixture. Added regressions observed acceptance of foreign sqliteXsecret and a false incompatible-schema result when initialization committed between identity/catalog reads. Green fixes use literal catalog-prefix filtering and one inspection snapshot. TestMigrate_EmptyDatabase, TestMigrationInventory_Invalid/Unreadable/StableBytes, TestMigrate_FailurePreservesPreviousVersion, TestMigrate_RefusesForeignOrNewer/RefusalPreservesFile/BrokenLedger/CorruptLedgerAndCanceledInspection, TestInspection_FailureReturnsNoPartialCatalog, TestMigrate_InjectedFailures, TestMigrate_InspectionUsesOneSnapshot, TestMigrate_ConcurrentInitializers, TestSchema_RejectsInvalidRows, TestMigrate_MemoryAndInverseFixture and TestEmbed_ForwardOnly pass. Existing task data and schema roll back together; foreign main/WAL bytes remain unchanged; two helper processes initialize exactly one ledger entry; injected ledger/commit/rollback failures have old-or-new readback and successful recovery. Final make validate exits 0 (storage 96.1%, db 100% coverage), including race and process fixtures. ce-simplify-code reuse/quality/efficiency passes ran inline per repository policy: no behavior-preserving change warranted; canonical schema replay cost remains for the U5 benchmark. No publication/native cross-target execution claim.
 
 
 
 
-### U6 commit reconstruction — 2026-09-08
+### U1 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
