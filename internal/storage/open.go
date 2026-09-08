@@ -10,9 +10,10 @@ import (
 	"sync"
 
 	assets "github.com/newbpydev/tusk/db"
+	"github.com/newbpydev/tusk/internal/ports"
 )
 
-const errClosedRepository storageError = "storage: repository closed"
+const errClosedRepository = ports.ErrClosedRepository
 
 // Options configures explicit storage access. Path overrides environment lookup.
 type Options struct{ Path string }
@@ -28,7 +29,12 @@ type Repository struct {
 }
 
 // Open explicitly opens storage; importing this package never accesses a database.
-func Open(ctx context.Context, options Options) (*Repository, error) {
+func Open(ctx context.Context, options Options) (_ *Repository, err error) {
+	defer func() {
+		if err != nil {
+			err = openCause(err)
+		}
+	}()
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
@@ -111,6 +117,9 @@ func (r *Repository) admit(ctx context.Context) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
+	if ctx.Value(transactionKey{r}) != nil {
+		return ports.ErrNestedTransaction
+	}
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if r.closed {
@@ -134,6 +143,7 @@ func (r *Repository) Close() error {
 		if r.writer != nil {
 			r.closeErr = errors.Join(r.closeErr, r.writer.Close())
 		}
+		r.closeErr = storageCause(r.closeErr)
 	})
 	return r.closeErr
 }

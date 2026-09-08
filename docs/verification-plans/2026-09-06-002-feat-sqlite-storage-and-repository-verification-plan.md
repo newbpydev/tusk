@@ -2,7 +2,7 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 surface-profiles: [library-sdk, data-persistence-migration, infrastructure-operations]
-status: U6/U1/U2/U3 locally accepted; U4 active
+status: U6/U1/U2/U3/U4 locally accepted; U5 active
 evidence-scope: Local U6 execution; remaining units not executed
 ---
 
@@ -137,43 +137,43 @@ Checkboxes record accepted scenarios after the owning unit's canonical gate. U6 
 
 ### U4. Repository contracts
 
-- [ ] 002-V40 **Round trip — TestRepository_RoundTripAndDetachedValues** (covers R8, R9, R10, R11). Round-trip all task fields, zero/empty notes, nil/empty tags, absent/present dates and root/non-root parents. **Expect:** Return canonical detached values with non-nil empty collections; description stays exact and optional NULL differs from empty malformed data.
+- [x] 002-V40 **Round trip — TestRepository_RoundTripAndDetachedValues** (covers R8, R9, R10, R11). Round-trip all task fields, zero/empty notes, nil/empty tags, absent/present dates and root/non-root parents. **Expect:** Return canonical detached values with non-nil empty collections; description stays exact and optional NULL differs from empty malformed data.
 
-- [ ] 002-V41 **Bad input — TestCodec_RejectsInvalidInput** (covers R8, R9, R17). Try nil task, invalid UTF-8/NUL, noncanonical ID/title/tag set, invalid status/range/time, and changed CreatedAt on Update. **Expect:** Reject without changing stored state; nil tags may encode as []; open parent progress 100 is accepted at the row boundary.
+- [x] 002-V41 **Bad input — TestCodec_RejectsInvalidInput** (covers R8, R9, R17). Try nil task, invalid UTF-8/NUL, noncanonical ID/title/tag set, invalid status/range/time, and changed CreatedAt on Update. **Expect:** Reject without changing stored state; nil tags may encode as []; open parent progress 100 is accepted at the row boundary.
 
-- [ ] 002-V42 **Corrupt decode — TestCodec_RejectsCorruptRows** (covers R8, R9, R11). Bypass constraints only in fixtures and store malformed timestamps/JSON/tag elements, completion mismatch or invalid text; separately inject a row-iteration error after one valid row. **Expect:** Read fails with corruption or the mapped iteration error and no partial collection; no default clock, trim, clamp, rewrite, or auto-repair occurs.
+- [x] 002-V42 **Corrupt decode — TestCodec_RejectsCorruptRows** (covers R8, R9, R11). Bypass constraints only in fixtures and store malformed timestamps/JSON/tag elements, completion mismatch or invalid text; separately inject a row-iteration error after one valid row. **Expect:** Read fails with corruption or the mapped iteration error and no partial collection; no default clock, trim, clamp, rewrite, or auto-repair occurs.
 
-- [ ] 002-V43 **Ownership — TestRepository_ReturnedValuesDoNotAlias** (covers R11). Mutate every returned slice, tag, pointer, event changed-field slice and task field, then read again. **Expect:** Database and subsequent results are unchanged; inputs cannot mutate committed values after calls return.
+- [x] 002-V43 **Ownership — TestRepository_ReturnedValuesDoNotAlias** (covers R11). Mutate every returned slice, tag, pointer, event changed-field slice and task field, then read again. **Expect:** Database and subsequent results are unchanged; inputs cannot mutate committed values after calls return.
 
-- [ ] 002-V44 **Filter parity — TestRepository_FilterMatchesCore** (covers R12). Compare ordered IDs against core across statuses/priorities/tags, mixed invalid enum values, conflicting root/parent, exclusive due bounds, Ä search and literal wildcard text. **Expect:** Exact core membership holds; empty filter includes done, and no CLI-only defaults or implicit truncation appear.
+- [x] 002-V44 **Filter parity — TestRepository_FilterMatchesCore** (covers R12). Compare ordered IDs against core across statuses/priorities/tags, mixed invalid enum values, conflicting root/parent, exclusive due bounds, Ä search and literal wildcard text. **Expect:** Exact core membership holds; empty filter includes done, and no CLI-only defaults or implicit truncation appear.
 
-- [ ] 002-V45 **Ordering — TestRepository_DefaultSort** (covers R12). Seed equal priorities/timestamps, missing due dates, Unicode titles and out-of-insertion-order IDs. **Expect:** Order is priority descending, due ascending/null last, created ascending, ID ascending; siblings use the same order.
+- [x] 002-V45 **Ordering — TestRepository_DefaultSort** (covers R12). Seed equal priorities/timestamps, missing due dates, Unicode titles and out-of-insertion-order IDs. **Expect:** Order is priority descending, due ascending/null last, created ascending, ID ascending; siblings use the same order.
 
-- [ ] 002-V46 **Hierarchy — TestRepository_TreeReadContract** (covers R11, R13). Read a root, non-root subtree, leaf, root ancestors, depth-10 branch, missing task and existing task with no children. **Expect:** Target-first depth-first subtree and parent-first ancestor ordering match the plan; original ParentID is retained; empty is distinct from missing.
+- [x] 002-V46 **Hierarchy — TestRepository_TreeReadContract** (covers R11, R13). Read a root, non-root subtree, leaf, root ancestors, depth-10 branch, missing task and existing task with no children. **Expect:** Target-first depth-first subtree and parent-first ancestor ordering match the plan; original ParentID is retained; empty is distinct from missing.
 
-- [ ] 002-V47 **Corrupt graph — TestRepository_TraversalRejectsCorruption** (covers R9, R13, R17). Inject self/two-node/deep cycles, an orphan, and a subtree whose stored ancestor depth exceeds 10. **Expect:** Queries terminate under a deadline and return corruption plus matching core sentinel; no orphan promotion or returned partial graph.
+- [x] 002-V47 **Corrupt graph — TestRepository_TraversalRejectsCorruption** (covers R9, R13, R17). Inject self/two-node/deep cycles, an orphan, and a subtree whose stored ancestor depth exceeds 10. **Expect:** Queries terminate under a deadline and return corruption plus matching core sentinel; no orphan promotion or returned partial graph.
 
-- [ ] 002-V48 **History — TestRepository_EventRetention** (covers R10, R11). Append each event kind with fixed times, delete the highest committed event's task, append again, and query task history. **Expect:** Sequence ascends without reuse of a deleted committed maximum; gaps are allowed. Events contain field names only, with sorted unique allowlisted fields and no old title/notes.
+- [x] 002-V48 **History — TestRepository_EventRetention** (covers R10, R11). Append each event kind with fixed times, delete the highest committed event's task, append again, and query task history. **Expect:** Sequence ascends without reuse of a deleted committed maximum; gaps are allowed. Events contain field names only, with sorted unique allowlisted fields and no old title/notes.
 
-- [ ] 002-V49 **Deletion — TestRepository_DeleteContract** (covers R10, R11, R17). Delete leaf and parent with recursive false/true while an unrelated root and events remain; repeat against a corrupt subtree fixture. **Expect:** False rejects children; true returns sorted exact deleted IDs and cascades their events. Missing task or corrupt traversal fails; unrelated rows/events survive.
+- [x] 002-V49 **Deletion — TestRepository_DeleteContract** (covers R10, R11, R17). Delete leaf and parent with recursive false/true while an unrelated root and events remain; repeat against a corrupt subtree fixture. **Expect:** False rejects children; true returns sorted exact deleted IDs and cascades their events. Missing task or corrupt traversal fails; unrelated rows/events survive.
 
-- [ ] 002-V50 **Error mapping — TestRepository_DomainErrors** (covers R11, R16, R17). Exercise missing read/update/delete/parent/event target, duplicate create, invalid record, busy, read-only, full/I/O and closed handles. **Expect:** errors.Is matches the intended domain/context/port category; SQLite concrete types and raw SQL do not cross the port.
+- [x] 002-V50 **Error mapping — TestRepository_DomainErrors** (covers R11, R16, R17). Exercise missing read/update/delete/parent/event target, duplicate create, invalid record, busy, read-only, full/I/O and closed handles. **Expect:** errors.Is matches the intended domain/context/port category; SQLite concrete types and raw SQL do not cross the port.
 
-- [ ] 002-V51 **Read snapshot — TestWithRead_StableSnapshot** (covers R14, R20). Read a row, commit a concurrent title/history change, and read both again within the same WithRead. **Expect:** Both reads see the original committed snapshot; a new snapshot sees the new pair. The callback has no mutation methods.
+- [x] 002-V51 **Read snapshot — TestWithRead_StableSnapshot** (covers R14, R20). Read a row, commit a concurrent title/history change, and read both again within the same WithRead. **Expect:** Both reads see the original committed snapshot; a new snapshot sees the new pair. The callback has no mutation methods.
 
-- [ ] 002-V52 **Atomic rollback — TestWithWrite_ChildAndHistoryRollback** (covers R14, R16). Update a child and ancestor, then fail event append or callback; separately fail rollback using the private connector. **Expect:** Confirmed rollback leaves every row/event unchanged. Unconfirmed rollback returns unknown outcome and discards the connection.
+- [x] 002-V52 **Atomic rollback — TestWithWrite_ChildAndHistoryRollback** (covers R14, R16). Update a child and ancestor, then fail event append or callback; separately fail rollback using the private connector. **Expect:** Confirmed rollback leaves every row/event unchanged. Unconfirmed rollback returns unknown outcome and discards the connection.
 
-- [ ] 002-V53 **Callback misuse — TestTransaction_CallbackLifetime** (covers R15, R16). Try nil callback, nested repository use with callback context, retained handle after exit, concurrent handle calls, and a panic. **Expect:** Nil/nested/escaped/concurrent use fails before unsafe SQL; panic rolls back then re-panics; no reusable active transaction or race remains.
+- [x] 002-V53 **Callback misuse — TestTransaction_CallbackLifetime** (covers R15, R16). Try nil callback, nested repository use with callback context, retained handle after exit, concurrent handle calls, and a panic. **Expect:** Nil/nested/escaped/concurrent use fails before unsafe SQL; panic rolls back then re-panics; no reusable active transaction or race remains.
 
-- [ ] 002-V54 **Swallowed error — TestWithWrite_LatchesOperationFailure** (covers R14, R15, R16). Succeed one update, force a later writer-handle operation to fail, let the callback ignore that error and return nil. **Expect:** WithWrite still fails and rolls back all prior changes. A swallowed statement error cannot turn partial business work into success.
+- [x] 002-V54 **Swallowed error — TestWithWrite_LatchesOperationFailure** (covers R14, R15, R16). Succeed one update, force a later writer-handle operation to fail, let the callback ignore that error and return nil. **Expect:** WithWrite still fails and rolls back all prior changes. A swallowed statement error cannot turn partial business work into success.
 
-- [ ] 002-V55 **Unknown commit — TestWithWrite_CommitFailureNeverReplays** (covers R14, R16). Inject failure before commit reaches SQLite and failure after SQLite committed but before acknowledgment reaches the adapter. **Expect:** No callback replay; report unknown outcome where proof is absent. Readback shows an atomic old/new state with exactly zero/one event set.
+- [x] 002-V55 **Unknown commit — TestWithWrite_CommitFailureNeverReplays** (covers R14, R16). Inject failure before commit reaches SQLite and failure after SQLite committed but before acknowledgment reaches the adapter. **Expect:** No callback replay; report unknown outcome where proof is absent. Readback shows an atomic old/new state with exactly zero/one event set.
 
-- [ ] 002-V56 **Cancellation boundary — TestWithWrite_CancellationAtCommit** (covers R14, R16, R20). Cancel before begin, during a statement, just before commit attempt, and after successful commit acknowledgment. **Expect:** Pre-commit cancellation rolls back when confirmed; known commit success remains success. Do not claim instant cancellation of native open or background-context Commit.
+- [x] 002-V56 **Cancellation boundary — TestWithWrite_CancellationAtCommit** (covers R14, R16, R20). Cancel before begin, during a statement, just before commit attempt, and after successful commit acknowledgment. **Expect:** Pre-commit cancellation rolls back when confirmed; known commit success remains success. Do not claim instant cancellation of native open or background-context Commit.
 
-- [ ] 002-V57 **Connection recovery — TestTransaction_DiscardsPoisonedConnection** (covers R5, R15, R16). Inject commit/rollback/read-cleanup failure, then issue a fresh operation through the same repository. **Expect:** Failed physical connection is discarded with supported pool APIs; replacement is configured and succeeds; no lingering transaction or lock remains.
+- [x] 002-V57 **Connection recovery — TestTransaction_DiscardsPoisonedConnection** (covers R5, R15, R16). Inject commit/rollback/read-cleanup failure, then issue a fresh operation through the same repository. **Expect:** Failed physical connection is discarded with supported pool APIs; replacement is configured and succeeds; no lingering transaction or lock remains.
 
-- [ ] 002-V58 **Error privacy — TestStorageErrors_RedactData** (covers R9, R16). Use sentinel secret-like note/title/path values while provoking decode, SQL, context, close and commit failures. **Expect:** Messages expose only bounded operation/category/metadata; no raw SQL, stored notes, or concrete driver unwrap chain appears. Context/domain matching remains intact.
+- [x] 002-V58 **Error privacy — TestStorageErrors_RedactData** (covers R9, R16). Use sentinel secret-like note/title/path values while provoking decode, SQL, context, close and commit failures. **Expect:** Messages expose only bounded operation/category/metadata; no raw SQL, stored notes, or concrete driver unwrap chain appears. Context/domain matching remains intact.
 
 ### U5. Disk acceptance and handoff
 
@@ -234,7 +234,7 @@ The baseline Makefile has no supported TEST/PKG/RUN filter variables. New target
 
 ## Execution record
 
-U6/U1/U2/U3 locally accepted; U4 active. Native Windows/macOS execution remains pending.
+U6/U1/U2/U3/U4 locally accepted; U5 active. Native Windows/macOS execution remains pending.
 
 | Date | Revision and dirty scope | Unit/scenario | Compiler and OS/arch | Command | Red/green/result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -263,7 +263,10 @@ Red: missing generated package and scripts/sqlc.sh; first real generation reject
 
 Red: undefined Open, Options, path inputs and connection roles. Local green: TestResolvePath_Precedence, TestOpen_LiteralFilename/RejectsUnsafeTarget/POSIXPermissions/ClosesPartialResources/FailureStagesReleaseEveryHandle/CanceledAndInvalidOverrideNeverFallsBack/ReplacementConnectionPragmas/MemoryLifetimeAndIsolation/CloseAdmissionAndIdempotency/CurrentSchemaNoMigrationWrite. These prove lazy fallback lookup, literal punctuation, symlink/FIFO refusal, restrictive new and preserved existing permissions, no fallback on invalid override, configured replacement pools, private memory anchors, admitted-work close behavior and current-schema opening during a held writer. Fault fixtures count every opened/closed physical handle across inspection connect/begin/catalog/close, WAL configuration, migration and reader ping failures; retry succeeds. make build-storage validate check-generated passes, storage coverage 95.7%. 002-V33 remains unchecked: the Windows test compiles, but native reparse/path/ACL proof belongs to Phase 6. U3 is locally accepted; final review remains pending.
 
+### U4 execution receipt — 2026-09-08
 
-### U3 commit reconstruction — 2026-09-08
+Base 4bbc639 plus uncommitted implementation. make validate check-generated passed; handwritten storage coverage 97.0%. Go 1.25 test-compat and five CGO-disabled storage/test builds passed. Repository round-trip, exact core filtering, tree corruption, deletion, history, snapshot, lifetime/concurrent-handle, cancellation, commit/rollback uncertainty and driver-fault tests cover 002-V40–002-V58. Observed regressions before fixes: public Open leaked OS paths; ListChildren unnecessarily decoded corrupt grandchildren; rollback cleanup failures lost the original context/domain cause. Sanitized categories, immediate-child reads and joined safe causes resolve those failures. Callback replay remains prohibited, provisional failed reads return no data, and the read handle exposes no writer interface. U4 is locally accepted; U5 is active. Native/hosted execution is not claimed.
+
+### U4 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.

@@ -2,7 +2,7 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 verification-plan: docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md
-status: U6/U1/U2/U3 locally accepted; U4 active
+status: U6/U1/U2/U3/U4 locally accepted; U5 active
 evidence-scope: Planning findings and local U6 execution
 ---
 
@@ -299,7 +299,10 @@ U2 accepted on 2026-09-08 after make validate check-generated. Official prebuilt
 
 U3 locally accepted after make build-storage validate check-generated; storage coverage 95.7%. Filesystem/privacy, resource ownership, concurrency and portability checks are represented by the paired path/open/fault/memory tests. No implicit CLI database access was introduced. Every counted physical handle closes on injected failure and a subsequent Open succeeds. Native Windows 002-V33 remains a Phase 6 obligation. Masterplan advances to U4.
 
+### U4 execution receipt — 2026-09-08
 
-### U3 commit reconstruction — 2026-09-08
+Base 4bbc639 plus uncommitted implementation. make validate check-generated passed; handwritten storage coverage 97.0%. Go 1.25 test-compat and five CGO-disabled storage/test builds passed. Repository round-trip, exact core filtering, tree corruption, deletion, history, snapshot, lifetime/concurrent-handle, cancellation, commit/rollback uncertainty and driver-fault tests cover 002-V40–002-V58. Observed regressions before fixes: public Open leaked OS paths; ListChildren unnecessarily decoded corrupt grandchildren; rollback cleanup failures lost the original context/domain cause. Sanitized categories, immediate-child reads and joined safe causes resolve those failures. Callback replay remains prohibited, provisional failed reads return no data, and the read handle exposes no writer interface. U4 is locally accepted; U5 is active. Native/hosted execution is not claimed.
+
+### U4 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
