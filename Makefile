@@ -1,5 +1,6 @@
+.DEFAULT_GOAL := all
 .PHONY: all setup fmt vet test test-unit test-compat build-storage race validate coverage bench bench-tree bench-build build clean help
-.PHONY: setup-sqlc generate check-generated test-scripts
+.PHONY: setup-sqlc generate check-generated test-scripts bench-storage
 
 setup-sqlc:
 	bash scripts/sqlc.sh setup
@@ -57,6 +58,10 @@ race:
 
 coverage:
 	@./scripts/coverage.sh
+bench-storage:
+	go version
+	go test ./internal/storage -run '^$$' -bench '^BenchmarkStorage$$' -benchmem -benchtime=200ms
+
 bench:
 	@./scripts/bench.sh all
 
@@ -88,6 +93,7 @@ help:
 	@echo "make race      - Run tests with data race detector"
 	@echo "make validate    - Run full verification suite (fmt, vet, test, race, coverage)"
 	@echo "make coverage    - Run coverage check with race detector"
+	@echo "make bench-storage - Measure storage queries and open costs"
 	@echo "make bench       - Run all core micro-benchmarks"
 	@echo "make bench-tree  - Run tree traversal micro-benchmark"
 	@echo "make bench-build - Run tree build micro-benchmark"

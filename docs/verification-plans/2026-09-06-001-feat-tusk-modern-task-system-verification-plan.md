@@ -252,3 +252,7 @@ All TUSK-V01–TUSK-V73 remain **not executed**. Planning does not populate soft
 | — | — | — | — | — | Not executed | — |
 
 For a red/green unit record both failures and results separately. Attach local command logs and hosted/manual proof by exact revision; if sources change after a result, identify which evidence remains applicable and rerun the affected checks. Record documentation-audit results in the workorder's planning record, not this software execution table.
+
+## Feature 002 local handoff — 2026-09-08
+
+The [Feature 002 triplet](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) now records six implemented units with per-unit validated commits and 67/68 local scenarios accepted. [Storage operations and Phase 3 obligations](../storage.md) and [durable evidence](../verification-evidence/002/README.md) cover the repository boundary, atomic metadata history, migration refusal, process recovery and benchmarks. Product U24 compatibility evidence is available locally; target-native TUSK-V01 acceptance remains pending. This handoff does not check cross-phase service/CLI/TUI or hosted/native product scenarios. MASTERPLAN.md advances to Feature 003 planning; its outline must be deepened before implementation.

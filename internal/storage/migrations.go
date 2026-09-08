@@ -103,7 +103,7 @@ func expectedSchema(ctx context.Context, inventory []migration) (map[string]stri
 	defer db.Close()
 	for _, m := range inventory {
 		if _, err := db.ExecContext(ctx, m.sql); err != nil {
-			return nil, fmt.Errorf("%w: invalid canonical schema", errIncompatibleSchema)
+			return nil, schemaFailure(err, errIncompatibleSchema)
 		}
 	}
 	return schemaObjects(ctx, db)
@@ -128,7 +128,7 @@ func inspectSchema(ctx context.Context, q schemaReader, inventory []migration) (
 	}
 	rows, err := q.QueryContext(ctx, "SELECT version, filename, checksum, applied_at FROM schema_migrations ORDER BY version")
 	if err != nil {
-		return 0, errCorruptSchema
+		return 0, schemaFailure(err, errCorruptSchema)
 	}
 	count := 0
 	for rows.Next() {
@@ -136,7 +136,7 @@ func inspectSchema(ctx context.Context, q schemaReader, inventory []migration) (
 		var name, checksum, applied string
 		if err := rows.Scan(&version, &name, &checksum, &applied); err != nil {
 			rows.Close()
-			return 0, errCorruptSchema
+			return 0, schemaFailure(err, errCorruptSchema)
 		}
 		if version > len(inventory) {
 			rows.Close()
@@ -191,7 +191,7 @@ func migrate(ctx context.Context, db *sql.DB, inventory []migration) (err error)
 	count, inspectErr := inspectSchema(ctx, read, inventory)
 	if rollbackErr := read.Rollback(); rollbackErr != nil {
 		discardConnection(conn)
-		return errors.Join(inspectErr, errMigrationOutcome)
+		return errors.Join(inspectErr, errMigrationOutcome, storageCause(rollbackErr))
 	}
 	if inspectErr != nil || count == len(inventory) {
 		return inspectErr
@@ -202,7 +202,7 @@ func migrate(ctx context.Context, db *sql.DB, inventory []migration) (err error)
 	}
 	defer func() {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil && !errors.Is(rollbackErr, sql.ErrTxDone) {
-			err = errors.Join(err, errMigrationOutcome)
+			err = errors.Join(err, errMigrationOutcome, storageCause(rollbackErr))
 			discardConnection(conn)
 		}
 	}()
@@ -217,15 +217,15 @@ func migrate(ctx context.Context, db *sql.DB, inventory []migration) (err error)
 	}
 	for _, m := range inventory[count:] {
 		if _, err := tx.ExecContext(ctx, m.sql); err != nil {
-			return fmt.Errorf("migration %s: application failed", m.name)
+			return fmt.Errorf("migration %s: application failed: %w", m.name, storageCause(err))
 		}
 		if _, err := tx.ExecContext(ctx, "INSERT INTO schema_migrations(version,filename,checksum,applied_at) VALUES(?,?,?,?)", m.version, m.name, m.checksum, time.Now().UTC().Format(dateLayout)); err != nil {
-			return fmt.Errorf("migration %s: ledger write failed", m.name)
+			return fmt.Errorf("migration %s: ledger write failed: %w", m.name, storageCause(err))
 		}
 	}
 	if err := tx.Commit(); err != nil {
 		discardConnection(conn)
-		return errMigrationOutcome
+		return errors.Join(errMigrationOutcome, storageCause(err))
 	}
 	return nil
 }

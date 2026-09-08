@@ -102,6 +102,12 @@ for package in github.com/newbpydev/tusk/internal/storage/sqlc github.com/newbpy
     assert_eq "$expected" "$result" "coverage package parsing: $package"
 done
 
+# Plain make must keep the canonical all target, never download sqlc by default.
+default_recipe=$(make --no-print-directory -n -C "${ROOT_DIR}")
+result=1
+if [[ "$default_recipe" == *"All canonical quality gates passed."* && "$default_recipe" != *"scripts/sqlc.sh setup"* ]]; then result=0; fi
+assert_eq 0 "$result" "default make validates and builds without downloading tools"
+
 echo "========================================"
 echo "Script Test Results: ${TESTS_PASSED}/${TESTS_TOTAL} passed"
 echo "========================================"

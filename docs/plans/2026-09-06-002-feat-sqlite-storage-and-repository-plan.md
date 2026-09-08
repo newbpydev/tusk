@@ -22,9 +22,9 @@ deepened: 2026-09-08
 
 **Pack:** This plan, the [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md), and the [issue workorder](../workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md). Artifacts stay in this first-party repository under `docs/`.
 
-**Execution direction:** Red-first TDD, sequential units, local verification through Make. U6 is the new prerequisite, followed by U1, U2, U3, U4, U5. Existing 002-1 through 002-5 identities are retained. An executor starts at the masterplan's active unit and advances only with its evidence.
+**Execution direction:** Red-first TDD, sequential units, local verification through Make. U6 is the new prerequisite, followed by U1, U2, U3, U4, U5. Existing 002-1 through 002-5 identities are retained. An executor starts at the masterplan's active unit and advances only with its evidence and a separate validated unit commit.
 
-**Stop conditions:** An incompatible dependency graph, failed compatibility probe, unrecognized database, or failed unit gate stops dependent implementation. Never choose an affected SQLite engine, weaken tests, or recreate user data to proceed. This planning request does not start implementation or publication.
+**Stop conditions:** An incompatible dependency graph, failed compatibility probe, unrecognized database, or failed unit gate stops dependent implementation. Never choose an affected SQLite engine, weaken tests, or recreate user data to proceed. The subsequent ce-work request authorized implementation; publication remains outside scope.
 
 ---
 
@@ -408,7 +408,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U2 generated queries and U3 opened storage instance.
 
-**Files:** New `internal/ports/task_repository.go`, `internal/ports/task_event.go`, `internal/ports/errors.go`, `internal/storage/sqlite_repository.go`, `internal/storage/codec.go`, `internal/storage/errors.go`, `internal/storage/transaction.go`, and corresponding `sqlite_repository_test.go`, `codec_test.go`, `errors_test.go`, `transaction_test.go` under `internal/storage/`.
+**Files:** New `internal/ports/task_repository.go`, `internal/ports/task_event.go`, `internal/ports/errors.go`, `internal/storage/sqlite_repository.go`, `internal/storage/codec.go`, `internal/storage/errors.go`, `internal/storage/transaction.go`, and corresponding `sqlite_repository_test.go`, `codec_test.go`, `errors_test.go`, `transaction_test.go`, `repository_contract_test.go`, `repository_fault_test.go` under `internal/storage/`.
 
 **Approach:** Implement the boundary table using instance-owned dependencies and guarded transaction handles. Test codecs directly, then exercise generated queries through the real adapter. Keep business mutations in the future service; no service mocks are needed to claim adapter behavior.
 
@@ -436,7 +436,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U4 complete. Characterization tests that already pass are valid evidence, not a reason to change working production code without a new failing case.
 
-**Files:** New `internal/storage/concurrency_test.go`, `internal/storage/recovery_test.go`, `internal/storage/storage_bench_test.go`, test-only fixtures under `internal/storage/testdata/`, `docs/storage.md`; update `Makefile`, this feature triplet, and masterplan evidence. Production fixes remain limited to a reproduced failing storage contract.
+**Files:** New `internal/storage/concurrency_test.go`, `internal/storage/recovery_test.go`, `internal/storage/storage_bench_test.go`, `internal/storage/inspection_cancellation_test.go`, test-only fixtures under `internal/storage/testdata/`, `docs/storage.md`; update `Makefile`, this feature triplet, and masterplan evidence. Production fixes remain limited to a reproduced failing storage contract.
 
 **Approach:** Use barriers and bounded child-process handshakes around transaction boundaries. Give each fixture a unique database and close all handles before cleanup. Benchmark storage components with fixed data and record reference hardware; document next-phase obligations.
 
@@ -459,7 +459,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 ## Verification Contract
 
-**Execution update, 2026-09-08:** U6/U1/U2/U3/U4 locally accepted; U5 active. See paired execution receipts.
+**Execution update, 2026-09-08:** All six units are locally accepted. See U5 acceptance and separate unit-commit evidence; native/hosted release gates remain pending.
 
 The [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md) owns 002-V01–002-V68 fixtures, failure placement, and evidence tiers. The [workorder](../workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md) records planning corrections separately from runtime findings.
 
@@ -484,3 +484,13 @@ Base 4bbc639 plus uncommitted implementation. make validate check-generated pass
 ### U4 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
+
+### U5 acceptance receipt — 2026-09-08
+
+All applicable Feature 002 local scenarios are accepted: 67/68 checked, with only native Windows 002-V33 deferred to Phase 6. Current Go 1.27.1-X:nodwarf5 make validate check-generated build passed after the review fixes (storage coverage 97.6%, db/cmd 100%, core 98.2%; existing ports/sqlc exemptions unchanged). Explicit Go 1.25 previously passed the full gate; after the final mapper changes it again passed test-compat, all five CGO-disabled storage/test builds, check-generated and focused migration/inspection race tests. make setup and the final Btrfs make bench-storage run passed. No hosted or native macOS/Windows runtime result is claimed.
+
+Two helper processes preserve all 40 read-modify-write increments and 40 events; a reader retains its snapshot across another process's commit. External writer cancellation returns in 102.5 ms (105.3 ms under race), while the uncanceled wait returns busy in 5.01 s; later writes succeed. Killing and reaping a writer before commit preserves the old task/event set; killing after acknowledgment preserves exactly one committed set. Independent reopen checks integrity and foreign keys. Held-reader WAL growth is followed by automatic restart sequence 0 -> 5 with bounded file reuse, without explicit checkpoint SQL. Normally closed offline backup reopens without modifying its source.
+
+Observed red-first U5 fixes restore the default Make target, preserve migration statement/ledger/commit/rollback cancellation causes, preserve inspection cancellation, and retain unknown migration outcomes alongside schema categories. The completed ce-code-review receipt reported two actionable findings; both were reproduced and fixed, with no unapplied actionable residual. Review passes ran sequentially in the parent context per repository tool mapping; both independent peer routes failed before producing a review, so independent corroboration is unavailable. ce-simplify-code found no warranted behavior-preserving edit.
+
+[Durable evidence, commit sequence and review resolution](../verification-evidence/002/README.md), [raw benchmarks](../verification-evidence/002/storage-benchmarks.txt), [code fingerprint and gate receipt](../verification-evidence/002/acceptance.json), and [operations/service handoff](../storage.md) retain the evidence. The separate U5 commit closes Phase 2; the next active target is Phase 3 planning, not Feature 003 implementation. No push, PR, merge or release is authorized by this acceptance.

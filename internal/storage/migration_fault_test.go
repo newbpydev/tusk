@@ -29,6 +29,9 @@ type migrationFaultConn struct {
 }
 
 func (f *migrationFaultConn) ExecContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
+	if f.stage == "cancel-ddl" && strings.Contains(q, "CREATE TABLE") || (f.stage == "cancel-ledger" || f.stage == "cancel-rollback") && strings.HasPrefix(q, "INSERT INTO schema_migrations") {
+		return nil, context.Canceled
+	}
 	if f.stage == "ledger" && strings.HasPrefix(q, "INSERT INTO schema_migrations") || f.stage == "app" && strings.HasPrefix(q, "PRAGMA application_id=") {
 		return nil, errors.New("injected migration write failure")
 	}
@@ -51,6 +54,9 @@ type migrationFaultTx struct {
 }
 
 func (t *migrationFaultTx) Commit() error {
+	if t.stage == "cancel-commit" {
+		return context.Canceled
+	}
 	if t.stage == "commit-before" {
 		return errors.New("injected before commit")
 	}
@@ -62,7 +68,10 @@ func (t *migrationFaultTx) Commit() error {
 }
 func (t *migrationFaultTx) Rollback() error {
 	err := t.Tx.Rollback()
-	if err == nil && t.stage == "rollback" {
+	if err == nil && t.stage == "cancel-rollback" {
+		return context.Canceled
+	}
+	if err == nil && (t.stage == "rollback" || t.stage == "cancel-rollback") {
 		return errors.New("injected rollback acknowledgment")
 	}
 	return err
@@ -174,5 +183,33 @@ func TestMigrate_InspectionUsesOneSnapshot(t *testing.T) {
 	db.SetMaxOpenConns(1)
 	if err := migrate(context.Background(), db, inv); err != nil {
 		t.Fatalf("concurrent compatible initialization refused: %v", err)
+	}
+}
+
+// Error categories must survive migration formatting and the public Open boundary.
+func TestMigrate_PreservesCancellationCause(t *testing.T) {
+	for _, stage := range []string{"cancel-ddl", "cancel-ledger", "cancel-commit", "cancel-rollback"} {
+		t.Run(stage, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "cancel.db")
+			base, err := newConnector(path, false)
+			if err != nil {
+				t.Fatal(err)
+			}
+			db := sql.OpenDB(migrationFaultConnector{Connector: base, stage: stage})
+			defer db.Close()
+			_, inv := migrationFixture(t)
+			err = migrate(context.Background(), db, inv)
+			if !errors.Is(err, context.Canceled) {
+				t.Fatalf("migration lost cancellation: %v", err)
+			}
+			if !errors.Is(openCause(err), context.Canceled) {
+				t.Fatalf("Open lost cancellation: %v", openCause(err))
+			}
+			if stage == "cancel-commit" || stage == "cancel-rollback" {
+				if !errors.Is(err, errMigrationOutcome) {
+					t.Fatalf("uncertainty lost: %v", err)
+				}
+			}
+		})
 	}
 }

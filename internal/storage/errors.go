@@ -55,15 +55,25 @@ func corruptCause(err error) error {
 	return ports.ErrCorrupt
 }
 
-func openCause(err error) error {
-	if errors.Is(err, errIncompatibleSchema) {
-		return ports.ErrIncompatibleSchema
+// schemaFailure preserves cancellation while classifying actual schema faults.
+func schemaFailure(err, category error) error {
+	for _, cause := range []error{context.Canceled, context.DeadlineExceeded} {
+		if errors.Is(err, cause) {
+			return cause
+		}
 	}
-	if errors.Is(err, errCorruptSchema) {
-		return ports.ErrCorrupt
+	return category
+}
+
+func openCause(err error) error {
+	cause := storageCause(err)
+	if errors.Is(err, errIncompatibleSchema) {
+		cause = schemaFailure(err, ports.ErrIncompatibleSchema)
+	} else if errors.Is(err, errCorruptSchema) {
+		cause = schemaFailure(err, ports.ErrCorrupt)
 	}
 	if errors.Is(err, errMigrationOutcome) {
-		return ports.NewTransactionError("migration", ports.ErrStorage)
+		return ports.NewTransactionError("migration", cause)
 	}
-	return storageCause(err)
+	return cause
 }

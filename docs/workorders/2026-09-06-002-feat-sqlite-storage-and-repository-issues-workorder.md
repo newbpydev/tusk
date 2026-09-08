@@ -2,20 +2,24 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 verification-plan: docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md
-status: U6/U1/U2/U3/U4 locally accepted; U5 active
-evidence-scope: Planning findings and local U6 execution
+status: locally accepted - native and hosted release gates deferred
+evidence-scope: local implementation, per-unit commits and acceptance; no native or hosted execution
 ---
 
 # Feature 002 Issue Workorder
 
 This register accompanies the [implementation plan](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) and [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md). **Fixed in plan** means a planning gap was resolved in these documents, not that code was fixed or tests passed.
 
-The original request authorized completing and reviewing the Feature 002 planning pack. The subsequent `ce-work` invocation authorizes implementation in masterplan order. Go 1.25 is the selected technical default; U6 owns runtime compatibility proof before migration implementation. No implementation/release gate is closed by this register.
+The original request authorized completing and reviewing the Feature 002 planning pack. The subsequent `ce-work` invocation authorizes implementation in masterplan order. Go 1.25 is the selected technical default; U6 owns runtime compatibility proof before migration implementation. Planning resolutions alone close no runtime gate; the execution receipts below record separately verified local acceptance.
 
 ## Issue register
 
 | ID | Source / lens | Owner | Severity | Status | Next action and evidence |
 | --- | --- | --- | --- | --- | --- |
+| 002-ISS-022 | U5 recovery: migration failures lost context causes | Feature 002 implementer | P2 | Resolved locally | TestMigrate_PreservesCancellationCause red/green; safe causes survive DDL/ledger/commit/rollback and public mapping. |
+| 002-ISS-023 | U5 tooling: plain make selected tool download | Feature 002 implementer | P2 | Resolved locally | Default-goal regression failed before .DEFAULT_GOAL := all; 12/12 base script checks now pass. |
+| 002-ISS-024 | ce-code-review #1: schema category hid unknown cleanup | Feature 002 implementer | P1 | Resolved locally | TestOpenCause_RetainsMigrationUnknownOutcome failed before public mapper fix; uncertainty and safe cause now survive. |
+| 002-ISS-025 | ce-code-review #2: inspection mislabeled cancellation | Feature 002 implementer | P2 | Resolved locally | TestInspection_PreservesCancellationCause failed for ledger/replay; cancellation and deadline categories now survive. |
 | 002-ISS-021 | Runtime compatibility: lock wait ignores short context deadline | Feature 002 implementer; U6 | P1 | Resolved locally | KTD4 wrapper passes original cancellation regression, replacement/negative/recovery tests, Go 1.25 compatibility, five-target builds and make validate; see resolution receipt. |
 | 002-ISS-001 | Coherence: Readiness advertised without an executable pack | Feature 002 implementer / named review lens | P1 | Fixed in plan | Set execution: code only with the complete contract, mapped scenarios and reviewed triplet; masterplan points to the first pending unit. Evidence: R21/R22; all units; 002-V67/002-V68. |
 | 002-ISS-002 | Feasibility/dependencies: Go and SQLite minimum was unresolved | Feature 002 implementer / named review lens | P1 | Fixed in plan | Select Go 1.25.0, sqlite v1.58.0, libc v1.75.6 as the technical planning default; U6 must prove engine/graph/minimum compiler before U1. Evidence: R1; U6; 002-V01/002-V02/002-V07. |
@@ -272,16 +276,16 @@ Planning checklist 2.1 is complete after the documentation audit. All six implem
 
 ### Gate checklist
 
-- [ ] U6, U1, U2, U3, U4 and U5 implemented in masterplan order.
-- [ ] Each behavioral change has observed red-first evidence and focused green proof.
-- [ ] Minimum Go/compiler and pinned SQLite/libc engine proof passed.
-- [ ] Generated output and negative script checks passed.
-- [ ] Full, race and required per-package coverage passed through Make.
-- [ ] Applicable local disk/process scenarios executed and recovery demonstrated.
-- [ ] Native Windows/macOS and hosted evidence recorded separately, or retained as named Phase 6 gates.
-- [ ] All runtime findings resolved with fresh retest evidence.
-- [ ] Phase 3 handoff and masterplan pointers synchronized.
-- [ ] Remaining unaccepted implementation issues: 0.
+- [x] U6, U1, U2, U3, U4 and U5 implemented in masterplan order.
+- [x] Each behavioral change has observed red-first evidence and focused green proof.
+- [x] Minimum Go/compiler and pinned SQLite/libc engine proof passed.
+- [x] Generated output and negative script checks passed.
+- [x] Full, race and required per-package coverage passed through Make.
+- [x] Applicable local disk/process scenarios executed and recovery demonstrated.
+- [x] Native Windows/macOS and hosted evidence recorded separately, or retained as named Phase 6 gates.
+- [x] All runtime findings resolved with fresh retest evidence.
+- [x] Phase 3 handoff and masterplan pointers synchronized.
+- [x] Remaining unaccepted implementation issues: 0.
 
 ### 002-ISS-021 resolution receipt
 
@@ -306,3 +310,13 @@ Base 4bbc639 plus uncommitted implementation. make validate check-generated pass
 ### U4 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
+
+### U5 acceptance receipt — 2026-09-08
+
+All applicable Feature 002 local scenarios are accepted: 67/68 checked, with only native Windows 002-V33 deferred to Phase 6. Current Go 1.27.1-X:nodwarf5 make validate check-generated build passed after the review fixes (storage coverage 97.6%, db/cmd 100%, core 98.2%; existing ports/sqlc exemptions unchanged). Explicit Go 1.25 previously passed the full gate; after the final mapper changes it again passed test-compat, all five CGO-disabled storage/test builds, check-generated and focused migration/inspection race tests. make setup and the final Btrfs make bench-storage run passed. No hosted or native macOS/Windows runtime result is claimed.
+
+Two helper processes preserve all 40 read-modify-write increments and 40 events; a reader retains its snapshot across another process's commit. External writer cancellation returns in 102.5 ms (105.3 ms under race), while the uncanceled wait returns busy in 5.01 s; later writes succeed. Killing and reaping a writer before commit preserves the old task/event set; killing after acknowledgment preserves exactly one committed set. Independent reopen checks integrity and foreign keys. Held-reader WAL growth is followed by automatic restart sequence 0 -> 5 with bounded file reuse, without explicit checkpoint SQL. Normally closed offline backup reopens without modifying its source.
+
+Observed red-first U5 fixes restore the default Make target, preserve migration statement/ledger/commit/rollback cancellation causes, preserve inspection cancellation, and retain unknown migration outcomes alongside schema categories. The completed ce-code-review receipt reported two actionable findings; both were reproduced and fixed, with no unapplied actionable residual. Review passes ran sequentially in the parent context per repository tool mapping; both independent peer routes failed before producing a review, so independent corroboration is unavailable. ce-simplify-code found no warranted behavior-preserving edit.
+
+[Durable evidence, commit sequence and review resolution](../verification-evidence/002/README.md), [raw benchmarks](../verification-evidence/002/storage-benchmarks.txt), [code fingerprint and gate receipt](../verification-evidence/002/acceptance.json), and [operations/service handoff](../storage.md) retain the evidence. The separate U5 commit closes Phase 2; the next active target is Phase 3 planning, not Feature 003 implementation. No push, PR, merge or release is authorized by this acceptance.

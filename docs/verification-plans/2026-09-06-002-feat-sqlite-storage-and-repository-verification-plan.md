@@ -2,8 +2,8 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 surface-profiles: [library-sdk, data-persistence-migration, infrastructure-operations]
-status: U6/U1/U2/U3/U4 locally accepted; U5 active
-evidence-scope: Local U6 execution; remaining units not executed
+status: locally accepted - native and hosted release gates deferred
+evidence-scope: local implementation, per-unit commits and acceptance; no native or hosted execution
 ---
 
 # Feature 002 Verification Plan
@@ -177,25 +177,25 @@ Checkboxes record accepted scenarios after the owning unit's canonical gate. U6 
 
 ### U5. Disk acceptance and handoff
 
-- [ ] 002-V59 **Two writers — TestDiskWriters_NoLostUpdate** (covers R14, R20). Two repository instances concurrently increment a fixture value by read-modify-write inside WithWrite, synchronized at lock acquisition. **Expect:** All successful increments survive; callbacks serialize and event counts equal acknowledged changes. No lost update or unbounded retry.
+- [x] 002-V59 **Two writers — TestDiskWriters_NoLostUpdate** (covers R14, R20). Two repository instances concurrently increment a fixture value by read-modify-write inside WithWrite, synchronized at lock acquisition. **Expect:** All successful increments survive; callbacks serialize and event counts equal acknowledged changes. No lost update or unbounded retry.
 
-- [ ] 002-V60 **Two processes — TestDiskReaders_SnapshotAcrossWriterCommit** (covers R14, R19, R20). Separate processes use the same temporary WAL DB, with channel/pipe handshakes marking snapshot acquisition and writer commit. **Expect:** Reader retains old snapshot while writer commits; next read sees new state. Observe actual journal_mode=wal.
+- [x] 002-V60 **Two processes — TestDiskReaders_SnapshotAcrossWriterCommit** (covers R14, R19, R20). Separate processes use the same temporary WAL DB, with channel/pipe handshakes marking snapshot acquisition and writer commit. **Expect:** Reader retains old snapshot while writer commits; next read sees new state. Observe actual journal_mode=wal.
 
-- [ ] 002-V61 **Lock bounds — TestDiskWriter_BusyAndCancelRecovery** (covers R16, R20). External process holds the write lock; test the 5000-ms busy limit and a 100-ms context, then release the holder. **Expect:** The short-deadline operation matches the context error and returns before the full 5000-ms limit; an uncanceled wait returns busy within the documented scheduling tolerance. A later write succeeds. Failure of the deadline behavior is a compatibility defect, not grounds to weaken this acceptance case.
+- [x] 002-V61 **Lock bounds — TestDiskWriter_BusyAndCancelRecovery** (covers R16, R20). External process holds the write lock; test the 5000-ms busy limit and a 100-ms context, then release the holder. **Expect:** The short-deadline operation matches the context error and returns before the full 5000-ms limit; an uncanceled wait returns busy within the documented scheduling tolerance. A later write succeeds. Failure of the deadline behavior is a compatibility defect, not grounds to weaken this acceptance case.
 
-- [ ] 002-V62 **Crash before commit — TestRecovery_KilledWriterBeforeCommit** (covers R7, R14, R19, R20). Helper process changes task/event rows in one transaction and signals a pre-commit checkpoint; terminate it, reap it, reopen DB. **Expect:** Old complete task/event set remains; integrity_check is ok and foreign_key_check has no rows.
+- [x] 002-V62 **Crash before commit — TestRecovery_KilledWriterBeforeCommit** (covers R7, R14, R19, R20). Helper process changes task/event rows in one transaction and signals a pre-commit checkpoint; terminate it, reap it, reopen DB. **Expect:** Old complete task/event set remains; integrity_check is ok and foreign_key_check has no rows.
 
-- [ ] 002-V63 **Crash after commit — TestRecovery_KilledWriterAfterAck** (covers R7, R14, R19, R20). Helper commits task/event changes and signals confirmed commit, then terminate/reap and reopen. **Expect:** Exactly one committed set survives process death. This is not a simulated power-loss durability claim.
+- [x] 002-V63 **Crash after commit — TestRecovery_KilledWriterAfterAck** (covers R7, R14, R19, R20). Helper commits task/event changes and signals confirmed commit, then terminate/reap and reopen. **Expect:** Exactly one committed set survives process death. This is not a simulated power-loss durability claim.
 
-- [ ] 002-V64 **Recovery readback — TestRecovery_AtomicStateAfterFailure** (covers R7, R14, R16, R20). Repeat injected statement/event/commit/rollback failures on disk and reopen with an independent repository. **Expect:** Only whole old/new transaction states occur as appropriate; unknown outcomes are resolved by inspection, never blind replay.
+- [x] 002-V64 **Recovery readback — TestRecovery_AtomicStateAfterFailure** (covers R7, R14, R16, R20). Repeat injected statement/event/commit/rollback failures on disk and reopen with an independent repository. **Expect:** Only whole old/new transaction states occur as appropriate; unknown outcomes are resolved by inspection, never blind replay.
 
-- [ ] 002-V65 **Integrity and cleanup — TestDiskLifecycle_IntegrityAndCleanup** (covers R5, R6, R7, R19, R20). Run repeated opens, migrations, reads/writes, cancellation and process termination; also hold a reader while writes grow WAL, release it, and continue writes beyond the automatic checkpoint threshold. **Expect:** Integrity/FK checks pass, checkpoint progress or bounded subsequent WAL recycling is observed, children are reaped, and no live locks block cleanup. File shrinking alone is not the checkpoint oracle, and an explicit test checkpoint cannot be reported as automatic-checkpoint proof. No real developer database is touched.
+- [x] 002-V65 **Integrity and cleanup — TestDiskLifecycle_IntegrityAndCleanup** (covers R5, R6, R7, R19, R20). Run repeated opens, migrations, reads/writes, cancellation and process termination; also hold a reader while writes grow WAL, release it, and continue writes beyond the automatic checkpoint threshold. **Expect:** Integrity/FK checks pass, checkpoint progress or bounded subsequent WAL recycling is observed, children are reaped, and no live locks block cleanup. File shrinking alone is not the checkpoint oracle, and an explicit test checkpoint cannot be reported as automatic-checkpoint proof. No real developer database is touched.
 
-- [ ] 002-V66 **Performance — BenchmarkStorage** (covers R22). Measure get/list/subtree and current-open versus first-create on empty/100/1000 tasks plus 10000-task stress, with fixed note/tag/tree sizes. **Expect:** Record ns/op, allocations, compiler, OS/filesystem/CPU and raw benchmark output; setup is outside timed loops. No storage benchmark claims CLI <15 ms.
+- [x] 002-V66 **Performance — BenchmarkStorage** (covers R22). Measure get/list/subtree and current-open versus first-create on empty/100/1000 tasks plus 10000-task stress, with fixed note/tag/tree sizes. **Expect:** Record ns/op, allocations, compiler, OS/filesystem/CPU and raw benchmark output; setup is outside timed loops. No storage benchmark claims CLI <15 ms.
 
-- [ ] 002-V67 **Aggregate — StorageAcceptanceGates** (covers R1, R18, R21, R22). On the actual implementation revision, run minimum/current compiler proof, full/race/coverage, generated check, scripts and CGO-disabled target builds through Make. **Expect:** All applicable local gates pass with >=95% handwritten-package coverage; native/hosted evidence remains separate and pending if unexecuted.
+- [x] 002-V67 **Aggregate — StorageAcceptanceGates** (covers R1, R18, R21, R22). On the actual implementation revision, run minimum/current compiler proof, full/race/coverage, generated check, scripts and CGO-disabled target builds through Make. **Expect:** All applicable local gates pass with >=95% handwritten-package coverage; native/hosted evidence remains separate and pending if unexecuted.
 
-- [ ] 002-V68 **Operational handoff — StorageRunbookReplay** (covers R6, R7, R16, R21, R22). Follow docs/storage.md with disposable recognized/foreign/newer/failed fixtures and verify Phase 3 boundary references. **Expect:** Documented open/refusal/recovery and consistent-offline-backup guidance match behavior; triplet/masterplan evidence is synchronized and future hosted/native gates stay explicit.
+- [x] 002-V68 **Operational handoff — StorageRunbookReplay** (covers R6, R7, R16, R21, R22). Follow docs/storage.md with disposable recognized/foreign/newer/failed fixtures and verify Phase 3 boundary references. **Expect:** Documented open/refusal/recovery and consistent-offline-backup guidance match behavior; triplet/masterplan evidence is synchronized and future hosted/native gates stay explicit.
 
 ## Commands and environments
 
@@ -207,11 +207,11 @@ Checkboxes record accepted scenarios after the owning unit's canonical gate. U6 
 | `make validate` | Exists; U6 adds existing setup-script checks, U2 extends them | fmt/vet/full/race/coverage; >=95% handwritten nonexempt packages |
 | `make test-compat` | Implemented U6; passes after 002-ISS-021 resolution | Driver/engine/transaction smoke plus fake minimum-version rejection |
 | `make build-storage` | Implemented U6 | CGO-disabled native and five-target storage compilation |
-| `make setup-sqlc` | Planned U2 | Explicit pinned tool download/install when needed; digest checked |
-| `make generate` | Planned U2 | Scratch generation then replacement of only owned generated outputs |
-| `make check-generated` | Planned U2 | Non-mutating full-directory comparison, including untracked/obsolete files |
-| `make test-scripts` | Planned U2 | Setup/generator negative fixtures; no real network needed in negative tests |
-| `make bench-storage` | Planned U5 | Storage timing/allocations, reference environment and raw output |
+| `make setup-sqlc` | Implemented U2 | Explicit pinned tool download/install when needed; digest checked |
+| `make generate` | Implemented U2 | Scratch generation then replacement of only owned generated outputs |
+| `make check-generated` | Implemented U2 | Non-mutating full-directory comparison, including untracked/obsolete files |
+| `make test-scripts` | Implemented U2 | Setup/generator negative fixtures; no real network needed in negative tests |
+| `make bench-storage` | Implemented U5 | Storage timing/allocations, reference environment and raw output |
 | Native Windows/macOS / hosted jobs | Deferred Feature 006 | Exact candidate revision, job URLs, compiler, OS/arch and result; never inferred from cross-build |
 
 The baseline Makefile has no supported TEST/PKG/RUN filter variables. New targets must be implemented and checked before invocation; until then use existing full/short targets. Each implementation unit records the first expected test failure before its production changes, then focused green and canonical aggregate results. Characterization cases already passing do not authorize unrelated changes.
@@ -234,7 +234,7 @@ The baseline Makefile has no supported TEST/PKG/RUN filter variables. New target
 
 ## Execution record
 
-U6/U1/U2/U3/U4 locally accepted; U5 active. Native Windows/macOS execution remains pending.
+All six units are locally accepted. Native Windows/macOS execution remains pending; chronological receipts below retain earlier states.
 
 | Date | Revision and dirty scope | Unit/scenario | Compiler and OS/arch | Command | Red/green/result | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -270,3 +270,13 @@ Base 4bbc639 plus uncommitted implementation. make validate check-generated pass
 ### U4 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
+
+### U5 acceptance receipt — 2026-09-08
+
+All applicable Feature 002 local scenarios are accepted: 67/68 checked, with only native Windows 002-V33 deferred to Phase 6. Current Go 1.27.1-X:nodwarf5 make validate check-generated build passed after the review fixes (storage coverage 97.6%, db/cmd 100%, core 98.2%; existing ports/sqlc exemptions unchanged). Explicit Go 1.25 previously passed the full gate; after the final mapper changes it again passed test-compat, all five CGO-disabled storage/test builds, check-generated and focused migration/inspection race tests. make setup and the final Btrfs make bench-storage run passed. No hosted or native macOS/Windows runtime result is claimed.
+
+Two helper processes preserve all 40 read-modify-write increments and 40 events; a reader retains its snapshot across another process's commit. External writer cancellation returns in 102.5 ms (105.3 ms under race), while the uncanceled wait returns busy in 5.01 s; later writes succeed. Killing and reaping a writer before commit preserves the old task/event set; killing after acknowledgment preserves exactly one committed set. Independent reopen checks integrity and foreign keys. Held-reader WAL growth is followed by automatic restart sequence 0 -> 5 with bounded file reuse, without explicit checkpoint SQL. Normally closed offline backup reopens without modifying its source.
+
+Observed red-first U5 fixes restore the default Make target, preserve migration statement/ledger/commit/rollback cancellation causes, preserve inspection cancellation, and retain unknown migration outcomes alongside schema categories. The completed ce-code-review receipt reported two actionable findings; both were reproduced and fixed, with no unapplied actionable residual. Review passes ran sequentially in the parent context per repository tool mapping; both independent peer routes failed before producing a review, so independent corroboration is unavailable. ce-simplify-code found no warranted behavior-preserving edit.
+
+[Durable evidence, commit sequence and review resolution](../verification-evidence/002/README.md), [raw benchmarks](../verification-evidence/002/storage-benchmarks.txt), [code fingerprint and gate receipt](../verification-evidence/002/acceptance.json), and [operations/service handoff](../storage.md) retain the evidence. The separate U5 commit closes Phase 2; the next active target is Phase 3 planning, not Feature 003 implementation. No push, PR, merge or release is authorized by this acceptance.
