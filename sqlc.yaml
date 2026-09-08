@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "sqlite"
+    schema: "db/migrations"
+    queries: "db/queries.sql"
+    gen:
+      go:
+        package: "sqlc"
+        out: "internal/storage/sqlc"
+        sql_package: "database/sql"
+        emit_empty_slices: true

@@ -2,7 +2,7 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 verification-plan: docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md
-status: U6/U1 locally accepted; U2 active
+status: U6/U1/U2 locally accepted; U3 active
 evidence-scope: Planning findings and local U6 execution
 ---
 
@@ -291,9 +291,12 @@ Resolved locally on 2026-09-08. The connection wrapper retries only failed acqui
 
 U1 accepted after final make validate on 2026-09-08 (storage 96.1%, db 100%). Data-integrity/migration review exercised atomic DDL+ledger+task rollback, foreign/newer/drift refusal and constraints. Adversarial tests reproduced and fixed two implementation findings: wildcard catalog exclusion (sqliteXsecret) and split-snapshot identity/catalog inspection. Failure injection distinguishes commit acknowledgment loss from pre-commit failure and proves recovery; two-process tests prove serialized initialization. Source inventory and disposable inverse fixtures are isolated. ce-simplify-code was performed inline under project instructions, with no edits needed. See paired verification receipt for exact test names. Masterplan advances to U2; final feature review and downstream acceptance remain pending.
 
+### U2 execution and review receipt
+
+U2 accepted on 2026-09-08 after make validate check-generated. Official prebuilt sqlc v1.31.1 installation verified the pinned digest; generated output is reproducible. SQL correctness/injection, recursive termination, candidate parity and tooling recovery fixtures pass. Resolved two observed implementation findings: ambiguous recursive ID references and coverage-script package-column parsing. Existing generated-code exemptions were preserved, not broadened. Whole-directory checks work without Git; generation and installation failures preserve old output/tool. Paired verification record owns details; masterplan advances to U3.
 
 
 
-### U1 commit reconstruction — 2026-09-08
+### U2 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.

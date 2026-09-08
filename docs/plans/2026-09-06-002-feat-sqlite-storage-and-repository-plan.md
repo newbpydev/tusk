@@ -459,7 +459,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 ## Verification Contract
 
-**Execution update, 2026-09-08:** U6/U1 locally accepted; U2 active. See paired execution receipts.
+**Execution update, 2026-09-08:** U6/U1/U2 locally accepted; U3 active. See paired execution receipts.
 
 The [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md) owns 002-V01–002-V68 fixtures, failure placement, and evidence tiers. The [workorder](../workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md) records planning corrections separately from runtime findings.
 
@@ -478,6 +478,6 @@ Feature 002 is complete when all six units and local scenarios have recorded exe
 Native Windows/macOS execution and release-target runtime acceptance remain explicit Phase 6 gates. Phase 2 supplies portable tests and CGO-disabled cross-build proof; Linux execution cannot check native evidence boxes. Feature 003 planning may begin only after Phase 2 local acceptance and a recorded handoff. CLI latency, full user workflows, hosted CI, and publication remain with their owning phases.
 
 
-### U1 commit reconstruction — 2026-09-08
+### U2 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.

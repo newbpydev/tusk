@@ -1,8 +1,18 @@
 .PHONY: all setup fmt vet test test-unit test-compat build-storage race validate coverage bench bench-tree bench-build build clean help
-.PHONY: test-scripts
+.PHONY: setup-sqlc generate check-generated test-scripts
+
+setup-sqlc:
+	bash scripts/sqlc.sh setup
+
+generate:
+	bash scripts/sqlc.sh generate
+
+check-generated:
+	bash scripts/sqlc.sh check
 
 test-scripts:
 	@./scripts/test/test_scripts.sh
+	@bash scripts/test/test_sqlc.sh
 
 all: validate build
 

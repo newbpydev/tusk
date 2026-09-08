@@ -88,6 +88,20 @@ EXIT_CODE=$?
 set -e
 assert_eq 0 "$EXIT_CODE" "fmt.sh exits 0 against repo root"
 
+# Go prints a package without the 'ok' prefix when it has no test files.
+cat > "${TMP_DIR}/go" <<'EOF'
+#!/usr/bin/env bash
+printf '\t%s\t\tcoverage: 0.0%% of statements\n' "$TUSK_COVERAGE_FIXTURE"
+EOF
+chmod +x "${TMP_DIR}/go"
+for package in github.com/newbpydev/tusk/internal/storage/sqlc github.com/newbpydev/tusk/internal/storage/not_sqlc; do
+    expected=1
+    if [[ "$package" == */sqlc ]]; then expected=0; fi
+    result=0
+    PATH="${TMP_DIR}:$PATH" TUSK_COVERAGE_FIXTURE="$package" "${ROOT_DIR}/scripts/coverage.sh" >"${TMP_DIR}/coverage-output" 2>&1 || result=$?
+    assert_eq "$expected" "$result" "coverage package parsing: $package"
+done
+
 echo "========================================"
 echo "Script Test Results: ${TESTS_PASSED}/${TESTS_TOTAL} passed"
 echo "========================================"
