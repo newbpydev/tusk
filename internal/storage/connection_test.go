@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+
+	"modernc.org/sqlite"
 )
 
 type faultConnection struct {
@@ -210,5 +212,48 @@ func TestWriterConnection_ReleaseDuringAcquisition(t *testing.T) {
 			t.Fatal(err)
 		}
 		cancel()
+	}
+}
+
+func TestWriterConnection_ExtendedBusyAcquisition(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "extended-busy.db")
+	a := compatibilityDB(t, path, false)
+	b := compatibilityDB(t, path, false)
+	for _, query := range []string{"PRAGMA journal_mode=WAL", "CREATE TABLE probe(value INTEGER)", "BEGIN"} {
+		if _, err := a.Exec(query); err != nil {
+			t.Fatal(err)
+		}
+	}
+	defer a.Exec("ROLLBACK")
+	var count int
+	if err := a.QueryRow("SELECT count(*) FROM probe").Scan(&count); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := b.Exec("INSERT INTO probe VALUES (1)"); err != nil {
+		t.Fatal(err)
+	}
+	_, busy := a.Exec("INSERT INTO probe VALUES (2)")
+	var concrete *sqlite.Error
+	if !errors.As(busy, &concrete) || concrete.Code() != 517 {
+		t.Fatalf("expected real SQLITE_BUSY_SNAPSHOT: %v", busy)
+	}
+	// Replay only acquisition, before a transaction or callback has been admitted.
+	attempts := 0
+	tx := &faultTx{}
+	c := &connection{sqliteConn: &faultConnection{
+		exec: func(string) error { return nil },
+		begin: func() (driver.Tx, error) {
+			attempts++
+			if attempts == 1 {
+				return nil, busy
+			}
+			return tx, nil
+		},
+	}}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	got, err := c.BeginTx(ctx, driver.TxOptions{})
+	if err != nil || got != tx || attempts != 2 {
+		t.Fatalf("extended busy aborted acquisition: tx=%v attempts=%d err=%v", got, attempts, err)
 	}
 }

@@ -5,6 +5,11 @@
       "unit": "2.6",
       "title": "Preserve joined categories and complete statement fault coverage",
       "evidence": "Red: all six hierarchy/corruption pairs lost ErrCorrupt during failed rollback. Green: preserve every recognized safe sentinel, retain unknown outcome, redact private wrapper text. Real SQLite constraint codes 1555/2067/787 and CreateTask statement failure now have explicit tests. Focused regression and make validate check-generated pass."
+    },
+    {
+      "unit": "2.7",
+      "title": "Retry extended busy results before transaction admission",
+      "evidence": "Red: a real SQLite WAL snapshot conflict (517) injected at BeginTx aborted acquisition after one attempt. Green: primary-code masking admits the second attempt within the existing budget. No callback, statement or commit retry added. Focused regression and make validate check-generated pass; storage coverage remains 97.6%."
     }
   ],
   "latest_code_sha256": {
@@ -32,8 +37,8 @@
     "internal/storage/codec_test.go": "0341e4c98c64e867c786f8884d1760aa703ff1f7fd715c74422c8d76d26b3278",
     "internal/storage/compatibility_test.go": "7f04aff8606f5cc66701022d99c12a6310560270fbf916eea797b9d20b2427f1",
     "internal/storage/concurrency_test.go": "785c475044e955ac463b48c1574ef9673f6981971785255878286f1a302f083d",
-    "internal/storage/connection.go": "59d707b4820c7d28d93dfcd61c1d2a34c5588ac3aa75b664c105f064855a967e",
-    "internal/storage/connection_test.go": "7177e90f54b8d8f09feb7b53168280b5464b8052e40b25a1492dc0dac862d43b",
+    "internal/storage/connection.go": "af67a4daa46410e145b38d63f1d070697d0c4f94675f593a1bab858e3a9c9a39",
+    "internal/storage/connection_test.go": "b15a3e99c069803eb77ea6343fa7016b06838336e045eec0d3ff5eba216e3a77",
     "internal/storage/errors.go": "d4161fd25814034bbb71acbf80cb9eace439923666d9ef404f909128d8046c5b",
     "internal/storage/errors_test.go": "0627d6d45753fac6e573e1bdd4100c5ea23cb4382e4d17da92134ec00e6d4520",
     "internal/storage/inspection_cancellation_test.go": "fbc60a8d133effc5c7b1053c64375c78d885a5e5b4586f57045625845b0fbeb8",

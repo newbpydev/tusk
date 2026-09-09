@@ -246,3 +246,5 @@ The original red-first work was accumulated without per-unit commits. At the use
 - [x] **2.5 PR #2 callback-cause preservation**: six omissions reproduced; all 28 declared cause cases pass with private text redacted. make validate check-generated build and the minimum-Go focused race test pass. See docs/verification-evidence/002/callback-cause-followup.json; separate fix commit, then monitor hosted feedback.
 
 - [x] **2.6 PR #2 joined error categories and statement fault coverage**
+
+- [x] **2.7 PR #2 extended busy acquisition**

@@ -126,7 +126,7 @@ func (c *connection) BeginTx(ctx context.Context, opts driver.TxOptions) (tx dri
 			return nil, contextErr
 		}
 		var busy *sqlite.Error
-		if !errors.As(err, &busy) || busy.Code() != 5 || !time.Now().Before(deadline) {
+		if !errors.As(err, &busy) || busy.Code()&255 != 5 || !time.Now().Before(deadline) {
 			return nil, err
 		}
 	}
