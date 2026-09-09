@@ -16,6 +16,7 @@ func storageCause(err error) error {
 	}
 	var safe error
 	for _, sentinel := range []error{
+		ports.ErrInvalidCommand, ports.ErrInvalidText, ports.ErrInvalidDate, ports.ErrInvalidReferenceTime, ports.ErrIdentityGeneration, ports.ErrConflict, ports.ErrConfirmationRequired, ports.ErrInvalidServiceOptions,
 		context.Canceled, context.DeadlineExceeded,
 		core.ErrTaskNotFound, core.ErrDuplicateTaskID, core.ErrInvalidTaskID, core.ErrEmptyTitle, core.ErrTitleTooLong, core.ErrInvalidStatus, core.ErrInvalidPriority, core.ErrInvalidStatusTransition, core.ErrInvalidProgress, core.ErrInvalidTag, core.ErrSelfParenting, core.ErrCyclicDependency, core.ErrMaxDepthExceeded, core.ErrInvalidDepth,
 		ports.ErrBusy, ports.ErrCorrupt, ports.ErrReadOnly, ports.ErrStorage, ports.ErrInvalidRecord, ports.ErrTransactionInUse, ports.ErrTransactionClosed, ports.ErrChildrenPresent, ports.ErrIncompatibleSchema, ports.ErrClosedRepository, ports.ErrInvalidCallback, ports.ErrNestedTransaction,

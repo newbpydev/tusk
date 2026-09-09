@@ -14,12 +14,14 @@ Companions: [plan](../plans/2026-09-06-003-feat-task-service-engine-plan.md), [v
 
 ## Issue register
 
+Lfg intake, 2026-09-09: local sequential contract review found no additional blocking findings at `f2fd0e35f16edb78ef5e57c0f4a68ffa7a1b9fa0`. The optional Claude review returned HTTP 401 (expired OAuth token), so no independent review is claimed. Implementation and publication through an open PR are now user-authorized; execution gates retain their evidence requirements.
+
 | ID | Source / owner and lens | Severity | Status | Impact / next action | Retest or closure evidence |
 | --- | --- | --- | --- | --- | --- |
 | 003-ISS-001 | Outline / plan owner, architecture | P1 | Fixed in plan | Unsupported readiness/missing companions; use synchronized seven-unit pack | Pack audit and master/registry/product G1 handoff |
 | 003-ISS-002 | Product R18/R19 / service owner, API parity | P1 | Fixed in plan | Missing get/stats/history/forest/delete-preview contracts; adopt operation/type tables | U1/U4/U7; V03, V60, V65–V76 |
 | 003-ISS-003 | Patch sketch / service owner, correctness | P1 | Fixed in plan | Preserve omit/set/clear, current-row patch and no-op semantics | U1/U6/U7; V04–V10, V44–V48 |
-| 003-ISS-004 | Transaction boundary / storage-service owner, reliability | P1 | Open execution gate | New service causes can disappear on failed rollback; add safe categories in U1 | V88; every new cause individually/joined, private text redacted and unknown outcome retained |
+| 003-ISS-004 | Transaction boundary / storage-service owner, reliability | P1 | U1 verified; U5 aggregate pending | All new service causes survive failed rollback; safe categories added in U1 | V88; every new cause individually/joined, private text redacted and unknown outcome retained |
 | 003-ISS-005 | Date outline / parser owner, portability | P1 | Fixed in plan | Decide local date/end time, calendar clamps, DST ambiguity, ranges and strict grammar | U2; V13–V24, V89 |
 | 003-ISS-006 | Identity omission / service owner, API/security | P2 | Fixed in plan | Pin UUIDv7 input/entropy/layout/ranges, invalid injected IDs and no retry | U2/U6; V25–V27, V41 |
 | 003-ISS-007 | Rollup status ambiguity / service owner, domain | P1 | Fixed in plan | Distinguish progress100 from done, explicit reopen from policy completion, and final-child reset | U3/U7; V28–V35, V49–V59 |
@@ -177,3 +179,5 @@ All items remain unchecked during planning. Explicit later-phase handoffs are tr
 - [ ] All Feature 003 runtime findings fixed or explicitly accepted by the user with scoped evidence; remaining unaccepted local blockers: 0.
 - [ ] MASTERPLAN and all affected planning/verification/workorder artifacts synchronized with executed evidence.
 - [ ] Hosted/native/CLI/TUI/manual/release status reported separately; publication separately authorized if requested.
+
+U1 acceptance: make validate passed with input/base/query seam tests and 16 real failed-rollback cases; [receipt](../verification-evidence/003/u1.json). Public operation/result/concurrency assertions in V07/V09/V11/V12 remain with their implementing units, consistent with the ban on interim facade stubs.

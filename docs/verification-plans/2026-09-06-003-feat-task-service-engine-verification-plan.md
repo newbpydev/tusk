@@ -51,16 +51,16 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 
 ### U1. Contracts, constructor and error seam
 
-- [ ] 003-V01 **Normal / no I/O:** Construct with valid repo/functions/location and policy false/true; it calls none of them, opens no storage, and does not close the injected owner.
-- [ ] 003-V02 **Invalid options:** Nil repository interface, clock, ID function or location returns ErrInvalidServiceOptions without panic/dependency calls. Typed-nil object behavior is outside supported injection.
-- [ ] 003-V03 **Contract:** Compile consumer fixtures for every planned operation/command/result; optional/clear/consent fields are representable without importing service/SQL into ports. Full concrete conformance is asserted in U4, with no interim method stubs.
-- [ ] 003-V04 **Metadata boundary:** Empty/whitespace title fails, 255 Unicode runes succeeds, 256 fails; default/invalid priority and exact multiline notes follow core/input rules; invalid UTF-8/NUL fails before admission.
-- [ ] 003-V05 **ID/tag normalization:** Trim ID/title/tag whitespace; existing opaque non-UUID ID remains addressable; normalize case/#/hyphens and sorted duplicates; invalid/empty tag fails. Inputs and snapshots remain unchanged.
+- [x] 003-V01 **Normal / no I/O:** Construct with valid repo/functions/location and policy false/true; it calls none of them, opens no storage, and does not close the injected owner.
+- [x] 003-V02 **Invalid options:** Nil repository interface, clock, ID function or location returns ErrInvalidServiceOptions without panic/dependency calls. Typed-nil object behavior is outside supported injection.
+- [x] 003-V03 **Contract:** Compile consumer fixtures for every planned operation/command/result; optional/clear/consent fields are representable without importing service/SQL into ports. Full concrete conformance is asserted in U4, with no interim method stubs.
+- [x] 003-V04 **Metadata boundary:** Empty/whitespace title fails, 255 Unicode runes succeeds, 256 fails; default/invalid priority and exact multiline notes follow core/input rules; invalid UTF-8/NUL fails before admission.
+- [x] 003-V05 **ID/tag normalization:** Trim ID/title/tag whitespace; existing opaque non-UUID ID remains addressable; normalize case/#/hyphens and sorted duplicates; invalid/empty tag fails. Inputs and snapshots remain unchanged.
 - [ ] 003-V06 **Patch shape:** Set+clear due/parent, manual-progress+status and manual-progress+parent intent return ErrInvalidCommand, including equal-value directives. Empty service patch is allowed but still reads/validates target/base.
 - [ ] 003-V07 **Domain validation:** Invalid status, done→blocked, priority 0 on patch, non-done progress 100 and progress -1/101 return the declared domain errors at their preflight or row-dependent boundary; valid done progress 100 is a no-op.
 - [ ] 003-V08 **Query shape:** All+Statuses, RootOnly+ParentID and malformed text/enums/tags fail with expected command/domain category. Reversed/equal exclusive date bounds are valid and produce an empty result.
 - [ ] 003-V09 **Time/cancellation:** Already canceled context returns context cause before dependencies. Zero/out-of-range reference time fails safely; one timestamp is captured per valid mutation/time-dependent query and reused for all changes.
-- [ ] 003-V10 **Base comparison:** Different editable metadata/ID/incarnation conflicts or fails malformed-shape validation as specified. Equal instants with different locations pass; pointer identity does not matter. Ignore UpdatedAt/CompletedAt and parent-derived progress; compare leaf progress. ABA-to-equal is accepted.
+- [x] 003-V10 **Base comparison:** Different editable metadata/ID/incarnation conflicts or fails malformed-shape validation as specified. Equal instants with different locations pass; pointer identity does not matter. Ignore UpdatedAt/CompletedAt and parent-derived progress; compare leaf progress. ABA-to-equal is accepted.
 - [ ] 003-V11 **No partial values:** Callback/commit/read-cleanup failure after assembling a result returns nil task/list/tree/history or zero stats/delete result. No error result exposes Deleted=true or staged IDs.
 - [ ] 003-V12 **Isolation and ownership:** Sequential/concurrent calls use per-operation state; returned slices/maps/pointers and supplied command/base slices do not alias. No handle escapes or concurrent handle/repository reentry occurs in a callback.
 
@@ -196,6 +196,8 @@ Benchmarks mirror storage fixture scale: 128-byte notes, three tags, depth-ten c
 
 ## Execution record
 
+The 2026-09-09 lfg intake rechecked the implementation contract against clean revision `f2fd0e35f16edb78ef5e57c0f4a68ffa7a1b9fa0`. Local sequential coherence, feasibility, scope and adversarial review found no blocking contract gaps. Additional Claude review produced no usable result (HTTP 401, expired OAuth token); independent corroboration is unavailable. This entry is document evidence only; all runtime scenarios below remain pending until executed.
+
 Planning does not fill implementation pass/fail values. Create `docs/verification-evidence/003/` during execution with an index and receipts containing scenario IDs, UTC date, exact commit plus worktree/diff identity for precommit Red/Green, Go/OS/architecture, command, exit code, expected/actual, raw evidence path and unresolved limitation. Attach each unit's validation to its eventual commit without claiming a precommit run ran on a commit that did not yet exist.
 
 | Scope | Current evidence |
@@ -206,3 +208,5 @@ Planning does not fill implementation pass/fail values. Create `docs/verificatio
 | Hosted/native/CLI/TUI/manual/release | Not run; later feature owners |
 
 Every executed scenario records its own result. A broad green suite does not close a scenario without verifying that its described assertions ran. Leave all implementation/acceptance boxes unchecked until that evidence exists.
+
+U1 execution: [receipt and raw logs](../verification-evidence/003/u1.json). make validate passed; V06/V08 have helper proof but retain public behavior checks for U6/U4, V07/V09/V11/V12 retain orchestration checks, and V88 retains U5 aggregate acceptance. These open boxes do not imply unimplemented U1 method stubs.

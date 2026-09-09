@@ -351,3 +351,26 @@ func TestTransaction_RollbackFailurePreservesJoinedCauses(t *testing.T) {
 		})
 	}
 }
+
+func TestServiceErrors_RollbackFailure(t *testing.T) {
+	for _, cause := range []error{ports.ErrInvalidCommand, ports.ErrInvalidText, ports.ErrInvalidDate, ports.ErrInvalidReferenceTime, ports.ErrIdentityGeneration, ports.ErrConflict, ports.ErrConfirmationRequired, ports.ErrInvalidServiceOptions} {
+		for _, joined := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%s/joined=%v", cause, joined), func(t *testing.T) {
+				r, path := diskRepository(t)
+				installTransactionFault(t, r, path, "rollback", false, nil, nil, nil)
+				original := cause
+				if joined {
+					original = errors.Join(cause, ports.ErrCorrupt, context.Canceled)
+				}
+				err := r.WithWrite(context.Background(), func(context.Context, ports.TaskWriter) error { return fmt.Errorf("PRIVATE-SERVICE: %w", original) })
+				var outcome ports.TransactionError
+				if !errors.As(err, &outcome) || !errors.Is(err, cause) || joined && (!errors.Is(err, ports.ErrCorrupt) || !errors.Is(err, context.Canceled)) {
+					t.Fatalf("lost cause: %v", err)
+				}
+				if strings.Contains(err.Error(), "PRIVATE-SERVICE") {
+					t.Fatal("private text exposed")
+				}
+			})
+		}
+	}
+}

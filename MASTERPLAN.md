@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 3: Task Service Engine (planning complete; implementation pending)
-**Active Implementation Target**: 3.2 — Unit 003-1 / U1: Inbound contracts and safe error compatibility (awaiting implementation authorization)
+**Active Phase**: Phase 3: Task Service Engine (implementation authorized by lfg, 2026-09-09)
+**Active Implementation Target**: 3.2 — Unit 003-2 / U2: Calendar parser and UUIDv7 identity
 **Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -143,7 +143,7 @@ graph TD
 ---
 
 ### Phase 3: Feature 003 - Task Service Engine
-- **Status**: ⏳ **PLANNING COMPLETE — IMPLEMENTATION PENDING** (no Feature 003 implementation authorization)
+- **Status**: 🚀 **IMPLEMENTATION AUTHORIZED** (lfg, 2026-09-09; each unit requires separate validation and commit)
 - **Plan**: `docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`
@@ -153,7 +153,7 @@ graph TD
   - [x] Verification Plan (`docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`)
   - [x] Issue Workorder (`docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`)
 - [ ] **3.2 Implementation Units**
-  - [ ] Unit 003-1 / U1: Inbound Contracts, Validation Seams & Safe Error Compatibility
+  - [x] Unit 003-1 / U1: Inbound Contracts, Validation Seams & Safe Error Compatibility
   - [ ] Unit 003-2 / U2: Calendar Parser & UUIDv7 Identity
   - [ ] Unit 003-3 / U3: Transaction-local Hierarchy, Rollup & Event Engine
   - [ ] Unit 003-6 / U6: Creation & Metadata Mutation Primitives (split from 003-4)
@@ -268,3 +268,7 @@ The original red-first work was accumulated without per-unit commits. At the use
 - [x] **2.11 PR #2 sqlc tooling usability**
 
 - [x] **2.12 PR #2 follow-up review and compounded learning**
+
+### Feature 003 U1 acceptance — 2026-09-09
+
+Inbound contracts, detached preflight and base comparisons pass make validate. All eight new safe errors survive failed rollback individually and joined. See docs/verification-evidence/003/u1.json. Runtime-dependent assertions in V07/V09/V11/V12 remain open for later units; U1 exposes no partial public facade.
