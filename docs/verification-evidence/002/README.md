@@ -13,6 +13,7 @@ The original red-first work accumulated without unit commits. The user required 
 | U2 | `938e7f4` | `make validate check-generated` | 96.1% |
 | U3 | `a9e21d6` | `make validate check-generated` | 95.7% |
 | U4 | `017d599` | `make validate check-generated` | 97.0% |
+| U5 | `63d6691` | `make validate check-generated build` | 97.6% |
 
 Original red/green receipts remain in the paired verification plan as historical evidence; their references to then-uncommitted work are not current branch status.
 
@@ -48,3 +49,5 @@ The review's two required fixes are applied with red/green evidence. Final aggre
 ## Publication review — 2026-09-08
 
 The user subsequently authorized simplify, review, compound and commit/push/PR. The [fresh review](publication-review.json) covers origin/main through U5, including both earlier fixes: zero actionable findings. Reuse, quality and efficiency passes found no worthwhile changes. make validate check-generated build passes (storage 97.6%). Both external routes again failed without usable review evidence; local passes are not independent corroboration. Publication state is tracked in MASTERPLAN target 2.4.
+
+The [compounded learning](../../solutions/database-issues/preserve-transaction-outcomes-through-error-redaction.md) explains why safe error causes and unknown outcomes must be preserved separately. Its frontmatter and claims validators pass; source grounding ran sequentially in the parent context. The task-event glossary now reflects implemented persistence.

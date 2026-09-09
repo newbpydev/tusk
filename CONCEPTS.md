@@ -33,8 +33,8 @@ The deterministic sort order applied when displaying tasks in the CLI or TUI:
 
 Apply the same order to siblings in a tree. Pinned/active ordering is reserved terminology; the current product contract has no persisted pin capability.
 
-### Task Event (Planned)
-A timeline entry recording the kind, changed field names, sequence, and time of a task mutation. Task events do not store old notes or reconstruct task state. Deleting a task deletes its events. The [product plan](docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md) defines the planned event contract; persistence is not implemented yet.
+### Task Event
+A timeline entry recording the kind, changed field names, sequence, and time of a task mutation. Task events do not store old notes or reconstruct task state. Deleting a task deletes its events.
 
 ---
 
@@ -63,7 +63,7 @@ The context-aware mapping of physical keystrokes to domain actions:
 ## 3. Storage & Infrastructure Concepts
 
 ### Storage Engine
-The persistence mechanism responsible for saving and retrieving tasks. By default, Tusk uses an embedded SQLite engine operating in Write-Ahead Logging (WAL) mode. The engine is decoupled from business logic through the `ports.TaskRepository` interface.
+The persistence boundary that saves and retrieves tasks and their task events independently of business orchestration. A write groups related changes so they succeed together; an unconfirmed outcome requires reading stored state before deciding what to repeat.
 
 ### Zero-Friction Startup
 The design principle ensuring Tusk runs immediately upon binary execution without requiring external database services, background daemon processes, environment configurations, or interactive authentication screens.

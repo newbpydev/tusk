@@ -137,7 +137,7 @@ graph TD
 - [ ] **2.4 Post-acceptance publication follow-up (user authorized 2026-09-08)**
   - [x] Simplification: reuse, quality and efficiency passes; no behavior-preserving change warranted
   - [x] Fresh code review and verification: zero actionable findings (independent review unavailable; recorded in publication-review.json)
-  - [ ] Capture durable learning and commit verified follow-up separately
+  - [x] Capture durable learning and commit verified follow-up separately (transaction outcome redaction; glossary synchronized)
   - [ ] Push branch and open PR; inspect hosted review/check state
 
 ---
