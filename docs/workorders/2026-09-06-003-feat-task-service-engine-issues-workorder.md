@@ -185,3 +185,5 @@ U1 acceptance: make validate passed with input/base/query seam tests and 16 real
 U2 acceptance: deterministic parser and UUIDv7 pass make validate; [receipt](../verification-evidence/003/u2.json). Tests exposed and fixed uppercase weekday dispatch and the valid year-1 midnight sentinel collision. Production tzdata embedding is still a consumer handoff.
 
 U3 acceptance: make validate passed; [receipt](../verification-evidence/003/u3.json). A reproduced manual-leaf reset defect was fixed with explicit child-removal state. Full public move and concurrent mutation proofs remain in U7/U5.
+
+U6 acceptance: make validate passed; [receipt](../verification-evidence/003/u6.json). Reproduced loaded-child ID collision overwriting a row, then fixed it by rejecting cached identity collisions before staging creation. Per-index mutation failure and public compound patches remain U7/U5.

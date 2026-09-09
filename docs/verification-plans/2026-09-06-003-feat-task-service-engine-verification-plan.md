@@ -98,16 +98,16 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 
 ### U6. Create and patch primitives
 
-- [ ] 003-V39 **Create default:** Create root with 255-rune title, notes, tags and due; verify canonical UUID, todo/medium/0, null completion, exact metadata and one create event with all nine allowed fields.
+- [x] 003-V39 **Create default:** Create root with 255-rune title, notes, tags and due; verify canonical UUID, todo/medium/0, null completion, exact metadata and one create event with all nine allowed fields.
 - [ ] 003-V40 **Parent/defaults:** Create child under open and done parents at admissible depth; defaults hold, ancestor state/progress/history changes share timestamp and transaction; no implicit parent creation.
-- [ ] 003-V41 **Failure before persistence:** Entropy failure, invalid generated ID, duplicate storage ID, invalid date and missing parent return their causes with no created row/history; count ID calls to forbid retries.
+- [x] 003-V41 **Failure before persistence:** Entropy failure, invalid generated ID, duplicate storage ID, invalid date and missing parent return their causes with no created row/history; count ID calls to forbid retries.
 - [ ] 003-V42 **Create atomicity:** Fail Create, each ancestor Update, each AppendEvent or outer commit after staged create; known rollback yields old graph/history; unknown outcome never returns task success.
 - [ ] 003-V43 **Create affects chain only:** Add incomplete child to previously complete hierarchy and preserve unrelated branch values/events; root creation has no ancestor writes.
 - [ ] 003-V44 **Set/omit/clear:** Omitted title/notes/priority/tags/due/parent preserved; explicit notes empty/tags empty/due clear/parent clear produce intended values. Repeated semantically equivalent tags and UTC instants count as equal.
 - [ ] 003-V45 **Metadata no-op:** Empty patch and supplied identical values return current task with unchanged UpdatedAt/events; metadata-only edit never auto-completes/reconciles unrelated graph or existing parent progress.
 - [ ] 003-V46 **Base conflict:** Change one compared field between Base capture and patch, then reject atomically; valid no-base patch reads latest values and never overwrites omitted concurrent fields.
 - [ ] 003-V47 **Missing/incarnation:** Missing patch target fails, mismatched Base ID is malformed, same ID with different CreatedAt conflicts; no replacement task is overwritten.
-- [ ] 003-V48 **Manual progress:** Open leaf 0/99 succeeds; invalid range, any parent manual intent (even equal value) and progress with status/parent intent fail; done leaf only accepts equal 100 as no-op.
+- [x] 003-V48 **Manual progress:** Open leaf 0/99 succeeds; invalid range, any parent manual intent (even equal value) and progress with status/parent intent fail; done leaf only accepts equal 100 as no-op.
 
 ### U7. Complete, reopen, move and delete
 
@@ -214,3 +214,5 @@ U1 execution: [receipt and raw logs](../verification-evidence/003/u1.json). make
 U2 execution: [receipt](../verification-evidence/003/u2.json), make validate passed. V20 predicate membership is retained for U4, while parser day bounds are proven. Year-1 midnight has its own regression.
 
 U3 execution: [receipt](../verification-evidence/003/u3.json), make validate passed. Shared-ancestor and graph-fault helpers have proof; full related-parent moves and public graph validation extend V34/V38 in U7/U5. Untouched manual leaf progress has regression coverage.
+
+U6 execution: [receipt](../verification-evidence/003/u6.json), make validate passed. Initial real-disk creation/patch/rollback cases are present; expanded ancestor-chain, per-index injection and public patch combinations remain in U7/U5. Cached child/parent identity collisions have red-first regression evidence.
