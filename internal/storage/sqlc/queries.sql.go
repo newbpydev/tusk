@@ -202,18 +202,18 @@ SELECT id, title, description, status, priority, progress, parent_id, tags, crea
 WHERE (json_array_length(CAST(?1 AS TEXT))=0 OR status IN (SELECT value FROM json_each(CAST(?1 AS TEXT))))
 AND (json_array_length(CAST(?2 AS TEXT))=0 OR priority IN (SELECT value FROM json_each(CAST(?2 AS TEXT))))
 AND (CAST(?3 AS INTEGER)=0 OR parent_id IS NULL)
-AND (?4 IS NULL OR parent_id=?4)
-AND (?5 IS NULL OR due_date < ?5)
-AND (?6 IS NULL OR due_date > ?6)
+AND (CAST(?4 AS TEXT) IS NULL OR parent_id=CAST(?4 AS TEXT))
+AND (CAST(?5 AS TEXT) IS NULL OR due_date < CAST(?5 AS TEXT))
+AND (CAST(?6 AS TEXT) IS NULL OR due_date > CAST(?6 AS TEXT))
 `
 
 type ListCandidatesParams struct {
 	Statuses   string
 	Priorities string
 	RootOnly   int64
-	ParentID   interface{}
-	DueBefore  interface{}
-	DueAfter   interface{}
+	ParentID   sql.NullString
+	DueBefore  sql.NullString
+	DueAfter   sql.NullString
 }
 
 func (q *Queries) ListCandidates(ctx context.Context, arg ListCandidatesParams) ([]Task, error) {

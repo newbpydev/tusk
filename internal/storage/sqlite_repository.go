@@ -88,13 +88,13 @@ func (h *taskHandle) List(ctx context.Context, f core.TaskFilter) ([]core.Task, 
 			p.RootOnly = 1
 		}
 		if f.ParentID != nil {
-			p.ParentID = *f.ParentID
+			p.ParentID = sql.NullString{String: *f.ParentID, Valid: true}
 		}
 		if f.DueBefore != nil && validTime(*f.DueBefore) {
-			p.DueBefore = f.DueBefore.UTC().Format(dateLayout)
+			p.DueBefore = sql.NullString{String: f.DueBefore.UTC().Format(dateLayout), Valid: true}
 		}
 		if f.DueAfter != nil && validTime(*f.DueAfter) {
-			p.DueAfter = f.DueAfter.UTC().Format(dateLayout)
+			p.DueAfter = sql.NullString{String: f.DueAfter.UTC().Format(dateLayout), Valid: true}
 		}
 		rows, err := h.q.ListCandidates(c, p)
 		if err != nil {

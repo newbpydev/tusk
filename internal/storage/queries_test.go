@@ -130,12 +130,12 @@ func TestQueries_CandidateSuperset(t *testing.T) {
 			parent := "id-00"
 			task.ParentID = &parent
 		}
-		p := generated.CreateTaskParams{ID: task.ID, Title: task.Title, Status: string(status), Priority: int64(task.Priority), Tags: "[]", CreatedAt: now.Format(dateLayout), UpdatedAt: now.Format(dateLayout)}
+		p := generated.CreateTaskParams{ID: task.ID, Title: task.Title, Status: string(status), Priority: int64(task.Priority), Tags: "[]", CreatedAt: now.UTC().Format(dateLayout), UpdatedAt: now.UTC().Format(dateLayout)}
 		if task.ParentID != nil {
 			p.ParentID = sql.NullString{String: *task.ParentID, Valid: true}
 		}
 		if task.DueDate != nil {
-			p.DueDate = sql.NullString{String: task.DueDate.Format(dateLayout), Valid: true}
+			p.DueDate = sql.NullString{String: task.DueDate.UTC().Format(dateLayout), Valid: true}
 		}
 		if err := q.CreateTask(ctx, p); err != nil {
 			t.Fatal(err)
@@ -164,13 +164,13 @@ func TestQueries_CandidateSuperset(t *testing.T) {
 					args.RootOnly = 1
 				}
 				if filter.ParentID != nil {
-					args.ParentID = *filter.ParentID
+					args.ParentID = sql.NullString{String: *filter.ParentID, Valid: true}
 				}
 				if filter.DueBefore != nil {
-					args.DueBefore = filter.DueBefore.Format(dateLayout)
+					args.DueBefore = sql.NullString{String: filter.DueBefore.UTC().Format(dateLayout), Valid: true}
 				}
 				if filter.DueAfter != nil {
-					args.DueAfter = filter.DueAfter.Format(dateLayout)
+					args.DueAfter = sql.NullString{String: filter.DueAfter.UTC().Format(dateLayout), Valid: true}
 				}
 				rows, err := q.ListCandidates(ctx, args)
 				if err != nil {
@@ -187,5 +187,14 @@ func TestQueries_CandidateSuperset(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func TestQueries_NullableCandidateParameters(t *testing.T) {
+	// These assignments require concrete nullable strings at compile time.
+	args := generated.ListCandidatesParams{}
+	var parent, before, after sql.NullString = args.ParentID, args.DueBefore, args.DueAfter
+	if parent.Valid || before.Valid || after.Valid {
+		t.Fatal("zero parameters must not constrain candidates")
 	}
 }

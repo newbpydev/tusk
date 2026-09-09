@@ -16,9 +16,9 @@ SELECT * FROM tasks
 WHERE (json_array_length(CAST(sqlc.arg(statuses) AS TEXT))=0 OR status IN (SELECT value FROM json_each(CAST(sqlc.arg(statuses) AS TEXT))))
 AND (json_array_length(CAST(sqlc.arg(priorities) AS TEXT))=0 OR priority IN (SELECT value FROM json_each(CAST(sqlc.arg(priorities) AS TEXT))))
 AND (CAST(sqlc.arg(root_only) AS INTEGER)=0 OR parent_id IS NULL)
-AND (sqlc.narg(parent_id) IS NULL OR parent_id=sqlc.narg(parent_id))
-AND (sqlc.narg(due_before) IS NULL OR due_date < sqlc.narg(due_before))
-AND (sqlc.narg(due_after) IS NULL OR due_date > sqlc.narg(due_after));
+AND (CAST(sqlc.narg(parent_id) AS TEXT) IS NULL OR parent_id=CAST(sqlc.narg(parent_id) AS TEXT))
+AND (CAST(sqlc.narg(due_before) AS TEXT) IS NULL OR due_date < CAST(sqlc.narg(due_before) AS TEXT))
+AND (CAST(sqlc.narg(due_after) AS TEXT) IS NULL OR due_date > CAST(sqlc.narg(due_after) AS TEXT));
 
 -- name: ListChildren :many
 SELECT * FROM tasks WHERE parent_id=?;

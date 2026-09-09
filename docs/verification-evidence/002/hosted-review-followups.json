@@ -20,6 +20,11 @@
       "unit": "2.9",
       "title": "Validate newly created database handles",
       "evidence": "Red: injected creation returning an actual device handle bypassed the regular-file check. Green: stat and close created handles before the shared regular/reparse validation, reject devices and prove rejection closes the handle. The per-call file creator seam is private and carries no mutable global state. Focused regression and make validate check-generated pass. Native Windows V33 remains deferred; injection is not native proof."
+    },
+    {
+      "unit": "2.10",
+      "title": "Generate typed nullable candidate parameters",
+      "evidence": "Red: compile-time NullString assignments rejected all three generated interface{} parameters. Green: explicit nullable TEXT casts let pinned sqlc generate concrete sql.NullString fields; callers bind typed values, fixtures normalize timestamps to UTC. Candidate/core parity and zero-value null semantics pass; make generate and make validate check-generated pass."
     }
   ],
   "latest_code_sha256": {
@@ -67,15 +72,15 @@
     "internal/storage/path_unix_test.go": "ba268c3482deb3995260682e0a9f266d1aea72e093c49a2f293f2fb810cda777",
     "internal/storage/path_windows.go": "8c8171e3ef795efb3689b18fd3ed6e41d181e049bfd3c1134df451c0e6b5a8e2",
     "internal/storage/path_windows_test.go": "f17c068a59c548f68406799cd23dedc0e941b7f443f20a0210993d8a8fc62f52",
-    "internal/storage/queries_test.go": "56f0d03aca33de51c1ff64c08a6d09a1eddf92bf5fff3efa3eb50e86753d5678",
+    "internal/storage/queries_test.go": "e6350da6572f9fceec29f2734d5247c8ef6a21a95db2a7540f670b78e11aed17",
     "internal/storage/recovery_test.go": "e8a2b1933ce3143c50f36253b2da2441a813f9ce7ecfa5fcde41e02c61853adf",
     "internal/storage/repository_contract_test.go": "59d906f8094472673007422775238e9301756016bc4c27c2a79789f2e0f07ae7",
     "internal/storage/repository_fault_test.go": "dec64a143e65d93e94ded7aff8d107d182697ae6b3a920dfdd07c253820f4d11",
     "internal/storage/schema_test.go": "f39d215ede6f792569b02ba7d01cd2b357a3ba16951dd077333b5f00c16667da",
     "internal/storage/sqlc/db.go": "5356c90d31993bf24bc6e59578cfa9fa8ab1191c3285259a2a9814a21113d7db",
     "internal/storage/sqlc/models.go": "366a74b38d7a7cc4e808f72f7c2da77c80180685449e5f243a902d46f182dd33",
-    "internal/storage/sqlc/queries.sql.go": "7b961510f1932b8212861fac44fba4de1304ca94b1be0a4a76c7a289125f5818",
-    "internal/storage/sqlite_repository.go": "eb76f0a560a3918826412b0edfabe6127eed5ed36ce16ce71a7a07ab09512d87",
+    "internal/storage/sqlc/queries.sql.go": "72f316547814556247bbea5dce880bec91be592896797c821cddd554f1650060",
+    "internal/storage/sqlite_repository.go": "f57e443c99ebdefa2fcbb60349291783b874e55fb38c2dc595ebeae2d470a39e",
     "internal/storage/sqlite_repository_test.go": "50b3051f550c0d1d55eebbf3ff23bf3a85e777292aa09ed99d1e61ab68dd5b44",
     "internal/storage/storage_bench_test.go": "dd7bc89ac969ae36b288ebb66a65dfcd28d3cec99d6bdfbe9d963da0ab7f4935",
     "internal/storage/transaction.go": "f0008e8b1994722ef278abb0909ecec4df8d8a1c6753697f7e75f86dc49ea041",
