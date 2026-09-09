@@ -21,7 +21,7 @@ Give developers a local task manager usable immediately from a terminal, shell s
 - **Surfaces:** CLI/TUI, internal library/service, persistence/migration, packaging/operations, documentation.
 - **Artifact triplet:** This plan, its [verification plan](../verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md), and [issue workorder](../workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md), under `docs/` in this first-party repository.
 - **Readiness:** Deepened product planning baseline with explicit gates. This umbrella remains `requirements-only` as an execution entrypoint. It does not replace the phase-specific triplets or authorize implementation.
-- **Current handoff:** [Feature 002](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) now owns the executable storage pack. Its first unit is **002-6 / feature U6**, the compatibility prerequisite added before migrations. Product U24 maps that new unit; product U6 still means the Phase 3 service contract. Later phases remain ordered by the masterplan.
+- **Current handoff:** Feature 002 is locally accepted. [Feature 003](2026-09-06-003-feat-task-service-engine-plan.md) now owns the decision-complete service pack; implementation awaits authorization at its U1 / 003-1. Product U6–U10 map to its seven units as described below. Later phases remain ordered by the masterplan; native/hosted acceptance remains pending.
 
 ## Product Contract
 
@@ -37,7 +37,7 @@ The legacy application required PostgreSQL during startup, prompted for authenti
 
 Product Contract restructured: original sections 2–5 map to R1–R27 below. Local operation, CLI/TUI identity, task fields, Markdown notes, optional parent completion, timeline history, and release platforms are retained. Clarifications reconcile original prose with shipped core behavior: depth 10, manual leaf progress, hyphenated tags, and exact state transitions. “Collision-free” becomes collision detection; “sub-millisecond” prose does not override the latency mandates.
 
-Inspected revision: `6128d312921cecca2a024bc8647d959126822f0b` on `main`, 2026-09-08; worktree initially clean. `go.mod` declares Go 1.24.0 and no dependencies. Only `internal/core/` and a help/version scaffold in `cmd/tusk/` exist. Ports, storage, services, Cobra, TUI, schema, and hosted workflows do not exist. Phase 0/1 completion is recorded historical evidence in `MASTERPLAN.md`, not a fresh test result from this pass.
+Historical product-planning baseline (superseded by the current handoff): `6128d312921cecca2a024bc8647d959126822f0b` on `main`, 2026-09-08; worktree initially clean. `go.mod` declares Go 1.24.0 and no dependencies. Only `internal/core/` and a help/version scaffold in `cmd/tusk/` exist. Ports, storage, services, Cobra, TUI, schema, and hosted workflows do not exist. Phase 0/1 completion is recorded historical evidence in `MASTERPLAN.md`, not a fresh test result from this pass.
 
 ### Actors and flows
 
@@ -123,14 +123,14 @@ No pagination or implicit JSON truncation in this release. Additive fields are c
 
 No network sync, external backend implementation, accounts, recurrence, reminders, collaboration, non-parent task dependencies, or event-sourced reconstruction. A future backend may implement the same port; no plugin framework is needed.
 
-Planning defaults are R9 opt-in completion, R15 date times, R17 retained-task metrics, R18 metadata-only timeline, and R20 explicit recursive deletion. They are decisions for this pack, not claims of separate user approval. Changes require synchronized product and affected feature triplets. Timeline/history is retained original scope; its missing persistence support must be incorporated into Feature 002 before schema implementation.
+Planning defaults are R9 opt-in completion, R15 date times, R17 retained-task metrics, R18 metadata-only timeline, and R20 explicit recursive deletion. They are decisions for this pack, not claims of separate user approval. Changes require synchronized product and affected feature triplets. Timeline/history is retained original scope; Feature 002 now supplies its persistence, and Feature 003 owns event selection and service exposure.
 
 ## Planning Contract
 
 ### Technical decisions
 
-- KTD1. **Phase plans own execution.** Units below are handoffs. Feature 002 has its complete execution triplet; Feature 003–006 outline metadata is not readiness. Gate G1 applies per feature. Follow the masterplan's phase order even where its DAG allows concurrency.
-- KTD2. **Choose modernc SQLite, subject to G2.** Keep `database/sql` in storage. Require a patched SQLite engine and matching driver/libc/toolchain. No dependencies are installed in this pass.
+- KTD1. **Phase plans own execution.** Units below are handoffs. Feature 002 has its complete execution triplet; Feature 003 now has its complete planning pack; Feature 004–006 outline metadata is not readiness. Gate G1 applies per feature. Follow the masterplan's phase order even where its DAG allows concurrency.
+- KTD2. **Retain the accepted modernc SQLite runtime.** Keep `database/sql` in storage. Feature 002 records local proof for the matching engine/driver/libc/Go 1.25 baseline; native/hosted G2/G4 acceptance remains pending. The Feature 003 planning pass changes no dependencies.
 - KTD3. **Migration-owning `db` package.** `db/embed.go` embeds adjacent `migrations/*.sql`; storage imports it. Embedding `../../db` from storage is invalid. Generate queries into `internal/storage/sqlc/`; test generated behavior through the adapter. [Go embed](https://pkg.go.dev/embed), [sqlc configuration](https://docs.sqlc.dev/en/latest/reference/config.html).
 - KTD4. **One writer, bounded readers.** Use one writer connection and up to four reader connections. Begin writes IMMEDIATE before reading graph state; read snapshots use separate deferred transactions. Configure connection-scoped pragmas for every new/replacement connection. No transaction callback may borrow another write connection. Verify cancellation and driver transaction options at G2. Create new application-owned directories as 0700 and database files as 0600 on POSIX; preserve existing parent permissions and use the user's private profile ACL on Windows. Reject symlink/non-regular database targets; encode path characters as literal filename data when constructing an internal DSN. This is a single-user boundary, not protection against a malicious process with the same OS identity. [Driver documentation](https://pkg.go.dev/modernc.org/sqlite).
 - KTD5. **Transaction-scoped ports.** `ports.TaskRepository` exposes reads and a write callback receiving a restricted query/writer interface. The callback uses that interface for all reads/writes/events and cannot retain or nest it. Storage owns begin/commit/rollback/close; service owns business decisions. Wrap failures with context and map known domain sentinels via `errors.Is`; typed port errors cover busy, conflict, children-present, corruption, and incompatible schema.
@@ -157,7 +157,7 @@ Port operation contract (all I/O accepts context; names below are the planned AP
 | Service mutations | CreateTask, UpdateTask, CompleteTask, ReopenTask, DeleteTask | Structured commands with supplied/clear intent, optional base snapshot/confirmation, one operation timestamp, committed result |
 | Service queries | ListTasks, GetTaskTree, GetStats, GetTaskHistory | Validated filters, snapshot-consistent DTO/read model; tree root projection never changes stored task |
 
-Do not expose `sql.DB`, `sql.Tx`, driver errors or generated query structs through ports. Delete preview and execution carry the exact sorted task IDs and target editable metadata for R20's equality check. Constructors own resource dependencies; only the composition root closes the opened storage instance. Calendar parsing must include portable zone data where the target OS cannot supply the named IANA fixtures; pin this behavior at G3.
+Do not expose `sql.DB`, `sql.Tx`, driver errors or generated query structs through ports. Delete preview and execution carry the exact sorted task IDs and target editable metadata for R20's equality check. Constructors own resource dependencies; only the composition root closes the opened storage instance. Feature 003 pins standard-library time/tzdata for named-zone test fixtures; Feature 004 embeds it in the production main package before date commands ship. G3 retains that packaging proof and CLI/UI dependency decisions.
 
 These sketches define ownership and sequencing, not implementation code.
 
@@ -230,8 +230,8 @@ One `d` opens confirmation; another `d` is not consent. Default button is Cancel
 
 | Gate | Owner and closure evidence | Blocking effect |
 | --- | --- | --- |
-| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002 pack completed; remains open for Features 003–006 |
-| G2 | Feature 002 KTD1 selects Go 1.25.0, modernc v1.58.0, libc v1.75.6 and SQLite 3.53.4; product U24 / feature U6 proves it | Planning choice recorded; compatibility smoke blocks production schema work in U1. Actual module remains unchanged until implementation |
+| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002 and 003 packs completed; remains open for Features 004–006 |
+| G2 | Feature 002 KTD1 and durable acceptance evidence record Go 1.25.0, modernc v1.58.0, libc v1.75.6 and SQLite 3.53.4 local proof | Local prerequisite satisfied; native/hosted release proof remains Phase 6. Feature 003 retains the installed graph |
 | G3 | Phase 4/5 owners pin CLI/UI dependencies before their first unit; U15/U20 add benchmark runners and evidence | Dependency choice blocks U11/U16; measurement blocks phase acceptance, not earlier implementation units or storage planning |
 | G4 | Phase 6 maintainer proves exact candidate on OS/architectures and terminals, licenses, distribution destination, release metadata | Blocks publication; local green/cross-compilation are insufficient |
 
@@ -560,4 +560,20 @@ External documentation checked 2026-09-08 is cited beside the decisions. Module 
 
 ## Feature 002 local handoff — 2026-09-08
 
-The [Feature 002 triplet](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) now records six implemented units with per-unit validated commits and 67/68 local scenarios accepted. [Storage operations and Phase 3 obligations](../storage.md) and [durable evidence](../verification-evidence/002/README.md) cover the repository boundary, atomic metadata history, migration refusal, process recovery and benchmarks. Product U24 compatibility evidence is available locally; target-native TUSK-V01 acceptance remains pending. This handoff does not check cross-phase service/CLI/TUI or hosted/native product scenarios. MASTERPLAN.md advances to Feature 003 planning; its outline must be deepened before implementation.
+The [Feature 002 triplet](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) now records six implemented units with per-unit validated commits and 67/68 local scenarios accepted. [Storage operations and Phase 3 obligations](../storage.md) and [durable evidence](../verification-evidence/002/README.md) cover the repository boundary, atomic metadata history, migration refusal, process recovery and benchmarks. Product U24 compatibility evidence is available locally; target-native TUSK-V01 acceptance remains pending. This handoff does not check cross-phase service/CLI/TUI or hosted/native product scenarios. At that handoff MASTERPLAN.md advanced to Feature 003 planning. The subsequent Feature 003 handoff below supersedes its former outline status.
+
+## Feature 003 planning handoff — 2026-09-09
+
+The [service plan](2026-09-06-003-feat-task-service-engine-plan.md), [verification plan](../verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md), and [workorder](../workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md) complete G1 for Feature 003: 22 feature requirements, seven bounded units, 91 unexecuted scenarios and 16 planning findings/gates. Product requirements and the 24 product handoff IDs remain unchanged. Feature 003 specifies internal API types, no-op/base/consent equality, date/DST/UUID rules, transaction outcome propagation, deterministic net-change history and real disk service acceptance.
+
+| Product handoff | Feature 003 execution mapping |
+| --- | --- |
+| U6 / 003-1 | Feature U1 contracts, constructor/validation seams and safe-error compatibility |
+| U7 / 003-2 | Feature U2 calendar and UUIDv7 helpers |
+| U8 / 003-3 | Feature U3 rollup/change-set helpers plus new U6 creation/patch and U7 lifecycle/deletion, split from original 003-4 |
+| U9 / 003-4 | Feature U4 snapshot queries and completed service facade |
+| U10 / 003-5 | Feature U5 disk/concurrency/recovery, compatibility, performance and consumer handoff |
+
+Current source inspection: clean main `679f5cefd6e626a3c67c1e08a433ab786c944883`, Go 1.25.0, modernc v1.58.0/libc v1.75.6, core/ports/storage present, service absent. Feature 002's recorded local acceptance supplies the storage prerequisite; its native/hosted limitations remain. Feature 003's U1 → U2 → U3 → U6 → U7 → U4 → U5 ordering supersedes the old five-unit outline while preserving product handoff IDs. Only planning checkboxes close; no runtime test, code change or implementation authorization is claimed.
+
+Consumer handoffs: Feature 004 must embed production timezone data, map structured commands/base/consent and typed outcomes to the existing CLI grammar/DTOs, and prove process latency. Feature 005 owns draft/refresh/terminal acceptance; Feature 006 owns native/hosted releases. These remain their respective G1/G3/G4 obligations.

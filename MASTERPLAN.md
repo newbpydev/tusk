@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 3: Task Service Engine (planning)
-**Active Implementation Target**: 3.1 — Deepen the Feature 003 planning triplet before implementation
+**Active Phase**: Phase 3: Task Service Engine (planning complete; implementation pending)
+**Active Implementation Target**: 3.2 — Unit 003-1 / U1: Inbound contracts and safe error compatibility (awaiting implementation authorization)
 **Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -14,7 +14,7 @@ Feature 002 is locally accepted after U6 -> U1 -> U2 -> U3 -> U4 -> U5. All unit
 
 The requested [Modern Task System product plan](docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md) has a synchronized [verification plan](docs/verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md) and [issue workorder](docs/workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md): 29 requirements, 24 cross-phase handoff units, and 73 planned scenarios. Product U24 is the new Feature 002 compatibility prerequisite; existing product U1–U23 keep their IDs.
 
-The original product pass supplied the cross-phase contract. Feature 002 now has its own executable pack: 22 requirements, six units, and 68 planned scenarios, including transaction-scoped ports, metadata-only history, strict migration ownership, and disk WAL recovery. Its KTD1 selects Go 1.25.0, modernc v1.58.0 and libc v1.75.6; U6/002-6 must prove the runtime before migrations. Feature 003–006 outline metadata remains insufficient under G1. That planning reconciliation changed no implementation or release checkbox; the current runtime acceptance above was established by subsequent ce-work execution.
+The original product pass supplied the cross-phase contract. Feature 002 now has its own executable pack: 22 requirements, six units, and 68 planned scenarios, including transaction-scoped ports, metadata-only history, strict migration ownership, and disk WAL recovery. Its KTD1 selects Go 1.25.0, modernc v1.58.0 and libc v1.75.6; U6/002-6 must prove the runtime before migrations. Feature 003 subsequently completed its planning pack on 2026-09-09; Feature 004–006 outline metadata remains insufficient under G1. That planning reconciliation changed no implementation or release checkbox; the current runtime acceptance above was established by subsequent ce-work execution.
 
 ---
 
@@ -143,22 +143,32 @@ graph TD
 ---
 
 ### Phase 3: Feature 003 - Task Service Engine
-- **Status**: ⏳ **PLANNING ACTIVE** (Phase 2 locally complete; no Feature 003 implementation authorization)
+- **Status**: ⏳ **PLANNING COMPLETE — IMPLEMENTATION PENDING** (no Feature 003 implementation authorization)
 - **Plan**: `docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`
+- **Verification Plan**: `docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`
+- **Issue Workorder**: `docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`
 
-- [ ] **3.1 Ultrathink Planning Pack**
-  - [ ] Deepened Plan (`docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`)
-  - [ ] Verification Plan (`docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`)
-  - [ ] Issue Workorder (`docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`)
+- [x] **3.1 Ultrathink Planning Pack**
+  - [x] Deepened Plan (`docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`)
+  - [x] Verification Plan (`docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`)
+  - [x] Issue Workorder (`docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`)
 - [ ] **3.2 Implementation Units**
-  - [ ] Unit 003-1: Inbound Port & Service Interface (`internal/ports/task_service.go`)
-  - [ ] Unit 003-2: Natural Language Date Parser (`internal/service/dateparse/`)
-  - [ ] Unit 003-3: Upward Progress Rollup Orchestration across DB transactions
-  - [ ] Unit 003-4: Task Service Orchestrator Implementation (`internal/service/task_service.go`)
-  - [ ] Unit 003-5: Mock-backed Service Unit Test Suite
+  - [ ] Unit 003-1 / U1: Inbound Contracts, Validation Seams & Safe Error Compatibility
+  - [ ] Unit 003-2 / U2: Calendar Parser & UUIDv7 Identity
+  - [ ] Unit 003-3 / U3: Transaction-local Hierarchy, Rollup & Event Engine
+  - [ ] Unit 003-6 / U6: Creation & Metadata Mutation Primitives (split from 003-4)
+  - [ ] Unit 003-7 / U7: Lifecycle, Moves & Confirmed Deletion (split from 003-4)
+  - [ ] Unit 003-4 / U4: Snapshot Queries & Complete Service Facade
+  - [ ] Unit 003-5 / U5: Disk Integration, Failure Proof, Compatibility & Consumer Handoff
 - [ ] **3.3 Quality Gate & Release Sign-off**
-  - [ ] Unit and service integration tests pass
+  - [ ] All 91 Feature 003 scenarios have local execution evidence
+  - [ ] Each unit validated, synchronized and separately committed before the next
+  - [ ] Real disk WAL, concurrent mutations, stale consent and unknown-outcome recovery pass
+  - [ ] Minimum Go, five-target service cross-builds and service benchmarks recorded
   - [ ] `make validate` passes
+  - [ ] Feature 004–006 consumer/native/hosted obligations handed off explicitly
+
+Feature 003 planning (2026-09-09) defines 22 requirements, seven units ordered U1 → U2 → U3 → U6 → U7 → U4 → U5, 91 unexecuted scenarios and 16 planning findings/gates. Only planning checkboxes close. Its workorder records the documentation audit; no service code, application tests, make validate, commit or publication ran in this pass. Phase completion remains 3 of 7.
 
 ---
 
