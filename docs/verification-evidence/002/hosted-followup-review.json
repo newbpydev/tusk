@@ -1,0 +1,30 @@
+{
+  "scope": {
+    "base": "0591916b610cec2de93d5f866cec1dbfcca4602a",
+    "head": "11e84c99406abfbde8072e3e64e2d81b0425cf43"
+  },
+  "mode": "Sequential inline review under AGENTS mapping; no claim of independent local reviewers",
+  "assessments": {
+    "correctness": "Joined causes preserve each safe sentinel; cleanup remains unknown. New file handles are closed before the shared type check.",
+    "project-standards": "Each of six units observed red first, passed make validate, synchronized the triplet and committed before advancing. No globals or service work.",
+    "testing": "Real extended busy and constraint errors, injected created-device handles, type-checked nullable arguments, nil error values and restricted-PATH scripts cover the changed boundaries.",
+    "maintainability": "The private file-creation seam enables device fault injection without global hooks. Nullable SQL casts remove interface{}; no new service abstraction.",
+    "security": "Raw errors remain redacted. Created device handles are rejected and closed. Archive integrity validation is unchanged.",
+    "performance": "Retries stay at acquisition within the existing budget. The extra stat is on new-file creation only. Candidate filtering remains a superset with one public sort.",
+    "api-contract": "Nil transaction causes gain safe ErrStorage matching; ordinary causes unchanged. Port documentation states existing callback/event/delete semantics. Generated types are internal.",
+    "data-integrity": "Task/history transactions, immutable schema inventory and migration ownership unchanged. No schema migration introduced.",
+    "reliability": "Canceled configuration still discards uncertain connections. Busy retries never replay callbacks. Driver/cleanup privacy and unknown outcome remain distinguishable.",
+    "adversarial": "Constructed rollback plus joined corruption, extended busy at first acquisition, device returned by successful create, nil error formatting and absent tooling. Regressions demonstrate bounded fixes."
+  },
+  "findings": [],
+  "validation": [
+    "make validate check-generated build",
+    "GOTOOLCHAIN=go1.25.0 make test-compat build-storage",
+    "minimum-Go focused race tests for changed ports/storage boundaries"
+  ],
+  "hosted_review": "Kilo report on 0591916 identifies glm-5.3; all 23 comments evaluated, 17 addressed in six commits and six explained. Updated-head hosted review and settlement are still pending.",
+  "release_limits": [
+    "Native Windows V33 remains unchecked for Phase 6",
+    "Cross compilation is not native runtime validation"
+  ]
+}

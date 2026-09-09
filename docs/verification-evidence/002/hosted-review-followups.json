@@ -30,9 +30,21 @@
       "unit": "2.11",
       "title": "Make sqlc tooling directly executable with explicit prerequisites",
       "evidence": "Red: direct entrypoints lacked executable bits; missing curl produced only command-not-found. Green: both scripts are executable, setup/generate/check diagnose their curl/gofmt/diff requirements before work, and restricted-PATH fixtures cover each missing tool. Focused script tests and make validate check-generated build pass."
+    },
+    {
+      "unit": "2.12",
+      "title": "Review hosted fixes and compound joined-error lessons",
+      "evidence": "Reviewed the six remediation commits against correctness, standards, tests, maintainability, security, performance, API, data integrity, reliability and compound-failure scenarios. No additional actionable finding. Seventeen of 23 hosted comments have fixes; six retain documented boundaries with evidence. Replies await publication. Updated the compounded lesson for joined safe categories; frontmatter and source/link checks pass. Current make validate check-generated build, explicit minimum-Go compatibility, five target builds and minimum-Go focused race regressions pass."
     }
   ],
   "latest_code_sha256": {
+    "Makefile": "e7aeb0a82f7e334f3ef55f79d892ff7635d2098f523dc6466f3d5ff5ccc5255f",
+    "db/embed.go": "e0d1422b5ea0f13dd5f3590b960c3bd0ce48c626e63921e02a593c50c1291bf2",
+    "db/embed_test.go": "94d78a008d67997c19ea8f3f0b1985e4de055108616cfae7d81a734526e5cc34",
+    "db/migrations/001_initial_schema.sql": "c0fb20d005b1a59d8c24bdcd6339a334b9a37d4c8ea5568375b03cf844fbfdcf",
+    "db/queries.sql": "e8f7a51daa12b63aea9040315d216be8cda6555d83f2c76e3594202c412a715e",
+    "go.mod": "ababa383b2550cd9c126c5c26fbded78c01fafcfb097d47f872bff2c900023e4",
+    "go.sum": "59d6f9f0590f841c826c0c2003f906b038b16397a886eaef7a562ac031b68d6b",
     "internal/core/coverage_test.go": "d11d30787b9ba58ce373bee614181d591f28e46786439160f957f70ec36786d5",
     "internal/core/errors.go": "dc13531030d09c5717aa593a6289a38abfd7bdd6ead76ff0b62f661ca7e60cd2",
     "internal/core/errors_test.go": "b0831190c3679e55cf9e2a224f77cbf8a3addd4d0e803b5b94242f16e89b7680",
@@ -88,7 +100,16 @@
     "internal/storage/sqlite_repository.go": "f57e443c99ebdefa2fcbb60349291783b874e55fb38c2dc595ebeae2d470a39e",
     "internal/storage/sqlite_repository_test.go": "50b3051f550c0d1d55eebbf3ff23bf3a85e777292aa09ed99d1e61ab68dd5b44",
     "internal/storage/storage_bench_test.go": "dd7bc89ac969ae36b288ebb66a65dfcd28d3cec99d6bdfbe9d963da0ab7f4935",
+    "internal/storage/testdata/migrations/disposable_inverse.sql": "3be5c0e5b5655e5fca1a32f0efc998027ebaf656eba890e10034578115c28eb9",
     "internal/storage/transaction.go": "f0008e8b1994722ef278abb0909ecec4df8d8a1c6753697f7e75f86dc49ea041",
-    "internal/storage/transaction_test.go": "bfe12c9d3fb1a7d94ac0d13747b7f256f0bd0f84c84a82435ace93dbd4f4d6e1"
+    "internal/storage/transaction_test.go": "bfe12c9d3fb1a7d94ac0d13747b7f256f0bd0f84c84a82435ace93dbd4f4d6e1",
+    "scripts/bench.sh": "670fd5f93cf92b6c0b2fb78959b73eb39d258c3e43099cd622524cc3614ddc4b",
+    "scripts/coverage.sh": "bb0235773a0e521fb52b8e94b68ec26056f751d23f3de192b5813be3e7995a20",
+    "scripts/fmt.sh": "0978d2894f4e5403ae8b2d0e8a420b3089525c2d5e323969f2ff88fff04c354d",
+    "scripts/setup.sh": "0d31e788501afde72c2455198f0bb82fae22bffe19107faef0cf1b43920cbdc0",
+    "scripts/sqlc.sh": "96b2c833e5d97f5ffe920dfbe07de1cdacced19da683c801a3bc97bf239d5cda",
+    "scripts/test/test_scripts.sh": "1b90ec3a937e643f8ff75ca9a61605578d25e3f9fe2dbd76734a069163d1f246",
+    "scripts/test/test_sqlc.sh": "5fb42a1cd668207dd129ae783d7286d4d3856bd0b7476b9ef85ce6c3d10e0735",
+    "sqlc.yaml": "822ec73ea678a1fd2ba0675e4ba3631c8ef651063e5af3be5163f4b0356e7b7e"
   }
 }

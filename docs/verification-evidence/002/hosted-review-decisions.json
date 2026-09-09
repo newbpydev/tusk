@@ -1,0 +1,216 @@
+{
+  "reviewed_head": "0591916b610cec2de93d5f866cec1dbfcca4602a",
+  "remediation_head": "11e84c99406abfbde8072e3e64e2d81b0425cf43",
+  "publication_state": "Fixes committed locally; replies prepared for publication. Remote PR threads are authoritative for subsequent settlement.",
+  "fixed": 17,
+  "retained_with_explanation": 6,
+  "decisions": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVg",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlqp",
+      "root_comment_id": 3963509417,
+      "disposition": "replied",
+      "invariant_key": "storage.service-boundary",
+      "reply": "> **[WARNING]:** `Update` writes arbitrary `ParentID` changes with no cycle or depth validation\n\nThe alternative requested here is already the release boundary: Feature 002 plan R17 and docs/storage.md explicitly reserve graph mutation validation for the Phase 3 service, under WithWrite. The CLI and service are not wired to this internal adapter. Adapter acceptance is not service acceptance. The service must reject cyclic and over-depth moves before writes; this PR does not expose an unchecked end-user move command.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509417"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVj",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlqu",
+      "root_comment_id": 3963509422,
+      "disposition": "fixed",
+      "invariant_key": "storage.busy-acquisition",
+      "reply": "> **[WARNING]:** Busy-retry predicate misses extended SQLITE_BUSY result codes\n\nFixed in 81bbf79. The predicate now masks the primary result code. A real WAL SQLITE_BUSY_SNAPSHOT (517) fed into acquisition reproduced the premature abort and now admits the next attempt. Only BeginTx acquisition retries, with the existing deadline; callbacks/statements/commits are never replayed. make validate check-generated passed. The comment transposes the names: RECOVERY is 261; SNAPSHOT is 517.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509422"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVm",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlqy",
+      "root_comment_id": 3963509426,
+      "disposition": "fixed",
+      "invariant_key": "ports.callback-context-contract",
+      "reply": "> **[WARNING]:** Nesting guard only fires for derived contexts; a fresh context deadlocks the single-connection writer pool\n\nFixed the port/runbook ambiguity in 245e035: callbacks must use the supplied handle and a derived context, and may never reenter the repository even with a fresh context. The existing plan explicitly calls context-marker evasion contract misuse. A repository-wide in-flight flag would reject unrelated legitimate concurrent callers, so it cannot identify nesting. Existing derived-context rejection/concurrency tests and make validate pass.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509426"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVo",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlq0",
+      "root_comment_id": 3963509428,
+      "disposition": "fixed",
+      "invariant_key": "storage.created-file-validation",
+      "reply": "> **[WARNING]:** Successful-create path skips the regular-file/reparse-point validation\n\nFixed in ac3b841. Created handles are now statted and closed before shared regular-file/reparse validation. An injected creator returning an actual device handle reproduced acceptance before the fix and now proves rejection and closure. make validate check-generated passed. Native Windows V33 remains a separate release gate; this regression does not claim native path/ACL proof.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509428"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVq",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlq3",
+      "root_comment_id": 3963509431,
+      "disposition": "replied",
+      "invariant_key": "tooling.selected-compiler",
+      "reply": "> **[WARNING]:** `test-compat` never enforces the Go 1.25 toolchain it claims to prove\n\ntest-compat is a runtime compatibility fixture under the explicitly selected compiler, which it prints. Its Makefile comment and docs/storage.md reproduction command require GOTOOLCHAIN=go1.25.0 for minimum-compiler evidence. The same fixture intentionally runs under both current and minimum Go; a bare invocation proves only the printed compiler. Existing acceptance records identify each compiler separately.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509431"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVs",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlq6",
+      "root_comment_id": 3963509434,
+      "disposition": "declined",
+      "invariant_key": "storage.connection-configuration",
+      "reply": "> **[SUGGESTION]:** Cancellation during the `busy_timeout` pragma poisons a healthy connection\n\nA canceled PRAGMA does not establish that the connection retained its previous busy_timeout. Reusing it without a confirmed restoration could admit a connection with the 25ms setting. The acquisition-failure tests require discarding failed configuration; keeping this conservative cleanup preserves connection invariants. Cancellation between BEGIN attempts follows a different path with a deferred timeout restoration.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509434"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVt",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlq9",
+      "root_comment_id": 3963509437,
+      "disposition": "fixed",
+      "invariant_key": "storage.callback-cause-preservation",
+      "reply": "> **[SUGGESTION]:** Core sentinels shadow `ports.ErrCorrupt` when a rollback also fails\n\nFixed in 0dd91cb by retaining all recognized safe categories, rather than making corruption erase the domain cause. All six hierarchy/corruption pairs reproduced the loss after rollback failure and now preserve both errors.Is matches plus the unknown outcome and redaction. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509437"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVv",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlq_",
+      "root_comment_id": 3963509439,
+      "disposition": "fixed",
+      "invariant_key": "storage.constraint-error-coverage",
+      "reply": "> **[SUGGESTION]:** The 1555/2067/787 driver-code mappings have no direct test coverage\n\nAdded real SQLite constraint fixtures in 0dd91cb for primary-key 1555, unique 2067 and foreign-key 787. Each asserts the actual extended code, mapped category and absence of raw driver/private text. Existing Create does not pre-check duplicate IDs, but the new direct tests make each mapping explicit. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509439"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZVy",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrE",
+      "root_comment_id": 3963509444,
+      "disposition": "not-addressing",
+      "invariant_key": "storage.foreign-key-ownership",
+      "reply": "> **[SUGGESTION]:** `Delete` discards `RowsAffected` and trusts `ON DELETE CASCADE` for the descendants it just reported\n\nThe public port cannot execute PRAGMAs or access either pool. Every physical connection, including replacements, enables foreign_keys, and the cascade tests verify deleted task/event readback. Package-internal corruption fixtures deliberately bypass that ownership boundary. RowsAffected on the root DELETE does not count SQLite cascade effects, so checking it would not verify the suggested descendant condition; explicitly replaying cascade deletion adds a second implementation unnecessarily.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509444"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZV3",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrL",
+      "root_comment_id": 3963509451,
+      "disposition": "fixed",
+      "invariant_key": "storage.statement-fault-coverage",
+      "reply": "> **[SUGGESTION]:** Fault-injection needle list omits `CreateTask`\n\nAdded CreateTask to the fault-injection table and exercised w.Create in 0dd91cb. The regression asserts the sanitized ErrStorage result through the transaction failure path. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509451"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZV6",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrO",
+      "root_comment_id": 3963509454,
+      "disposition": "fixed",
+      "invariant_key": "storage.query-fixtures",
+      "reply": "> **[SUGGESTION]:** Format timestamps with `.UTC()` in fixtures\n\nFixed in b559a15. Explicit nullable TEXT casts make pinned sqlc emit sql.NullString for ParentID, DueBefore and DueAfter. A compile-time regression rejected the old interface{} fields; candidate/core parity and null semantics now pass. Query fixtures also normalize timestamp formatting with UTC. make generate and make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509454"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWC",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrX",
+      "root_comment_id": 3963509463,
+      "disposition": "declined",
+      "invariant_key": "storage.candidate-superset",
+      "reply": "> **[SUGGESTION]:** `ListCandidates` has no `ORDER BY` (or `LIMIT`) in its contract\n\nFeature 002 deliberately defines ListCandidates as an unordered candidate superset. The repository applies core filtering and complete deterministic sorting before returning results. A SQL limit could discard valid matches before those predicates; ORDER BY id adds a redundant sort and still is not the public ordering contract. The generated package is adapter-private; candidate/core parity tests exercise this boundary.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509463"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWE",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrd",
+      "root_comment_id": 3963509469,
+      "disposition": "fixed",
+      "invariant_key": "storage.typed-query-parameters",
+      "reply": "> **[SUGGESTION]:** `sqlc.narg(parent_id)` widens the generated parameter to `interface{}`\n\nFixed in b559a15. Explicit nullable TEXT casts make pinned sqlc emit sql.NullString for ParentID, DueBefore and DueAfter. A compile-time regression rejected the old interface{} fields; candidate/core parity and null semantics now pass. Query fixtures also normalize timestamp formatting with UTC. make generate and make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509469"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWG",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrg",
+      "root_comment_id": 3963509472,
+      "disposition": "fixed",
+      "invariant_key": "storage.migration-authoring-contract",
+      "reply": "> **[SUGGESTION]:** Filename regex permanently caps the migration inventory at 999 entries\n\nDocumented the 001..999 cap and the fixed-width lexical/numeric ordering invariant in docs/storage.md, in 245e035. Expanding the inventory will require an explicit format change; no premature migration numbering refactor was introduced. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509472"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWJ",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrk",
+      "root_comment_id": 3963509476,
+      "disposition": "fixed",
+      "invariant_key": "storage.migration-authoring-contract",
+      "reply": "> **[SUGGESTION]:** Forbidden-keyword scan matches comments and string literals, not just executable SQL\n\nDocumented the conservative whole-file scan, including comments and literals, and listed the forbidden words in docs/storage.md, in 245e035. This clarifies authoring failures without adding a second SQL parser. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509476"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWM",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrp",
+      "root_comment_id": 3963509481,
+      "disposition": "fixed",
+      "invariant_key": "ports.transaction-error-contract",
+      "reply": "> **[SUGGESTION]:** Doc comment promises behavior 'by Unwrap' but the type implements no `Unwrap`\n\nClarified errors.Is matching and the deliberate absence of Unwrap in 245e035. The new port tests assert no cause unwrap and preserve unknown outcome. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509481"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWN",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlrs",
+      "root_comment_id": 3963509484,
+      "disposition": "fixed",
+      "invariant_key": "ports.transaction-error-contract",
+      "reply": "> **[SUGGESTION]:** `NewTransactionError` with a nil cause panics at format time\n\nFixed in 245e035. A missing cause and the zero value now format safely and match ErrStorage. The test reproduced the nil-pointer panic before the guard; known causes still retain their category and unknown outcome. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509484"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWQ",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlry",
+      "root_comment_id": 3963509490,
+      "disposition": "fixed",
+      "invariant_key": "ports.event-contract",
+      "reply": "> **[SUGGESTION]:** Write-side validity contract for `ChangedFields` (and `Sequence`) is undocumented at the port\n\nDocumented Sequence == 0 on append, storage-assigned sequence, the nonempty sorted unique field-name whitelist and valid OccurredAt range directly on TaskEvent, in 245e035. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509490"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWS",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlr1",
+      "root_comment_id": 3963509493,
+      "disposition": "fixed",
+      "invariant_key": "ports.event-contract",
+      "reply": "> **[SUGGESTION]:** `ListEvents` ordering and pagination contract is unspecified\n\nDocumented that ListEvents returns every event for an existing task in ascending sequence order, deliberately without pagination, in 245e035. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509493"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWY",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlr7",
+      "root_comment_id": 3963509499,
+      "disposition": "fixed",
+      "invariant_key": "ports.delete-contract",
+      "reply": "> **[SUGGESTION]:** `Delete`'s bare `bool` and return semantics are undocumented\n\nNamed the recursive argument and documented exact sorted deleted IDs and ErrChildrenPresent behavior directly on TaskWriter.Delete, in 245e035. No additional options abstraction is needed for this single flag. make validate check-generated passed.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509499"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWa",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlr-",
+      "root_comment_id": 3963509502,
+      "disposition": "fixed",
+      "invariant_key": "tooling.sqlc-entrypoints",
+      "reply": "> **[SUGGESTION]:** Script is committed without the executable bit\n\nFixed in 11e84c9. Both sqlc scripts now have executable bits; direct execution is covered. Setup/generate/check report required curl/gofmt/diff tools before work, with restricted-PATH regressions for each. The old modes and missing-curl diagnostic failed first; focused script tests and make validate check-generated build now pass.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509502"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWe",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlsC",
+      "root_comment_id": 3963509506,
+      "disposition": "fixed",
+      "invariant_key": "tooling.sqlc-prerequisites",
+      "reply": "> **[SUGGESTION]:** No dependency pre-check for `curl` (also `gofmt` and `diff` used later)\n\nFixed in 11e84c9. Both sqlc scripts now have executable bits; direct execution is covered. Setup/generate/check report required curl/gofmt/diff tools before work, with restricted-PATH regressions for each. The old modes and missing-curl diagnostic failed first; focused script tests and make validate check-generated build now pass.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509506"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6gdZWk",
+      "comment_node_id": "PRRC_kwDOUQoUDc7sPlsK",
+      "root_comment_id": 3963509514,
+      "disposition": "declined",
+      "invariant_key": "storage.runtime-pin-proof",
+      "reply": "> **[SUGGESTION]:** Hardcoded SQLite version string couples this test to every driver bump\n\nThe exact SQLite runtime check is intentional KTD1/U6 compatibility evidence (plan pins SQLite 3.53.4, modernc v1.58.0 and libc v1.75.6). go list verifies the module graph, while sqlite_version verifies the actual embedded runtime. A driver upgrade must update and re-prove that reviewed combination; deriving the expected runtime from the same changed dependency would weaken the independent pin check.",
+      "url": "https://github.com/newbpydev/tusk/pull/2#discussion_r3963509514"
+    }
+  ]
+}

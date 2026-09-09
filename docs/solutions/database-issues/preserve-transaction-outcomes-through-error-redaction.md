@@ -32,7 +32,7 @@ Blindly exposing the original error chain is also inappropriate here: the public
 
 ## Solution
 
-Map the safe cause first, then attach transaction uncertainty before returning. Preserve cancellation before interpreting a schema operation's failure as schema damage. The implementation in `internal/storage/errors.go:68` follows this order:
+Map the safe cause first, then attach transaction uncertainty before returning. Preserve cancellation before interpreting a schema operation's failure as schema damage. The implementation in `internal/storage/errors.go` follows this order:
 
 ```go
 cause := storageCause(err)
@@ -47,19 +47,20 @@ if errors.Is(err, errMigrationOutcome) {
 return cause
 ```
 
-The public transaction error exposes `Outcome()` and matches its sanitized cause through `Is`; it has no driver-error `Unwrap` path (`internal/ports/errors.go:24`). Callers can detect both uncertainty and a familiar cause without receiving the original driver error.
+The public transaction error exposes `Outcome()` and matches its sanitized cause through `Is`; it has no driver-error `Unwrap` path (`internal/ports/errors.go`). Callers can detect both uncertainty and a familiar cause without receiving the original driver error.
 
 ## Why This Works
 
 Cause and outcome answer different questions. Cancellation explains why work stopped; it cannot establish whether a commit completed. Corruption describes the inspected data; it cannot establish whether cleanup succeeded. Preserve both facts until the caller chooses recovery.
 
-Keep this policy at the outer storage boundary. A generic mapper that selects a single sentinel cannot also represent every joined transaction state. Conversely, wrapping raw errors solely to preserve state defeats the redaction contract. A safe category plus a typed outcome is enough for this repository.
+Keep this policy at the outer storage boundary. A generic mapper that selects a single sentinel cannot also represent every joined transaction state. Conversely, wrapping raw errors solely to preserve state defeats the redaction contract. All recognized safe categories plus a typed outcome preserve the information this repository needs. The sanitizer must retain multiple recognized sentinels when a callback joins them, while discarding the original wrappers.
 
 ## Prevention
 
 - Test combinations of cause and cleanup outcome. `TestOpenCause_RetainsMigrationUnknownOutcome` covers corruption, incompatibility, cancellation and deadline causes joined with migration uncertainty in `internal/storage/inspection_cancellation_test.go:50`.
 - Assert both `errors.Is` and the typed `Outcome()` result. Checking only the error message or only the cause misses half the contract.
 - Cover every declared safe callback sentinel, not a representative subset. Hosted review of [PR #2](https://github.com/newbpydev/tusk/pull/2#discussion_r3963401314) exposed six omissions in the sanitizer; the expanded `TestTransaction_RollbackFailurePreservesCause` checks all current core/port categories plus cancellation and deadlines, with private wrapper text that must stay redacted.
+- Test joined causes as well as individual sentinels. `TestTransaction_RollbackFailurePreservesJoinedCauses` reproduces all six hierarchy/corruption pairs: after failed rollback, both `ErrCorrupt` and the domain category must still match alongside the unknown outcome. Selecting the first recognized sentinel lost corruption even though every individual-sentinel test passed.
 - Keep canceled ledger and canonical-replay tests alongside malformed-schema tests, so schema classification cannot swallow cancellation again.
 - Use disk readback after injected commit-before, commit-after and rollback failures. `TestRecovery_AtomicStateAfterFailure` verifies complete old or new task/history state in `internal/storage/recovery_test.go:82`.
 - Do not replay a write callback automatically after an unknown outcome. Follow the [storage recovery guidance](../../storage.md).

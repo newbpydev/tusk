@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 2: PR #2 hosted review follow-ups
-**Active Implementation Target**: PR #2 — Evaluate remaining hosted feedback; completed unit committed before advancing
+**Active Phase**: Phase 3: Task Service Engine (planning)
+**Active Implementation Target**: 3.1 — Deepen the Feature 003 planning triplet before implementation
 **Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -256,3 +256,5 @@ The original red-first work was accumulated without per-unit commits. At the use
 - [x] **2.10 PR #2 typed candidate parameters**
 
 - [x] **2.11 PR #2 sqlc tooling usability**
+
+- [x] **2.12 PR #2 follow-up review and compounded learning**

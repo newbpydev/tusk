@@ -57,3 +57,9 @@ Published as [PR #2](https://github.com/newbpydev/tusk/pull/2) against main. Loc
 ## Hosted callback-cause finding
 
 A later [hosted review](https://github.com/newbpydev/tusk/pull/2#discussion_r3963401314) found six safe callback causes omitted from error sanitization after failed rollback. The expanded regression reproduced each omission; all 28 declared cause cases now pass with private error redaction and unknown outcomes retained. The [follow-up receipt](callback-cause-followup.json) records the new code manifest and validation. The earlier local review was a point-in-time result, not proof that hosted review would find nothing.
+
+## Hosted review remediation
+
+Kilo reported 23 threads on `0591916`: 17 are addressed in six separately validated commits and six retain the existing contract with concrete explanations. See the [decisions](hosted-review-decisions.json), [unit evidence](hosted-review-followups.json), and [follow-up review](hosted-followup-review.json). Those artifacts record local remediation before reply publication; live PR threads own later settlement.
+
+Current-Go `make validate check-generated build`, explicit Go 1.25 compatibility, five CGO-disabled storage/test builds, and minimum-Go focused race regressions pass. The created-device injection proves the new-file guard locally; native Windows V33 remains a release obligation. The compounded error-redaction lesson now covers joined categories as well as individual causes.
