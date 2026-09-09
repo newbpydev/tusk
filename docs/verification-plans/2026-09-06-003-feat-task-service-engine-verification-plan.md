@@ -84,16 +84,16 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 
 ### U3. Rollup, staging and event selection
 
-- [ ] 003-V28 **Floor and depths:** Empty affected set, root leaf, one-level parent and depth-10 chains; children 100/0/0 yield 33, and intermediate flooring propagates exactly to each ancestor.
-- [ ] 003-V29 **Nested complete progress:** Non-done intermediate parents at 100 contribute 100 upward; this alone never auto-completes their parents because their statuses are open.
-- [ ] 003-V30 **Last child:** Removing/moving/deleting final child resets open parent to 0 and keeps done parent 100; previous manual progress is not restored. A remaining sibling preserves average semantics.
-- [ ] 003-V31 **Reopen before rollup:** A done ancestor receiving a new/reopened open child becomes in-progress, clears completion and recalculates; done-first CalculateProgress cannot mask incomplete work.
-- [ ] 003-V32 **Policy pair:** Identical final nonempty/all-done child fixtures complete parents only with policy true; policy false leaves open parent at 100. Empty children never auto-complete.
-- [ ] 003-V33 **Explicit open precedence:** Explicitly opened target remains todo/in-progress at 100 with all children done and policy true; done higher ancestors reopen even if the open target still contributes 100.
+- [x] 003-V28 **Floor and depths:** Empty affected set, root leaf, one-level parent and depth-10 chains; children 100/0/0 yield 33, and intermediate flooring propagates exactly to each ancestor.
+- [x] 003-V29 **Nested complete progress:** Non-done intermediate parents at 100 contribute 100 upward; this alone never auto-completes their parents because their statuses are open.
+- [x] 003-V30 **Last child:** Removing/moving/deleting final child resets open parent to 0 and keeps done parent 100; previous manual progress is not restored. A remaining sibling preserves average semantics.
+- [x] 003-V31 **Reopen before rollup:** A done ancestor receiving a new/reopened open child becomes in-progress, clears completion and recalculates; done-first CalculateProgress cannot mask incomplete work.
+- [x] 003-V32 **Policy pair:** Identical final nonempty/all-done child fixtures complete parents only with policy true; policy false leaves open parent at 100. Empty children never auto-complete.
+- [x] 003-V33 **Explicit open precedence:** Explicitly opened target remains todo/in-progress at 100 with all children done and policy true; done higher ancestors reopen even if the open target still contributes 100.
 - [ ] 003-V34 **Shared ancestor:** Move between branches with a common grandparent, and ancestor/descendant-related old/new parents; process final deepest-first union, shared grandparent once after both branches, no transient extra event.
-- [ ] 003-V35 **Status-only propagation:** Child changes done↔open while remaining at progress 100; higher policy/reopen decisions still run despite unchanged numeric progress.
-- [ ] 003-V36 **Net diffs/no-op:** Helpers may set timestamps internally, but equal canonical final fields produce no row write/event. Changed rows use one operation time; discarded/intermediate fields never reach history.
-- [ ] 003-V37 **Event attribution:** Exercise create, metadata, move, status, manual-progress and rollup, including compound patches. Assert exact sorted fields, fixed category/task ordering, Sequence=0 on append and no duplicated field across events.
+- [x] 003-V35 **Status-only propagation:** Child changes done↔open while remaining at progress 100; higher policy/reopen decisions still run despite unchanged numeric progress.
+- [x] 003-V36 **Net diffs/no-op:** Helpers may set timestamps internally, but equal canonical final fields produce no row write/event. Changed rows use one operation time; discarded/intermediate fields never reach history.
+- [x] 003-V37 **Event attribution:** Exercise create, metadata, move, status, manual-progress and rollup, including compound patches. Assert exact sorted fields, fixed category/task ordering, Sequence=0 on append and no duplicated field across events.
 - [ ] 003-V38 **Invalid graph/cancellation:** Cyclic/missing-parent/depth/invalid-record fixtures and cancellation during traversal fail without partial results or infinite traversal; no clamped corrupt data is saved.
 
 ### U6. Create and patch primitives
@@ -212,3 +212,5 @@ Every executed scenario records its own result. A broad green suite does not clo
 U1 execution: [receipt and raw logs](../verification-evidence/003/u1.json). make validate passed; V06/V08 have helper proof but retain public behavior checks for U6/U4, V07/V09/V11/V12 retain orchestration checks, and V88 retains U5 aggregate acceptance. These open boxes do not imply unimplemented U1 method stubs.
 
 U2 execution: [receipt](../verification-evidence/003/u2.json), make validate passed. V20 predicate membership is retained for U4, while parser day bounds are proven. Year-1 midnight has its own regression.
+
+U3 execution: [receipt](../verification-evidence/003/u3.json), make validate passed. Shared-ancestor and graph-fault helpers have proof; full related-parent moves and public graph validation extend V34/V38 in U7/U5. Untouched manual leaf progress has regression coverage.

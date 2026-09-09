@@ -1,0 +1,48 @@
+{
+  "unit": "U3",
+  "date": "2026-09-09T19:35:18.284614+00:00",
+  "base_commit": "8c66061d64aaab96fac87709a711c5cbcf6dd79e",
+  "environment": "go version go1.27.1-X:nodwarf5 linux/amd64",
+  "scenarios": {
+    "V28-V29,V31-V32,V35": "TestRollup_ChainAndPolicy",
+    "V30,V33": "TestRollup_LastChildAndExplicitOpen",
+    "V34": "TestRollup_SharedAncestorOnce",
+    "V36-V37": "TestChanges_CancelAndNoOp, TestEvents_NetDiff",
+    "V38": "TestChanges_GraphGuards, TestChanges_FailureAtomicity"
+  },
+  "verification": [
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u3-red.log.gz",
+      "observed": "Missing graph/event helpers fail compilation"
+    },
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u3-leaf-red.log.gz",
+      "observed": "Untouched manual leaf 40 reset to 0"
+    },
+    {
+      "command": "make validate",
+      "exit": 2,
+      "log": "u3-validate.log.gz",
+      "observed": "coverage 93.2%; additional failure paths required"
+    },
+    {
+      "command": "make validate",
+      "exit": 0,
+      "log": "u3-validate-final.log.gz"
+    }
+  ],
+  "sha256": {
+    "internal/service/changes.go": "fb3793561f223e18c817e669dde429fd37f47691ac6de0e35e7a9cd656e4da08",
+    "internal/service/rollup.go": "69492d32bafb9f95ad4cff059a7755aa7ebb6e8dd8d63276aa208663b9962edd",
+    "internal/service/events.go": "53ebd549bccfa68295833eaa0f06db0af3342675b0a068b2c3789d1c2ace1915",
+    "internal/service/changes_test.go": "3c1294fdbbdd2467d823648e49400e7eaf69dd92839fa40280e12a2b40aa1cdc",
+    "internal/service/rollup_test.go": "440345ddddff14e29b337091cb7c42cdc5179e0e985991c984c278b9aad2ea5e",
+    "internal/service/events_test.go": "9bcb53f992d6d70181706705337fed7e0a81cc6c5f0677ca633247a474e80c9a",
+    "internal/service/test_helpers_test.go": "52da552c3acc84270fb5fb31f56e4cefda32d229aad12c31662ce534633b795d"
+  },
+  "remaining": "U7/U5 extend graph cases through complete public mutations, including related old/new parents and concurrent operations."
+}

@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development
 **Active Phase**: Phase 3: Task Service Engine (implementation authorized by lfg, 2026-09-09)
-**Active Implementation Target**: 3.2 — Unit 003-3 / U3: Transaction-local hierarchy, rollup and events
+**Active Implementation Target**: 3.2 — Unit 003-6 / U6: Creation and metadata mutations
 **Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -155,7 +155,7 @@ graph TD
 - [ ] **3.2 Implementation Units**
   - [x] Unit 003-1 / U1: Inbound Contracts, Validation Seams & Safe Error Compatibility
   - [x] Unit 003-2 / U2: Calendar Parser & UUIDv7 Identity
-  - [ ] Unit 003-3 / U3: Transaction-local Hierarchy, Rollup & Event Engine
+  - [x] Unit 003-3 / U3: Transaction-local Hierarchy, Rollup & Event Engine
   - [ ] Unit 003-6 / U6: Creation & Metadata Mutation Primitives (split from 003-4)
   - [ ] Unit 003-7 / U7: Lifecycle, Moves & Confirmed Deletion (split from 003-4)
   - [ ] Unit 003-4 / U4: Snapshot Queries & Complete Service Facade
@@ -274,3 +274,5 @@ The original red-first work was accumulated without per-unit commits. At the use
 Inbound contracts, detached preflight and base comparisons pass make validate. All eight new safe errors survive failed rollback individually and joined. See docs/verification-evidence/003/u1.json. Runtime-dependent assertions in V07/V09/V11/V12 remain open for later units; U1 exposes no partial public facade.
 
 U2 acceptance: make validate passed; see docs/verification-evidence/003/u2.json for parser/identity red-first and calendar regression evidence.
+
+U3 acceptance: make validate passed with real-writer graph/event tests and injected rollback cases. See docs/verification-evidence/003/u3.json.
