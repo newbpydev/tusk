@@ -19,7 +19,8 @@ EOF
 chmod +x "$test_dir/bin/sqlc"
 export TUSK_SQLC_BIN="$test_dir/bin/sqlc"
 expect_failure() { if "$@" >"$test_dir/failure.log" 2>&1; then echo "Expected failure: $*" >&2; exit 1; fi; }
-bash "$ROOT_DIR/scripts/sqlc.sh" generate "$test_dir/project"
+[[ -x "$ROOT_DIR/scripts/sqlc.sh" && -x "$ROOT_DIR/scripts/test/test_sqlc.sh" ]] || { echo 'sqlc entrypoints must be executable' >&2; exit 1; }
+"$ROOT_DIR/scripts/sqlc.sh" generate "$test_dir/project"
 bash "$ROOT_DIR/scripts/sqlc.sh" check "$test_dir/project"
 printf 'package stale\n' > "$test_dir/project/internal/storage/sqlc/queries.go"
 expect_failure bash "$ROOT_DIR/scripts/sqlc.sh" check "$test_dir/project"
@@ -55,3 +56,22 @@ chmod +x "$test_dir/bin/curl"
 expect_failure env PATH="$test_dir/bin:$PATH" TUSK_SQLC_HOST=Linux/x86_64 bash "$ROOT_DIR/scripts/sqlc.sh" setup "$test_dir/project"
 [[ "$(sqlc_sha256 "$TUSK_SQLC_BIN")" == "$before" ]]
 echo 'sqlc script fixtures passed (source archive, drift, partial failure, version, host, digest, traversal, symlink, download failure)'
+
+for scenario in setup:curl generate:gofmt check:diff; do
+    action=${scenario%:*}
+    missing=${scenario#*:}
+    restricted="$test_dir/without-$missing"
+    mkdir -p "$restricted"
+    for dependency in bash dirname mktemp uname rm curl gofmt diff; do
+        if [[ "$dependency" != "$missing" ]]; then
+            ln -s "$(command -v "$dependency")" "$restricted/$dependency"
+        fi
+    done
+    expect_failure env PATH="$restricted" TUSK_SQLC_HOST=Linux/x86_64 bash "$ROOT_DIR/scripts/sqlc.sh" "$action" "$test_dir/project"
+    if ! grep -F "sqlc $action requires $missing on PATH" "$test_dir/failure.log" >/dev/null; then
+        cat "$test_dir/failure.log" >&2
+        echo "Missing prerequisite was not explained: $missing" >&2
+        exit 1
+    fi
+done
+echo 'sqlc direct execution and missing prerequisite fixtures passed'

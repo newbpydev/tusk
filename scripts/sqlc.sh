@@ -21,6 +21,15 @@ verify_sqlc_archive() {
 sqlc_main() (
     set -euo pipefail
     action="${1:?expected setup, generate or check}"
+    case "$action" in
+        setup) required=(curl) ;;
+        generate) required=(gofmt) ;;
+        check) required=(gofmt diff) ;;
+        *) echo "Unknown sqlc action: $action" >&2; exit 2 ;;
+    esac
+    for dependency in "${required[@]}"; do
+        command -v "$dependency" >/dev/null || { echo "sqlc $action requires $dependency on PATH" >&2; exit 1; }
+    done
     root="${2:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
     root=$(cd "$root" && pwd)
     scratch=$(mktemp -d)
@@ -59,7 +68,6 @@ sqlc_main() (
         mv -f "$install_stage" "$tool"
         exit
     fi
-    [[ "$action" == generate || "$action" == check ]] || { echo "Unknown sqlc action: $action" >&2; exit 2; }
     [[ -x "$tool" ]] || { echo 'Run make setup-sqlc to install sqlc v1.31.1' >&2; exit 1; }
     [[ "$("$tool" version)" == v1.31.1 ]] || { echo 'Incorrect sqlc version; expected v1.31.1' >&2; exit 1; }
     mkdir -p "$scratch/db"

@@ -348,3 +348,7 @@ Red: injected creation returning an actual device handle bypassed the regular-fi
 ### PR #2 review unit 2.10: Generate typed nullable candidate parameters
 
 Red: compile-time NullString assignments rejected all three generated interface{} parameters. Green: explicit nullable TEXT casts let pinned sqlc generate concrete sql.NullString fields; callers bind typed values, fixtures normalize timestamps to UTC. Candidate/core parity and zero-value null semantics pass; make generate and make validate check-generated pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.11: Make sqlc tooling directly executable with explicit prerequisites
+
+Red: direct entrypoints lacked executable bits; missing curl produced only command-not-found. Green: both scripts are executable, setup/generate/check diagnose their curl/gofmt/diff requirements before work, and restricted-PATH fixtures cover each missing tool. Focused script tests and make validate check-generated build pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.

@@ -254,3 +254,5 @@ The original red-first work was accumulated without per-unit commits. At the use
 - [x] **2.9 PR #2 created file safety**
 
 - [x] **2.10 PR #2 typed candidate parameters**
+
+- [x] **2.11 PR #2 sqlc tooling usability**
