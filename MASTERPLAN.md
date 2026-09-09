@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 3 locally accepted; Feature 003 PR #3 bounded feedback watch active (lfg, 2026-09-09)
-**Active Implementation Target**: PR #3 CI/review watch; next implementation requires the Feature 004 planning pack
+**Active Phase**: Phase 3 locally accepted and merged; Feature 004 planning is next (2026-09-09)
+**Active Implementation Target**: None; prepare the Feature 004 planning pack under a new instruction before implementing Phase 4
 **Overall Completion**: 57% (4 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -143,7 +143,7 @@ graph TD
 ---
 
 ### Phase 3: Feature 003 - Task Service Engine
-- **Status**: ✅ **LOCALLY ACCEPTED** (2026-09-09; PR #3 open; hosted feedback watch active)
+- **Status**: ✅ **LOCALLY ACCEPTED AND MERGED** (2026-09-09; PR #3 merged as `859d6b1`)
 - **Plan**: `docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`
@@ -170,9 +170,14 @@ graph TD
 
 - [x] **3.4 Final local review and publication**
   - [x] Simplification and sequential code review: no actionable findings; independent corroboration unavailable
-  - [x] Push seven unit commits and open [PR #3](https://github.com/newbpydev/tusk/pull/3); bounded CI/review watch follows
+  - [x] Push seven unit commits and open [PR #3](https://github.com/newbpydev/tusk/pull/3); bounded CI/review watch completed
   - [x] Reproduce and fix PR #3 UTC calendar-boundary feedback; regression tests and `make validate build` pass ([receipt](docs/verification-evidence/003/review-r1.json))
   - [x] Address Kilo review: reopen error categories, test/recovery assertions, portable fixtures, benchmark limits and synchronized acceptance status; `make validate build` passes ([dispositions and evidence](docs/verification-evidence/003/review-r2.json))
+
+- [x] **3.5 User-authorized merge and branch cleanup (2026-09-09)**
+  - [x] Recheck head `aafe48f`: Kilo check passed, Codex review completed, no open review threads, current base mergeable
+  - [x] Merge PR #3 as `859d6b12c9fd093dba93e7a491f40fdbdffb16e5`, preserving all individual commits
+  - [x] Fast-forward local main and remove local/remote `feat/task-service-engine`
 
 Feature 003 completed seven units in the declared order with separate canonical gates and commits. All 91 local scenarios have [execution receipts](docs/verification-evidence/003/README.md), including disk WAL concurrency, stale consent, rollback and process recovery. Final service coverage is 95.8%, parser 98.4%; minimum Go 1.25 full tests and five CGO-free builds pass. Benchmark baselines and [consumer handoffs](docs/service.md) are recorded. Native/hosted/CLI/TUI acceptance remains with Features 004–006. No later-phase implementation is authorized by this Feature 003 run.
 

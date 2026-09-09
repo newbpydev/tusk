@@ -2,7 +2,7 @@
 feature-id: "003"
 plan-source: docs/plans/2026-09-06-003-feat-task-service-engine-plan.md
 surface-profiles: [service-api, library, transactional-persistence, concurrency, portability, documentation]
-status: Locally accepted - PR open
+status: Locally accepted - merged
 evidence-scope: Local implementation and acceptance; native and consumer gates pending
 ---
 
@@ -223,8 +223,12 @@ U4 execution: [receipt](../verification-evidence/003/u4.json), make validate pas
 
 U5 execution: [receipt](../verification-evidence/003/u5.json) maps all 91 scenarios to tests; final make validate and Go 1.25 full suite/five-target builds pass. Additional tests characterize existing behavior; only missing canonical build/benchmark targets required a red-first implementation. Port query counts and transaction lifetime are recorded at 0/100/1000/10000 tasks; these are not SQL VM traces or statistical latency guarantees. Native/hosted/CLI/TUI obligations remain in the runbook. Earlier unit notes describe their then-pending scope, now covered by aggregate acceptance.
 
-Publication review: sequential reuse/quality/efficiency and risk-based code review completed at `d714ea6` with no actionable findings. [Review record](../verification-evidence/003/publication-review.json); [implementation return](../verification-evidence/003/work-return.json). Browser QA is inapplicable because this feature has no browser routes. Bounded hosted feedback monitoring follows publication; merge remains user-owned.
+Publication review: sequential reuse/quality/efficiency and risk-based code review completed at `d714ea6` with no actionable findings. [Review record](../verification-evidence/003/publication-review.json); [implementation return](../verification-evidence/003/work-return.json). Browser QA is inapplicable because this feature has no browser routes. Bounded hosted feedback monitoring completed; the subsequent user-authorized merge is recorded below.
 
 PR #3 review follow-up (2026-09-09): Codex identified premature civil-year rejection in date resolution. Red-first tests reproduced valid year-1 due instants and a valid final-year exclusive day bound being rejected. Range checks now apply to resolved UTC candidates; explicit year-zero dates and unrepresentable bounds still fail. Both new regressions and `make validate build` pass. [Review-fix receipt](../verification-evidence/003/review-r1.json) extends V17/V23 evidence; no later-phase scope changed.
 
 PR #3 Kilo review follow-up (2026-09-09): addressed 14 threads covering invalid reopen status categories, checked test setup/read errors, fresh-connection post-cancel persistence, callback-failure classification in the recovery fixture, embedded service-test tzdata, benchmark sample limits/labels, port/helper documentation, canonical help and acceptance-status drift. Seven suggestions retain the active KTD9 query design, safe entropy-error boundary, overflow-safe statistics and private-helper invariants; each has an evidence-based reply in the [disposition receipt](../verification-evidence/003/review-r2.json). New red-first cases, strengthened scenarios, `make validate build`, Go 1.25 five-target service builds and the canonical benchmark run pass. Multi-iteration benchmark misuse is explicitly rejected. Historical History/Move samples mean empty history/leaf promotion; event-volume scaling and cross-branch subtree move latency remain unmeasured.
+
+## Merge and cleanup (2026-09-09)
+
+The user authorized merging and branch cleanup after review. [PR #3](https://github.com/newbpydev/tusk/pull/3) merged at `859d6b12c9fd093dba93e7a491f40fdbdffb16e5`, preserving the seven unit commits and review fixes. Immediately before merge, head `aafe48f` matched the validated local commit, Kilo's check passed, Codex review was complete, and no review threads remained open. Local main was fast-forwarded and local/remote `feat/task-service-engine` removed. Feature 004 planning is next; native runtime, production timezone packaging and CLI latency gates remain with their owning phases.

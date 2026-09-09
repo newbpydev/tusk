@@ -8,6 +8,7 @@ type: feat
 date: 2026-09-06
 deepened: 2026-09-09
 execution: code
+status: Locally accepted - merged
 ---
 
 # Task Service Engine - Plan
@@ -21,7 +22,7 @@ Provide synchronous, context-aware task operations that CLI, TUI, and automation
 - **Surfaces:** Internal service/API, library, transactional persistence, concurrency, calendar/identity portability, and documentation. CLI/TUI are consumers; their UI, flags, serialization and process behavior remain later phases.
 - **Prerequisite:** Feature 002 is locally accepted according to the masterplan and its [durable evidence](../verification-evidence/002/README.md). Native/hosted release evidence remains a Phase 6 obligation.
 - **Execution order:** U1 → U2 → U3 → U6 → U7 → U4 → U5. New U6/U7 split the original broad orchestrator unit; original U1–U5 identifiers retain their responsibilities.
-- **Evidence boundary:** Readiness describes the contract. The 2026-09-09 lfg invocation authorizes execution through an open PR. Unit acceptance and remaining scenarios are recorded in the [execution evidence](../verification-evidence/003/README.md), verification plan and masterplan; no later phase or merge is authorized.
+- **Evidence boundary:** Readiness describes the contract. The 2026-09-09 lfg invocation authorizes execution through an open PR. Unit acceptance and remaining scenarios are recorded in the [execution evidence](../verification-evidence/003/README.md), verification plan and masterplan; no later-phase implementation is authorized. The subsequent user-authorized merge is recorded below.
 
 ---
 
@@ -353,8 +354,12 @@ Implementation: U1/U2/U3/U6/U7/U4/U5 are separately validated and committed unde
 
 U1 → U2 → U3 → U6 → U7 → U4 → U5 completed with per-unit canonical gates and commits. [U5 evidence](../verification-evidence/003/u5.json) maps all 91 local scenarios to executable assertions and records 95.8% service / 98.4% parser coverage, Go 1.25 full tests and five CGO-free builds. [Runbook and handoffs](../service.md) preserve consumer/native/hosted obligations. The single-sample 10,000-task List/Tree/Stats baseline is 67–72 ms; it does not satisfy the later end-to-end CLI latency gate.
 
-Publication review: sequential reuse/quality/efficiency and risk-based code review completed at `d714ea6` with no actionable findings. [Review record](../verification-evidence/003/publication-review.json); [implementation return](../verification-evidence/003/work-return.json). Browser QA is inapplicable because this feature has no browser routes. Bounded hosted feedback monitoring follows publication; merge remains user-owned.
+Publication review: sequential reuse/quality/efficiency and risk-based code review completed at `d714ea6` with no actionable findings. [Review record](../verification-evidence/003/publication-review.json); [implementation return](../verification-evidence/003/work-return.json). Browser QA is inapplicable because this feature has no browser routes. Bounded hosted feedback monitoring completed; the subsequent user-authorized merge is recorded below.
 
 PR #3 review follow-up (2026-09-09): Codex identified premature civil-year rejection in date resolution. Red-first tests reproduced valid year-1 due instants and a valid final-year exclusive day bound being rejected. Range checks now apply to resolved UTC candidates; explicit year-zero dates and unrepresentable bounds still fail. Both new regressions and `make validate build` pass. [Review-fix receipt](../verification-evidence/003/review-r1.json) extends V17/V23 evidence; no later-phase scope changed.
 
 PR #3 Kilo review follow-up (2026-09-09): addressed 14 threads covering invalid reopen status categories, checked test setup/read errors, fresh-connection post-cancel persistence, callback-failure classification in the recovery fixture, embedded service-test tzdata, benchmark sample limits/labels, port/helper documentation, canonical help and acceptance-status drift. Seven suggestions retain the active KTD9 query design, safe entropy-error boundary, overflow-safe statistics and private-helper invariants; each has an evidence-based reply in the [disposition receipt](../verification-evidence/003/review-r2.json). New red-first cases, strengthened scenarios, `make validate build`, Go 1.25 five-target service builds and the canonical benchmark run pass. Multi-iteration benchmark misuse is explicitly rejected. Historical History/Move samples mean empty history/leaf promotion; event-volume scaling and cross-branch subtree move latency remain unmeasured.
+
+## Merge and cleanup (2026-09-09)
+
+The user authorized merging and branch cleanup after review. [PR #3](https://github.com/newbpydev/tusk/pull/3) merged at `859d6b12c9fd093dba93e7a491f40fdbdffb16e5`, preserving the seven unit commits and review fixes. Immediately before merge, head `aafe48f` matched the validated local commit, Kilo's check passed, Codex review was complete, and no review threads remained open. Local main was fast-forwarded and local/remote `feat/task-service-engine` removed. Feature 004 planning is next; native runtime, production timezone packaging and CLI latency gates remain with their owning phases.
