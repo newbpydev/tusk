@@ -15,6 +15,11 @@
       "unit": "2.8",
       "title": "Harden and document repository ports",
       "evidence": "Red: formatting NewTransactionError with nil cause panicked. Green: nil and zero-value errors match ErrStorage and preserve unknown outcome without Unwrap. Port tests pass; callback contexts, metadata fields, ordered unpaginated events, recursive deletion and conservative migration authoring contracts are documented. make validate check-generated passes."
+    },
+    {
+      "unit": "2.9",
+      "title": "Validate newly created database handles",
+      "evidence": "Red: injected creation returning an actual device handle bypassed the regular-file check. Green: stat and close created handles before the shared regular/reparse validation, reject devices and prove rejection closes the handle. The per-call file creator seam is private and carries no mutable global state. Focused regression and make validate check-generated pass. Native Windows V33 remains deferred; injection is not native proof."
     }
   ],
   "latest_code_sha256": {
@@ -56,8 +61,8 @@
     "internal/storage/open.go": "47d859b2735cb37e8ad876525923d9314549cf766605db4e68cc3e732639d6ba",
     "internal/storage/open_fault_test.go": "ae30bed48efb1c388d43955953f4d7ad7aedd393ab89241b71b8e975d5e100bf",
     "internal/storage/open_test.go": "64bf7075c7ecbae9a67b3333f3cb9833367e1b2ebdf4f64315ac922e5392d3a3",
-    "internal/storage/path.go": "9937bfab47430de539f9a193f2b476ff11af29d054a2f49d987baef015dbba90",
-    "internal/storage/path_test.go": "0132d8c9a5ed9936d555c130448bf4bcb555279bfce1c84c345f587f00ded97d",
+    "internal/storage/path.go": "db55222c50012231d9c92aac141a1c21945b20a38d7964c9ba043f7f2e48c466",
+    "internal/storage/path_test.go": "bb1ce39c098282dd7a2119aba6230e08aa4af7b04e3b70b78b9833ada99e7f2e",
     "internal/storage/path_unix.go": "281e674ffa932857901b038bf6ec7fb04b4b6d60ffe99bd9f5379547d835a8c6",
     "internal/storage/path_unix_test.go": "ba268c3482deb3995260682e0a9f266d1aea72e093c49a2f293f2fb810cda777",
     "internal/storage/path_windows.go": "8c8171e3ef795efb3689b18fd3ed6e41d181e049bfd3c1134df451c0e6b5a8e2",

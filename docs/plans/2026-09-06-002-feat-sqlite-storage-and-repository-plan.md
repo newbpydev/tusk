@@ -514,3 +514,7 @@ Red: a real SQLite WAL snapshot conflict (517) injected at BeginTx aborted acqui
 ### PR #2 review unit 2.8: Harden and document repository ports
 
 Red: formatting NewTransactionError with nil cause panicked. Green: nil and zero-value errors match ErrStorage and preserve unknown outcome without Unwrap. Port tests pass; callback contexts, metadata fields, ordered unpaginated events, recursive deletion and conservative migration authoring contracts are documented. make validate check-generated passes. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.9: Validate newly created database handles
+
+Red: injected creation returning an actual device handle bypassed the regular-file check. Green: stat and close created handles before the shared regular/reparse validation, reject devices and prove rejection closes the handle. The per-call file creator seam is private and carries no mutable global state. Focused regression and make validate check-generated pass. Native Windows V33 remains deferred; injection is not native proof. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.

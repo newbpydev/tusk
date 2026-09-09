@@ -52,19 +52,25 @@ func resolvePath(explicit string, in pathInputs) (string, error) {
 }
 
 func prepareFile(path string) error {
+	return prepareFileWith(path, os.OpenFile)
+}
+
+func prepareFileWith(path string, create func(string, int, os.FileMode) (*os.File, error)) error {
 	info, err := os.Lstat(path)
 	if errors.Is(err, os.ErrNotExist) {
 		if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
 			return err
 		}
-		f, createErr := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
+		f, createErr := create(path, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
 		if createErr == nil {
-			return f.Close()
+			info, err = f.Stat()
+			err = errors.Join(err, f.Close())
+		} else {
+			if !errors.Is(createErr, os.ErrExist) {
+				return createErr
+			}
+			info, err = os.Lstat(path)
 		}
-		if !errors.Is(createErr, os.ErrExist) {
-			return createErr
-		}
-		info, err = os.Lstat(path)
 	}
 	if err != nil {
 		return err
