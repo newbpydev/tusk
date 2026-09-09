@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 2: SQLite Storage & Repository (publication follow-up)
-**Active Implementation Target**: 2.4 — User-authorized simplification, review, learning capture and PR publication
+**Active Phase**: Phase 3: Task Service Engine (planning)
+**Active Implementation Target**: 3.1 — Deepen the Feature 003 planning triplet before implementation
 **Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -134,11 +134,11 @@ graph TD
   - [x] CGO-disabled five-target storage builds pass; native target runtime proof remains a Phase 6 gate
   - [x] `make validate` passes
 
-- [ ] **2.4 Post-acceptance publication follow-up (user authorized 2026-09-08)**
+- [x] **2.4 Post-acceptance publication follow-up (user authorized 2026-09-08)**
   - [x] Simplification: reuse, quality and efficiency passes; no behavior-preserving change warranted
   - [x] Fresh code review and verification: zero actionable findings (independent review unavailable; recorded in publication-review.json)
   - [x] Capture durable learning and commit verified follow-up separately (transaction outcome redaction; glossary synchronized)
-  - [ ] Push branch and open PR; inspect hosted review/check state
+  - [x] Push branch and open [PR #2](https://github.com/newbpydev/tusk/pull/2); merge remains user-owned
 
 ---
 
@@ -238,3 +238,7 @@ All AI coding agents (Codex, Opencode, Kilo, OMP, Claude Code, Cursor) must foll
 ### U4 commit reconstruction — 2026-09-08
 
 The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
+
+### Feature 002 publication — 2026-09-08
+
+[PR #2](https://github.com/newbpydev/tusk/pull/2) is open against main. Six implementation commits, a fresh review receipt, and the compounded learning are published separately. Local review has zero actionable findings and all canonical gates pass; independent review was unavailable. The PR monitor owns subsequent hosted checks and feedback. No merge or release is claimed.

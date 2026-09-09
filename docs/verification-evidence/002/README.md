@@ -51,3 +51,5 @@ The review's two required fixes are applied with red/green evidence. Final aggre
 The user subsequently authorized simplify, review, compound and commit/push/PR. The [fresh review](publication-review.json) covers origin/main through U5, including both earlier fixes: zero actionable findings. Reuse, quality and efficiency passes found no worthwhile changes. make validate check-generated build passes (storage 97.6%). Both external routes again failed without usable review evidence; local passes are not independent corroboration. Publication state is tracked in MASTERPLAN target 2.4.
 
 The [compounded learning](../../solutions/database-issues/preserve-transaction-outcomes-through-error-redaction.md) explains why safe error causes and unknown outcomes must be preserved separately. Its frontmatter and claims validators pass; source grounding ran sequentially in the parent context. The task-event glossary now reflects implemented persistence.
+
+Published as [PR #2](https://github.com/newbpydev/tusk/pull/2) against main. Local acceptance and its original fingerprint remain historical evidence; publication does not change native/hosted release gates or imply merge.
