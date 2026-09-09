@@ -1,16 +1,20 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: 🟢 Active Development  
-**Active Phase**: Phase 2: SQLite Storage & Repository  
-**Active Implementation Target**: 2.2 — Unit 002-6 / U6: Pinned Storage Runtime & Compatibility Proof
-**Overall Completion**: 29% (2 of 7 Phases Complete)  
+**Current Status**: 🟢 Active Development
+**Active Phase**: Phase 3: Task Service Engine (planning)
+**Active Implementation Target**: 3.1 — Deepen the Feature 003 planning triplet before implementation
+**Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
+
+### Feature 002 execution finding (2026-09-08)
+
+Feature 002 is locally accepted after U6 -> U1 -> U2 -> U3 -> U4 -> U5. All units have separate validated commit boundaries. The original missed commit checkpoints were reconstructed in isolation and verified before advancing. Final make validate check-generated build passes with 97.6% storage coverage; Go 1.25 compatibility, final affected race tests and all five CGO-disabled storage/test builds pass. 67/68 feature scenarios are checked; native Windows V33 and native/hosted release proof remain Phase 6 obligations. See [durable acceptance evidence](docs/verification-evidence/002/README.md). The next target is Feature 003 planning; no service/CLI/TUI work was started.
 
 ### Product planning reconciliation (2026-09-08)
 
 The requested [Modern Task System product plan](docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md) has a synchronized [verification plan](docs/verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md) and [issue workorder](docs/workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md): 29 requirements, 24 cross-phase handoff units, and 73 planned scenarios. Product U24 is the new Feature 002 compatibility prerequisite; existing product U1–U23 keep their IDs.
 
-The original product pass supplied the cross-phase contract. Feature 002 now has its own executable pack: 22 requirements, six units, and 68 planned scenarios, including transaction-scoped ports, metadata-only history, strict migration ownership, and disk WAL recovery. Its KTD1 selects Go 1.25.0, modernc v1.58.0 and libc v1.75.6; U6/002-6 must prove the runtime before migrations. Feature 003–006 outline metadata remains insufficient under G1. This planning request changes no implementation, scenario, phase-acceptance, or release checkbox.
+The original product pass supplied the cross-phase contract. Feature 002 now has its own executable pack: 22 requirements, six units, and 68 planned scenarios, including transaction-scoped ports, metadata-only history, strict migration ownership, and disk WAL recovery. Its KTD1 selects Go 1.25.0, modernc v1.58.0 and libc v1.75.6; U6/002-6 must prove the runtime before migrations. Feature 003–006 outline metadata remains insufficient under G1. That planning reconciliation changed no implementation or release checkbox; the current runtime acceptance above was established by subsequent ce-work execution.
 
 ---
 
@@ -21,8 +25,8 @@ The Tusk reboot follows an uncompromising, evidence-first execution sequence. Wo
 ```mermaid
 graph TD
     P0[Phase 0: Foundation & Setup<br/>✅ COMPLETE] --> P1[Phase 1: Core Domain & Invariants<br/>✅ COMPLETE]
-    P1 --> P2[Phase 2: SQLite Storage & Repo<br/>🚀 ACTIVE]
-    P2 --> P3[Phase 3: Task Service Engine<br/>⏳ PLANNED]
+    P1 --> P2[Phase 2: SQLite Storage & Repo<br/>✅ COMPLETE]
+    P2 --> P3[Phase 3: Task Service Engine<br/>🚀 PLANNING]
     P3 --> P4[Phase 4: CLI & Scripting<br/>⏳ PLANNED]
     P3 --> P5[Phase 5: Interactive TUI<br/>⏳ PLANNED]
     P4 --> P6[Phase 6: Packaging & Release<br/>⏳ PLANNED]
@@ -106,7 +110,7 @@ graph TD
 ---
 
 ### Phase 2: Feature 002 - SQLite Storage & Repository
-- **Status**: 🚀 **ACTIVE / PLANNING COMPLETE; IMPLEMENTATION PENDING**
+- **Status**: 🚀 **COMPLETE — LOCAL ACCEPTANCE; NATIVE/HOSTED RELEASE GATES DEFERRED**
 - **Plan**: `docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md`
@@ -115,25 +119,31 @@ graph TD
   - [x] Deepened Plan (`docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md`)
   - [x] Verification Plan (`docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md`)
   - [x] Issue Workorder (`docs/workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md`)
-- [ ] **2.2 Implementation Units**
-  - [ ] Unit 002-6 / U6: Pinned Storage Runtime & Compatibility Proof (Go 1.25, SQLite 3.53.4, transaction modes, five CGO-disabled target builds; prerequisite to 002-1)
-  - [ ] Unit 002-1: Migration Engine & Embedded Schema (`db/migrations/001_initial_schema.sql`)
-  - [ ] Unit 002-2: Pinned sqlc v1.31.1 Queries & Reproducible Generation (configuration format v2)
-  - [ ] Unit 002-3: SQLite Connection Manager (WAL mode, busy timeout 5000ms, single-writer pool)
-  - [ ] Unit 002-4: Transaction-Scoped `ports.TaskRepository`, Strict Codecs & Metadata History
-  - [ ] Unit 002-5: Isolated Memory / Disk / Process Recovery Suite, Storage Benchmarks & Phase 3 Handoff
-- [ ] **2.3 Quality Gate & Release Sign-off**
-  - [ ] Minimum Go/compiler and pinned runtime compatibility proof passes
-  - [ ] Generated output consistency and negative script checks pass
-  - [ ] Repository semantics pass against unique in-memory fixtures
-  - [ ] Real disk WAL, concurrency, cancellation, process recovery and integrity scenarios pass under full/race gates
-  - [ ] CGO-disabled five-target storage builds pass; native target runtime proof remains a Phase 6 gate
-  - [ ] `make validate` passes
+- [x] **2.2 Implementation Units**
+  - [x] Unit 002-6 / U6: Pinned Storage Runtime & Compatibility Proof (Go 1.25, SQLite 3.53.4, transaction modes, five CGO-disabled target builds; prerequisite to 002-1)
+  - [x] Unit 002-1: Migration Engine & Embedded Schema (`db/migrations/001_initial_schema.sql`)
+  - [x] Unit 002-2: Pinned sqlc v1.31.1 Queries & Reproducible Generation (configuration format v2)
+  - [x] Unit 002-3: SQLite Connection Manager (WAL mode, busy timeout 5000ms, single-writer pool)
+  - [x] Unit 002-4: Transaction-Scoped `ports.TaskRepository`, Strict Codecs & Metadata History
+  - [x] Unit 002-5: Isolated Memory / Disk / Process Recovery Suite, Storage Benchmarks & Phase 3 Handoff
+- [x] **2.3 Quality Gate & Release Sign-off**
+  - [x] Minimum Go/compiler and pinned runtime compatibility proof passes
+  - [x] Generated output consistency and negative script checks pass
+  - [x] Repository semantics pass against unique in-memory fixtures
+  - [x] Real disk WAL, concurrency, cancellation, process recovery and integrity scenarios pass under full/race gates
+  - [x] CGO-disabled five-target storage builds pass; native target runtime proof remains a Phase 6 gate
+  - [x] `make validate` passes
+
+- [x] **2.4 Post-acceptance publication follow-up (user authorized 2026-09-08)**
+  - [x] Simplification: reuse, quality and efficiency passes; no behavior-preserving change warranted
+  - [x] Fresh code review and verification: zero actionable findings (independent review unavailable; recorded in publication-review.json)
+  - [x] Capture durable learning and commit verified follow-up separately (transaction outcome redaction; glossary synchronized)
+  - [x] Push branch and open [PR #2](https://github.com/newbpydev/tusk/pull/2); merge remains user-owned
 
 ---
 
 ### Phase 3: Feature 003 - Task Service Engine
-- **Status**: ⏳ **PLANNED** (Pending Phase 2 Completion)
+- **Status**: ⏳ **PLANNING ACTIVE** (Phase 2 locally complete; no Feature 003 implementation authorization)
 - **Plan**: `docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`
 
 - [ ] **3.1 Ultrathink Planning Pack**
@@ -224,3 +234,27 @@ All AI coding agents (Codex, Opencode, Kilo, OMP, Claude Code, Cursor) must foll
    - Check off the completed unit in `MASTERPLAN.md`.
    - If a phase is completed, update the **Active Phase** and **Active Implementation Target** pointers in this document.
    - Update the companion issue workorder with verification evidence.
+
+### U4 commit reconstruction — 2026-09-08
+
+The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
+
+### Feature 002 publication — 2026-09-08
+
+[PR #2](https://github.com/newbpydev/tusk/pull/2) is open against main. Six implementation commits, a fresh review receipt, and the compounded learning are published separately. Local review has zero actionable findings and all canonical gates pass; independent review was unavailable. The PR monitor owns subsequent hosted checks and feedback. No merge or release is claimed.
+
+- [x] **2.5 PR #2 callback-cause preservation**: six omissions reproduced; all 28 declared cause cases pass with private text redacted. make validate check-generated build and the minimum-Go focused race test pass. See docs/verification-evidence/002/callback-cause-followup.json; separate fix commit, then monitor hosted feedback.
+
+- [x] **2.6 PR #2 joined error categories and statement fault coverage**
+
+- [x] **2.7 PR #2 extended busy acquisition**
+
+- [x] **2.8 PR #2 repository port contracts**
+
+- [x] **2.9 PR #2 created file safety**
+
+- [x] **2.10 PR #2 typed candidate parameters**
+
+- [x] **2.11 PR #2 sqlc tooling usability**
+
+- [x] **2.12 PR #2 follow-up review and compounded learning**

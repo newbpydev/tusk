@@ -1,0 +1,189 @@
+{
+  "status": "complete",
+  "verdict": "Ready with fixes",
+  "scope": {
+    "base": "4bbc639",
+    "branch": "feat/sqlite-storage-repository",
+    "head_sha": "017d59927af1c3ae2bd923d0e87437875ec4cd8f",
+    "pr_url": null,
+    "files_changed": 58
+  },
+  "intent": "Implement Feature 002 SQLite ownership, migration and transaction repository with strict codecs, metadata history and disk recovery. Preserve cancellation, unknown outcomes and no-replay semantics.",
+  "intent_confidence": "explicit",
+  "reviewers": [
+    "correctness",
+    "project-standards",
+    "testing",
+    "maintainability",
+    "security",
+    "performance",
+    "api-contract",
+    "data-migration",
+    "reliability"
+  ],
+  "findings": [
+    {
+      "#": 1,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "file": "internal/storage/errors.go",
+      "first_evidence": "internal/storage/errors.go:59 -- if errors.Is(err, errIncompatibleSchema) {",
+      "independent_reviewers": [],
+      "line": 59,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness"
+      ],
+      "severity": "P1",
+      "suggested_fix": "Map the safe schema/context cause, then preserve errMigrationOutcome as the outer TransactionError before returning the category.",
+      "title": "Preserve unknown migration outcomes before schema categories",
+      "why_it_matters": "A failed rollback during an already-corrupt or incompatible schema inspection is reported only as a schema error. The caller loses the required unknown-outcome signal and cannot follow the documented readback recovery contract.",
+      "evidence": [
+        "internal/storage/errors.go:59 -- if errors.Is(err, errIncompatibleSchema) {",
+        "internal/storage/errors.go:62 -- if errors.Is(err, errCorruptSchema) {",
+        "Isolated TestOpenCause_RetainsMigrationUnknownOutcome fails: unknown cleanup outcome hidden by storage: corrupt data."
+      ]
+    },
+    {
+      "#": 2,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "file": "internal/storage/migrations.go",
+      "first_evidence": "internal/storage/migrations.go:131 -- return 0, errCorruptSchema",
+      "independent_reviewers": [],
+      "line": 131,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Preserve context.Canceled and context.DeadlineExceeded from ledger queries/scans and canonical replay before classifying schema failures.",
+      "title": "Preserve cancellation during schema inspection",
+      "why_it_matters": "Canceling Open during ledger inspection or canonical schema replay incorrectly reports corruption or incompatibility. That violates R16 and can direct a caller to database recovery instead of honoring cancellation.",
+      "evidence": [
+        "internal/storage/migrations.go:131 -- return 0, errCorruptSchema",
+        "internal/storage/migrations.go:106 -- return nil, fmt.Errorf(\"%w: invalid canonical schema\", errIncompatibleSchema)",
+        "Isolated TestInspection_PreservesCancellationCause fails for ledger and canonical replay with corrupt/incompatible public categories."
+      ]
+    }
+  ],
+  "actionable_findings": [
+    {
+      "#": 1,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "file": "internal/storage/errors.go",
+      "first_evidence": "internal/storage/errors.go:59 -- if errors.Is(err, errIncompatibleSchema) {",
+      "independent_reviewers": [],
+      "line": 59,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness"
+      ],
+      "severity": "P1",
+      "suggested_fix": "Map the safe schema/context cause, then preserve errMigrationOutcome as the outer TransactionError before returning the category.",
+      "title": "Preserve unknown migration outcomes before schema categories",
+      "why_it_matters": "A failed rollback during an already-corrupt or incompatible schema inspection is reported only as a schema error. The caller loses the required unknown-outcome signal and cannot follow the documented readback recovery contract.",
+      "evidence": [
+        "internal/storage/errors.go:59 -- if errors.Is(err, errIncompatibleSchema) {",
+        "internal/storage/errors.go:62 -- if errors.Is(err, errCorruptSchema) {",
+        "Isolated TestOpenCause_RetainsMigrationUnknownOutcome fails: unknown cleanup outcome hidden by storage: corrupt data."
+      ]
+    },
+    {
+      "#": 2,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "file": "internal/storage/migrations.go",
+      "first_evidence": "internal/storage/migrations.go:131 -- return 0, errCorruptSchema",
+      "independent_reviewers": [],
+      "line": 131,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Preserve context.Canceled and context.DeadlineExceeded from ledger queries/scans and canonical replay before classifying schema failures.",
+      "title": "Preserve cancellation during schema inspection",
+      "why_it_matters": "Canceling Open during ledger inspection or canonical schema replay incorrectly reports corruption or incompatibility. That violates R16 and can direct a caller to database recovery instead of honoring cancellation.",
+      "evidence": [
+        "internal/storage/migrations.go:131 -- return 0, errCorruptSchema",
+        "internal/storage/migrations.go:106 -- return nil, fmt.Errorf(\"%w: invalid canonical schema\", errIncompatibleSchema)",
+        "Isolated TestInspection_PreservesCancellationCause fails for ledger and canonical replay with corrupt/incompatible public categories."
+      ]
+    }
+  ],
+  "triage_groups": [],
+  "pre_existing_findings": [],
+  "requirements_completeness": {
+    "R1": "met",
+    "R2": "met",
+    "R3": "met",
+    "R4": "met",
+    "R5": "met",
+    "R6": "met",
+    "R7": "met",
+    "R8": "met",
+    "R9": "met",
+    "R10": "met",
+    "R11": "met",
+    "R12": "met",
+    "R13": "met",
+    "R14": "met",
+    "R15": "met",
+    "R16": "partial; findings 1 and 2 must be fixed",
+    "R17": "met",
+    "R18": "met",
+    "R19": "met",
+    "R20": "met",
+    "R21": "met",
+    "R22": "met",
+    "units": "U6/U1/U2/U3/U4 committed; U5 code and acceptance tests present, final signoff pending fixes. Native V33 intentionally deferred."
+  },
+  "learnings": [],
+  "agent_native_gaps": [],
+  "deployment_notes": [],
+  "residual_risks": [
+    "CLI latency is not measured here; 10000-row materialization remains a recorded stress cost."
+  ],
+  "testing_gaps": [
+    "Native Windows/macOS execution remains Phase 6; cross-builds are not execution."
+  ],
+  "coverage": {
+    "scope": "full branch plus staged U5",
+    "standards": "AGENTS.md fallback applies to every changed file",
+    "local_execution": "nine sequential parent-context passes; no independent reviewer promotion",
+    "simplification": "reuse/quality/efficiency applied 0 changes; guards retained",
+    "cross_model": "No usable independent review: claude-opus-5 high via claude returned provider 401 expired OAuth; composer-2.5-fast via Cursor rejected --add-dir before review. One replacement attempted; no served-model receipt.",
+    "adversarial": "independent lens unavailable; local correctness/security/reliability and concrete fault tests retain attributed coverage",
+    "validator": {
+      "verdicts": [
+        {
+          "#": 1,
+          "validated": true,
+          "reason": "Isolated test demonstrates that joined corruption and migration-outcome errors lose Outcome()."
+        },
+        {
+          "#": 2,
+          "validated": true,
+          "reason": "Isolated ledger and canonical-replay tests return wrong public categories for context.Canceled."
+        }
+      ],
+      "independent": false,
+      "limitation": "User AGENTS tool mapping requires reviewer and validator work sequentially in the main thread; tests corroborate behavior, not independent model judgment."
+    },
+    "suppressed": 0,
+    "malformed": 0,
+    "local_gates": "Current Go1.27.1 and minimum Go1.25 make validate, generated check and minimum five-target builds pass; storage coverage97.3%; new findings reproduced in faithful isolated snapshot."
+  },
+  "artifact_path": "/tmp/compound-engineering-1000/ce-code-review/20260908-211735-0a43d641",
+  "run_id": "20260908-211735-0a43d641"
+}

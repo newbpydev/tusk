@@ -22,9 +22,9 @@ deepened: 2026-09-08
 
 **Pack:** This plan, the [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md), and the [issue workorder](../workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md). Artifacts stay in this first-party repository under `docs/`.
 
-**Execution direction:** Red-first TDD, sequential units, local verification through Make. U6 is the new prerequisite, followed by U1, U2, U3, U4, U5. Existing 002-1 through 002-5 identities are retained. An executor starts at the masterplan's active unit and advances only with its evidence.
+**Execution direction:** Red-first TDD, sequential units, local verification through Make. U6 is the new prerequisite, followed by U1, U2, U3, U4, U5. Existing 002-1 through 002-5 identities are retained. An executor starts at the masterplan's active unit and advances only with its evidence and a separate validated unit commit.
 
-**Stop conditions:** An incompatible dependency graph, failed compatibility probe, unrecognized database, or failed unit gate stops dependent implementation. Never choose an affected SQLite engine, weaken tests, or recreate user data to proceed. This planning request does not start implementation or publication.
+**Stop conditions:** An incompatible dependency graph, failed compatibility probe, unrecognized database, or failed unit gate stops dependent implementation. Never choose an affected SQLite engine, weaken tests, or recreate user data to proceed. The subsequent ce-work request authorized implementation; publication remains outside scope.
 
 ---
 
@@ -118,7 +118,7 @@ The current Makefile has no test filtering variables or generation targets. `mak
 - KTD1. **Pin the runtime graph.** Select Go 1.25.0 minimum, `modernc.org/sqlite v1.58.0`, and its required `modernc.org/libc v1.75.6`. The driver documents SQLite 3.53.4 on the five product targets, beyond the WAL-reset fix. This is the recommended technical planning default, not a claim of explicit user approval or completed compatibility tests. U6 proves the selected graph, exact engine, and minimum toolchain before schema implementation. Sources: [driver](https://pkg.go.dev/modernc.org/sqlite@v1.58.0), [module](https://proxy.golang.org/modernc.org/sqlite/@v/v1.58.0.mod), [libc module](https://proxy.golang.org/modernc.org/libc/@v/v1.75.6.mod), [WAL fix](https://www.sqlite.org/wal.html#walresetbug). Governs R1/R20/R21.
 - KTD2. **Keep the generator outside the runtime module.** Use prebuilt sqlc v1.31.1 and config format `version: "2"`; commit generated Go. Its source module requires Go 1.26, so do not add a tool dependency to Tusk's Go 1.25 module. Verify the downloaded archive against the release asset digest in the tool table. Sources: [release](https://github.com/sqlc-dev/sqlc/releases/tag/v1.31.1), [generator module](https://proxy.golang.org/github.com/sqlc-dev/sqlc/@v/v1.31.1.mod). Governs R18.
 - KTD3. **Separate open policy from connection mechanics.** A private connector factory builds writer/read-only reader configurations; `storage.Open` owns paths, compatibility, migration, and cleanup. Use `sqlite.NewConnector` with `sql.OpenDB`, without registering per-repository drivers or global hooks. Connector DSNs contain only encoded filenames and application-owned parameters. Governs R2–R5.
-- KTD4. **Use driver-backed transactions.** Writer connections set `_txlock=immediate`; reader connections use deferred transactions and `query_only=ON`. The driver's read-only transaction flag controls begin mode but does not enforce write protection by itself. Use `database/sql` transaction ownership, never mix manual BEGIN with `sql.Tx`. Sources: [transaction source](https://github.com/modernc-org/sqlite/blob/v1.58.0/tx.go), [connector source](https://github.com/modernc-org/sqlite/blob/v1.58.0/connector.go). Governs R14–R16/R20.
+- KTD4. **Use driver-backed transactions.** Writer connections set `_txlock=immediate`; reader connections use deferred transactions and `query_only=ON`. The driver's read-only transaction flag controls begin mode but does not enforce write protection by itself. Use `database/sql` transaction ownership, never mix manual BEGIN with `sql.Tx`. Execution reconciliation for 002-ISS-021: cancellable writer acquisition uses a private connector wrapper with at most 25-ms SQLite busy waits and a five-second total acquisition budget. Retry only a failed driver BeginTx returning primary SQLITE_BUSY, before any callback or application statement; check context between attempts. Restore busy_timeout=5000 before exposing the transaction or returning the connection. Cleanup failure discards the physical connection. Never retry application statements, callbacks or commits. Sources: [transaction source](https://github.com/modernc-org/sqlite/blob/v1.58.0/tx.go), [connector source](https://github.com/modernc-org/sqlite/blob/v1.58.0/connector.go), [SQLite busy handler](https://www.sqlite.org/c3ref/busy_handler.html). Governs R14–R16/R20.
 - KTD5. **Store explicit, canonical records.** Use STRICT tables and the schema/codec contract below. Store UTC dates as fixed-width TEXT rather than driver-interpreted DATETIME; use core parsing/validation without changing valid user content. Governs R8/R9/R17.
 - KTD6. **Make migrations transactional and identifiable.** Use application ID `0x5455534B`, a SHA-256 ledger, and sequential embedded forward SQL. `db/embed.go` owns the compiler-populated, unexported read-only `embed.FS`; never export or reassign that asset binding. Runtime connections, clocks, maps, and callbacks remain instance-owned. Sources: [Go embed](https://pkg.go.dev/embed), [SQLite application ID](https://www.sqlite.org/pragma.html#pragma_application_id). Governs R6/R7.
 - KTD7. **Keep ports small and transaction-scoped.** Readers expose materialized domain values; writers add CRUD and event append. No SQL handles, generated structs, open cursors, or concrete driver errors cross the port. Full operation semantics are in the boundary table. Governs R10–R17.
@@ -158,7 +158,7 @@ Decode requires exactly that canonical stored representation, including a parse-
 
 Event kinds are `create`, `metadata`, `status`, `move`, `progress`, `rollup`. Changed-field names are a sorted nonempty unique subset of `title`, `description`, `status`, `priority`, `parent_id`, `progress`, `tags`, `due_date`, `completed_at`. Store no previous text, values, snapshots, or delete tombstones. The service supplies which event applies and when; the repository validates and appends it, without automatic event generation or no-op inference. AUTOINCREMENT prevents reuse of a committed sequence after deletion; gaps and rolled-back allocations are not event counts.
 
-Migration idempotency is enforced by the ledger: re-open runs no already-applied migration. Before any pending SQL, validate filenames, uniqueness, contiguity, hashes, and exact applied-prefix equality. Unknown files, missing versions, edited bytes, or unknown database objects fail closed. Ledger creation, application ID, all pending DDL/data changes, and ledger inserts share the same transaction. Do not hide drift with unconditional `IF NOT EXISTS`. A migration fixture failing on its second statement or ledger insert must restore the prior logical database. On a newly created file, failure may leave an empty file/directories; it never deletes them automatically.
+Migration idempotency is enforced by the ledger: re-open runs no already-applied migration. Before any pending SQL, validate filenames, uniqueness, contiguity, hashes, and exact applied-prefix equality. Identity, ledger and catalog inspection share one read snapshot; recheck them in the write transaction. Compare catalog definitions against the applied canonical migration prefix evaluated in an isolated private memory database, avoiding a second handwritten schema definition. Unknown files, missing versions, edited bytes, or unknown database objects fail closed. Ledger creation, application ID, all pending DDL/data changes, and ledger inserts share the same transaction. Do not hide drift with unconditional `IF NOT EXISTS`. A migration fixture failing on its second statement or ledger insert must restore the prior logical database. On a newly created file, failure may leave an empty file/directories; it never deletes them automatically.
 
 ### Repository boundary
 
@@ -303,7 +303,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** Completed Feature 001 and this reviewed planning pack. U6 is a newly split prerequisite, so the existing U1–U5 IDs do not move.
 
-**Files:** `go.mod`, new `go.sum`, `scripts/setup.sh`, `scripts/test/test_scripts.sh`, `Makefile`, new `internal/storage/connection.go`, `internal/storage/compatibility_test.go`. Own only compatibility/connection primitives; do not add schema or public file-opening policy here.
+**Files:** `go.mod`, new `go.sum`, `scripts/setup.sh`, `scripts/test/test_scripts.sh`, `Makefile`, new `internal/storage/connection.go`, `internal/storage/compatibility_test.go`, `internal/storage/connection_test.go`. Own only compatibility/connection primitives; do not add schema or public file-opening policy here.
 
 **Approach:** Introduce the private connector factory, pinned graph, and canonical compatibility/build targets. Update Go-minimum diagnostics and fake-toolchain fixtures. Keep runtime global settings untouched.
 
@@ -329,7 +329,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U6 proves the driver and supplies private connection primitives; no public opener or generated queries is needed to test migration mechanics.
 
-**Files:** New `.gitattributes`, `db/embed.go`, `db/embed_test.go`, `db/migrations/001_initial_schema.sql`, `internal/storage/migrations.go`, `internal/storage/migrations_test.go`, `internal/storage/schema_test.go`, and fixture migrations under `internal/storage/testdata/migrations/`.
+**Files:** New `.gitattributes`, `db/embed.go`, `db/embed_test.go`, `db/migrations/001_initial_schema.sql`, `internal/storage/migrations.go`, `internal/storage/migrations_test.go`, `internal/storage/schema_test.go`, `internal/storage/migration_fault_test.go`, `internal/storage/migration_process_test.go`, and fixture migrations under `internal/storage/testdata/migrations/`.
 
 **Approach:** Separate immutable inventory validation, compatibility inspection, and transaction application. Test against injected fixture filesystems and disposable real databases. Cover the `db` package with inventory/content tests instead of excluding it from coverage.
 
@@ -356,7 +356,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U1 supplies canonical schema; U6 supplies test connections.
 
-**Files:** New `db/queries.sql`, `sqlc.yaml`, `internal/storage/sqlc/`, `internal/storage/queries_test.go`, `scripts/sqlc.sh`; modify `Makefile`, `scripts/test/test_scripts.sh`, and `.gitignore` only if the local tool path is not already ignored.
+**Files:** New `db/queries.sql`, `sqlc.yaml`, `internal/storage/sqlc/`, `internal/storage/queries_test.go`, `scripts/sqlc.sh`, `scripts/test/test_sqlc.sh`; modify `Makefile`, `scripts/test/test_scripts.sh`, `scripts/coverage.sh` (correct Go output parsing while preserving existing exemptions), and `.gitignore` only if the local tool path is not already ignored.
 
 **Approach:** Generate fixed CRUD, filtered candidate, children/subtree/ancestor, and event queries. Keep migration ledger and PRAGMA/transaction control in the migration/connection owner because those bootstrap operations precede generation. Add pinned setup/generation/check targets and negative script fixtures.
 
@@ -382,7 +382,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U1 migration and U6 connection primitives. Execute after U2 to preserve the phase's established order.
 
-**Files:** New `internal/storage/path.go`, `internal/storage/path_test.go`, `internal/storage/open.go`, `internal/storage/open_test.go`, `internal/storage/path_unix_test.go`, `internal/storage/path_windows_test.go`; adapt private connection/migration files only to integrate their decided contracts.
+**Files:** New `internal/storage/path.go`, `internal/storage/path_test.go`, `internal/storage/open.go`, `internal/storage/open_test.go`, `internal/storage/path_unix_test.go`, `internal/storage/path_windows_test.go`, `internal/storage/path_unix.go`, `internal/storage/path_windows.go`, `internal/storage/open_fault_test.go`, `internal/storage/memory_test.go`; adapt private connection/migration files only to integrate their decided contracts.
 
 **Approach:** Implement the lifecycle specified above, with injected path inputs and a private constructor seam for connector failures. Keep public user configuration distinct from internal memory-fixture configuration. Do not wire `cmd/tusk` to storage in this phase.
 
@@ -408,7 +408,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U2 generated queries and U3 opened storage instance.
 
-**Files:** New `internal/ports/task_repository.go`, `internal/ports/task_event.go`, `internal/ports/errors.go`, `internal/storage/sqlite_repository.go`, `internal/storage/codec.go`, `internal/storage/errors.go`, `internal/storage/transaction.go`, and corresponding `sqlite_repository_test.go`, `codec_test.go`, `errors_test.go`, `transaction_test.go` under `internal/storage/`.
+**Files:** New `internal/ports/task_repository.go`, `internal/ports/task_event.go`, `internal/ports/errors.go`, `internal/storage/sqlite_repository.go`, `internal/storage/codec.go`, `internal/storage/errors.go`, `internal/storage/transaction.go`, and corresponding `sqlite_repository_test.go`, `codec_test.go`, `errors_test.go`, `transaction_test.go`, `repository_contract_test.go`, `repository_fault_test.go` under `internal/storage/`.
 
 **Approach:** Implement the boundary table using instance-owned dependencies and guarded transaction handles. Test codecs directly, then exercise generated queries through the real adapter. Keep business mutations in the future service; no service mocks are needed to claim adapter behavior.
 
@@ -436,7 +436,7 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 **Dependencies:** U4 complete. Characterization tests that already pass are valid evidence, not a reason to change working production code without a new failing case.
 
-**Files:** New `internal/storage/concurrency_test.go`, `internal/storage/recovery_test.go`, `internal/storage/storage_bench_test.go`, test-only fixtures under `internal/storage/testdata/`, `docs/storage.md`; update `Makefile`, this feature triplet, and masterplan evidence. Production fixes remain limited to a reproduced failing storage contract.
+**Files:** New `internal/storage/concurrency_test.go`, `internal/storage/recovery_test.go`, `internal/storage/storage_bench_test.go`, `internal/storage/inspection_cancellation_test.go`, test-only fixtures under `internal/storage/testdata/`, `docs/storage.md`; update `Makefile`, this feature triplet, and masterplan evidence. Production fixes remain limited to a reproduced failing storage contract.
 
 **Approach:** Use barriers and bounded child-process handshakes around transaction boundaries. Give each fixture a unique database and close all handles before cleanup. Benchmark storage components with fixed data and record reference hardware; document next-phase obligations.
 
@@ -459,6 +459,8 @@ Phase 3 must adopt these callback contracts when it deepens its own outline. Do 
 
 ## Verification Contract
 
+**Execution update, 2026-09-08:** All six units are locally accepted. See U5 acceptance and separate unit-commit evidence; native/hosted release gates remain pending.
+
 The [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md) owns 002-V01–002-V68 fixtures, failure placement, and evidence tiers. The [workorder](../workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md) records planning corrections separately from runtime findings.
 
 Existing canonical commands are `make setup`, `make test-unit`, `make test`, `make race`, `make coverage`, `make validate`, and `make build`. Test-unit may skip disk/process tests, but full/race must include them. Tests must assert that the intended cases ran. Existing targets accept no filtering variables; use the suite until a documented new target exists.
@@ -474,3 +476,57 @@ Every unit needs observed red evidence before implementation changes, focused gr
 Feature 002 is complete when all six units and local scenarios have recorded execution evidence, the repository boundary matches this plan, generated output is reproducible, and the canonical gates pass on the actual candidate revision. Remove abandoned experimental code and fixtures containing user data. Close planning/runtime issues only with their required evidence and synchronize the triplet and masterplan.
 
 Native Windows/macOS execution and release-target runtime acceptance remain explicit Phase 6 gates. Phase 2 supplies portable tests and CGO-disabled cross-build proof; Linux execution cannot check native evidence boxes. Feature 003 planning may begin only after Phase 2 local acceptance and a recorded handoff. CLI latency, full user workflows, hosted CI, and publication remain with their owning phases.
+
+### U4 execution receipt — 2026-09-08
+
+Base 4bbc639 plus uncommitted implementation. make validate check-generated passed; handwritten storage coverage 97.0%. Go 1.25 test-compat and five CGO-disabled storage/test builds passed. Repository round-trip, exact core filtering, tree corruption, deletion, history, snapshot, lifetime/concurrent-handle, cancellation, commit/rollback uncertainty and driver-fault tests cover 002-V40–002-V58. Observed regressions before fixes: public Open leaked OS paths; ListChildren unnecessarily decoded corrupt grandchildren; rollback cleanup failures lost the original context/domain cause. Sanitized categories, immediate-child reads and joined safe causes resolve those failures. Callback replay remains prohibited, provisional failed reads return no data, and the read handle exposes no writer interface. U4 is locally accepted; U5 is active. Native/hosted execution is not claimed.
+
+### U4 commit reconstruction — 2026-09-08
+
+The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
+
+### U5 acceptance receipt — 2026-09-08
+
+All applicable Feature 002 local scenarios are accepted: 67/68 checked, with only native Windows 002-V33 deferred to Phase 6. Current Go 1.27.1-X:nodwarf5 make validate check-generated build passed after the review fixes (storage coverage 97.6%, db/cmd 100%, core 98.2%; existing ports/sqlc exemptions unchanged). Explicit Go 1.25 previously passed the full gate; after the final mapper changes it again passed test-compat, all five CGO-disabled storage/test builds, check-generated and focused migration/inspection race tests. make setup and the final Btrfs make bench-storage run passed. No hosted or native macOS/Windows runtime result is claimed.
+
+Two helper processes preserve all 40 read-modify-write increments and 40 events; a reader retains its snapshot across another process's commit. External writer cancellation returns in 102.5 ms (105.3 ms under race), while the uncanceled wait returns busy in 5.01 s; later writes succeed. Killing and reaping a writer before commit preserves the old task/event set; killing after acknowledgment preserves exactly one committed set. Independent reopen checks integrity and foreign keys. Held-reader WAL growth is followed by automatic restart sequence 0 -> 5 with bounded file reuse, without explicit checkpoint SQL. Normally closed offline backup reopens without modifying its source.
+
+Observed red-first U5 fixes restore the default Make target, preserve migration statement/ledger/commit/rollback cancellation causes, preserve inspection cancellation, and retain unknown migration outcomes alongside schema categories. The completed ce-code-review receipt reported two actionable findings; both were reproduced and fixed, with no unapplied actionable residual. Review passes ran sequentially in the parent context per repository tool mapping; both independent peer routes failed before producing a review, so independent corroboration is unavailable. ce-simplify-code found no warranted behavior-preserving edit.
+
+[Durable evidence, commit sequence and review resolution](../verification-evidence/002/README.md), [raw benchmarks](../verification-evidence/002/storage-benchmarks.txt), [code fingerprint and gate receipt](../verification-evidence/002/acceptance.json), and [operations/service handoff](../storage.md) retain the evidence. The separate U5 commit closes Phase 2; the next active target is Phase 3 planning, not Feature 003 implementation. No push, PR, merge or release is authorized by this acceptance.
+
+### Post-acceptance publication follow-up — 2026-09-08
+
+The user authorized simplify, review to zero actionable findings, compound, then commit/push/PR. MASTERPLAN target 2.4 tracks this follow-up; the six validated implementation commits remain separate. Simplification found no worthwhile behavior-preserving changes. Fresh review reports zero actionable findings; make validate check-generated build passes with 97.6% storage coverage. Both external review routes failed before producing usable review evidence; nine local passes ran sequentially in the parent context. See ../verification-evidence/002/publication-review.json. The reusable transaction-outcome/redaction lesson is captured in ../solutions/database-issues/preserve-transaction-outcomes-through-error-redaction.md with parser, link and source grounding checks. The branch is published as [PR #2](https://github.com/newbpydev/tusk/pull/2) against main; merge remains user-owned. Hosted checks and feedback are handled by the PR monitor, separately from local acceptance. Feature 003 implementation remains out of scope; V33 native Windows remains a Phase 6 obligation.
+
+### PR #2 callback-cause follow-up — 2026-09-08
+
+Hosted review identified incomplete safe-sentinel coverage when callback failure and rollback failure coincide. Target 2.5 reproduced six omissions and now preserves all declared safe core/port categories without exposing original private error text. All 28 cause cases pass, along with make validate check-generated build and the minimum-Go focused race test. See ../verification-evidence/002/callback-cause-followup.json for the updated code manifest; earlier acceptance and review artifacts remain historical snapshots.
+
+### PR #2 review unit 2.6: Preserve joined categories and complete statement fault coverage
+
+Red: all six hierarchy/corruption pairs lost ErrCorrupt during failed rollback. Green: preserve every recognized safe sentinel, retain unknown outcome, redact private wrapper text. Real SQLite constraint codes 1555/2067/787 and CreateTask statement failure now have explicit tests. Focused regression and make validate check-generated pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.7: Retry extended busy results before transaction admission
+
+Red: a real SQLite WAL snapshot conflict (517) injected at BeginTx aborted acquisition after one attempt. Green: primary-code masking admits the second attempt within the existing budget. No callback, statement or commit retry added. Focused regression and make validate check-generated pass; storage coverage remains 97.6%. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.8: Harden and document repository ports
+
+Red: formatting NewTransactionError with nil cause panicked. Green: nil and zero-value errors match ErrStorage and preserve unknown outcome without Unwrap. Port tests pass; callback contexts, metadata fields, ordered unpaginated events, recursive deletion and conservative migration authoring contracts are documented. make validate check-generated passes. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.9: Validate newly created database handles
+
+Red: injected creation returning an actual device handle bypassed the regular-file check. Green: stat and close created handles before the shared regular/reparse validation, reject devices and prove rejection closes the handle. The per-call file creator seam is private and carries no mutable global state. Focused regression and make validate check-generated pass. Native Windows V33 remains deferred; injection is not native proof. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.10: Generate typed nullable candidate parameters
+
+Red: compile-time NullString assignments rejected all three generated interface{} parameters. Green: explicit nullable TEXT casts let pinned sqlc generate concrete sql.NullString fields; callers bind typed values, fixtures normalize timestamps to UTC. Candidate/core parity and zero-value null semantics pass; make generate and make validate check-generated pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.11: Make sqlc tooling directly executable with explicit prerequisites
+
+Red: direct entrypoints lacked executable bits; missing curl produced only command-not-found. Green: both scripts are executable, setup/generate/check diagnose their curl/gofmt/diff requirements before work, and restricted-PATH fixtures cover each missing tool. Focused script tests and make validate check-generated build pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.12: Review hosted fixes and compound joined-error lessons
+
+Reviewed the six remediation commits against correctness, standards, tests, maintainability, security, performance, API, data integrity, reliability and compound-failure scenarios. No additional actionable finding. Seventeen of 23 hosted comments have fixes; six retain documented boundaries with evidence. Replies await publication. Updated the compounded lesson for joined safe categories; frontmatter and source/link checks pass. Current make validate check-generated build, explicit minimum-Go compatibility, five target builds and minimum-Go focused race regressions pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.

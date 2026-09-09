@@ -2,20 +2,25 @@
 feature-id: "002"
 plan-source: docs/plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md
 verification-plan: docs/verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md
-status: Planning corrections recorded - implementation pending
-evidence-scope: Planning findings only
+status: locally accepted - native and hosted release gates deferred
+evidence-scope: local implementation, per-unit commits and acceptance; no native or hosted execution
 ---
 
 # Feature 002 Issue Workorder
 
 This register accompanies the [implementation plan](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) and [verification plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md). **Fixed in plan** means a planning gap was resolved in these documents, not that code was fixed or tests passed.
 
-The request authorizes completing and reviewing the Feature 002 planning pack. Ordinary technical corrections are incorporated under that scope. Go 1.25 is a selected planning default based on the pinned manifests and the product plan's recommendation; it is not labeled as an explicit user-approved decision. U6 owns runtime compatibility proof before migration implementation. No implementation/release gate is closed by this register.
+The original request authorized completing and reviewing the Feature 002 planning pack. The subsequent `ce-work` invocation authorizes implementation in masterplan order. Go 1.25 is the selected technical default; U6 owns runtime compatibility proof before migration implementation. Planning resolutions alone close no runtime gate; the execution receipts below record separately verified local acceptance.
 
 ## Issue register
 
 | ID | Source / lens | Owner | Severity | Status | Next action and evidence |
 | --- | --- | --- | --- | --- | --- |
+| 002-ISS-022 | U5 recovery: migration failures lost context causes | Feature 002 implementer | P2 | Resolved locally | TestMigrate_PreservesCancellationCause red/green; safe causes survive DDL/ledger/commit/rollback and public mapping. |
+| 002-ISS-023 | U5 tooling: plain make selected tool download | Feature 002 implementer | P2 | Resolved locally | Default-goal regression failed before .DEFAULT_GOAL := all; 12/12 base script checks now pass. |
+| 002-ISS-024 | ce-code-review #1: schema category hid unknown cleanup | Feature 002 implementer | P1 | Resolved locally | TestOpenCause_RetainsMigrationUnknownOutcome failed before public mapper fix; uncertainty and safe cause now survive. |
+| 002-ISS-025 | ce-code-review #2: inspection mislabeled cancellation | Feature 002 implementer | P2 | Resolved locally | TestInspection_PreservesCancellationCause failed for ledger/replay; cancellation and deadline categories now survive. |
+| 002-ISS-021 | Runtime compatibility: lock wait ignores short context deadline | Feature 002 implementer; U6 | P1 | Resolved locally | KTD4 wrapper passes original cancellation regression, replacement/negative/recovery tests, Go 1.25 compatibility, five-target builds and make validate; see resolution receipt. |
 | 002-ISS-001 | Coherence: Readiness advertised without an executable pack | Feature 002 implementer / named review lens | P1 | Fixed in plan | Set execution: code only with the complete contract, mapped scenarios and reviewed triplet; masterplan points to the first pending unit. Evidence: R21/R22; all units; 002-V67/002-V68. |
 | 002-ISS-002 | Feasibility/dependencies: Go and SQLite minimum was unresolved | Feature 002 implementer / named review lens | P1 | Fixed in plan | Select Go 1.25.0, sqlite v1.58.0, libc v1.75.6 as the technical planning default; U6 must prove engine/graph/minimum compiler before U1. Evidence: R1; U6; 002-V01/002-V02/002-V07. |
 | 002-ISS-003 | Feasibility: Generator minimum would contaminate runtime tooling | Feature 002 implementer / named review lens | P1 | Fixed in plan | Pin the prebuilt executable separately and commit generated output; ordinary build/test uses no source-built generator. Evidence: R18; U2; 002-V25/002-V28. |
@@ -257,13 +262,97 @@ Planning checklist 2.1 is complete after the documentation audit. All six implem
 
 ## Implementation and release gate
 
-- [ ] U6, U1, U2, U3, U4 and U5 implemented in masterplan order.
-- [ ] Each behavioral change has observed red-first evidence and focused green proof.
-- [ ] Minimum Go/compiler and pinned SQLite/libc engine proof passed.
-- [ ] Generated output and negative script checks passed.
-- [ ] Full, race and required per-package coverage passed through Make.
-- [ ] Applicable local disk/process scenarios executed and recovery demonstrated.
-- [ ] Native Windows/macOS and hosted evidence recorded separately, or retained as named Phase 6 gates.
-- [ ] All runtime findings resolved with fresh retest evidence.
-- [ ] Phase 3 handoff and masterplan pointers synchronized.
-- [ ] Remaining unaccepted implementation issues: 0.
+### 002-ISS-021. Pinned driver's lock wait outlives the context deadline
+
+- **Observed:** 2026-09-08 on clean base `4bbc639`, with uncommitted U6 changes on `feat/sqlite-storage-repository`.
+- **Contract:** R16/R20, KTD4/KTD9; U6; 002-V05/002-V06. The plan explicitly makes failed compatibility proof a stop before U1.
+- **Reproduction:** Two independently opened single-connection pools on a temporary disk WAL database, both configured with `_txlock=immediate` and `busy_timeout=5000`. Writer A holds a transaction; writer B calls `BeginTx` with a 100-ms deadline. B returns `database is locked (5) (SQLITE_BUSY)` after 5.03763051s on Go 1.25.0 and 5.009708107s on installed Go 1.27.1. Releasing A permits a later B transaction. The race run reproduces the same failure after 5.05168653s.
+- **Source inspection:** Pinned [tx.go](https://github.com/modernc-org/sqlite/blob/v1.58.0/tx.go) executes begin through `sqlite3_exec`, arranges interruption for canceled contexts, and returns the SQLite error. The measured behavior does not satisfy the promised short-deadline lock cancellation; source inspection alone does not establish a safe fix.
+- **Changes retained:** Pinned go.mod/go.sum, private no-I/O connector, compatibility regressions, stricter Go-minimum setup fixtures, and canonical compatibility/cross-build targets. No schema, public opener, repository, service, CLI or TUI implementation was added.
+- **Validation:** Engine/minimum compiler and individual basic connection probes pass. `make test-compat`, `make validate` and separately `make race` fail the retained regression; coverage was not reached. The setup script suite passes 9/9. Full evidence is in the paired verification record.
+- **Cross-build proof:** `GOTOOLCHAIN=go1.25.0 make build-storage` exits 0 for the native package and all five CGO-disabled targets. This does not close the failed runtime gate or establish native Windows/macOS behavior.
+- **Resolution in progress:** Following the user's instruction to continue with engineering judgment, KTD4 now selects a connection-local cancellable acquisition wrapper. The default busy timeout and total lock budget remain five seconds; only acquisition temporarily uses 25-ms waits, with context checks between failed driver BeginTx attempts. Restore the default before returning a connection/transaction; discard on restoration failure. No manual SQL BEGIN, dependency change, callback/statement replay or relaxed cancellation assertion. Added negative/recovery tests must prove this before closing the issue.
+- **Resume:** Resolve this incompatibility, finish the remaining U6 mode/portability probes, and pass minimum/current `make test-compat`, `make build-storage`, full/race and `make validate`. Until then, U6 and all downstream units remain unchecked; no commit or publication performed.
+
+### Gate checklist
+
+- [x] U6, U1, U2, U3, U4 and U5 implemented in masterplan order.
+- [x] Each behavioral change has observed red-first evidence and focused green proof.
+- [x] Minimum Go/compiler and pinned SQLite/libc engine proof passed.
+- [x] Generated output and negative script checks passed.
+- [x] Full, race and required per-package coverage passed through Make.
+- [x] Applicable local disk/process scenarios executed and recovery demonstrated.
+- [x] Native Windows/macOS and hosted evidence recorded separately, or retained as named Phase 6 gates.
+- [x] All runtime findings resolved with fresh retest evidence.
+- [x] Phase 3 handoff and masterplan pointers synchronized.
+- [x] Remaining unaccepted implementation issues: 0.
+
+### 002-ISS-021 resolution receipt
+
+Resolved locally on 2026-09-08. The connection wrapper retries only failed acquisition before user work, restores busy_timeout=5000, preserves all driver pool interfaces, and poisons a connection when restoration fails. Both cancellation regressions pass around 100 ms, and fault/budget/replacement tests pass. Explicit Go 1.25 compatibility and five-target builds pass; make validate passes with 97.8% storage coverage. Earlier failure/stop notes above remain historical evidence. U6 is accepted and U1 becomes active. No commit or publication occurred.
+
+### U1 execution and review receipt
+
+U1 accepted after final make validate on 2026-09-08 (storage 96.1%, db 100%). Data-integrity/migration review exercised atomic DDL+ledger+task rollback, foreign/newer/drift refusal and constraints. Adversarial tests reproduced and fixed two implementation findings: wildcard catalog exclusion (sqliteXsecret) and split-snapshot identity/catalog inspection. Failure injection distinguishes commit acknowledgment loss from pre-commit failure and proves recovery; two-process tests prove serialized initialization. Source inventory and disposable inverse fixtures are isolated. ce-simplify-code was performed inline under project instructions, with no edits needed. See paired verification receipt for exact test names. Masterplan advances to U2; final feature review and downstream acceptance remain pending.
+
+### U2 execution and review receipt
+
+U2 accepted on 2026-09-08 after make validate check-generated. Official prebuilt sqlc v1.31.1 installation verified the pinned digest; generated output is reproducible. SQL correctness/injection, recursive termination, candidate parity and tooling recovery fixtures pass. Resolved two observed implementation findings: ambiguous recursive ID references and coverage-script package-column parsing. Existing generated-code exemptions were preserved, not broadened. Whole-directory checks work without Git; generation and installation failures preserve old output/tool. Paired verification record owns details; masterplan advances to U3.
+
+### U3 execution and review receipt
+
+U3 locally accepted after make build-storage validate check-generated; storage coverage 95.7%. Filesystem/privacy, resource ownership, concurrency and portability checks are represented by the paired path/open/fault/memory tests. No implicit CLI database access was introduced. Every counted physical handle closes on injected failure and a subsequent Open succeeds. Native Windows 002-V33 remains a Phase 6 obligation. Masterplan advances to U4.
+
+### U4 execution receipt — 2026-09-08
+
+Base 4bbc639 plus uncommitted implementation. make validate check-generated passed; handwritten storage coverage 97.0%. Go 1.25 test-compat and five CGO-disabled storage/test builds passed. Repository round-trip, exact core filtering, tree corruption, deletion, history, snapshot, lifetime/concurrent-handle, cancellation, commit/rollback uncertainty and driver-fault tests cover 002-V40–002-V58. Observed regressions before fixes: public Open leaked OS paths; ListChildren unnecessarily decoded corrupt grandchildren; rollback cleanup failures lost the original context/domain cause. Sanitized categories, immediate-child reads and joined safe causes resolve those failures. Callback replay remains prohibited, provisional failed reads return no data, and the read handle exposes no writer interface. U4 is locally accepted; U5 is active. Native/hosted execution is not claimed.
+
+### U4 commit reconstruction — 2026-09-08
+
+The original red-first work was accumulated without per-unit commits. At the user's correction, this unit was reconstructed in an isolated worktree and make validate was rerun on its exact code contents before committing. The original chronological test receipts above remain historical evidence. Unit completion now includes a separate local commit before advancing; pushing and merging are outside this authorization.
+
+### U5 acceptance receipt — 2026-09-08
+
+All applicable Feature 002 local scenarios are accepted: 67/68 checked, with only native Windows 002-V33 deferred to Phase 6. Current Go 1.27.1-X:nodwarf5 make validate check-generated build passed after the review fixes (storage coverage 97.6%, db/cmd 100%, core 98.2%; existing ports/sqlc exemptions unchanged). Explicit Go 1.25 previously passed the full gate; after the final mapper changes it again passed test-compat, all five CGO-disabled storage/test builds, check-generated and focused migration/inspection race tests. make setup and the final Btrfs make bench-storage run passed. No hosted or native macOS/Windows runtime result is claimed.
+
+Two helper processes preserve all 40 read-modify-write increments and 40 events; a reader retains its snapshot across another process's commit. External writer cancellation returns in 102.5 ms (105.3 ms under race), while the uncanceled wait returns busy in 5.01 s; later writes succeed. Killing and reaping a writer before commit preserves the old task/event set; killing after acknowledgment preserves exactly one committed set. Independent reopen checks integrity and foreign keys. Held-reader WAL growth is followed by automatic restart sequence 0 -> 5 with bounded file reuse, without explicit checkpoint SQL. Normally closed offline backup reopens without modifying its source.
+
+Observed red-first U5 fixes restore the default Make target, preserve migration statement/ledger/commit/rollback cancellation causes, preserve inspection cancellation, and retain unknown migration outcomes alongside schema categories. The completed ce-code-review receipt reported two actionable findings; both were reproduced and fixed, with no unapplied actionable residual. Review passes ran sequentially in the parent context per repository tool mapping; both independent peer routes failed before producing a review, so independent corroboration is unavailable. ce-simplify-code found no warranted behavior-preserving edit.
+
+[Durable evidence, commit sequence and review resolution](../verification-evidence/002/README.md), [raw benchmarks](../verification-evidence/002/storage-benchmarks.txt), [code fingerprint and gate receipt](../verification-evidence/002/acceptance.json), and [operations/service handoff](../storage.md) retain the evidence. The separate U5 commit closes Phase 2; the next active target is Phase 3 planning, not Feature 003 implementation. No push, PR, merge or release is authorized by this acceptance.
+
+### Post-acceptance publication follow-up — 2026-09-08
+
+The user authorized simplify, review to zero actionable findings, compound, then commit/push/PR. MASTERPLAN target 2.4 tracks this follow-up; the six validated implementation commits remain separate. Simplification found no worthwhile behavior-preserving changes. Fresh review reports zero actionable findings; make validate check-generated build passes with 97.6% storage coverage. Both external review routes failed before producing usable review evidence; nine local passes ran sequentially in the parent context. See ../verification-evidence/002/publication-review.json. The reusable transaction-outcome/redaction lesson is captured in ../solutions/database-issues/preserve-transaction-outcomes-through-error-redaction.md with parser, link and source grounding checks. The branch is published as [PR #2](https://github.com/newbpydev/tusk/pull/2) against main; merge remains user-owned. Hosted checks and feedback are handled by the PR monitor, separately from local acceptance. Feature 003 implementation remains out of scope; V33 native Windows remains a Phase 6 obligation.
+
+### PR #2 callback-cause follow-up — 2026-09-08
+
+Hosted review identified incomplete safe-sentinel coverage when callback failure and rollback failure coincide. Target 2.5 reproduced six omissions and now preserves all declared safe core/port categories without exposing original private error text. All 28 cause cases pass, along with make validate check-generated build and the minimum-Go focused race test. See ../verification-evidence/002/callback-cause-followup.json for the updated code manifest; earlier acceptance and review artifacts remain historical snapshots.
+
+### PR #2 review unit 2.6: Preserve joined categories and complete statement fault coverage
+
+Red: all six hierarchy/corruption pairs lost ErrCorrupt during failed rollback. Green: preserve every recognized safe sentinel, retain unknown outcome, redact private wrapper text. Real SQLite constraint codes 1555/2067/787 and CreateTask statement failure now have explicit tests. Focused regression and make validate check-generated pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.7: Retry extended busy results before transaction admission
+
+Red: a real SQLite WAL snapshot conflict (517) injected at BeginTx aborted acquisition after one attempt. Green: primary-code masking admits the second attempt within the existing budget. No callback, statement or commit retry added. Focused regression and make validate check-generated pass; storage coverage remains 97.6%. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.8: Harden and document repository ports
+
+Red: formatting NewTransactionError with nil cause panicked. Green: nil and zero-value errors match ErrStorage and preserve unknown outcome without Unwrap. Port tests pass; callback contexts, metadata fields, ordered unpaginated events, recursive deletion and conservative migration authoring contracts are documented. make validate check-generated passes. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.9: Validate newly created database handles
+
+Red: injected creation returning an actual device handle bypassed the regular-file check. Green: stat and close created handles before the shared regular/reparse validation, reject devices and prove rejection closes the handle. The per-call file creator seam is private and carries no mutable global state. Focused regression and make validate check-generated pass. Native Windows V33 remains deferred; injection is not native proof. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.10: Generate typed nullable candidate parameters
+
+Red: compile-time NullString assignments rejected all three generated interface{} parameters. Green: explicit nullable TEXT casts let pinned sqlc generate concrete sql.NullString fields; callers bind typed values, fixtures normalize timestamps to UTC. Candidate/core parity and zero-value null semantics pass; make generate and make validate check-generated pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.11: Make sqlc tooling directly executable with explicit prerequisites
+
+Red: direct entrypoints lacked executable bits; missing curl produced only command-not-found. Green: both scripts are executable, setup/generate/check diagnose their curl/gofmt/diff requirements before work, and restricted-PATH fixtures cover each missing tool. Focused script tests and make validate check-generated build pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### PR #2 review unit 2.12: Review hosted fixes and compound joined-error lessons
+
+Reviewed the six remediation commits against correctness, standards, tests, maintainability, security, performance, API, data integrity, reliability and compound-failure scenarios. No additional actionable finding. Seventeen of 23 hosted comments have fixes; six retain documented boundaries with evidence. Replies await publication. Updated the compounded lesson for joined safe categories; frontmatter and source/link checks pass. Current make validate check-generated build, explicit minimum-Go compatibility, five target builds and minimum-Go focused race regressions pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.

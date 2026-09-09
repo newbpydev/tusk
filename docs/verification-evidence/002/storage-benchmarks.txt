@@ -1,0 +1,26 @@
+go version
+go version go1.27.1-X:nodwarf5 linux/amd64
+go test ./internal/storage -run '^$' -bench '^BenchmarkStorage$' -benchmem -benchtime=200ms
+goos: linux
+goarch: amd64
+pkg: github.com/newbpydev/tusk/internal/storage
+cpu: AMD Ryzen 5 4500U with Radeon Graphics
+BenchmarkStorage/tasks=0/GetByID-6 	    6790	     32803 ns/op	    3084 B/op	      68 allocs/op
+BenchmarkStorage/tasks=0/List-6    	    3186	     75421 ns/op	    3199 B/op	      76 allocs/op
+BenchmarkStorage/tasks=0/GetSubtree-6         	    6895	     36868 ns/op	    3087 B/op	      68 allocs/op
+BenchmarkStorage/tasks=0/OpenCurrent-6        	      88	   2488604 ns/op	   72204 B/op	    1087 allocs/op
+BenchmarkStorage/tasks=100/GetByID-6          	    5409	     54292 ns/op	    3891 B/op	      93 allocs/op
+BenchmarkStorage/tasks=100/List-6             	     288	    739357 ns/op	  206025 B/op	    3050 allocs/op
+BenchmarkStorage/tasks=100/GetSubtree-6       	     825	    352904 ns/op	   52144 B/op	     583 allocs/op
+BenchmarkStorage/tasks=100/OpenCurrent-6      	      94	   2395179 ns/op	   70889 B/op	    1086 allocs/op
+BenchmarkStorage/tasks=1000/GetByID-6         	    5276	     57725 ns/op	    3894 B/op	      93 allocs/op
+BenchmarkStorage/tasks=1000/List-6            	      39	   7295743 ns/op	 2148951 B/op	   29702 allocs/op
+BenchmarkStorage/tasks=1000/GetSubtree-6      	     800	    311789 ns/op	   52097 B/op	     583 allocs/op
+BenchmarkStorage/tasks=1000/OpenCurrent-6     	     100	   2226618 ns/op	   70857 B/op	    1086 allocs/op
+BenchmarkStorage/tasks=10000/GetByID-6        	    4707	     53066 ns/op	    3898 B/op	      93 allocs/op
+BenchmarkStorage/tasks=10000/List-6           	       4	  66195370 ns/op	24822482 B/op	  296116 allocs/op
+BenchmarkStorage/tasks=10000/GetSubtree-6     	     794	    327002 ns/op	   52067 B/op	     583 allocs/op
+BenchmarkStorage/tasks=10000/OpenCurrent-6    	      99	   2375158 ns/op	   71213 B/op	    1086 allocs/op
+BenchmarkStorage/FirstCreate-6                	      12	  22102547 ns/op	   63190 B/op	     670 allocs/op
+PASS
+ok  	github.com/newbpydev/tusk/internal/storage	6.685s

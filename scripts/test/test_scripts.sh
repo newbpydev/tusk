@@ -43,6 +43,18 @@ assert_eq 1 "$EXIT_CODE" "setup.sh exits 1 when Go is missing"
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "${TMP_DIR}"' EXIT
 
+# TestSetupGoMinimum: setup must reject unsupported and malformed toolchains.
+for version in go1.24.9 go1.25.0 go1.27.1 malformed; do
+    fake_go="${TMP_DIR}/go"
+    printf '#!/usr/bin/env bash\nprintf "%%s\\n" "go version %s linux/amd64"\n' "$version" > "$fake_go"
+    chmod +x "$fake_go"
+    expected=0
+    case "$version" in go1.24.9|malformed) expected=1 ;; esac
+    result=0
+    TUSK_GO_BIN="$fake_go" "${ROOT_DIR}/scripts/setup.sh" >"${TMP_DIR}/setup-output" 2>&1 || result=$?
+    assert_eq "$expected" "$result" "TestSetupGoMinimum: $version"
+done
+
 TEST_GO_FILE="${TMP_DIR}/bad_format.go"
 cat << 'EOF' > "${TEST_GO_FILE}"
 package main
@@ -75,6 +87,26 @@ set +e
 EXIT_CODE=$?
 set -e
 assert_eq 0 "$EXIT_CODE" "fmt.sh exits 0 against repo root"
+
+# Go prints a package without the 'ok' prefix when it has no test files.
+cat > "${TMP_DIR}/go" <<'EOF'
+#!/usr/bin/env bash
+printf '\t%s\t\tcoverage: 0.0%% of statements\n' "$TUSK_COVERAGE_FIXTURE"
+EOF
+chmod +x "${TMP_DIR}/go"
+for package in github.com/newbpydev/tusk/internal/storage/sqlc github.com/newbpydev/tusk/internal/storage/not_sqlc; do
+    expected=1
+    if [[ "$package" == */sqlc ]]; then expected=0; fi
+    result=0
+    PATH="${TMP_DIR}:$PATH" TUSK_COVERAGE_FIXTURE="$package" "${ROOT_DIR}/scripts/coverage.sh" >"${TMP_DIR}/coverage-output" 2>&1 || result=$?
+    assert_eq "$expected" "$result" "coverage package parsing: $package"
+done
+
+# Plain make must keep the canonical all target, never download sqlc by default.
+default_recipe=$(make --no-print-directory -n -C "${ROOT_DIR}")
+result=1
+if [[ "$default_recipe" == *"All canonical quality gates passed."* && "$default_recipe" != *"scripts/sqlc.sh setup"* ]]; then result=0; fi
+assert_eq 0 "$result" "default make validates and builds without downloading tools"
 
 echo "========================================"
 echo "Script Test Results: ${TESTS_PASSED}/${TESTS_TOTAL} passed"

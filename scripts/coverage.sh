@@ -33,7 +33,8 @@ function is_exempt(pkg) {
     }
 }
 /coverage: [0-9.]+%/ {
-    if (is_exempt($2)) { next }
+    pkg = ($1 == "ok") ? $2 : $1
+    if (is_exempt(pkg)) { next }
     for (i = 1; i <= NF; i++) {
         if ($i ~ /^[0-9.]+%$/) {
             cov = substr($i, 1, length($i)-1) + 0.0

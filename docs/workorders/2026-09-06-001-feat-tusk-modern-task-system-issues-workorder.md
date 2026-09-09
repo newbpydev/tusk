@@ -251,3 +251,7 @@ Leave every item unchecked during planning.
 - [ ] Remaining unaccepted implementation/release issues: 0.
 - [ ] Master checklist and every affected feature triplet synchronized.
 - [ ] Release publication separately authorized and its result recorded.
+
+## Feature 002 local handoff — 2026-09-08
+
+The [Feature 002 triplet](../plans/2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) now records six implemented units with per-unit validated commits and 67/68 local scenarios accepted. [Storage operations and Phase 3 obligations](../storage.md) and [durable evidence](../verification-evidence/002/README.md) cover the repository boundary, atomic metadata history, migration refusal, process recovery and benchmarks. Product U24 compatibility evidence is available locally; target-native TUSK-V01 acceptance remains pending. This handoff does not check cross-phase service/CLI/TUI or hosted/native product scenarios. MASTERPLAN.md advances to Feature 003 planning; its outline must be deepened before implementation.
