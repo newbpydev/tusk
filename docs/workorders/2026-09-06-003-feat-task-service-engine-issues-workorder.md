@@ -2,7 +2,7 @@
 feature-id: "003"
 plan-source: docs/plans/2026-09-06-003-feat-task-service-engine-plan.md
 verification-plan: docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md
-status: Locally accepted - publication review pending
+status: Locally accepted - PR open
 evidence-scope: Local implementation and acceptance; native and consumer gates pending
 ---
 
@@ -193,3 +193,5 @@ U7 acceptance: make validate passed; [receipt](../verification-evidence/003/u7.j
 U4 acceptance: make validate passed; [receipt](../verification-evidence/003/u4.json). Full inbound interface, day intersection, tree projection, retained stats/history and read cleanup suppression are implemented.
 
 U5 acceptance: [receipt](../verification-evidence/003/u5.json) supplies all 91 scenario mappings, full/race/coverage/script gates, minimum Go and cross-builds, benchmark baselines and executable recovery runbook. ISS-004/013/015 local gates are closed; ISS-016 is handed to Features 004–006 and remains open there. Earlier issue-detail future tense is the preserved planning record, superseded for local status by this acceptance and the issue register. Publication and final code review proceed under the user-invoked lfg; merge is not part of this run.
+
+Publication review: sequential reuse/quality/efficiency and risk-based code review completed at `d714ea6` with no actionable findings. [Review record](../verification-evidence/003/publication-review.json); [implementation return](../verification-evidence/003/work-return.json). Browser QA is inapplicable because this feature has no browser routes. Bounded hosted feedback monitoring follows publication; merge remains user-owned.

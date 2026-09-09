@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 3 locally accepted; Feature 003 publication/review tail active (lfg, 2026-09-09)
-**Active Implementation Target**: Feature 003 final review and PR publication; next implementation requires the Feature 004 planning pack
+**Active Phase**: Phase 3 locally accepted; Feature 003 PR #3 bounded feedback watch active (lfg, 2026-09-09)
+**Active Implementation Target**: PR #3 CI/review watch; next implementation requires the Feature 004 planning pack
 **Overall Completion**: 57% (4 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -143,7 +143,7 @@ graph TD
 ---
 
 ### Phase 3: Feature 003 - Task Service Engine
-- **Status**: ✅ **LOCALLY ACCEPTED** (2026-09-09; publication/review tail pending)
+- **Status**: ✅ **LOCALLY ACCEPTED** (2026-09-09; final review passed; PR publication underway)
 - **Plan**: `docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`
@@ -167,6 +167,10 @@ graph TD
   - [x] Minimum Go, five-target service cross-builds and service benchmarks recorded
   - [x] `make validate` passes
   - [x] Feature 004–006 consumer/native/hosted obligations handed off explicitly
+
+- [x] **3.4 Final local review and publication**
+  - [x] Simplification and sequential code review: no actionable findings; independent corroboration unavailable
+  - [x] Push seven unit commits and open [PR #3](https://github.com/newbpydev/tusk/pull/3); bounded CI/review watch follows
 
 Feature 003 completed seven units in the declared order with separate canonical gates and commits. All 91 local scenarios have [execution receipts](docs/verification-evidence/003/README.md), including disk WAL concurrency, stale consent, rollback and process recovery. Final service coverage is 95.8%, parser 98.4%; minimum Go 1.25 full tests and five CGO-free builds pass. Benchmark baselines and [consumer handoffs](docs/service.md) are recorded. Native/hosted/CLI/TUI acceptance remains with Features 004–006. No later-phase implementation is authorized by this Feature 003 run.
 

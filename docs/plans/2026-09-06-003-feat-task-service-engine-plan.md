@@ -352,3 +352,5 @@ Implementation: U1/U2/U3/U6/U7/U4/U5 are separately validated and committed unde
 ## Local acceptance (2026-09-09)
 
 U1 → U2 → U3 → U6 → U7 → U4 → U5 completed with per-unit canonical gates and commits. [U5 evidence](../verification-evidence/003/u5.json) maps all 91 local scenarios to executable assertions and records 95.8% service / 98.4% parser coverage, Go 1.25 full tests and five CGO-free builds. [Runbook and handoffs](../service.md) preserve consumer/native/hosted obligations. The single-sample 10,000-task List/Tree/Stats baseline is 67–72 ms; it does not satisfy the later end-to-end CLI latency gate.
+
+Publication review: sequential reuse/quality/efficiency and risk-based code review completed at `d714ea6` with no actionable findings. [Review record](../verification-evidence/003/publication-review.json); [implementation return](../verification-evidence/003/work-return.json). Browser QA is inapplicable because this feature has no browser routes. Bounded hosted feedback monitoring follows publication; merge remains user-owned.
