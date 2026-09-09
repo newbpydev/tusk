@@ -7,3 +7,5 @@ U2: [receipt](u2.json) includes calendar/DST, synthetic repeated evening, year-1
 U3: [receipt](u3.json) covers transaction-local graph/event work, failure rollback and preservation of untouched manual leaf progress.
 
 U6: [receipt](u6.json) proves creation and metadata/manual patch primitives, including a loaded-hierarchy ID collision regression.
+
+U7: [receipt](u7.json) covers public mutations and per-write failure atomicity across five operations.

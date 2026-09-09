@@ -101,7 +101,7 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 - [x] 003-V39 **Create default:** Create root with 255-rune title, notes, tags and due; verify canonical UUID, todo/medium/0, null completion, exact metadata and one create event with all nine allowed fields.
 - [ ] 003-V40 **Parent/defaults:** Create child under open and done parents at admissible depth; defaults hold, ancestor state/progress/history changes share timestamp and transaction; no implicit parent creation.
 - [x] 003-V41 **Failure before persistence:** Entropy failure, invalid generated ID, duplicate storage ID, invalid date and missing parent return their causes with no created row/history; count ID calls to forbid retries.
-- [ ] 003-V42 **Create atomicity:** Fail Create, each ancestor Update, each AppendEvent or outer commit after staged create; known rollback yields old graph/history; unknown outcome never returns task success.
+- [x] 003-V42 **Create atomicity:** Fail Create, each ancestor Update, each AppendEvent or outer commit after staged create; known rollback yields old graph/history; unknown outcome never returns task success.
 - [ ] 003-V43 **Create affects chain only:** Add incomplete child to previously complete hierarchy and preserve unrelated branch values/events; root creation has no ancestor writes.
 - [ ] 003-V44 **Set/omit/clear:** Omitted title/notes/priority/tags/due/parent preserved; explicit notes empty/tags empty/due clear/parent clear produce intended values. Repeated semantically equivalent tags and UTC instants count as equal.
 - [ ] 003-V45 **Metadata no-op:** Empty patch and supplied identical values return current task with unchanged UpdatedAt/events; metadata-only edit never auto-completes/reconciles unrelated graph or existing parent progress.
@@ -111,21 +111,21 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 
 ### U7. Complete, reopen, move and delete
 
-- [ ] 003-V49 **Complete subtree:** Complete a three-level target with mixed statuses; all non-done nodes become done with one time, existing done nodes retain times, ancestors roll up and event fields reflect net changes.
-- [ ] 003-V50 **Satisfied complete:** Repeating complete on a fully done subtree is a no-op, even under a changed clock/policy; Base validation still occurs.
-- [ ] 003-V51 **Done target/open descendant:** Seed valid rows representing a done target with an open descendant; explicit completion visits descendants and completes them rather than returning early on target status.
-- [ ] 003-V52 **Leaf reopen/state machine:** Done leaf→todo/in-progress resets progress0/completion nil; open→same is no-op, open-state changes preserve manual progress; done→blocked and ReopenTask blocked/zero targets fail.
-- [ ] 003-V53 **Parent reopen:** Preserve done descendants, keep explicitly reopened parent open at calculated 100 with policy true/false, reopen done ancestors, and repeat without duplicate changes. Covers AE2.
+- [x] 003-V49 **Complete subtree:** Complete a three-level target with mixed statuses; all non-done nodes become done with one time, existing done nodes retain times, ancestors roll up and event fields reflect net changes.
+- [x] 003-V50 **Satisfied complete:** Repeating complete on a fully done subtree is a no-op, even under a changed clock/policy; Base validation still occurs.
+- [x] 003-V51 **Done target/open descendant:** Seed valid rows representing a done target with an open descendant; explicit completion visits descendants and completes them rather than returning early on target status.
+- [x] 003-V52 **Leaf reopen/state machine:** Done leaf→todo/in-progress resets progress0/completion nil; open→same is no-op, open-state changes preserve manual progress; done→blocked and ReopenTask blocked/zero targets fail.
+- [x] 003-V53 **Parent reopen:** Preserve done descendants, keep explicitly reopened parent open at calculated 100 with policy true/false, reopen done ancestors, and repeat without duplicate changes. Covers AE2.
 - [ ] 003-V54 **Child reopen:** Reopen an interior child of a completed depth-10 chain; done ancestors become in-progress bottom-up, siblings remain unchanged and no numeric-unchanged shortcut hides the state change.
 - [ ] 003-V55 **Auto completion cascade:** Complete final incomplete leaf with policy true; all-done direct children cause upward completion with consistent timestamp; policy false and open-100 intermediate child cases do not.
-- [ ] 003-V56 **Cycle/existence:** Self-parent matches both cycle sentinels; two-node/deep-cycle/missing-parent moves fail and preserve graph/events; valid root promotion succeeds.
+- [x] 003-V56 **Cycle/existence:** Self-parent matches both cycle sentinels; two-node/deep-cycle/missing-parent moves fail and preserve graph/events; valid root promotion succeeds.
 - [ ] 003-V57 **Depth:** Move leaf to depth10 succeeds and depth11 fails; moving a subtree includes descendant height. Promotion rebases depth without changing descendants' parent IDs.
 - [ ] 003-V58 **Compound move/status:** Move first then complete/reopen/open-status patch; only target subtree changes status, both chains reflect final membership, target explicit open wins, progress+status/parent is refused.
 - [ ] 003-V59 **Move no-op/old chain:** Same parent is no-op unless another field changes; disjoint/shared old/new chains retain final averages, last-child reset and no duplicate shared-ancestor event.
-- [ ] 003-V60 **Delete preview:** One read snapshot returns full sorted unique subtree IDs and detached target including done descendants; leaf gives one ID; missing target fails and errors return no preview values.
-- [ ] 003-V61 **Consent/recursion matrix:** Nonforce without Expected returns confirmation-required; malformed preview or Force+Expected invalid; nonrecursive parent returns children-present even when forced; confirmed leaf and forced recursive subtree succeed.
-- [ ] 003-V62 **Delete integrity:** Exact deleted IDs/count match authoritative subtree; task events cascade, unrelated events survive, old ancestors recompute, final-child reset obeys status, no delete tombstone is created.
-- [ ] 003-V63 **Failure points:** Table-inject each descendant/ancestor write, event append and delete error; graph/history wholly roll back. Mismatch between validated membership and delete result aborts. Suppress staged target/delete success.
+- [x] 003-V60 **Delete preview:** One read snapshot returns full sorted unique subtree IDs and detached target including done descendants; leaf gives one ID; missing target fails and errors return no preview values.
+- [x] 003-V61 **Consent/recursion matrix:** Nonforce without Expected returns confirmation-required; malformed preview or Force+Expected invalid; nonrecursive parent returns children-present even when forced; confirmed leaf and forced recursive subtree succeed.
+- [x] 003-V62 **Delete integrity:** Exact deleted IDs/count match authoritative subtree; task events cascade, unrelated events survive, old ancestors recompute, final-child reset obeys status, no delete tombstone is created.
+- [x] 003-V63 **Failure points:** Table-inject each descendant/ancestor write, event append and delete error; graph/history wholly roll back. Mismatch between validated membership and delete result aborts. Suppress staged target/delete success.
 - [ ] 003-V64 **Stale consent:** Membership addition/removal/move and target metadata/incarnation change fail equality check; unrelated-task or derived parent-progress changes alone do not conflict. Force executes current scope, preserving Recursive requirement.
 
 ### U4. Read surface and facade
@@ -150,7 +150,7 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 - [ ] 003-V79 **Stale patch:** Two owners read/edit same task with/without Base; base conflict preserves newer row/draft, no-base disjoint patch preserves omitted fields, unrelated tasks do not falsely conflict. Covers AE3.
 - [ ] 003-V80 **Stale preview:** Pause after read-only preview, mutate membership/metadata through second owner, then nonforce delete fails; force still needs Recursive. Covers AE4.
 - [ ] 003-V81 **Writer admission cancel/busy:** Hold independent writer lock, invoke service with short deadline and uncancelled five-second budget, assert context/ErrBusy respectively; release lock and new explicit operation succeeds. No callback replay or event created by rejected call.
-- [ ] 003-V82 **Statement/event rollback:** Decorate real writer to return error before each Create/Update/Delete/AppendEvent index; inspect full graph/history from a new snapshot and confirm old state. Inject after a real statement as well to prove transaction rollback.
+- [x] 003-V82 **Statement/event rollback:** Decorate real writer to return error before each Create/Update/Delete/AppendEvent index; inspect full graph/history from a new snapshot and confirm old state. Inject after a real statement as well to prove transaction rollback.
 - [ ] 003-V83 **Unknown outcomes:** Before-commit and after-real-commit fault modes return ports.TransactionError while storing wholly old or new state respectively; assert errors.As plus all safe causes, nil result, callback exactly once, then close/reopen/readback without retry.
 - [ ] 003-V84 **Known commit then cancel:** Cancel only after real WithWrite success; service returns committed task/delete result. A later explicit read failure is a separate operation and never replays the write. CLI output behavior remains Feature 004 proof.
 - [ ] 003-V85 **Snapshot/read cleanup:** Hold one service query callback snapshot while another writer commits a multi-task/history change; assembled result is wholly old or new, not mixed. Read cleanup error suppresses that result; fresh owner reads complete current data.
@@ -216,3 +216,5 @@ U2 execution: [receipt](../verification-evidence/003/u2.json), make validate pas
 U3 execution: [receipt](../verification-evidence/003/u3.json), make validate passed. Shared-ancestor and graph-fault helpers have proof; full related-parent moves and public graph validation extend V34/V38 in U7/U5. Untouched manual leaf progress has regression coverage.
 
 U6 execution: [receipt](../verification-evidence/003/u6.json), make validate passed. Initial real-disk creation/patch/rollback cases are present; expanded ancestor-chain, per-index injection and public patch combinations remain in U7/U5. Cached child/parent identity collisions have red-first regression evidence.
+
+U7 execution: [receipt](../verification-evidence/003/u7.json), make validate passed. Every real write/event position fails atomically before/after the statement across create/complete/reopen/move/delete. U5 retains extended concurrency/depth/consent variants.

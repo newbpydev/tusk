@@ -160,3 +160,27 @@ func TestChanges_CreationAndSameParent(t *testing.T) {
 		t.Fatalf("%v %v", e, err)
 	}
 }
+
+func (w faultWriter) GetSubtree(ctx context.Context, id string) ([]core.Task, error) {
+	if w.fail == "subtree" {
+		return nil, ports.ErrStorage
+	}
+	v, e := w.TaskWriter.GetSubtree(ctx, id)
+	if w.fail == "empty-subtree" {
+		return nil, nil
+	}
+	if w.fail == "duplicate-subtree" && len(v) > 0 {
+		return append(v, v[0]), nil
+	}
+	return v, e
+}
+func (w faultWriter) Delete(ctx context.Context, id string, recursive bool) ([]string, error) {
+	if w.fail == "delete" {
+		return nil, ports.ErrStorage
+	}
+	v, e := w.TaskWriter.Delete(ctx, id, recursive)
+	if w.fail == "delete-mismatch" {
+		return []string{}, nil
+	}
+	return v, e
+}

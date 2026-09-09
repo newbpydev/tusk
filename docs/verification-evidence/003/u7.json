@@ -1,0 +1,40 @@
+{
+  "unit": "U7",
+  "date": "2026-09-09T19:45:19.999657+00:00",
+  "base_commit": "824ce8e2b21905639a96199099d83d15556b9c9c",
+  "environment": "go version go1.27.1-X:nodwarf5 linux/amd64",
+  "verification": [
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u7-red.log.gz",
+      "observed": "Missing public lifecycle/move/delete API"
+    },
+    {
+      "command": "make validate",
+      "exit": 2,
+      "log": "u7-validate.log.gz",
+      "observed": "Coverage 92%; expanded read/statement/event/delete failures required"
+    },
+    {
+      "command": "make validate",
+      "exit": 0,
+      "log": "u7-validate-final.log.gz"
+    }
+  ],
+  "scenarios": {
+    "V49-V51,V55": "TestComplete_SubtreeAndRepeat, TestMutation_FailureAtEveryWrite",
+    "V52-V54": "TestReopen_ParentAtHundred, TestMutation_StatusAndReadFailures",
+    "V56-V59": "TestMove_SharedChainsAndDepth",
+    "V60-V64": "TestDelete_*",
+    "V42,V63,V82": "TestMutation_FailureAtEveryWrite injects every Create/Update/Delete/AppendEvent index before and after real statements for five public operations; old graph and zero new history verified"
+  },
+  "remaining": "U5 extends two-owner concurrency, depth-10 reopening, related-parent move variants, consent scope changes and recovery proof.",
+  "sha256": {
+    "internal/service/mutations.go": "de5e9107d6f92977f5266636fd9ac694e09122a229957e2196195498566b8449",
+    "internal/service/mutations_test.go": "1f211521e80580be01f4cde00c41a7ff16d167a92c928e95a188857d4993b047",
+    "internal/service/delete.go": "9b951a9312b873cb97aaa007034b1fce08e4bd76c02f85df97df09ca30fc2630",
+    "internal/service/delete_test.go": "9fbd52db0ba72b2cffcd812d2b14257d5236c18d6da6e2e4249e5f7aac070e95",
+    "internal/service/changes_test.go": "325b8befbc211743b9f9ce3ddb0a8cce7aea514e3d2d947fad9d07b04aad6c0a"
+  }
+}

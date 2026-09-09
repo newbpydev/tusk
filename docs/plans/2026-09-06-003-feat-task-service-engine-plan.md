@@ -21,7 +21,7 @@ Provide synchronous, context-aware task operations that CLI, TUI, and automation
 - **Surfaces:** Internal service/API, library, transactional persistence, concurrency, calendar/identity portability, and documentation. CLI/TUI are consumers; their UI, flags, serialization and process behavior remain later phases.
 - **Prerequisite:** Feature 002 is locally accepted according to the masterplan and its [durable evidence](../verification-evidence/002/README.md). Native/hosted release evidence remains a Phase 6 obligation.
 - **Execution order:** U1 → U2 → U3 → U6 → U7 → U4 → U5. New U6/U7 split the original broad orchestrator unit; original U1–U5 identifiers retain their responsibilities.
-- **Evidence boundary:** Decision-complete planning, with all Feature 003 tests and implementation gates unexecuted. Readiness does not authorize implementation, commits, push, PR, merge, or publication.
+- **Evidence boundary:** Readiness describes the contract. The 2026-09-09 lfg invocation authorizes execution through an open PR. Unit acceptance and remaining scenarios are recorded in the [execution evidence](../verification-evidence/003/README.md), verification plan and masterplan; no later phase or merge is authorized.
 
 ---
 

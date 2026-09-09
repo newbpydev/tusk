@@ -187,3 +187,5 @@ U2 acceptance: deterministic parser and UUIDv7 pass make validate; [receipt](../
 U3 acceptance: make validate passed; [receipt](../verification-evidence/003/u3.json). A reproduced manual-leaf reset defect was fixed with explicit child-removal state. Full public move and concurrent mutation proofs remain in U7/U5.
 
 U6 acceptance: make validate passed; [receipt](../verification-evidence/003/u6.json). Reproduced loaded-child ID collision overwriting a row, then fixed it by rejecting cached identity collisions before staging creation. Per-index mutation failure and public compound patches remain U7/U5.
+
+U7 acceptance: make validate passed; [receipt](../verification-evidence/003/u7.json). Complete/reopen, latest-row compound moves and exact deletion consent are implemented. Per-position before/after statement/event injection preserves old graph/history.
