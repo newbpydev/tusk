@@ -1,14 +1,14 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 3: Task Service Engine (planning complete; implementation pending)
-**Active Implementation Target**: 3.2 — Unit 003-1 / U1: Inbound contracts and safe error compatibility (awaiting implementation authorization)
-**Overall Completion**: 43% (3 of 7 Phases Complete)
+**Active Phase**: Phase 3 locally accepted; Feature 003 PR #3 bounded feedback watch active (lfg, 2026-09-09)
+**Active Implementation Target**: PR #3 CI/review watch; next implementation requires the Feature 004 planning pack
+**Overall Completion**: 57% (4 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
 ### Feature 002 execution finding (2026-09-08)
 
-Feature 002 is locally accepted after U6 -> U1 -> U2 -> U3 -> U4 -> U5. All units have separate validated commit boundaries. The original missed commit checkpoints were reconstructed in isolation and verified before advancing. Final make validate check-generated build passes with 97.6% storage coverage; Go 1.25 compatibility, final affected race tests and all five CGO-disabled storage/test builds pass. 67/68 feature scenarios are checked; native Windows V33 and native/hosted release proof remain Phase 6 obligations. See [durable acceptance evidence](docs/verification-evidence/002/README.md). The next target is Feature 003 planning; no service/CLI/TUI work was started.
+Feature 002 is locally accepted after U6 -> U1 -> U2 -> U3 -> U4 -> U5. All units have separate validated commit boundaries. The original missed commit checkpoints were reconstructed in isolation and verified before advancing. Final make validate check-generated build passes with 97.6% storage coverage; Go 1.25 compatibility, final affected race tests and all five CGO-disabled storage/test builds pass. 67/68 feature scenarios are checked; native Windows V33 and native/hosted release proof remain Phase 6 obligations. See [durable acceptance evidence](docs/verification-evidence/002/README.md). At that Feature 002 checkpoint the next target was Feature 003 planning; subsequent service acceptance is recorded below.
 
 ### Product planning reconciliation (2026-09-08)
 
@@ -26,7 +26,7 @@ The Tusk reboot follows an uncompromising, evidence-first execution sequence. Wo
 graph TD
     P0[Phase 0: Foundation & Setup<br/>✅ COMPLETE] --> P1[Phase 1: Core Domain & Invariants<br/>✅ COMPLETE]
     P1 --> P2[Phase 2: SQLite Storage & Repo<br/>✅ COMPLETE]
-    P2 --> P3[Phase 3: Task Service Engine<br/>🚀 PLANNING]
+    P2 --> P3[Phase 3: Task Service Engine<br/>✅ LOCALLY COMPLETE]
     P3 --> P4[Phase 4: CLI & Scripting<br/>⏳ PLANNED]
     P3 --> P5[Phase 5: Interactive TUI<br/>⏳ PLANNED]
     P4 --> P6[Phase 6: Packaging & Release<br/>⏳ PLANNED]
@@ -143,7 +143,7 @@ graph TD
 ---
 
 ### Phase 3: Feature 003 - Task Service Engine
-- **Status**: ⏳ **PLANNING COMPLETE — IMPLEMENTATION PENDING** (no Feature 003 implementation authorization)
+- **Status**: ✅ **LOCALLY ACCEPTED** (2026-09-09; PR #3 open; hosted feedback watch active)
 - **Plan**: `docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`
@@ -152,23 +152,29 @@ graph TD
   - [x] Deepened Plan (`docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`)
   - [x] Verification Plan (`docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`)
   - [x] Issue Workorder (`docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`)
-- [ ] **3.2 Implementation Units**
-  - [ ] Unit 003-1 / U1: Inbound Contracts, Validation Seams & Safe Error Compatibility
-  - [ ] Unit 003-2 / U2: Calendar Parser & UUIDv7 Identity
-  - [ ] Unit 003-3 / U3: Transaction-local Hierarchy, Rollup & Event Engine
-  - [ ] Unit 003-6 / U6: Creation & Metadata Mutation Primitives (split from 003-4)
-  - [ ] Unit 003-7 / U7: Lifecycle, Moves & Confirmed Deletion (split from 003-4)
-  - [ ] Unit 003-4 / U4: Snapshot Queries & Complete Service Facade
-  - [ ] Unit 003-5 / U5: Disk Integration, Failure Proof, Compatibility & Consumer Handoff
-- [ ] **3.3 Quality Gate & Release Sign-off**
-  - [ ] All 91 Feature 003 scenarios have local execution evidence
-  - [ ] Each unit validated, synchronized and separately committed before the next
-  - [ ] Real disk WAL, concurrent mutations, stale consent and unknown-outcome recovery pass
-  - [ ] Minimum Go, five-target service cross-builds and service benchmarks recorded
-  - [ ] `make validate` passes
-  - [ ] Feature 004–006 consumer/native/hosted obligations handed off explicitly
+- [x] **3.2 Implementation Units**
+  - [x] Unit 003-1 / U1: Inbound Contracts, Validation Seams & Safe Error Compatibility
+  - [x] Unit 003-2 / U2: Calendar Parser & UUIDv7 Identity
+  - [x] Unit 003-3 / U3: Transaction-local Hierarchy, Rollup & Event Engine
+  - [x] Unit 003-6 / U6: Creation & Metadata Mutation Primitives (split from 003-4)
+  - [x] Unit 003-7 / U7: Lifecycle, Moves & Confirmed Deletion (split from 003-4)
+  - [x] Unit 003-4 / U4: Snapshot Queries & Complete Service Facade
+  - [x] Unit 003-5 / U5: Disk Integration, Failure Proof, Compatibility & Consumer Handoff
+- [x] **3.3 Quality Gate & Release Sign-off**
+  - [x] All 91 Feature 003 scenarios have local execution evidence
+  - [x] Each unit validated, synchronized and separately committed before the next
+  - [x] Real disk WAL, concurrent mutations, stale consent and unknown-outcome recovery pass
+  - [x] Minimum Go, five-target service cross-builds and service benchmarks recorded
+  - [x] `make validate` passes
+  - [x] Feature 004–006 consumer/native/hosted obligations handed off explicitly
 
-Feature 003 planning (2026-09-09) defines 22 requirements, seven units ordered U1 → U2 → U3 → U6 → U7 → U4 → U5, 91 unexecuted scenarios and 16 planning findings/gates. Only planning checkboxes close. Its workorder records the documentation audit; no service code, application tests, make validate, commit or publication ran in this pass. Phase completion remains 3 of 7.
+- [x] **3.4 Final local review and publication**
+  - [x] Simplification and sequential code review: no actionable findings; independent corroboration unavailable
+  - [x] Push seven unit commits and open [PR #3](https://github.com/newbpydev/tusk/pull/3); bounded CI/review watch follows
+  - [x] Reproduce and fix PR #3 UTC calendar-boundary feedback; regression tests and `make validate build` pass ([receipt](docs/verification-evidence/003/review-r1.json))
+  - [x] Address Kilo review: reopen error categories, test/recovery assertions, portable fixtures, benchmark limits and synchronized acceptance status; `make validate build` passes ([dispositions and evidence](docs/verification-evidence/003/review-r2.json))
+
+Feature 003 completed seven units in the declared order with separate canonical gates and commits. All 91 local scenarios have [execution receipts](docs/verification-evidence/003/README.md), including disk WAL concurrency, stale consent, rollback and process recovery. Final service coverage is 95.8%, parser 98.4%; minimum Go 1.25 full tests and five CGO-free builds pass. Benchmark baselines and [consumer handoffs](docs/service.md) are recorded. Native/hosted/CLI/TUI acceptance remains with Features 004–006. No later-phase implementation is authorized by this Feature 003 run.
 
 ---
 
@@ -268,3 +274,17 @@ The original red-first work was accumulated without per-unit commits. At the use
 - [x] **2.11 PR #2 sqlc tooling usability**
 
 - [x] **2.12 PR #2 follow-up review and compounded learning**
+
+### Feature 003 U1 acceptance — 2026-09-09
+
+Inbound contracts, detached preflight and base comparisons pass make validate. All eight new safe errors survive failed rollback individually and joined. See docs/verification-evidence/003/u1.json. Runtime-dependent assertions in V07/V09/V11/V12 remain open for later units; U1 exposes no partial public facade.
+
+U2 acceptance: make validate passed; see docs/verification-evidence/003/u2.json for parser/identity red-first and calendar regression evidence.
+
+U3 acceptance: make validate passed with real-writer graph/event tests and injected rollback cases. See docs/verification-evidence/003/u3.json.
+
+U6 acceptance: make validate passed (service coverage 95.5%); see docs/verification-evidence/003/u6.json. All generated-ID collisions reject without replacing loaded rows.
+
+U7 acceptance: make validate passed (service coverage 95.2%); real per-statement/event fault matrix proves rollback of five public mutation flows. See docs/verification-evidence/003/u7.json.
+
+U4 acceptance: make validate passed; the concrete service now satisfies the entire inbound port. See docs/verification-evidence/003/u4.json.

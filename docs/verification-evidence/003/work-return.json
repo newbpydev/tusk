@@ -1,0 +1,672 @@
+{
+  "status": "complete",
+  "plan_path": "docs/plans/2026-09-06-003-feat-task-service-engine-plan.md",
+  "changed_files": [
+    "MASTERPLAN.md",
+    "Makefile",
+    "docs/plans/2026-09-06-003-feat-task-service-engine-plan.md",
+    "docs/plans/README.md",
+    "docs/service.md",
+    "docs/storage.md",
+    "docs/verification-evidence/003/README.md",
+    "docs/verification-evidence/003/u1-cause-red.log.gz",
+    "docs/verification-evidence/003/u1-red.log.gz",
+    "docs/verification-evidence/003/u1-validate-final.log.gz",
+    "docs/verification-evidence/003/u1-validate.log.gz",
+    "docs/verification-evidence/003/u1.json",
+    "docs/verification-evidence/003/u2-green.log.gz",
+    "docs/verification-evidence/003/u2-red.log.gz",
+    "docs/verification-evidence/003/u2-validate-final.log.gz",
+    "docs/verification-evidence/003/u2-validate.log.gz",
+    "docs/verification-evidence/003/u2-year-red.log.gz",
+    "docs/verification-evidence/003/u2.json",
+    "docs/verification-evidence/003/u3-leaf-red.log.gz",
+    "docs/verification-evidence/003/u3-red.log.gz",
+    "docs/verification-evidence/003/u3-validate-final.log.gz",
+    "docs/verification-evidence/003/u3-validate.log.gz",
+    "docs/verification-evidence/003/u3.json",
+    "docs/verification-evidence/003/u4-red.log.gz",
+    "docs/verification-evidence/003/u4-validate-final.log.gz",
+    "docs/verification-evidence/003/u4-validate.log.gz",
+    "docs/verification-evidence/003/u4.json",
+    "docs/verification-evidence/003/u5-bench.log.gz",
+    "docs/verification-evidence/003/u5-characterization.log.gz",
+    "docs/verification-evidence/003/u5-compat-final.log.gz",
+    "docs/verification-evidence/003/u5-compat.log.gz",
+    "docs/verification-evidence/003/u5-integration-final.log.gz",
+    "docs/verification-evidence/003/u5-integration.log.gz",
+    "docs/verification-evidence/003/u5-target-green.log.gz",
+    "docs/verification-evidence/003/u5-target-red.log.gz",
+    "docs/verification-evidence/003/u5-validate-final.log.gz",
+    "docs/verification-evidence/003/u5-validate.log.gz",
+    "docs/verification-evidence/003/u5.json",
+    "docs/verification-evidence/003/u6-collision-red.log.gz",
+    "docs/verification-evidence/003/u6-red.log.gz",
+    "docs/verification-evidence/003/u6-validate-final.log.gz",
+    "docs/verification-evidence/003/u6-validate.log.gz",
+    "docs/verification-evidence/003/u6.json",
+    "docs/verification-evidence/003/u7-red.log.gz",
+    "docs/verification-evidence/003/u7-validate-final.log.gz",
+    "docs/verification-evidence/003/u7-validate.log.gz",
+    "docs/verification-evidence/003/u7.json",
+    "docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md",
+    "docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md",
+    "internal/ports/service_errors.go",
+    "internal/ports/service_errors_test.go",
+    "internal/ports/task_service.go",
+    "internal/service/benchmark_test.go",
+    "internal/service/changes.go",
+    "internal/service/changes_test.go",
+    "internal/service/commands.go",
+    "internal/service/commands_test.go",
+    "internal/service/concurrency_test.go",
+    "internal/service/create.go",
+    "internal/service/create_test.go",
+    "internal/service/dateparse/dateparse.go",
+    "internal/service/dateparse/dateparse_test.go",
+    "internal/service/delete.go",
+    "internal/service/delete_test.go",
+    "internal/service/events.go",
+    "internal/service/events_test.go",
+    "internal/service/history.go",
+    "internal/service/history_test.go",
+    "internal/service/id.go",
+    "internal/service/id_test.go",
+    "internal/service/integration_test.go",
+    "internal/service/mutations.go",
+    "internal/service/mutations_test.go",
+    "internal/service/patch.go",
+    "internal/service/patch_test.go",
+    "internal/service/process_test.go",
+    "internal/service/queries.go",
+    "internal/service/queries_test.go",
+    "internal/service/recovery_test.go",
+    "internal/service/rollup.go",
+    "internal/service/rollup_test.go",
+    "internal/service/task_service.go",
+    "internal/service/task_service_test.go",
+    "internal/service/test_helpers_test.go",
+    "internal/storage/errors.go",
+    "internal/storage/transaction_test.go",
+    "scripts/test/test_scripts.sh"
+  ],
+  "u_ids_attempted": [
+    "U1",
+    "U2",
+    "U3",
+    "U6",
+    "U7",
+    "U4",
+    "U5"
+  ],
+  "u_ids_completed": [
+    "U1",
+    "U2",
+    "U3",
+    "U6",
+    "U7",
+    "U4",
+    "U5"
+  ],
+  "verification_results": [
+    "make validate passed",
+    "Go 1.25 make test build-service passed",
+    "make bench-service recorded"
+  ],
+  "verification_evidence": [
+    {
+      "unit": "U1",
+      "behavior_changed": true,
+      "existing_tests_inspected": [
+        "core",
+        "ports",
+        "storage",
+        "preceding service units"
+      ],
+      "tests_added_or_changed": [
+        "internal/service/commands_test.go",
+        "internal/service/task_service_test.go",
+        "internal/ports/service_errors_test.go",
+        "internal/storage/transaction_test.go"
+      ],
+      "tests_used_unchanged": [
+        "canonical existing suite"
+      ],
+      "observed": [
+        {
+          "command": "make test-unit",
+          "log": "u1-red.log.gz",
+          "exit": 2,
+          "observed": "Missing commands, sentinels and validation helpers fail compilation."
+        },
+        {
+          "command": "make test-unit",
+          "log": "u1-cause-red.log.gz",
+          "exit": 2,
+          "observed": "All 16 failed-rollback service-cause cases lose their category."
+        },
+        {
+          "command": "make validate",
+          "log": "u1-validate.log.gz",
+          "exit": 2,
+          "observed": "Behavior and race pass; service coverage 92.7% below 95%."
+        },
+        {
+          "command": "make validate",
+          "log": "u1-validate-final.log.gz",
+          "exit": 0
+        }
+      ],
+      "verification": [
+        {
+          "command": "make test-unit",
+          "log": "u1-red.log.gz",
+          "exit": 2,
+          "observed": "Missing commands, sentinels and validation helpers fail compilation."
+        },
+        {
+          "command": "make test-unit",
+          "log": "u1-cause-red.log.gz",
+          "exit": 2,
+          "observed": "All 16 failed-rollback service-cause cases lose their category."
+        },
+        {
+          "command": "make validate",
+          "log": "u1-validate.log.gz",
+          "exit": 2,
+          "observed": "Behavior and race pass; service coverage 92.7% below 95%."
+        },
+        {
+          "command": "make validate",
+          "log": "u1-validate-final.log.gz",
+          "exit": 0
+        }
+      ],
+      "exception_reason": null
+    },
+    {
+      "unit": "U2",
+      "behavior_changed": true,
+      "existing_tests_inspected": [
+        "core",
+        "ports",
+        "storage",
+        "preceding service units"
+      ],
+      "tests_added_or_changed": [
+        "internal/service/dateparse/dateparse_test.go",
+        "internal/service/id_test.go"
+      ],
+      "tests_used_unchanged": [
+        "canonical existing suite"
+      ],
+      "observed": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u2-red.log.gz",
+          "observed": "Missing parser and UUID functions fail compilation"
+        },
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u2-green.log.gz",
+          "observed": "TUE incorrectly routed as timestamp"
+        },
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u2-year-red.log.gz",
+          "observed": "year 1 midnight confused with unset sentinel"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u2-validate-final.log.gz"
+        }
+      ],
+      "verification": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u2-red.log.gz",
+          "observed": "Missing parser and UUID functions fail compilation"
+        },
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u2-green.log.gz",
+          "observed": "TUE incorrectly routed as timestamp"
+        },
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u2-year-red.log.gz",
+          "observed": "year 1 midnight confused with unset sentinel"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u2-validate-final.log.gz"
+        }
+      ],
+      "exception_reason": null
+    },
+    {
+      "unit": "U3",
+      "behavior_changed": true,
+      "existing_tests_inspected": [
+        "core",
+        "ports",
+        "storage",
+        "preceding service units"
+      ],
+      "tests_added_or_changed": [
+        "internal/service/changes_test.go",
+        "internal/service/rollup_test.go",
+        "internal/service/events_test.go",
+        "internal/service/test_helpers_test.go"
+      ],
+      "tests_used_unchanged": [
+        "canonical existing suite"
+      ],
+      "observed": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u3-red.log.gz",
+          "observed": "Missing graph/event helpers fail compilation"
+        },
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u3-leaf-red.log.gz",
+          "observed": "Untouched manual leaf 40 reset to 0"
+        },
+        {
+          "command": "make validate",
+          "exit": 2,
+          "log": "u3-validate.log.gz",
+          "observed": "coverage 93.2%; additional failure paths required"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u3-validate-final.log.gz"
+        }
+      ],
+      "verification": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u3-red.log.gz",
+          "observed": "Missing graph/event helpers fail compilation"
+        },
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u3-leaf-red.log.gz",
+          "observed": "Untouched manual leaf 40 reset to 0"
+        },
+        {
+          "command": "make validate",
+          "exit": 2,
+          "log": "u3-validate.log.gz",
+          "observed": "coverage 93.2%; additional failure paths required"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u3-validate-final.log.gz"
+        }
+      ],
+      "exception_reason": null
+    },
+    {
+      "unit": "U6",
+      "behavior_changed": true,
+      "existing_tests_inspected": [
+        "core",
+        "ports",
+        "storage",
+        "preceding service units"
+      ],
+      "tests_added_or_changed": [
+        "internal/service/create_test.go",
+        "internal/service/patch_test.go"
+      ],
+      "tests_used_unchanged": [
+        "canonical existing suite"
+      ],
+      "observed": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u6-red.log.gz",
+          "observed": "Missing CreateTask and private patch primitive"
+        },
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u6-collision-red.log.gz",
+          "observed": "Generated-ID collision with loaded child could replace row; parent collision misclassified"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u6-validate-final.log.gz"
+        }
+      ],
+      "verification": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u6-red.log.gz",
+          "observed": "Missing CreateTask and private patch primitive"
+        },
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u6-collision-red.log.gz",
+          "observed": "Generated-ID collision with loaded child could replace row; parent collision misclassified"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u6-validate-final.log.gz"
+        }
+      ],
+      "exception_reason": null
+    },
+    {
+      "unit": "U7",
+      "behavior_changed": true,
+      "existing_tests_inspected": [
+        "core",
+        "ports",
+        "storage",
+        "preceding service units"
+      ],
+      "tests_added_or_changed": [
+        "internal/service/mutations_test.go",
+        "internal/service/delete_test.go",
+        "internal/service/changes_test.go"
+      ],
+      "tests_used_unchanged": [
+        "canonical existing suite"
+      ],
+      "observed": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u7-red.log.gz",
+          "observed": "Missing public lifecycle/move/delete API"
+        },
+        {
+          "command": "make validate",
+          "exit": 2,
+          "log": "u7-validate.log.gz",
+          "observed": "Coverage 92%; expanded read/statement/event/delete failures required"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u7-validate-final.log.gz"
+        }
+      ],
+      "verification": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u7-red.log.gz",
+          "observed": "Missing public lifecycle/move/delete API"
+        },
+        {
+          "command": "make validate",
+          "exit": 2,
+          "log": "u7-validate.log.gz",
+          "observed": "Coverage 92%; expanded read/statement/event/delete failures required"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u7-validate-final.log.gz"
+        }
+      ],
+      "exception_reason": null
+    },
+    {
+      "unit": "U4",
+      "behavior_changed": true,
+      "existing_tests_inspected": [
+        "core",
+        "ports",
+        "storage",
+        "preceding service units"
+      ],
+      "tests_added_or_changed": [
+        "internal/service/queries_test.go",
+        "internal/service/history_test.go"
+      ],
+      "tests_used_unchanged": [
+        "canonical existing suite"
+      ],
+      "observed": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u4-red.log.gz",
+          "observed": "Missing read facade"
+        },
+        {
+          "command": "make validate",
+          "exit": 2,
+          "log": "u4-validate.log.gz",
+          "observed": "Coverage 93.5%; repository failure and invalid-input cases missing"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u4-validate-final.log.gz"
+        }
+      ],
+      "verification": [
+        {
+          "command": "make test-unit",
+          "exit": 2,
+          "log": "u4-red.log.gz",
+          "observed": "Missing read facade"
+        },
+        {
+          "command": "make validate",
+          "exit": 2,
+          "log": "u4-validate.log.gz",
+          "observed": "Coverage 93.5%; repository failure and invalid-input cases missing"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u4-validate-final.log.gz"
+        }
+      ],
+      "exception_reason": null
+    },
+    {
+      "unit": "U5",
+      "behavior_changed": true,
+      "existing_tests_inspected": [
+        "core",
+        "ports",
+        "storage",
+        "preceding service units"
+      ],
+      "tests_added_or_changed": [
+        "scripts/test/test_scripts.sh",
+        "internal/service/commands_test.go",
+        "internal/service/task_service_test.go",
+        "internal/service/id_test.go",
+        "internal/service/test_helpers_test.go",
+        "internal/service/rollup_test.go",
+        "internal/service/events_test.go",
+        "internal/service/changes_test.go",
+        "internal/service/create_test.go",
+        "internal/service/patch_test.go",
+        "internal/service/mutations_test.go",
+        "internal/service/delete_test.go",
+        "internal/service/queries_test.go",
+        "internal/service/history_test.go",
+        "internal/service/concurrency_test.go",
+        "internal/service/recovery_test.go",
+        "internal/service/process_test.go",
+        "internal/service/integration_test.go",
+        "internal/service/benchmark_test.go",
+        "internal/service/dateparse/dateparse_test.go",
+        "internal/storage/transaction_test.go"
+      ],
+      "tests_used_unchanged": [
+        "canonical existing suite"
+      ],
+      "observed": "New integration tests passed existing implementation. Script target test failed before adding build-service/bench-service. First expanded integration run exposed invalid fixture CreatedAt updates and local-vs-UTC structural comparisons; fixtures corrected, no production change.",
+      "verification": [
+        {
+          "command": "make test-unit",
+          "exit": 0,
+          "log": "u5-characterization.log.gz"
+        },
+        {
+          "command": "make test-scripts",
+          "exit": 2,
+          "log": "u5-target-red.log.gz"
+        },
+        {
+          "command": "make test-scripts",
+          "exit": 0,
+          "log": "u5-target-green.log.gz"
+        },
+        {
+          "command": "make test",
+          "exit": 2,
+          "log": "u5-integration.log.gz"
+        },
+        {
+          "command": "make test",
+          "exit": 0,
+          "log": "u5-integration-final.log.gz"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u5-validate.log.gz"
+        },
+        {
+          "command": "make validate",
+          "exit": 0,
+          "log": "u5-validate-final.log.gz"
+        },
+        {
+          "command": "GOTOOLCHAIN=go1.25.0 make test build-service",
+          "exit": 0,
+          "log": "u5-compat.log.gz"
+        },
+        {
+          "command": "GOTOOLCHAIN=go1.25.0 make test build-service",
+          "exit": 0,
+          "log": "u5-compat-final.log.gz"
+        },
+        {
+          "command": "make bench-service",
+          "exit": 0,
+          "log": "u5-bench.log.gz"
+        }
+      ],
+      "exception_reason": null
+    }
+  ],
+  "implementation_engine_binding": null,
+  "requested_route": "native inline",
+  "actual_route": "native inline",
+  "requested_model": null,
+  "actual_model": "unverified",
+  "fallback_reason": null,
+  "run_id": null,
+  "source_kind": "plan",
+  "source_digest": "af98fb4023ed06c1ba57f9171fde729176a36e3fcf441c492523be5bf22084b9",
+  "unit_receipts": [
+    {
+      "unit": "U1",
+      "route": "native inline",
+      "model": "unverified",
+      "detached_process": null,
+      "integration": "canonical branch",
+      "verification": "passed",
+      "canonical_commit": "caeffbdf875db5272953f8aff25f2bf51479a691",
+      "cleanup": "clean"
+    },
+    {
+      "unit": "U2",
+      "route": "native inline",
+      "model": "unverified",
+      "detached_process": null,
+      "integration": "canonical branch",
+      "verification": "passed",
+      "canonical_commit": "8c66061d64aaab96fac87709a711c5cbcf6dd79e",
+      "cleanup": "clean"
+    },
+    {
+      "unit": "U3",
+      "route": "native inline",
+      "model": "unverified",
+      "detached_process": null,
+      "integration": "canonical branch",
+      "verification": "passed",
+      "canonical_commit": "f821cbec0b8b6d5cfe8dd3eb05b0cf8faf019cc2",
+      "cleanup": "clean"
+    },
+    {
+      "unit": "U6",
+      "route": "native inline",
+      "model": "unverified",
+      "detached_process": null,
+      "integration": "canonical branch",
+      "verification": "passed",
+      "canonical_commit": "824ce8e2b21905639a96199099d83d15556b9c9c",
+      "cleanup": "clean"
+    },
+    {
+      "unit": "U7",
+      "route": "native inline",
+      "model": "unverified",
+      "detached_process": null,
+      "integration": "canonical branch",
+      "verification": "passed",
+      "canonical_commit": "ed045f201926ac18e1cc4366075442ad4b442f59",
+      "cleanup": "clean"
+    },
+    {
+      "unit": "U4",
+      "route": "native inline",
+      "model": "unverified",
+      "detached_process": null,
+      "integration": "canonical branch",
+      "verification": "passed",
+      "canonical_commit": "59e599ecf06d67129cf96467bbb00ceab8f1ba80",
+      "cleanup": "clean"
+    },
+    {
+      "unit": "U5",
+      "route": "native inline",
+      "model": "unverified",
+      "detached_process": null,
+      "integration": "canonical branch",
+      "verification": "passed",
+      "canonical_commit": "d714ea6a139f84b73e33de3832b9bf764952f43e",
+      "cleanup": "clean"
+    }
+  ],
+  "plan_checkpoint": null,
+  "blockers": [],
+  "recovery_path": null,
+  "settled_decision_conflicts": [],
+  "behavior_change": true,
+  "standalone_shipping_skipped": true
+}

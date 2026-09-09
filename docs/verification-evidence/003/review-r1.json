@@ -1,0 +1,50 @@
+{
+  "review": "PR #3 round 1",
+  "source": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972693307",
+  "verified_at": "2026-09-09T20:28:18.938300+00:00",
+  "base_head": "b89e463a4f6ef8d41782b4addf517ed56122f887",
+  "revision_scope": "uncommitted changes over base_head; enclosing commit associates receipt with accepted sources",
+  "environment": "go version go1.27.1-X:nodwarf5 linux/amd64",
+  "scenarios": [
+    "003-V17",
+    "003-V23"
+  ],
+  "tests": [
+    "TestParseDue_UTCYearBoundary",
+    "TestDayBounds_UTCYearBoundary"
+  ],
+  "commands": {
+    "red_green": "GOFLAGS='-run=TestParseDue_UTCYearBoundary|TestDayBounds_UTCYearBoundary' make test-unit",
+    "aggregate": "make validate build"
+  },
+  "red_observation": "today/tonight at UTC year 1 and final-year exclusive day end rejected with ErrInvalidDate",
+  "green_observation": "resolved UTC instants accepted; explicit year-zero dates and unrepresentable bounds rejected without partial results",
+  "logs": [
+    {
+      "stage": "red",
+      "exit": 2,
+      "log": "review-r1-red.log.gz",
+      "sha256": "0c057ff1d5aa4ab97400c2b40fda1655316a16a225184cab07bf1512bbbc5d82"
+    },
+    {
+      "stage": "green",
+      "exit": 0,
+      "log": "review-r1-green.log.gz",
+      "sha256": "2dbd75d7be9b196cf61d0ee374949061c4f9f899b36d936ba1f9af6948887012"
+    },
+    {
+      "stage": "validate",
+      "exit": 0,
+      "log": "review-r1-validate.log.gz",
+      "sha256": "11aa2ca7780499f32f36bb3979691a3e4ec6e9629826169ccdea1795e5131d6c"
+    }
+  ],
+  "source_sha256": {
+    "internal/service/dateparse/dateparse.go": "ce27ecdea187bc821e429b83dd55c169d05ab710b63baff837b96e90c0c7cf74",
+    "internal/service/dateparse/dateparse_test.go": "98a9d5c161405bf23a3d95ee6620b332bdea46dd6979fa603748a38772b53b6a"
+  },
+  "limitations": [
+    "Local verification; hosted review continues.",
+    "No native Windows/macOS or CLI latency claim."
+  ]
+}

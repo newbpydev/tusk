@@ -93,3 +93,11 @@ make bench-storage
 All database fixtures are temporary. Shared-memory fixtures establish semantics and lifetime only; real disk/process fixtures establish WAL behavior. `make build-storage` cross-compiles storage and tests for Linux amd64/arm64, macOS amd64/arm64 and Windows amd64 with CGO disabled. Cross-compilation is not native execution. Hosted checks, native Windows/macOS runtime, CLI latency and final service integration remain separate later gates.
 
 Storage benchmark fixtures use 0/100/1000/10000 tasks, 128-byte notes, three tags and ten-task chains of depth ten. Population and cleanup are outside measured loops. Current-open includes close and first-create includes initialization plus close. These storage measurements do not prove the end-to-end CLI's 15-ms budget. Raw measurements and machine details are recorded in the paired Feature 002 verification evidence.
+
+## Task service consumer
+
+The Phase 3 [service contract and recovery runbook](service.md) uses one supplied
+reader/writer callback per operation and preserves unknown outcomes. Service
+previews and Base snapshots never hold a transaction across user interaction.
+The application composition root owns the repository, cryptographic entropy,
+clock, timezone data and completion policy.

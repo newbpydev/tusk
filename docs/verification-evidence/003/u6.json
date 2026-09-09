@@ -1,0 +1,38 @@
+{
+  "unit": "U6",
+  "date": "2026-09-09T19:39:10.455188+00:00",
+  "base_commit": "f821cbec0b8b6d5cfe8dd3eb05b0cf8faf019cc2",
+  "environment": "go version go1.27.1-X:nodwarf5 linux/amd64",
+  "verification": [
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u6-red.log.gz",
+      "observed": "Missing CreateTask and private patch primitive"
+    },
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u6-collision-red.log.gz",
+      "observed": "Generated-ID collision with loaded child could replace row; parent collision misclassified"
+    },
+    {
+      "command": "make validate",
+      "exit": 0,
+      "log": "u6-validate-final.log.gz"
+    }
+  ],
+  "scenarios": {
+    "V39-V40": "TestCreate_AtomicDefaultsAndParent",
+    "V41": "TestCreate_IdentityFailureAndCollision, TestCreate_CollisionWithLoadedHierarchy",
+    "V42": "TestCreate_FailureAndUnknownOutcome",
+    "V44-V47": "TestPatch_SetClearNoOp plus U1 base comparison; public compound/date/parent intent remains U7",
+    "V48": "TestPatch_ParentAndDoneProgress"
+  },
+  "sha256": {
+    "internal/service/create.go": "085ed132807ca395d2ac73ef444ec27598c3a237c40492c087c41b21bd1473bc",
+    "internal/service/patch.go": "d0b60739de2b6a61d7828316ba2b3391a845267568ba28a9b0fdaf7f727b0542",
+    "internal/service/create_test.go": "1528c32b943afc2cedd95689e7a68a09ea365b916ade53b65e68cf40c85002c4",
+    "internal/service/patch_test.go": "c775e8fd586129f81dc6965093979b407ff2b3e905a3b83ac7af7f6a388ace73"
+  }
+}

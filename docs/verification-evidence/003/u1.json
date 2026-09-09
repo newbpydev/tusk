@@ -1,0 +1,52 @@
+{
+  "unit": "U1",
+  "date": "2026-09-09T19:24:08.833991+00:00",
+  "base_commit": "f2fd0e35f16edb78ef5e57c0f4a68ffa7a1b9fa0",
+  "environment": "go version go1.27.1-X:nodwarf5 linux/amd64",
+  "commands": [
+    {
+      "command": "make test-unit",
+      "log": "u1-red.log.gz",
+      "exit": 2,
+      "observed": "Missing commands, sentinels and validation helpers fail compilation."
+    },
+    {
+      "command": "make test-unit",
+      "log": "u1-cause-red.log.gz",
+      "exit": 2,
+      "observed": "All 16 failed-rollback service-cause cases lose their category."
+    },
+    {
+      "command": "make validate",
+      "log": "u1-validate.log.gz",
+      "exit": 2,
+      "observed": "Behavior and race pass; service coverage 92.7% below 95%."
+    },
+    {
+      "command": "make validate",
+      "log": "u1-validate-final.log.gz",
+      "exit": 0
+    }
+  ],
+  "sha256": {
+    "internal/service/commands_test.go": "21fe71d387080a2ef4ceea0c8b6703225e5246c2d7e1f1a65728fd315a759da6",
+    "internal/service/task_service_test.go": "7ebefb0de830f00e3fedde829ff2bffbd0960b3c4df56aa509c09f1d3ced7ccf",
+    "internal/service/task_service.go": "82241a145d7acfb4a653155254ea8e37ffb28a83ef81ccfd0038d51ae4bbdd5a",
+    "internal/service/commands.go": "975cf7a9e14abb6a8a13607d7188b4265840bb31e4e482ef3e830ab008bfd80e",
+    "internal/ports/service_errors.go": "f60aa446e2b4166ff1bfe864cda280bf44d116c53dee461370439d6d3a476a35",
+    "internal/ports/task_service.go": "a0b4fb32a1f6837f8d96d8b00b59c8ca134f3be085afb1340706a67e75f3bc73",
+    "internal/ports/service_errors_test.go": "1c859770ec7ad9cc3f48069bea290fd09100dc30b1c661ba7a2afd68350a0b0f",
+    "internal/storage/errors.go": "86f957a592650e9dc94ea07098bb4ab4970875807a6d5b3e65de5babfddd9625",
+    "internal/storage/transaction_test.go": "d2c7658409a44913a76b2defeca62d3b74120349a73774b05086ae31178a1525"
+  },
+  "scenario_evidence": {
+    "V01-V02": "TestServiceOptions_NoIO",
+    "V03": "ports serviceConsumer compile fixture",
+    "V04-V05": "TestCommandValidation_Metadata, DetachesInput, MalformedSnapshots",
+    "V06": "TestCommandValidation_PatchIntent (public no-op persistence proof in U6)",
+    "V08": "TestQueryValidation, MalformedSnapshots (empty result proof in U4)",
+    "V10": "TestBaseComparison",
+    "V88": "TestServiceErrors_RollbackFailure (8 individual plus 8 joined cases)"
+  },
+  "remaining_cross_unit_assertions": "V07 row-dependent transitions/manual progress in U6/U7; V09 single operation timestamp in mutations; V11 result suppression and V12 concurrent operation isolation in U4/U5/U7. No public-method stubs added."
+}

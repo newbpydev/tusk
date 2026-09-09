@@ -109,6 +109,19 @@ if [[ "$default_recipe" == *"All canonical quality gates passed."* && "$default_
 assert_eq 0 "$result" "default make validates and builds without downloading tools"
 
 echo "========================================"
+for target in build-service bench-service; do
+    result=0
+    make --no-print-directory -n -C "${ROOT_DIR}" "$target" >"${TMP_DIR}/service-target" 2>&1 || result=$?
+    assert_eq 0 "$result" "service target exists: $target"
+    recipe=$(cat "${TMP_DIR}/service-target")
+    result=1
+    case "$target" in
+        build-service) if [[ "$recipe" == *"CGO_ENABLED=0"* && "$recipe" == *"windows/amd64"* && "$recipe" == *"go test -c"* ]]; then result=0; fi ;;
+        bench-service) if [[ "$recipe" == *"BenchmarkService"* && "$recipe" == *"-benchmem"* ]]; then result=0; fi ;;
+    esac
+    assert_eq 0 "$result" "service target contract: $target"
+done
+
 echo "Script Test Results: ${TESTS_PASSED}/${TESTS_TOTAL} passed"
 echo "========================================"
 

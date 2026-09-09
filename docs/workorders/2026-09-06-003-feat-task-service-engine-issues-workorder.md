@@ -2,8 +2,8 @@
 feature-id: "003"
 plan-source: docs/plans/2026-09-06-003-feat-task-service-engine-plan.md
 verification-plan: docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md
-status: Planning complete - execution gates pending
-evidence-scope: Planning findings only
+status: Locally accepted - PR open
+evidence-scope: Local implementation and acceptance; native and consumer gates pending
 ---
 
 # Feature 003 Task Service Engine Issue Workorder
@@ -14,12 +14,14 @@ Companions: [plan](../plans/2026-09-06-003-feat-task-service-engine-plan.md), [v
 
 ## Issue register
 
+Lfg intake, 2026-09-09: local sequential contract review found no additional blocking findings at `f2fd0e35f16edb78ef5e57c0f4a68ffa7a1b9fa0`. The optional Claude review returned HTTP 401 (expired OAuth token), so no independent review is claimed. Implementation and publication through an open PR are now user-authorized; execution gates retain their evidence requirements.
+
 | ID | Source / owner and lens | Severity | Status | Impact / next action | Retest or closure evidence |
 | --- | --- | --- | --- | --- | --- |
 | 003-ISS-001 | Outline / plan owner, architecture | P1 | Fixed in plan | Unsupported readiness/missing companions; use synchronized seven-unit pack | Pack audit and master/registry/product G1 handoff |
 | 003-ISS-002 | Product R18/R19 / service owner, API parity | P1 | Fixed in plan | Missing get/stats/history/forest/delete-preview contracts; adopt operation/type tables | U1/U4/U7; V03, V60, V65–V76 |
 | 003-ISS-003 | Patch sketch / service owner, correctness | P1 | Fixed in plan | Preserve omit/set/clear, current-row patch and no-op semantics | U1/U6/U7; V04–V10, V44–V48 |
-| 003-ISS-004 | Transaction boundary / storage-service owner, reliability | P1 | Open execution gate | New service causes can disappear on failed rollback; add safe categories in U1 | V88; every new cause individually/joined, private text redacted and unknown outcome retained |
+| 003-ISS-004 | Transaction boundary / storage-service owner, reliability | P1 | Locally verified | All new service causes survive failed rollback; safe categories added in U1 | V88; every new cause individually/joined, private text redacted and unknown outcome retained |
 | 003-ISS-005 | Date outline / parser owner, portability | P1 | Fixed in plan | Decide local date/end time, calendar clamps, DST ambiguity, ranges and strict grammar | U2; V13–V24, V89 |
 | 003-ISS-006 | Identity omission / service owner, API/security | P2 | Fixed in plan | Pin UUIDv7 input/entropy/layout/ranges, invalid injected IDs and no retry | U2/U6; V25–V27, V41 |
 | 003-ISS-007 | Rollup status ambiguity / service owner, domain | P1 | Fixed in plan | Distinguish progress100 from done, explicit reopen from policy completion, and final-child reset | U3/U7; V28–V35, V49–V59 |
@@ -28,9 +30,9 @@ Companions: [plan](../plans/2026-09-06-003-feat-task-service-engine-plan.md), [v
 | 003-ISS-010 | Delete sketch / service owner, destructive actions | P1 | Fixed in plan | Require consent snapshot or force, preserve recursion guard, recheck membership/metadata | U7/U5; V60–V64, V80 |
 | 003-ISS-011 | Event ownership / service owner, privacy | P1 | Fixed in plan | Define net-diff attribution, ordering, create fields and deletion retention | U3/U6/U7/U5; V36, V37, V39, V62, V75, V87 |
 | 003-ISS-012 | Query boundaries / service owner, correctness | P1 | Fixed in plan | Core-exclusive bounds cannot express inclusive midnight; use separate day predicate and complete ancestry | U4; V65–V76 |
-| 003-ISS-013 | Mock-only acceptance / test owner, evidence | P1 | Open execution gate | Add real WAL, stale-write, per-statement and process termination service tests in U5 | V77–V87; disk snapshots, callback counts, integrity and raw logs |
+| 003-ISS-013 | Mock-only acceptance / test owner, evidence | P1 | Locally verified | Add real WAL, stale-write, per-statement and process termination service tests in U5 | V77–V87; disk snapshots, callback counts, integrity and raw logs |
 | 003-ISS-014 | Broad implementation units / plan owner, sequencing | P2 | Fixed in plan | Split original orchestrator into U6 creation/patch and U7 lifecycle/deletion while preserving U1–U5 identities | Dependency/ownership audit; separate red/validate/commit boundaries during execution |
-| 003-ISS-015 | Runtime/measurement / U5 owner, portability/performance | P2 | Open execution gate | Add tested canonical build-service/bench-service targets, minimum Go proof and workload baselines | V90/V91 plus make validate; no native/CLI latency claim |
+| 003-ISS-015 | Runtime/measurement / U5 owner, portability/performance | P2 | Locally verified | Add tested canonical build-service/bench-service targets, minimum Go proof and workload baselines | V90/V91 plus make validate; no native/CLI latency claim |
 | 003-ISS-016 | Consumer packaging / Feature 004–006 owners | P2 | Open handoff gate | Embed production timezone data, implement adapter contracts and prove native/hosted/terminal behavior | Owning phase triplets and exact candidate evidence; not local Feature 003 acceptance |
 
 ## Issue details
@@ -163,17 +165,37 @@ Reviews run sequentially in the main thread under the repository's tool mapping.
 
 ## Implementation release gate
 
-All items remain unchecked during planning. Explicit later-phase handoffs are tracked in ISS-016; they do not masquerade as completed release evidence.
+The following local implementation gates are verified by the unit receipts. Explicit later-phase handoffs are tracked in ISS-016; they do not masquerade as completed release evidence.
 
-- [ ] U1, U2, U3, U6, U7, U4 and U5 implemented in dependency order.
-- [ ] Each unit has observed red-first evidence, focused green assertions and make validate on its actual contents.
-- [ ] Each unit synchronized and separately committed before the next under implementation/commit authority.
-- [ ] All 91 local Feature 003 scenarios executed with exact revision/environment/command/result evidence.
-- [ ] Service/dateparse coverage meets 95%; full/race/script gates pass without weakened exemptions.
-- [ ] Safe error category and unknown-outcome checks pass; no unaccepted callback-cause loss remains.
-- [ ] Real disk WAL/concurrency/rollback/process-recovery integrity scenarios pass.
-- [ ] Minimum Go, five CGO-free service test builds, benchmarks and runbook replay recorded.
-- [ ] Full ports.TaskService contract is implemented without stubs and consumer handoffs are documented.
-- [ ] All Feature 003 runtime findings fixed or explicitly accepted by the user with scoped evidence; remaining unaccepted local blockers: 0.
-- [ ] MASTERPLAN and all affected planning/verification/workorder artifacts synchronized with executed evidence.
-- [ ] Hosted/native/CLI/TUI/manual/release status reported separately; publication separately authorized if requested.
+- [x] U1, U2, U3, U6, U7, U4 and U5 implemented in dependency order.
+- [x] Each unit has observed red-first evidence, focused green assertions and make validate on its actual contents.
+- [x] Each unit synchronized and separately committed before the next under implementation/commit authority.
+- [x] All 91 local Feature 003 scenarios executed with exact revision/environment/command/result evidence.
+- [x] Service/dateparse coverage meets 95%; full/race/script gates pass without weakened exemptions.
+- [x] Safe error category and unknown-outcome checks pass; no unaccepted callback-cause loss remains.
+- [x] Real disk WAL/concurrency/rollback/process-recovery integrity scenarios pass.
+- [x] Minimum Go, five CGO-free service test builds, benchmarks and runbook replay recorded.
+- [x] Full ports.TaskService contract is implemented without stubs and consumer handoffs are documented.
+- [x] All Feature 003 runtime findings fixed or explicitly accepted by the user with scoped evidence; remaining unaccepted local blockers: 0.
+- [x] MASTERPLAN and all affected planning/verification/workorder artifacts synchronized with executed evidence.
+- [x] Hosted/native/CLI/TUI/manual/release status reported separately; publication separately authorized if requested.
+
+U1 acceptance: make validate passed with input/base/query seam tests and 16 real failed-rollback cases; [receipt](../verification-evidence/003/u1.json). Public operation/result/concurrency assertions in V07/V09/V11/V12 remain with their implementing units, consistent with the ban on interim facade stubs.
+
+U2 acceptance: deterministic parser and UUIDv7 pass make validate; [receipt](../verification-evidence/003/u2.json). Tests exposed and fixed uppercase weekday dispatch and the valid year-1 midnight sentinel collision. Production tzdata embedding is still a consumer handoff.
+
+U3 acceptance: make validate passed; [receipt](../verification-evidence/003/u3.json). A reproduced manual-leaf reset defect was fixed with explicit child-removal state. Full public move and concurrent mutation proofs remain in U7/U5.
+
+U6 acceptance: make validate passed; [receipt](../verification-evidence/003/u6.json). Reproduced loaded-child ID collision overwriting a row, then fixed it by rejecting cached identity collisions before staging creation. Per-index mutation failure and public compound patches remain U7/U5.
+
+U7 acceptance: make validate passed; [receipt](../verification-evidence/003/u7.json). Complete/reopen, latest-row compound moves and exact deletion consent are implemented. Per-position before/after statement/event injection preserves old graph/history.
+
+U4 acceptance: make validate passed; [receipt](../verification-evidence/003/u4.json). Full inbound interface, day intersection, tree projection, retained stats/history and read cleanup suppression are implemented.
+
+U5 acceptance: [receipt](../verification-evidence/003/u5.json) supplies all 91 scenario mappings, full/race/coverage/script gates, minimum Go and cross-builds, benchmark baselines and executable recovery runbook. ISS-004/013/015 local gates are closed; ISS-016 is handed to Features 004–006 and remains open there. Earlier issue-detail future tense is the preserved planning record, superseded for local status by this acceptance and the issue register. Publication and final code review proceed under the user-invoked lfg; merge is not part of this run.
+
+Publication review: sequential reuse/quality/efficiency and risk-based code review completed at `d714ea6` with no actionable findings. [Review record](../verification-evidence/003/publication-review.json); [implementation return](../verification-evidence/003/work-return.json). Browser QA is inapplicable because this feature has no browser routes. Bounded hosted feedback monitoring follows publication; merge remains user-owned.
+
+PR #3 review follow-up (2026-09-09): Codex identified premature civil-year rejection in date resolution. Red-first tests reproduced valid year-1 due instants and a valid final-year exclusive day bound being rejected. Range checks now apply to resolved UTC candidates; explicit year-zero dates and unrepresentable bounds still fail. Both new regressions and `make validate build` pass. [Review-fix receipt](../verification-evidence/003/review-r1.json) extends V17/V23 evidence; no later-phase scope changed.
+
+PR #3 Kilo review follow-up (2026-09-09): addressed 14 threads covering invalid reopen status categories, checked test setup/read errors, fresh-connection post-cancel persistence, callback-failure classification in the recovery fixture, embedded service-test tzdata, benchmark sample limits/labels, port/helper documentation, canonical help and acceptance-status drift. Seven suggestions retain the active KTD9 query design, safe entropy-error boundary, overflow-safe statistics and private-helper invariants; each has an evidence-based reply in the [disposition receipt](../verification-evidence/003/review-r2.json). New red-first cases, strengthened scenarios, `make validate build`, Go 1.25 five-target service builds and the canonical benchmark run pass. Multi-iteration benchmark misuse is explicitly rejected. Historical History/Move samples mean empty history/leaf promotion; event-volume scaling and cross-branch subtree move latency remain unmeasured.
