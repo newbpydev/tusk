@@ -79,3 +79,35 @@ func TestStorageErrors_CategoriesAndNoDriverUnwrap(t *testing.T) {
 		}
 	}
 }
+
+func TestStorageErrors_ConstraintCategories(t *testing.T) {
+	db := compatibilityDB(t, filepath.Join(t.TempDir(), "constraints.db"), false)
+	for _, statement := range []string{
+		"CREATE TABLE parent(id TEXT PRIMARY KEY, name TEXT UNIQUE)",
+		"CREATE TABLE child(parent_id TEXT REFERENCES parent(id))",
+		"INSERT INTO parent VALUES ('PRIVATE-NOTES', 'PRIVATE-NOTES')",
+	} {
+		if _, err := db.Exec(statement); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, tc := range []struct {
+		statement string
+		code      int
+		want      error
+	}{
+		{"INSERT INTO parent VALUES ('PRIVATE-NOTES', 'other')", 1555, core.ErrDuplicateTaskID},
+		{"INSERT INTO parent VALUES ('other', 'PRIVATE-NOTES')", 2067, core.ErrDuplicateTaskID},
+		{"INSERT INTO child VALUES ('PRIVATE-MISSING')", 787, core.ErrTaskNotFound},
+	} {
+		_, raw := db.Exec(tc.statement)
+		var driverErr *sqlite.Error
+		if !errors.As(raw, &driverErr) || driverErr.Code() != tc.code {
+			t.Fatalf("code %d: %v", tc.code, raw)
+		}
+		mapped := storageCause(raw)
+		if !errors.Is(mapped, tc.want) || errors.As(mapped, &driverErr) || strings.Contains(mapped.Error(), "PRIVATE") {
+			t.Fatalf("unsafe category: %v", mapped)
+		}
+	}
+}

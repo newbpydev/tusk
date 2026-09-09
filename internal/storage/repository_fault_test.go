@@ -67,7 +67,7 @@ func (r *faultRows) Next(values []driver.Value) error {
 }
 
 func TestRepository_QueryFailuresNeverReturnPartialValues(t *testing.T) {
-	for _, needle := range []string{"GetTask", "ListCandidates", "GetAncestors", "GetSubtree", "ListEvents", "ListChildren", "UpdateTask", "DeleteTask", "AppendEvent"} {
+	for _, needle := range []string{"GetTask", "ListCandidates", "GetAncestors", "GetSubtree", "ListEvents", "ListChildren", "CreateTask", "UpdateTask", "DeleteTask", "AppendEvent"} {
 		t.Run(needle, func(t *testing.T) {
 			r, path := diskRepository(t)
 			createFixture(t, r, taskFixture("task"))
@@ -101,6 +101,8 @@ func TestRepository_QueryFailuresNeverReturnPartialValues(t *testing.T) {
 				case "ListEvents":
 					_, err := w.ListEvents(c, "task")
 					return err
+				case "CreateTask":
+					return w.Create(c, taskFixture("new"))
 				case "UpdateTask":
 					return w.Update(c, taskFixture("task"))
 				case "DeleteTask":

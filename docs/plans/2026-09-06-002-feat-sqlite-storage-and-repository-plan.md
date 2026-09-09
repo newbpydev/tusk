@@ -502,3 +502,7 @@ The user authorized simplify, review to zero actionable findings, compound, then
 ### PR #2 callback-cause follow-up — 2026-09-08
 
 Hosted review identified incomplete safe-sentinel coverage when callback failure and rollback failure coincide. Target 2.5 reproduced six omissions and now preserves all declared safe core/port categories without exposing original private error text. All 28 cause cases pass, along with make validate check-generated build and the minimum-Go focused race test. See ../verification-evidence/002/callback-cause-followup.json for the updated code manifest; earlier acceptance and review artifacts remain historical snapshots.
+
+### PR #2 review unit 2.6: Preserve joined categories and complete statement fault coverage
+
+Red: all six hierarchy/corruption pairs lost ErrCorrupt during failed rollback. Green: preserve every recognized safe sentinel, retain unknown outcome, redact private wrapper text. Real SQLite constraint codes 1555/2067/787 and CreateTask statement failure now have explicit tests. Focused regression and make validate check-generated pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.

@@ -333,3 +333,21 @@ func TestTransaction_RollbackFailurePreservesCause(t *testing.T) {
 		})
 	}
 }
+
+func TestTransaction_RollbackFailurePreservesJoinedCauses(t *testing.T) {
+	for _, domain := range []error{core.ErrInvalidTaskID, core.ErrSelfParenting, core.ErrCyclicDependency, core.ErrMaxDepthExceeded, core.ErrTaskNotFound, core.ErrDuplicateTaskID} {
+		t.Run(domain.Error(), func(t *testing.T) {
+			r, path := diskRepository(t)
+			installTransactionFault(t, r, path, "rollback", false, nil, nil, nil)
+			original := fmt.Errorf("PRIVATE-NOTES: %w", corruptCause(domain))
+			err := r.WithWrite(context.Background(), func(context.Context, ports.TaskWriter) error { return original })
+			var outcome ports.TransactionError
+			if !errors.As(err, &outcome) || outcome.Outcome() != "unknown" || !errors.Is(err, domain) || !errors.Is(err, ports.ErrCorrupt) || !errors.Is(err, ports.ErrStorage) {
+				t.Fatalf("joined categories lost: %v", err)
+			}
+			if strings.Contains(err.Error(), "PRIVATE-NOTES") || errors.Is(err, original) {
+				t.Fatalf("private cause exposed: %v", err)
+			}
+		})
+	}
+}

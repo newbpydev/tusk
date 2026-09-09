@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 3: Task Service Engine (planning)
-**Active Implementation Target**: 3.1 — Deepen the Feature 003 planning triplet before implementation
+**Active Phase**: Phase 2: PR #2 hosted review follow-ups
+**Active Implementation Target**: PR #2 — Evaluate remaining hosted feedback; completed unit committed before advancing
 **Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -244,3 +244,5 @@ The original red-first work was accumulated without per-unit commits. At the use
 [PR #2](https://github.com/newbpydev/tusk/pull/2) is open against main. Six implementation commits, a fresh review receipt, and the compounded learning are published separately. Local review has zero actionable findings and all canonical gates pass; independent review was unavailable. The PR monitor owns subsequent hosted checks and feedback. No merge or release is claimed.
 
 - [x] **2.5 PR #2 callback-cause preservation**: six omissions reproduced; all 28 declared cause cases pass with private text redacted. make validate check-generated build and the minimum-Go focused race test pass. See docs/verification-evidence/002/callback-cause-followup.json; separate fix commit, then monitor hosted feedback.
+
+- [x] **2.6 PR #2 joined error categories and statement fault coverage**
