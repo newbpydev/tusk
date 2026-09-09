@@ -86,6 +86,7 @@ func ParseDue(expression string, reference time.Time, location *time.Location) (
 			} else {
 				var err error
 				day, err = time.Parse("2006-01-02", s)
+				// Absolute dates exclude year zero; relative civil dates may cross it.
 				if err != nil || len(s) != 10 || day.Year() < 1 {
 					return time.Time{}, ports.ErrInvalidDate
 				}

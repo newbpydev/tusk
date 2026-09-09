@@ -68,8 +68,9 @@ The parser accepts today/tomorrow/tonight, three-letter weekdays, positive
 calendar day/week/month offsets, ISO dates and strict offset timestamps. Month
 arithmetic clamps the final destination month. Missing wall times or midnight
 boundaries fail; repeated wall times select the earlier instant. Parsing uses
-only the supplied reference/location and returns UTC. Test binaries embed
-`time/tzdata`; Feature 004 must embed it in the production composition root.
+only the supplied reference/location and returns UTC. Both the service and
+dateparse test binaries embed `time/tzdata`; Feature 004 must embed it in the
+production composition root.
 
 Feature 004 owns CLI grammar, JSON DTOs, exit codes, policy/zone configuration,
 output-after-commit behavior and end-to-end startup/query latency. Feature 005
@@ -84,4 +85,8 @@ workload/size, with setup/reset outside timing. It reports allocations, reposito
 read/write call counts and snapshot duration. Those call counts describe port
 operations, not SQLite virtual-machine statement counts. Single samples are
 baseline observations, not statistical latency guarantees or CLI acceptance.
+The harness rejects iteration counts other than one. `EmptyHistory` measures an
+existing task with zero events; `PromoteLeaf` measures root promotion of a leaf.
+The original U5 logs label these `History` and `Move`; they do not measure event
+volume scaling or subtree reparenting between branches.
 See [Feature 003 evidence](verification-evidence/003/README.md).

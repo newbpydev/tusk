@@ -19,3 +19,5 @@ At 10,000 tasks, warm Get/History measured about 0.19/0.26 ms; List/Tree/Stats a
 Final [publication review](publication-review.json) and [implementation return](work-return.json) record the seven unit commits, local review scope and independent-review limitation.
 
 PR #3 [review-fix receipt](review-r1.json) records red/green and full canonical verification for UTC year-boundary resolution, including explicit year-zero input rejection and no partial day bounds.
+
+PR #3 [Kilo review dispositions and evidence](review-r2.json) cover 21 threads: 14 addressed and seven retained with plan/contract rationale. The review corrects acceptance frontmatter, strengthens setup/history/recovery checks, embeds service-test tzdata, distinguishes invalid reopen statuses and bounds benchmark execution.

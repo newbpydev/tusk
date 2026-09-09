@@ -8,6 +8,7 @@ import (
 )
 
 // NewUUIDv7 uses fresh caller-owned entropy; it makes no monotonic-order promise.
+// A supplied reader must support Read; panics from unusable readers propagate.
 func NewUUIDv7(now time.Time, entropy io.Reader) (string, error) {
 	ms := now.UnixMilli()
 	if !validTime(now) || ms < 0 || ms > 1<<48-1 {

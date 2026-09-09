@@ -120,11 +120,17 @@ func TestService_RelatedMoveAndMetadataNoOp(t *testing.T) {
 		}
 	}
 	base := mustGet(t, r, "a")
-	events, _ := s.GetTaskHistory(context.Background(), "a")
+	events, err := s.GetTaskHistory(context.Background(), "a")
+	if err != nil || len(events) == 0 {
+		t.Fatalf("move history: %v, %v", events, err)
+	}
 	if _, e := s.UpdateTask(context.Background(), ports.UpdateTaskCommand{ID: "a", ParentID: ptr("q"), Base: base}); e != nil {
 		t.Fatal(e)
 	}
-	again, _ := s.GetTaskHistory(context.Background(), "a")
+	again, err := s.GetTaskHistory(context.Background(), "a")
+	if err != nil {
+		t.Fatal(err)
+	}
 	if !reflect.DeepEqual(events, again) {
 		t.Fatal("same parent emitted event")
 	}
@@ -159,7 +165,10 @@ func TestService_OneTimeAndExactMetadata(t *testing.T) {
 		if !x.UpdatedAt.Equal(now) {
 			t.Fatal("multiple clocks")
 		}
-		ev, _ := s.GetTaskHistory(context.Background(), id)
+		ev, err := s.GetTaskHistory(context.Background(), id)
+		if err != nil || len(ev) == 0 {
+			t.Fatalf("metadata history for %q: %v, %v", id, ev, err)
+		}
 		for _, e := range ev {
 			if !e.OccurredAt.Equal(now) || strings.Contains(fmt.Sprint(e), "private") {
 				t.Fatalf("%v", e)
@@ -183,7 +192,10 @@ func TestService_IncarnationAndConsentVariants(t *testing.T) {
 	for _, change := range []string{"remove", "move", "metadata", "incarnation", "derived"} {
 		r := repository(t, task("p", "", 0, core.StatusTodo), task("a", "p", 0, core.StatusTodo), task("other", "", 0, core.StatusTodo))
 		s := serviceFor(t, r, false)
-		preview, _ := s.PreviewDeleteTask(context.Background(), "p")
+		preview, err := s.PreviewDeleteTask(context.Background(), "p")
+		if err != nil || preview.Target.ID != "p" || !reflect.DeepEqual(preview.IDs, []string{"a", "p"}) {
+			t.Fatalf("initial consent: %v, %v", preview, err)
+		}
 		var e error
 		switch change {
 		case "remove":
@@ -279,7 +291,10 @@ func TestService_FilterOracleAndDSTIntersection(t *testing.T) {
 	s.options.Location = z
 	for _, filter := range []core.TaskFilter{{}, {Statuses: []core.Status{core.StatusDone, core.StatusTodo}}, {Priorities: []core.Priority{core.PriorityLow, core.PriorityUrgent}}, {Tags: []core.Tag{"work"}, SearchTerm: "界 %_ '"}, {RootOnly: true}, {ParentID: ptr("p")}} {
 		q := ports.TaskQuery{Filter: filter}
-		prepared, _ := prepareQuery(context.Background(), q)
+		prepared, err := prepareQuery(context.Background(), q)
+		if err != nil {
+			t.Fatal(err)
+		}
 		want := core.FilterTasks(rows, prepared.Filter)
 		core.SortTasks(want, defaultOrder())
 		got, e := s.ListTasks(context.Background(), q)

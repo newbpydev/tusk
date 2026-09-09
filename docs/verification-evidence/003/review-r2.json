@@ -1,0 +1,292 @@
+{
+  "review": "PR #3 round 2",
+  "verified_at": "2026-09-09T20:57:39.299447+00:00",
+  "base_head": "49582d7e478ec35e22877fa715b6053a66b3482d",
+  "revision_scope": "uncommitted changes over base_head; enclosing commit associates receipt with accepted sources",
+  "environment": "go version go1.27.1-X:nodwarf5 linux/amd64",
+  "commands": {
+    "red_green": "GOFLAGS='-run=TestReopen_InvalidStatusCategory|TestUnknownRepository_CallbackFailure' make test-unit",
+    "green_with_readback": "GOFLAGS='-run=TestReopen_InvalidStatusCategory|TestUnknownRepository_CallbackFailure|TestService_CommittedThenCanceled' make test-unit",
+    "aggregate": "make validate build",
+    "compatibility": "GOTOOLCHAIN=go1.25.0 make build-service",
+    "benchmark": "make bench-service",
+    "benchmark_misuse": "GOFLAGS='-run=^$ -bench=^BenchmarkService$/^EmptyHistory$/^tasks=100$ -benchtime=2x' make test"
+  },
+  "red_observation": "Malformed reopen enums returned ErrInvalidStatusTransition; callback ErrTaskNotFound was replaced by unknown transaction outcome in test wrapper",
+  "logs": [
+    {
+      "stage": "red",
+      "exit": 2,
+      "log": "review-r2-red.log.gz",
+      "sha256": "7b6ed35aa39998c7ee85c3f82d260df59a70da350ba6c2e5ccf210e27daccd22"
+    },
+    {
+      "stage": "green",
+      "exit": 0,
+      "log": "review-r2-green.log.gz",
+      "sha256": "071ccb132a0d5f24e6f40920af54df60c90d9aeed831c2073d0f1d0b3f9ba285"
+    },
+    {
+      "stage": "test-hardening",
+      "exit": 0,
+      "log": "review-r2-test-hardening.log.gz",
+      "sha256": "5fcd806ad68cc87317e43539eb8c9496fd7a5354c4f8de32f036bba191d30817"
+    },
+    {
+      "stage": "validate",
+      "exit": 0,
+      "log": "review-r2-validate.log.gz",
+      "sha256": "810c3666bfc8bc181571e3af0a0169b1afa1e18c2ef17b8ca49e65eff74e1d9a"
+    },
+    {
+      "stage": "bench",
+      "exit": 0,
+      "log": "review-r2-bench.log.gz",
+      "sha256": "9a5a079518f668b61af383ac258d77eedcd3f75cd014fc1845855662a7154a98"
+    },
+    {
+      "stage": "bench-negative",
+      "exit": 2,
+      "log": "review-r2-bench-negative.log.gz",
+      "sha256": "3824924ab9fbc4259feecd7430af49dfc2913560c78047592ed411ea023e45b3"
+    },
+    {
+      "stage": "build-service",
+      "exit": 0,
+      "log": "review-r2-build-service.log.gz",
+      "sha256": "c70222d94796eb70bf22103f09fb211c88dacefaad883828fd387edbcb16e4d7"
+    }
+  ],
+  "source_sha256": {
+    "Makefile": "82dc1e260776daf57f4fa03d768f888cb0d5c6075e494639a91cce9e9b9ae065",
+    "internal/ports/task_service.go": "600ccb1acc6d43cb525590a70eecefefdaaf3ba2ec11b3768fd3e013c5969fc3",
+    "internal/service/benchmark_test.go": "0a8487b0ee645b0e21f08042f1ea283398c6bf53d9e5a741d2b985c23388a407",
+    "internal/service/concurrency_test.go": "e87fd2f5456b5aefc92f4e05703c259f1466f7bd979ea354a11ea51648aa8eca",
+    "internal/service/dateparse/dateparse.go": "57dee9a2aca3b152ad3df439e0cca07a37e0f3c73e4a929694fa4dbd384a1f6c",
+    "internal/service/dateparse/dateparse_test.go": "d56ffd3124a481af0fd4fc7c5a321bc25da4ec1fab94b544141431b0f59837e6",
+    "internal/service/id.go": "80bf02c15c000b40cbfb4fd05d3bd0dd9385217b0ae528edd1bdb1b0aff20414",
+    "internal/service/integration_test.go": "c8bd604791860b7115ebe5dd45f8c41034e17a34af286009e14361b7ef69dd56",
+    "internal/service/mutations.go": "064ec6d10f1186ed91e67c7633452ef6ea49fb61d29189ef8bbfc523f3af8fc8",
+    "internal/service/mutations_test.go": "9d1a95a501c929146cf9c9f92081a067b4e0cb289d1212a704abfa376cf9cdc3",
+    "internal/service/recovery_test.go": "4cff3285cb76851fc21b671f32d62145a9a1bec4727cf66ceddc857fcfb12a1c",
+    "internal/service/test_helpers_test.go": "b7481a90c72d6872b1c92596f2c76c0bad151265ee107661a73174539007d782"
+  },
+  "dispositions": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EfG",
+      "root_comment_id": 3972894661,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_F",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894661",
+      "path": "internal/service/queries.go",
+      "verdict": "not-addressing",
+      "quoted_feedback": "**[WARNING]:** Due-day filter loads every matching row and filters in Go instead of pushing the interval into SQL",
+      "reason": "Keeping the active plan's KTD9 decision: due-day membership follows repository candidate filtering so the inclusive start is not silently translated into the core's exclusive bounds. The 10,000-task latency limitation is measured and recorded; CLI latency acceptance remains open for Feature 004. A predicate/query redesign belongs with that explicitly scoped follow-up. https://github.com/newbpydev/tusk/blob/49582d7e478ec35e22877fa715b6053a66b3482d/docs/plans/2026-09-06-003-feat-task-service-engine-plan.md"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EfK",
+      "root_comment_id": 3972894665,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_J",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894665",
+      "path": "internal/service/queries.go",
+      "verdict": "not-addressing",
+      "quoted_feedback": "**[WARNING]:** `GetTaskTree(id)` materializes the same tree three times per call",
+      "reason": "Keeping the selected-subtree contract in KTD9 and the read-model section: the service obtains subtree plus complete ancestry within one snapshot, then validates/builds detached output. Consolidating storage tree queries would change the accepted repository API and its corruption checks. The redundant work and measured latency remain visible for the Feature 004 performance follow-up. https://github.com/newbpydev/tusk/blob/49582d7e478ec35e22877fa715b6053a66b3482d/docs/plans/2026-09-06-003-feat-task-service-engine-plan.md"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EfM",
+      "root_comment_id": 3972894667,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_L",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894667",
+      "path": "internal/service/queries.go",
+      "verdict": "not-addressing",
+      "quoted_feedback": "**[WARNING]:** `GetStats` decodes the entire task table instead of using SQL aggregation",
+      "reason": "KTD9 explicitly selects snapshot-based in-memory statistics before adding query APIs. The counters and strict seven-day window are tested, and the 10,000-task baseline does not claim the CLI latency gate passes. SQL aggregation is a later measured optimization requiring a separately scoped storage contract change. https://github.com/newbpydev/tusk/blob/49582d7e478ec35e22877fa715b6053a66b3482d/docs/plans/2026-09-06-003-feat-task-service-engine-plan.md"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EfV",
+      "root_comment_id": 3972894678,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_W",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894678",
+      "path": "internal/service/integration_test.go",
+      "verdict": "fixed",
+      "quoted_feedback": "**[WARNING]:** Discarded read errors make several assertions vacuously satisfiable",
+      "reason": "Checked all enumerated history, preview and oracle preparation errors before assertions. Move/privacy checks now also require nonempty event baselines, and consent verifies the initial target and exact membership."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Efa",
+      "root_comment_id": 3972894686,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_e",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894686",
+      "path": "internal/service/concurrency_test.go",
+      "verdict": "fixed",
+      "quoted_feedback": "**[WARNING]:** Discarded errors in this file can satisfy assertions for the wrong reason",
+      "reason": "Checked the enumerated history reads, base read and initial delete preview. Admission and stale-consent assertions can no longer accept a failed setup/read as evidence."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Efe",
+      "root_comment_id": 3972894692,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_k",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894692",
+      "path": "internal/service/benchmark_test.go",
+      "verdict": "fixed-differently",
+      "quoted_feedback": "**[WARNING]:** Benchmark harness is hazardous under default benchtime, and two ops do not measure what their label claims",
+      "reason": "The harness now rejects b.N other than one before fixture allocation; make bench-service remains the supported fixed-sample invocation. Renamed History to EmptyHistory and Move to PromoteLeaf, and documented precisely what the original samples measured. Event-volume scaling and cross-branch subtree reparenting are not claimed by these baselines. The canonical run passes; a two-iteration invocation fails with an explicit instruction."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Efh",
+      "root_comment_id": 3972894698,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_q",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894698",
+      "path": "docs/service.md",
+      "verdict": "fixed",
+      "quoted_feedback": "**[WARNING]:** \"Test binaries embed `time/tzdata`\" is false for the service test binary",
+      "reason": "Embedded time/tzdata in the service test binary as well as the dateparse test binary, and made the runbook wording explicit. Production timezone packaging remains Feature 004."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Efn",
+      "root_comment_id": 3972894710,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_2",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894710",
+      "path": "docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md",
+      "verdict": "fixed",
+      "quoted_feedback": "**[WARNING]:** Verification plan frontmatter now contradicts its own checked scenarios",
+      "reason": "Updated verification frontmatter, the scenario preamble and the historical intake entry to distinguish completed local acceptance from later native/consumer gates. Reviewed and synchronized the paired plan, workorder and MASTERPLAN."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Efv",
+      "root_comment_id": 3972894717,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szY_9",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894717",
+      "path": "internal/service/queries.go",
+      "verdict": "not-addressing",
+      "quoted_feedback": "**[SUGGESTION]:** Every listed row is deep-cloned and re-sorted a second time",
+      "reason": "Retaining service-owned detachment and canonical sorting: TaskService is injected with the TaskReader port, not coupled to this SQLite implementation's current allocation/sort details. KTD9 explicitly retains core sorting, and the service must preserve its output contract for other conforming readers. https://github.com/newbpydev/tusk/blob/49582d7e478ec35e22877fa715b6053a66b3482d/docs/plans/2026-09-06-003-feat-task-service-engine-plan.md"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Ef1",
+      "root_comment_id": 3972894725,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZAF",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894725",
+      "path": "internal/service/queries.go",
+      "verdict": "not-addressing",
+      "quoted_feedback": "**[SUGGESTION]:** 128-bit division is an obscure way to compute a percentage",
+      "reason": "The statistics contract explicitly requires overflow-safe floor(100*Done/Total). Mul64/Div64 implements that contract without relying on an assumed maximum task count or int width. There is no measured bottleneck in these two arithmetic operations. https://github.com/newbpydev/tusk/blob/49582d7e478ec35e22877fa715b6053a66b3482d/docs/plans/2026-09-06-003-feat-task-service-engine-plan.md"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Ef7",
+      "root_comment_id": 3972894733,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZAN",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894733",
+      "path": "internal/ports/task_service.go",
+      "verdict": "fixed-differently",
+      "quoted_feedback": "**[SUGGESTION]:** `TaskQuery` has no pagination and `GetTaskTree(ctx, \"\")` hides a magic-value contract",
+      "reason": "Documented the empty-ID forest contract directly on TaskService.GetTaskTree. Pagination remains excluded by the active Feature 003 scope; adding it would change the complete-list/tree contract and requires a separate plan. https://github.com/newbpydev/tusk/blob/49582d7e478ec35e22877fa715b6053a66b3482d/docs/plans/2026-09-06-003-feat-task-service-engine-plan.md"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Ef-",
+      "root_comment_id": 3972894736,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZAQ",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894736",
+      "path": "internal/service/create.go",
+      "verdict": "not-addressing",
+      "quoted_feedback": "**[SUGGESTION]:** `NewID` failure cause is masked by the sentinel",
+      "reason": "The input/error contract intentionally maps failed entropy to ErrIdentityGeneration without exposing the reader error. Joining an arbitrary injected cause would violate that privacy boundary; duplicate IDs retain their separate domain category. https://github.com/newbpydev/tusk/blob/49582d7e478ec35e22877fa715b6053a66b3482d/docs/plans/2026-09-06-003-feat-task-service-engine-plan.md"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EgC",
+      "root_comment_id": 3972894741,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZAV",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894741",
+      "path": "internal/service/mutations.go",
+      "verdict": "fixed",
+      "quoted_feedback": "**[SUGGESTION]:** Unset or malformed `ReopenTaskCommand.Status` is misclassified as an invalid transition",
+      "reason": "Added red-first coverage for empty/malformed versus valid-but-disallowed reopen statuses. Invalid enums now return ErrInvalidStatus; blocked/done retain ErrInvalidStatusTransition."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EgH",
+      "root_comment_id": 3972894747,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZAb",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894747",
+      "path": "internal/service/id.go",
+      "verdict": "fixed",
+      "quoted_feedback": "**[SUGGESTION]:** Typed-nil entropy reader passes the nil check and panics instead of erroring",
+      "reason": "Documented that a supplied entropy reader must support Read and that reader panics propagate. A typed-nil interface may implement a valid Read method, so no reflection-based pointer rejection or broad panic recovery was added. Nil interfaces and ordinary reader errors retain the existing safe sentinel behavior."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EgL",
+      "root_comment_id": 3972894752,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZAg",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894752",
+      "path": "internal/service/patch.go",
+      "verdict": "not-addressing",
+      "quoted_feedback": "**[SUGGESTION]:** Latent nil-vs-set confusion on the `due` parameter",
+      "reason": "The only patch caller resolves cmd.Due before entering the write transaction and returns immediately on parsing failure. That establishes the pairing before this private helper is called. Moving parsing into patch would move it into the writer transaction; adding a second guard for a currently impossible state would not fix an observed defect."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EgQ",
+      "root_comment_id": 3972894762,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZAq",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894762",
+      "path": "internal/service/dateparse/dateparse.go",
+      "verdict": "fixed",
+      "quoted_feedback": "**[SUGGESTION]:** Document the deliberate absolute-vs-relative year-0 asymmetry",
+      "reason": "Added a local comment distinguishing absolute year-zero syntax rejection from relative civil dates crossing the UTC boundary. The explicit absolute/relative regression tests remain green."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EgU",
+      "root_comment_id": 3972894766,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZAu",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894766",
+      "path": "internal/service/dateparse/dateparse_test.go",
+      "verdict": "fixed",
+      "quoted_feedback": "**[SUGGESTION]:** Test oracle discards the `time.Parse` error",
+      "reason": "The RFC3339 oracle now checks time.Parse errors and reports the invalid fixture before comparing parser output."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1EgZ",
+      "root_comment_id": 3972894773,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZA1",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894773",
+      "path": "internal/service/test_helpers_test.go",
+      "verdict": "fixed-differently",
+      "quoted_feedback": "**[SUGGESTION]:** Fixture constructor discards the `core.NewTask` error",
+      "reason": "The shared task helper has no testing.T parameter and is also used by benchmarks. It now checks core.NewTask and raises a descriptive fixture error including the ID instead of causing a later nil dereference; no broad call-site signature migration was needed."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Egd",
+      "root_comment_id": 3972894777,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZA5",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894777",
+      "path": "internal/service/recovery_test.go",
+      "verdict": "fixed",
+      "quoted_feedback": "**[SUGGESTION]:** Wrapper conflates callback failure with commit-acknowledgment failure when `before=true`",
+      "reason": "Added a red-first service regression for callback failure under the before-commit test wrapper. It now preserves genuine callback/admission errors and substitutes an unknown outcome only for the deliberately injected failure."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Egk",
+      "root_comment_id": 3972894786,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZBC",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894786",
+      "path": "internal/service/recovery_test.go",
+      "verdict": "fixed",
+      "quoted_feedback": "**[SUGGESTION]:** Post-cancel persistence is not verified through a fresh connection",
+      "reason": "After both completion and deletion followed by cancellation, the test now closes the original owner and opens a fresh disk connection. It verifies persisted completion/status history or task absence while retaining the canceled-context read assertion."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6g1Egp",
+      "root_comment_id": 3972894792,
+      "comment_node_id": "PRRC_kwDOUQoUDc7szZBI",
+      "url": "https://github.com/newbpydev/tusk/pull/3#discussion_r3972894792",
+      "path": "Makefile",
+      "verdict": "fixed",
+      "quoted_feedback": "**[SUGGESTION]:** `make help` does not list the new canonical targets",
+      "reason": "Added build-service and bench-service to make help with their actual cross-build and fixed-sample behavior."
+    }
+  ],
+  "needs_human": [],
+  "limitations": [
+    "Query latency remains the documented KTD9/Feature 004 follow-up; no SQL/API redesign in this fix.",
+    "Benchmarks remain single samples, with empty history and leaf promotion explicitly named.",
+    "Native Windows/macOS and production timezone packaging remain later-phase gates."
+  ]
+}

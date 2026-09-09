@@ -15,6 +15,9 @@ func (s *TaskService) ReopenTask(ctx context.Context, cmd ports.ReopenTaskComman
 	if e := ctx.Err(); e != nil {
 		return nil, e
 	}
+	if !cmd.Status.IsValid() {
+		return nil, core.ErrInvalidStatus
+	}
 	if cmd.Status != core.StatusTodo && cmd.Status != core.StatusInProgress {
 		return nil, core.ErrInvalidStatusTransition
 	}

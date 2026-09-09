@@ -33,6 +33,21 @@ func TestComplete_SubtreeAndRepeat(t *testing.T) {
 		}
 	}
 }
+func TestReopen_InvalidStatusCategory(t *testing.T) {
+	r := repository(t, task("a", "", 100, core.StatusDone))
+	s := serviceFor(t, r, false)
+	for _, status := range []core.Status{"", "invalid", core.StatusBlocked, core.StatusDone} {
+		want := core.ErrInvalidStatus
+		if status == core.StatusBlocked || status == core.StatusDone {
+			want = core.ErrInvalidStatusTransition
+		}
+		got, err := s.ReopenTask(context.Background(), ports.ReopenTaskCommand{ID: "a", Status: status})
+		if got != nil || !errors.Is(err, want) {
+			t.Errorf("status %q: want %v, got %v, %v", status, want, got, err)
+		}
+	}
+}
+
 func TestReopen_ParentAtHundred(t *testing.T) {
 	r := repository(t, task("g", "", 100, core.StatusDone), task("p", "g", 100, core.StatusDone), task("a", "p", 100, core.StatusDone))
 	s := serviceFor(t, r, true)

@@ -17,6 +17,7 @@ type TaskService interface {
 	DeleteTask(context.Context, DeleteTaskCommand) (DeleteResult, error)
 	GetTask(context.Context, string) (*core.Task, error)
 	ListTasks(context.Context, TaskQuery) ([]core.Task, error)
+	// GetTaskTree returns the entire forest for an empty ID, or one selected subtree.
 	GetTaskTree(context.Context, string) ([]*core.TaskNode, error)
 	GetStats(context.Context) (TaskStats, error)
 	GetTaskHistory(context.Context, string) ([]TaskEvent, error)

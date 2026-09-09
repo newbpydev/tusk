@@ -2,18 +2,23 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/newbpydev/tusk/internal/core"
 	"github.com/newbpydev/tusk/internal/ports"
 	"github.com/newbpydev/tusk/internal/storage"
 	"path/filepath"
 	"testing"
 	"time"
+	_ "time/tzdata"
 )
 
 func fixedTime() time.Time { return time.Date(2026, 9, 1, 12, 0, 0, 0, time.UTC) }
 func task(id, parent string, progress int, status core.Status) core.Task {
 	now := fixedTime()
-	v, _ := core.NewTask(core.NewTaskParams{ID: id, Title: id, Now: now})
+	v, err := core.NewTask(core.NewTaskParams{ID: id, Title: id, Now: now})
+	if err != nil {
+		panic(fmt.Sprintf("task fixture %q: %v", id, err))
+	}
 	v.Status = status
 	v.Progress = progress
 	if parent != "" {

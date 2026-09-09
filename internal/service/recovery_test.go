@@ -16,21 +16,34 @@ type unknownRepository struct {
 }
 
 func (r unknownRepository) WithWrite(ctx context.Context, fn func(context.Context, ports.TaskWriter) error) error {
+	injected := false
 	e := r.TaskRepository.WithWrite(ctx, func(ctx context.Context, w ports.TaskWriter) error {
 		*r.calls++
 		if e := fn(ctx, w); e != nil {
 			return e
 		}
 		if r.before {
+			injected = true
 			return ports.ErrConflict
 		}
 		return nil
 	})
-	if e != nil && !r.before {
+	if e != nil && !injected {
 		return e
 	}
 	return ports.NewTransactionError("acknowledgment", errors.Join(ports.ErrConflict, context.Canceled))
 }
+func TestUnknownRepository_CallbackFailure(t *testing.T) {
+	r := repository(t)
+	calls := 0
+	s := serviceFor(t, unknownRepository{TaskRepository: r, before: true, calls: &calls}, false)
+	got, err := s.CompleteTask(context.Background(), ports.TaskCommand{ID: "missing"})
+	var outcome ports.TransactionError
+	if got != nil || !errors.Is(err, core.ErrTaskNotFound) || errors.As(err, &outcome) || calls != 1 {
+		t.Fatalf("callback error changed to unknown outcome: %v, %v, calls=%d", got, err, calls)
+	}
+}
+
 func TestService_RollbackAndUnknownOutcome(t *testing.T) {
 	for _, before := range []bool{false, true} {
 		path, r, _ := twoOwners(t, task("a", "", 0, core.StatusTodo))
@@ -63,7 +76,7 @@ func TestService_RollbackAndUnknownOutcome(t *testing.T) {
 }
 func TestService_CommittedThenCanceled(t *testing.T) {
 	for _, deletion := range []bool{false, true} {
-		r := repository(t, task("a", "", 0, core.StatusTodo))
+		path, r, _ := twoOwners(t, task("a", "", 0, core.StatusTodo))
 		ctx, cancel := context.WithCancel(context.Background())
 		s := serviceFor(t, faultRepository{TaskRepository: r, cancel: cancel}, false)
 		if deletion {
@@ -79,6 +92,32 @@ func TestService_CommittedThenCanceled(t *testing.T) {
 		}
 		if _, e := s.GetTask(ctx, "a"); !errors.Is(e, context.Canceled) {
 			t.Fatal(e)
+		}
+		if err := r.Close(); err != nil {
+			t.Fatal(err)
+		}
+		fresh, err := storage.Open(context.Background(), storage.Options{Path: path})
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			if err := fresh.Close(); err != nil {
+				t.Error(err)
+			}
+		})
+		got, err := fresh.GetByID(context.Background(), "a")
+		if deletion {
+			if got != nil || !errors.Is(err, core.ErrTaskNotFound) {
+				t.Fatalf("deletion was not durable: %v, %v", got, err)
+			}
+		} else {
+			if err != nil || got == nil || got.Status != core.StatusDone {
+				t.Fatalf("completion was not durable: %v, %v", got, err)
+			}
+			events, err := fresh.ListEvents(context.Background(), "a")
+			if err != nil || len(events) != 1 || events[0].Kind != ports.EventStatus {
+				t.Fatalf("completion history was not durable: %v, %v", events, err)
+			}
 		}
 	}
 }

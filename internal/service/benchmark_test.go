@@ -86,11 +86,14 @@ func (r *measuredRepository) WithWrite(ctx context.Context, fn func(context.Cont
 }
 func BenchmarkService(b *testing.B) {
 	for _, n := range []int{0, 100, 1000, 10000} {
-		for _, op := range []string{"Get", "List", "Tree", "Stats", "History", "Create", "Complete", "Reopen", "Move", "Delete"} {
+		for _, op := range []string{"Get", "List", "Tree", "Stats", "EmptyHistory", "Create", "Complete", "Reopen", "PromoteLeaf", "Delete"} {
 			if n == 0 && op != "List" && op != "Tree" && op != "Stats" && op != "Create" {
 				continue
 			}
 			b.Run(fmt.Sprintf("%s/tasks=%d", op, n), func(b *testing.B) {
+				if b.N != 1 {
+					b.Fatal("fixture setup is intentionally unmeasured; use make bench-service (-benchtime=1x)")
+				}
 				reads, writes, snapshots := 0, 0, 0
 				var duration time.Duration
 				for i := 0; i < b.N; i++ {
@@ -145,7 +148,7 @@ func BenchmarkService(b *testing.B) {
 						_, e = s.GetTaskTree(context.Background(), "")
 					case "Stats":
 						_, e = s.GetStats(context.Background())
-					case "History":
+					case "EmptyHistory":
 						_, e = s.GetTaskHistory(context.Background(), "t00000")
 					case "Create":
 						parent := (*string)(nil)
@@ -157,7 +160,7 @@ func BenchmarkService(b *testing.B) {
 						_, e = s.CompleteTask(context.Background(), ports.TaskCommand{ID: "t00000"})
 					case "Reopen":
 						_, e = s.ReopenTask(context.Background(), ports.ReopenTaskCommand{ID: "t00001", Status: core.StatusTodo})
-					case "Move":
+					case "PromoteLeaf":
 						_, e = s.UpdateTask(context.Background(), ports.UpdateTaskCommand{ID: "t00009", ClearParent: true})
 					case "Delete":
 						_, e = s.DeleteTask(context.Background(), ports.DeleteTaskCommand{ID: "t00000", Force: true, Recursive: true})

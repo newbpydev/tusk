@@ -105,6 +105,8 @@ help:
 	@echo "make test-unit - Run short unit tests"
 	@echo "make test-compat - Prove pinned storage runtime and Go minimum fixtures"
 	@echo "make build-storage - Compile CGO-free storage for all five targets"
+	@echo "make build-service - Compile CGO-free service and tests for all five targets"
+	@echo "make bench-service - Measure fixed single-sample service workloads"
 	@echo "make race      - Run tests with data race detector"
 	@echo "make validate    - Run full verification suite (fmt, vet, test, race, coverage)"
 	@echo "make coverage    - Run coverage check with race detector"

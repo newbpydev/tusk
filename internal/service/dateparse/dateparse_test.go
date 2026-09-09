@@ -61,7 +61,10 @@ func TestParseDue_Calendar(t *testing.T) {
 	}
 	for _, s := range []string{"2026-02-01T01:02:03Z", "2026-02-01T01:02:03.1Z", "2026-02-01T01:02:03.123456789-03:00", "2026-02-01T01:02:03+23:59"} {
 		v, e := ParseDue(s, ref(), time.UTC)
-		want, _ := time.Parse(time.RFC3339Nano, s)
+		want, err := time.Parse(time.RFC3339Nano, s)
+		if err != nil {
+			t.Fatalf("timestamp oracle %q: %v", s, err)
+		}
 		if e != nil || !v.Equal(want) {
 			t.Fatalf("%s: %v %v", s, v, e)
 		}

@@ -102,7 +102,10 @@ func TestService_OppositeMoves(t *testing.T) {
 	}
 	count := 0
 	for _, id := range []string{"a", "b"} {
-		ev, _ := sa.GetTaskHistory(context.Background(), id)
+		ev, err := sa.GetTaskHistory(context.Background(), id)
+		if err != nil {
+			t.Fatal(err)
+		}
 		count += len(ev)
 	}
 	if count != 1 {
@@ -146,8 +149,14 @@ func TestService_DescendantHeightRace(t *testing.T) {
 func TestService_StalePatchAndDeletePreview(t *testing.T) {
 	_, a, b := twoOwners(t, task("p", "", 0, core.StatusTodo), task("a", "p", 0, core.StatusTodo))
 	sa, sb := serviceFor(t, a, false), serviceFor(t, b, false)
-	base, _ := sa.GetTask(context.Background(), "a")
-	preview, _ := sa.PreviewDeleteTask(context.Background(), "p")
+	base, err := sa.GetTask(context.Background(), "a")
+	if err != nil || base == nil {
+		t.Fatalf("initial base: %v, %v", base, err)
+	}
+	preview, err := sa.PreviewDeleteTask(context.Background(), "p")
+	if err != nil || preview.Target.ID != "p" || len(preview.IDs) != 2 {
+		t.Fatalf("initial consent: %v, %v", preview, err)
+	}
 	if _, e := sb.UpdateTask(context.Background(), ports.UpdateTaskCommand{ID: "a", Description: ptr("newer")}); e != nil {
 		t.Fatal(e)
 	}
@@ -195,8 +204,8 @@ func TestService_WriterAdmission(t *testing.T) {
 	if !errors.Is(e, ports.ErrBusy) {
 		t.Fatal(e)
 	}
-	if ev, _ := s.GetTaskHistory(context.Background(), "a"); len(ev) != 0 {
-		t.Fatal("rejected admission created event")
+	if ev, err := s.GetTaskHistory(context.Background(), "a"); err != nil || len(ev) != 0 {
+		t.Fatalf("rejected admission history: %v, %v", ev, err)
 	}
 	if _, e := s.CompleteTask(context.Background(), ports.TaskCommand{ID: "a"}); e != nil {
 		t.Fatal(e)

@@ -2,8 +2,8 @@
 feature-id: "003"
 plan-source: docs/plans/2026-09-06-003-feat-task-service-engine-plan.md
 surface-profiles: [service-api, library, transactional-persistence, concurrency, portability, documentation]
-status: Planned - not executed
-evidence-scope: Planning only
+status: Locally accepted - PR open
+evidence-scope: Local implementation and acceptance; native and consumer gates pending
 ---
 
 # Feature 003 Task Service Engine Verification Plan
@@ -12,7 +12,7 @@ evidence-scope: Planning only
 
 Companions: [plan](../plans/2026-09-06-003-feat-task-service-engine-plan.md), [workorder](../workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md), and [masterplan](../../MASTERPLAN.md). Feature-local R/U/KTD/AE IDs refer to the plan. Product R/U/V IDs are prefixed `product` or `TUSK`.
 
-Verify synchronous service calls, exact input/result/error contracts, transaction-scoped graph/history changes, calendar/identity behavior and read models. The baseline is clean main `679f5cefd6e626a3c67c1e08a433ab786c944883`, inspected 2026-09-09. Existing core/storage acceptance is historical evidence from their own packs. All **91 Feature 003 scenarios below are planned and unchecked**; this document contains no service pass/fail results.
+Verify synchronous service calls, exact input/result/error contracts, transaction-scoped graph/history changes, calendar/identity behavior and read models. The planning baseline was clean main `679f5cefd6e626a3c67c1e08a433ab786c944883`, inspected 2026-09-09. Existing core/storage acceptance is historical evidence from their own packs. All **91 Feature 003 scenarios below have local execution evidence**, indexed in [unit receipts](../verification-evidence/003/README.md); dated execution and review follow-ups appear below.
 
 Local evidence consists of deterministic unit assertions, real temporary disk integration, concurrency/fault recovery, minimum-Go compilation, benchmarks and runbook replay. Hosted native operating systems, production timezone embedding, real CLI/TUI behavior and process latency belong to Features 004–006. Cross-compilation is local compatibility evidence only. Browser/mobile/HTTP/auth/rate-limit scenarios do not apply to this internal single-user service.
 
@@ -196,7 +196,7 @@ Benchmarks mirror storage fixture scale: 128-byte notes, three tags, depth-ten c
 
 ## Execution record
 
-The 2026-09-09 lfg intake rechecked the implementation contract against clean revision `f2fd0e35f16edb78ef5e57c0f4a68ffa7a1b9fa0`. Local sequential coherence, feasibility, scope and adversarial review found no blocking contract gaps. Additional Claude review produced no usable result (HTTP 401, expired OAuth token); independent corroboration is unavailable. This entry is document evidence only; all runtime scenarios below remain pending until executed.
+The 2026-09-09 lfg intake rechecked the implementation contract against clean revision `f2fd0e35f16edb78ef5e57c0f4a68ffa7a1b9fa0`. Local sequential coherence, feasibility, scope and adversarial review found no blocking contract gaps. Additional Claude review produced no usable result (HTTP 401, expired OAuth token); independent corroboration was unavailable at intake. This intake entry is document evidence only; subsequent runtime acceptance and hosted review are recorded below.
 
 Planning does not fill implementation pass/fail values. Create `docs/verification-evidence/003/` during execution with an index and receipts containing scenario IDs, UTC date, exact commit plus worktree/diff identity for precommit Red/Green, Go/OS/architecture, command, exit code, expected/actual, raw evidence path and unresolved limitation. Attach each unit's validation to its eventual commit without claiming a precommit run ran on a commit that did not yet exist.
 
@@ -226,3 +226,5 @@ U5 execution: [receipt](../verification-evidence/003/u5.json) maps all 91 scenar
 Publication review: sequential reuse/quality/efficiency and risk-based code review completed at `d714ea6` with no actionable findings. [Review record](../verification-evidence/003/publication-review.json); [implementation return](../verification-evidence/003/work-return.json). Browser QA is inapplicable because this feature has no browser routes. Bounded hosted feedback monitoring follows publication; merge remains user-owned.
 
 PR #3 review follow-up (2026-09-09): Codex identified premature civil-year rejection in date resolution. Red-first tests reproduced valid year-1 due instants and a valid final-year exclusive day bound being rejected. Range checks now apply to resolved UTC candidates; explicit year-zero dates and unrepresentable bounds still fail. Both new regressions and `make validate build` pass. [Review-fix receipt](../verification-evidence/003/review-r1.json) extends V17/V23 evidence; no later-phase scope changed.
+
+PR #3 Kilo review follow-up (2026-09-09): addressed 14 threads covering invalid reopen status categories, checked test setup/read errors, fresh-connection post-cancel persistence, callback-failure classification in the recovery fixture, embedded service-test tzdata, benchmark sample limits/labels, port/helper documentation, canonical help and acceptance-status drift. Seven suggestions retain the active KTD9 query design, safe entropy-error boundary, overflow-safe statistics and private-helper invariants; each has an evidence-based reply in the [disposition receipt](../verification-evidence/003/review-r2.json). New red-first cases, strengthened scenarios, `make validate build`, Go 1.25 five-target service builds and the canonical benchmark run pass. Multi-iteration benchmark misuse is explicitly rejected. Historical History/Move samples mean empty history/leaf promotion; event-volume scaling and cross-branch subtree move latency remain unmeasured.
