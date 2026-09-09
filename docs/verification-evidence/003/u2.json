@@ -1,0 +1,45 @@
+{
+  "unit": "U2",
+  "date": "2026-09-09T19:29:22.234800+00:00",
+  "base_commit": "caeffbdf875db5272953f8aff25f2bf51479a691",
+  "environment": "go version go1.27.1-X:nodwarf5 linux/amd64",
+  "scenario_tests": {
+    "V13-V18": "TestParseDue_Calendar, TestParseDue_InvalidAndAmbiguous",
+    "V19-V21": "TestDayBounds_DST; actual list predicate remains U4/V68",
+    "V22": "TestParseDue_InvalidAndAmbiguous, TestTonight_RepeatedWallTime synthetic TZif",
+    "V23-V24": "TestDateOptionsAndRange, TestDayBounds_FirstRepresentableDay",
+    "V25-V27": "TestUUIDv7_LayoutAndFailure, TestUUIDv7_IndependentEntropyAndClockReversal",
+    "V89": "test-only time/tzdata import; production embedding remains Feature 004"
+  },
+  "verification": [
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u2-red.log.gz",
+      "observed": "Missing parser and UUID functions fail compilation"
+    },
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u2-green.log.gz",
+      "observed": "TUE incorrectly routed as timestamp"
+    },
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u2-year-red.log.gz",
+      "observed": "year 1 midnight confused with unset sentinel"
+    },
+    {
+      "command": "make validate",
+      "exit": 0,
+      "log": "u2-validate-final.log.gz"
+    }
+  ],
+  "sha256": {
+    "internal/service/dateparse/dateparse_test.go": "ceaabdb0a472921525a7ab1c5b3f12213f3d96c849bfbabeb1257a475b4aa918",
+    "internal/service/dateparse/dateparse.go": "1343d8a44c0ba3b19745f88e438adce0100c7971634d5d178b18523fb9b8d305",
+    "internal/service/id.go": "564efa3389766aede31d565a63dd7210fe0e69a16a41193aab1f61e05c0d6b24",
+    "internal/service/id_test.go": "6700c2e06f62bc39f6660724f27b1a53addfdc51a847f83041ac99c852d72511"
+  }
+}

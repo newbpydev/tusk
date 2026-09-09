@@ -66,21 +66,21 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 
 ### U2. Date parsing and identity
 
-- [ ] 003-V13 **Word tokens:** Fixed reference in UTC and Sao Paulo covers today/tomorrow/tonight and each weekday abbreviation, including matching today and tonight already past; check exact UTC nanoseconds.
-- [ ] 003-V14 **Token normalization:** Exterior whitespace and mixed-case word/unit tokens succeed; unsupported full weekdays/extra words/embedded whitespace/empty input fail without fallback.
-- [ ] 003-V15 **Calendar offsets:** +1d/+3d/+1w/+2w/+1m and leading-zero positive N select expected destination date end; week multiplication is checked before conversion.
-- [ ] 003-V16 **Month end:** Jan 31 +1m clamps to Feb 28/29; Jan 31 +2m resolves Mar 31, not repeated clamping to Mar 28; leap-year and year rollover cases preserve intended date.
-- [ ] 003-V17 **Absolute dates:** YYYY-MM-DD strict width, leap-day validity, invalid February dates, month/day zero/overflow and year zero are asserted; no Date normalization turns malformed input into success.
-- [ ] 003-V18 **RFC3339:** Z and positive/negative offsets, optional 1–9 fractional digits, leap seconds, lowercase t/z, absent offset, comma fraction, excess precision, offset ranges and trailing text enforce the documented grammar; exact valid instant survives UTC conversion.
-- [ ] 003-V19 **DST normal day:** New York 2026-03-08 and 2026-11-01 DayBounds span 23 and 25 hours; tomorrow/+1d retain civil-day meaning. Covers AE5.
+- [x] 003-V13 **Word tokens:** Fixed reference in UTC and Sao Paulo covers today/tomorrow/tonight and each weekday abbreviation, including matching today and tonight already past; check exact UTC nanoseconds.
+- [x] 003-V14 **Token normalization:** Exterior whitespace and mixed-case word/unit tokens succeed; unsupported full weekdays/extra words/embedded whitespace/empty input fail without fallback.
+- [x] 003-V15 **Calendar offsets:** +1d/+3d/+1w/+2w/+1m and leading-zero positive N select expected destination date end; week multiplication is checked before conversion.
+- [x] 003-V16 **Month end:** Jan 31 +1m clamps to Feb 28/29; Jan 31 +2m resolves Mar 31, not repeated clamping to Mar 28; leap-year and year rollover cases preserve intended date.
+- [x] 003-V17 **Absolute dates:** YYYY-MM-DD strict width, leap-day validity, invalid February dates, month/day zero/overflow and year zero are asserted; no Date normalization turns malformed input into success.
+- [x] 003-V18 **RFC3339:** Z and positive/negative offsets, optional 1–9 fractional digits, leap seconds, lowercase t/z, absent offset, comma fraction, excess precision, offset ranges and trailing text enforce the documented grammar; exact valid instant survives UTC conversion.
+- [x] 003-V19 **DST normal day:** New York 2026-03-08 and 2026-11-01 DayBounds span 23 and 25 hours; tomorrow/+1d retain civil-day meaning. Covers AE5.
 - [ ] 003-V20 **Day boundaries:** Due exactly start is included, end-1ns included, exactly end excluded, undated excluded; bounds use local date from parsed instant, not the input offset's calendar label.
-- [ ] 003-V21 **Offset crossing date:** An explicit offset timestamp landing on a different civil day in injected location selects that local day; original due timestamp parsing remains unchanged.
-- [ ] 003-V22 **Missing/repeated wall time:** Historical midnight-gap and skipped-date fixtures fail with ErrInvalidDate; next-midnight gap fails bounds; repeated exact wall time selects earliest matching instant. Use real IANA examples and a controlled zone fixture for a repeated 20:00 if necessary.
-- [ ] 003-V23 **Overflow/range:** Zero, negative, fractional or huge N; overflow in 7*N/month/year arithmetic; UTC year falling outside 1–9999 due to offset conversion; no partial bounds or fallback time. Include final-year day-bound overflow.
-- [ ] 003-V24 **Bad dependency/text:** Nil location, zero reference and invalid UTF-8/NUL fail safely; fixed-reference inputs are unchanged and parser does not inspect process TZ/environment or wall clock.
-- [ ] 003-V25 **UUID vector/layout:** Deterministic timestamp/entropy reproduces RFC 9562 vector and canonical lowercase form, exact 48 timestamp bits, version 7 and variant 10; no counter/ordering assertion.
-- [ ] 003-V26 **UUID failure:** Pre-epoch/out-of-range/zero reference, nil/short/error entropy and malformed injected NewID output fail before DB write; error text does not contain entropy-reader text. No alternate ID or timestamp is generated.
-- [ ] 003-V27 **Same millisecond/reversal:** Distinct deterministic entropy at same millisecond yields distinct valid IDs; reversed clock still encodes its own time. ID source called once for one create attempt, no automatic collision retry.
+- [x] 003-V21 **Offset crossing date:** An explicit offset timestamp landing on a different civil day in injected location selects that local day; original due timestamp parsing remains unchanged.
+- [x] 003-V22 **Missing/repeated wall time:** Historical midnight-gap and skipped-date fixtures fail with ErrInvalidDate; next-midnight gap fails bounds; repeated exact wall time selects earliest matching instant. Use real IANA examples and a controlled zone fixture for a repeated 20:00 if necessary.
+- [x] 003-V23 **Overflow/range:** Zero, negative, fractional or huge N; overflow in 7*N/month/year arithmetic; UTC year falling outside 1–9999 due to offset conversion; no partial bounds or fallback time. Include final-year day-bound overflow.
+- [x] 003-V24 **Bad dependency/text:** Nil location, zero reference and invalid UTF-8/NUL fail safely; fixed-reference inputs are unchanged and parser does not inspect process TZ/environment or wall clock.
+- [x] 003-V25 **UUID vector/layout:** Deterministic timestamp/entropy reproduces RFC 9562 vector and canonical lowercase form, exact 48 timestamp bits, version 7 and variant 10; no counter/ordering assertion.
+- [x] 003-V26 **UUID failure:** Pre-epoch/out-of-range/zero reference, nil/short/error entropy and malformed injected NewID output fail before DB write; error text does not contain entropy-reader text. No alternate ID or timestamp is generated.
+- [x] 003-V27 **Same millisecond/reversal:** Distinct deterministic entropy at same millisecond yields distinct valid IDs; reversed clock still encodes its own time. ID source called once for one create attempt, no automatic collision retry.
 
 ### U3. Rollup, staging and event selection
 
@@ -160,7 +160,7 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 ### Cross-unit compatibility and evidence
 
 - [ ] 003-V88 **Safe cause catalog and canonical gates:** Every new immutable port error survives failed rollback individually/joined with context/corruption while private wrappers are redacted and unknown outcome remains detectable. Full/race/coverage/script gates pass, service/dateparse >=95%; no exemption weakening. U1 establishes catalog cases, U5 reruns aggregate acceptance.
-- [ ] 003-V89 **Portable date fixtures:** Named IANA tests work with test-embedded tzdata; parser uses supplied location and no global TZ mutation. Record Feature 004 production main-package embedding as pending, not proven by unit tests.
+- [x] 003-V89 **Portable date fixtures:** Named IANA tests work with test-embedded tzdata; parser uses supplied location and no global TZ mutation. Record Feature 004 production main-package embedding as pending, not proven by unit tests.
 - [ ] 003-V90 **Compatibility/runbook:** Minimum Go1.25 full suite passes; new build-service target compiles service/tests for Linux amd64/arm64, macOS amd64/arm64, Windows amd64 with CGO0. Replay service lifecycle/uncertain-outcome instructions using temporary DBs; record exact revisions and verify docs/consumer handoffs. Native/hosted targets remain pending.
 - [ ] 003-V91 **Resource/performance:** New bench-service target measures warm Get/List/Tree/Stats/History and create/complete/reopen/move/delete at 0/100/1000/10000 tasks where applicable, including depth10/wide trees. Record time/allocations, query counts, snapshot lifetime and host details; fixture setup/reset outside timed sections. No global cache, full-DB mutation scan or query-count growth from per-child redundant ancestor reads. Service timings do not close CLI latency gates.
 
@@ -210,3 +210,5 @@ Planning does not fill implementation pass/fail values. Create `docs/verificatio
 Every executed scenario records its own result. A broad green suite does not close a scenario without verifying that its described assertions ran. Leave all implementation/acceptance boxes unchecked until that evidence exists.
 
 U1 execution: [receipt and raw logs](../verification-evidence/003/u1.json). make validate passed; V06/V08 have helper proof but retain public behavior checks for U6/U4, V07/V09/V11/V12 retain orchestration checks, and V88 retains U5 aggregate acceptance. These open boxes do not imply unimplemented U1 method stubs.
+
+U2 execution: [receipt](../verification-evidence/003/u2.json), make validate passed. V20 predicate membership is retained for U4, while parser day bounds are proven. Year-1 midnight has its own regression.

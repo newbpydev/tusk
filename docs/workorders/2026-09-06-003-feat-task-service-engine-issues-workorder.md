@@ -181,3 +181,5 @@ All items remain unchecked during planning. Explicit later-phase handoffs are tr
 - [ ] Hosted/native/CLI/TUI/manual/release status reported separately; publication separately authorized if requested.
 
 U1 acceptance: make validate passed with input/base/query seam tests and 16 real failed-rollback cases; [receipt](../verification-evidence/003/u1.json). Public operation/result/concurrency assertions in V07/V09/V11/V12 remain with their implementing units, consistent with the ban on interim facade stubs.
+
+U2 acceptance: deterministic parser and UUIDv7 pass make validate; [receipt](../verification-evidence/003/u2.json). Tests exposed and fixed uppercase weekday dispatch and the valid year-1 midnight sentinel collision. Production tzdata embedding is still a consumer handoff.
