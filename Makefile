@@ -1,6 +1,21 @@
 .DEFAULT_GOAL := all
 .PHONY: all setup fmt vet test test-unit test-compat build-storage race validate coverage bench bench-tree bench-build build clean help
 .PHONY: setup-sqlc generate check-generated test-scripts bench-storage
+.PHONY: build-service bench-service
+
+build-service:
+	go version
+	@set -e; build_tmp=$$(mktemp -d); trap 'rm -rf "$$build_tmp"' EXIT; \
+	for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do \
+		echo "Building service and tests: $$target (CGO_ENABLED=0; native execution separate)"; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go build ./internal/service/...; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/service-$${target%/*}-$${target#*/}.test" ./internal/service; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/dateparse-$${target%/*}-$${target#*/}.test" ./internal/service/dateparse; \
+	done
+
+bench-service:
+	go version
+	go test ./internal/service -run '^$$' -bench '^BenchmarkService$$' -benchmem -benchtime=1x
 
 setup-sqlc:
 	bash scripts/sqlc.sh setup

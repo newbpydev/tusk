@@ -56,13 +56,13 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 - [x] 003-V03 **Contract:** Compile consumer fixtures for every planned operation/command/result; optional/clear/consent fields are representable without importing service/SQL into ports. Full concrete conformance is asserted in U4, with no interim method stubs.
 - [x] 003-V04 **Metadata boundary:** Empty/whitespace title fails, 255 Unicode runes succeeds, 256 fails; default/invalid priority and exact multiline notes follow core/input rules; invalid UTF-8/NUL fails before admission.
 - [x] 003-V05 **ID/tag normalization:** Trim ID/title/tag whitespace; existing opaque non-UUID ID remains addressable; normalize case/#/hyphens and sorted duplicates; invalid/empty tag fails. Inputs and snapshots remain unchanged.
-- [ ] 003-V06 **Patch shape:** Set+clear due/parent, manual-progress+status and manual-progress+parent intent return ErrInvalidCommand, including equal-value directives. Empty service patch is allowed but still reads/validates target/base.
-- [ ] 003-V07 **Domain validation:** Invalid status, done→blocked, priority 0 on patch, non-done progress 100 and progress -1/101 return the declared domain errors at their preflight or row-dependent boundary; valid done progress 100 is a no-op.
-- [ ] 003-V08 **Query shape:** All+Statuses, RootOnly+ParentID and malformed text/enums/tags fail with expected command/domain category. Reversed/equal exclusive date bounds are valid and produce an empty result.
-- [ ] 003-V09 **Time/cancellation:** Already canceled context returns context cause before dependencies. Zero/out-of-range reference time fails safely; one timestamp is captured per valid mutation/time-dependent query and reused for all changes.
+- [x] 003-V06 **Patch shape:** Set+clear due/parent, manual-progress+status and manual-progress+parent intent return ErrInvalidCommand, including equal-value directives. Empty service patch is allowed but still reads/validates target/base.
+- [x] 003-V07 **Domain validation:** Invalid status, done→blocked, priority 0 on patch, non-done progress 100 and progress -1/101 return the declared domain errors at their preflight or row-dependent boundary; valid done progress 100 is a no-op.
+- [x] 003-V08 **Query shape:** All+Statuses, RootOnly+ParentID and malformed text/enums/tags fail with expected command/domain category. Reversed/equal exclusive date bounds are valid and produce an empty result.
+- [x] 003-V09 **Time/cancellation:** Already canceled context returns context cause before dependencies. Zero/out-of-range reference time fails safely; one timestamp is captured per valid mutation/time-dependent query and reused for all changes.
 - [x] 003-V10 **Base comparison:** Different editable metadata/ID/incarnation conflicts or fails malformed-shape validation as specified. Equal instants with different locations pass; pointer identity does not matter. Ignore UpdatedAt/CompletedAt and parent-derived progress; compare leaf progress. ABA-to-equal is accepted.
 - [x] 003-V11 **No partial values:** Callback/commit/read-cleanup failure after assembling a result returns nil task/list/tree/history or zero stats/delete result. No error result exposes Deleted=true or staged IDs.
-- [ ] 003-V12 **Isolation and ownership:** Sequential/concurrent calls use per-operation state; returned slices/maps/pointers and supplied command/base slices do not alias. No handle escapes or concurrent handle/repository reentry occurs in a callback.
+- [x] 003-V12 **Isolation and ownership:** Sequential/concurrent calls use per-operation state; returned slices/maps/pointers and supplied command/base slices do not alias. No handle escapes or concurrent handle/repository reentry occurs in a callback.
 
 ### U2. Date parsing and identity
 
@@ -90,23 +90,23 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 - [x] 003-V31 **Reopen before rollup:** A done ancestor receiving a new/reopened open child becomes in-progress, clears completion and recalculates; done-first CalculateProgress cannot mask incomplete work.
 - [x] 003-V32 **Policy pair:** Identical final nonempty/all-done child fixtures complete parents only with policy true; policy false leaves open parent at 100. Empty children never auto-complete.
 - [x] 003-V33 **Explicit open precedence:** Explicitly opened target remains todo/in-progress at 100 with all children done and policy true; done higher ancestors reopen even if the open target still contributes 100.
-- [ ] 003-V34 **Shared ancestor:** Move between branches with a common grandparent, and ancestor/descendant-related old/new parents; process final deepest-first union, shared grandparent once after both branches, no transient extra event.
+- [x] 003-V34 **Shared ancestor:** Move between branches with a common grandparent, and ancestor/descendant-related old/new parents; process final deepest-first union, shared grandparent once after both branches, no transient extra event.
 - [x] 003-V35 **Status-only propagation:** Child changes done↔open while remaining at progress 100; higher policy/reopen decisions still run despite unchanged numeric progress.
 - [x] 003-V36 **Net diffs/no-op:** Helpers may set timestamps internally, but equal canonical final fields produce no row write/event. Changed rows use one operation time; discarded/intermediate fields never reach history.
 - [x] 003-V37 **Event attribution:** Exercise create, metadata, move, status, manual-progress and rollup, including compound patches. Assert exact sorted fields, fixed category/task ordering, Sequence=0 on append and no duplicated field across events.
-- [ ] 003-V38 **Invalid graph/cancellation:** Cyclic/missing-parent/depth/invalid-record fixtures and cancellation during traversal fail without partial results or infinite traversal; no clamped corrupt data is saved.
+- [x] 003-V38 **Invalid graph/cancellation:** Cyclic/missing-parent/depth/invalid-record fixtures and cancellation during traversal fail without partial results or infinite traversal; no clamped corrupt data is saved.
 
 ### U6. Create and patch primitives
 
 - [x] 003-V39 **Create default:** Create root with 255-rune title, notes, tags and due; verify canonical UUID, todo/medium/0, null completion, exact metadata and one create event with all nine allowed fields.
-- [ ] 003-V40 **Parent/defaults:** Create child under open and done parents at admissible depth; defaults hold, ancestor state/progress/history changes share timestamp and transaction; no implicit parent creation.
+- [x] 003-V40 **Parent/defaults:** Create child under open and done parents at admissible depth; defaults hold, ancestor state/progress/history changes share timestamp and transaction; no implicit parent creation.
 - [x] 003-V41 **Failure before persistence:** Entropy failure, invalid generated ID, duplicate storage ID, invalid date and missing parent return their causes with no created row/history; count ID calls to forbid retries.
 - [x] 003-V42 **Create atomicity:** Fail Create, each ancestor Update, each AppendEvent or outer commit after staged create; known rollback yields old graph/history; unknown outcome never returns task success.
-- [ ] 003-V43 **Create affects chain only:** Add incomplete child to previously complete hierarchy and preserve unrelated branch values/events; root creation has no ancestor writes.
-- [ ] 003-V44 **Set/omit/clear:** Omitted title/notes/priority/tags/due/parent preserved; explicit notes empty/tags empty/due clear/parent clear produce intended values. Repeated semantically equivalent tags and UTC instants count as equal.
-- [ ] 003-V45 **Metadata no-op:** Empty patch and supplied identical values return current task with unchanged UpdatedAt/events; metadata-only edit never auto-completes/reconciles unrelated graph or existing parent progress.
-- [ ] 003-V46 **Base conflict:** Change one compared field between Base capture and patch, then reject atomically; valid no-base patch reads latest values and never overwrites omitted concurrent fields.
-- [ ] 003-V47 **Missing/incarnation:** Missing patch target fails, mismatched Base ID is malformed, same ID with different CreatedAt conflicts; no replacement task is overwritten.
+- [x] 003-V43 **Create affects chain only:** Add incomplete child to previously complete hierarchy and preserve unrelated branch values/events; root creation has no ancestor writes.
+- [x] 003-V44 **Set/omit/clear:** Omitted title/notes/priority/tags/due/parent preserved; explicit notes empty/tags empty/due clear/parent clear produce intended values. Repeated semantically equivalent tags and UTC instants count as equal.
+- [x] 003-V45 **Metadata no-op:** Empty patch and supplied identical values return current task with unchanged UpdatedAt/events; metadata-only edit never auto-completes/reconciles unrelated graph or existing parent progress.
+- [x] 003-V46 **Base conflict:** Change one compared field between Base capture and patch, then reject atomically; valid no-base patch reads latest values and never overwrites omitted concurrent fields.
+- [x] 003-V47 **Missing/incarnation:** Missing patch target fails, mismatched Base ID is malformed, same ID with different CreatedAt conflicts; no replacement task is overwritten.
 - [x] 003-V48 **Manual progress:** Open leaf 0/99 succeeds; invalid range, any parent manual intent (even equal value) and progress with status/parent intent fail; done leaf only accepts equal 100 as no-op.
 
 ### U7. Complete, reopen, move and delete
@@ -116,53 +116,53 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 - [x] 003-V51 **Done target/open descendant:** Seed valid rows representing a done target with an open descendant; explicit completion visits descendants and completes them rather than returning early on target status.
 - [x] 003-V52 **Leaf reopen/state machine:** Done leaf→todo/in-progress resets progress0/completion nil; open→same is no-op, open-state changes preserve manual progress; done→blocked and ReopenTask blocked/zero targets fail.
 - [x] 003-V53 **Parent reopen:** Preserve done descendants, keep explicitly reopened parent open at calculated 100 with policy true/false, reopen done ancestors, and repeat without duplicate changes. Covers AE2.
-- [ ] 003-V54 **Child reopen:** Reopen an interior child of a completed depth-10 chain; done ancestors become in-progress bottom-up, siblings remain unchanged and no numeric-unchanged shortcut hides the state change.
-- [ ] 003-V55 **Auto completion cascade:** Complete final incomplete leaf with policy true; all-done direct children cause upward completion with consistent timestamp; policy false and open-100 intermediate child cases do not.
+- [x] 003-V54 **Child reopen:** Reopen an interior child of a completed depth-10 chain; done ancestors become in-progress bottom-up, siblings remain unchanged and no numeric-unchanged shortcut hides the state change.
+- [x] 003-V55 **Auto completion cascade:** Complete final incomplete leaf with policy true; all-done direct children cause upward completion with consistent timestamp; policy false and open-100 intermediate child cases do not.
 - [x] 003-V56 **Cycle/existence:** Self-parent matches both cycle sentinels; two-node/deep-cycle/missing-parent moves fail and preserve graph/events; valid root promotion succeeds.
-- [ ] 003-V57 **Depth:** Move leaf to depth10 succeeds and depth11 fails; moving a subtree includes descendant height. Promotion rebases depth without changing descendants' parent IDs.
-- [ ] 003-V58 **Compound move/status:** Move first then complete/reopen/open-status patch; only target subtree changes status, both chains reflect final membership, target explicit open wins, progress+status/parent is refused.
-- [ ] 003-V59 **Move no-op/old chain:** Same parent is no-op unless another field changes; disjoint/shared old/new chains retain final averages, last-child reset and no duplicate shared-ancestor event.
+- [x] 003-V57 **Depth:** Move leaf to depth10 succeeds and depth11 fails; moving a subtree includes descendant height. Promotion rebases depth without changing descendants' parent IDs.
+- [x] 003-V58 **Compound move/status:** Move first then complete/reopen/open-status patch; only target subtree changes status, both chains reflect final membership, target explicit open wins, progress+status/parent is refused.
+- [x] 003-V59 **Move no-op/old chain:** Same parent is no-op unless another field changes; disjoint/shared old/new chains retain final averages, last-child reset and no duplicate shared-ancestor event.
 - [x] 003-V60 **Delete preview:** One read snapshot returns full sorted unique subtree IDs and detached target including done descendants; leaf gives one ID; missing target fails and errors return no preview values.
 - [x] 003-V61 **Consent/recursion matrix:** Nonforce without Expected returns confirmation-required; malformed preview or Force+Expected invalid; nonrecursive parent returns children-present even when forced; confirmed leaf and forced recursive subtree succeed.
 - [x] 003-V62 **Delete integrity:** Exact deleted IDs/count match authoritative subtree; task events cascade, unrelated events survive, old ancestors recompute, final-child reset obeys status, no delete tombstone is created.
 - [x] 003-V63 **Failure points:** Table-inject each descendant/ancestor write, event append and delete error; graph/history wholly roll back. Mismatch between validated membership and delete result aborts. Suppress staged target/delete success.
-- [ ] 003-V64 **Stale consent:** Membership addition/removal/move and target metadata/incarnation change fail equality check; unrelated-task or derived parent-progress changes alone do not conflict. Force executes current scope, preserving Recursive requirement.
+- [x] 003-V64 **Stale consent:** Membership addition/removal/move and target metadata/incarnation change fail equality check; unrelated-task or derived parent-progress changes alone do not conflict. Force executes current scope, preserving Recursive requirement.
 
 ### U4. Read surface and facade
 
 - [x] 003-V65 **List statuses:** Default excludes done, All includes every status, explicit statuses select exactly requested states; empty results are non-nil and input filters stay unchanged.
-- [ ] 003-V66 **Filter parity:** Status/priority OR, tags/fields AND, root/parent, title+notes literal Unicode search, percent/underscore/quotes and nil dates match a core.FilterTasks oracle.
-- [ ] 003-V67 **Order:** Urgent/high/medium/low, earliest due with nil last, CreatedAt and ID ties; no custom ordering or mutable package-global default-order slice.
-- [ ] 003-V68 **Due-day intersection:** Combine all/default/status/search/parent with local-day predicate; assert start included/end excluded and due==now is not overdue; no exclusive-bound conversion loses midnight. Covers AE5.
-- [ ] 003-V69 **Query invalid/empty range:** Invalid enum/tag/UTF-8/NUL and conflicting shape rejected before read; equal/reversed core bounds yield empty; bad Due expression returns date error without admission.
+- [x] 003-V66 **Filter parity:** Status/priority OR, tags/fields AND, root/parent, title+notes literal Unicode search, percent/underscore/quotes and nil dates match a core.FilterTasks oracle.
+- [x] 003-V67 **Order:** Urgent/high/medium/low, earliest due with nil last, CreatedAt and ID ties; no custom ordering or mutable package-global default-order slice.
+- [x] 003-V68 **Due-day intersection:** Combine all/default/status/search/parent with local-day predicate; assert start included/end excluded and due==now is not overdue; no exclusive-bound conversion loses midnight. Covers AE5.
+- [x] 003-V69 **Query invalid/empty range:** Invalid enum/tag/UTF-8/NUL and conflicting shape rejected before read; equal/reversed core bounds yield empty; bad Due expression returns date error without admission.
 - [x] 003-V70 **Detached reads:** Mutate returned task/tag/date/filter copies and reread; storage and subsequent results unchanged. Caller-owned query slices are never sorted/normalized in place.
-- [ ] 003-V71 **Forest:** Empty, single root, multiple roots and depth10; includes done descendants; independent sibling ordering; no filtering creates missing parents.
+- [x] 003-V71 **Forest:** Empty, single root, multiple roots and depth10; includes done descendants; independent sibling ordering; no filtering creates missing parents.
 - [x] 003-V72 **Selected subtree:** Select non-root, return one node at Depth1 with descendants rebased; root task keeps original ParentID. Stored graph and later forest depths are unchanged.
-- [ ] 003-V73 **Tree invalid:** Missing selected ID, orphan, duplicate, cycle and depth overflow produce errors with no partial forest; never detach parent IDs to conceal corruption.
-- [ ] 003-V74 **Statistics:** Empty yields zeros/four status keys; mixed nested tasks count parents, correct floor percent, strict overdue and (now-168h,now] completion window. Boundary completions, future completion, reopen and delete alter retained metric exactly.
+- [x] 003-V73 **Tree invalid:** Missing selected ID, orphan, duplicate, cycle and depth overflow produce errors with no partial forest; never detach parent IDs to conceal corruption.
+- [x] 003-V74 **Statistics:** Empty yields zeros/four status keys; mixed nested tasks count parents, correct floor percent, strict overdue and (now-168h,now] completion window. Boundary completions, future completion, reopen and delete alter retained metric exactly.
 - [x] 003-V75 **History:** Existing no-event task returns empty; nonexistent fails; every event kind ordered by persisted sequence, equal timestamps remain sequence-ordered, changed-field slices detached, deleted timelines absent.
 - [x] 003-V76 **Read failure:** Inject cancellation, decode/corruption and callback cleanup failure after reads; all result shapes suppressed. Complete concrete service satisfies every inbound interface method without opening extra snapshots.
 
 ### U5. Disk WAL, recovery and handoff acceptance
 
-- [ ] 003-V77 **Concurrent siblings:** Two independently opened repositories complete distinct siblings with barriers; final children/ancestor values contain both updates, exact committed event sets and no race. Covers AE1.
-- [ ] 003-V78 **Opposite moves:** Concurrent A-under-B and B-under-A through separate owners; at most one succeeds, other gets cycle error, resulting forest valid and rejected mutation has no events. Include descendant-height race variant.
-- [ ] 003-V79 **Stale patch:** Two owners read/edit same task with/without Base; base conflict preserves newer row/draft, no-base disjoint patch preserves omitted fields, unrelated tasks do not falsely conflict. Covers AE3.
-- [ ] 003-V80 **Stale preview:** Pause after read-only preview, mutate membership/metadata through second owner, then nonforce delete fails; force still needs Recursive. Covers AE4.
-- [ ] 003-V81 **Writer admission cancel/busy:** Hold independent writer lock, invoke service with short deadline and uncancelled five-second budget, assert context/ErrBusy respectively; release lock and new explicit operation succeeds. No callback replay or event created by rejected call.
+- [x] 003-V77 **Concurrent siblings:** Two independently opened repositories complete distinct siblings with barriers; final children/ancestor values contain both updates, exact committed event sets and no race. Covers AE1.
+- [x] 003-V78 **Opposite moves:** Concurrent A-under-B and B-under-A through separate owners; at most one succeeds, other gets cycle error, resulting forest valid and rejected mutation has no events. Include descendant-height race variant.
+- [x] 003-V79 **Stale patch:** Two owners read/edit same task with/without Base; base conflict preserves newer row/draft, no-base disjoint patch preserves omitted fields, unrelated tasks do not falsely conflict. Covers AE3.
+- [x] 003-V80 **Stale preview:** Pause after read-only preview, mutate membership/metadata through second owner, then nonforce delete fails; force still needs Recursive. Covers AE4.
+- [x] 003-V81 **Writer admission cancel/busy:** Hold independent writer lock, invoke service with short deadline and uncancelled five-second budget, assert context/ErrBusy respectively; release lock and new explicit operation succeeds. No callback replay or event created by rejected call.
 - [x] 003-V82 **Statement/event rollback:** Decorate real writer to return error before each Create/Update/Delete/AppendEvent index; inspect full graph/history from a new snapshot and confirm old state. Inject after a real statement as well to prove transaction rollback.
-- [ ] 003-V83 **Unknown outcomes:** Before-commit and after-real-commit fault modes return ports.TransactionError while storing wholly old or new state respectively; assert errors.As plus all safe causes, nil result, callback exactly once, then close/reopen/readback without retry.
-- [ ] 003-V84 **Known commit then cancel:** Cancel only after real WithWrite success; service returns committed task/delete result. A later explicit read failure is a separate operation and never replays the write. CLI output behavior remains Feature 004 proof.
-- [ ] 003-V85 **Snapshot/read cleanup:** Hold one service query callback snapshot while another writer commits a multi-task/history change; assembled result is wholly old or new, not mixed. Read cleanup error suppresses that result; fresh owner reads complete current data.
-- [ ] 003-V86 **Process termination:** Child process runs service subtree completion and is killed/reaped at before-first-write, after-some-writes and after-acknowledged-commit barriers. Fresh storage open shows complete old/new graph/history with integrity_check=ok and zero FK violations. No WAL/SHM deletion; no hardware-power-loss claim.
-- [ ] 003-V87 **Privacy and independence:** Notes containing Unicode, ESC/OSC-like content, quotes and private markers persist exactly when allowed; events/errors contain no note/title values or raw driver/entropy text. All DB fixtures are temporary and unrelated roots/owners remain intact.
+- [x] 003-V83 **Unknown outcomes:** Before-commit and after-real-commit fault modes return ports.TransactionError while storing wholly old or new state respectively; assert errors.As plus all safe causes, nil result, callback exactly once, then close/reopen/readback without retry.
+- [x] 003-V84 **Known commit then cancel:** Cancel only after real WithWrite success; service returns committed task/delete result. A later explicit read failure is a separate operation and never replays the write. CLI output behavior remains Feature 004 proof.
+- [x] 003-V85 **Snapshot/read cleanup:** Hold one service query callback snapshot while another writer commits a multi-task/history change; assembled result is wholly old or new, not mixed. Read cleanup error suppresses that result; fresh owner reads complete current data.
+- [x] 003-V86 **Process termination:** Child process runs service subtree completion and is killed/reaped at before-first-write, after-some-writes and after-acknowledged-commit barriers. Fresh storage open shows complete old/new graph/history with integrity_check=ok and zero FK violations. No WAL/SHM deletion; no hardware-power-loss claim.
+- [x] 003-V87 **Privacy and independence:** Notes containing Unicode, ESC/OSC-like content, quotes and private markers persist exactly when allowed; events/errors contain no note/title values or raw driver/entropy text. All DB fixtures are temporary and unrelated roots/owners remain intact.
 
 ### Cross-unit compatibility and evidence
 
-- [ ] 003-V88 **Safe cause catalog and canonical gates:** Every new immutable port error survives failed rollback individually/joined with context/corruption while private wrappers are redacted and unknown outcome remains detectable. Full/race/coverage/script gates pass, service/dateparse >=95%; no exemption weakening. U1 establishes catalog cases, U5 reruns aggregate acceptance.
+- [x] 003-V88 **Safe cause catalog and canonical gates:** Every new immutable port error survives failed rollback individually/joined with context/corruption while private wrappers are redacted and unknown outcome remains detectable. Full/race/coverage/script gates pass, service/dateparse >=95%; no exemption weakening. U1 establishes catalog cases, U5 reruns aggregate acceptance.
 - [x] 003-V89 **Portable date fixtures:** Named IANA tests work with test-embedded tzdata; parser uses supplied location and no global TZ mutation. Record Feature 004 production main-package embedding as pending, not proven by unit tests.
-- [ ] 003-V90 **Compatibility/runbook:** Minimum Go1.25 full suite passes; new build-service target compiles service/tests for Linux amd64/arm64, macOS amd64/arm64, Windows amd64 with CGO0. Replay service lifecycle/uncertain-outcome instructions using temporary DBs; record exact revisions and verify docs/consumer handoffs. Native/hosted targets remain pending.
-- [ ] 003-V91 **Resource/performance:** New bench-service target measures warm Get/List/Tree/Stats/History and create/complete/reopen/move/delete at 0/100/1000/10000 tasks where applicable, including depth10/wide trees. Record time/allocations, query counts, snapshot lifetime and host details; fixture setup/reset outside timed sections. No global cache, full-DB mutation scan or query-count growth from per-child redundant ancestor reads. Service timings do not close CLI latency gates.
+- [x] 003-V90 **Compatibility/runbook:** Minimum Go1.25 full suite passes; new build-service target compiles service/tests for Linux amd64/arm64, macOS amd64/arm64, Windows amd64 with CGO0. Replay service lifecycle/uncertain-outcome instructions using temporary DBs; record exact revisions and verify docs/consumer handoffs. Native/hosted targets remain pending.
+- [x] 003-V91 **Resource/performance:** New bench-service target measures warm Get/List/Tree/Stats/History and create/complete/reopen/move/delete at 0/100/1000/10000 tasks where applicable, including depth10/wide trees. Record time/allocations, query counts, snapshot lifetime and host details; fixture setup/reset outside timed sections. No global cache, full-DB mutation scan or query-count growth from per-child redundant ancestor reads. Service timings do not close CLI latency gates.
 
 ## Commands and environments
 
@@ -203,8 +203,8 @@ Planning does not fill implementation pass/fail values. Create `docs/verificatio
 | Scope | Current evidence |
 | --- | --- |
 | Planning/source inspection | 2026-09-09; baseline SHA above; structural result in workorder |
-| Feature 003 red/green/integration/race/coverage | Not run |
-| Feature 003 benchmark/minimum-Go/cross-build | Not run |
+| Feature 003 red/green/integration/race/coverage | Passed; unit receipts and U5 aggregate, service 95.8%, parser 98.4% |
+| Feature 003 benchmark/minimum-Go/cross-build | Recorded/passed; U5 raw logs and source hashes |
 | Hosted/native/CLI/TUI/manual/release | Not run; later feature owners |
 
 Every executed scenario records its own result. A broad green suite does not close a scenario without verifying that its described assertions ran. Leave all implementation/acceptance boxes unchecked until that evidence exists.
@@ -220,3 +220,5 @@ U6 execution: [receipt](../verification-evidence/003/u6.json), make validate pas
 U7 execution: [receipt](../verification-evidence/003/u7.json), make validate passed. Every real write/event position fails atomically before/after the statement across create/complete/reopen/move/delete. U5 retains extended concurrency/depth/consent variants.
 
 U4 execution: [receipt](../verification-evidence/003/u4.json), make validate passed. Complete port conformance, detached snapshot reads, selected-tree depth and history are verified. Remaining expanded query/metric cases are explicit U5 aggregate work.
+
+U5 execution: [receipt](../verification-evidence/003/u5.json) maps all 91 scenarios to tests; final make validate and Go 1.25 full suite/five-target builds pass. Additional tests characterize existing behavior; only missing canonical build/benchmark targets required a red-first implementation. Port query counts and transaction lifetime are recorded at 0/100/1000/10000 tasks; these are not SQL VM traces or statistical latency guarantees. Native/hosted/CLI/TUI obligations remain in the runbook. Earlier unit notes describe their then-pending scope, now covered by aggregate acceptance.
