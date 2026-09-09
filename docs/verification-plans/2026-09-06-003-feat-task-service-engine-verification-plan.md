@@ -61,7 +61,7 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 - [ ] 003-V08 **Query shape:** All+Statuses, RootOnly+ParentID and malformed text/enums/tags fail with expected command/domain category. Reversed/equal exclusive date bounds are valid and produce an empty result.
 - [ ] 003-V09 **Time/cancellation:** Already canceled context returns context cause before dependencies. Zero/out-of-range reference time fails safely; one timestamp is captured per valid mutation/time-dependent query and reused for all changes.
 - [x] 003-V10 **Base comparison:** Different editable metadata/ID/incarnation conflicts or fails malformed-shape validation as specified. Equal instants with different locations pass; pointer identity does not matter. Ignore UpdatedAt/CompletedAt and parent-derived progress; compare leaf progress. ABA-to-equal is accepted.
-- [ ] 003-V11 **No partial values:** Callback/commit/read-cleanup failure after assembling a result returns nil task/list/tree/history or zero stats/delete result. No error result exposes Deleted=true or staged IDs.
+- [x] 003-V11 **No partial values:** Callback/commit/read-cleanup failure after assembling a result returns nil task/list/tree/history or zero stats/delete result. No error result exposes Deleted=true or staged IDs.
 - [ ] 003-V12 **Isolation and ownership:** Sequential/concurrent calls use per-operation state; returned slices/maps/pointers and supplied command/base slices do not alias. No handle escapes or concurrent handle/repository reentry occurs in a callback.
 
 ### U2. Date parsing and identity
@@ -73,7 +73,7 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 - [x] 003-V17 **Absolute dates:** YYYY-MM-DD strict width, leap-day validity, invalid February dates, month/day zero/overflow and year zero are asserted; no Date normalization turns malformed input into success.
 - [x] 003-V18 **RFC3339:** Z and positive/negative offsets, optional 1–9 fractional digits, leap seconds, lowercase t/z, absent offset, comma fraction, excess precision, offset ranges and trailing text enforce the documented grammar; exact valid instant survives UTC conversion.
 - [x] 003-V19 **DST normal day:** New York 2026-03-08 and 2026-11-01 DayBounds span 23 and 25 hours; tomorrow/+1d retain civil-day meaning. Covers AE5.
-- [ ] 003-V20 **Day boundaries:** Due exactly start is included, end-1ns included, exactly end excluded, undated excluded; bounds use local date from parsed instant, not the input offset's calendar label.
+- [x] 003-V20 **Day boundaries:** Due exactly start is included, end-1ns included, exactly end excluded, undated excluded; bounds use local date from parsed instant, not the input offset's calendar label.
 - [x] 003-V21 **Offset crossing date:** An explicit offset timestamp landing on a different civil day in injected location selects that local day; original due timestamp parsing remains unchanged.
 - [x] 003-V22 **Missing/repeated wall time:** Historical midnight-gap and skipped-date fixtures fail with ErrInvalidDate; next-midnight gap fails bounds; repeated exact wall time selects earliest matching instant. Use real IANA examples and a controlled zone fixture for a repeated 20:00 if necessary.
 - [x] 003-V23 **Overflow/range:** Zero, negative, fractional or huge N; overflow in 7*N/month/year arithmetic; UTC year falling outside 1–9999 due to offset conversion; no partial bounds or fallback time. Include final-year day-bound overflow.
@@ -130,18 +130,18 @@ Each checkbox is one acceptance scenario with table/subtest cases as described. 
 
 ### U4. Read surface and facade
 
-- [ ] 003-V65 **List statuses:** Default excludes done, All includes every status, explicit statuses select exactly requested states; empty results are non-nil and input filters stay unchanged.
+- [x] 003-V65 **List statuses:** Default excludes done, All includes every status, explicit statuses select exactly requested states; empty results are non-nil and input filters stay unchanged.
 - [ ] 003-V66 **Filter parity:** Status/priority OR, tags/fields AND, root/parent, title+notes literal Unicode search, percent/underscore/quotes and nil dates match a core.FilterTasks oracle.
 - [ ] 003-V67 **Order:** Urgent/high/medium/low, earliest due with nil last, CreatedAt and ID ties; no custom ordering or mutable package-global default-order slice.
 - [ ] 003-V68 **Due-day intersection:** Combine all/default/status/search/parent with local-day predicate; assert start included/end excluded and due==now is not overdue; no exclusive-bound conversion loses midnight. Covers AE5.
 - [ ] 003-V69 **Query invalid/empty range:** Invalid enum/tag/UTF-8/NUL and conflicting shape rejected before read; equal/reversed core bounds yield empty; bad Due expression returns date error without admission.
-- [ ] 003-V70 **Detached reads:** Mutate returned task/tag/date/filter copies and reread; storage and subsequent results unchanged. Caller-owned query slices are never sorted/normalized in place.
+- [x] 003-V70 **Detached reads:** Mutate returned task/tag/date/filter copies and reread; storage and subsequent results unchanged. Caller-owned query slices are never sorted/normalized in place.
 - [ ] 003-V71 **Forest:** Empty, single root, multiple roots and depth10; includes done descendants; independent sibling ordering; no filtering creates missing parents.
-- [ ] 003-V72 **Selected subtree:** Select non-root, return one node at Depth1 with descendants rebased; root task keeps original ParentID. Stored graph and later forest depths are unchanged.
+- [x] 003-V72 **Selected subtree:** Select non-root, return one node at Depth1 with descendants rebased; root task keeps original ParentID. Stored graph and later forest depths are unchanged.
 - [ ] 003-V73 **Tree invalid:** Missing selected ID, orphan, duplicate, cycle and depth overflow produce errors with no partial forest; never detach parent IDs to conceal corruption.
 - [ ] 003-V74 **Statistics:** Empty yields zeros/four status keys; mixed nested tasks count parents, correct floor percent, strict overdue and (now-168h,now] completion window. Boundary completions, future completion, reopen and delete alter retained metric exactly.
-- [ ] 003-V75 **History:** Existing no-event task returns empty; nonexistent fails; every event kind ordered by persisted sequence, equal timestamps remain sequence-ordered, changed-field slices detached, deleted timelines absent.
-- [ ] 003-V76 **Read failure:** Inject cancellation, decode/corruption and callback cleanup failure after reads; all result shapes suppressed. Complete concrete service satisfies every inbound interface method without opening extra snapshots.
+- [x] 003-V75 **History:** Existing no-event task returns empty; nonexistent fails; every event kind ordered by persisted sequence, equal timestamps remain sequence-ordered, changed-field slices detached, deleted timelines absent.
+- [x] 003-V76 **Read failure:** Inject cancellation, decode/corruption and callback cleanup failure after reads; all result shapes suppressed. Complete concrete service satisfies every inbound interface method without opening extra snapshots.
 
 ### U5. Disk WAL, recovery and handoff acceptance
 
@@ -218,3 +218,5 @@ U3 execution: [receipt](../verification-evidence/003/u3.json), make validate pas
 U6 execution: [receipt](../verification-evidence/003/u6.json), make validate passed. Initial real-disk creation/patch/rollback cases are present; expanded ancestor-chain, per-index injection and public patch combinations remain in U7/U5. Cached child/parent identity collisions have red-first regression evidence.
 
 U7 execution: [receipt](../verification-evidence/003/u7.json), make validate passed. Every real write/event position fails atomically before/after the statement across create/complete/reopen/move/delete. U5 retains extended concurrency/depth/consent variants.
+
+U4 execution: [receipt](../verification-evidence/003/u4.json), make validate passed. Complete port conformance, detached snapshot reads, selected-tree depth and history are verified. Remaining expanded query/metric cases are explicit U5 aggregate work.

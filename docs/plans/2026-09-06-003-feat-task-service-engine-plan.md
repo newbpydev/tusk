@@ -324,7 +324,7 @@ All filenames below are planned additions unless the live-baseline section ident
 
 ## Verification Contract
 
-The [verification plan](../verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md) maps 22 requirements to 91 planned scenarios and defines fixtures, injection, commands and evidence tiers. Application test presence is not execution evidence.
+The [verification plan](../verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md) maps 22 requirements to 91 planned scenarios and defines fixtures, injection, commands and evidence tiers. Application test presence is not execution evidence. Completed unit receipts are indexed in [Feature 003 execution evidence](../verification-evidence/003/README.md); aggregate acceptance remains U5.
 
 Existing Makefile targets: setup, fmt, vet, test-unit, test, race, coverage, validate, build, test-compat, build-storage, bench-storage, test-scripts and generator targets. There are no PKG/RUN/TEST selection variables; focused named tests run within the canonical containing suite until intentionally tested filtering exists. `make validate` includes fmt/vet/full tests/race/coverage/script tests, with service and dateparse subject to the existing 95% per-package floor. Do not weaken coverage exemptions or retry failures to obtain green output.
 

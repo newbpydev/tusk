@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development
 **Active Phase**: Phase 3: Task Service Engine (implementation authorized by lfg, 2026-09-09)
-**Active Implementation Target**: 3.2 — Unit 003-4 / U4: Snapshot queries and complete service facade
+**Active Implementation Target**: 3.2 — Unit 003-5 / U5: Disk integration, recovery, compatibility and handoff
 **Overall Completion**: 43% (3 of 7 Phases Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -158,7 +158,7 @@ graph TD
   - [x] Unit 003-3 / U3: Transaction-local Hierarchy, Rollup & Event Engine
   - [x] Unit 003-6 / U6: Creation & Metadata Mutation Primitives (split from 003-4)
   - [x] Unit 003-7 / U7: Lifecycle, Moves & Confirmed Deletion (split from 003-4)
-  - [ ] Unit 003-4 / U4: Snapshot Queries & Complete Service Facade
+  - [x] Unit 003-4 / U4: Snapshot Queries & Complete Service Facade
   - [ ] Unit 003-5 / U5: Disk Integration, Failure Proof, Compatibility & Consumer Handoff
 - [ ] **3.3 Quality Gate & Release Sign-off**
   - [ ] All 91 Feature 003 scenarios have local execution evidence
@@ -280,3 +280,5 @@ U3 acceptance: make validate passed with real-writer graph/event tests and injec
 U6 acceptance: make validate passed (service coverage 95.5%); see docs/verification-evidence/003/u6.json. All generated-ID collisions reject without replacing loaded rows.
 
 U7 acceptance: make validate passed (service coverage 95.2%); real per-statement/event fault matrix proves rollback of five public mutation flows. See docs/verification-evidence/003/u7.json.
+
+U4 acceptance: make validate passed; the concrete service now satisfies the entire inbound port. See docs/verification-evidence/003/u4.json.

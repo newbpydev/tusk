@@ -1,0 +1,39 @@
+{
+  "unit": "U4",
+  "date": "2026-09-09T19:49:21.442997+00:00",
+  "base_commit": "ed045f201926ac18e1cc4366075442ad4b442f59",
+  "environment": "go version go1.27.1-X:nodwarf5 linux/amd64",
+  "verification": [
+    {
+      "command": "make test-unit",
+      "exit": 2,
+      "log": "u4-red.log.gz",
+      "observed": "Missing read facade"
+    },
+    {
+      "command": "make validate",
+      "exit": 2,
+      "log": "u4-validate.log.gz",
+      "observed": "Coverage 93.5%; repository failure and invalid-input cases missing"
+    },
+    {
+      "command": "make validate",
+      "exit": 0,
+      "log": "u4-validate-final.log.gz"
+    }
+  ],
+  "scenarios": {
+    "V65-V70": "TestList_DefaultsParityAndDay, TestRead_PreflightAndRepositoryFailures",
+    "V71-V73": "TestTree_SelectedRootPreservesParent, TestTree_SiblingOrderAndDepth; orphan rejection; core retains duplicate/cycle/depth proof",
+    "V74": "TestStats_RetainedWindow",
+    "V75": "TestHistory_EmptyMissingAndDetached",
+    "V11,V76": "TestRead_NoPartialValues; compile-time complete ports.TaskService conformance"
+  },
+  "sha256": {
+    "internal/service/queries.go": "b50da17934b41b4a42ab003fffdcf833e29c8014e384eca8c508747da82b4ff2",
+    "internal/service/queries_test.go": "48e813938002d427c0fa2b3d459a7b07de4f13987a58d6166b2ad1e6eba91631",
+    "internal/service/history.go": "02c73dfe1d88f6f24a4e1e8ef13132b8a2d5179b4a32f173bb79dd39727919b5",
+    "internal/service/history_test.go": "43073766817b6c8e2c6cb42c0577701126b3954c96037e1a067ab8e7ccd58552"
+  },
+  "remaining": "U5 adds extended DST day intersection, retained metric transitions, snapshot concurrency and malformed graph variants."
+}

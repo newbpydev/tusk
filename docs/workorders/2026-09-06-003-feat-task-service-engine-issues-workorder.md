@@ -189,3 +189,5 @@ U3 acceptance: make validate passed; [receipt](../verification-evidence/003/u3.j
 U6 acceptance: make validate passed; [receipt](../verification-evidence/003/u6.json). Reproduced loaded-child ID collision overwriting a row, then fixed it by rejecting cached identity collisions before staging creation. Per-index mutation failure and public compound patches remain U7/U5.
 
 U7 acceptance: make validate passed; [receipt](../verification-evidence/003/u7.json). Complete/reopen, latest-row compound moves and exact deletion consent are implemented. Per-position before/after statement/event injection preserves old graph/history.
+
+U4 acceptance: make validate passed; [receipt](../verification-evidence/003/u4.json). Full inbound interface, day intersection, tree projection, retained stats/history and read cleanup suppression are implemented.

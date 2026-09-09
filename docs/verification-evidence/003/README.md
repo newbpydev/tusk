@@ -9,3 +9,5 @@ U3: [receipt](u3.json) covers transaction-local graph/event work, failure rollba
 U6: [receipt](u6.json) proves creation and metadata/manual patch primitives, including a loaded-hierarchy ID collision regression.
 
 U7: [receipt](u7.json) covers public mutations and per-write failure atomicity across five operations.
+
+U4: [receipt](u4.json) proves the complete read facade and suppression of assembled results on cleanup failure.
