@@ -10,6 +10,11 @@
       "unit": "2.7",
       "title": "Retry extended busy results before transaction admission",
       "evidence": "Red: a real SQLite WAL snapshot conflict (517) injected at BeginTx aborted acquisition after one attempt. Green: primary-code masking admits the second attempt within the existing budget. No callback, statement or commit retry added. Focused regression and make validate check-generated pass; storage coverage remains 97.6%."
+    },
+    {
+      "unit": "2.8",
+      "title": "Harden and document repository ports",
+      "evidence": "Red: formatting NewTransactionError with nil cause panicked. Green: nil and zero-value errors match ErrStorage and preserve unknown outcome without Unwrap. Port tests pass; callback contexts, metadata fields, ordered unpaginated events, recursive deletion and conservative migration authoring contracts are documented. make validate check-generated passes."
     }
   ],
   "latest_code_sha256": {
@@ -30,9 +35,10 @@
     "internal/core/task_test.go": "925717ceac30c86c9ba47e494b5d8a3831169caeefa2718d496fb628f080ca80",
     "internal/core/tree.go": "cf5d5bbfd028eed0646aaaeff2b7f8af7c9c218134eb18178d18ca49b0441403",
     "internal/core/tree_test.go": "06b686f2866c695f0ffd9463e9e76f2807cf555203fdc14f2c44a4d5fd4ed00e",
-    "internal/ports/errors.go": "8e8f3403472a029e5332b4e2495797ef91b4447042ef62e08895f849a45074e5",
-    "internal/ports/task_event.go": "3c770ddb5ddbbead92d821b80a363f69c776f6bee9a71e036512a9d1ad322505",
-    "internal/ports/task_repository.go": "c63bc377f0c6d829942cdaa8a813baf586cbe40791cf0bd02a89ba23be5b0fa0",
+    "internal/ports/errors.go": "d9528c07d6dd55824759227c49cf220edb339a79e32072e5f4b8830e4da99125",
+    "internal/ports/errors_test.go": "0103e126c30e4589fd4dc837beed9a6195ee5d0d46a0503e5596146bb3db56c4",
+    "internal/ports/task_event.go": "00b85057874e24cf5705877fe162cb76dd274f1c9158531f60f9f6eb095dcebf",
+    "internal/ports/task_repository.go": "2d1b8213c431e54d7e51023809eb08e0c0f9dfb4d4344094086b7bbf0cc3587c",
     "internal/storage/codec.go": "98028c369e18db1d326bfc94758a6c3f334d01705b32005f78f07793efc2ef89",
     "internal/storage/codec_test.go": "0341e4c98c64e867c786f8884d1760aa703ff1f7fd715c74422c8d76d26b3278",
     "internal/storage/compatibility_test.go": "7f04aff8606f5cc66701022d99c12a6310560270fbf916eea797b9d20b2427f1",

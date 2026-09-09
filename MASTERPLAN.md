@@ -248,3 +248,5 @@ The original red-first work was accumulated without per-unit commits. At the use
 - [x] **2.6 PR #2 joined error categories and statement fault coverage**
 
 - [x] **2.7 PR #2 extended busy acquisition**
+
+- [x] **2.8 PR #2 repository port contracts**

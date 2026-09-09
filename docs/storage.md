@@ -35,7 +35,7 @@ err := repo.WithWrite(ctx, func(txctx context.Context, writer ports.TaskWriter) 
 })
 ```
 
-Use the callback context and handle. Repository reentry with that context, concurrent handle use and use after callback return are rejected. A read callback does not expose write methods. The first failed write-handle operation invalidates the whole change set, including an error the callback ignores. A callback error or panic rolls back; a panic is rethrown. Returned records are detached; failed reads expose no partial collection.
+Use the callback context (or a derived context) and handle for every operation. Never reenter the repository from a callback. Reentry with its context is rejected; substituting a fresh context evades detection and can deadlock or read a different snapshot. Concurrent handle use and use after callback return are rejected. A read callback does not expose write methods. The first failed write-handle operation invalidates the whole change set, including an error the callback ignores. A callback error or panic rolls back; a panic is rethrown. Returned records are detached; failed reads expose no partial collection.
 
 Storage validates canonical records and representation, not complete business transitions. It preserves immutable creation time, nullable dates/parent, normalized sorted tags, exact notes, and fixed nine-digit UTC timestamps. Tree reads reject corrupt cycles, orphans and depth overflow. `ListChildren` reads immediate children; `GetSubtree` includes the requested task; ancestors are nearest-parent first. List ordering is priority descending, due ascending with nulls last, creation ascending, then ID. Filtering finishes through the core oracle after a bound SQL candidate query.
 
@@ -58,6 +58,14 @@ WAL with synchronous NORMAL preserves transactional consistency in the tested pr
 There is no production backup, repair, reset or inspection CLI in this phase. Integrity fixtures use `PRAGMA integrity_check` (one `ok` result) and `PRAGMA foreign_key_check` (zero rows) through test-owned connections.
 
 ## Reproduce local evidence
+
+Migration filenames use contiguous, fixed-width prefixes from `001` through `999`
+so lexicographic and numeric order agree. Expanding this inventory requires an
+explicit format change. The conservative authoring check scans the entire SQL
+file, including comments and string literals, for transaction/file-state keywords
+(`begin`, `commit`, `end`, `rollback`, `savepoint`, `release`, `attach`, `detach`,
+`vacuum`, `pragma`). Avoid those words even in commentary or seed data; this check
+rejects such files rather than parsing SQL tokens.
 
 Run all operations through Make from the repository root:
 
