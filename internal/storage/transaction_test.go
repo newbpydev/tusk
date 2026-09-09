@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
 	"sync/atomic"
@@ -305,13 +306,30 @@ func TestTransaction_ConcurrentHandleAndCompletion(t *testing.T) {
 }
 
 func TestTransaction_RollbackFailurePreservesCause(t *testing.T) {
-	for _, cause := range []error{context.DeadlineExceeded, core.ErrInvalidPriority, ports.ErrInvalidRecord} {
-		r, path := diskRepository(t)
-		installTransactionFault(t, r, path, "rollback", false, nil, nil, nil)
-		err := r.WithWrite(context.Background(), func(context.Context, ports.TaskWriter) error { return cause })
-		var outcome ports.TransactionError
-		if !errors.As(err, &outcome) || !errors.Is(err, cause) || !errors.Is(err, ports.ErrStorage) {
-			t.Fatalf("rollback lost cause %v: %v", cause, err)
-		}
+	for _, cause := range []error{
+		context.Canceled, context.DeadlineExceeded,
+		core.ErrTaskNotFound, core.ErrEmptyTitle, core.ErrTitleTooLong,
+		core.ErrInvalidStatus, core.ErrInvalidPriority, core.ErrInvalidStatusTransition,
+		core.ErrCyclicDependency, core.ErrSelfParenting, core.ErrMaxDepthExceeded,
+		core.ErrInvalidTag, core.ErrInvalidProgress, core.ErrInvalidTaskID,
+		core.ErrDuplicateTaskID, core.ErrInvalidDepth,
+		ports.ErrInvalidRecord, ports.ErrCorrupt, ports.ErrIncompatibleSchema,
+		ports.ErrBusy, ports.ErrStorage, ports.ErrReadOnly, ports.ErrClosedRepository,
+		ports.ErrInvalidCallback, ports.ErrNestedTransaction, ports.ErrTransactionClosed,
+		ports.ErrTransactionInUse, ports.ErrChildrenPresent,
+	} {
+		t.Run(cause.Error(), func(t *testing.T) {
+			r, path := diskRepository(t)
+			installTransactionFault(t, r, path, "rollback", false, nil, nil, nil)
+			callbackError := fmt.Errorf("PRIVATE-NOTES: %w", cause)
+			err := r.WithWrite(context.Background(), func(context.Context, ports.TaskWriter) error { return callbackError })
+			var outcome ports.TransactionError
+			if !errors.As(err, &outcome) || outcome.Outcome() != "unknown" || !errors.Is(err, cause) || !errors.Is(err, ports.ErrStorage) {
+				t.Fatalf("rollback lost cause %v: %v", cause, err)
+			}
+			if strings.Contains(err.Error(), "PRIVATE-NOTES") || errors.Is(err, callbackError) {
+				t.Fatalf("rollback exposed original error: %v", err)
+			}
+		})
 	}
 }

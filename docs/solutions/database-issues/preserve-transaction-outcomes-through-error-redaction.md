@@ -59,6 +59,7 @@ Keep this policy at the outer storage boundary. A generic mapper that selects a 
 
 - Test combinations of cause and cleanup outcome. `TestOpenCause_RetainsMigrationUnknownOutcome` covers corruption, incompatibility, cancellation and deadline causes joined with migration uncertainty in `internal/storage/inspection_cancellation_test.go:50`.
 - Assert both `errors.Is` and the typed `Outcome()` result. Checking only the error message or only the cause misses half the contract.
+- Cover every declared safe callback sentinel, not a representative subset. Hosted review of [PR #2](https://github.com/newbpydev/tusk/pull/2#discussion_r3963401314) exposed six omissions in the sanitizer; the expanded `TestTransaction_RollbackFailurePreservesCause` checks all current core/port categories plus cancellation and deadlines, with private wrapper text that must stay redacted.
 - Keep canceled ledger and canonical-replay tests alongside malformed-schema tests, so schema classification cannot swallow cancellation again.
 - Use disk readback after injected commit-before, commit-after and rollback failures. `TestRecovery_AtomicStateAfterFailure` verifies complete old or new task/history state in `internal/storage/recovery_test.go:82`.
 - Do not replay a write callback automatically after an unknown outcome. Follow the [storage recovery guidance](../../storage.md).

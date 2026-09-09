@@ -53,3 +53,7 @@ The user subsequently authorized simplify, review, compound and commit/push/PR. 
 The [compounded learning](../../solutions/database-issues/preserve-transaction-outcomes-through-error-redaction.md) explains why safe error causes and unknown outcomes must be preserved separately. Its frontmatter and claims validators pass; source grounding ran sequentially in the parent context. The task-event glossary now reflects implemented persistence.
 
 Published as [PR #2](https://github.com/newbpydev/tusk/pull/2) against main. Local acceptance and its original fingerprint remain historical evidence; publication does not change native/hosted release gates or imply merge.
+
+## Hosted callback-cause finding
+
+A later [hosted review](https://github.com/newbpydev/tusk/pull/2#discussion_r3963401314) found six safe callback causes omitted from error sanitization after failed rollback. The expanded regression reproduced each omission; all 28 declared cause cases now pass with private error redaction and unknown outcomes retained. The [follow-up receipt](callback-cause-followup.json) records the new code manifest and validation. The earlier local review was a point-in-time result, not proof that hosted review would find nothing.
