@@ -141,3 +141,41 @@ func TestDayBounds_FirstRepresentableDay(t *testing.T) {
 		t.Fatalf("first day: %v %v %v", a, b, e)
 	}
 }
+
+func TestParseDue_UTCYearBoundary(t *testing.T) {
+	reference := time.Date(1, 1, 1, 0, 30, 0, 0, time.UTC)
+	for _, tc := range []struct {
+		name, expression string
+		offset           int
+		want             time.Time
+	}{
+		{"today from local year zero", "today", -3600, time.Date(1, 1, 1, 0, 59, 59, 999999999, time.UTC)},
+		{"tonight from local year zero", "tonight", -5 * 3600, time.Date(1, 1, 1, 1, 0, 0, 0, time.UTC)},
+		{"absolute year zero stays invalid", "0000-12-31", -3600, time.Time{}},
+		{"due before UTC year one", "tonight", -3600, time.Time{}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := ParseDue(tc.expression, reference, time.FixedZone(tc.name, tc.offset))
+			if tc.want.IsZero() {
+				if !errors.Is(err, ports.ErrInvalidDate) || !got.IsZero() {
+					t.Fatalf("want invalid date, got %v, %v", got, err)
+				}
+			} else if err != nil || !got.Equal(tc.want) || got.Location() != time.UTC {
+				t.Fatalf("want %v, got %v, %v", tc.want, got, err)
+			}
+		})
+	}
+}
+
+func TestDayBounds_UTCYearBoundary(t *testing.T) {
+	// The exclusive end has civil year 10000 but remains in UTC year 9999.
+	start, end, err := DayBounds("9999-12-31", ref(), time.FixedZone("east", 3600))
+	if err != nil || !start.Equal(time.Date(9999, 12, 30, 23, 0, 0, 0, time.UTC)) || !end.Equal(time.Date(9999, 12, 31, 23, 0, 0, 0, time.UTC)) {
+		t.Fatalf("representable final day: %v, %v, %v", start, end, err)
+	}
+	// A valid due instant cannot make an unrepresentable start boundary valid.
+	start, end, err = DayBounds("today", time.Date(1, 1, 1, 0, 30, 0, 0, time.UTC), time.FixedZone("west", -3600))
+	if !errors.Is(err, ports.ErrInvalidDate) || !start.IsZero() || !end.IsZero() {
+		t.Fatalf("unrepresentable first day: %v, %v, %v", start, end, err)
+	}
+}

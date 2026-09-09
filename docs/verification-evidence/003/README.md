@@ -17,3 +17,5 @@ U5: [receipt](u5.json) maps all 91 local scenarios and retains full/race/coverag
 At 10,000 tasks, warm Get/History measured about 0.19/0.26 ms; List/Tree/Stats about 67–72 ms. Full-subtree completion took 1.92 s. Port calls and transaction duration are recorded, not SQL statement traces. These observations do not establish CLI latency or statistical bounds. See the [runbook](../../service.md) for unknown-outcome recovery and pending consumer/native/hosted obligations.
 
 Final [publication review](publication-review.json) and [implementation return](work-return.json) record the seven unit commits, local review scope and independent-review limitation.
+
+PR #3 [review-fix receipt](review-r1.json) records red/green and full canonical verification for UTC year-boundary resolution, including explicit year-zero input rejection and no partial day bounds.

@@ -86,14 +86,11 @@ func ParseDue(expression string, reference time.Time, location *time.Location) (
 			} else {
 				var err error
 				day, err = time.Parse("2006-01-02", s)
-				if err != nil || len(s) != 10 {
+				if err != nil || len(s) != 10 || day.Year() < 1 {
 					return time.Time{}, ports.ErrInvalidDate
 				}
 			}
 		}
-	}
-	if !valid(day) {
-		return time.Time{}, ports.ErrInvalidDate
 	}
 	y, m, d = day.Date()
 	return wallTime(y, m, d, hour, min, sec, ns, location)
@@ -160,9 +157,6 @@ func timestamp(s string) (time.Time, error) {
 // candidates. This avoids time.Date's unspecified choice during repeated times.
 func wallTime(y int, m time.Month, d, h, min, sec, ns int, loc *time.Location) (time.Time, error) {
 	wall := time.Date(y, m, d, h, min, sec, ns, time.UTC)
-	if !valid(wall) {
-		return time.Time{}, ports.ErrInvalidDate
-	}
 	guess := time.Date(y, m, d, h, min, sec, ns, loc)
 	offsets := make(map[int]bool)
 	// Include the guess's interval for fixed zones, then adjacent transitions on

@@ -143,7 +143,7 @@ graph TD
 ---
 
 ### Phase 3: Feature 003 - Task Service Engine
-- **Status**: ✅ **LOCALLY ACCEPTED** (2026-09-09; final review passed; PR publication underway)
+- **Status**: ✅ **LOCALLY ACCEPTED** (2026-09-09; PR #3 open; hosted feedback watch active)
 - **Plan**: `docs/plans/2026-09-06-003-feat-task-service-engine-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md`
@@ -171,6 +171,7 @@ graph TD
 - [x] **3.4 Final local review and publication**
   - [x] Simplification and sequential code review: no actionable findings; independent corroboration unavailable
   - [x] Push seven unit commits and open [PR #3](https://github.com/newbpydev/tusk/pull/3); bounded CI/review watch follows
+  - [x] Reproduce and fix PR #3 UTC calendar-boundary feedback; regression tests and `make validate build` pass ([receipt](docs/verification-evidence/003/review-r1.json))
 
 Feature 003 completed seven units in the declared order with separate canonical gates and commits. All 91 local scenarios have [execution receipts](docs/verification-evidence/003/README.md), including disk WAL concurrency, stale consent, rollback and process recovery. Final service coverage is 95.8%, parser 98.4%; minimum Go 1.25 full tests and five CGO-free builds pass. Benchmark baselines and [consumer handoffs](docs/service.md) are recorded. Native/hosted/CLI/TUI acceptance remains with Features 004–006. No later-phase implementation is authorized by this Feature 003 run.
 
