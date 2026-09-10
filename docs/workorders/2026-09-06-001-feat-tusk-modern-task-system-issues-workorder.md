@@ -12,15 +12,15 @@ This register accompanies the [product plan](../plans/2026-09-06-001-feat-tusk-m
 
 **Fixed in plan** means the document now decides the behavior; it does not mean implemented or tested. **Open gate/decision** means the named owner must supply the stated evidence before the dependent unit/phase proceeds. Owners are accountable project roles, not claims that a human has accepted an assignment. G1–G4 are the plan's shared gate IDs.
 
-Gate sequencing: Feature 002 now records local acceptance of G2's runtime and all six units in its [durable evidence](../verification-evidence/002/README.md). Feature 003's planning G1 is satisfied; its U1 and U5 supply the new service execution evidence. G1 remains open for Features 004–006. G3's dependency/production timezone-data choices precede U11/U16, while U15/U20 supply measurement before phase acceptance. G4 native/hosted/distribution evidence remains a release gate.
+Gate sequencing: Feature 002 now records local acceptance of G2's runtime and all six units in its [durable evidence](../verification-evidence/002/README.md). Features 003/004 planning G1 is satisfied; Feature 003 is locally accepted and merged. G1 remains open for Features 005/006. G3's dependency/production timezone-data choices precede U11/U16, while U15/U20 supply measurement before phase acceptance. G4 native/hosted/distribution evidence remains a release gate.
 
 ## Issue register
 
 | ID | Gate | Source / lens | Owner | Severity | Status | Next action and retest |
 | --- | --- | --- | --- | --- | --- | --- |
-| TUSK-ISS-001 | G1 | Architecture/status | Each Feature 002–006 owner | P1 | Open for 004–006 | Feature 002 is locally accepted; Feature 003 has a complete seven-unit, 91-scenario planning pack. Its U1 is next under later implementation authority. The umbrella stays requirements-only. Later feature owners complete their own triplets. |
+| TUSK-ISS-001 | G1 | Architecture/status | Each Feature 002–006 owner | P1 | Open for 005–006 | Features 002/003 are locally accepted and merged; Feature 004 has its complete seven-unit, 91-scenario planning pack. Its U1 is next under later implementation authority. The umbrella stays requirements-only; later owners complete their own triplets. |
 | TUSK-ISS-002 | G2 | Dependency/security | Phase 2 / Phase 6 owners | P1 | Local proof recorded; native pending | Retain accepted Go 1.25.0, modernc v1.58.0/libc v1.75.6 graph. Feature 002 durable evidence owns local compatibility; native/hosted runtime remains Phase 6. No runtime tests were rerun during Feature 003 planning. |
-| TUSK-ISS-003 | G3 | Dependency/performance | Phase 4/5 owners | P2 | Open gate | Pin compatible Cobra/Charm/calendar zone dependencies and implement named Make targets in U15/U20, with the reference environment declared before measurement. Evidence: Exact dependency graph, canonical target tests, raw CLI/TUI samples and v1 API proof; close separately for each phase. |
+| TUSK-ISS-003 | G3 | Dependency/performance | Phase 4/5 owners | P2 | Open execution gate | Feature 004 KTD1 selects CLI pins; U1 proves the combined graph/production timezone data and U6 meets the unchanged performance protocol. Feature 005 dependency selection and U20 measurement remain separate. Evidence: module/build logs, raw process samples, reference manifest; not executed. |
 | TUSK-ISS-004 | G4 | Release/operations | Phase 6 release maintainer | P2 | Open gate | Establish release candidate and destination/ownership/license/version policy; run hosted/manual matrix before publication. Evidence: Candidate SHA, job URLs, binary hashes, manual terminal record, checksums/notices and actual authorized publication result when released. |
 | TUSK-ISS-005 | — | Core contract/coherence | Core/service reviewers | P1 | Fixed in plan | Retain shipped core; update product R5/R6 and map integration tests without reopening completed Phase 1 work. Evidence: Planning source comparison completed; runtime regression evidence remains Phase 3 execution. |
 | TUSK-ISS-006 | — | Rollup/product | Service owner | P1 | Fixed in plan | R7–R9 and mutation table define defaults, reopen-before-rollup, explicit reopen precedence and last-child reset. Evidence: Table-driven lifecycle, nested 100%, both policy settings, rollback; not executed. |
@@ -43,12 +43,12 @@ Gate sequencing: Feature 002 now records local acceptance of G2's runtime and al
 
 ### TUSK-ISS-001. Architecture/status
 
-- **Found:** Planning/source review on 2026-09-08; severity P1; Open for Features 004–006.
+- **Found:** Planning/source review on 2026-09-08; severity P1; Open for Features 005/006.
 - **Owner / affected contract:** Each Feature 002–006 owner; R29; all units; TUSK-V73.
-- **Evidence / gap:** Feature 004–006 stubs still lack completed triplets; Feature 002 is locally accepted and Feature 003 has a complete planning pack.
-- **Decision / next action:** Keep umbrella requirements-only; G1 is satisfied for Features 002/003. MASTERPLAN names Feature 003 U1 as the next implementation unit under later authorization. Apply G1 to Features 004–006.
-- **Retest / closure:** Feature 003 has seven units, 22 requirements and 91 mapped scenarios; its workorder records the current audit. Earlier Feature 002 evidence remains in its own pack. Later G1 closures need their own evidence.
-- **Blocking boundary:** G1 still blocks Features 004–006 until their packs exist. Feature 003 planning readiness does not grant implementation authority or waive its U1/U5 execution gates.
+- **Evidence / gap:** Features 005/006 still lack completed triplets; Features 002/003 are locally accepted and Feature 004 has its complete planning pack.
+- **Decision / next action:** Keep umbrella requirements-only; G1 is satisfied for Features 002/003/004. MASTERPLAN names Feature 004 U1 as the next implementation unit under later authorization. Apply G1 to Features 005/006.
+- **Retest / closure:** Feature 004 has seven units, 25 requirements and 91 mapped scenarios; its workorder records the current planning audit. Feature 002/003 runtime evidence remains in their own packs. Later G1 closures need their own evidence.
+- **Blocking boundary:** G1 still blocks Features 005/006 until their packs exist. Feature 004 planning readiness does not grant implementation authority or waive its compatibility/process/latency gates.
 
 ### TUSK-ISS-002. Dependency/security
 
@@ -63,8 +63,8 @@ Gate sequencing: Feature 002 now records local acceptance of G2's runtime and al
 
 - **Found:** Planning/source review on 2026-09-08; severity P2; Open gate.
 - **Owner / affected contract:** Phase 4/5 owners; R24, R28; U11, U15, U16, U20; TUSK-V51, TUSK-V65.
-- **Evidence / gap:** CLI/TUI combined dependencies, canonical process benchmarks and reference performance environment do not yet exist.
-- **Decision / next action:** Pin compatible Cobra/Charm/calendar zone dependencies and implement named Make targets in U15/U20, with the reference environment declared before measurement.
+- **Evidence / gap:** Feature 004 KTD1 selects the CLI dependencies; combined-graph builds, canonical process benchmarks and reference performance evidence do not yet exist. Feature 005 owns its later UI graph.
+- **Decision / next action:** Feature 004 KTD1 pins the CLI source baseline; its U1 proves the graph and production timezone data, then U6 adds benchmark execution. Feature 005 selects its UI graph and product U20 owns its later measurement. Declare the reference environment before either measurement.
 - **Retest / closure:** Exact dependency graph, canonical target tests, raw CLI/TUI samples and v1 API proof; close separately for each phase.
 - **Blocking boundary:** G3 dependency choices precede the owning CLI/TUI units; their measurements precede phase acceptance. Feature 002's recorded G2 choice does not close either part of G3.
 
@@ -261,3 +261,12 @@ The [Feature 002 triplet](../plans/2026-09-06-002-feat-sqlite-storage-and-reposi
 The [Feature 003 plan](../plans/2026-09-06-003-feat-task-service-engine-plan.md), [verification matrix](../verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md), and [workorder](../workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md) now satisfy G1 for service planning. Product U6 → feature U1, U7 → U2, U8 → U3/U6/U7, U9 → U4, and U10 → U5. The service pack has 22 requirements, seven units and 91 unexecuted scenarios; all 73 product scenario IDs/check states remain unchanged.
 
 TUSK-V20–V38 service coverage is expanded in that matrix. TUSK-V35 filtered TUI presentation and TUSK-V38 post-commit output/refresh presentation still need the owning adapters. The new service workorder separately tracks failed-rollback error-category compatibility (U1), real disk atomicity/recovery and runtime/benchmark proof (U5), and production timezone-data/CLI/TUI/native/hosted handoffs (Features 004–006). No product requirement or runtime/release checkbox closes in this planning update. The Feature 003 workorder owns the current documentation audit; no application tests or make validate ran.
+
+
+## Feature 004 planning handoff — 2026-09-09
+
+The [Feature 004 plan](../plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md), [verification matrix](../verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md) and [workorder](../workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md) now satisfy G1 for CLI planning. Features 002/003 are locally accepted and merged according to MASTERPLAN.md; earlier planning handoffs above are historical.
+
+Product U11→feature U1, U14→U5/U4, U12→U2/U7, U13→U3 and U15→U6. Execution order is product U11→U14→U12→U13→U15 / feature U1→U5→U4→U2→U7→U3→U6. Existing product IDs and all 73 scenario check states are preserved. Feature 004 has 25 requirements, seven units, 91 unchecked scenarios and 25 findings; 20 are fixed in planning and five remain execution/release evidence gates.
+
+TUSK-V39–V53 expand into that matrix, with TUSK-V38 output recovery and TUSK-V73 governance included. G3 CLI dependency choices are recorded in Feature 004 KTD1; U1 still must prove the combined graph/Go 1.25/full executable builds, and U6 must meet the unchanged product performance protocol. V90–V91 retain native/hosted release obligations with Feature 006. G1 stays open for Features 005/006. No application tests, dependency builds or make validate ran, and no runtime/release checkbox closes during planning. MASTERPLAN names Feature 004 U1 as next, awaiting implementation authorization.

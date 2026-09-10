@@ -21,7 +21,7 @@ Give developers a local task manager usable immediately from a terminal, shell s
 - **Surfaces:** CLI/TUI, internal library/service, persistence/migration, packaging/operations, documentation.
 - **Artifact triplet:** This plan, its [verification plan](../verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md), and [issue workorder](../workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md), under `docs/` in this first-party repository.
 - **Readiness:** Deepened product planning baseline with explicit gates. This umbrella remains `requirements-only` as an execution entrypoint. It does not replace the phase-specific triplets or authorize implementation.
-- **Current handoff:** Feature 002 is locally accepted. [Feature 003](2026-09-06-003-feat-task-service-engine-plan.md) now owns the decision-complete service pack; implementation awaits authorization at its U1 / 003-1. Product U6–U10 map to its seven units as described below. Later phases remain ordered by the masterplan; native/hosted acceptance remains pending.
+- **Current handoff:** Features 002/003 are locally accepted and merged per MASTERPLAN.md. [Feature 004](2026-09-06-004-feat-cli-interface-and-scripting-plan.md) now owns the CLI planning pack: 25 requirements, seven units and 91 unexecuted scenarios. Its U1 / 004-1 is next under a new implementation instruction. Product U11–U15 map below; later phases and native/hosted acceptance remain pending.
 
 ## Product Contract
 
@@ -129,7 +129,7 @@ Planning defaults are R9 opt-in completion, R15 date times, R17 retained-task me
 
 ### Technical decisions
 
-- KTD1. **Phase plans own execution.** Units below are handoffs. Feature 002 has its complete execution triplet; Feature 003 now has its complete planning pack; Feature 004–006 outline metadata is not readiness. Gate G1 applies per feature. Follow the masterplan's phase order even where its DAG allows concurrency.
+- KTD1. **Phase plans own execution.** Units below are handoffs. Feature 002 has its complete execution triplet; Features 003/004 now have complete planning packs; Feature 005–006 outline metadata is not readiness. Gate G1 applies per feature. Follow the masterplan's phase order even where its DAG allows concurrency.
 - KTD2. **Retain the accepted modernc SQLite runtime.** Keep `database/sql` in storage. Feature 002 records local proof for the matching engine/driver/libc/Go 1.25 baseline; native/hosted G2/G4 acceptance remains pending. The Feature 003 planning pass changes no dependencies.
 - KTD3. **Migration-owning `db` package.** `db/embed.go` embeds adjacent `migrations/*.sql`; storage imports it. Embedding `../../db` from storage is invalid. Generate queries into `internal/storage/sqlc/`; test generated behavior through the adapter. [Go embed](https://pkg.go.dev/embed), [sqlc configuration](https://docs.sqlc.dev/en/latest/reference/config.html).
 - KTD4. **One writer, bounded readers.** Use one writer connection and up to four reader connections. Begin writes IMMEDIATE before reading graph state; read snapshots use separate deferred transactions. Configure connection-scoped pragmas for every new/replacement connection. No transaction callback may borrow another write connection. Verify cancellation and driver transaction options at G2. Create new application-owned directories as 0700 and database files as 0600 on POSIX; preserve existing parent permissions and use the user's private profile ACL on Windows. Reject symlink/non-regular database targets; encode path characters as literal filename data when constructing an internal DSN. This is a single-user boundary, not protection against a malicious process with the same OS identity. [Driver documentation](https://pkg.go.dev/modernc.org/sqlite).
@@ -230,9 +230,9 @@ One `d` opens confirmation; another `d` is not consent. Default button is Cancel
 
 | Gate | Owner and closure evidence | Blocking effect |
 | --- | --- | --- |
-| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002 and 003 packs completed; remains open for Features 004–006 |
+| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002, 003 and 004 packs completed; remains open for Features 005–006 |
 | G2 | Feature 002 KTD1 and durable acceptance evidence record Go 1.25.0, modernc v1.58.0, libc v1.75.6 and SQLite 3.53.4 local proof | Local prerequisite satisfied; native/hosted release proof remains Phase 6. Feature 003 retains the installed graph |
-| G3 | Phase 4/5 owners pin CLI/UI dependencies before their first unit; U15/U20 add benchmark runners and evidence | Dependency choice blocks U11/U16; measurement blocks phase acceptance, not earlier implementation units or storage planning |
+| G3 | Phase 4/5 owners pin CLI/UI dependencies before their first unit; U15/U20 add benchmark runners and evidence | Feature 004 KTD1 selects CLI pins; its U1 proves the combined graph and U6 measures latency. Feature 005 dependency selection remains open; measurement blocks phase acceptance, not planning |
 | G4 | Phase 6 maintainer proves exact candidate on OS/architectures and terminals, licenses, distribution destination, release metadata | Blocks publication; local green/cross-compilation are insufficient |
 
 G2 planning choice is now owned by [Feature 002 KTD1](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md#key-technical-decisions): raise the build minimum to Go 1.25 with the pinned patched driver/libc. This is a technical planning default, not a claim of explicit user approval or executed compatibility proof. The earlier affected Go 1.24 candidate is not selected. [Affected engine](https://pkg.go.dev/modernc.org/sqlite@v1.46.1), [WAL fix](https://www.sqlite.org/wal.html#walresetbug), [selected module](https://proxy.golang.org/modernc.org/sqlite/@v/v1.58.0.mod).
@@ -259,10 +259,10 @@ These units are handoff contracts, not completed work or activation of future ph
 | U9 | 003-4 | Queries, statistics and history orchestration: `internal/service/queries.go` | U8 |
 | U10 | 003-5 | Service integration and stale-write proof: `internal/service/integration_test.go` | U9 |
 | U11 | 004-1 | Lazy CLI routing and process exit: `internal/cli/root.go` | Phase 3 accepted; G1 and G3 dependency decision for Feature 004 |
-| U12 | 004-2 | Scriptable mutation commands: `internal/cli/add.go` | U11 |
+| U12 | 004-2/004-7 | Scriptable mutations and confirmed deletion: `internal/cli/add.go` | U14 |
 | U13 | 004-3 | List, tree, stats and history commands: `internal/cli/list.go` | U12 |
-| U14 | 004-4/004-5 | Stable human and JSON formatting: `internal/cli/format.go` | U13 |
-| U15 | 004-6 | Real CLI workflows and latency: `internal/cli/process_test.go` | U14 |
+| U14 | 004-5/004-4 | Stable JSON and human formatting: `internal/cli/format.go` | U11 |
+| U15 | 004-6 | Real CLI workflows and latency: `internal/cli/process_test.go` | U13 |
 | U16 | 005-1/005-2 | Pure TUI model and deterministic layout: `internal/tui/model.go` | Phase 4 accepted per masterplan; G1 and G3 dependency decision for Feature 005 |
 | U17 | 005-3 | Navigation, filtering and refresh generations: `internal/tui/navigation.go` | U16 |
 | U18 | 005-4 | Details, Markdown and timeline: `internal/tui/details.go` | U17 |
@@ -271,6 +271,8 @@ These units are handoff contracts, not completed work or activation of future ph
 | U21 | 006-1 | Hosted platform quality gates: `.github/workflows/ci.yml` | Phases 4/5 accepted; G1 for Feature 006 |
 | U22 | 006-2 | Release artifacts and installation lifecycle: `.goreleaser.yaml` | U21; G4 distribution decisions |
 | U23 | 006-3 | Completions, documentation and final handoff: `internal/cli/completion.go` | U22 |
+
+Feature 004 refines the CLI handoff order without changing product IDs: U11 → U14 → U12 → U13 → U15. Feature-local mapping is U11→U1, U14→U5/U4, U12→U2/U7, U13→U3, U15→U6. Formatting precedes its command consumers; deletion is separately provable. The Feature 004 triplet owns exact command/fixture/target details.
 
 ### U24. Pinned storage runtime and compatibility proof
 
@@ -406,8 +408,8 @@ These units are handoff contracts, not completed work or activation of future ph
 
 ### U12. Scriptable mutation commands
 
-- **Goal / requirements:** Scriptable mutation commands; R3–R9, R18–R23. Feature unit 004-2.
-- **Dependencies:** U11.
+- **Goal / requirements:** Scriptable mutation commands; R3–R9, R18–R23. Feature units 004-2 and 004-7.
+- **Dependencies:** U14 (feature U5/U4 formatting/output), then feature U2 before U7.
 - **Ownership:** `internal/cli/add.go`, `internal/cli/edit.go`, `internal/cli/done.go`, `internal/cli/delete.go`, `internal/cli/mutations_test.go`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
 - **Approach:** Bind explicit patch/clear fields to service commands; no UI-owned domain logic. Implement recursive and force distinction, default-No prompt, policy flag and validation mapping.
 - **Red-first test:** TestDelete_ForceDoesNotImplyRecursive, TestEdit_ClearVersusOmitted, TestDone_Descendants fail on missing flags/incorrect service mapping.
@@ -429,7 +431,7 @@ These units are handoff contracts, not completed work or activation of future ph
 ### U14. Stable human and JSON formatting
 
 - **Goal / requirements:** Stable human and JSON formatting; R14, R19, R21–R23, R28. Feature unit 004-4/004-5.
-- **Dependencies:** U13.
+- **Dependencies:** U11; execute feature U5 JSON/output, then U4 human formatting, before command consumers.
 - **Ownership:** `internal/cli/format.go`, `internal/cli/json.go`, `internal/cli/format_test.go`, `internal/cli/testdata/`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
 - **Approach:** Explicit Task/tree/stats/event DTOs, one JSON value+LF, tabular colors only under R23, cell-aware truncation and terminal-control sanitization. Golden files test deliberate format, not incidental styling.
 - **Red-first test:** TestJSON_ExplicitNullsAndArrays, TestFormat_ControlSequencesAndUnicode, TestOutputFailure_NoMutationRetry fail on core omitempty, unsafe control text or ignored writer errors.
@@ -440,11 +442,11 @@ These units are handoff contracts, not completed work or activation of future ph
 ### U15. Real CLI workflows and latency
 
 - **Goal / requirements:** Real CLI workflows and latency; R1, R2, R5–R10, R19–R23, R28, R29. Feature unit 004-6.
-- **Dependencies:** U14.
-- **Ownership:** `internal/cli/process_test.go`, `scripts/bench_cli.go`, `scripts/test/test_scripts.sh`, `Makefile`, `phase 004 triplet`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
-- **Approach:** Add canonical test-cli/bench-cli; build once via make build, run real subprocesses against temp homes/files. Measure launch through exit with encoded output consumed, not go run or core microbenchmarks.
+- **Dependencies:** U13 and all earlier Feature 004 units.
+- **Ownership:** `internal/cli/process_test.go`, `scripts/cli-bench/`, `scripts/test/test_scripts.sh`, `Makefile`, `phase 004 triplet`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
+- **Approach:** Feature U1 adds test-cli/build-cli; U6 adds bench-cli; build once via make build, run real subprocesses against temp homes/files. Measure launch through exit with encoded output consumed, not go run or core microbenchmarks.
 - **Red-first test:** TestProcess_CaptureCompleteReopenDelete and TestHelp_NoFilesystemEffects fail against any adapter integration regressions; latency assertions start only with a documented stable fixture.
-- **Verification:** make test; make race; make test-cli and make bench-cli (add here); make validate. Scenarios TUSK-V50, TUSK-V51, TUSK-V52, TUSK-V53. Record actual red/green evidence during execution; these are expected failures, not observed results.
+- **Verification:** make test; make race; make test-cli (added by feature U1) and make bench-cli (add here); make validate. Scenarios TUSK-V50, TUSK-V51, TUSK-V52, TUSK-V53. Record actual red/green evidence during execution; these are expected failures, not observed results.
 - **Failure / recovery:** Retain raw samples/outliers and exact binary revision; slow/busy runs are not silently discarded. Query committed state after interrupted mutations.
 - **Reviews:** End-to-end, performance, non-regression. Close the unit only with the applicable aggregate gate and phase triplet/master checklist update.
 

@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 3 locally accepted and merged; Feature 004 planning is next (2026-09-09)
-**Active Implementation Target**: None; prepare the Feature 004 planning pack under a new instruction before implementing Phase 4
+**Active Phase**: Phase 4 planning complete; Feature 004 implementation awaits authorization (2026-09-09)
+**Active Implementation Target**: 4.2 — Unit 004-1 / U1: Cobra Root, Lazy Composition & Compatibility (ready; execute only after a new implementation instruction)
 **Overall Completion**: 57% (4 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -14,7 +14,7 @@ Feature 002 is locally accepted after U6 -> U1 -> U2 -> U3 -> U4 -> U5. All unit
 
 The requested [Modern Task System product plan](docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md) has a synchronized [verification plan](docs/verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md) and [issue workorder](docs/workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md): 29 requirements, 24 cross-phase handoff units, and 73 planned scenarios. Product U24 is the new Feature 002 compatibility prerequisite; existing product U1–U23 keep their IDs.
 
-The original product pass supplied the cross-phase contract. Feature 002 now has its own executable pack: 22 requirements, six units, and 68 planned scenarios, including transaction-scoped ports, metadata-only history, strict migration ownership, and disk WAL recovery. Its KTD1 selects Go 1.25.0, modernc v1.58.0 and libc v1.75.6; U6/002-6 must prove the runtime before migrations. Feature 003 subsequently completed its planning pack on 2026-09-09; Feature 004–006 outline metadata remains insufficient under G1. That planning reconciliation changed no implementation or release checkbox; the current runtime acceptance above was established by subsequent ce-work execution.
+The original product pass supplied the cross-phase contract. Feature 002 now has its own executable pack: 22 requirements, six units, and 68 planned scenarios, including transaction-scoped ports, metadata-only history, strict migration ownership, and disk WAL recovery. Its KTD1 selects Go 1.25.0, modernc v1.58.0 and libc v1.75.6; U6/002-6 must prove the runtime before migrations. Features 003 and 004 subsequently completed their planning packs on 2026-09-09; Feature 005–006 outline metadata remains insufficient under G1. That planning reconciliation changed no implementation or release checkbox; the current runtime acceptance above was established by subsequent ce-work execution.
 
 ---
 
@@ -184,26 +184,36 @@ Feature 003 completed seven units in the declared order with separate canonical 
 ---
 
 ### Phase 4: Feature 004 - CLI Interface & Scripting
-- **Status**: ⏳ **PLANNED** (Pending Phase 3 Completion)
-- **Plan**: `docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md`
+- **Status**: ⏳ **PLANNING COMPLETE — NOT IMPLEMENTED** (2026-09-09; Phase 3 prerequisite locally accepted and merged)
+- **Plan**: [Feature 004](docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md)
+- **Verification Plan**: [Feature 004 matrix](docs/verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md)
+- **Issue Workorder**: [Feature 004 findings](docs/workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md)
 
-- [ ] **4.1 Ultrathink Planning Pack**
-  - [ ] Deepened Plan, Verification Plan, and Workorder
-- [ ] **4.2 Implementation Units**
-  - [ ] Unit 004-1: Cobra Root Command & Lazy DB Initializer (Zero-DB on `--help` and `--version`)
-  - [ ] Unit 004-2: Core Commands: `add`, `list`, `done`, `edit`, `delete`
-  - [ ] Unit 004-3: Hierarchy Commands: `tree`, `stats`
-  - [ ] Unit 004-4: Lipgloss Tabular Formatter & Adaptive Terminal Theming
-  - [ ] Unit 004-5: Machine-Readable `--json` Formatter & Strict Exit Code Contract (0, 1, 2)
-  - [ ] Unit 004-6: Golden File & CLI Subprocess Test Harness
-- [ ] **4.3 Quality Gate & Release Sign-off**
-  - [ ] Cold start benchmark: `tusk --help` $< 5\text{ms}$
-  - [ ] `make validate` passes
+- [x] **4.1 Ultrathink Planning Pack**
+  - [x] Deepened Plan, Verification Plan, and Workorder (25 requirements, seven ordered units, 91 planned scenarios, 25 findings)
+  - [x] Sequential planning/document review and synchronized product handoff; no runtime acceptance inferred
+- [ ] **4.2 Implementation Units** — execute U1 → U5 → U4 → U2 → U7 → U3 → U6; validate/synchronize/commit each before advancing
+  - [ ] Unit 004-1 / U1: Cobra Root, Lazy Composition & Dependency/Executable Compatibility
+  - [ ] Unit 004-5 / U5: Explicit JSON DTOs, Output Failures & Exit/Outcome Contract
+  - [ ] Unit 004-4 / U4: Safe Human Formatter, Unicode Width & Terminal Capability Styling
+  - [ ] Unit 004-2 / U2: Add, Edit & Complete Through the Accepted Service
+  - [ ] Unit 004-7 / U7: Preview, Default-No Consent & Authoritative Deletion (split from U2)
+  - [ ] Unit 004-3 / U3: List, Tree, Stats & Metadata History Queries
+  - [ ] Unit 004-6 / U6: Actual Executable/Disk Recovery, Latency & Consumer Handoff
+- [ ] **4.3 Quality Gate & Local Acceptance**
+  - [ ] All local scenarios V01–V89 have exact-revision evidence; V90–V91 remain Feature 006 release obligations
+  - [ ] Complete executable and test binaries cross-build CGO-free for five targets under Go 1.25
+  - [ ] Every reference help/version sample <5ms and list/tree/stats/history sample <15ms; raw samples retained
+  - [ ] Actual Linux terminal, cancellation, broken pipe and committed readback scenarios pass
+  - [ ] `make validate build check-generated` passes and unit commits/evidence are synchronized
+  - [ ] Feature 005 TUI and Feature 006 native/hosted/completion/release obligations handed off
+
+Planning-only on 2026-09-09: source/contract inspection, dependency-source research, confidence check and sequential document review produced the complete triplet. No code, dependencies, tests or release artifacts changed; no implementation or product scenario was checked. Five execution/release evidence gates remain in the workorder. The next implementation target is U1 after authorization.
 
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: ⏳ **PLANNED** (Pending Phase 3 Completion)
+- **Status**: ⏳ **PLANNED** (Pending Phase 4 local acceptance and Feature 005 planning)
 - **Plan**: `docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md`
 
 - [ ] **5.1 Ultrathink Planning Pack**
