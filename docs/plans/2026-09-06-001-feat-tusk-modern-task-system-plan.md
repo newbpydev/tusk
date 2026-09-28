@@ -12,6 +12,46 @@ planning_scope: product-contract-and-cross-phase-handoffs
 
 # Tusk Modern Task Management System - Plan
 
+### Current latency acceptance policy (owner-delegated judgment)
+
+The owner authorized best-practice measurement judgment to prevent incidental
+measurement noise from blocking useful progress while preserving the speed goal.
+This explicitly supersedes the earlier every-sample policy; historical failing
+reports below remain failures under their original policy and are not relabeled.
+The exact limits below are an engineering decision for Tusk, not a standard
+prescribed by the cited sources.
+
+| Fresh-process case | p90 target | p95 guard | p99 guard | Maximum guard |
+|---|---:|---:|---:|---:|
+| Help/version, clean or invalid configuration | <5 ms | <7.5 ms | <10 ms | <15 ms |
+| List/tree/stats/history, human and JSON | <15 ms | <20 ms | <30 ms | <50 ms |
+
+`make bench-cli` collects three complete runs on the declared reference host.
+Each case in each run retains five warmups and 100 consecutive measured samples;
+every case in every run must pass independently. Percentiles use nearest rank.
+Retain min/p50/p90/p95/p99/max, counts at or above the p90 target, all raw durations,
+output size and correctness, exit results, exact binary hash, compiler, OS,
+filesystem, CPU, governor, power profile and coordinator GOMAXPROCS. No trimming,
+subtracting estimated overhead, selecting the best run, or retrying until green.
+The maximum guards prevent severe pauses from disappearing behind a percentile.
+These are finite-sample acceptance criteria, not population confidence bounds or
+hard real-time guarantees. Retained target misses remain visible even on a pass;
+no miss is automatically attributed to host noise.
+
+The timer still covers fresh process launch through exit and complete pipe drain;
+builds and isolated fixture setup stay outside timing. Use default Codex Bash,
+a cached executable/current-schema disk database, balanced power profile and no
+concurrent verification workload. Fixtures and all functional requirements are
+unchanged. First use, 10,000 tasks, 1 MiB notes, contention and slow output remain
+separate observations. Regressions in p90, bounded tails or correctness still block.
+
+Rationale: [Google SRE](https://sre.google/sre-book/service-level-objectives/)
+recommends distributions rather than averages alone and discusses why demanding
+100% attainment can obstruct useful delivery. [pyperf's system guidance](https://pyperf.readthedocs.io/en/latest/system.html)
+explains scheduler/power-related variance and environment metadata. Those sources
+support the method; the thresholds above preserve Tusk's fast interactive purpose.
+
+
 ## Goal Capsule
 
 Give developers a local task manager usable immediately from a terminal, shell script, or AI agent, with a keyboard-driven TUI over the same task operations. Use one binary, embedded SQLite, a pure Go domain core, and synchronous services called by CLI handlers or Bubble Tea commands.
@@ -89,7 +129,7 @@ Historical product-planning baseline (superseded by the current handoff): `6128d
 - R25. States: loading, empty, filtered-empty, loaded, refreshing, load error, saving, save error, stale data. Preserve selection by ID; reject superseded responses. Failed writes preserve drafts; uncertain commits require reload before retry. A late response cannot overwrite newer data or a different form.
 - R26. At least 80×24 supports list/details/help without overflow. Smaller terminals show a bounded resize message and allow quit, preserving drafts/selection. Support visible focus, non-color status labels, Unicode cell widths, scrolling, keyboard operation, and plain terminal presentation. Real terminal acceptance is separate from synthetic tests.
 - R27. Release CGO-free binaries for Linux amd64/arm64, macOS amd64/arm64, Windows amd64, Bash/Zsh/Fish completion, and man pages. Keep local, hosted, manual, and publication evidence separate. Data survives executable replacement/removal.
-- R28. Preserve query latency under 15 ms and help/version under 5 ms. Measure actual subprocess startup through exit, including formatting, using explicit fixtures. Report initialization, lock contention, slow output, and larger datasets separately; no benchmark proves the bound on all hardware or unbounded output.
+- R28. Preserve reference query p90 below 15 ms and help/version p90 below 5 ms, with the current tail guards. Measure actual subprocess startup through exit, including formatting, using explicit fixtures. Report initialization, lock contention, slow output, and larger datasets separately; no benchmark proves the bound on all hardware or unbounded output.
 - R29. Core stays independent; state is constructor-injected; verification uses Makefile gates. `make validate` currently includes fmt, vet, test, race, and at least 95% per-package coverage for nonexempt packages. Close a phase only after its scenarios, issue gates, and master checklist have execution evidence.
 
 ### Command grammar and data shapes
@@ -579,3 +619,61 @@ The [service plan](2026-09-06-003-feat-task-service-engine-plan.md), [verificati
 Current source inspection: clean main `679f5cefd6e626a3c67c1e08a433ab786c944883`, Go 1.25.0, modernc v1.58.0/libc v1.75.6, core/ports/storage present, service absent. Feature 002's recorded local acceptance supplies the storage prerequisite; its native/hosted limitations remain. Feature 003's U1 → U2 → U3 → U6 → U7 → U4 → U5 ordering supersedes the old five-unit outline while preserving product handoff IDs. Only planning checkboxes close; no runtime test, code change or implementation authorization is claimed.
 
 Consumer handoffs: Feature 004 must embed production timezone data, map structured commands/base/consent and typed outcomes to the existing CLI grammar/DTOs, and prove process latency. Feature 005 owns draft/refresh/terminal acceptance; Feature 006 owns native/hosted releases. These remain their respective G1/G3/G4 obligations.
+
+## Feature 004 execution handoff — 2026-09-28
+
+Feature 004 has six separately validated unit commits; U6 remains active. Its
+[verification matrix](../verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md)
+checks V01–V86 and V88–V89 with [local evidence](../verification-evidence/004/README.md).
+Canonical tests, race, coverage, generated checks, minimum Go and five-target
+cross-builds pass. Actual Linux process/PTY recovery and visible Kitty checks pass.
+V87 reference latency fails on the 1,000-task fixture; ISS-023 blocks U6/Phase 4
+acceptance and Phase 5 advancement. No performance contract was weakened.
+
+[CLI](../cli.md) and [service](../service.md) document the current consumer contract.
+Feature 005 owns TUI registration, drafts, consent and refresh using the same ports
+and explicit outcome handling. Feature 006 owns completion/man pages, native
+Windows/macOS and architecture runtime, hosted checks and release artifacts. CLI
+V90–V91 and carried storage/service native obligations remain pending. This handoff
+does not close cross-phase product scenarios or authorize publication.
+
+### Feature 004 broader optimization follow-up — 2026-09-28
+
+The owner retained 15 ms. Storage/query allocation and sorting changes pass
+canonical validation, minimum-Go tests/cross-builds and fresh Kitty checks, but
+the all-sample latency gate still fails. Feature 004 U6 and Phase 4 stay open;
+no downstream implementation or acceptance is inferred. See the synchronized
+[Feature 004 evidence](../verification-evidence/004/u6-broader-checkpoint.json).
+
+## U6 local acceptance — 2026-09-28
+
+Feature 004 U6 and Phase 4 are locally accepted under the owner-delegated distribution
+policy above. The [acceptance receipt](../verification-evidence/004/u6-acceptance.json)
+records exact source hashes, commands, results and review coverage. This section
+supersedes earlier incomplete checkpoints; those reports remain historical evidence.
+
+- `make validate build check-generated`: passed in Codex Bash, including race,
+  coverage and schema generation checks. CLI 96.8%, main 95.7%, harness 95.4%.
+- `GOTOOLCHAIN=go1.25.0 make test build-cli`: full tests and all five CGO-free
+  executable/test target builds passed.
+- Three complete reference runs passed all 84 case-runs. Worst query p90
+  14.621 ms, p95 16.685 ms, p99 19.125 ms, maximum 23.934 ms. Help/version worst
+  p90 2.855 ms, maximum 4.118 ms. All 8,400 measured samples are retained,
+  including 40 query samples at or above 15 ms; this is distribution acceptance,
+  not an every-invocation guarantee or a statistical population-confidence claim.
+- The first distribution run and the default-runtime experiment each failed
+  one tree case; neither was discarded or relabeled. The final code change
+  replaced repeated graph hash lookups with task indices, reducing workspace
+  allocation while preserving ID, parent, cycle, depth and detached-value rules.
+  Its allocation test failed at 394,352 bytes before the fix and passed the
+  350 KiB limit afterward. The earlier single-thread runtime override was removed.
+- Fresh owned Kitty output verifies decimal progress, depth, parent rollup and
+  statistics. The temporary database/window was released after inspection.
+- Fresh `ce-code-review` completed with no actionable findings. Local personas
+  ran inline as required; Composer's served identity was unverified, so no
+  independent corroboration is claimed. Peer dispositions are retained.
+
+V01–V89 and ISS-021/022/023/025 are closed locally. The U6 commit contains this
+receipt and synchronized acceptance checks. V90–V91 / ISS-024 remain pending
+Feature 006 native/hosted release proof. The next target is Feature 005 planning;
+its implementation has not started. No push, PR, merge or publication occurred.

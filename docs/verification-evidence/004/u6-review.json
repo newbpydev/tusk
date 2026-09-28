@@ -1,0 +1,251 @@
+{
+  "status": "complete",
+  "verdict": "Not ready",
+  "scope": {
+    "base": "6a8aff0",
+    "branch": "feat/cli-interface-and-scripting",
+    "head_sha": "5c1647f57f9ec0fa1da8a2d51a4b87f01c4fdebd",
+    "pr_url": null,
+    "files_changed": 114
+  },
+  "intent": "Deliver Feature004 CLI over the accepted service with honest terminal/process/latency evidence.",
+  "intent_confidence": "explicit",
+  "reviewers": [
+    "correctness",
+    "project-standards",
+    "testing",
+    "maintainability",
+    "performance",
+    "security",
+    "api-contract",
+    "reliability",
+    "agent-native",
+    "learnings",
+    "adversarial-composer"
+  ],
+  "findings": [
+    {
+      "#": 1,
+      "autofix_class": "manual",
+      "confidence": 100,
+      "evidence": [
+        "scripts/cli-bench/main.go:299: r := collect(fmt.Sprintf(\"%d/%s/json=%v\", count, name, jsonOutput), int64(15*time.Millisecond), func() (int64, int, error) {",
+        "/tmp/tusk-004-u6-latency-optimized.json: 1000/list/json=true Max 28.819ms, 100 violations; 1000/tree/json=true Max 26.395ms, 100 violations.",
+        "AGENTS.md first_principles_engineering_protocol: all CLI query paths under15ms."
+      ],
+      "file": "scripts/cli-bench/main.go",
+      "first_evidence": "scripts/cli-bench/main.go:299: r := collect(fmt.Sprintf(\"%d/%s/json=%v\", count, name, jsonOutput), int64(15*time.Millisecond), func() (int64, int, error) {",
+      "independent_reviewers": [],
+      "line": 299,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "project-standards",
+        "performance"
+      ],
+      "severity": "P1",
+      "suggested_fix": "Profile and optimize the snapshot decoding/serialization path, retain every sample, rerun all reference cases before accepting; obtain explicit product decision for any contract change.",
+      "title": "Reference query latency exceeds the required bound",
+      "why_it_matters": "The complete 1000-task list/tree reference cases exceed the strict 15ms gate on both Go1.25 and the current compiler; Phase4 cannot be accepted.",
+      "validation_status": "confirmed",
+      "protected_subject": null,
+      "validation_reason": "All three retained complete reference reports show query latency violations for the required 1000-task fixture; actual incidence measured."
+    },
+    {
+      "#": 2,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "internal/cli/edit.go:23: f.Int64Var(&progress, \"progress\", 0, \"Manual leaf progress 0\u2013100\")",
+        "pflag v1.0.9 int64.go:14: v, err := strconv.ParseInt(s, 0, 64)",
+        "Plan KTD4: Progress accepts signed base-10 int64 syntax."
+      ],
+      "file": "internal/cli/edit.go",
+      "first_evidence": "internal/cli/edit.go:23: f.Int64Var(&progress, \"progress\", 0, \"Manual leaf progress 0\u2013100\")",
+      "independent_reviewers": [],
+      "line": 23,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness",
+        "api-contract"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Use a decimal-only pflag.Value with strconv.ParseInt(s, 10, 64), preserving parse errors before storage and numeric domain validation.",
+      "title": "Parse progress as decimal rather than automatic radix",
+      "why_it_matters": "pflag Int64Var uses ParseInt base 0: --progress=010 writes 8 and --progress=0x10 writes 16, violating KTD4 signed base-10 grammar.",
+      "validation_status": "confirmed",
+      "protected_subject": "public-contract",
+      "validation_reason": "pflag v1.0.9 int64 Set parses base0 and edit binds it directly, so zero-prefixed progress is octal; base10 required by KTD4. Reachable ordinary command input."
+    },
+    {
+      "#": 3,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/cli-bench/main.go:143: if len(items) != want {",
+        "scripts/cli-bench/main_test.go fakeProcess emits only id fields, and report tests accept those as correct fixtures.",
+        "Feature 004 V89 requires rejection of incorrect byte/data fixtures."
+      ],
+      "file": "scripts/cli-bench/main.go",
+      "first_evidence": "scripts/cli-bench/main.go:143: if len(items) != want {",
+      "independent_reviewers": [],
+      "line": 143,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "testing"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Validate required fields and representative seeded task/event values, recursively validate tree nodes, and add negatives for same-count empty or malformed objects.",
+      "title": "Benchmark accepts missing task and event fields",
+      "why_it_matters": "A process returning arrays of empty objects can satisfy fixture counts and pass the timing report while omitting all task data. The guard must reject incomplete results to avoid accepting a faster but broken serializer.",
+      "validation_status": "confirmed",
+      "protected_subject": null,
+      "validation_reason": "validateOutput accepts []RawMessage by length without object field checks; same-count empty task/event objects mechanically pass, as fakeProcess report tests demonstrate."
+    }
+  ],
+  "actionable_findings": [
+    {
+      "#": 1,
+      "autofix_class": "manual",
+      "confidence": 100,
+      "evidence": [
+        "scripts/cli-bench/main.go:299: r := collect(fmt.Sprintf(\"%d/%s/json=%v\", count, name, jsonOutput), int64(15*time.Millisecond), func() (int64, int, error) {",
+        "/tmp/tusk-004-u6-latency-optimized.json: 1000/list/json=true Max 28.819ms, 100 violations; 1000/tree/json=true Max 26.395ms, 100 violations.",
+        "AGENTS.md first_principles_engineering_protocol: all CLI query paths under15ms."
+      ],
+      "file": "scripts/cli-bench/main.go",
+      "first_evidence": "scripts/cli-bench/main.go:299: r := collect(fmt.Sprintf(\"%d/%s/json=%v\", count, name, jsonOutput), int64(15*time.Millisecond), func() (int64, int, error) {",
+      "independent_reviewers": [],
+      "line": 299,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "project-standards",
+        "performance"
+      ],
+      "severity": "P1",
+      "suggested_fix": "Profile and optimize the snapshot decoding/serialization path, retain every sample, rerun all reference cases before accepting; obtain explicit product decision for any contract change.",
+      "title": "Reference query latency exceeds the required bound",
+      "why_it_matters": "The complete 1000-task list/tree reference cases exceed the strict 15ms gate on both Go1.25 and the current compiler; Phase4 cannot be accepted.",
+      "validation_status": "confirmed",
+      "protected_subject": null,
+      "validation_reason": "All three retained complete reference reports show query latency violations for the required 1000-task fixture; actual incidence measured."
+    },
+    {
+      "#": 2,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "internal/cli/edit.go:23: f.Int64Var(&progress, \"progress\", 0, \"Manual leaf progress 0\u2013100\")",
+        "pflag v1.0.9 int64.go:14: v, err := strconv.ParseInt(s, 0, 64)",
+        "Plan KTD4: Progress accepts signed base-10 int64 syntax."
+      ],
+      "file": "internal/cli/edit.go",
+      "first_evidence": "internal/cli/edit.go:23: f.Int64Var(&progress, \"progress\", 0, \"Manual leaf progress 0\u2013100\")",
+      "independent_reviewers": [],
+      "line": 23,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness",
+        "api-contract"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Use a decimal-only pflag.Value with strconv.ParseInt(s, 10, 64), preserving parse errors before storage and numeric domain validation.",
+      "title": "Parse progress as decimal rather than automatic radix",
+      "why_it_matters": "pflag Int64Var uses ParseInt base 0: --progress=010 writes 8 and --progress=0x10 writes 16, violating KTD4 signed base-10 grammar.",
+      "validation_status": "confirmed",
+      "protected_subject": "public-contract",
+      "validation_reason": "pflag v1.0.9 int64 Set parses base0 and edit binds it directly, so zero-prefixed progress is octal; base10 required by KTD4. Reachable ordinary command input."
+    },
+    {
+      "#": 3,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/cli-bench/main.go:143: if len(items) != want {",
+        "scripts/cli-bench/main_test.go fakeProcess emits only id fields, and report tests accept those as correct fixtures.",
+        "Feature 004 V89 requires rejection of incorrect byte/data fixtures."
+      ],
+      "file": "scripts/cli-bench/main.go",
+      "first_evidence": "scripts/cli-bench/main.go:143: if len(items) != want {",
+      "independent_reviewers": [],
+      "line": 143,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "testing"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Validate required fields and representative seeded task/event values, recursively validate tree nodes, and add negatives for same-count empty or malformed objects.",
+      "title": "Benchmark accepts missing task and event fields",
+      "why_it_matters": "A process returning arrays of empty objects can satisfy fixture counts and pass the timing report while omitting all task data. The guard must reject incomplete results to avoid accepting a faster but broken serializer.",
+      "validation_status": "confirmed",
+      "protected_subject": null,
+      "validation_reason": "validateOutput accepts []RawMessage by length without object field checks; same-count empty task/event objects mechanically pass, as fakeProcess report tests demonstrate."
+    }
+  ],
+  "triage_groups": [],
+  "pre_existing_findings": [],
+  "requirements_completeness": {
+    "source": "explicit",
+    "plan": "docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md",
+    "unaddressed": [
+      "R22 reference latency",
+      "R25 final U6 acceptance pending"
+    ],
+    "partially_addressed": [
+      "R2 decimal progress grammar",
+      "R21/R22 benchmark output fidelity"
+    ],
+    "units_pending": [
+      "U6"
+    ],
+    "release_deferred": [
+      "V90",
+      "V91"
+    ]
+  },
+  "learnings": [
+    {
+      "type": "known_pattern",
+      "title": "Preserve transaction outcomes through error redaction",
+      "citation": "docs/solutions/database-issues/preserve-transaction-outcomes-through-error-redaction.md",
+      "note": "Typed unknown outcome precedes causes; no replay and fresh owner readback are tested."
+    }
+  ],
+  "agent_native_gaps": [],
+  "deployment_notes": [],
+  "residual_risks": [
+    "Native Windows/macOS console behavior remains a Feature006 release obligation."
+  ],
+  "testing_gaps": [],
+  "coverage": {
+    "execution": "Local personas, merge, validator and report stages run sequentially inline under explicit user AGENTS tool mapping; no local independent agents.",
+    "independent_reviewers": [],
+    "cross_model_route": "composer",
+    "model_requested": "composer-2.5-fast",
+    "effort_requested": "fast",
+    "receipt_supported": false,
+    "model_actual": "unverified",
+    "effort_actual": "unverified",
+    "independence_verified": false,
+    "claude": "401 invalid OAuth token; no review",
+    "peer_disposition": "Four Composer claims rejected on source/contracts; see peer-disposition.json",
+    "standards": "AGENTS.md fallback governs entire diff",
+    "first_evidence_backfilled": 5,
+    "validation": "All 3 findings inspected and confirmed inline; no independent validation claim",
+    "scope": "6a8aff0 to tracked working tree; all new code staged",
+    "simplify": "Reuse, quality and efficiency passes completed inline; no additional simplification applied."
+  },
+  "artifact_path": "/tmp/ce-code-review/tusk-004-u6",
+  "run_id": "tusk-004-u6"
+}

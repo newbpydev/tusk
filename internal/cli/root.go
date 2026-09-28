@@ -27,6 +27,7 @@ type invocation struct {
 	options         Options
 	root            *cobra.Command
 	output          bytes.Buffer
+	result          []byte
 	autoComplete    bool
 	timezone        string
 	committed       bool
@@ -97,7 +98,11 @@ func (i *invocation) execute(ctx context.Context, args []string) int {
 		_, err = i.root.ExecuteContextC(ctx)
 	}
 	if err == nil {
-		err = writeAll(i.options.Stdout, i.output.Bytes())
+		data := i.result
+		if data == nil {
+			data = i.output.Bytes()
+		}
+		err = writeAll(i.options.Stdout, data)
 	}
 	if err == nil {
 		return 0
@@ -149,6 +154,6 @@ func (i *invocation) invoke(c *cobra.Command, work func(ports.TaskService) ([]by
 	if workErr != nil || closeErr != nil {
 		return errors.Join(workErr, closeErr)
 	}
-	_, _ = i.output.Write(data)
+	i.result = data
 	return nil
 }

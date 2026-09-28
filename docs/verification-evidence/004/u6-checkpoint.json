@@ -1,0 +1,215 @@
+{
+  "unit": "004-6 / U6",
+  "date": "2026-09-28",
+  "status": "checkpoint; local acceptance blocked by V87 / ISS-023",
+  "parent_sha": "5c1647f57f9ec0fa1da8a2d51a4b87f01c4fdebd",
+  "branch": "feat/cli-interface-and-scripting",
+  "source_sha256": {
+    "Makefile": "5629ceaa772862a1a33316fb854a7bf83e6975007d7c8179d0cc1788e07090ce",
+    "cmd/tusk/process_linux_test.go": "d918fa9da64272d6660df2022627831b6d782967677279daa95310509062a08b",
+    "internal/cli/edit.go": "2a628caeb6f9711b4c556bef1870c772264f2fbd17981e687815e3a86758483f",
+    "internal/cli/flags.go": "0c6688c8e88ec54a47ad2d8517c1a1a74708de9d3d26913d55bb7dbf86ba17f6",
+    "internal/cli/mutations_test.go": "ffcd023cff14d8573443766e2760a77278f68a06c529586c6a347ced6b934091",
+    "internal/cli/output_test.go": "eed30c0b87b4a74f071af98f029d3294327cf5b9004617c1c9f748f3e359e3c7",
+    "internal/cli/process_test.go": "47ef77cd8531c770c3fd0a38aa751fa45c0c2e9a868c28bd1c635d10dd0cdb19",
+    "internal/cli/root.go": "d515e642ffd37b18d5bbe6917e1893f376ac246d50122b9258952966a9469c74",
+    "internal/storage/codec.go": "1a4c20a7ccc01eafa012ad7ace014efc511cc558697258ece80d7610633c0ffc",
+    "internal/storage/codec_test.go": "27f295bfbed1f76145920ee20b235031d280d0bc525f16a9d9d37d704e6e3b5d",
+    "scripts/cli-bench/conditions_test.go": "497009bf0d72ea7eeb544bc8496d9e3c387e2fab280a9ebe752f339b16ca6bb0",
+    "scripts/cli-bench/main.go": "928cafc8c83bb051ce206e74e7cf95e49493489705f42bd60631292cd2ca6734",
+    "scripts/cli-bench/main_test.go": "a3d9587c4048e27301a31ec26d12ecb78f057094889da4b5d9cb5e905ce7943b",
+    "scripts/cli-bench/profile_test.go": "c10e8021dda87b5f2d475ad42ac2bc2fdc70f04436882faff2230b097647cddc",
+    "scripts/test/test_scripts.sh": "6ab07475c8d604eb2923342c9c072565da9e8c7b9b1ca9f4348205509216b53b"
+  },
+  "revision_identity": "Parent SHA plus changed source hashes; subsequent checkpoint commit is not unit acceptance. Documentation-only edits followed the final code gate.",
+  "scenarios_passed": [
+    "004-V76",
+    "004-V77",
+    "004-V78",
+    "004-V79",
+    "004-V80",
+    "004-V81",
+    "004-V82",
+    "004-V83",
+    "004-V84",
+    "004-V85",
+    "004-V86",
+    "004-V88",
+    "004-V89"
+  ],
+  "scenario_failed": [
+    "004-V87"
+  ],
+  "native_hosted_pending": [
+    "004-V90",
+    "004-V91"
+  ],
+  "canonical": {
+    "command": "make validate build check-generated",
+    "exit": 0,
+    "log": "u6-review-green.log.gz",
+    "environment": "owned Kitty on Linux amd64; Go 1.27.1"
+  },
+  "minimum": {
+    "command": "GOTOOLCHAIN=go1.25.0 make test build-cli",
+    "exit": 0,
+    "log": "u6-minimum-final.log.gz",
+    "targets": [
+      "linux/amd64",
+      "linux/arm64",
+      "darwin/amd64",
+      "darwin/arm64",
+      "windows/amd64"
+    ],
+    "native_execution": "Linux amd64 only"
+  },
+  "coverage_percent": {
+    "cmd/tusk": 95.7,
+    "internal/cli": 96.4,
+    "internal/storage": 97.6,
+    "scripts/cli-bench": 95.3
+  },
+  "latency": {
+    "command": "make bench-cli CLI_BENCH_OUTPUT=/tmp/tusk-004-u6-latency-final.json",
+    "make_exit": 2,
+    "child_exit": 1,
+    "report": "u6-latency-final.json",
+    "passed": false,
+    "failure": "1,000-task list/tree and some stats exceed 15 ms; all raw samples retained",
+    "prior_reports": [
+      "u6-latency.json",
+      "u6-latency-go125.json",
+      "u6-latency-optimized.json"
+    ]
+  },
+  "conditions": {
+    "command": "make bench-cli-conditions CLI_CONDITIONS_OUTPUT=/tmp/tusk-004-u6-conditions-final.json",
+    "exit": 0,
+    "report": "u6-conditions-final.json",
+    "acceptance": "Bounded observations only; no reference latency claim"
+  },
+  "kitty": {
+    "version": "0.49.1",
+    "owned_socket": "/tmp/tusk-004-kitty.sock",
+    "os_window_id": 18874382,
+    "screens": [
+      "u6-width40-color.png",
+      "u6-width40-dumb.png",
+      "u6-width80-no-color.png",
+      "u6-width120-color.png",
+      "u6-final-kitty.png"
+    ],
+    "inspection": "Actual rendered output viewed; control/bidi escaped, full IDs, Unicode, narrow stacking, disabled color; decimal 010 readback 10 and hex rejected exit 2. Isolated temporary DBs only. Final review test gate and minimum builds ran in owned Kitty tabs.",
+    "earlier_width_binary": "Same formatter source as final; captured before decimal parsing/benchmark-validator fixes. Final screenshot uses final benchmark binary."
+  },
+  "tests": {
+    "process": "internal/cli/process_test.go",
+    "terminal": "cmd/tusk/process_linux_test.go",
+    "benchmark": "scripts/cli-bench/main_test.go",
+    "recovery": "Unknown before/after commit closes once and does not replay; hard kills use deterministic staged/committed barriers and reap before fresh-owner task/event readback."
+  },
+  "red_green_logs": [
+    {
+      "log": "u6-bench-focused.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-bench-red.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-codec-green.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-codec-red.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-conditions-final.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-conditions-green.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-conditions.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-final-latency.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-gates.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-harness-coverage.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-integrity-red.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-latency-go125.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-latency-optimized.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-latency.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-minimum-final.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-minimum.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-output-green.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-output-red.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-output-red2.log.gz",
+      "exit": 2
+    },
+    {
+      "log": "u6-process-baseline.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-profile.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-review-green.log.gz",
+      "exit": 0
+    },
+    {
+      "log": "u6-review-red.log.gz",
+      "exit": 2
+    }
+  ],
+  "review": "u6-review.json",
+  "review_resolution": "u6-review-resolution.json",
+  "profile": "u6-baseline.cpu (pre-optimization; diagnostic only)",
+  "handoff": [
+    "docs/cli.md",
+    "docs/service.md",
+    "Feature 005 TUI ports, refresh, drafts and consent",
+    "Feature 006 native/hosted runtime, completion/man pages, release"
+  ],
+  "remaining": "ISS-023 / V87 requires measured remediation or explicit owner decision. Do not mark U6/Phase 4 accepted, start Phase 5, or publish."
+}

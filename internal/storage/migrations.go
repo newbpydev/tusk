@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	assets "github.com/newbpydev/tusk/db"
 	"modernc.org/sqlite"
 )
 
@@ -90,10 +91,25 @@ func schemaObjects(ctx context.Context, q schemaReader) (map[string]string, erro
 	return objects, rows.Err()
 }
 
-// expectedSchema uses an isolated private memory database to let SQLite parse
-// canonical DDL. This detects altered columns, constraints, indexes and triggers
-// without maintaining a second handwritten schema description.
+// expectedSchema uses SQLite's generated catalog for exact embedded SQL bytes.
+// The canonical gate recompiles it in private memory and checks every prefix.
+// Nonmatching inventories fall back to that same compiler at runtime.
 func expectedSchema(ctx context.Context, inventory []migration) (map[string]string, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	data, err := fs.ReadFile(assets.Migrations(), "schema_catalog.json")
+	if err == nil {
+		if objects, ok := readSchemaCatalog(data, inventory); ok {
+			return objects, nil
+		}
+	}
+	return evaluateSchema(ctx, inventory)
+}
+
+// evaluateSchema lets SQLite parse canonical DDL instead of maintaining a
+// second handwritten schema description.
+func evaluateSchema(ctx context.Context, inventory []migration) (map[string]string, error) {
 	c, err := sqlite.NewConnector(":memory:")
 	if err != nil {
 		return nil, err
@@ -112,6 +128,19 @@ func expectedSchema(ctx context.Context, inventory []migration) (map[string]stri
 // inspectSchema performs read-only compatibility checks; the caller must use a
 // read-only physical connection when inspecting an existing user file.
 func inspectSchema(ctx context.Context, q schemaReader, inventory []migration) (int, error) {
+	return (&schemaInspector{inventory: inventory}).inspect(ctx, q)
+}
+
+// One Open/migrate call owns this inspector. Reuse only the expected catalog
+// compiled from embedded DDL; the user's catalog and ledger are read every time.
+// It is never shared between repositories or concurrent operations.
+type schemaInspector struct {
+	inventory []migration
+	expected  map[int]map[string]string
+}
+
+func (s *schemaInspector) inspect(ctx context.Context, q schemaReader) (int, error) {
+	inventory := s.inventory
 	var app int
 	if err := q.QueryRowContext(ctx, "PRAGMA application_id").Scan(&app); err != nil {
 		return 0, err
@@ -165,9 +194,16 @@ func inspectSchema(ctx context.Context, q schemaReader, inventory []migration) (
 	if count == 0 {
 		return 0, errCorruptSchema
 	}
-	expected, err := expectedSchema(ctx, inventory[:count])
-	if err != nil {
-		return 0, err
+	expected, ok := s.expected[count]
+	if !ok {
+		expected, err = expectedSchema(ctx, inventory[:count])
+		if err != nil {
+			return 0, err
+		}
+		if s.expected == nil {
+			s.expected = make(map[int]map[string]string)
+		}
+		s.expected[count] = expected
 	}
 	if !maps.Equal(objects, expected) {
 		return 0, errCorruptSchema
@@ -176,6 +212,11 @@ func inspectSchema(ctx context.Context, q schemaReader, inventory []migration) (
 }
 
 func migrate(ctx context.Context, db *sql.DB, inventory []migration) (err error) {
+	return (&schemaInspector{inventory: inventory}).migrate(ctx, db)
+}
+
+func (s *schemaInspector) migrate(ctx context.Context, db *sql.DB) (err error) {
+	inventory := s.inventory
 	if len(inventory) == 0 {
 		return errIncompatibleSchema
 	}
@@ -188,7 +229,7 @@ func migrate(ctx context.Context, db *sql.DB, inventory []migration) (err error)
 	if err != nil {
 		return err
 	}
-	count, inspectErr := inspectSchema(ctx, read, inventory)
+	count, inspectErr := s.inspect(ctx, read)
 	if rollbackErr := read.Rollback(); rollbackErr != nil {
 		discardConnection(conn)
 		return errors.Join(inspectErr, errMigrationOutcome, storageCause(rollbackErr))
@@ -206,7 +247,7 @@ func migrate(ctx context.Context, db *sql.DB, inventory []migration) (err error)
 			discardConnection(conn)
 		}
 	}()
-	count, err = inspectSchema(ctx, tx, inventory)
+	count, err = s.inspect(ctx, tx)
 	if err != nil {
 		return err
 	}

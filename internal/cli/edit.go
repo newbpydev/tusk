@@ -10,14 +10,14 @@ func (i *invocation) editCommand() *cobra.Command {
 	c := dataCommand("edit <id>", "Patch supplied task fields", cobra.ExactArgs(1))
 	var title, notes, priority, status, due, parent string
 	var tags []string
-	var progress int64
+	var progress decimalInt64
 	var clearDue, clearTags, root bool
 	f := c.Flags()
 	f.StringVar(&title, "title", "", "Task title")
 	f.StringVarP(&notes, "notes", "n", "", "Task notes (empty clears)")
 	f.StringVarP(&priority, "priority", "p", "", "Priority")
 	f.StringVarP(&status, "status", "s", "", "Task status")
-	f.Int64Var(&progress, "progress", 0, "Manual leaf progress 0–100")
+	f.Var(&progress, "progress", "Manual leaf progress 0–100")
 	f.StringVarP(&due, "due", "d", "", "Due date expression")
 	f.BoolVar(&clearDue, "clear-due", false, "Clear due date")
 	f.StringArrayVarP(&tags, "tags", "t", nil, "Repeatable comma-separated tags")

@@ -59,3 +59,21 @@ func TestOutput_UnknownOutcomePrecedesCause(t *testing.T) {
 		}
 	}
 }
+
+func TestOutput_LargeJSONAllocation(t *testing.T) {
+	task := jsonFixture()
+	task.Description = strings.Repeat("n", 1<<20)
+	result := testing.Benchmark(func(b *testing.B) {
+		for range b.N {
+			code := fixtureRun(context.Background(), []string{"probe", "title"}, Options{Stdout: io.Discard, OpenService: func(context.Context, Config) (ports.TaskService, func() error, error) {
+				return fakeService{}, func() error { return nil }, nil
+			}}, func(ports.TaskService) ([]byte, bool, error) { data, err := encodeJSON(&task); return data, false, err })
+			if code != 0 {
+				b.Fatal(code)
+			}
+		}
+	})
+	if result.AllocedBytesPerOp() >= 2<<20 {
+		t.Fatalf("large JSON output allocates %d bytes; budget <2MiB", result.AllocedBytesPerOp())
+	}
+}

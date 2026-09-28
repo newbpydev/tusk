@@ -85,6 +85,23 @@ func TestEdit_OmittedVersusClear(t *testing.T) {
 		t.Fatalf("%d %+v %s", code, s.updated, errout)
 	}
 }
+
+func TestEdit_DecimalProgress(t *testing.T) {
+	for _, value := range []string{"010", "+010", "10", "00010"} {
+		s := &mutationSpy{}
+		code, _, stderr, _ := runSpy([]string{"edit", "id", "--progress=" + value}, s)
+		if code != 0 || s.updated.Progress == nil || *s.updated.Progress != 10 {
+			t.Errorf("%s: code=%d progress=%v %s", value, code, s.updated.Progress, stderr)
+		}
+	}
+	for _, value := range []string{"0x10", "0o10", "0b10", "1_0", " 10", "9223372036854775808"} {
+		s := &mutationSpy{}
+		code, out, _, opened := runSpy([]string{"edit", "id", "--progress=" + value}, s)
+		if code != 2 || opened != 0 || out != "" {
+			t.Errorf("%s: code=%d opened=%d", value, code, opened)
+		}
+	}
+}
 func TestMutation_SyntaxAndDomains(t *testing.T) {
 	for _, args := range [][]string{{"add"}, {"add", "a", "b"}, {"done"}, {"edit", "id"}, {"edit", "id", "--root=false"}, {"edit", "id", "--due=x", "--clear-due"}, {"edit", "id", "--tags=a", "--clear-tags"}, {"edit", "id", "--parent=x", "--root"}, {"edit", "id", "--progress=5", "--status=todo"}, {"edit", "id", "--progress=5", "--parent=x"}, {"edit", "id", "--progress=9223372036854775808"}, {"edit", "id", "--progress=x"}} {
 		s := &mutationSpy{}

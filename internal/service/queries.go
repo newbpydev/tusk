@@ -6,6 +6,7 @@ import (
 	"github.com/newbpydev/tusk/internal/ports"
 	"github.com/newbpydev/tusk/internal/service/dateparse"
 	"math/bits"
+	"slices"
 	"time"
 )
 
@@ -59,7 +60,12 @@ func (s *TaskService) ListTasks(ctx context.Context, query ports.TaskQuery) ([]c
 		if e != nil {
 			return e
 		}
-		out = make([]core.Task, 0, len(rows))
+		// TaskReader transfers detached values. Compact that owned snapshot
+		// in place instead of cloning every task and optional field again.
+		out = rows[:0]
+		if out == nil {
+			out = []core.Task{}
+		}
 		for _, v := range rows {
 			if e := ctx.Err(); e != nil {
 				return e
@@ -67,8 +73,9 @@ func (s *TaskService) ListTasks(ctx context.Context, query ports.TaskQuery) ([]c
 			if q.Due != nil && (v.DueDate == nil || v.DueDate.Before(start) || !v.DueDate.Before(end)) {
 				continue
 			}
-			out = append(out, v.Clone())
+			out = append(out, v)
 		}
+		clear(rows[len(out):])
 		core.SortTasks(out, defaultOrder())
 		return nil
 	})
@@ -139,19 +146,17 @@ func (s *TaskService) GetTaskTree(ctx context.Context, rawID string) ([]*core.Ta
 	return out, nil
 }
 func orderTree(ctx context.Context, nodes []*core.TaskNode, depth int) error {
-	tasks := make([]core.Task, len(nodes))
-	byID := make(map[string]*core.TaskNode, len(nodes))
-	for i, n := range nodes {
-		tasks[i] = n.Task
-		byID[n.Task.ID] = n
+	if len(nodes) > 1 {
+		order := defaultOrder()
+		compare := func(a, b *core.TaskNode) int { return core.CompareTasks(&a.Task, &b.Task, order) }
+		if !slices.IsSortedFunc(nodes, compare) {
+			slices.SortStableFunc(nodes, compare)
+		}
 	}
-	core.SortTasks(tasks, defaultOrder())
-	for i, v := range tasks {
+	for _, n := range nodes {
 		if e := ctx.Err(); e != nil {
 			return e
 		}
-		n := byID[v.ID]
-		nodes[i] = n
 		n.Depth = depth
 		if e := orderTree(ctx, n.Children, depth+1); e != nil {
 			return e

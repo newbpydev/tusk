@@ -15,6 +15,18 @@ import (
 	"github.com/newbpydev/tusk/internal/ports"
 )
 
+func TestSanitize_SafeTextAllocation(t *testing.T) {
+	for _, text := range []string{"ordinary task text", "opaque-task-id-123", "界 👩‍💻 é", "quotes \" & < >"} {
+		if allocs := testing.AllocsPerRun(100, func() {
+			if got := sanitize(text); got != text {
+				t.Fatalf("changed safe text: %q", got)
+			}
+		}); allocs != 0 {
+			t.Fatalf("safe text %q needs %.0f allocations; want zero", text, allocs)
+		}
+	}
+}
+
 func TestSanitize_Controls(t *testing.T) {
 	raw := "界 e\u0301 👩‍💻 \x1b]52;c;payload\a\r\n\t\x00\x7f\u0085\u2028\u2029\u202e\u2066"
 	got := sanitize(raw)

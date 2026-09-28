@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"strconv"
 	"strings"
 	"unicode/utf8"
 
@@ -8,6 +9,19 @@ import (
 	"github.com/newbpydev/tusk/internal/ports"
 	"github.com/spf13/cobra"
 )
+
+// pflag's integer value selects radix from prefixes. Progress is decimal.
+type decimalInt64 int64
+
+func (v *decimalInt64) String() string { return strconv.FormatInt(int64(*v), 10) }
+func (*decimalInt64) Type() string     { return "int64" }
+func (v *decimalInt64) Set(raw string) error {
+	n, err := strconv.ParseInt(raw, 10, 64)
+	if err == nil {
+		*v = decimalInt64(n)
+	}
+	return err
+}
 
 func textInput(values ...string) error {
 	for _, v := range values {

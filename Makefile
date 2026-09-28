@@ -22,9 +22,17 @@ setup-sqlc:
 
 generate:
 	bash scripts/sqlc.sh generate
+	$(MAKE) generate-schema-catalog
 
-check-generated:
+check-generated: check-schema-catalog
 	bash scripts/sqlc.sh check
+
+.PHONY: generate-schema-catalog check-schema-catalog
+generate-schema-catalog:
+	TUSK_UPDATE_SCHEMA_CATALOG=1 go test ./internal/storage -run '^TestEmbeddedSchemaCatalog$$' -count=1
+
+check-schema-catalog:
+	go test ./internal/storage -run '^TestEmbeddedSchemaCatalog$$' -count=1
 
 test-scripts:
 	@./scripts/test/test_scripts.sh
@@ -135,3 +143,22 @@ help:
 	@echo "make bench-build - Run tree build micro-benchmark"
 	@echo "make build     - Compile binary to bin/tusk"
 	@echo "make clean     - Clean temporary build artifacts"
+
+.PHONY: bench-cli
+CLI_BENCH_OUTPUT ?= docs/verification-evidence/004/latency.json
+bench-cli: build
+	go run ./scripts/cli-bench --binary "$(BUILD_OUTPUT)" --output "$(CLI_BENCH_OUTPUT)"
+
+.PHONY: profile-cli
+CLI_PROFILE_OUTPUT ?= /tmp/tusk-cli.cpu
+profile-cli:
+	go test ./scripts/cli-bench -run '^$$' -bench '^BenchmarkCLIProfile$$' -benchtime=3s -cpuprofile "$(CLI_PROFILE_OUTPUT)" -o /tmp/tusk-cli-profile.test
+
+.PHONY: test-cli-latency-codec
+test-cli-latency-codec:
+	go test -v ./internal/storage -run '^TestCodec_'
+
+.PHONY: bench-cli-conditions
+CLI_CONDITIONS_OUTPUT ?= /tmp/tusk-cli-conditions.json
+bench-cli-conditions: build
+	TUSK_CLI_CONDITIONS=1 TUSK_CLI_BINARY="$(abspath $(BUILD_OUTPUT))" TUSK_CLI_CONDITIONS_OUTPUT="$(abspath $(CLI_CONDITIONS_OUTPUT))" go test -v ./scripts/cli-bench -run '^TestCLIConditions$$' -count=1

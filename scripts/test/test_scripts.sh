@@ -146,6 +146,36 @@ for target in test-cli build-cli; do
     assert_eq 2 "$result" "CLI target propagates failed go: $target"
 done
 
+for target in bench-cli bench-cli-conditions profile-cli test-cli-latency-codec generate-schema-catalog check-schema-catalog; do
+    recipe=$(make --no-print-directory -n -C "${ROOT_DIR}" "$target")
+    result=1
+    if [[ "$recipe" == *"go "* ]]; then result=0; fi
+    assert_eq 0 "$result" "CLI measurement target exists: $target"
+    printf '#!/usr/bin/env bash\nexit 19\n' > "${TMP_DIR}/go"
+    chmod +x "${TMP_DIR}/go"
+    result=0
+    PATH="${TMP_DIR}:$PATH" make --no-print-directory -C "${ROOT_DIR}" "$target" >"${TMP_DIR}/negative-bench" 2>&1 || result=$?
+    assert_eq 2 "$result" "CLI measurement target propagates failed go: $target"
+done
+
+# Catalog generation compiles storage, which may refer to newly added sqlc
+# methods. Regenerate those methods before attempting the catalog compiler.
+mkdir -p "${TMP_DIR}/generation-fixture/bin"
+cp "${ROOT_DIR}/Makefile" "${TMP_DIR}/generation-fixture/Makefile"
+cat > "${TMP_DIR}/generation-fixture/bin/bash" <<'EOF'
+#!/bin/sh
+test "$1" = scripts/sqlc.sh && test "$2" = generate || exit 23
+touch sqlc-generated.marker
+EOF
+cat > "${TMP_DIR}/generation-fixture/bin/go" <<'EOF'
+#!/bin/sh
+test -f sqlc-generated.marker || exit 19
+EOF
+chmod +x "${TMP_DIR}/generation-fixture/bin/"*
+result=0
+PATH="${TMP_DIR}/generation-fixture/bin:$PATH" make --no-print-directory -C "${TMP_DIR}/generation-fixture" generate >"${TMP_DIR}/generation-output" 2>&1 || result=$?
+assert_eq 0 "$result" "generate bootstraps sqlc before compiling schema catalog"
+
 echo "Script Test Results: ${TESTS_PASSED}/${TESTS_TOTAL} passed"
 echo "========================================"
 

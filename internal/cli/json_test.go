@@ -151,10 +151,133 @@ func TestJSON_StatsDeleteHistory(t *testing.T) {
 func TestJSON_Invalid(t *testing.T) {
 	bad := jsonFixture()
 	bad.CreatedAt = time.Date(10000, 1, 1, 0, 0, 0, 0, time.UTC)
-	for _, v := range []any{&bad, (*core.Task)(nil), 42, []*core.TaskNode{nil}} {
+	for _, v := range []any{&bad, (*core.Task)(nil), 42, []*core.TaskNode{nil}, []*core.TaskNode{{Task: jsonFixture(), Children: []*core.TaskNode{nil}}}} {
 		data, err := encodeJSON(v)
 		if err == nil || len(data) != 0 {
 			t.Fatalf("%T: %q %v", v, data, err)
 		}
+	}
+}
+
+func TestJSON_EncodingAllocation(t *testing.T) {
+	tasks := make([]core.Task, 100)
+	for i := range tasks {
+		tasks[i] = jsonFixture()
+		tasks[i].Title = strings.Repeat("t", 64)
+		tasks[i].Description = strings.Repeat("n", 128)
+		tasks[i].CreatedAt = tasks[i].CreatedAt.UTC()
+		tasks[i].Tags = []core.Tag{"alpha", "beta", "gamma"}
+		tasks[i].DueDate = &tasks[i].CreatedAt
+		tasks[i].CompletedAt = &tasks[i].UpdatedAt
+	}
+	allocs := testing.AllocsPerRun(100, func() {
+		if data, err := encodeJSON(tasks); err != nil || len(data) == 0 {
+			t.Fatalf("encode: %v", err)
+		}
+	})
+	if allocs > 20 {
+		t.Fatalf("100-task JSON needs %.0f allocations; want at most 20", allocs)
+	}
+	data, err := encodeJSON(tasks)
+	if err != nil {
+		t.Fatal(err)
+	}
+	measured := testing.Benchmark(func(b *testing.B) {
+		for range b.N {
+			if _, err := encodeJSON(tasks); err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+	if n := measured.AllocedBytesPerOp(); n > int64(len(data)*5/4) {
+		t.Fatalf("wire encoding allocates %d bytes for %d output bytes; want <= 125%%", n, len(data))
+	}
+}
+
+func TestJSON_EncodingParity(t *testing.T) {
+	check := func(value any) {
+		t.Helper()
+		dto, err := referenceJSONDTO(value)
+		if err != nil {
+			t.Fatal(err)
+		}
+		want, wantErr := json.Marshal(dto)
+		got, gotErr := encodeJSON(value)
+		if (wantErr == nil) != (gotErr == nil) || wantErr == nil && !bytes.Equal(got, append(want, '\n')) {
+			t.Fatalf("wire mismatch: got %q / %v; want %q / %v", got, gotErr, want, wantErr)
+		}
+	}
+	for c := range 256 {
+		task := jsonFixture()
+		task.Description = "prefix" + string([]byte{byte(c)}) + "suffix"
+		task.Title = "界 👩‍💻 é \u2028\u2029 \u202e <&> \" \\"
+		task.Tags = []core.Tag{"alpha", "beta"}
+		task.ParentID = &task.ID
+		task.DueDate = &task.CreatedAt
+		check(&task)
+		check([]core.Task{task, task})
+		check([]*core.TaskNode{{Task: task, Depth: 1, Children: []*core.TaskNode{{Task: task, Depth: 2}}}})
+	}
+	for _, year := range []int{-1, 0, 1, 9999, 10000} {
+		for _, field := range []string{"created", "updated", "due", "completed"} {
+			task := jsonFixture()
+			tm := time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
+			switch field {
+			case "created":
+				task.CreatedAt = tm
+			case "updated":
+				task.UpdatedAt = tm
+			case "due":
+				task.DueDate = &tm
+			case "completed":
+				task.CompletedAt = &tm
+			}
+			check(&task)
+			check([]core.Task{jsonFixture(), task})
+			check([]*core.TaskNode{{Task: task, Depth: 1}})
+			check([]*core.TaskNode{{Task: jsonFixture(), Depth: 1, Children: []*core.TaskNode{{Task: task, Depth: 2}}}})
+		}
+	}
+}
+
+// Standard-library oracle for the explicit task schema, independent of the
+// production append encoder. Batch DTO construction is only needed in tests.
+type nodeJSON struct {
+	Task     taskJSON   `json:"task"`
+	Children []nodeJSON `json:"children"`
+	Depth    int        `json:"depth"`
+}
+
+func treeDTO(nodes []*core.TaskNode) ([]nodeJSON, error) {
+	out := make([]nodeJSON, len(nodes))
+	for n, node := range nodes {
+		if node == nil {
+			return nil, ports.ErrInvalidRecord
+		}
+		children, err := treeDTO(node.Children)
+		if err != nil {
+			return nil, err
+		}
+		out[n] = nodeJSON{taskDTO(node.Task), children, node.Depth}
+	}
+	return out, nil
+}
+func referenceJSONDTO(value any) (any, error) {
+	switch v := value.(type) {
+	case *core.Task:
+		if v == nil {
+			return nil, ports.ErrInvalidRecord
+		}
+		return taskDTO(*v), nil
+	case []core.Task:
+		out := make([]taskJSON, len(v))
+		for n, t := range v {
+			out[n] = taskDTO(t)
+		}
+		return out, nil
+	case []*core.TaskNode:
+		return treeDTO(v)
+	default:
+		return jsonDTO(value)
 	}
 }

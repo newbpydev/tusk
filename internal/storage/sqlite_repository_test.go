@@ -4,12 +4,51 @@ import (
 	"context"
 	"errors"
 	"reflect"
+	"strconv"
 	"testing"
 	"time"
 
 	"github.com/newbpydev/tusk/internal/core"
 	"github.com/newbpydev/tusk/internal/ports"
 )
+
+func TestRepository_UnfilteredAllocation(t *testing.T) {
+	r, _ := memoryRepository(t)
+	ctx := context.Background()
+	const count = 100
+	if err := r.WithWrite(ctx, func(ctx context.Context, w ports.TaskWriter) error {
+		for i := range count {
+			if err := w.Create(ctx, taskFixture("task-"+strconv.Itoa(i))); err != nil {
+				return err
+			}
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	measure := func(f core.TaskFilter) float64 {
+		return testing.AllocsPerRun(20, func() {
+			rows, err := r.List(ctx, f)
+			if err != nil || len(rows) != count {
+				t.Fatalf("list: %v", err)
+			}
+		})
+	}
+	unfiltered := measure(core.TaskFilter{})
+	filtered := measure(core.TaskFilter{SearchTerm: "title"})
+	if filtered-unfiltered < count {
+		t.Fatalf("unfiltered %.0f / filtered %.0f allocations: empty predicates should avoid cloning the decoded batch", unfiltered, filtered)
+	}
+	rows, err := r.List(ctx, core.TaskFilter{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	rows[0].Tags[0] = "changed"
+	again, err := r.List(ctx, core.TaskFilter{})
+	if err != nil || again[0].Tags[0] != "a" {
+		t.Fatalf("list aliases storage: %v", err)
+	}
+}
 
 func taskFixture(id string) *core.Task {
 	return &core.Task{ID: id, Title: "title", Description: "  markdown\n", Status: core.StatusTodo, Priority: core.PriorityMedium, Tags: []core.Tag{"a", "z"}, CreatedAt: time.Date(2026, 9, 8, 12, 0, 0, 123, time.UTC), UpdatedAt: time.Date(2026, 9, 8, 12, 0, 0, 123, time.UTC)}

@@ -16,7 +16,7 @@ Every claim, optimization, or bugfix must be grounded in observable, automated v
 
 <first_principles_engineering_protocol>
 1. **Zero External Dependencies by Default**: Tusk must function as a self-contained single binary with zero external service or daemon requirements. Default storage is embedded SQLite located at `~/.local/share/tusk/tusk.db`.
-2. **Sub-15ms CLI Latency**: All CLI query paths must complete execution in under 15ms. `tusk --help` and `tusk --version` must execute in under 5ms with zero database initialization.
+2. **Sub-15ms CLI Latency**: The reference fresh-process p90 target is under 15ms for queries and under 5ms for help/version; help/version perform zero database initialization. Follow the product verification protocol: three complete retained-sample runs, query p95/p99/max below 20/30/50ms, help/version p95/p99/max below 7.5/10/15ms. Every case in every run must pass; retain all outliers and target-miss counts. This is a distribution target on a declared host, not a hard real-time guarantee.
 3. **Strict Separation of Concerns**:
    - `internal/core`: Pure domain business logic, entities, and error definitions. No database imports, no CLI imports, no TUI imports.
    - `internal/ports`: Inbound and outbound contracts (interfaces).
@@ -61,17 +61,19 @@ All verification and build operations must use the canonical Makefile:
 </canonical_commands>
 
 <kitty_verification>
-Kitty is mandatory for verification. Run the canonical Makefile checks in an
-owned Kitty window and exercise the current CLI/TUI behavior there before
-accepting each implementation unit. Check the visible output and interactions
-against the active plan to confirm the implementation is moving in the intended
-direction. Keep command results and terminal evidence with the unit's receipts;
-automated tests and visual terminal checks are distinct evidence.
+Use Codex's default Bash for canonical Makefile checks, automated tests and
+latency measurements. Use an owned Kitty window for the terminal verification
+required by the active verification plan: exercise CLI/TUI behavior and inspect
+visible output and interactions. Keep those terminal results with the unit's
+verification receipts. Automated checks, latency measurements and visible
+terminal checks are distinct evidence; running a test in Kitty is not a
+substitute for the required terminal inspection.
 
 Use an isolated temporary database for interactive checks. Do not reuse or close
 the user's existing terminal sessions. If Kitty or desktop access is unavailable,
-record the blocker and leave Kitty verification pending; headless or synthetic
-terminal results do not satisfy this requirement. Keep `make validate` mandatory.
+record the blocker and leave the required terminal checks pending; headless or
+synthetic terminal results do not satisfy those checks. Continue automated
+verification in Bash. Keep `make validate` mandatory.
 </kitty_verification>
 
 ---

@@ -9,3 +9,4 @@ sql:
         out: "internal/storage/sqlc"
         sql_package: "database/sql"
         emit_empty_slices: true
+        emit_result_struct_pointers: true

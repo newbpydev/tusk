@@ -51,6 +51,48 @@ func TestMigrate_EmptyDatabase(t *testing.T) {
 	}
 }
 
+func TestSchemaInspection_ReusesOnlyExpectedCatalog(t *testing.T) {
+	db, inv := migrationFixture(t)
+	ctx := context.Background()
+	if err := migrate(ctx, db, inv); err != nil {
+		t.Fatal(err)
+	}
+	check := schemaInspector{inventory: inv}
+	allocs := testing.AllocsPerRun(20, func() {
+		if n, err := check.inspect(ctx, db); err != nil || n != len(inv) {
+			t.Fatalf("inspect: %d %v", n, err)
+		}
+	})
+	if allocs > 200 {
+		t.Fatalf("repeated catalog inspection needs %.0f allocations; want at most 200", allocs)
+	}
+	// Only the immutable embedded DDL may be reused. Every actual catalog
+	// is reread, even when the version ledger has not changed.
+	if _, err := db.Exec("ALTER TABLE tasks ADD COLUMN unexpected TEXT"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := check.inspect(ctx, db); !errors.Is(err, errCorruptSchema) {
+		t.Fatalf("missed schema change: %v", err)
+	}
+}
+
+func TestExpectedSchema_EmbeddedAllocation(t *testing.T) {
+	inv, err := loadMigrations(assets.Migrations())
+	if err != nil {
+		t.Fatal(err)
+	}
+	allocs := testing.AllocsPerRun(10, func() {
+		objects, err := expectedSchema(context.Background(), inv)
+		if err != nil || len(objects) != 8 {
+			t.Fatalf("catalog: %d %v", len(objects), err)
+		}
+	})
+	t.Logf("immutable expected catalog allocations: %.0f", allocs)
+	if allocs > 60 {
+		t.Fatalf("immutable expected catalog: %.0f allocations; want at most 60", allocs)
+	}
+}
+
 func TestMigrationInventory_Invalid(t *testing.T) {
 	for _, fixture := range []fstest.MapFS{
 		{}, {"migrations/002_gap.sql": {Data: []byte("SELECT 1;")}},

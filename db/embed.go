@@ -6,7 +6,7 @@ import (
 	"io/fs"
 )
 
-//go:embed migrations/*.sql
+//go:embed migrations/*.sql schema_catalog.json
 var migrations embed.FS
 
 // Migrations exposes read-only migration assets, including their migrations/ prefix.

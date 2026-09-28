@@ -1,0 +1,26 @@
+{
+  "claude": "401 invalid OAuth token; no review",
+  "composer": {
+    "model_requested": "composer-2.5-fast",
+    "model_actual": "unverified",
+    "independence_verified": false
+  },
+  "rejected": [
+    {
+      "title": "Bench harness uses memory buffer not drained pipe",
+      "reason": "os/exec writerDescriptor creates os.Pipe and copy goroutine for bytes.Buffer (GOROOT src/os/exec/exec.go:591-618); Cmd.Wait joins those goroutines. Timing includes fast pipe drain. Slow drain is explicitly a separate KTD9 observation."
+    },
+    {
+      "title": "Cancel after y discards confirmed deletion",
+      "reason": "KTD5/7 require cancellation to reject consent before DeleteTask. Confirmed input is not a committed mutation. delete.go rechecks context and returns exit1; Windows thread helper is not the Unix signal path."
+    },
+    {
+      "title": "Latency codec target skips process measurement",
+      "reason": "The target runs specifically named codec regression tests; docs name bench-cli as the acceptance gate. No false acceptance linkage exists."
+    },
+    {
+      "title": "Stale delete preview after concurrent subtree change",
+      "reason": "service/delete.go:97-103 checks target and exact sorted subtree inside the writer transaction and returns ErrConflict; delete_test.go disk races cover changed membership/metadata. No partial delete is reachable."
+    }
+  ]
+}

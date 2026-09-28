@@ -81,8 +81,14 @@ func nullDate(t *time.Time) sql.NullString {
 	return sql.NullString{String: t.UTC().Format(dateLayout), Valid: true}
 }
 func parseDate(s string) (time.Time, error) {
-	t, err := time.Parse(dateLayout, s)
-	if err != nil || !validTime(t) || t.Format(dateLayout) != s {
+	// Stored timestamps are exactly UTC with nine fractional digits. The RFC
+	// parser has a fast path; shape checks retain the canonical disk contract
+	// without allocating a formatted copy for every field on every task.
+	if len(s) != len(dateLayout) || s[19] != '.' || s[29] != 'Z' {
+		return time.Time{}, ports.ErrCorrupt
+	}
+	t, err := time.Parse(time.RFC3339Nano, s)
+	if err != nil || !validTime(t) {
 		return time.Time{}, ports.ErrCorrupt
 	}
 	return t, nil
@@ -115,35 +121,73 @@ func encodeTask(t *core.Task) (generated.CreateTaskParams, error) {
 }
 
 func decodeTask(row generated.Task) (*core.Task, error) {
-	t := &core.Task{ID: row.ID, Title: row.Title, Description: row.Description, Status: core.Status(row.Status), Priority: core.Priority(row.Priority), Progress: int(row.Progress)}
+	t := new(core.Task)
+	if err := decodeTaskInto(&row, t); err != nil {
+		return nil, err
+	}
+	return t, nil
+}
+
+func decodeTaskInto(row *generated.Task, t *core.Task) error {
+	*t = core.Task{ID: row.ID, Title: row.Title, Description: row.Description, Status: core.Status(row.Status), Priority: core.Priority(row.Priority), Progress: int(row.Progress)}
 	if row.ParentID.Valid {
 		p := row.ParentID.String
 		t.ParentID = &p
 	}
-	if err := json.Unmarshal([]byte(row.Tags), &t.Tags); err != nil || t.Tags == nil {
-		return nil, ports.ErrCorrupt
-	}
-	encoded, _ := json.Marshal(t.Tags)
-	if string(encoded) != row.Tags {
-		return nil, ports.ErrCorrupt
+	if tags, ok := canonicalTags(row.Tags); ok {
+		t.Tags = tags
+	} else {
+		// Keep the general decoder for malformed/noncanonical input so the
+		// existing corruption and domain-error classifications are preserved.
+		if err := json.Unmarshal([]byte(row.Tags), &t.Tags); err != nil || t.Tags == nil {
+			return ports.ErrCorrupt
+		}
+		encoded, _ := json.Marshal(t.Tags)
+		if string(encoded) != row.Tags {
+			return ports.ErrCorrupt
+		}
 	}
 	var err error
 	if t.CreatedAt, err = parseDate(row.CreatedAt); err != nil {
-		return nil, err
+		return err
 	}
 	if t.UpdatedAt, err = parseDate(row.UpdatedAt); err != nil {
-		return nil, err
+		return err
 	}
 	if t.DueDate, err = parseNullDate(row.DueDate); err != nil {
-		return nil, err
+		return err
 	}
 	if t.CompletedAt, err = parseNullDate(row.CompletedAt); err != nil {
-		return nil, err
+		return err
 	}
 	if err := validateTask(t); err != nil {
-		return nil, corruptCause(err)
+		return corruptCause(err)
 	}
-	return t, nil
+	return nil
+}
+
+// Canonical persisted tags contain only unescaped ASCII. Parse that common
+// representation without a JSON decoder, copied strings or a round-trip encode.
+// validateTask still checks tag normalization, ordering and uniqueness.
+func canonicalTags(raw string) ([]core.Tag, bool) {
+	if raw == "[]" {
+		return []core.Tag{}, true
+	}
+	if len(raw) < 4 || !strings.HasPrefix(raw, `["`) || !strings.HasSuffix(raw, `"]`) {
+		return nil, false
+	}
+	inner := raw[2 : len(raw)-2]
+	tags := make([]core.Tag, 0, strings.Count(inner, `","`)+1)
+	for tag := range strings.SplitSeq(inner, `","`) {
+		for i := range len(tag) {
+			c := tag[i]
+			if !(c >= 'a' && c <= 'z' || c >= '0' && c <= '9' || c == '-') {
+				return nil, false
+			}
+		}
+		tags = append(tags, core.Tag(tag))
+	}
+	return tags, true
 }
 
 func validateEvent(e ports.TaskEvent) error {

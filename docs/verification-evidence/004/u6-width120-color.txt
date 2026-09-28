@@ -1,0 +1,11 @@
+U6 Kitty width 120 / color
+
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0e971-b3fa-70f3-aa4b-7835385619c3  todo         high    100%      -           Unicode 界 👩‍💻 é; control \u001b[31m an…
+01a0e971-b416-7595-b57f-15fd134064bc  done         medium  100%      -           Child checklist
+
+Tree:
+`-- 01a0e971-b3fa-70f3-aa4b-7835385619c3 [todo 100%] Unicode 界 👩‍💻 é; control \u001b[31m and bidi \u202e (depth 1)
+    `-- 01a0e971-b416-7595-b57f-15fd134064bc [done 100%] Child checklist (depth 2)
+
+Press Enter for next mode.

@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"strings"
 	"testing"
@@ -11,6 +12,83 @@ import (
 	"github.com/newbpydev/tusk/internal/ports"
 	generated "github.com/newbpydev/tusk/internal/storage/sqlc"
 )
+
+func TestCodec_TagDecodeAllocation(t *testing.T) {
+	row := storedTask()
+	row.Tags = `["alpha","beta","gamma"]`
+	allocs := testing.AllocsPerRun(100, func() {
+		task, err := decodeTask(row)
+		if err != nil || len(task.Tags) != 3 {
+			t.Fatalf("decode: %v", err)
+		}
+	})
+	if allocs > 4 {
+		t.Fatalf("tagged row needs %.0f allocations; want at most 4", allocs)
+	}
+}
+
+func TestCodec_BatchDecodeAllocation(t *testing.T) {
+	rows := make([]*generated.Task, 100)
+	for i := range rows {
+		row := storedTask()
+		rows[i] = &row
+		rows[i].Tags = `["alpha","beta","gamma"]`
+	}
+	allocs := testing.AllocsPerRun(100, func() {
+		tasks, err := decodeTasks(rows)
+		if err != nil || len(tasks) != len(rows) {
+			t.Fatalf("decode: %v", err)
+		}
+	})
+	// One backing array plus each row's detached tag slice; no heap Task
+	// is needed per row because this API returns values in a batch.
+	if allocs > 110 {
+		t.Fatalf("100-row batch needs %.0f allocations; want at most 110", allocs)
+	}
+}
+
+func TestCodec_TagDecodeCanonicalParity(t *testing.T) {
+	// Match the existing JSON round-trip and domain validation, including
+	// corrupt-input error categories; optimized reads cannot relax either.
+	check := func(raw string) {
+		t.Helper()
+		row := storedTask()
+		row.Tags = raw
+		var tags []core.Tag
+		var want error
+		if err := json.Unmarshal([]byte(raw), &tags); err != nil || tags == nil {
+			want = ports.ErrCorrupt
+		} else if b, _ := json.Marshal(tags); string(b) != raw {
+			want = ports.ErrCorrupt
+		} else {
+			task, _ := decodeTask(storedTask())
+			task.Tags = tags
+			if err := validateTask(task); err != nil {
+				want = corruptCause(err)
+			}
+		}
+		got, err := decodeTask(row)
+		if (err == nil) != (want == nil) || errors.Is(err, core.ErrInvalidTag) != errors.Is(want, core.ErrInvalidTag) || errors.Is(err, ports.ErrCorrupt) != errors.Is(want, ports.ErrCorrupt) {
+			t.Fatalf("%q: got %v want %v", raw, err, want)
+		}
+		if err == nil && (got == nil || len(got.Tags) != len(tags)) {
+			t.Fatalf("%q: lost tags", raw)
+		}
+	}
+	for _, raw := range []string{`[]`, `["alpha"]`, `["alpha","beta","gamma"]`, `["a-b","c0"]`, `["A"]`, `["a","a"]`, `["b","a"]`, `[""]`, `["a\\b"]`, `["a\"b"]`, `["a\nb"]`, `["\u0061"]`, `["界"]`, `[null]`, `[1]`, `[ ]`, `["a", "b"]`, `null`, `"a"`, `["a",]`, `["a","b"`, `["` + strings.Repeat("a", 33) + `"]`} {
+		check(raw)
+	}
+	canonical := `["alpha","beta","gamma"]`
+	check(`[" ]`)
+	check("[\"]") // Truncated string inside an array.
+	for i := range canonical {
+		for c := 0; c < 256; c++ {
+			b := []byte(canonical)
+			b[i] = byte(c)
+			check(string(b))
+		}
+	}
+}
 
 func TestCodec_RejectsInvalidInput(t *testing.T) {
 	if _, err := encodeTask(nil); !errors.Is(err, ports.ErrInvalidRecord) {
@@ -107,6 +185,40 @@ func TestCodec_EventValidation(t *testing.T) {
 	} {
 		if _, err := decodeEvent(row); !errors.Is(err, ports.ErrCorrupt) {
 			t.Fatal(err)
+		}
+	}
+}
+
+func TestCodec_CanonicalDateAllocation(t *testing.T) {
+	const value = "2026-09-28T12:34:56.123456789Z"
+	if allocs := testing.AllocsPerRun(100, func() {
+		if _, err := parseDate(value); err != nil {
+			t.Fatal(err)
+		}
+	}); allocs != 0 {
+		t.Fatalf("canonical decode allocates %.0f times per timestamp", allocs)
+	}
+}
+
+func TestCodec_DateCanonicalParity(t *testing.T) {
+	check := func(value string) {
+		t.Helper()
+		want, err := time.Parse(dateLayout, value)
+		valid := err == nil && validTime(want) && want.Format(dateLayout) == value
+		got, actualErr := parseDate(value)
+		if (actualErr == nil) != valid || valid && !got.Equal(want) {
+			t.Fatalf("%q: %v %v valid=%v", value, got, actualErr, valid)
+		}
+	}
+	for _, value := range []string{"0001-01-01T00:00:00.000000000Z", "9999-12-31T23:59:59.999999999Z", "2000-02-29T12:34:56.123456789Z", "1900-02-29T12:34:56.123456789Z", "2026-09-28T12:34:56Z", "2026-09-28T12:34:56.1Z", "2026-09-28T12:34:56.123456789+00:00", "2026-09-28T1:34:56.1234567890Z", "0000-01-01T00:00:00.000000000Z"} {
+		check(value)
+	}
+	const canonical = "2026-09-28T12:34:56.123456789Z"
+	for i := range canonical {
+		for ch := byte(0); ch < 127; ch++ {
+			data := []byte(canonical)
+			data[i] = ch
+			check(string(data))
 		}
 	}
 }

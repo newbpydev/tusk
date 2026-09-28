@@ -61,6 +61,7 @@ func openAt(ctx context.Context, path string, factory connectorFactory, prepare 
 	if err != nil {
 		return nil, err
 	}
+	check := schemaInspector{inventory: inventory}
 	inspection, err := factory(path, inspectionConnection)
 	if err != nil {
 		return nil, err
@@ -72,7 +73,7 @@ func openAt(ctx context.Context, path string, factory connectorFactory, prepare 
 		probe.Close()
 		return nil, err
 	}
-	_, inspectErr := inspectSchema(ctx, read, inventory)
+	_, inspectErr := check.inspect(ctx, read)
 	err = errors.Join(inspectErr, read.Rollback(), probe.Close())
 	if err != nil {
 		return nil, err
@@ -97,7 +98,7 @@ func openAt(ctx context.Context, path string, factory connectorFactory, prepare 
 	if journal != "wal" {
 		return nil, fmt.Errorf("storage: WAL journal unavailable")
 	}
-	if err := migrate(ctx, r.writer, inventory); err != nil {
+	if err := check.migrate(ctx, r.writer); err != nil {
 		return nil, err
 	}
 	reader, err := factory(path, readerConnection)

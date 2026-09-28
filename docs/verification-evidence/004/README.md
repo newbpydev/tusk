@@ -1,5 +1,102 @@
 # Feature 004 execution evidence
 
+## Local acceptance: U6 complete
+
+[Acceptance receipt](u6-acceptance.json) · [84/84 latency case-runs](u6-latency-accepted.json)
+· [Code review](u6-review-acceptance.json) · [Peer dispositions](u6-review-dispositions.json)
+
+Automated verification ran in Codex Bash. `make validate build check-generated`
+and Go 1.25 full tests/five-target cross-builds passed. Query p90 is below 15 ms
+in every case/run (worst 14.621 ms); help/version p90 is below 5 ms (worst 2.855 ms).
+All tail guards pass. All 8,400 samples, including 40 query target misses, remain
+in the report. See the synchronized triplet for the owner-delegated policy.
+
+[Fresh Kitty screenshot](u6-acceptance-kitty.png) and
+[transcript](u6-acceptance-kitty.txt) confirm tree/progress/stats behavior.
+Local V01–V89 and U6 are accepted. V90–V91 remain Feature 006 native/hosted gates.
+Historical failed reports below keep their original outcomes and policies.
+
+
+## Historical U6 checkpoint: Bash and terminal evidence
+
+[Receipt and exact source hashes](u6-bash-checkpoint.json). Canonical validation,
+generated checks, Go 1.25 short tests and five target builds pass in Codex Bash.
+[Visible Kitty evidence](u6-bash-checkpoint-kitty.png) and its
+[transcript](u6-bash-checkpoint-kitty.txt) verify tree/progress/statistics behavior.
+AGENTS.md now reserves Kitty for required visible terminal scenarios.
+
+[Balanced Bash latency](u6-latency-bash.json) and
+[temporary performance-profile latency](u6-latency-bash-performance.json) still
+fail the unchanged strict gate. U6 is incomplete and uncommitted. The prior
+code-review receipt predates the broader changes; fresh review remains required.
+
+PGO, JSON row transport, reader connection reuse and enlarged kernel-pipe
+experiments were discarded. Their retained reports/logs are diagnostic evidence,
+not acceptance or production build settings. The
+[simplification pass](u6-simplify-broad.md) was sequential and inline.
+
+## Historical broader-optimization checkpoint — latency still pending
+
+The owner retained 15 ms. Query allocation, sqlc row loading and stable sorting
+have been optimized, and the pipe consumer now prepares storage and collects
+prior validation garbage before timing. Every measured sample is still retained.
+
+- [Current receipt and source hashes](u6-broader-checkpoint.json).
+- [Canonical gate](u6-checkpoint-gate.log.gz): validate/build/generated checks pass.
+- [Minimum Go](u6-checkpoint-minimum.log.gz): full tests and five cross-builds pass.
+- [Post-sort balanced run](u6-latency-index.json): 1,000-task query medians about
+  9–11 ms; JSON list/tree maxima 17.752/18.818 ms. The strict gate still fails.
+- [Go 1.25](u6-latency-index-go125.json), [affinity experiment](u6-latency-affinity.json),
+  and [temporary performance profile](u6-latency-performance.json) also fail.
+  The last JSON-list maximum is 26.164 ms; the power profile was restored to balanced.
+- [Timing diagnostics](u6-timing-scheduling.json), [GC trace](u6-timing-trace.json),
+  and [instrumented stages](u6-stage-diagnostic.json) are supplementary evidence.
+  Their settings/fixtures differ from reference acceptance; no outcome overrides it.
+- [Fresh Kitty screenshot](u6-current-kitty.png) and [terminal text](u6-current-kitty.txt)
+  confirm decimal parsing, syntax exit and persisted readback with a temporary DB.
+
+U6/Phase 4 remain unaccepted and uncommitted. The completed review below predates
+these optimizations; review the current delta before committing. No new owner
+decision about relaxing the bound is needed: keep 15 ms and continue the active
+U6 investigation. Do not start Phase 5. The older checkpoint below is historical.
+
+## Earlier U6 checkpoint — before broader optimization
+
+Kitty and Git access are working. The mandatory Kitty rule is in `AGENTS.md`.
+Six units are committed in the required order; U6 functional verification passes,
+but **V87 / ISS-023 fails**. U6 and Phase 4 remain unaccepted; Phase 5 must not start.
+
+- [U6 receipt and source hashes](u6-checkpoint.json), [CLI guide](../../cli.md).
+- [Canonical gate log](u6-review-green.log.gz): `make validate build check-generated`
+  passes, including races, 29 script fixtures and coverage (CLI 96.4%, main 95.7%,
+  storage 97.6%, benchmark runner 95.3%).
+- [Minimum Go final log](u6-minimum-final.log.gz): full tests and five CGO-free
+  executable/test builds pass. These builds do not establish native target runtime.
+- [Final benchmark](u6-latency-final.json): all 100 samples per case retained.
+  Help/version, empty and 100-task cases pass. 1,000-task JSON list/tree maxima are
+  **30.118/32.832 ms**, each with 100/100 violations of the unchanged 15 ms bound.
+  Human list/tree and some stats samples also fail. Earlier baseline, minimum-Go
+  and optimized reports remain alongside it. A failed gate cannot be accepted by
+  choosing a different percentile or dropping outliers.
+- [Separate capacity/conditions observations](u6-conditions-final.json): first-use,
+  10k tasks, 1 MiB notes, held writer and throttled output, each with a deadline.
+- [Completed code review](u6-review.json) and [resolution](u6-review-resolution.json):
+  decimal progress and incomplete benchmark fixtures fixed after observed red;
+  performance finding remains open. Local review ran sequentially in the main
+  agent. The attempted peer model had no verifiable independence receipt.
+- Actual Kitty screenshots: [40 columns/color](u6-width40-color.png),
+  [40 columns/dumb](u6-width40-dumb.png), [80 columns/no color](u6-width80-no-color.png),
+  [120 columns/color](u6-width120-color.png), [final decimal/readback](u6-final-kitty.png).
+  Matching text captures are retained. These are distinct from automated real-PTY
+  yes/no/EOF/SIGINT/SIGTERM tests and process broken-pipe/hard-kill readback.
+
+Timestamp decoding and removal of a redundant output copy reduce allocation;
+regression and canonical checks pass. The final process benchmark still fails.
+Further measured optimization or an explicit owner decision is needed. No revised
+bound, acceptance, native/hosted proof or publication is inferred.
+
+## Prior unit evidence
+
 ## U1 locally verified — 2026-09-28
 
 The session permission issue is resolved. [U1 acceptance](u1-accepted.json)

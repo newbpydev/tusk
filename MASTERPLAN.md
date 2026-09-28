@@ -1,10 +1,52 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 4 implementation active (authorized 2026-09-28)
-**Active Implementation Target**: 4.2 — Unit 004-6 / U6 (next after U3 commit)
-**Overall Completion**: 57% (4 of 7 Phases Locally Complete)
+**Active Phase**: Phase 4 locally complete; Phase 5 planning next
+**Active Implementation Target**: 5.1 — Feature 005 planning triplet; no Phase 5 implementation authorized
+**Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
+
+### Feature 004 local acceptance (2026-09-28)
+
+U6 passes `make validate build check-generated`, Go 1.25 full tests/five-target
+cross-builds and all 84 reference case-runs under the owner-delegated distribution
+policy. Worst query p90 is 14.621 ms; all tails and raw samples are retained.
+Fresh Kitty verification and code review are complete. See the
+[acceptance receipt](docs/verification-evidence/004/u6-acceptance.json).
+The U6 local commit closes Phase 4. Feature 005 planning is next; implementation
+and Feature 006 native/hosted release proof remain separate.
+
+### Historical Feature 004 measurement-policy revision (2026-09-28)
+
+The owner delegated best-practice measurement judgment. The current Feature 004
+and product triplets now use three complete runs with p90 targets of 15 ms for
+queries and 5 ms for help/version, explicit p95/p99/maximum guards, and every
+sample retained. This supersedes the historical every-sample gate without
+relabelling old failed reports. Red/green harness tests pass; the new reference
+matrix and fresh code review are underway. U6 remains the active target.
+
+### Historical Feature 004 Bash verification checkpoint (2026-09-28)
+
+The owner clarified the verification surfaces: run automated Makefile checks and
+latency measurements in Codex Bash; retain Kitty for required visible terminal
+scenarios. AGENTS.md and the Feature 004 triplet now agree. Generated expected
+schema data and batched tree node allocation pass `make validate build
+check-generated`, Go 1.25 short tests and all five CLI/test cross-builds. Fresh
+Kitty inspection confirms tree/progress/stats behavior. Balanced and temporary
+performance-profile Bash latency runs still fail the unchanged strict limits.
+U6/V87/ISS-023 remain open and uncommitted; Phase 5 must not start. The
+[current receipt](docs/verification-evidence/004/u6-bash-checkpoint.json) records
+source hashes, retained measurements, discarded experiments and remaining gates.
+
+### Feature 004 earlier broader-optimization checkpoint (2026-09-28)
+
+The owner retained the 15 ms bound. Broader storage/query allocation and sorting
+changes pass canonical validation, generated checks, Go 1.25 tests/cross-builds,
+and fresh visible Kitty checks. Typical 1,000-task queries are now about 9–11 ms,
+but retained reference samples still exceed the limit. U6/V87/ISS-023 remain open;
+Phase 5 must not start. The working changes are uncommitted and need a fresh
+review after latency resolution. [Current receipt](docs/verification-evidence/004/u6-broader-checkpoint.json)
+records exact source hashes, all experiment reports and resume obligations.
 
 ### Feature 002 execution finding (2026-09-08)
 
@@ -27,7 +69,7 @@ graph TD
     P0[Phase 0: Foundation & Setup<br/>✅ COMPLETE] --> P1[Phase 1: Core Domain & Invariants<br/>✅ COMPLETE]
     P1 --> P2[Phase 2: SQLite Storage & Repo<br/>✅ COMPLETE]
     P2 --> P3[Phase 3: Task Service Engine<br/>✅ LOCALLY COMPLETE]
-    P3 --> P4[Phase 4: CLI & Scripting<br/>⏳ PLANNED]
+    P3 --> P4[Phase 4: CLI & Scripting<br/>✅ LOCALLY COMPLETE]
     P3 --> P5[Phase 5: Interactive TUI<br/>⏳ PLANNED]
     P4 --> P6[Phase 6: Packaging & Release<br/>⏳ PLANNED]
     P5 --> P6
@@ -184,7 +226,7 @@ Feature 003 completed seven units in the declared order with separate canonical 
 ---
 
 ### Phase 4: Feature 004 - CLI Interface & Scripting
-- **Status**: 🚧 **IMPLEMENTATION ACTIVE — U1 LOCALLY VERIFIED** (2026-09-28; Phase 3 prerequisite locally accepted and merged)
+- **Status**: ✅ **LOCALLY ACCEPTED** (2026-09-28; seven implementation units)
 - **Plan**: [Feature 004](docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md)
 - **Verification Plan**: [Feature 004 matrix](docs/verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md)
 - **Issue Workorder**: [Feature 004 findings](docs/workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md)
@@ -192,23 +234,31 @@ Feature 003 completed seven units in the declared order with separate canonical 
 - [x] **4.1 Ultrathink Planning Pack**
   - [x] Deepened Plan, Verification Plan, and Workorder (25 requirements, seven ordered units, 91 planned scenarios, 25 findings)
   - [x] Sequential planning/document review and synchronized product handoff; no runtime acceptance inferred
-- [ ] **4.2 Implementation Units** — execute U1 → U5 → U4 → U2 → U7 → U3 → U6; validate/synchronize/commit each before advancing
+- [x] **4.2 Implementation Units** — execute U1 → U5 → U4 → U2 → U7 → U3 → U6; validate/synchronize/commit each before advancing
   - [x] Unit 004-1 / U1: Cobra Root, Lazy Composition & Dependency/Executable Compatibility
   - [x] Unit 004-5 / U5: Explicit JSON DTOs, Output Failures & Exit/Outcome Contract
   - [x] Unit 004-4 / U4: Safe Human Formatter, Unicode Width & Terminal Capability Styling
   - [x] Unit 004-2 / U2: Add, Edit & Complete Through the Accepted Service
   - [x] Unit 004-7 / U7: Preview, Default-No Consent & Authoritative Deletion (split from U2)
   - [x] Unit 004-3 / U3: List, Tree, Stats & Metadata History Queries
-  - [ ] Unit 004-6 / U6: Actual Executable/Disk Recovery, Latency & Consumer Handoff
-- [ ] **4.3 Quality Gate & Local Acceptance**
-  - [ ] All local scenarios V01–V89 have exact-revision evidence; V90–V91 remain Feature 006 release obligations
-  - [ ] Complete executable and test binaries cross-build CGO-free for five targets under Go 1.25
-  - [ ] Every reference help/version sample <5ms and list/tree/stats/history sample <15ms; raw samples retained
-  - [ ] Actual Linux terminal, cancellation, broken pipe and committed readback scenarios pass
-  - [ ] `make validate build check-generated` passes and unit commits/evidence are synchronized
-  - [ ] Feature 005 TUI and Feature 006 native/hosted/completion/release obligations handed off
+  - [x] Unit 004-6 / U6: Actual Executable/Disk Recovery, Latency & Consumer Handoff
+- [x] **4.3 Quality Gate & Local Acceptance**
+  - [x] All local scenarios V01–V89 have exact-revision evidence; V90–V91 remain Feature 006 release obligations
+  - [x] Complete executable and test binaries cross-build CGO-free for five targets under Go 1.25
+  - [x] Three reference runs meet help/version p90 <5ms and query p90 <15ms plus p95/p99/max guards; all samples retained
+  - [x] Actual Linux terminal, cancellation, broken pipe and committed readback scenarios pass
+  - [x] `make validate build check-generated` passes and unit commits/evidence are synchronized
+  - [x] Feature 005 TUI and Feature 006 native/hosted/completion/release obligations handed off
 
-Planning-only on 2026-09-09: source/contract inspection, dependency-source research, confidence check and sequential document review produced the complete triplet. No code, dependencies, tests or release artifacts changed; no implementation or product scenario was checked. Five execution/release evidence gates remain in the workorder. Implementation was authorized on 2026-09-28. U1 has passing canonical gates, minimum-Go/five-target builds and actual Kitty visual verification. Session permissions were restored; the display and Git blockers are resolved. U5 follows its unit commit. See [U1 execution evidence](docs/verification-evidence/004/README.md).
+Implementation was authorized on 2026-09-28. All seven units have separate local
+commit boundaries, with U6 carrying actual process/PTY recovery, query/storage
+optimizations, benchmark integrity and consumer handoff. Canonical checks run in
+Codex Bash; owned Kitty checks provide visible terminal evidence.
+
+Local V01–V89 pass, including V87 under the owner-delegated distribution policy.
+ISS-023 is closed. Earlier failed reports are retained without relabeling.
+V90–V91 remain Feature 006 exact-candidate native/hosted release obligations.
+No Phase 5 implementation, push, PR or publication occurred.
 
 ---
 

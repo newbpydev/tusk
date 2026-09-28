@@ -1,0 +1,25 @@
+package storage
+
+import (
+ "context"
+ "encoding/json"
+ "fmt"
+ "path/filepath"
+ "strings"
+ "testing"
+ "github.com/newbpydev/tusk/internal/core"
+ "github.com/newbpydev/tusk/internal/ports"
+ generated "github.com/newbpydev/tusk/internal/storage/sqlc"
+)
+
+func BenchmarkRowTransportExperiment(b *testing.B) {
+ ctx:=context.Background()
+ r,err:=Open(ctx,Options{Path:filepath.Join(b.TempDir(),"rows.db")});if err!=nil {b.Fatal(err)};defer r.Close()
+ if err:=r.WithWrite(ctx,func(ctx context.Context,w ports.TaskWriter)error{for i:=range 1000 {t:=taskFixture(fmt.Sprint(i));t.Title=strings.Repeat("t",64);t.Description=strings.Repeat("n",128);t.Tags=[]core.Tag{"alpha","beta","gamma"};if err:=w.Create(ctx,t);err!=nil{return err}};return nil});err!=nil{b.Fatal(err)}
+ q:=generated.New(r.reader)
+ b.Run("columns",func(b *testing.B){b.ReportAllocs();for range b.N {rows,err:=q.ListAll(ctx);if err!=nil||len(rows)!=1000{b.Fatal(err)}}})
+ const obj=`json_object('ID',id,'Title',title,'Description',description,'Status',status,'Priority',priority,'Progress',progress,'ParentID',parent_id,'Tags',tags,'CreatedAt',created_at,'UpdatedAt',updated_at,'DueDate',due_date,'CompletedAt',completed_at)`
+ type row struct{ID,Title,Description,Status,Tags,CreatedAt,UpdatedAt string;Priority,Progress int64;ParentID,DueDate,CompletedAt *string}
+ b.Run("jsonRows",func(b *testing.B){b.ReportAllocs();for range b.N {rows,err:=r.reader.QueryContext(ctx,"SELECT "+obj+" FROM tasks");if err!=nil{b.Fatal(err)};n:=0;for rows.Next(){var raw []byte;var value row;if err:=rows.Scan(&raw);err!=nil{b.Fatal(err)};if err:=json.Unmarshal(raw,&value);err!=nil{b.Fatal(err)};n++};if err:=rows.Err();err!=nil{b.Fatal(err)};rows.Close();if n!=1000{b.Fatal(n)}}})
+ b.Run("jsonBatch",func(b *testing.B){b.ReportAllocs();for range b.N {var raw []byte;var values []row;if err:=r.reader.QueryRowContext(ctx,"SELECT json_group_array("+obj+") FROM tasks").Scan(&raw);err!=nil{b.Fatal(err)};if err:=json.Unmarshal(raw,&values);err!=nil{b.Fatal(err)};if len(values)!=1000{b.Fatal(len(values))}}})
+}

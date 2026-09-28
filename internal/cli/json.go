@@ -17,16 +17,11 @@ type taskJSON struct {
 	Priority    core.Priority `json:"priority"`
 	ParentID    *string       `json:"parent_id"`
 	Progress    int           `json:"progress"`
-	Tags        []string      `json:"tags"`
+	Tags        []core.Tag    `json:"tags"`
 	DueDate     *time.Time    `json:"due_date"`
 	CreatedAt   time.Time     `json:"created_at"`
 	UpdatedAt   time.Time     `json:"updated_at"`
 	CompletedAt *time.Time    `json:"completed_at"`
-}
-type nodeJSON struct {
-	Task     taskJSON   `json:"task"`
-	Children []nodeJSON `json:"children"`
-	Depth    int        `json:"depth"`
 }
 type deleteJSON struct {
 	ID      string   `json:"id"`
@@ -54,29 +49,20 @@ func utcPointer(t *time.Time) *time.Time {
 	if t == nil {
 		return nil
 	}
+	if t.Location() == time.UTC {
+		return t
+	}
 	v := t.UTC()
 	return &v
 }
 func taskDTO(t core.Task) taskJSON {
-	tags := make([]string, len(t.Tags))
-	for n, tag := range t.Tags {
-		tags[n] = string(tag)
+	// Serialization only reads these detached values; copying their slices
+	// and already-UTC pointers adds work without changing wire ownership.
+	tags := t.Tags
+	if tags == nil {
+		tags = []core.Tag{}
 	}
 	return taskJSON{t.ID, t.Title, t.Description, t.Status, t.Priority, t.ParentID, t.Progress, tags, utcPointer(t.DueDate), t.CreatedAt.UTC(), t.UpdatedAt.UTC(), utcPointer(t.CompletedAt)}
-}
-func treeDTO(nodes []*core.TaskNode) ([]nodeJSON, error) {
-	out := make([]nodeJSON, len(nodes))
-	for n, node := range nodes {
-		if node == nil {
-			return nil, ports.ErrInvalidRecord
-		}
-		children, err := treeDTO(node.Children)
-		if err != nil {
-			return nil, err
-		}
-		out[n] = nodeJSON{taskDTO(node.Task), children, node.Depth}
-	}
-	return out, nil
 }
 func sortedStrings(values []string) []string {
 	out := append([]string{}, values...)
@@ -85,19 +71,6 @@ func sortedStrings(values []string) []string {
 }
 func jsonDTO(value any) (any, error) {
 	switch v := value.(type) {
-	case *core.Task:
-		if v == nil {
-			return nil, ports.ErrInvalidRecord
-		}
-		return taskDTO(*v), nil
-	case []core.Task:
-		out := make([]taskJSON, len(v))
-		for n, t := range v {
-			out[n] = taskDTO(t)
-		}
-		return out, nil
-	case []*core.TaskNode:
-		return treeDTO(v)
 	case ports.DeleteResult:
 		return deleteJSON{v.ID, sortedStrings(v.DeletedIDs), v.DeletedCount, v.Deleted}, nil
 	case ports.TaskStats:
@@ -117,6 +90,45 @@ func jsonDTO(value any) (any, error) {
 	}
 }
 func encodeJSON(value any) ([]byte, error) {
+	var data []byte
+	var err error
+	switch v := value.(type) {
+	case *core.Task:
+		if v == nil {
+			return nil, ports.ErrInvalidRecord
+		}
+		data, err = appendTaskJSON(make([]byte, 0, taskJSONCapacity(*v)), taskDTO(*v))
+	case []core.Task:
+		size := 3
+		for _, task := range v {
+			size += taskJSONCapacity(task) + 1
+		}
+		data = append(make([]byte, 0, size), '[')
+		for i, task := range v {
+			if i > 0 {
+				data = append(data, ',')
+			}
+			if data, err = appendTaskJSON(data, taskDTO(task)); err != nil {
+				return nil, err
+			}
+		}
+		data = append(data, ']')
+	case []*core.TaskNode:
+		size, e := treeJSONCapacity(v)
+		if e != nil {
+			return nil, e
+		}
+		data, err = appendTreeJSON(make([]byte, 0, size+1), v)
+	default:
+		return encodeOtherJSON(value)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return append(data, '\n'), nil
+}
+
+func encodeOtherJSON(value any) ([]byte, error) {
 	dto, err := jsonDTO(value)
 	if err != nil {
 		return nil, err

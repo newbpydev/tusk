@@ -1,0 +1,4218 @@
+{
+  "Manifest": {
+    "arch": "amd64",
+    "binary": "/home/newbpydev/Development/Xoomby/tusk/bin/tusk",
+    "cpu": "processor\t: 0\nvendor_id\t: AuthenticAMD\ncpu family\t: 23\nmodel\t\t: 96\nmodel name\t: AMD Ryzen 5 4500U with Radeon Graphics\nstepping\t: 1\nmicrocode\t: 0x860010d\ncpu MHz\t\t: 3977.955\ncache size\t: 512 KB\nphysical id\t: 0\nsiblings\t: 6\ncore id\t\t: 0\ncpu cores\t: 6\napicid\t\t: 0\ninitial apicid\t: 0\nfpu\t\t: yes\nfpu_exception\t: yes\ncpuid level\t: 16\nwp\t\t: yes\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca\nbugs\t\t: sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass retbleed smt_rsb srso ibpb_no_ret spectre_v2_user vmscape\nbogomips\t: 4741.28\nTLB size\t: 3072 4K pages\nclflush size\t: 64\ncache_alignment\t: 64\naddress sizes\t: 48 bits physical, 48 bits virtual\npower management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]\n\nprocessor\t: 1\nvendor_id\t: AuthenticAMD\ncpu family\t: 23\nmodel\t\t: 96\nmodel name\t: AMD Ryzen 5 4500U with Radeon Graphics\nstepping\t: 1\nmicrocode\t: 0x860010d\ncpu MHz\t\t: 3976.170\ncache size\t: 512 KB\nphysical id\t: 0\nsiblings\t: 6\ncore id\t\t: 1\ncpu cores\t: 6\napicid\t\t: 1\ninitial apicid\t: 1\nfpu\t\t: yes\nfpu_exception\t: yes\ncpuid level\t: 16\nwp\t\t: yes\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca\nbugs\t\t: sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass retbleed smt_rsb srso ibpb_no_ret spectre_v2_user vmscape\nbogomips\t: 4741.28\nTLB size\t: 3072 4K pages\nclflush size\t: 64\ncache_alignment\t: 64\naddress sizes\t: 48 bits physical, 48 bits virtual\npower management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]\n\nprocessor\t: 2\nvendor_id\t: AuthenticAMD\ncpu family\t: 23\nmodel\t\t: 96\nmodel name\t: AMD Ryzen 5 4500U with Radeon Graphics\nstepping\t: 1\nmicrocode\t: 0x860010d\ncpu MHz\t\t: 3982.376\ncache size\t: 512 KB\nphysical id\t: 0\nsiblings\t: 6\ncore id\t\t: 2\ncpu cores\t: 6\napicid\t\t: 2\ninitial apicid\t: 2\nfpu\t\t: yes\nfpu_exception\t: yes\ncpuid level\t: 16\nwp\t\t: yes\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca\nbugs\t\t: sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass retbleed smt_rsb srso ibpb_no_ret spectre_v2_user vmscape\nbogomips\t: 4741.28\nTLB size\t: 3072 4K pages\nclflush size\t: 64\ncache_alignment\t: 64\naddress sizes\t: 48 bits physical, 48 bits virtual\npower management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]\n\nprocessor\t: 3\nvendor_id\t: AuthenticAMD\ncpu family\t: 23\nmodel\t\t: 96\nmodel name\t: AMD Ryzen 5 4500U with Radeon Graphics\nstepping\t: 1\nmicrocode\t: 0x860010d\ncpu MHz\t\t: 3992.263\ncache size\t: 512 KB\nphysical id\t: 0\nsiblings\t: 6\ncore id\t\t: 4\ncpu cores\t: 6\napicid\t\t: 4\ninitial apicid\t: 4\nfpu\t\t: yes\nfpu_exception\t: yes\ncpuid level\t: 16\nwp\t\t: yes\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca\nbugs\t\t: sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass retbleed smt_rsb srso ibpb_no_ret spectre_v2_user vmscape\nbogomips\t: 4741.28\nTLB size\t: 3072 4K pages\nclflush size\t: 64\ncache_alignment\t: 64\naddress sizes\t: 48 bits physical, 48 bits virtual\npower management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]\n\nprocessor\t: 4\nvendor_id\t: AuthenticAMD\ncpu family\t: 23\nmodel\t\t: 96\nmodel name\t: AMD Ryzen 5 4500U with Radeon Graphics\nstepping\t: 1\nmicrocode\t: 0x860010d\ncpu MHz\t\t: 2599.433\ncache size\t: 512 KB\nphysical id\t: 0\nsiblings\t: 6\ncore id\t\t: 5\ncpu cores\t: 6\napicid\t\t: 5\ninitial apicid\t: 5\nfpu\t\t: yes\nfpu_exception\t: yes\ncpuid level\t: 16\nwp\t\t: yes\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca\nbugs\t\t: sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass retbleed smt_rsb srso ibpb_no_ret spectre_v2_user vmscape\nbogomips\t: 4741.28\nTLB size\t: 3072 4K pages\nclflush size\t: 64\ncache_alignment\t: 64\naddress sizes\t: 48 bits physical, 48 bits virtual\npower management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]\n\nprocessor\t: 5\nvendor_id\t: AuthenticAMD\ncpu family\t: 23\nmodel\t\t: 96\nmodel name\t: AMD Ryzen 5 4500U with Radeon Graphics\nstepping\t: 1\nmicrocode\t: 0x860010d\ncpu MHz\t\t: 3991.893\ncache size\t: 512 KB\nphysical id\t: 0\nsiblings\t: 6\ncore id\t\t: 6\ncpu cores\t: 6\napicid\t\t: 6\ninitial apicid\t: 6\nfpu\t\t: yes\nfpu_exception\t: yes\ncpuid level\t: 16\nwp\t\t: yes\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca\nbugs\t\t: sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass retbleed smt_rsb srso ibpb_no_ret spectre_v2_user vmscape\nbogomips\t: 4741.28\nTLB size\t: 3072 4K pages\nclflush size\t: 64\ncache_alignment\t: 64\naddress sizes\t: 48 bits physical, 48 bits virtual\npower management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]",
+    "go": "go1.27.1-X:nodwarf5",
+    "governor": "schedutil",
+    "kernel": "7.2.8-1-cachyos",
+    "os": "linux",
+    "power_profile": "balanced",
+    "reference_utc": "2026-09-28T12:00:00Z",
+    "sample_rule": "5 warmups plus 100 consecutive samples; every sample strictly below limit",
+    "sha256": "6a69378d7df7419be0e0db5cdc7165f68057af32fb68ae510b7d2ab75a5a6081",
+    "started_utc": "2026-09-28T20:15:37.93046292Z"
+  },
+  "Samples": [
+    {
+      "Mode": "baseline",
+      "Index": 0,
+      "Warmup": true,
+      "WallNS": 12051043,
+      "UserNS": 8062000,
+      "SystemNS": 3455000,
+      "ParentGCBefore": 1,
+      "ParentGCAfter": 1
+    },
+    {
+      "Mode": "baseline",
+      "Index": 1,
+      "Warmup": true,
+      "WallNS": 10175444,
+      "UserNS": 5227000,
+      "SystemNS": 5227000,
+      "ParentGCBefore": 1,
+      "ParentGCAfter": 1
+    },
+    {
+      "Mode": "baseline",
+      "Index": 2,
+      "Warmup": true,
+      "WallNS": 9544495,
+      "UserNS": 6749000,
+      "SystemNS": 3374000,
+      "ParentGCBefore": 1,
+      "ParentGCAfter": 1
+    },
+    {
+      "Mode": "baseline",
+      "Index": 3,
+      "Warmup": true,
+      "WallNS": 11351298,
+      "UserNS": 8440000,
+      "SystemNS": 2110000,
+      "ParentGCBefore": 2,
+      "ParentGCAfter": 3
+    },
+    {
+      "Mode": "baseline",
+      "Index": 4,
+      "Warmup": true,
+      "WallNS": 11762875,
+      "UserNS": 7899000,
+      "SystemNS": 3385000,
+      "ParentGCBefore": 4,
+      "ParentGCAfter": 5
+    },
+    {
+      "Mode": "baseline",
+      "Index": 5,
+      "Warmup": false,
+      "WallNS": 12360232,
+      "UserNS": 6999000,
+      "SystemNS": 4666000,
+      "ParentGCBefore": 6,
+      "ParentGCAfter": 7
+    },
+    {
+      "Mode": "baseline",
+      "Index": 6,
+      "Warmup": false,
+      "WallNS": 10050497,
+      "UserNS": 8394000,
+      "SystemNS": 2098000,
+      "ParentGCBefore": 8,
+      "ParentGCAfter": 9
+    },
+    {
+      "Mode": "baseline",
+      "Index": 7,
+      "Warmup": false,
+      "WallNS": 11221882,
+      "UserNS": 8331000,
+      "SystemNS": 3124000,
+      "ParentGCBefore": 10,
+      "ParentGCAfter": 11
+    },
+    {
+      "Mode": "baseline",
+      "Index": 8,
+      "Warmup": false,
+      "WallNS": 10975341,
+      "UserNS": 4968000,
+      "SystemNS": 5962000,
+      "ParentGCBefore": 12,
+      "ParentGCAfter": 13
+    },
+    {
+      "Mode": "baseline",
+      "Index": 9,
+      "Warmup": false,
+      "WallNS": 10956343,
+      "UserNS": 8459000,
+      "SystemNS": 2114000,
+      "ParentGCBefore": 14,
+      "ParentGCAfter": 15
+    },
+    {
+      "Mode": "baseline",
+      "Index": 10,
+      "Warmup": false,
+      "WallNS": 18062246,
+      "UserNS": 13796000,
+      "SystemNS": 4245000,
+      "ParentGCBefore": 16,
+      "ParentGCAfter": 17
+    },
+    {
+      "Mode": "baseline",
+      "Index": 11,
+      "Warmup": false,
+      "WallNS": 14879980,
+      "UserNS": 11601000,
+      "SystemNS": 3163000,
+      "ParentGCBefore": 18,
+      "ParentGCAfter": 19
+    },
+    {
+      "Mode": "baseline",
+      "Index": 12,
+      "Warmup": false,
+      "WallNS": 11926165,
+      "UserNS": 5348000,
+      "SystemNS": 6240000,
+      "ParentGCBefore": 20,
+      "ParentGCAfter": 21
+    },
+    {
+      "Mode": "baseline",
+      "Index": 13,
+      "Warmup": false,
+      "WallNS": 11120123,
+      "UserNS": 6679000,
+      "SystemNS": 4453000,
+      "ParentGCBefore": 22,
+      "ParentGCAfter": 23
+    },
+    {
+      "Mode": "baseline",
+      "Index": 14,
+      "Warmup": false,
+      "WallNS": 11521643,
+      "UserNS": 6699000,
+      "SystemNS": 4466000,
+      "ParentGCBefore": 24,
+      "ParentGCAfter": 25
+    },
+    {
+      "Mode": "baseline",
+      "Index": 15,
+      "Warmup": false,
+      "WallNS": 12395223,
+      "UserNS": 8031000,
+      "SystemNS": 4015000,
+      "ParentGCBefore": 26,
+      "ParentGCAfter": 27
+    },
+    {
+      "Mode": "baseline",
+      "Index": 16,
+      "Warmup": false,
+      "WallNS": 14026863,
+      "UserNS": 8261000,
+      "SystemNS": 3671000,
+      "ParentGCBefore": 28,
+      "ParentGCAfter": 29
+    },
+    {
+      "Mode": "baseline",
+      "Index": 17,
+      "Warmup": false,
+      "WallNS": 24644824,
+      "UserNS": 10160000,
+      "SystemNS": 3386000,
+      "ParentGCBefore": 30,
+      "ParentGCAfter": 31
+    },
+    {
+      "Mode": "baseline",
+      "Index": 18,
+      "Warmup": false,
+      "WallNS": 13238700,
+      "UserNS": 8392000,
+      "SystemNS": 4196000,
+      "ParentGCBefore": 32,
+      "ParentGCAfter": 33
+    },
+    {
+      "Mode": "baseline",
+      "Index": 19,
+      "Warmup": false,
+      "WallNS": 16171492,
+      "UserNS": 10653000,
+      "SystemNS": 2130000,
+      "ParentGCBefore": 34,
+      "ParentGCAfter": 35
+    },
+    {
+      "Mode": "baseline",
+      "Index": 20,
+      "Warmup": false,
+      "WallNS": 10977366,
+      "UserNS": 6218000,
+      "SystemNS": 4145000,
+      "ParentGCBefore": 36,
+      "ParentGCAfter": 37
+    },
+    {
+      "Mode": "baseline",
+      "Index": 21,
+      "Warmup": false,
+      "WallNS": 13545934,
+      "UserNS": 8635000,
+      "SystemNS": 4797000,
+      "ParentGCBefore": 38,
+      "ParentGCAfter": 39
+    },
+    {
+      "Mode": "baseline",
+      "Index": 22,
+      "Warmup": false,
+      "WallNS": 11544900,
+      "UserNS": 8459000,
+      "SystemNS": 2114000,
+      "ParentGCBefore": 40,
+      "ParentGCAfter": 41
+    },
+    {
+      "Mode": "baseline",
+      "Index": 23,
+      "Warmup": false,
+      "WallNS": 10965005,
+      "UserNS": 8935000,
+      "SystemNS": 2233000,
+      "ParentGCBefore": 42,
+      "ParentGCAfter": 43
+    },
+    {
+      "Mode": "baseline",
+      "Index": 24,
+      "Warmup": false,
+      "WallNS": 10271895,
+      "UserNS": 7430000,
+      "SystemNS": 2786000,
+      "ParentGCBefore": 44,
+      "ParentGCAfter": 45
+    },
+    {
+      "Mode": "baseline",
+      "Index": 25,
+      "Warmup": false,
+      "WallNS": 10969614,
+      "UserNS": 8259000,
+      "SystemNS": 2753000,
+      "ParentGCBefore": 46,
+      "ParentGCAfter": 47
+    },
+    {
+      "Mode": "baseline",
+      "Index": 26,
+      "Warmup": false,
+      "WallNS": 11128853,
+      "UserNS": 6397000,
+      "SystemNS": 4569000,
+      "ParentGCBefore": 48,
+      "ParentGCAfter": 49
+    },
+    {
+      "Mode": "baseline",
+      "Index": 27,
+      "Warmup": false,
+      "WallNS": 11585966,
+      "UserNS": 11399000,
+      "SystemNS": 0,
+      "ParentGCBefore": 50,
+      "ParentGCAfter": 51
+    },
+    {
+      "Mode": "baseline",
+      "Index": 28,
+      "Warmup": false,
+      "WallNS": 10637098,
+      "UserNS": 5373000,
+      "SystemNS": 5373000,
+      "ParentGCBefore": 52,
+      "ParentGCAfter": 53
+    },
+    {
+      "Mode": "baseline",
+      "Index": 29,
+      "Warmup": false,
+      "WallNS": 10506563,
+      "UserNS": 7320000,
+      "SystemNS": 3137000,
+      "ParentGCBefore": 54,
+      "ParentGCAfter": 55
+    },
+    {
+      "Mode": "baseline",
+      "Index": 30,
+      "Warmup": false,
+      "WallNS": 10295921,
+      "UserNS": 7726000,
+      "SystemNS": 2207000,
+      "ParentGCBefore": 56,
+      "ParentGCAfter": 57
+    },
+    {
+      "Mode": "baseline",
+      "Index": 31,
+      "Warmup": false,
+      "WallNS": 11317006,
+      "UserNS": 5630000,
+      "SystemNS": 5630000,
+      "ParentGCBefore": 58,
+      "ParentGCAfter": 59
+    },
+    {
+      "Mode": "baseline",
+      "Index": 32,
+      "Warmup": false,
+      "WallNS": 10349978,
+      "UserNS": 9128000,
+      "SystemNS": 1141000,
+      "ParentGCBefore": 60,
+      "ParentGCAfter": 61
+    },
+    {
+      "Mode": "baseline",
+      "Index": 33,
+      "Warmup": false,
+      "WallNS": 11059221,
+      "UserNS": 9033000,
+      "SystemNS": 2258000,
+      "ParentGCBefore": 62,
+      "ParentGCAfter": 63
+    },
+    {
+      "Mode": "baseline",
+      "Index": 34,
+      "Warmup": false,
+      "WallNS": 12199805,
+      "UserNS": 7845000,
+      "SystemNS": 3922000,
+      "ParentGCBefore": 64,
+      "ParentGCAfter": 65
+    },
+    {
+      "Mode": "baseline",
+      "Index": 35,
+      "Warmup": false,
+      "WallNS": 11902279,
+      "UserNS": 7452000,
+      "SystemNS": 3726000,
+      "ParentGCBefore": 66,
+      "ParentGCAfter": 67
+    },
+    {
+      "Mode": "baseline",
+      "Index": 36,
+      "Warmup": false,
+      "WallNS": 10996154,
+      "UserNS": 5762000,
+      "SystemNS": 4802000,
+      "ParentGCBefore": 68,
+      "ParentGCAfter": 69
+    },
+    {
+      "Mode": "baseline",
+      "Index": 37,
+      "Warmup": false,
+      "WallNS": 11647078,
+      "UserNS": 7630000,
+      "SystemNS": 3815000,
+      "ParentGCBefore": 70,
+      "ParentGCAfter": 71
+    },
+    {
+      "Mode": "baseline",
+      "Index": 38,
+      "Warmup": false,
+      "WallNS": 11638907,
+      "UserNS": 7206000,
+      "SystemNS": 4504000,
+      "ParentGCBefore": 72,
+      "ParentGCAfter": 73
+    },
+    {
+      "Mode": "baseline",
+      "Index": 39,
+      "Warmup": false,
+      "WallNS": 11064389,
+      "UserNS": 7138000,
+      "SystemNS": 3059000,
+      "ParentGCBefore": 74,
+      "ParentGCAfter": 75
+    },
+    {
+      "Mode": "baseline",
+      "Index": 40,
+      "Warmup": false,
+      "WallNS": 11437065,
+      "UserNS": 7586000,
+      "SystemNS": 3251000,
+      "ParentGCBefore": 76,
+      "ParentGCAfter": 77
+    },
+    {
+      "Mode": "baseline",
+      "Index": 41,
+      "Warmup": false,
+      "WallNS": 10354029,
+      "UserNS": 6597000,
+      "SystemNS": 3298000,
+      "ParentGCBefore": 78,
+      "ParentGCAfter": 79
+    },
+    {
+      "Mode": "baseline",
+      "Index": 42,
+      "Warmup": false,
+      "WallNS": 11158954,
+      "UserNS": 5940000,
+      "SystemNS": 5092000,
+      "ParentGCBefore": 80,
+      "ParentGCAfter": 81
+    },
+    {
+      "Mode": "baseline",
+      "Index": 43,
+      "Warmup": false,
+      "WallNS": 9933652,
+      "UserNS": 7736000,
+      "SystemNS": 2210000,
+      "ParentGCBefore": 82,
+      "ParentGCAfter": 83
+    },
+    {
+      "Mode": "baseline",
+      "Index": 44,
+      "Warmup": false,
+      "WallNS": 9916191,
+      "UserNS": 4071000,
+      "SystemNS": 6107000,
+      "ParentGCBefore": 84,
+      "ParentGCAfter": 85
+    },
+    {
+      "Mode": "baseline",
+      "Index": 45,
+      "Warmup": false,
+      "WallNS": 11270911,
+      "UserNS": 6988000,
+      "SystemNS": 4367000,
+      "ParentGCBefore": 86,
+      "ParentGCAfter": 87
+    },
+    {
+      "Mode": "baseline",
+      "Index": 46,
+      "Warmup": false,
+      "WallNS": 11816025,
+      "UserNS": 6796000,
+      "SystemNS": 4854000,
+      "ParentGCBefore": 88,
+      "ParentGCAfter": 89
+    },
+    {
+      "Mode": "baseline",
+      "Index": 47,
+      "Warmup": false,
+      "WallNS": 11626963,
+      "UserNS": 6225000,
+      "SystemNS": 5187000,
+      "ParentGCBefore": 90,
+      "ParentGCAfter": 91
+    },
+    {
+      "Mode": "baseline",
+      "Index": 48,
+      "Warmup": false,
+      "WallNS": 11525763,
+      "UserNS": 9057000,
+      "SystemNS": 2012000,
+      "ParentGCBefore": 92,
+      "ParentGCAfter": 93
+    },
+    {
+      "Mode": "baseline",
+      "Index": 49,
+      "Warmup": false,
+      "WallNS": 10819105,
+      "UserNS": 7905000,
+      "SystemNS": 2964000,
+      "ParentGCBefore": 94,
+      "ParentGCAfter": 95
+    },
+    {
+      "Mode": "baseline",
+      "Index": 50,
+      "Warmup": false,
+      "WallNS": 10851581,
+      "UserNS": 7172000,
+      "SystemNS": 3586000,
+      "ParentGCBefore": 96,
+      "ParentGCAfter": 97
+    },
+    {
+      "Mode": "baseline",
+      "Index": 51,
+      "Warmup": false,
+      "WallNS": 11734799,
+      "UserNS": 7225000,
+      "SystemNS": 4516000,
+      "ParentGCBefore": 98,
+      "ParentGCAfter": 99
+    },
+    {
+      "Mode": "baseline",
+      "Index": 52,
+      "Warmup": false,
+      "WallNS": 11033170,
+      "UserNS": 8185000,
+      "SystemNS": 3069000,
+      "ParentGCBefore": 100,
+      "ParentGCAfter": 101
+    },
+    {
+      "Mode": "baseline",
+      "Index": 53,
+      "Warmup": false,
+      "WallNS": 11605103,
+      "UserNS": 7213000,
+      "SystemNS": 4809000,
+      "ParentGCBefore": 102,
+      "ParentGCAfter": 103
+    },
+    {
+      "Mode": "baseline",
+      "Index": 54,
+      "Warmup": false,
+      "WallNS": 10732222,
+      "UserNS": 8511000,
+      "SystemNS": 2127000,
+      "ParentGCBefore": 104,
+      "ParentGCAfter": 104
+    },
+    {
+      "Mode": "baseline",
+      "Index": 55,
+      "Warmup": false,
+      "WallNS": 11029677,
+      "UserNS": 8338000,
+      "SystemNS": 2382000,
+      "ParentGCBefore": 106,
+      "ParentGCAfter": 107
+    },
+    {
+      "Mode": "baseline",
+      "Index": 56,
+      "Warmup": false,
+      "WallNS": 10481770,
+      "UserNS": 7950000,
+      "SystemNS": 2650000,
+      "ParentGCBefore": 108,
+      "ParentGCAfter": 109
+    },
+    {
+      "Mode": "baseline",
+      "Index": 57,
+      "Warmup": false,
+      "WallNS": 11156230,
+      "UserNS": 10032000,
+      "SystemNS": 1114000,
+      "ParentGCBefore": 110,
+      "ParentGCAfter": 111
+    },
+    {
+      "Mode": "baseline",
+      "Index": 58,
+      "Warmup": false,
+      "WallNS": 12120675,
+      "UserNS": 7473000,
+      "SystemNS": 3736000,
+      "ParentGCBefore": 112,
+      "ParentGCAfter": 113
+    },
+    {
+      "Mode": "baseline",
+      "Index": 59,
+      "Warmup": false,
+      "WallNS": 10434626,
+      "UserNS": 6572000,
+      "SystemNS": 3755000,
+      "ParentGCBefore": 114,
+      "ParentGCAfter": 115
+    },
+    {
+      "Mode": "baseline",
+      "Index": 60,
+      "Warmup": false,
+      "WallNS": 11238504,
+      "UserNS": 8039000,
+      "SystemNS": 3445000,
+      "ParentGCBefore": 116,
+      "ParentGCAfter": 117
+    },
+    {
+      "Mode": "baseline",
+      "Index": 61,
+      "Warmup": false,
+      "WallNS": 10497135,
+      "UserNS": 6048000,
+      "SystemNS": 4320000,
+      "ParentGCBefore": 118,
+      "ParentGCAfter": 119
+    },
+    {
+      "Mode": "baseline",
+      "Index": 62,
+      "Warmup": false,
+      "WallNS": 10907315,
+      "UserNS": 6942000,
+      "SystemNS": 3967000,
+      "ParentGCBefore": 120,
+      "ParentGCAfter": 121
+    },
+    {
+      "Mode": "baseline",
+      "Index": 63,
+      "Warmup": false,
+      "WallNS": 10913950,
+      "UserNS": 7968000,
+      "SystemNS": 2988000,
+      "ParentGCBefore": 122,
+      "ParentGCAfter": 123
+    },
+    {
+      "Mode": "baseline",
+      "Index": 64,
+      "Warmup": false,
+      "WallNS": 9580463,
+      "UserNS": 6690000,
+      "SystemNS": 2867000,
+      "ParentGCBefore": 124,
+      "ParentGCAfter": 125
+    },
+    {
+      "Mode": "baseline",
+      "Index": 65,
+      "Warmup": false,
+      "WallNS": 12011442,
+      "UserNS": 5700000,
+      "SystemNS": 5700000,
+      "ParentGCBefore": 126,
+      "ParentGCAfter": 127
+    },
+    {
+      "Mode": "baseline",
+      "Index": 66,
+      "Warmup": false,
+      "WallNS": 12173754,
+      "UserNS": 8363000,
+      "SystemNS": 3584000,
+      "ParentGCBefore": 128,
+      "ParentGCAfter": 129
+    },
+    {
+      "Mode": "baseline",
+      "Index": 67,
+      "Warmup": false,
+      "WallNS": 10453903,
+      "UserNS": 6194000,
+      "SystemNS": 4424000,
+      "ParentGCBefore": 130,
+      "ParentGCAfter": 131
+    },
+    {
+      "Mode": "baseline",
+      "Index": 68,
+      "Warmup": false,
+      "WallNS": 10243749,
+      "UserNS": 9320000,
+      "SystemNS": 1165000,
+      "ParentGCBefore": 132,
+      "ParentGCAfter": 133
+    },
+    {
+      "Mode": "baseline",
+      "Index": 69,
+      "Warmup": false,
+      "WallNS": 12165303,
+      "UserNS": 8384000,
+      "SystemNS": 3144000,
+      "ParentGCBefore": 134,
+      "ParentGCAfter": 135
+    },
+    {
+      "Mode": "baseline",
+      "Index": 70,
+      "Warmup": false,
+      "WallNS": 10819315,
+      "UserNS": 9757000,
+      "SystemNS": 975000,
+      "ParentGCBefore": 136,
+      "ParentGCAfter": 137
+    },
+    {
+      "Mode": "baseline",
+      "Index": 71,
+      "Warmup": false,
+      "WallNS": 13158453,
+      "UserNS": 6082000,
+      "SystemNS": 6082000,
+      "ParentGCBefore": 138,
+      "ParentGCAfter": 139
+    },
+    {
+      "Mode": "baseline",
+      "Index": 72,
+      "Warmup": false,
+      "WallNS": 10255274,
+      "UserNS": 5709000,
+      "SystemNS": 4567000,
+      "ParentGCBefore": 140,
+      "ParentGCAfter": 141
+    },
+    {
+      "Mode": "baseline",
+      "Index": 73,
+      "Warmup": false,
+      "WallNS": 11443071,
+      "UserNS": 6651000,
+      "SystemNS": 4751000,
+      "ParentGCBefore": 142,
+      "ParentGCAfter": 143
+    },
+    {
+      "Mode": "baseline",
+      "Index": 74,
+      "Warmup": false,
+      "WallNS": 12263222,
+      "UserNS": 8097000,
+      "SystemNS": 4048000,
+      "ParentGCBefore": 144,
+      "ParentGCAfter": 145
+    },
+    {
+      "Mode": "baseline",
+      "Index": 75,
+      "Warmup": false,
+      "WallNS": 12334600,
+      "UserNS": 9497000,
+      "SystemNS": 2374000,
+      "ParentGCBefore": 146,
+      "ParentGCAfter": 147
+    },
+    {
+      "Mode": "baseline",
+      "Index": 76,
+      "Warmup": false,
+      "WallNS": 11266372,
+      "UserNS": 6600000,
+      "SystemNS": 4714000,
+      "ParentGCBefore": 148,
+      "ParentGCAfter": 149
+    },
+    {
+      "Mode": "baseline",
+      "Index": 77,
+      "Warmup": false,
+      "WallNS": 11336282,
+      "UserNS": 7115000,
+      "SystemNS": 4066000,
+      "ParentGCBefore": 150,
+      "ParentGCAfter": 151
+    },
+    {
+      "Mode": "baseline",
+      "Index": 78,
+      "Warmup": false,
+      "WallNS": 12686183,
+      "UserNS": 9072000,
+      "SystemNS": 3024000,
+      "ParentGCBefore": 152,
+      "ParentGCAfter": 153
+    },
+    {
+      "Mode": "baseline",
+      "Index": 79,
+      "Warmup": false,
+      "WallNS": 11304155,
+      "UserNS": 6215000,
+      "SystemNS": 5179000,
+      "ParentGCBefore": 154,
+      "ParentGCAfter": 155
+    },
+    {
+      "Mode": "baseline",
+      "Index": 80,
+      "Warmup": false,
+      "WallNS": 10550703,
+      "UserNS": 5723000,
+      "SystemNS": 4578000,
+      "ParentGCBefore": 156,
+      "ParentGCAfter": 157
+    },
+    {
+      "Mode": "baseline",
+      "Index": 81,
+      "Warmup": false,
+      "WallNS": 11447401,
+      "UserNS": 7922000,
+      "SystemNS": 2971000,
+      "ParentGCBefore": 158,
+      "ParentGCAfter": 159
+    },
+    {
+      "Mode": "baseline",
+      "Index": 82,
+      "Warmup": false,
+      "WallNS": 10547281,
+      "UserNS": 7943000,
+      "SystemNS": 2269000,
+      "ParentGCBefore": 160,
+      "ParentGCAfter": 161
+    },
+    {
+      "Mode": "baseline",
+      "Index": 83,
+      "Warmup": false,
+      "WallNS": 11289139,
+      "UserNS": 7714000,
+      "SystemNS": 3306000,
+      "ParentGCBefore": 162,
+      "ParentGCAfter": 163
+    },
+    {
+      "Mode": "baseline",
+      "Index": 84,
+      "Warmup": false,
+      "WallNS": 10704215,
+      "UserNS": 8696000,
+      "SystemNS": 2174000,
+      "ParentGCBefore": 164,
+      "ParentGCAfter": 165
+    },
+    {
+      "Mode": "baseline",
+      "Index": 85,
+      "Warmup": false,
+      "WallNS": 10597847,
+      "UserNS": 5703000,
+      "SystemNS": 4563000,
+      "ParentGCBefore": 166,
+      "ParentGCAfter": 167
+    },
+    {
+      "Mode": "baseline",
+      "Index": 86,
+      "Warmup": false,
+      "WallNS": 10763581,
+      "UserNS": 6584000,
+      "SystemNS": 4389000,
+      "ParentGCBefore": 168,
+      "ParentGCAfter": 169
+    },
+    {
+      "Mode": "baseline",
+      "Index": 87,
+      "Warmup": false,
+      "WallNS": 11112440,
+      "UserNS": 8190000,
+      "SystemNS": 2340000,
+      "ParentGCBefore": 170,
+      "ParentGCAfter": 171
+    },
+    {
+      "Mode": "baseline",
+      "Index": 88,
+      "Warmup": false,
+      "WallNS": 10432531,
+      "UserNS": 5306000,
+      "SystemNS": 5306000,
+      "ParentGCBefore": 172,
+      "ParentGCAfter": 173
+    },
+    {
+      "Mode": "baseline",
+      "Index": 89,
+      "Warmup": false,
+      "WallNS": 12209513,
+      "UserNS": 7240000,
+      "SystemNS": 5171000,
+      "ParentGCBefore": 174,
+      "ParentGCAfter": 175
+    },
+    {
+      "Mode": "baseline",
+      "Index": 90,
+      "Warmup": false,
+      "WallNS": 11519338,
+      "UserNS": 6479000,
+      "SystemNS": 4319000,
+      "ParentGCBefore": 176,
+      "ParentGCAfter": 177
+    },
+    {
+      "Mode": "baseline",
+      "Index": 91,
+      "Warmup": false,
+      "WallNS": 30182432,
+      "UserNS": 6833000,
+      "SystemNS": 5694000,
+      "ParentGCBefore": 178,
+      "ParentGCAfter": 179
+    },
+    {
+      "Mode": "baseline",
+      "Index": 92,
+      "Warmup": false,
+      "WallNS": 12229838,
+      "UserNS": 8160000,
+      "SystemNS": 4080000,
+      "ParentGCBefore": 180,
+      "ParentGCAfter": 181
+    },
+    {
+      "Mode": "baseline",
+      "Index": 93,
+      "Warmup": false,
+      "WallNS": 10529053,
+      "UserNS": 7650000,
+      "SystemNS": 2868000,
+      "ParentGCBefore": 182,
+      "ParentGCAfter": 183
+    },
+    {
+      "Mode": "baseline",
+      "Index": 94,
+      "Warmup": false,
+      "WallNS": 10121666,
+      "UserNS": 7576000,
+      "SystemNS": 2164000,
+      "ParentGCBefore": 184,
+      "ParentGCAfter": 185
+    },
+    {
+      "Mode": "baseline",
+      "Index": 95,
+      "Warmup": false,
+      "WallNS": 10980439,
+      "UserNS": 9713000,
+      "SystemNS": 1079000,
+      "ParentGCBefore": 186,
+      "ParentGCAfter": 187
+    },
+    {
+      "Mode": "baseline",
+      "Index": 96,
+      "Warmup": false,
+      "WallNS": 10766514,
+      "UserNS": 6802000,
+      "SystemNS": 3886000,
+      "ParentGCBefore": 188,
+      "ParentGCAfter": 189
+    },
+    {
+      "Mode": "baseline",
+      "Index": 97,
+      "Warmup": false,
+      "WallNS": 10938884,
+      "UserNS": 6136000,
+      "SystemNS": 4090000,
+      "ParentGCBefore": 190,
+      "ParentGCAfter": 191
+    },
+    {
+      "Mode": "baseline",
+      "Index": 98,
+      "Warmup": false,
+      "WallNS": 11249679,
+      "UserNS": 6827000,
+      "SystemNS": 4551000,
+      "ParentGCBefore": 192,
+      "ParentGCAfter": 193
+    },
+    {
+      "Mode": "baseline",
+      "Index": 99,
+      "Warmup": false,
+      "WallNS": 12287596,
+      "UserNS": 9025000,
+      "SystemNS": 3008000,
+      "ParentGCBefore": 194,
+      "ParentGCAfter": 195
+    },
+    {
+      "Mode": "baseline",
+      "Index": 100,
+      "Warmup": false,
+      "WallNS": 10257718,
+      "UserNS": 6139000,
+      "SystemNS": 4093000,
+      "ParentGCBefore": 196,
+      "ParentGCAfter": 197
+    },
+    {
+      "Mode": "baseline",
+      "Index": 101,
+      "Warmup": false,
+      "WallNS": 11741015,
+      "UserNS": 7307000,
+      "SystemNS": 3653000,
+      "ParentGCBefore": 198,
+      "ParentGCAfter": 199
+    },
+    {
+      "Mode": "baseline",
+      "Index": 102,
+      "Warmup": false,
+      "WallNS": 10947264,
+      "UserNS": 6381000,
+      "SystemNS": 4558000,
+      "ParentGCBefore": 200,
+      "ParentGCAfter": 201
+    },
+    {
+      "Mode": "baseline",
+      "Index": 103,
+      "Warmup": false,
+      "WallNS": 10361502,
+      "UserNS": 7137000,
+      "SystemNS": 3059000,
+      "ParentGCBefore": 202,
+      "ParentGCAfter": 203
+    },
+    {
+      "Mode": "baseline",
+      "Index": 104,
+      "Warmup": false,
+      "WallNS": 10836636,
+      "UserNS": 8489000,
+      "SystemNS": 2425000,
+      "ParentGCBefore": 204,
+      "ParentGCAfter": 205
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 0,
+      "Warmup": true,
+      "WallNS": 11790952,
+      "UserNS": 6793000,
+      "SystemNS": 4075000,
+      "ParentGCBefore": 207,
+      "ParentGCAfter": 207
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 1,
+      "Warmup": true,
+      "WallNS": 10180892,
+      "UserNS": 6374000,
+      "SystemNS": 4553000,
+      "ParentGCBefore": 209,
+      "ParentGCAfter": 209
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 2,
+      "Warmup": true,
+      "WallNS": 10425478,
+      "UserNS": 6105000,
+      "SystemNS": 4070000,
+      "ParentGCBefore": 211,
+      "ParentGCAfter": 211
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 3,
+      "Warmup": true,
+      "WallNS": 10839988,
+      "UserNS": 8747000,
+      "SystemNS": 2186000,
+      "ParentGCBefore": 213,
+      "ParentGCAfter": 213
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 4,
+      "Warmup": true,
+      "WallNS": 10202403,
+      "UserNS": 7380000,
+      "SystemNS": 3163000,
+      "ParentGCBefore": 215,
+      "ParentGCAfter": 215
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 5,
+      "Warmup": false,
+      "WallNS": 12482245,
+      "UserNS": 9842000,
+      "SystemNS": 2952000,
+      "ParentGCBefore": 217,
+      "ParentGCAfter": 217
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 6,
+      "Warmup": false,
+      "WallNS": 16693978,
+      "UserNS": 13037000,
+      "SystemNS": 4011000,
+      "ParentGCBefore": 219,
+      "ParentGCAfter": 219
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 7,
+      "Warmup": false,
+      "WallNS": 10406900,
+      "UserNS": 7188000,
+      "SystemNS": 3594000,
+      "ParentGCBefore": 221,
+      "ParentGCAfter": 221
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 8,
+      "Warmup": false,
+      "WallNS": 9853754,
+      "UserNS": 7051000,
+      "SystemNS": 3022000,
+      "ParentGCBefore": 223,
+      "ParentGCAfter": 223
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 9,
+      "Warmup": false,
+      "WallNS": 10823785,
+      "UserNS": 7713000,
+      "SystemNS": 3428000,
+      "ParentGCBefore": 225,
+      "ParentGCAfter": 225
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 10,
+      "Warmup": false,
+      "WallNS": 10372258,
+      "UserNS": 6318000,
+      "SystemNS": 4513000,
+      "ParentGCBefore": 227,
+      "ParentGCAfter": 227
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 11,
+      "Warmup": false,
+      "WallNS": 10584786,
+      "UserNS": 6115000,
+      "SystemNS": 5096000,
+      "ParentGCBefore": 229,
+      "ParentGCAfter": 229
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 12,
+      "Warmup": false,
+      "WallNS": 13252809,
+      "UserNS": 10344000,
+      "SystemNS": 3182000,
+      "ParentGCBefore": 231,
+      "ParentGCAfter": 231
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 13,
+      "Warmup": false,
+      "WallNS": 10475345,
+      "UserNS": 7149000,
+      "SystemNS": 3574000,
+      "ParentGCBefore": 233,
+      "ParentGCAfter": 233
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 14,
+      "Warmup": false,
+      "WallNS": 12706018,
+      "UserNS": 11419000,
+      "SystemNS": 1141000,
+      "ParentGCBefore": 235,
+      "ParentGCAfter": 235
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 15,
+      "Warmup": false,
+      "WallNS": 10577174,
+      "UserNS": 7361000,
+      "SystemNS": 3680000,
+      "ParentGCBefore": 237,
+      "ParentGCAfter": 237
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 16,
+      "Warmup": false,
+      "WallNS": 10197165,
+      "UserNS": 7283000,
+      "SystemNS": 3121000,
+      "ParentGCBefore": 239,
+      "ParentGCAfter": 239
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 17,
+      "Warmup": false,
+      "WallNS": 12903949,
+      "UserNS": 9893000,
+      "SystemNS": 2968000,
+      "ParentGCBefore": 241,
+      "ParentGCAfter": 241
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 18,
+      "Warmup": false,
+      "WallNS": 11446283,
+      "UserNS": 6337000,
+      "SystemNS": 5431000,
+      "ParentGCBefore": 243,
+      "ParentGCAfter": 243
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 19,
+      "Warmup": false,
+      "WallNS": 9835874,
+      "UserNS": 7852000,
+      "SystemNS": 2243000,
+      "ParentGCBefore": 245,
+      "ParentGCAfter": 245
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 20,
+      "Warmup": false,
+      "WallNS": 11075843,
+      "UserNS": 7076000,
+      "SystemNS": 4043000,
+      "ParentGCBefore": 247,
+      "ParentGCAfter": 247
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 21,
+      "Warmup": false,
+      "WallNS": 10295572,
+      "UserNS": 9591000,
+      "SystemNS": 1065000,
+      "ParentGCBefore": 249,
+      "ParentGCAfter": 249
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 22,
+      "Warmup": false,
+      "WallNS": 10270638,
+      "UserNS": 9856000,
+      "SystemNS": 1232000,
+      "ParentGCBefore": 251,
+      "ParentGCAfter": 251
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 23,
+      "Warmup": false,
+      "WallNS": 10396563,
+      "UserNS": 9591000,
+      "SystemNS": 1065000,
+      "ParentGCBefore": 253,
+      "ParentGCAfter": 253
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 24,
+      "Warmup": false,
+      "WallNS": 10035481,
+      "UserNS": 7176000,
+      "SystemNS": 3075000,
+      "ParentGCBefore": 255,
+      "ParentGCAfter": 255
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 25,
+      "Warmup": false,
+      "WallNS": 9747943,
+      "UserNS": 8864000,
+      "SystemNS": 1108000,
+      "ParentGCBefore": 257,
+      "ParentGCAfter": 257
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 26,
+      "Warmup": false,
+      "WallNS": 11217691,
+      "UserNS": 10374000,
+      "SystemNS": 1037000,
+      "ParentGCBefore": 259,
+      "ParentGCAfter": 259
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 27,
+      "Warmup": false,
+      "WallNS": 10265190,
+      "UserNS": 8091000,
+      "SystemNS": 2311000,
+      "ParentGCBefore": 261,
+      "ParentGCAfter": 261
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 28,
+      "Warmup": false,
+      "WallNS": 10999297,
+      "UserNS": 8398000,
+      "SystemNS": 2799000,
+      "ParentGCBefore": 263,
+      "ParentGCAfter": 263
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 29,
+      "Warmup": false,
+      "WallNS": 10437072,
+      "UserNS": 8363000,
+      "SystemNS": 2389000,
+      "ParentGCBefore": 265,
+      "ParentGCAfter": 265
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 30,
+      "Warmup": false,
+      "WallNS": 9742216,
+      "UserNS": 6985000,
+      "SystemNS": 2993000,
+      "ParentGCBefore": 267,
+      "ParentGCAfter": 267
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 31,
+      "Warmup": false,
+      "WallNS": 9729924,
+      "UserNS": 8927000,
+      "SystemNS": 1115000,
+      "ParentGCBefore": 269,
+      "ParentGCAfter": 269
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 32,
+      "Warmup": false,
+      "WallNS": 10932249,
+      "UserNS": 5733000,
+      "SystemNS": 5733000,
+      "ParentGCBefore": 271,
+      "ParentGCAfter": 271
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 33,
+      "Warmup": false,
+      "WallNS": 14228567,
+      "UserNS": 9707000,
+      "SystemNS": 3882000,
+      "ParentGCBefore": 273,
+      "ParentGCAfter": 273
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 34,
+      "Warmup": false,
+      "WallNS": 10201705,
+      "UserNS": 8308000,
+      "SystemNS": 2373000,
+      "ParentGCBefore": 275,
+      "ParentGCAfter": 275
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 35,
+      "Warmup": false,
+      "WallNS": 11557053,
+      "UserNS": 8994000,
+      "SystemNS": 2998000,
+      "ParentGCBefore": 277,
+      "ParentGCAfter": 277
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 36,
+      "Warmup": false,
+      "WallNS": 10676907,
+      "UserNS": 7644000,
+      "SystemNS": 2866000,
+      "ParentGCBefore": 279,
+      "ParentGCAfter": 279
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 37,
+      "Warmup": false,
+      "WallNS": 9589542,
+      "UserNS": 7693000,
+      "SystemNS": 2198000,
+      "ParentGCBefore": 282,
+      "ParentGCAfter": 282
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 38,
+      "Warmup": false,
+      "WallNS": 9789639,
+      "UserNS": 5540000,
+      "SystemNS": 4432000,
+      "ParentGCBefore": 285,
+      "ParentGCAfter": 285
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 39,
+      "Warmup": false,
+      "WallNS": 10385947,
+      "UserNS": 6991000,
+      "SystemNS": 3495000,
+      "ParentGCBefore": 287,
+      "ParentGCAfter": 287
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 40,
+      "Warmup": false,
+      "WallNS": 10006078,
+      "UserNS": 8502000,
+      "SystemNS": 1889000,
+      "ParentGCBefore": 289,
+      "ParentGCAfter": 289
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 41,
+      "Warmup": false,
+      "WallNS": 12705459,
+      "UserNS": 7336000,
+      "SystemNS": 6288000,
+      "ParentGCBefore": 291,
+      "ParentGCAfter": 291
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 42,
+      "Warmup": false,
+      "WallNS": 10042046,
+      "UserNS": 8176000,
+      "SystemNS": 2336000,
+      "ParentGCBefore": 293,
+      "ParentGCAfter": 293
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 43,
+      "Warmup": false,
+      "WallNS": 10741442,
+      "UserNS": 9211000,
+      "SystemNS": 2047000,
+      "ParentGCBefore": 295,
+      "ParentGCAfter": 295
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 44,
+      "Warmup": false,
+      "WallNS": 11683187,
+      "UserNS": 8152000,
+      "SystemNS": 4076000,
+      "ParentGCBefore": 297,
+      "ParentGCAfter": 297
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 45,
+      "Warmup": false,
+      "WallNS": 10974433,
+      "UserNS": 9930000,
+      "SystemNS": 1103000,
+      "ParentGCBefore": 299,
+      "ParentGCAfter": 299
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 46,
+      "Warmup": false,
+      "WallNS": 10846273,
+      "UserNS": 8404000,
+      "SystemNS": 3151000,
+      "ParentGCBefore": 301,
+      "ParentGCAfter": 301
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 47,
+      "Warmup": false,
+      "WallNS": 10632139,
+      "UserNS": 9173000,
+      "SystemNS": 2038000,
+      "ParentGCBefore": 303,
+      "ParentGCAfter": 303
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 48,
+      "Warmup": false,
+      "WallNS": 10800877,
+      "UserNS": 9104000,
+      "SystemNS": 2276000,
+      "ParentGCBefore": 305,
+      "ParentGCAfter": 305
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 49,
+      "Warmup": false,
+      "WallNS": 19735513,
+      "UserNS": 14037000,
+      "SystemNS": 6141000,
+      "ParentGCBefore": 307,
+      "ParentGCAfter": 307
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 50,
+      "Warmup": false,
+      "WallNS": 9575574,
+      "UserNS": 6340000,
+      "SystemNS": 3623000,
+      "ParentGCBefore": 309,
+      "ParentGCAfter": 309
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 51,
+      "Warmup": false,
+      "WallNS": 11200441,
+      "UserNS": 9256000,
+      "SystemNS": 2057000,
+      "ParentGCBefore": 311,
+      "ParentGCAfter": 311
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 52,
+      "Warmup": false,
+      "WallNS": 10788514,
+      "UserNS": 7809000,
+      "SystemNS": 3346000,
+      "ParentGCBefore": 313,
+      "ParentGCAfter": 313
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 53,
+      "Warmup": false,
+      "WallNS": 10066491,
+      "UserNS": 5118000,
+      "SystemNS": 5118000,
+      "ParentGCBefore": 315,
+      "ParentGCAfter": 315
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 54,
+      "Warmup": false,
+      "WallNS": 11227749,
+      "UserNS": 8182000,
+      "SystemNS": 3506000,
+      "ParentGCBefore": 317,
+      "ParentGCAfter": 317
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 55,
+      "Warmup": false,
+      "WallNS": 11026325,
+      "UserNS": 4538000,
+      "SystemNS": 6807000,
+      "ParentGCBefore": 319,
+      "ParentGCAfter": 319
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 56,
+      "Warmup": false,
+      "WallNS": 10464100,
+      "UserNS": 8835000,
+      "SystemNS": 1963000,
+      "ParentGCBefore": 321,
+      "ParentGCAfter": 321
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 57,
+      "Warmup": false,
+      "WallNS": 10768609,
+      "UserNS": 8047000,
+      "SystemNS": 3017000,
+      "ParentGCBefore": 323,
+      "ParentGCAfter": 323
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 58,
+      "Warmup": false,
+      "WallNS": 10421008,
+      "UserNS": 8381000,
+      "SystemNS": 2095000,
+      "ParentGCBefore": 325,
+      "ParentGCAfter": 325
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 59,
+      "Warmup": false,
+      "WallNS": 10743676,
+      "UserNS": 4775000,
+      "SystemNS": 6685000,
+      "ParentGCBefore": 327,
+      "ParentGCAfter": 327
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 60,
+      "Warmup": false,
+      "WallNS": 10409973,
+      "UserNS": 5839000,
+      "SystemNS": 5005000,
+      "ParentGCBefore": 329,
+      "ParentGCAfter": 329
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 61,
+      "Warmup": false,
+      "WallNS": 15988856,
+      "UserNS": 13602000,
+      "SystemNS": 3138000,
+      "ParentGCBefore": 331,
+      "ParentGCAfter": 331
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 62,
+      "Warmup": false,
+      "WallNS": 10388322,
+      "UserNS": 9774000,
+      "SystemNS": 1086000,
+      "ParentGCBefore": 334,
+      "ParentGCAfter": 334
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 63,
+      "Warmup": false,
+      "WallNS": 10764000,
+      "UserNS": 7449000,
+      "SystemNS": 3724000,
+      "ParentGCBefore": 336,
+      "ParentGCAfter": 336
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 64,
+      "Warmup": false,
+      "WallNS": 10332448,
+      "UserNS": 7664000,
+      "SystemNS": 2874000,
+      "ParentGCBefore": 338,
+      "ParentGCAfter": 338
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 65,
+      "Warmup": false,
+      "WallNS": 11177463,
+      "UserNS": 8088000,
+      "SystemNS": 3466000,
+      "ParentGCBefore": 340,
+      "ParentGCAfter": 340
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 66,
+      "Warmup": false,
+      "WallNS": 10351027,
+      "UserNS": 8676000,
+      "SystemNS": 2169000,
+      "ParentGCBefore": 342,
+      "ParentGCAfter": 342
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 67,
+      "Warmup": false,
+      "WallNS": 10948940,
+      "UserNS": 10277000,
+      "SystemNS": 1141000,
+      "ParentGCBefore": 344,
+      "ParentGCAfter": 344
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 68,
+      "Warmup": false,
+      "WallNS": 10762044,
+      "UserNS": 9321000,
+      "SystemNS": 1864000,
+      "ParentGCBefore": 346,
+      "ParentGCAfter": 346
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 69,
+      "Warmup": false,
+      "WallNS": 11508652,
+      "UserNS": 5991000,
+      "SystemNS": 5991000,
+      "ParentGCBefore": 348,
+      "ParentGCAfter": 348
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 70,
+      "Warmup": false,
+      "WallNS": 10875398,
+      "UserNS": 6744000,
+      "SystemNS": 4817000,
+      "ParentGCBefore": 350,
+      "ParentGCAfter": 350
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 71,
+      "Warmup": false,
+      "WallNS": 11302130,
+      "UserNS": 6069000,
+      "SystemNS": 5057000,
+      "ParentGCBefore": 352,
+      "ParentGCAfter": 352
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 72,
+      "Warmup": false,
+      "WallNS": 10562437,
+      "UserNS": 5119000,
+      "SystemNS": 6142000,
+      "ParentGCBefore": 354,
+      "ParentGCAfter": 354
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 73,
+      "Warmup": false,
+      "WallNS": 10708476,
+      "UserNS": 7519000,
+      "SystemNS": 3222000,
+      "ParentGCBefore": 356,
+      "ParentGCAfter": 356
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 74,
+      "Warmup": false,
+      "WallNS": 11314003,
+      "UserNS": 5632000,
+      "SystemNS": 5632000,
+      "ParentGCBefore": 358,
+      "ParentGCAfter": 358
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 75,
+      "Warmup": false,
+      "WallNS": 11275521,
+      "UserNS": 7834000,
+      "SystemNS": 3357000,
+      "ParentGCBefore": 360,
+      "ParentGCAfter": 360
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 76,
+      "Warmup": false,
+      "WallNS": 12620532,
+      "UserNS": 5739000,
+      "SystemNS": 5739000,
+      "ParentGCBefore": 362,
+      "ParentGCAfter": 362
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 77,
+      "Warmup": false,
+      "WallNS": 11117678,
+      "UserNS": 6862000,
+      "SystemNS": 3921000,
+      "ParentGCBefore": 364,
+      "ParentGCAfter": 364
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 78,
+      "Warmup": false,
+      "WallNS": 9648210,
+      "UserNS": 7232000,
+      "SystemNS": 3099000,
+      "ParentGCBefore": 366,
+      "ParentGCAfter": 366
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 79,
+      "Warmup": false,
+      "WallNS": 9855290,
+      "UserNS": 7835000,
+      "SystemNS": 2238000,
+      "ParentGCBefore": 368,
+      "ParentGCAfter": 368
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 80,
+      "Warmup": false,
+      "WallNS": 11281178,
+      "UserNS": 7459000,
+      "SystemNS": 4262000,
+      "ParentGCBefore": 370,
+      "ParentGCAfter": 370
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 81,
+      "Warmup": false,
+      "WallNS": 11298638,
+      "UserNS": 8454000,
+      "SystemNS": 3170000,
+      "ParentGCBefore": 372,
+      "ParentGCAfter": 372
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 82,
+      "Warmup": false,
+      "WallNS": 10251083,
+      "UserNS": 8452000,
+      "SystemNS": 2415000,
+      "ParentGCBefore": 374,
+      "ParentGCAfter": 374
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 83,
+      "Warmup": false,
+      "WallNS": 10586393,
+      "UserNS": 9870000,
+      "SystemNS": 1233000,
+      "ParentGCBefore": 376,
+      "ParentGCAfter": 376
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 84,
+      "Warmup": false,
+      "WallNS": 10835867,
+      "UserNS": 6042000,
+      "SystemNS": 5178000,
+      "ParentGCBefore": 378,
+      "ParentGCAfter": 378
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 85,
+      "Warmup": false,
+      "WallNS": 10872465,
+      "UserNS": 10068000,
+      "SystemNS": 1118000,
+      "ParentGCBefore": 380,
+      "ParentGCAfter": 380
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 86,
+      "Warmup": false,
+      "WallNS": 11250937,
+      "UserNS": 8416000,
+      "SystemNS": 3156000,
+      "ParentGCBefore": 382,
+      "ParentGCAfter": 382
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 87,
+      "Warmup": false,
+      "WallNS": 10507960,
+      "UserNS": 4881000,
+      "SystemNS": 5857000,
+      "ParentGCBefore": 384,
+      "ParentGCAfter": 384
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 88,
+      "Warmup": false,
+      "WallNS": 11815536,
+      "UserNS": 7609000,
+      "SystemNS": 4348000,
+      "ParentGCBefore": 386,
+      "ParentGCAfter": 386
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 89,
+      "Warmup": false,
+      "WallNS": 13017163,
+      "UserNS": 8505000,
+      "SystemNS": 4725000,
+      "ParentGCBefore": 388,
+      "ParentGCAfter": 388
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 90,
+      "Warmup": false,
+      "WallNS": 11297870,
+      "UserNS": 7376000,
+      "SystemNS": 4215000,
+      "ParentGCBefore": 390,
+      "ParentGCAfter": 390
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 91,
+      "Warmup": false,
+      "WallNS": 11661326,
+      "UserNS": 6422000,
+      "SystemNS": 4587000,
+      "ParentGCBefore": 392,
+      "ParentGCAfter": 392
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 92,
+      "Warmup": false,
+      "WallNS": 10089329,
+      "UserNS": 7067000,
+      "SystemNS": 3533000,
+      "ParentGCBefore": 394,
+      "ParentGCAfter": 394
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 93,
+      "Warmup": false,
+      "WallNS": 9776928,
+      "UserNS": 6462000,
+      "SystemNS": 3692000,
+      "ParentGCBefore": 396,
+      "ParentGCAfter": 396
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 94,
+      "Warmup": false,
+      "WallNS": 11626056,
+      "UserNS": 9560000,
+      "SystemNS": 2124000,
+      "ParentGCBefore": 398,
+      "ParentGCAfter": 398
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 95,
+      "Warmup": false,
+      "WallNS": 10922122,
+      "UserNS": 5097000,
+      "SystemNS": 6117000,
+      "ParentGCBefore": 400,
+      "ParentGCAfter": 400
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 96,
+      "Warmup": false,
+      "WallNS": 11195342,
+      "UserNS": 9359000,
+      "SystemNS": 1871000,
+      "ParentGCBefore": 402,
+      "ParentGCAfter": 402
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 97,
+      "Warmup": false,
+      "WallNS": 10812052,
+      "UserNS": 8028000,
+      "SystemNS": 3010000,
+      "ParentGCBefore": 404,
+      "ParentGCAfter": 404
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 98,
+      "Warmup": false,
+      "WallNS": 10585904,
+      "UserNS": 7072000,
+      "SystemNS": 4041000,
+      "ParentGCBefore": 406,
+      "ParentGCAfter": 406
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 99,
+      "Warmup": false,
+      "WallNS": 10774197,
+      "UserNS": 8066000,
+      "SystemNS": 3024000,
+      "ParentGCBefore": 408,
+      "ParentGCAfter": 408
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 100,
+      "Warmup": false,
+      "WallNS": 14342828,
+      "UserNS": 8299000,
+      "SystemNS": 6224000,
+      "ParentGCBefore": 410,
+      "ParentGCAfter": 410
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 101,
+      "Warmup": false,
+      "WallNS": 10465916,
+      "UserNS": 8872000,
+      "SystemNS": 1971000,
+      "ParentGCBefore": 412,
+      "ParentGCAfter": 412
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 102,
+      "Warmup": false,
+      "WallNS": 9998186,
+      "UserNS": 6805000,
+      "SystemNS": 3402000,
+      "ParentGCBefore": 414,
+      "ParentGCAfter": 414
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 103,
+      "Warmup": false,
+      "WallNS": 10663149,
+      "UserNS": 5830000,
+      "SystemNS": 4858000,
+      "ParentGCBefore": 416,
+      "ParentGCAfter": 416
+    },
+    {
+      "Mode": "parent-gc",
+      "Index": 104,
+      "Warmup": false,
+      "WallNS": 12373921,
+      "UserNS": 10224000,
+      "SystemNS": 2272000,
+      "ParentGCBefore": 419,
+      "ParentGCAfter": 419
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 0,
+      "Warmup": true,
+      "WallNS": 9849842,
+      "UserNS": 8989000,
+      "SystemNS": 1123000,
+      "ParentGCBefore": 420,
+      "ParentGCAfter": 421
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 1,
+      "Warmup": true,
+      "WallNS": 11586945,
+      "UserNS": 7179000,
+      "SystemNS": 5127000,
+      "ParentGCBefore": 422,
+      "ParentGCAfter": 422
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 2,
+      "Warmup": true,
+      "WallNS": 10553847,
+      "UserNS": 4784000,
+      "SystemNS": 6698000,
+      "ParentGCBefore": 424,
+      "ParentGCAfter": 424
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 3,
+      "Warmup": true,
+      "WallNS": 12028624,
+      "UserNS": 9796000,
+      "SystemNS": 2938000,
+      "ParentGCBefore": 426,
+      "ParentGCAfter": 426
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 4,
+      "Warmup": true,
+      "WallNS": 10313103,
+      "UserNS": 6034000,
+      "SystemNS": 4827000,
+      "ParentGCBefore": 428,
+      "ParentGCAfter": 428
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 5,
+      "Warmup": false,
+      "WallNS": 11364219,
+      "UserNS": 6992000,
+      "SystemNS": 4994000,
+      "ParentGCBefore": 430,
+      "ParentGCAfter": 430
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 6,
+      "Warmup": false,
+      "WallNS": 11487001,
+      "UserNS": 5607000,
+      "SystemNS": 6728000,
+      "ParentGCBefore": 432,
+      "ParentGCAfter": 433
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 7,
+      "Warmup": false,
+      "WallNS": 10092193,
+      "UserNS": 6931000,
+      "SystemNS": 3465000,
+      "ParentGCBefore": 434,
+      "ParentGCAfter": 435
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 8,
+      "Warmup": false,
+      "WallNS": 9786007,
+      "UserNS": 3982000,
+      "SystemNS": 5973000,
+      "ParentGCBefore": 436,
+      "ParentGCAfter": 437
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 9,
+      "Warmup": false,
+      "WallNS": 10936440,
+      "UserNS": 6095000,
+      "SystemNS": 5079000,
+      "ParentGCBefore": 438,
+      "ParentGCAfter": 438
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 10,
+      "Warmup": false,
+      "WallNS": 10860312,
+      "UserNS": 8581000,
+      "SystemNS": 2860000,
+      "ParentGCBefore": 440,
+      "ParentGCAfter": 440
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 11,
+      "Warmup": false,
+      "WallNS": 12049087,
+      "UserNS": 8441000,
+      "SystemNS": 4220000,
+      "ParentGCBefore": 442,
+      "ParentGCAfter": 442
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 12,
+      "Warmup": false,
+      "WallNS": 10619009,
+      "UserNS": 7825000,
+      "SystemNS": 2934000,
+      "ParentGCBefore": 444,
+      "ParentGCAfter": 445
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 13,
+      "Warmup": false,
+      "WallNS": 12099304,
+      "UserNS": 5127000,
+      "SystemNS": 7178000,
+      "ParentGCBefore": 447,
+      "ParentGCAfter": 447
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 14,
+      "Warmup": false,
+      "WallNS": 10196048,
+      "UserNS": 6917000,
+      "SystemNS": 3952000,
+      "ParentGCBefore": 448,
+      "ParentGCAfter": 448
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 15,
+      "Warmup": false,
+      "WallNS": 11175159,
+      "UserNS": 9961000,
+      "SystemNS": 1992000,
+      "ParentGCBefore": 451,
+      "ParentGCAfter": 451
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 16,
+      "Warmup": false,
+      "WallNS": 11104409,
+      "UserNS": 6806000,
+      "SystemNS": 4861000,
+      "ParentGCBefore": 452,
+      "ParentGCAfter": 453
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 17,
+      "Warmup": false,
+      "WallNS": 11051608,
+      "UserNS": 10060000,
+      "SystemNS": 1117000,
+      "ParentGCBefore": 454,
+      "ParentGCAfter": 455
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 18,
+      "Warmup": false,
+      "WallNS": 19024944,
+      "UserNS": 16351000,
+      "SystemNS": 3065000,
+      "ParentGCBefore": 456,
+      "ParentGCAfter": 456
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 19,
+      "Warmup": false,
+      "WallNS": 11331464,
+      "UserNS": 8304000,
+      "SystemNS": 3690000,
+      "ParentGCBefore": 458,
+      "ParentGCAfter": 458
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 20,
+      "Warmup": false,
+      "WallNS": 13356384,
+      "UserNS": 9499000,
+      "SystemNS": 4221000,
+      "ParentGCBefore": 460,
+      "ParentGCAfter": 460
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 21,
+      "Warmup": false,
+      "WallNS": 10128790,
+      "UserNS": 8229000,
+      "SystemNS": 2351000,
+      "ParentGCBefore": 462,
+      "ParentGCAfter": 462
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 22,
+      "Warmup": false,
+      "WallNS": 11090929,
+      "UserNS": 8391000,
+      "SystemNS": 3596000,
+      "ParentGCBefore": 464,
+      "ParentGCAfter": 464
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 23,
+      "Warmup": false,
+      "WallNS": 10490849,
+      "UserNS": 7750000,
+      "SystemNS": 3444000,
+      "ParentGCBefore": 466,
+      "ParentGCAfter": 466
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 24,
+      "Warmup": false,
+      "WallNS": 17625946,
+      "UserNS": 14281000,
+      "SystemNS": 4080000,
+      "ParentGCBefore": 468,
+      "ParentGCAfter": 468
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 25,
+      "Warmup": false,
+      "WallNS": 10433579,
+      "UserNS": 8942000,
+      "SystemNS": 1987000,
+      "ParentGCBefore": 470,
+      "ParentGCAfter": 470
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 26,
+      "Warmup": false,
+      "WallNS": 10554336,
+      "UserNS": 5411000,
+      "SystemNS": 5411000,
+      "ParentGCBefore": 472,
+      "ParentGCAfter": 472
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 27,
+      "Warmup": false,
+      "WallNS": 11594558,
+      "UserNS": 4455000,
+      "SystemNS": 8167000,
+      "ParentGCBefore": 474,
+      "ParentGCAfter": 474
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 28,
+      "Warmup": false,
+      "WallNS": 12189260,
+      "UserNS": 8550000,
+      "SystemNS": 4275000,
+      "ParentGCBefore": 476,
+      "ParentGCAfter": 476
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 29,
+      "Warmup": false,
+      "WallNS": 14628899,
+      "UserNS": 12069000,
+      "SystemNS": 3017000,
+      "ParentGCBefore": 478,
+      "ParentGCAfter": 478
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 30,
+      "Warmup": false,
+      "WallNS": 11452500,
+      "UserNS": 8580000,
+      "SystemNS": 3217000,
+      "ParentGCBefore": 480,
+      "ParentGCAfter": 480
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 31,
+      "Warmup": false,
+      "WallNS": 12908838,
+      "UserNS": 9339000,
+      "SystemNS": 4150000,
+      "ParentGCBefore": 482,
+      "ParentGCAfter": 482
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 32,
+      "Warmup": false,
+      "WallNS": 11289838,
+      "UserNS": 6915000,
+      "SystemNS": 4939000,
+      "ParentGCBefore": 484,
+      "ParentGCAfter": 484
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 33,
+      "Warmup": false,
+      "WallNS": 13631350,
+      "UserNS": 11931000,
+      "SystemNS": 2169000,
+      "ParentGCBefore": 486,
+      "ParentGCAfter": 486
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 34,
+      "Warmup": false,
+      "WallNS": 9934560,
+      "UserNS": 7666000,
+      "SystemNS": 2555000,
+      "ParentGCBefore": 488,
+      "ParentGCAfter": 488
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 35,
+      "Warmup": false,
+      "WallNS": 10187597,
+      "UserNS": 5943000,
+      "SystemNS": 4952000,
+      "ParentGCBefore": 490,
+      "ParentGCAfter": 490
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 36,
+      "Warmup": false,
+      "WallNS": 9990434,
+      "UserNS": 7535000,
+      "SystemNS": 3229000,
+      "ParentGCBefore": 492,
+      "ParentGCAfter": 492
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 37,
+      "Warmup": false,
+      "WallNS": 11748629,
+      "UserNS": 8534000,
+      "SystemNS": 4267000,
+      "ParentGCBefore": 494,
+      "ParentGCAfter": 494
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 38,
+      "Warmup": false,
+      "WallNS": 10380988,
+      "UserNS": 6695000,
+      "SystemNS": 4463000,
+      "ParentGCBefore": 496,
+      "ParentGCAfter": 496
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 39,
+      "Warmup": false,
+      "WallNS": 10621593,
+      "UserNS": 9161000,
+      "SystemNS": 2035000,
+      "ParentGCBefore": 498,
+      "ParentGCAfter": 498
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 40,
+      "Warmup": false,
+      "WallNS": 10031081,
+      "UserNS": 6277000,
+      "SystemNS": 4184000,
+      "ParentGCBefore": 500,
+      "ParentGCAfter": 500
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 41,
+      "Warmup": false,
+      "WallNS": 10260581,
+      "UserNS": 7135000,
+      "SystemNS": 3567000,
+      "ParentGCBefore": 502,
+      "ParentGCAfter": 502
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 42,
+      "Warmup": false,
+      "WallNS": 11450194,
+      "UserNS": 6184000,
+      "SystemNS": 6184000,
+      "ParentGCBefore": 504,
+      "ParentGCAfter": 504
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 43,
+      "Warmup": false,
+      "WallNS": 11064460,
+      "UserNS": 6005000,
+      "SystemNS": 5004000,
+      "ParentGCBefore": 506,
+      "ParentGCAfter": 507
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 44,
+      "Warmup": false,
+      "WallNS": 10762045,
+      "UserNS": 10238000,
+      "SystemNS": 1137000,
+      "ParentGCBefore": 508,
+      "ParentGCAfter": 508
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 45,
+      "Warmup": false,
+      "WallNS": 10793543,
+      "UserNS": 5760000,
+      "SystemNS": 5760000,
+      "ParentGCBefore": 511,
+      "ParentGCAfter": 511
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 46,
+      "Warmup": false,
+      "WallNS": 11401934,
+      "UserNS": 7453000,
+      "SystemNS": 4258000,
+      "ParentGCBefore": 512,
+      "ParentGCAfter": 512
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 47,
+      "Warmup": false,
+      "WallNS": 12225996,
+      "UserNS": 8389000,
+      "SystemNS": 4194000,
+      "ParentGCBefore": 514,
+      "ParentGCAfter": 514
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 48,
+      "Warmup": false,
+      "WallNS": 16345817,
+      "UserNS": 11753000,
+      "SystemNS": 4273000,
+      "ParentGCBefore": 516,
+      "ParentGCAfter": 516
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 49,
+      "Warmup": false,
+      "WallNS": 18495265,
+      "UserNS": 12128000,
+      "SystemNS": 7463000,
+      "ParentGCBefore": 518,
+      "ParentGCAfter": 518
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 50,
+      "Warmup": false,
+      "WallNS": 10525212,
+      "UserNS": 6768000,
+      "SystemNS": 4230000,
+      "ParentGCBefore": 520,
+      "ParentGCAfter": 520
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 51,
+      "Warmup": false,
+      "WallNS": 10468151,
+      "UserNS": 9818000,
+      "SystemNS": 1090000,
+      "ParentGCBefore": 522,
+      "ParentGCAfter": 522
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 52,
+      "Warmup": false,
+      "WallNS": 10978904,
+      "UserNS": 6204000,
+      "SystemNS": 5170000,
+      "ParentGCBefore": 524,
+      "ParentGCAfter": 524
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 53,
+      "Warmup": false,
+      "WallNS": 14756849,
+      "UserNS": 10285000,
+      "SystemNS": 5142000,
+      "ParentGCBefore": 526,
+      "ParentGCAfter": 526
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 54,
+      "Warmup": false,
+      "WallNS": 11384265,
+      "UserNS": 9118000,
+      "SystemNS": 2279000,
+      "ParentGCBefore": 528,
+      "ParentGCAfter": 528
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 55,
+      "Warmup": false,
+      "WallNS": 15867751,
+      "UserNS": 10736000,
+      "SystemNS": 5368000,
+      "ParentGCBefore": 530,
+      "ParentGCAfter": 530
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 56,
+      "Warmup": false,
+      "WallNS": 10440633,
+      "UserNS": 7821000,
+      "SystemNS": 3351000,
+      "ParentGCBefore": 532,
+      "ParentGCAfter": 532
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 57,
+      "Warmup": false,
+      "WallNS": 10507262,
+      "UserNS": 7358000,
+      "SystemNS": 3679000,
+      "ParentGCBefore": 534,
+      "ParentGCAfter": 535
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 58,
+      "Warmup": false,
+      "WallNS": 10630532,
+      "UserNS": 7649000,
+      "SystemNS": 3278000,
+      "ParentGCBefore": 536,
+      "ParentGCAfter": 537
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 59,
+      "Warmup": false,
+      "WallNS": 11416181,
+      "UserNS": 5110000,
+      "SystemNS": 6813000,
+      "ParentGCBefore": 538,
+      "ParentGCAfter": 538
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 60,
+      "Warmup": false,
+      "WallNS": 10409903,
+      "UserNS": 7717000,
+      "SystemNS": 3307000,
+      "ParentGCBefore": 540,
+      "ParentGCAfter": 540
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 61,
+      "Warmup": false,
+      "WallNS": 10332239,
+      "UserNS": 11155000,
+      "SystemNS": 0,
+      "ParentGCBefore": 543,
+      "ParentGCAfter": 543
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 62,
+      "Warmup": false,
+      "WallNS": 10213788,
+      "UserNS": 7595000,
+      "SystemNS": 2531000,
+      "ParentGCBefore": 544,
+      "ParentGCAfter": 544
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 63,
+      "Warmup": false,
+      "WallNS": 10644711,
+      "UserNS": 7125000,
+      "SystemNS": 4071000,
+      "ParentGCBefore": 546,
+      "ParentGCAfter": 546
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 64,
+      "Warmup": false,
+      "WallNS": 10652812,
+      "UserNS": 7323000,
+      "SystemNS": 3661000,
+      "ParentGCBefore": 548,
+      "ParentGCAfter": 548
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 65,
+      "Warmup": false,
+      "WallNS": 10165177,
+      "UserNS": 7477000,
+      "SystemNS": 3204000,
+      "ParentGCBefore": 550,
+      "ParentGCAfter": 550
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 66,
+      "Warmup": false,
+      "WallNS": 11509281,
+      "UserNS": 7477000,
+      "SystemNS": 4272000,
+      "ParentGCBefore": 552,
+      "ParentGCAfter": 552
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 67,
+      "Warmup": false,
+      "WallNS": 20049871,
+      "UserNS": 16786000,
+      "SystemNS": 3730000,
+      "ParentGCBefore": 554,
+      "ParentGCAfter": 554
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 68,
+      "Warmup": false,
+      "WallNS": 11126548,
+      "UserNS": 10992000,
+      "SystemNS": 999000,
+      "ParentGCBefore": 556,
+      "ParentGCAfter": 556
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 69,
+      "Warmup": false,
+      "WallNS": 11269515,
+      "UserNS": 9793000,
+      "SystemNS": 2176000,
+      "ParentGCBefore": 558,
+      "ParentGCAfter": 558
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 70,
+      "Warmup": false,
+      "WallNS": 10745911,
+      "UserNS": 8057000,
+      "SystemNS": 3021000,
+      "ParentGCBefore": 560,
+      "ParentGCAfter": 560
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 71,
+      "Warmup": false,
+      "WallNS": 10088073,
+      "UserNS": 6501000,
+      "SystemNS": 3715000,
+      "ParentGCBefore": 562,
+      "ParentGCAfter": 563
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 72,
+      "Warmup": false,
+      "WallNS": 18886728,
+      "UserNS": 14218000,
+      "SystemNS": 5077000,
+      "ParentGCBefore": 564,
+      "ParentGCAfter": 565
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 73,
+      "Warmup": false,
+      "WallNS": 10966611,
+      "UserNS": 8275000,
+      "SystemNS": 3103000,
+      "ParentGCBefore": 566,
+      "ParentGCAfter": 566
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 74,
+      "Warmup": false,
+      "WallNS": 10745283,
+      "UserNS": 6765000,
+      "SystemNS": 4510000,
+      "ParentGCBefore": 568,
+      "ParentGCAfter": 568
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 75,
+      "Warmup": false,
+      "WallNS": 11201069,
+      "UserNS": 8419000,
+      "SystemNS": 4209000,
+      "ParentGCBefore": 570,
+      "ParentGCAfter": 570
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 76,
+      "Warmup": false,
+      "WallNS": 10803740,
+      "UserNS": 7835000,
+      "SystemNS": 3358000,
+      "ParentGCBefore": 572,
+      "ParentGCAfter": 572
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 77,
+      "Warmup": false,
+      "WallNS": 11723695,
+      "UserNS": 7657000,
+      "SystemNS": 4375000,
+      "ParentGCBefore": 574,
+      "ParentGCAfter": 574
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 78,
+      "Warmup": false,
+      "WallNS": 12155387,
+      "UserNS": 10345000,
+      "SystemNS": 2299000,
+      "ParentGCBefore": 576,
+      "ParentGCAfter": 576
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 79,
+      "Warmup": false,
+      "WallNS": 10741232,
+      "UserNS": 6961000,
+      "SystemNS": 4350000,
+      "ParentGCBefore": 578,
+      "ParentGCAfter": 578
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 80,
+      "Warmup": false,
+      "WallNS": 10978694,
+      "UserNS": 9023000,
+      "SystemNS": 2255000,
+      "ParentGCBefore": 580,
+      "ParentGCAfter": 580
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 81,
+      "Warmup": false,
+      "WallNS": 10168600,
+      "UserNS": 6650000,
+      "SystemNS": 4433000,
+      "ParentGCBefore": 582,
+      "ParentGCAfter": 582
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 82,
+      "Warmup": false,
+      "WallNS": 9885881,
+      "UserNS": 6959000,
+      "SystemNS": 3479000,
+      "ParentGCBefore": 584,
+      "ParentGCAfter": 584
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 83,
+      "Warmup": false,
+      "WallNS": 10785721,
+      "UserNS": 4731000,
+      "SystemNS": 6308000,
+      "ParentGCBefore": 586,
+      "ParentGCAfter": 586
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 84,
+      "Warmup": false,
+      "WallNS": 10356544,
+      "UserNS": 8400000,
+      "SystemNS": 2100000,
+      "ParentGCBefore": 588,
+      "ParentGCAfter": 588
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 85,
+      "Warmup": false,
+      "WallNS": 10921283,
+      "UserNS": 8130000,
+      "SystemNS": 3049000,
+      "ParentGCBefore": 590,
+      "ParentGCAfter": 590
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 86,
+      "Warmup": false,
+      "WallNS": 10451389,
+      "UserNS": 4649000,
+      "SystemNS": 5579000,
+      "ParentGCBefore": 592,
+      "ParentGCAfter": 592
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 87,
+      "Warmup": false,
+      "WallNS": 11109926,
+      "UserNS": 8888000,
+      "SystemNS": 2962000,
+      "ParentGCBefore": 594,
+      "ParentGCAfter": 594
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 88,
+      "Warmup": false,
+      "WallNS": 12038821,
+      "UserNS": 7145000,
+      "SystemNS": 5104000,
+      "ParentGCBefore": 596,
+      "ParentGCAfter": 596
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 89,
+      "Warmup": false,
+      "WallNS": 10407179,
+      "UserNS": 3969000,
+      "SystemNS": 6947000,
+      "ParentGCBefore": 598,
+      "ParentGCAfter": 598
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 90,
+      "Warmup": false,
+      "WallNS": 19668885,
+      "UserNS": 17838000,
+      "SystemNS": 2098000,
+      "ParentGCBefore": 600,
+      "ParentGCAfter": 600
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 91,
+      "Warmup": false,
+      "WallNS": 13674653,
+      "UserNS": 9346000,
+      "SystemNS": 4673000,
+      "ParentGCBefore": 602,
+      "ParentGCAfter": 602
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 92,
+      "Warmup": false,
+      "WallNS": 11600215,
+      "UserNS": 6810000,
+      "SystemNS": 5107000,
+      "ParentGCBefore": 604,
+      "ParentGCAfter": 604
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 93,
+      "Warmup": false,
+      "WallNS": 13046007,
+      "UserNS": 8829000,
+      "SystemNS": 4816000,
+      "ParentGCBefore": 606,
+      "ParentGCAfter": 606
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 94,
+      "Warmup": false,
+      "WallNS": 11039317,
+      "UserNS": 6908000,
+      "SystemNS": 4605000,
+      "ParentGCBefore": 608,
+      "ParentGCAfter": 608
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 95,
+      "Warmup": false,
+      "WallNS": 11424004,
+      "UserNS": 7960000,
+      "SystemNS": 3538000,
+      "ParentGCBefore": 610,
+      "ParentGCAfter": 610
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 96,
+      "Warmup": false,
+      "WallNS": 10754083,
+      "UserNS": 9401000,
+      "SystemNS": 2089000,
+      "ParentGCBefore": 612,
+      "ParentGCAfter": 612
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 97,
+      "Warmup": false,
+      "WallNS": 10950547,
+      "UserNS": 6442000,
+      "SystemNS": 4602000,
+      "ParentGCBefore": 614,
+      "ParentGCAfter": 615
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 98,
+      "Warmup": false,
+      "WallNS": 10505237,
+      "UserNS": 6610000,
+      "SystemNS": 3777000,
+      "ParentGCBefore": 616,
+      "ParentGCAfter": 617
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 99,
+      "Warmup": false,
+      "WallNS": 11917226,
+      "UserNS": 8474000,
+      "SystemNS": 3766000,
+      "ParentGCBefore": 618,
+      "ParentGCAfter": 618
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 100,
+      "Warmup": false,
+      "WallNS": 10657422,
+      "UserNS": 8061000,
+      "SystemNS": 3023000,
+      "ParentGCBefore": 620,
+      "ParentGCAfter": 620
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 101,
+      "Warmup": false,
+      "WallNS": 10330353,
+      "UserNS": 7491000,
+      "SystemNS": 3210000,
+      "ParentGCBefore": 622,
+      "ParentGCAfter": 622
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 102,
+      "Warmup": false,
+      "WallNS": 10465636,
+      "UserNS": 7579000,
+      "SystemNS": 3248000,
+      "ParentGCBefore": 624,
+      "ParentGCAfter": 624
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 103,
+      "Warmup": false,
+      "WallNS": 9918707,
+      "UserNS": 7294000,
+      "SystemNS": 3126000,
+      "ParentGCBefore": 626,
+      "ParentGCAfter": 627
+    },
+    {
+      "Mode": "preallocated-pipe",
+      "Index": 104,
+      "Warmup": false,
+      "WallNS": 10159381,
+      "UserNS": 5143000,
+      "SystemNS": 5143000,
+      "ParentGCBefore": 628,
+      "ParentGCAfter": 629
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 0,
+      "Warmup": true,
+      "WallNS": 10801296,
+      "UserNS": 5625000,
+      "SystemNS": 5625000,
+      "ParentGCBefore": 631,
+      "ParentGCAfter": 631
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 1,
+      "Warmup": true,
+      "WallNS": 9811570,
+      "UserNS": 6081000,
+      "SystemNS": 4054000,
+      "ParentGCBefore": 633,
+      "ParentGCAfter": 633
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 2,
+      "Warmup": true,
+      "WallNS": 10908573,
+      "UserNS": 8236000,
+      "SystemNS": 3088000,
+      "ParentGCBefore": 635,
+      "ParentGCAfter": 635
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 3,
+      "Warmup": true,
+      "WallNS": 9702546,
+      "UserNS": 4734000,
+      "SystemNS": 5524000,
+      "ParentGCBefore": 637,
+      "ParentGCAfter": 637
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 4,
+      "Warmup": true,
+      "WallNS": 9787264,
+      "UserNS": 4565000,
+      "SystemNS": 5706000,
+      "ParentGCBefore": 639,
+      "ParentGCAfter": 639
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 5,
+      "Warmup": false,
+      "WallNS": 9745429,
+      "UserNS": 5996000,
+      "SystemNS": 3997000,
+      "ParentGCBefore": 641,
+      "ParentGCAfter": 641
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 6,
+      "Warmup": false,
+      "WallNS": 10374633,
+      "UserNS": 6641000,
+      "SystemNS": 3795000,
+      "ParentGCBefore": 643,
+      "ParentGCAfter": 643
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 7,
+      "Warmup": false,
+      "WallNS": 11466817,
+      "UserNS": 7821000,
+      "SystemNS": 3910000,
+      "ParentGCBefore": 645,
+      "ParentGCAfter": 645
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 8,
+      "Warmup": false,
+      "WallNS": 10971850,
+      "UserNS": 5417000,
+      "SystemNS": 6320000,
+      "ParentGCBefore": 647,
+      "ParentGCAfter": 647
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 9,
+      "Warmup": false,
+      "WallNS": 10249617,
+      "UserNS": 9858000,
+      "SystemNS": 985000,
+      "ParentGCBefore": 649,
+      "ParentGCAfter": 649
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 10,
+      "Warmup": false,
+      "WallNS": 10529053,
+      "UserNS": 5985000,
+      "SystemNS": 5130000,
+      "ParentGCBefore": 651,
+      "ParentGCAfter": 651
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 11,
+      "Warmup": false,
+      "WallNS": 11816934,
+      "UserNS": 7110000,
+      "SystemNS": 5078000,
+      "ParentGCBefore": 653,
+      "ParentGCAfter": 653
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 12,
+      "Warmup": false,
+      "WallNS": 10717765,
+      "UserNS": 10346000,
+      "SystemNS": 940000,
+      "ParentGCBefore": 655,
+      "ParentGCAfter": 655
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 13,
+      "Warmup": false,
+      "WallNS": 9641156,
+      "UserNS": 7657000,
+      "SystemNS": 2187000,
+      "ParentGCBefore": 657,
+      "ParentGCAfter": 657
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 14,
+      "Warmup": false,
+      "WallNS": 10393979,
+      "UserNS": 5763000,
+      "SystemNS": 4802000,
+      "ParentGCBefore": 659,
+      "ParentGCAfter": 659
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 15,
+      "Warmup": false,
+      "WallNS": 11266372,
+      "UserNS": 7388000,
+      "SystemNS": 3694000,
+      "ParentGCBefore": 661,
+      "ParentGCAfter": 661
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 16,
+      "Warmup": false,
+      "WallNS": 11106504,
+      "UserNS": 7175000,
+      "SystemNS": 4100000,
+      "ParentGCBefore": 663,
+      "ParentGCAfter": 663
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 17,
+      "Warmup": false,
+      "WallNS": 9699403,
+      "UserNS": 9185000,
+      "SystemNS": 1148000,
+      "ParentGCBefore": 665,
+      "ParentGCAfter": 665
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 18,
+      "Warmup": false,
+      "WallNS": 16882412,
+      "UserNS": 14204000,
+      "SystemNS": 3043000,
+      "ParentGCBefore": 667,
+      "ParentGCAfter": 667
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 19,
+      "Warmup": false,
+      "WallNS": 10670273,
+      "UserNS": 5235000,
+      "SystemNS": 6107000,
+      "ParentGCBefore": 669,
+      "ParentGCAfter": 669
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 20,
+      "Warmup": false,
+      "WallNS": 14392764,
+      "UserNS": 10599000,
+      "SystemNS": 3533000,
+      "ParentGCBefore": 671,
+      "ParentGCAfter": 671
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 21,
+      "Warmup": false,
+      "WallNS": 11983786,
+      "UserNS": 11160000,
+      "SystemNS": 1014000,
+      "ParentGCBefore": 673,
+      "ParentGCAfter": 673
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 22,
+      "Warmup": false,
+      "WallNS": 11546436,
+      "UserNS": 6657000,
+      "SystemNS": 5548000,
+      "ParentGCBefore": 675,
+      "ParentGCAfter": 675
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 23,
+      "Warmup": false,
+      "WallNS": 12822794,
+      "UserNS": 6104000,
+      "SystemNS": 6104000,
+      "ParentGCBefore": 677,
+      "ParentGCAfter": 677
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 24,
+      "Warmup": false,
+      "WallNS": 10036739,
+      "UserNS": 8427000,
+      "SystemNS": 2106000,
+      "ParentGCBefore": 679,
+      "ParentGCAfter": 679
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 25,
+      "Warmup": false,
+      "WallNS": 10043583,
+      "UserNS": 6532000,
+      "SystemNS": 4355000,
+      "ParentGCBefore": 681,
+      "ParentGCAfter": 681
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 26,
+      "Warmup": false,
+      "WallNS": 10505935,
+      "UserNS": 7236000,
+      "SystemNS": 3618000,
+      "ParentGCBefore": 683,
+      "ParentGCAfter": 683
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 27,
+      "Warmup": false,
+      "WallNS": 11151691,
+      "UserNS": 10208000,
+      "SystemNS": 1020000,
+      "ParentGCBefore": 685,
+      "ParentGCAfter": 685
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 28,
+      "Warmup": false,
+      "WallNS": 10540647,
+      "UserNS": 8976000,
+      "SystemNS": 2244000,
+      "ParentGCBefore": 687,
+      "ParentGCAfter": 687
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 29,
+      "Warmup": false,
+      "WallNS": 11364359,
+      "UserNS": 7745000,
+      "SystemNS": 4303000,
+      "ParentGCBefore": 689,
+      "ParentGCAfter": 689
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 30,
+      "Warmup": false,
+      "WallNS": 9687950,
+      "UserNS": 7533000,
+      "SystemNS": 2511000,
+      "ParentGCBefore": 691,
+      "ParentGCAfter": 691
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 31,
+      "Warmup": false,
+      "WallNS": 10214486,
+      "UserNS": 9027000,
+      "SystemNS": 1805000,
+      "ParentGCBefore": 693,
+      "ParentGCAfter": 693
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 32,
+      "Warmup": false,
+      "WallNS": 10880217,
+      "UserNS": 8961000,
+      "SystemNS": 2987000,
+      "ParentGCBefore": 695,
+      "ParentGCAfter": 695
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 33,
+      "Warmup": false,
+      "WallNS": 10620196,
+      "UserNS": 7359000,
+      "SystemNS": 3679000,
+      "ParentGCBefore": 697,
+      "ParentGCAfter": 697
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 34,
+      "Warmup": false,
+      "WallNS": 10846972,
+      "UserNS": 8265000,
+      "SystemNS": 3099000,
+      "ParentGCBefore": 699,
+      "ParentGCAfter": 699
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 35,
+      "Warmup": false,
+      "WallNS": 10922960,
+      "UserNS": 9032000,
+      "SystemNS": 2709000,
+      "ParentGCBefore": 701,
+      "ParentGCAfter": 701
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 36,
+      "Warmup": false,
+      "WallNS": 11088275,
+      "UserNS": 6215000,
+      "SystemNS": 5179000,
+      "ParentGCBefore": 703,
+      "ParentGCAfter": 703
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 37,
+      "Warmup": false,
+      "WallNS": 11461160,
+      "UserNS": 6801000,
+      "SystemNS": 4858000,
+      "ParentGCBefore": 705,
+      "ParentGCAfter": 705
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 38,
+      "Warmup": false,
+      "WallNS": 11935176,
+      "UserNS": 9125000,
+      "SystemNS": 3422000,
+      "ParentGCBefore": 707,
+      "ParentGCAfter": 707
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 39,
+      "Warmup": false,
+      "WallNS": 10638216,
+      "UserNS": 5635000,
+      "SystemNS": 5635000,
+      "ParentGCBefore": 709,
+      "ParentGCAfter": 709
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 40,
+      "Warmup": false,
+      "WallNS": 12229489,
+      "UserNS": 9730000,
+      "SystemNS": 2162000,
+      "ParentGCBefore": 711,
+      "ParentGCAfter": 711
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 41,
+      "Warmup": false,
+      "WallNS": 10373516,
+      "UserNS": 10953000,
+      "SystemNS": 0,
+      "ParentGCBefore": 713,
+      "ParentGCAfter": 713
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 42,
+      "Warmup": false,
+      "WallNS": 10320646,
+      "UserNS": 7609000,
+      "SystemNS": 3261000,
+      "ParentGCBefore": 715,
+      "ParentGCAfter": 715
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 43,
+      "Warmup": false,
+      "WallNS": 9877081,
+      "UserNS": 8109000,
+      "SystemNS": 2317000,
+      "ParentGCBefore": 717,
+      "ParentGCAfter": 717
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 44,
+      "Warmup": false,
+      "WallNS": 11938597,
+      "UserNS": 9783000,
+      "SystemNS": 1087000,
+      "ParentGCBefore": 719,
+      "ParentGCAfter": 719
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 45,
+      "Warmup": false,
+      "WallNS": 11725580,
+      "UserNS": 6153000,
+      "SystemNS": 6153000,
+      "ParentGCBefore": 721,
+      "ParentGCAfter": 721
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 46,
+      "Warmup": false,
+      "WallNS": 10534361,
+      "UserNS": 7531000,
+      "SystemNS": 3765000,
+      "ParentGCBefore": 723,
+      "ParentGCAfter": 723
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 47,
+      "Warmup": false,
+      "WallNS": 10574450,
+      "UserNS": 7228000,
+      "SystemNS": 3614000,
+      "ParentGCBefore": 725,
+      "ParentGCAfter": 725
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 48,
+      "Warmup": false,
+      "WallNS": 19916614,
+      "UserNS": 13326000,
+      "SystemNS": 7175000,
+      "ParentGCBefore": 727,
+      "ParentGCAfter": 727
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 49,
+      "Warmup": false,
+      "WallNS": 9978002,
+      "UserNS": 8418000,
+      "SystemNS": 2104000,
+      "ParentGCBefore": 729,
+      "ParentGCAfter": 729
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 50,
+      "Warmup": false,
+      "WallNS": 10281045,
+      "UserNS": 8844000,
+      "SystemNS": 1965000,
+      "ParentGCBefore": 731,
+      "ParentGCAfter": 731
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 51,
+      "Warmup": false,
+      "WallNS": 10356824,
+      "UserNS": 8667000,
+      "SystemNS": 2166000,
+      "ParentGCBefore": 733,
+      "ParentGCAfter": 733
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 52,
+      "Warmup": false,
+      "WallNS": 10708616,
+      "UserNS": 8496000,
+      "SystemNS": 3186000,
+      "ParentGCBefore": 735,
+      "ParentGCAfter": 735
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 53,
+      "Warmup": false,
+      "WallNS": 11072422,
+      "UserNS": 8371000,
+      "SystemNS": 3139000,
+      "ParentGCBefore": 737,
+      "ParentGCAfter": 737
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 54,
+      "Warmup": false,
+      "WallNS": 10527098,
+      "UserNS": 5045000,
+      "SystemNS": 6054000,
+      "ParentGCBefore": 739,
+      "ParentGCAfter": 739
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 55,
+      "Warmup": false,
+      "WallNS": 11663631,
+      "UserNS": 10769000,
+      "SystemNS": 1076000,
+      "ParentGCBefore": 741,
+      "ParentGCAfter": 741
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 56,
+      "Warmup": false,
+      "WallNS": 10519485,
+      "UserNS": 6256000,
+      "SystemNS": 5213000,
+      "ParentGCBefore": 743,
+      "ParentGCAfter": 743
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 57,
+      "Warmup": false,
+      "WallNS": 9756464,
+      "UserNS": 7013000,
+      "SystemNS": 3506000,
+      "ParentGCBefore": 745,
+      "ParentGCAfter": 745
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 58,
+      "Warmup": false,
+      "WallNS": 9777347,
+      "UserNS": 7226000,
+      "SystemNS": 3097000,
+      "ParentGCBefore": 747,
+      "ParentGCAfter": 747
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 59,
+      "Warmup": false,
+      "WallNS": 9585702,
+      "UserNS": 7102000,
+      "SystemNS": 3044000,
+      "ParentGCBefore": 749,
+      "ParentGCAfter": 749
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 60,
+      "Warmup": false,
+      "WallNS": 10303883,
+      "UserNS": 6568000,
+      "SystemNS": 4378000,
+      "ParentGCBefore": 751,
+      "ParentGCAfter": 751
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 61,
+      "Warmup": false,
+      "WallNS": 10025704,
+      "UserNS": 8446000,
+      "SystemNS": 2111000,
+      "ParentGCBefore": 753,
+      "ParentGCAfter": 753
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 62,
+      "Warmup": false,
+      "WallNS": 12607122,
+      "UserNS": 10762000,
+      "SystemNS": 1076000,
+      "ParentGCBefore": 755,
+      "ParentGCAfter": 755
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 63,
+      "Warmup": false,
+      "WallNS": 11044345,
+      "UserNS": 7458000,
+      "SystemNS": 4261000,
+      "ParentGCBefore": 757,
+      "ParentGCAfter": 757
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 64,
+      "Warmup": false,
+      "WallNS": 9884415,
+      "UserNS": 5197000,
+      "SystemNS": 5197000,
+      "ParentGCBefore": 759,
+      "ParentGCAfter": 759
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 65,
+      "Warmup": false,
+      "WallNS": 11806946,
+      "UserNS": 9724000,
+      "SystemNS": 2431000,
+      "ParentGCBefore": 761,
+      "ParentGCAfter": 761
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 66,
+      "Warmup": false,
+      "WallNS": 10809468,
+      "UserNS": 9136000,
+      "SystemNS": 2284000,
+      "ParentGCBefore": 763,
+      "ParentGCAfter": 763
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 67,
+      "Warmup": false,
+      "WallNS": 10800388,
+      "UserNS": 8178000,
+      "SystemNS": 3066000,
+      "ParentGCBefore": 765,
+      "ParentGCAfter": 765
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 68,
+      "Warmup": false,
+      "WallNS": 11775727,
+      "UserNS": 7161000,
+      "SystemNS": 4774000,
+      "ParentGCBefore": 767,
+      "ParentGCAfter": 767
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 69,
+      "Warmup": false,
+      "WallNS": 11166149,
+      "UserNS": 5795000,
+      "SystemNS": 5795000,
+      "ParentGCBefore": 769,
+      "ParentGCAfter": 769
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 70,
+      "Warmup": false,
+      "WallNS": 11233756,
+      "UserNS": 9704000,
+      "SystemNS": 1940000,
+      "ParentGCBefore": 771,
+      "ParentGCAfter": 771
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 71,
+      "Warmup": false,
+      "WallNS": 10611745,
+      "UserNS": 6858000,
+      "SystemNS": 3918000,
+      "ParentGCBefore": 773,
+      "ParentGCAfter": 773
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 72,
+      "Warmup": false,
+      "WallNS": 10843550,
+      "UserNS": 6118000,
+      "SystemNS": 4079000,
+      "ParentGCBefore": 775,
+      "ParentGCAfter": 775
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 73,
+      "Warmup": false,
+      "WallNS": 10116987,
+      "UserNS": 5688000,
+      "SystemNS": 4550000,
+      "ParentGCBefore": 777,
+      "ParentGCAfter": 777
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 74,
+      "Warmup": false,
+      "WallNS": 10077247,
+      "UserNS": 7640000,
+      "SystemNS": 2865000,
+      "ParentGCBefore": 779,
+      "ParentGCAfter": 779
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 75,
+      "Warmup": false,
+      "WallNS": 10559574,
+      "UserNS": 5920000,
+      "SystemNS": 4933000,
+      "ParentGCBefore": 781,
+      "ParentGCAfter": 781
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 76,
+      "Warmup": false,
+      "WallNS": 9919125,
+      "UserNS": 5083000,
+      "SystemNS": 5083000,
+      "ParentGCBefore": 783,
+      "ParentGCAfter": 783
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 77,
+      "Warmup": false,
+      "WallNS": 10873443,
+      "UserNS": 8565000,
+      "SystemNS": 2855000,
+      "ParentGCBefore": 785,
+      "ParentGCAfter": 785
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 78,
+      "Warmup": false,
+      "WallNS": 10413465,
+      "UserNS": 7573000,
+      "SystemNS": 3245000,
+      "ParentGCBefore": 787,
+      "ParentGCAfter": 787
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 79,
+      "Warmup": false,
+      "WallNS": 10918909,
+      "UserNS": 8174000,
+      "SystemNS": 3065000,
+      "ParentGCBefore": 789,
+      "ParentGCAfter": 789
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 80,
+      "Warmup": false,
+      "WallNS": 11229565,
+      "UserNS": 6833000,
+      "SystemNS": 5125000,
+      "ParentGCBefore": 791,
+      "ParentGCAfter": 791
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 81,
+      "Warmup": false,
+      "WallNS": 9850611,
+      "UserNS": 9097000,
+      "SystemNS": 1010000,
+      "ParentGCBefore": 793,
+      "ParentGCAfter": 793
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 82,
+      "Warmup": false,
+      "WallNS": 10210854,
+      "UserNS": 10610000,
+      "SystemNS": 0,
+      "ParentGCBefore": 795,
+      "ParentGCAfter": 795
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 83,
+      "Warmup": false,
+      "WallNS": 12590012,
+      "UserNS": 8683000,
+      "SystemNS": 4341000,
+      "ParentGCBefore": 797,
+      "ParentGCAfter": 797
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 84,
+      "Warmup": false,
+      "WallNS": 9964523,
+      "UserNS": 7253000,
+      "SystemNS": 3108000,
+      "ParentGCBefore": 799,
+      "ParentGCAfter": 799
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 85,
+      "Warmup": false,
+      "WallNS": 10292220,
+      "UserNS": 6895000,
+      "SystemNS": 3940000,
+      "ParentGCBefore": 801,
+      "ParentGCAfter": 801
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 86,
+      "Warmup": false,
+      "WallNS": 12407235,
+      "UserNS": 5852000,
+      "SystemNS": 7023000,
+      "ParentGCBefore": 803,
+      "ParentGCAfter": 803
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 87,
+      "Warmup": false,
+      "WallNS": 10322810,
+      "UserNS": 7128000,
+      "SystemNS": 3564000,
+      "ParentGCBefore": 805,
+      "ParentGCAfter": 805
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 88,
+      "Warmup": false,
+      "WallNS": 10546304,
+      "UserNS": 8915000,
+      "SystemNS": 1981000,
+      "ParentGCBefore": 807,
+      "ParentGCAfter": 807
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 89,
+      "Warmup": false,
+      "WallNS": 13284307,
+      "UserNS": 7458000,
+      "SystemNS": 4972000,
+      "ParentGCBefore": 809,
+      "ParentGCAfter": 809
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 90,
+      "Warmup": false,
+      "WallNS": 10940979,
+      "UserNS": 10226000,
+      "SystemNS": 1136000,
+      "ParentGCBefore": 811,
+      "ParentGCAfter": 811
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 91,
+      "Warmup": false,
+      "WallNS": 10154213,
+      "UserNS": 8374000,
+      "SystemNS": 2392000,
+      "ParentGCBefore": 813,
+      "ParentGCAfter": 813
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 92,
+      "Warmup": false,
+      "WallNS": 10327700,
+      "UserNS": 7649000,
+      "SystemNS": 3278000,
+      "ParentGCBefore": 815,
+      "ParentGCAfter": 815
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 93,
+      "Warmup": false,
+      "WallNS": 11001952,
+      "UserNS": 8356000,
+      "SystemNS": 3133000,
+      "ParentGCBefore": 817,
+      "ParentGCAfter": 817
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 94,
+      "Warmup": false,
+      "WallNS": 10265191,
+      "UserNS": 4472000,
+      "SystemNS": 6261000,
+      "ParentGCBefore": 819,
+      "ParentGCAfter": 819
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 95,
+      "Warmup": false,
+      "WallNS": 10732572,
+      "UserNS": 9568000,
+      "SystemNS": 1739000,
+      "ParentGCBefore": 821,
+      "ParentGCAfter": 821
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 96,
+      "Warmup": false,
+      "WallNS": 9834757,
+      "UserNS": 7448000,
+      "SystemNS": 2793000,
+      "ParentGCBefore": 823,
+      "ParentGCAfter": 823
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 97,
+      "Warmup": false,
+      "WallNS": 10655327,
+      "UserNS": 7400000,
+      "SystemNS": 3700000,
+      "ParentGCBefore": 825,
+      "ParentGCAfter": 825
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 98,
+      "Warmup": false,
+      "WallNS": 15160186,
+      "UserNS": 9916000,
+      "SystemNS": 4958000,
+      "ParentGCBefore": 827,
+      "ParentGCAfter": 827
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 99,
+      "Warmup": false,
+      "WallNS": 12088059,
+      "UserNS": 8508000,
+      "SystemNS": 4254000,
+      "ParentGCBefore": 829,
+      "ParentGCAfter": 829
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 100,
+      "Warmup": false,
+      "WallNS": 18366548,
+      "UserNS": 14700000,
+      "SystemNS": 3920000,
+      "ParentGCBefore": 831,
+      "ParentGCAfter": 831
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 101,
+      "Warmup": false,
+      "WallNS": 10636400,
+      "UserNS": 7832000,
+      "SystemNS": 3356000,
+      "ParentGCBefore": 833,
+      "ParentGCAfter": 833
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 102,
+      "Warmup": false,
+      "WallNS": 9995183,
+      "UserNS": 6812000,
+      "SystemNS": 3893000,
+      "ParentGCBefore": 835,
+      "ParentGCAfter": 835
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 103,
+      "Warmup": false,
+      "WallNS": 10853048,
+      "UserNS": 8406000,
+      "SystemNS": 2401000,
+      "ParentGCBefore": 837,
+      "ParentGCAfter": 837
+    },
+    {
+      "Mode": "parent-gc-and-preallocated-pipe",
+      "Index": 104,
+      "Warmup": false,
+      "WallNS": 11347807,
+      "UserNS": 7350000,
+      "SystemNS": 3675000,
+      "ParentGCBefore": 839,
+      "ParentGCAfter": 839
+    }
+  ]
+}

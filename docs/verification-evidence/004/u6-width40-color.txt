@@ -1,0 +1,27 @@
+U6 Kitty width 40 / color
+
+01a0e96f-7c84-7cd3-aab0-3eabb837627e
+Status: todo
+Priority: high
+Progress: 100%
+Due: -
+Title: Unicode 界 👩‍💻 é; control \u001b[3
+1m and bidi \u202e
+
+01a0e96f-7c9c-70ec-bb65-fbec7c06d0ff
+Status: done
+Priority: medium
+Progress: 100%
+Due: -
+Title: Child checklist
+
+Tree:
+`-- 01a0e96f-7c84-7cd3-aab0-3eabb837627e
+     [todo 100%] Unicode 界 👩‍💻 é; contro
+    l \u001b[31m and bidi \u202e (depth 
+    1)
+    `-- 01a0e96f-7c9c-70ec-bb65-fbec7c06
+        d0ff [done 100%] Child checklist
+         (depth 2)
+
+Press Enter for next mode.
