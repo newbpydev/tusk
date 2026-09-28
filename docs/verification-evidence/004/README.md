@@ -75,3 +75,10 @@ Add, edit and done map exact argument intent to one accepted service call. Disk 
 
 See [receipt](u2-accepted.json), [Kitty screenshot](u2-kitty.png) and
 [screen text](u2-kitty.txt). Canonical gates passed; commit precedes U7.
+
+## U7 locally verified
+
+Deletion requires independent recursion and force intent, defaults to no in an eligible terminal, and passes unchanged preview consent to the service. Second-owner add/remove/move/metadata races reject stale consent. Unix input uses bounded polling; Windows cancellation joins its pinned reader, including the no-pending-I/O race. Actual Kitty decline, acceptance and recursion refusal passed.
+
+See [receipt](u7-accepted.json), [Kitty screenshot](u7-kitty.png) and
+[screen text](u7-kitty.txt). Canonical gates passed; commit precedes U3.

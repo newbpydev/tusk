@@ -20,6 +20,7 @@ type Options struct {
 	Local          *time.Location
 	OpenService    func(context.Context, Config) (ports.TaskService, func() error, error)
 	Terminal       func() TerminalFacts
+	Confirm        Confirmation
 }
 
 type invocation struct {
@@ -66,7 +67,7 @@ func newInvocation(options Options) *invocation {
 		return nil
 	}}
 	root.AddCommand(version)
-	root.AddCommand(i.addCommand(), i.editCommand(), i.doneCommand())
+	root.AddCommand(i.addCommand(), i.editCommand(), i.doneCommand(), i.deleteCommand())
 	root.SetHelpCommand(&cobra.Command{Use: "help [command]", Short: "Help about any command", RunE: func(c *cobra.Command, args []string) error {
 		target, remaining, err := root.Find(args)
 		if err != nil || len(remaining) != 0 {

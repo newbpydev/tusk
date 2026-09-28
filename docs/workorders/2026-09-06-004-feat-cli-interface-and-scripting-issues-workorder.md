@@ -2,7 +2,7 @@
 feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 verification-plan: docs/verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md
-status: Implementation active - U2 locally verified
+status: Implementation active - U7 locally verified
 evidence-scope: Planning findings and partial U1 execution
 ---
 
@@ -206,4 +206,14 @@ Canonical `make validate` passed in an owned Kitty window; current CLI output
 was inspected there. [Receipt](../verification-evidence/004/u2-accepted.json)
 retains red/green logs and source hashes. Scenarios 40-51 are locally
 verified; native release acceptance remains separate. Advance to U7
+only after this unit commit.
+
+### U7 local acceptance — 2026-09-28
+
+Deletion requires independent recursion and force intent, defaults to no in an eligible terminal, and passes unchanged preview consent to the service. Second-owner add/remove/move/metadata races reject stale consent. Unix input uses bounded polling; Windows cancellation joins its pinned reader, including the no-pending-I/O race. Actual Kitty decline, acceptance and recursion refusal passed.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u7-accepted.json)
+retains red/green logs and source hashes. Scenarios 52-63 are locally
+verified; native release acceptance remains separate. Advance to U3
 only after this unit commit.

@@ -2,7 +2,7 @@
 feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 surface-profiles: [cli, service-adapter, persistence-lifecycle, process-terminal, documentation]
-status: Implementation active - U2 locally verified
+status: Implementation active - U7 locally verified
 evidence-scope: U1 local acceptance; later units pending
 ---
 
@@ -117,18 +117,18 @@ Scenario labels Vnn below have durable full IDs 004-Vnn. The short form is used 
 
 ### U7: Consent and deletion
 
-- [ ] 004-V52 **Forced leaf:** Force deletes once with no preview or stdin access, emits exact result in human/JSON and keeps close count one.
-- [ ] 004-V53 **Recursion independence:** Parent force without recursive fails with children-present; force+recursive deletes exact subtree; recursive alone still requires consent.
-- [ ] 004-V54 **Batch refusal:** JSON or any redirected stdin/stdout/stderr without force exits 1 before open/preview/read with safe force/recursion guidance.
-- [ ] 004-V55 **Confirmation content:** Terminal prompt displays sanitized target, full ID and exact count on stderr; no stdout before consent/result.
-- [ ] 004-V56 **Decline/line endings:** Empty/no/other/EOF declines with exit 0 and no mutation; y/yes case-insensitive accepts; CRLF/LF normalize; false flags do not imply consent.
-- [ ] 004-V57 **Input failure/cancel:** >4096-byte line, read error, failed prompt writer and context cancellation return 1; no delete; any owned reader ends and is joined; cancellation racing consent always suppresses delete, platform cancellation setup failure starts no read, and a no-pending-I/O response is not mistaken for reader completion.
-- [ ] 004-V58 **Parent without recursion:** Preview showing children returns 1 without prompt; missing target fails without prompt; no misleading success.
-- [ ] 004-V59 **Membership race:** Barrier after preview, second disk owner adds/removes/moves a descendant; confirmation conflicts and preserves current tasks/history.
-- [ ] 004-V60 **Target race:** Another writer changes target metadata/incarnation after preview; Expected rejected; no automatic new preview or expanded consent.
-- [ ] 004-V61 **Forced authoritative scope:** Second writer changes tree before forced execution; service validates current recursion/scope under transaction, output matches actual deletion.
-- [ ] 004-V62 **Abuse / liveness:** Untrusted title cannot forge prompt controls; closed prompt output does not consume input; repeated invocation has no leaked reader/terminal state.
-- [ ] 004-V63 **Delete failure/recovery:** Domain/storage/unknown outcome discard result; committed delete then output failure preserves removal/history cascade and reports readback guidance.
+- [x] 004-V52 **Forced leaf:** Force deletes once with no preview or stdin access, emits exact result in human/JSON and keeps close count one.
+- [x] 004-V53 **Recursion independence:** Parent force without recursive fails with children-present; force+recursive deletes exact subtree; recursive alone still requires consent.
+- [x] 004-V54 **Batch refusal:** JSON or any redirected stdin/stdout/stderr without force exits 1 before open/preview/read with safe force/recursion guidance.
+- [x] 004-V55 **Confirmation content:** Terminal prompt displays sanitized target, full ID and exact count on stderr; no stdout before consent/result.
+- [x] 004-V56 **Decline/line endings:** Empty/no/other/EOF declines with exit 0 and no mutation; y/yes case-insensitive accepts; CRLF/LF normalize; false flags do not imply consent.
+- [x] 004-V57 **Input failure/cancel:** >4096-byte line, read error, failed prompt writer and context cancellation return 1; no delete; any owned reader ends and is joined; cancellation racing consent always suppresses delete, platform cancellation setup failure starts no read, and a no-pending-I/O response is not mistaken for reader completion.
+- [x] 004-V58 **Parent without recursion:** Preview showing children returns 1 without prompt; missing target fails without prompt; no misleading success.
+- [x] 004-V59 **Membership race:** Barrier after preview, second disk owner adds/removes/moves a descendant; confirmation conflicts and preserves current tasks/history.
+- [x] 004-V60 **Target race:** Another writer changes target metadata/incarnation after preview; Expected rejected; no automatic new preview or expanded consent.
+- [x] 004-V61 **Forced authoritative scope:** Second writer changes tree before forced execution; service validates current recursion/scope under transaction, output matches actual deletion.
+- [x] 004-V62 **Abuse / liveness:** Untrusted title cannot forge prompt controls; closed prompt output does not consume input; repeated invocation has no leaked reader/terminal state.
+- [x] 004-V63 **Delete failure/recovery:** Domain/storage/unknown outcome discard result; committed delete then output failure preserves removal/history cascade and reports readback guidance.
 
 ### U3: Query commands
 
@@ -243,4 +243,14 @@ Canonical `make validate` passed in an owned Kitty window; current CLI output
 was inspected there. [Receipt](../verification-evidence/004/u2-accepted.json)
 retains red/green logs and source hashes. Scenarios 40-51 are locally
 verified; native release acceptance remains separate. Advance to U7
+only after this unit commit.
+
+### U7 local acceptance — 2026-09-28
+
+Deletion requires independent recursion and force intent, defaults to no in an eligible terminal, and passes unchanged preview consent to the service. Second-owner add/remove/move/metadata races reject stale consent. Unix input uses bounded polling; Windows cancellation joins its pinned reader, including the no-pending-I/O race. Actual Kitty decline, acceptance and recursion refusal passed.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u7-accepted.json)
+retains red/green logs and source hashes. Scenarios 52-63 are locally
+verified; native release acceptance remains separate. Advance to U3
 only after this unit commit.
