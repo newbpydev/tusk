@@ -8,7 +8,7 @@ type: feat
 date: 2026-09-06
 deepened: 2026-09-09
 execution: code
-status: Implementation active - U4 locally verified
+status: Implementation active - U2 locally verified
 ---
 
 # Feature Plan 004: CLI Interface & Scripting
@@ -368,4 +368,14 @@ Canonical `make validate` passed in an owned Kitty window; current CLI output
 was inspected there. [Receipt](../verification-evidence/004/u4-accepted.json)
 retains red/green logs and source hashes. Scenarios 28-39 are locally
 verified; native release acceptance remains separate. Advance to U2
+only after this unit commit.
+
+### U2 local acceptance — 2026-09-28
+
+Add, edit and done map exact argument intent to one accepted service call. Disk integration proves subtree lifecycle, atomic combined patches, no-op history, parent policy, and supported service dates (+1d/+1w/+1m). The built CLI was exercised in Kitty on an isolated database. Shared-code reuse, quality and efficiency review ran sequentially with no behavior-preserving change warranted.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u2-accepted.json)
+retains red/green logs and source hashes. Scenarios 40-51 are locally
+verified; native release acceptance remains separate. Advance to U7
 only after this unit commit.

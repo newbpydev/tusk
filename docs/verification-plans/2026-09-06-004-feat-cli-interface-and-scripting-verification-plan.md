@@ -2,7 +2,7 @@
 feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 surface-profiles: [cli, service-adapter, persistence-lifecycle, process-terminal, documentation]
-status: Implementation active - U4 locally verified
+status: Implementation active - U2 locally verified
 evidence-scope: U1 local acceptance; later units pending
 ---
 
@@ -102,18 +102,18 @@ Scenario labels Vnn below have durable full IDs 004-Vnn. The short form is used 
 
 ### U2: Create, patch and complete
 
-- [ ] 004-V40 **Create mapping:** All add flags map once to CreateTask, including Unicode title, multiline notes, date and parent; empty defaults match todo/medium/0.
-- [ ] 004-V41 **Validation edges:** Titles 1/255/256 runes, whitespace-only, invalid UTF-8/NUL, bad priority/ID/date reject with documented domain exit 1; syntax cases still 2.
-- [ ] 004-V42 **Tags:** Repeated/comma-separated values normalize, sort and deduplicate; empty items and invalid normalized tags fail; comma quoting has no hidden CSV behavior.
-- [ ] 004-V43 **Atomic failure:** Inject CreateTask failure, duplicate ID/entropy failure and unknown outcome; no success/partial task, one service call, fresh readback before any retry.
-- [ ] 004-V44 **Edit syntax:** No changes, false-only controls, due+clear, tags+clear, parent+root and progress+status/parent/root return 2 before factory.
-- [ ] 004-V45 **Patch intent:** Omitted versus explicit empty notes, empty tags and clear due/root produce exact pointer/clear fields with Base nil; title/empty date do not clear.
-- [ ] 004-V46 **Progress parsing:** Signed decimal int64, negative/out-of-domain and >int64 input yield stable cross-platform 2/1 classification; parent/manual and open=100 rejection remains service domain.
-- [ ] 004-V47 **Compound edit:** Metadata+move+status uses one UpdateTask; latest unsupplied fields survive another writer; no read/replace or split transactions.
-- [ ] 004-V48 **No-op:** Equal supplied edit succeeds; unchanged timestamps/history; effective service no-op differs from forbidden empty CLI edit.
-- [ ] 004-V49 **Lifecycle:** done completes descendants, repeated done no-op; edit status reopens leaf/parent correctly and done→blocked fails; output contains authoritative selected Task.
-- [ ] 004-V50 **Policy/date integration:** Flag/env completion settings affect ancestors; fixed-zone today/tomorrow/tonight/day/week/month/ISO/offset dates use service semantics including DST.
-- [ ] 004-V51 **Failure/parity:** Self/cyclic/depth/missing parent, manual-parent progress and storage failures preserve state/history; exact service sentinel categories mapped safely; every durable edit action is scriptable.
+- [x] 004-V40 **Create mapping:** All add flags map once to CreateTask, including Unicode title, multiline notes, date and parent; empty defaults match todo/medium/0.
+- [x] 004-V41 **Validation edges:** Titles 1/255/256 runes, whitespace-only, invalid UTF-8/NUL, bad priority/ID/date reject with documented domain exit 1; syntax cases still 2.
+- [x] 004-V42 **Tags:** Repeated/comma-separated values normalize, sort and deduplicate; empty items and invalid normalized tags fail; comma quoting has no hidden CSV behavior.
+- [x] 004-V43 **Atomic failure:** Inject CreateTask failure, duplicate ID/entropy failure and unknown outcome; no success/partial task, one service call, fresh readback before any retry.
+- [x] 004-V44 **Edit syntax:** No changes, false-only controls, due+clear, tags+clear, parent+root and progress+status/parent/root return 2 before factory.
+- [x] 004-V45 **Patch intent:** Omitted versus explicit empty notes, empty tags and clear due/root produce exact pointer/clear fields with Base nil; title/empty date do not clear.
+- [x] 004-V46 **Progress parsing:** Signed decimal int64, negative/out-of-domain and >int64 input yield stable cross-platform 2/1 classification; parent/manual and open=100 rejection remains service domain.
+- [x] 004-V47 **Compound edit:** Metadata+move+status uses one UpdateTask; latest unsupplied fields survive another writer; no read/replace or split transactions.
+- [x] 004-V48 **No-op:** Equal supplied edit succeeds; unchanged timestamps/history; effective service no-op differs from forbidden empty CLI edit.
+- [x] 004-V49 **Lifecycle:** done completes descendants, repeated done no-op; edit status reopens leaf/parent correctly and done→blocked fails; output contains authoritative selected Task.
+- [x] 004-V50 **Policy/date integration:** Flag/env completion settings affect ancestors; fixed-zone today/tomorrow/tonight/day/week/month/ISO/offset dates use service semantics including DST.
+- [x] 004-V51 **Failure/parity:** Self/cyclic/depth/missing parent, manual-parent progress and storage failures preserve state/history; exact service sentinel categories mapped safely; every durable edit action is scriptable.
 
 ### U7: Consent and deletion
 
@@ -233,4 +233,14 @@ Canonical `make validate` passed in an owned Kitty window; current CLI output
 was inspected there. [Receipt](../verification-evidence/004/u4-accepted.json)
 retains red/green logs and source hashes. Scenarios 28-39 are locally
 verified; native release acceptance remains separate. Advance to U2
+only after this unit commit.
+
+### U2 local acceptance — 2026-09-28
+
+Add, edit and done map exact argument intent to one accepted service call. Disk integration proves subtree lifecycle, atomic combined patches, no-op history, parent policy, and supported service dates (+1d/+1w/+1m). The built CLI was exercised in Kitty on an isolated database. Shared-code reuse, quality and efficiency review ran sequentially with no behavior-preserving change warranted.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u2-accepted.json)
+retains red/green logs and source hashes. Scenarios 40-51 are locally
+verified; native release acceptance remains separate. Advance to U7
 only after this unit commit.

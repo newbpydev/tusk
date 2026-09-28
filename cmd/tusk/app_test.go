@@ -112,3 +112,10 @@ func TestOpenService_NoFallback(t *testing.T) {
 		t.Fatalf("fallback touched: %v", err)
 	}
 }
+
+func TestTerminalFacts(t *testing.T) {
+	facts := terminalFacts()
+	if facts.WidthError == nil && facts.Width < 1 {
+		t.Fatalf("invalid width %+v", facts)
+	}
+}

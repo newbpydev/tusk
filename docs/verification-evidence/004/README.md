@@ -68,3 +68,10 @@ Human output escapes terminal controls and bidi directives, preserves complete I
 
 See [receipt](u4-accepted.json), [Kitty screenshot](u4-kitty.png) and
 [screen text](u4-kitty.txt). Canonical gates passed; commit precedes U2.
+
+## U2 locally verified
+
+Add, edit and done map exact argument intent to one accepted service call. Disk integration proves subtree lifecycle, atomic combined patches, no-op history, parent policy, and supported service dates (+1d/+1w/+1m). The built CLI was exercised in Kitty on an isolated database. Shared-code reuse, quality and efficiency review ran sequentially with no behavior-preserving change warranted.
+
+See [receipt](u2-accepted.json), [Kitty screenshot](u2-kitty.png) and
+[screen text](u2-kitty.txt). Canonical gates passed; commit precedes U7.

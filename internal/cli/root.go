@@ -66,6 +66,7 @@ func newInvocation(options Options) *invocation {
 		return nil
 	}}
 	root.AddCommand(version)
+	root.AddCommand(i.addCommand(), i.editCommand(), i.doneCommand())
 	root.SetHelpCommand(&cobra.Command{Use: "help [command]", Short: "Help about any command", RunE: func(c *cobra.Command, args []string) error {
 		target, remaining, err := root.Find(args)
 		if err != nil || len(remaining) != 0 {
