@@ -82,3 +82,10 @@ Deletion requires independent recursion and force intent, defaults to no in an e
 
 See [receipt](u7-accepted.json), [Kitty screenshot](u7-kitty.png) and
 [screen text](u7-kitty.txt). Canonical gates passed; commit precedes U3.
+
+## U3 locally verified
+
+List, tree, stats and metadata history consume authoritative service read models without resorting or recomputing. Tests cover exact filters, empty/missing results, retained completions and failure suppression. Actual Kitty query inspection improved long history output to labeled records when aligned columns cannot fit.
+
+See [receipt](u3-accepted.json), [Kitty screenshot](u3-kitty.png) and
+[screen text](u3-kitty.txt). Canonical gates passed; commit precedes U6.

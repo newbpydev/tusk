@@ -8,7 +8,7 @@ type: feat
 date: 2026-09-06
 deepened: 2026-09-09
 execution: code
-status: Implementation active - U7 locally verified
+status: Implementation active - U3 locally verified
 ---
 
 # Feature Plan 004: CLI Interface & Scripting
@@ -388,4 +388,14 @@ Canonical `make validate` passed in an owned Kitty window; current CLI output
 was inspected there. [Receipt](../verification-evidence/004/u7-accepted.json)
 retains red/green logs and source hashes. Scenarios 52-63 are locally
 verified; native release acceptance remains separate. Advance to U3
+only after this unit commit.
+
+### U3 local acceptance — 2026-09-28
+
+List, tree, stats and metadata history consume authoritative service read models without resorting or recomputing. Tests cover exact filters, empty/missing results, retained completions and failure suppression. Actual Kitty query inspection improved long history output to labeled records when aligned columns cannot fit.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u3-accepted.json)
+retains red/green logs and source hashes. Scenarios 64-75 are locally
+verified; native release acceptance remains separate. Advance to U6
 only after this unit commit.

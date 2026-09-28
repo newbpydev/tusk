@@ -204,3 +204,11 @@ func TestFormat_HeaderAlignment(t *testing.T) {
 		t.Fatalf("misaligned progress column: %q", data)
 	}
 }
+
+func TestFormat_HistoryNarrowRecords(t *testing.T) {
+	f := newFormatter(TerminalFacts{Out: true, Width: 40}, time.UTC, nil)
+	data, err := f.format([]ports.TaskEvent{{Sequence: 1, OccurredAt: jsonFixture().CreatedAt, Kind: ports.EventMetadata, ChangedFields: []string{"description", "title"}}})
+	if err != nil || !strings.Contains(string(data), "Sequence: 1\n") || !strings.Contains(string(data), "Kind: metadata\n") {
+		t.Fatalf("%q %v", data, err)
+	}
+}

@@ -195,21 +195,60 @@ func (f *formatter) format(value any) ([]byte, error) {
 			out += f.line(label + sep + strconv.Itoa(values[n]))
 		}
 	case []ports.TaskEvent:
-		if f.terminal {
-			out = f.line("SEQUENCE OCCURRED_AT KIND CHANGED_FIELDS")
-		} else {
-			out = "SEQUENCE\tOCCURRED_AT\tKIND\tCHANGED_FIELDS\n"
-		}
-		for _, e := range v {
-			fields := []string{strconv.FormatInt(e.Sequence, 10), e.OccurredAt.UTC().Format(time.RFC3339Nano), sanitize(string(e.Kind)), sanitize(strings.Join(sortedStrings(e.ChangedFields), ","))}
-			sep := "\t"
-			if f.terminal {
-				sep = "  "
-			}
-			out += f.line(strings.Join(fields, sep))
-		}
+		out = f.history(v)
 	default:
 		return nil, ports.ErrInvalidRecord
 	}
 	return []byte(out), nil
+}
+
+func (f *formatter) history(events []ports.TaskEvent) string {
+	headers := []string{"SEQUENCE", "OCCURRED_AT", "KIND", "CHANGED_FIELDS"}
+	rows := make([][]string, len(events))
+	widths := []int{8, 11, 4, 14}
+	for n, e := range events {
+		rows[n] = []string{strconv.FormatInt(e.Sequence, 10), e.OccurredAt.UTC().Format(time.RFC3339Nano), sanitize(string(e.Kind)), sanitize(strings.Join(sortedStrings(e.ChangedFields), ","))}
+		for col, value := range rows[n] {
+			widths[col] = max(widths[col], ansi.StringWidth(value))
+		}
+	}
+	var out strings.Builder
+	if !f.terminal {
+		out.WriteString(strings.Join(headers, "\t") + "\n")
+		for _, row := range rows {
+			out.WriteString(strings.Join(row, "\t") + "\n")
+		}
+	} else if widths[0]+widths[1]+widths[2]+widths[3]+6 <= f.width {
+		writeRow := func(row []string) {
+			for col, value := range row {
+				if col > 0 {
+					out.WriteString("  ")
+				}
+				if col == 3 {
+					out.WriteString(value)
+				} else {
+					out.WriteString(pad(value, widths[col]))
+				}
+			}
+			out.WriteByte('\n')
+		}
+		writeRow(headers)
+		for _, row := range rows {
+			writeRow(row)
+		}
+	} else {
+		if len(rows) == 0 {
+			return f.line(strings.Join(headers, " "))
+		}
+		labels := []string{"Sequence", "Occurred at", "Kind", "Changed fields"}
+		for n, row := range rows {
+			if n > 0 {
+				out.WriteByte('\n')
+			}
+			for col, value := range row {
+				out.WriteString(f.line(labels[col] + ": " + value))
+			}
+		}
+	}
+	return out.String()
 }

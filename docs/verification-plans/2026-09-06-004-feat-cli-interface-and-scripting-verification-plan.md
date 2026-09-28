@@ -2,7 +2,7 @@
 feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 surface-profiles: [cli, service-adapter, persistence-lifecycle, process-terminal, documentation]
-status: Implementation active - U7 locally verified
+status: Implementation active - U3 locally verified
 evidence-scope: U1 local acceptance; later units pending
 ---
 
@@ -132,18 +132,18 @@ Scenario labels Vnn below have durable full IDs 004-Vnn. The short form is used 
 
 ### U3: Query commands
 
-- [ ] 004-V64 **Filter mapping:** Repeated status/priority OR semantics and tags/due/search/parent AND semantics use one TaskQuery; non-numeric domain priority is exit 1.
-- [ ] 004-V65 **Default/all/status:** Default excludes done; --all includes all; explicit status selects exactly requested states; status+all true is syntax 2 before open.
-- [ ] 004-V66 **Search/tags:** Unicode literal title/description matching and normalized all-tags behavior match service; no SQL wildcard or ANSI interpretation.
-- [ ] 004-V67 **Parent/root syntax:** Contradictory filters exit 2 before open; full opaque parent IDs accepted, missing-parent filter returns [] rather than prefix resolution.
-- [ ] 004-V68 **Order and detach:** Equal priority/due/created timestamps tie-break by full ID; query format conversion does not mutate service order/results.
-- [ ] 004-V69 **Due boundary:** Local midnight included, next midnight excluded, undated excluded; offset timestamps select their parsed local day, including DST/UTC date-edge cases.
-- [ ] 004-V70 **Empty/bad input:** Empty and filtered-empty list/forest return valid human/JSON; invalid status/date/empty ID fail with exit 1, no silent default.
-- [ ] 004-V71 **Tree integration:** Entire forest/subtree includes done descendants, respects sibling sort/depth 10, retains stored parent; missing target/corrupt graph returns no partial output.
-- [ ] 004-V72 **Stats:** Empty 0%, floor ratios, overdue strict boundary and all statuses/parents counted; no query-side recomputation or clock drift.
-- [ ] 004-V73 **Completion window:** Exactly reference−168h excluded and reference included; reopened/deleted tasks leave retained completion count; no historical velocity claim.
-- [ ] 004-V74 **History:** Missing task errors versus existing zero-event []; oldest-first sequence and metadata-only fields; deleted task history inaccessible.
-- [ ] 004-V75 **Read failure:** Service/read-cleanup/owner-close failures for list/tree/stats/history yield empty stdout and exit 1, no filtered partial forest/zero-stat success.
+- [x] 004-V64 **Filter mapping:** Repeated status/priority OR semantics and tags/due/search/parent AND semantics use one TaskQuery; non-numeric domain priority is exit 1.
+- [x] 004-V65 **Default/all/status:** Default excludes done; --all includes all; explicit status selects exactly requested states; status+all true is syntax 2 before open.
+- [x] 004-V66 **Search/tags:** Unicode literal title/description matching and normalized all-tags behavior match service; no SQL wildcard or ANSI interpretation.
+- [x] 004-V67 **Parent/root syntax:** Contradictory filters exit 2 before open; full opaque parent IDs accepted, missing-parent filter returns [] rather than prefix resolution.
+- [x] 004-V68 **Order and detach:** Equal priority/due/created timestamps tie-break by full ID; query format conversion does not mutate service order/results.
+- [x] 004-V69 **Due boundary:** Local midnight included, next midnight excluded, undated excluded; offset timestamps select their parsed local day, including DST/UTC date-edge cases.
+- [x] 004-V70 **Empty/bad input:** Empty and filtered-empty list/forest return valid human/JSON; invalid status/date/empty ID fail with exit 1, no silent default.
+- [x] 004-V71 **Tree integration:** Entire forest/subtree includes done descendants, respects sibling sort/depth 10, retains stored parent; missing target/corrupt graph returns no partial output.
+- [x] 004-V72 **Stats:** Empty 0%, floor ratios, overdue strict boundary and all statuses/parents counted; no query-side recomputation or clock drift.
+- [x] 004-V73 **Completion window:** Exactly reference−168h excluded and reference included; reopened/deleted tasks leave retained completion count; no historical velocity claim.
+- [x] 004-V74 **History:** Missing task errors versus existing zero-event []; oldest-first sequence and metadata-only fields; deleted task history inaccessible.
+- [x] 004-V75 **Read failure:** Service/read-cleanup/owner-close failures for list/tree/stats/history yield empty stdout and exit 1, no filtered partial forest/zero-stat success.
 
 ### U6: Process, integration, performance and handoff
 
@@ -253,4 +253,14 @@ Canonical `make validate` passed in an owned Kitty window; current CLI output
 was inspected there. [Receipt](../verification-evidence/004/u7-accepted.json)
 retains red/green logs and source hashes. Scenarios 52-63 are locally
 verified; native release acceptance remains separate. Advance to U3
+only after this unit commit.
+
+### U3 local acceptance — 2026-09-28
+
+List, tree, stats and metadata history consume authoritative service read models without resorting or recomputing. Tests cover exact filters, empty/missing results, retained completions and failure suppression. Actual Kitty query inspection improved long history output to labeled records when aligned columns cannot fit.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u3-accepted.json)
+retains red/green logs and source hashes. Scenarios 64-75 are locally
+verified; native release acceptance remains separate. Advance to U6
 only after this unit commit.
