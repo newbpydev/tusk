@@ -8,7 +8,7 @@ type: feat
 date: 2026-09-06
 deepened: 2026-09-09
 execution: code
-status: Implementation active - U1 locally verified
+status: Implementation active - U4 locally verified
 ---
 
 # Feature Plan 004: CLI Interface & Scripting
@@ -358,4 +358,14 @@ Canonical `make validate` passed in an owned Kitty window; current CLI output
 was inspected there. [Receipt](../verification-evidence/004/u5-accepted.json)
 retains red/green logs and source hashes. Scenarios 16-27 are locally
 verified; native release acceptance remains separate. Advance to U4
+only after this unit commit.
+
+### U4 local acceptance — 2026-09-28
+
+Human output escapes terminal controls and bidi directives, preserves complete IDs, wraps by grapheme cell width, and uses invocation-owned styling without background probes. Actual Kitty inspection found and fixed header alignment; the six-cell terminal priority header is PRIO, while TSV remains PRIORITY.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u4-accepted.json)
+retains red/green logs and source hashes. Scenarios 28-39 are locally
+verified; native release acceptance remains separate. Advance to U2
 only after this unit commit.

@@ -19,15 +19,19 @@ type Options struct {
 	Getenv         func(string) string
 	Local          *time.Location
 	OpenService    func(context.Context, Config) (ports.TaskService, func() error, error)
+	Terminal       func() TerminalFacts
 }
 
 type invocation struct {
-	options      Options
-	root         *cobra.Command
-	output       bytes.Buffer
-	autoComplete bool
-	timezone     string
-	committed    bool
+	options         Options
+	root            *cobra.Command
+	output          bytes.Buffer
+	autoComplete    bool
+	timezone        string
+	committed       bool
+	configValue     Config
+	terminalFacts   TerminalFacts
+	terminalSampled bool
 }
 
 func Run(ctx context.Context, args []string, options Options) int {
@@ -117,6 +121,7 @@ func (i *invocation) invoke(c *cobra.Command, work func(ports.TaskService) ([]by
 	if err != nil {
 		return err
 	}
+	i.configValue = cfg
 	if err = c.Context().Err(); err != nil {
 		return err
 	}

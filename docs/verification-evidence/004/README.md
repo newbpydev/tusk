@@ -61,3 +61,10 @@ Explicit JSON DTOs preserve complete task and query data, nulls and arrays, UTC 
 
 See [receipt](u5-accepted.json), [Kitty screenshot](u5-kitty.png) and
 [screen text](u5-kitty.txt). Canonical gates passed; commit precedes U4.
+
+## U4 locally verified
+
+Human output escapes terminal controls and bidi directives, preserves complete IDs, wraps by grapheme cell width, and uses invocation-owned styling without background probes. Actual Kitty inspection found and fixed header alignment; the six-cell terminal priority header is PRIO, while TSV remains PRIORITY.
+
+See [receipt](u4-accepted.json), [Kitty screenshot](u4-kitty.png) and
+[screen text](u4-kitty.txt). Canonical gates passed; commit precedes U2.

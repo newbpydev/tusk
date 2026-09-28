@@ -2,7 +2,7 @@
 feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 surface-profiles: [cli, service-adapter, persistence-lifecycle, process-terminal, documentation]
-status: U1 locally verified - remaining units pending
+status: Implementation active - U4 locally verified
 evidence-scope: U1 local acceptance; later units pending
 ---
 
@@ -87,18 +87,18 @@ Scenario labels Vnn below have durable full IDs 004-Vnn. The short form is used 
 
 ### U4: Human format and terminal boundary
 
-- [ ] 004-V28 **Plain mode:** Non-TTY stdout uses deterministic TSV headers, all full IDs/rows, no ANSI; empty list/history header only, empty tree message and all zero stats visible.
-- [ ] 004-V29 **Capability matrix:** TTY/non-TTY × NO_COLOR unset/empty/nonempty × TERM normal/dumb controls color; labels remain readable without color and JSON/help never create renderer.
-- [ ] 004-V30 **Layout:** At 1/20/40/80/120/200 cells, task rows switch to stacked/wrapped layout as decided; title clipping never truncates IDs or omits tasks.
-- [ ] 004-V31 **Grapheme width:** CJK, combining accents, emoji ZWJ/variation selectors and long opaque IDs fit/wrap by display cells with no broken clusters.
-- [ ] 004-V32 **Dimension boundary:** Failed/zero/negative width falls back/clamps as specified; every formatter remains finite and panic-free.
-- [ ] 004-V33 **Terminal injection:** C0/C1/DEL/ESC/OSC8/OSC52/BEL/CR/LF/TAB become visible escapes, including unterminated sequences; no input-origin control reaches terminal; a grapheme wider than width 1 uses the documented escaped fallback without an infinite loop.
-- [ ] 004-V34 **Unicode safety:** Bidi override/isolate and Unicode line/paragraph separators are escaped; ordinary text, combining marks and emoji ZWJ remain intact; original DTO unchanged.
-- [ ] 004-V35 **Purity / no probes:** Formatting never reads stdin, asks terminal background, launches links/pagers or mutates the task, slices/maps or package renderer; repeated render deterministic.
-- [ ] 004-V36 **Tree golden:** Roots, siblings, selected subtree and depth-10 chain use correct branches/order/continuations; every ID/task included, done children retained.
-- [ ] 004-V37 **Stats golden:** Metric order/status order and "Completed last 7 days" label fixed; percentages are integers and retained-task semantics documented.
-- [ ] 004-V38 **History/delete golden:** Stable sequence/time/kind/field columns and delete ID/count text; narrow records wrap; no stored notes are shown accidentally.
-- [ ] 004-V39 **Output isolation:** Different invocation renderers with different widths/color settings run concurrently; writer failures propagate, no global setters or inherited hidden style state.
+- [x] 004-V28 **Plain mode:** Non-TTY stdout uses deterministic TSV headers, all full IDs/rows, no ANSI; empty list/history header only, empty tree message and all zero stats visible.
+- [x] 004-V29 **Capability matrix:** TTY/non-TTY × NO_COLOR unset/empty/nonempty × TERM normal/dumb controls color; labels remain readable without color and JSON/help never create renderer.
+- [x] 004-V30 **Layout:** At 1/20/40/80/120/200 cells, task rows switch to stacked/wrapped layout as decided; title clipping never truncates IDs or omits tasks.
+- [x] 004-V31 **Grapheme width:** CJK, combining accents, emoji ZWJ/variation selectors and long opaque IDs fit/wrap by display cells with no broken clusters.
+- [x] 004-V32 **Dimension boundary:** Failed/zero/negative width falls back/clamps as specified; every formatter remains finite and panic-free.
+- [x] 004-V33 **Terminal injection:** C0/C1/DEL/ESC/OSC8/OSC52/BEL/CR/LF/TAB become visible escapes, including unterminated sequences; no input-origin control reaches terminal; a grapheme wider than width 1 uses the documented escaped fallback without an infinite loop.
+- [x] 004-V34 **Unicode safety:** Bidi override/isolate and Unicode line/paragraph separators are escaped; ordinary text, combining marks and emoji ZWJ remain intact; original DTO unchanged.
+- [x] 004-V35 **Purity / no probes:** Formatting never reads stdin, asks terminal background, launches links/pagers or mutates the task, slices/maps or package renderer; repeated render deterministic.
+- [x] 004-V36 **Tree golden:** Roots, siblings, selected subtree and depth-10 chain use correct branches/order/continuations; every ID/task included, done children retained.
+- [x] 004-V37 **Stats golden:** Metric order/status order and "Completed last 7 days" label fixed; percentages are integers and retained-task semantics documented.
+- [x] 004-V38 **History/delete golden:** Stable sequence/time/kind/field columns and delete ID/count text; narrow records wrap; no stored notes are shown accidentally.
+- [x] 004-V39 **Output isolation:** Different invocation renderers with different widths/color settings run concurrently; writer failures propagate, no global setters or inherited hidden style state.
 
 ### U2: Create, patch and complete
 
@@ -223,4 +223,14 @@ Canonical `make validate` passed in an owned Kitty window; current CLI output
 was inspected there. [Receipt](../verification-evidence/004/u5-accepted.json)
 retains red/green logs and source hashes. Scenarios 16-27 are locally
 verified; native release acceptance remains separate. Advance to U4
+only after this unit commit.
+
+### U4 local acceptance — 2026-09-28
+
+Human output escapes terminal controls and bidi directives, preserves complete IDs, wraps by grapheme cell width, and uses invocation-owned styling without background probes. Actual Kitty inspection found and fixed header alignment; the six-cell terminal priority header is PRIO, while TSV remains PRIORITY.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u4-accepted.json)
+retains red/green logs and source hashes. Scenarios 28-39 are locally
+verified; native release acceptance remains separate. Advance to U2
 only after this unit commit.
