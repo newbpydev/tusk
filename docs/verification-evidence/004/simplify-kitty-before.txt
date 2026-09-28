@@ -1,0 +1,9 @@
+$ tusk tree
+|-- 01a0ea49-bb12-717c-a89f-b90434d9c178 [todo 0%] Tree rendering: 界 é 👩‍💻 and wrapped titles (depth 1)
+|   |-- 01a0ea49-bb2e-7915-bd58-ae02b12d0b7b [todo 0%] First child with a long title that must wrap at narrow terminal wid
+        ths (depth 2)
+|   |   `-- 01a0ea49-bb4e-711d-8537-b2003057eac7 [todo 0%] Nested leaf (depth 3)
+|   `-- 01a0ea49-bb54-7194-8dc7-872625f68d65 [todo 0%] Second child (depth 2)
+`-- 01a0ea49-bb5b-7ac8-8c02-10d71ed89450 [todo 0%] Last root (depth 1)
+
+Press Enter to continue this owned verification.

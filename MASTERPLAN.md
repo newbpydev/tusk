@@ -6,6 +6,13 @@
 **Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
+### Feature 004 simplification follow-up
+
+- [x] Complete reuse, quality and efficiency review. One tree-buffer trial was
+  reverted after a latency gate miss; no production/test changes retained.
+  [Evaluation](docs/verification-evidence/004/simplify-review.md) preserves the
+  patch, red/green, Kitty output and candidate/control measurements.
+
 ### Feature 004 local acceptance (2026-09-28)
 
 U6 passes `make validate build check-generated`, Go 1.25 full tests/five-target

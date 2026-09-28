@@ -543,3 +543,16 @@ V01–V89 and ISS-021/022/023/025 are closed locally. The U6 commit contains thi
 receipt and synchronized acceptance checks. V90–V91 / ISS-024 remain pending
 Feature 006 native/hosted release proof. The next target is Feature 005 planning;
 its implementation has not started. No push, PR, merge or publication occurred.
+
+## Post-acceptance branch simplification review — 2026-09-28
+
+The owner requested `ce-simplify-code` for the branch. Three review lenses ran
+inline per the project tool mapping. A shared human-tree output buffer halved
+allocation in the deep-tree fixture and passed functional/race/Kitty checks.
+The trial passed 83/84 latency case-runs; one unchanged JSON-tree case had p90
+15.125 ms. A pre-change source control passed all 84. Causation is unconfirmed,
+so the trial was reverted under the skill's verification rule. No production or
+test changes remain, and the original U6 acceptance source is preserved.
+The [evaluation and retained evidence](../verification-evidence/004/simplify-review.md)
+record the rejected patch, all samples and restored-source validation.
+Feature 005 planning remains next; native/hosted release gates remain deferred.

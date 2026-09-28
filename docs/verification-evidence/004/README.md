@@ -1,5 +1,11 @@
 # Feature 004 execution evidence
 
+## Branch simplification follow-up
+
+[Review and experiment](simplify-review.md): one tree-buffer trial reduced
+allocation by about 50% but missed one latency case while the pre-change control
+passed. The trial was reverted; accepted production/test source is unchanged.
+
 ## Local acceptance: U6 complete
 
 [Acceptance receipt](u6-acceptance.json) · [84/84 latency case-runs](u6-latency-accepted.json)
