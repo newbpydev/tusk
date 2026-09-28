@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-28",
+  "kitty_version": "kitty 0.49.1 created by Kovid Goyal",
+  "display_connections": [
+    {
+      "display": "wayland",
+      "socket": "/run/user/1000/wayland-0",
+      "exists": true,
+      "result": "denied",
+      "errno": 1,
+      "message": "Operation not permitted"
+    },
+    {
+      "display": "x11",
+      "socket": "/tmp/.X11-unix/X0",
+      "exists": true,
+      "result": "denied",
+      "errno": 1,
+      "message": "Operation not permitted"
+    }
+  ],
+  "xauthority_readable": true,
+  "git_mount": "/home/newbpydev/Development/Xoomby/tusk/.git ro,nosuid,nodev,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,commit=120,subvolid=257,subvol=/@home",
+  "diagnosis": "Session sandbox denies desktop socket connections; Git metadata mount is read-only. Kitty installation and display configuration are present.",
+  "required_change": "Restore session permissions for desktop socket access and writing repository Git metadata.",
+  "installation_required": false
+}

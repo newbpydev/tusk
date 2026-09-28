@@ -8,7 +8,7 @@ type: feat
 date: 2026-09-06
 deepened: 2026-09-09
 execution: code
-status: Planning complete - not implemented
+status: Implementation active - U1 locally verified
 ---
 
 # Feature Plan 004: CLI Interface & Scripting
@@ -17,7 +17,7 @@ status: Planning complete - not implemented
 
 Expose the accepted task service through a local, scriptable Cobra CLI. Developers get readable terminal output; scripts and agents get complete JSON, exact IDs, predictable exit codes and explicit destructive intent.
 
-- **Authority:** [MASTERPLAN.md](../../MASTERPLAN.md), [AGENTS.md](../../AGENTS.md), then the [product contract](2026-09-06-001-feat-tusk-modern-task-system-plan.md). This request authorizes planning only.
+- **Authority:** [MASTERPLAN.md](../../MASTERPLAN.md), [AGENTS.md](../../AGENTS.md), then the [product contract](2026-09-06-001-feat-tusk-modern-task-system-plan.md). The original request authorized planning only; ce-work execution was authorized on 2026-09-28.
 - **Pack:** This plan, its [verification plan](../verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md) and [workorder](../workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md), in this first-party repository's `docs/`.
 - **Prerequisite:** Phase 3 locally accepted and merged; its [consumer handoff](../service.md) is the implementation baseline.
 - **Surfaces:** CLI, service adapter/library contracts, persistence lifecycle, process/terminal portability, documentation. No browser or interactive TUI implementation.
@@ -324,4 +324,28 @@ No current source, tests, dependencies or release files are changed by this pack
 
 No unresolved product decision blocks implementation planning. Technical defaults here are planner decisions grounded in the product/live code, not claims of separate user approval.
 
-U1 owns actual combined-graph/signal compatibility; U6 owns reference-host manifest, cancellation/PTY proof and latency results before local acceptance. If a bound cannot be met, create a finding and resolve it with the project owner; do not waive the mandate. Feature 006 owns native/hosted release evidence before publication. Implementation begins only under a new instruction activating U1 in MASTERPLAN.md.
+U1 owns actual combined-graph/signal compatibility; U6 owns reference-host manifest, cancellation/PTY proof and latency results before local acceptance. If a bound cannot be met, create a finding and resolve it with the project owner; do not waive the mandate. Feature 006 owns native/hosted release evidence before publication. Implementation was authorized on 2026-09-28 and U1 is active in MASTERPLAN.md.
+
+## Execution checkpoint — 2026-09-28
+
+U1 implements the root/configuration/lifetime seams, concrete composition, signal
+handling, presentation dependency pins and complete-package Make targets. Observed
+red tests and passing headless results are retained in the [execution evidence](../verification-evidence/004/README.md).
+The user now requires verification in Kitty for every unit; AGENTS.md records that
+requirement. Both Wayland and X11 Kitty launches failed to connect to the desktop.
+Headless checks do not satisfy Kitty acceptance. U1 is uncommitted and remains
+active; U5 and subsequent units have not started. No local scenario or release
+checkbox is advanced by this partial checkpoint.
+
+Follow-up diagnosis proves that Kitty is installed and the session sandbox denies
+both desktop socket connections with EPERM. The Git metadata mount is read-only.
+Resume requires session permission changes; no dependency installation is needed.
+
+### U1 acceptance after session permissions restored
+
+U1 now passes `make validate build test-cli` in an owned Kitty 0.49.1 window.
+Help, version and syntax failure output were inspected on the actual desktop;
+[receipt and screenshot](../verification-evidence/004/README.md) are retained.
+Go 1.25 tests and all five executable/test builds pass. Sequential architecture,
+contract, reliability and portability review found no blocking U1 issue. The prior
+permission blockers are resolved. U5 begins only after the U1 local commit.

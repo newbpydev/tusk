@@ -122,6 +122,30 @@ for target in build-service bench-service; do
     assert_eq 0 "$result" "service target contract: $target"
 done
 
+# A copied Makefile must build the complete package, including sibling files.
+mkdir -p "${TMP_DIR}/build-fixture/cmd/tusk"
+cp "${ROOT_DIR}/Makefile" "${TMP_DIR}/build-fixture/Makefile"
+printf 'module fixture\n\ngo 1.25.0\n' > "${TMP_DIR}/build-fixture/go.mod"
+printf 'package main\nfunc main() { sibling() }\n' > "${TMP_DIR}/build-fixture/cmd/tusk/main.go"
+printf 'package main\nfunc sibling() {}\n' > "${TMP_DIR}/build-fixture/cmd/tusk/app.go"
+result=0
+make --no-print-directory -C "${TMP_DIR}/build-fixture" build GOFLAGS=-buildvcs=false BUILD_OUTPUT="${TMP_DIR}/fixture-tusk" >"${TMP_DIR}/build-output" 2>&1 || result=$?
+assert_eq 0 "$result" "build includes siblings and accepts isolated output"
+test -f "${TMP_DIR}/fixture-tusk"
+
+# Verify the CLI gates select the right packages and propagate tool failures.
+for target in test-cli build-cli; do
+    recipe=$(make --no-print-directory -n -C "${ROOT_DIR}" "$target")
+    result=1
+    if [[ "$recipe" == *"./internal/cli"* && "$recipe" == *"./cmd/tusk"* ]]; then result=0; fi
+    assert_eq 0 "$result" "CLI target includes adapter and executable: $target"
+    printf '#!/usr/bin/env bash\nexit 19\n' > "${TMP_DIR}/go"
+    chmod +x "${TMP_DIR}/go"
+    result=0
+    PATH="${TMP_DIR}:$PATH" make --no-print-directory -C "${ROOT_DIR}" "$target" >"${TMP_DIR}/negative-cli" 2>&1 || result=$?
+    assert_eq 2 "$result" "CLI target propagates failed go: $target"
+done
+
 echo "Script Test Results: ${TESTS_PASSED}/${TESTS_TOTAL} passed"
 echo "========================================"
 

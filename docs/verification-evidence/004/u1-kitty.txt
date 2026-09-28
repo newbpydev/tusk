@@ -1,0 +1,30 @@
+Tusk U1 — actual Kitty verification
+
+Tusk - Zero-friction terminal task management system
+
+Usage:
+  tusk [flags]
+  tusk [command]
+
+Available Commands:
+  help        Help about any command
+  version     Print the version of tusk
+
+Flags:
+      --auto-complete-parent   Complete parents when all children are done
+  -h, --help                   help for tusk
+      --timezone string        Date timezone (IANA name)
+  -v, --version                Print version
+
+Use "tusk [command] --help" for more information about a command.
+
+Version: tusk version 0.2.0-reboot
+
+Unknown command — expected exit 2:
+tusk: invalid invocation
+Usage: tusk [command] [flags]
+Run tusk help for usage.
+Observed exit: 2
+
+Canonical make validate build test-cli: PASS
+Inspection complete. Press Enter to close this owned tab.

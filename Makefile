@@ -88,9 +88,28 @@ bench-build:
 validate: fmt vet test race coverage test-scripts
 	@echo "All canonical quality gates passed."
 
+BUILD_OUTPUT ?= bin/tusk
+CLI_TEST_RUN ?= .
+.PHONY: test-cli build-cli
+
+test-cli:
+	go test -v ./internal/cli ./cmd/tusk -run '$(CLI_TEST_RUN)'
+
+build-cli:
+	go version
+	@test "$$(go list -m -f '{{.Version}}' modernc.org/sqlite)" = v1.58.0
+	@test "$$(go list -m -f '{{.Version}}' modernc.org/libc)" = v1.75.6
+	@set -e; build_tmp=$$(mktemp -d); trap 'rm -rf "$$build_tmp"' EXIT; \
+	for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do \
+		echo "Building CLI and tests: $$target (CGO_ENABLED=0; native execution separate)"; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go build -o "$$build_tmp/tusk-$${target%/*}-$${target#*/}" ./cmd/tusk; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/cli-$${target%/*}-$${target#*/}.test" ./internal/cli; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/main-$${target%/*}-$${target#*/}.test" ./cmd/tusk; \
+	done
+
 build:
-	mkdir -p bin
-	go build -o bin/tusk cmd/tusk/main.go
+	mkdir -p "$(dir $(BUILD_OUTPUT))"
+	CGO_ENABLED=0 go build -o "$(BUILD_OUTPUT)" ./cmd/tusk
 
 clean:
 	rm -rf bin/ coverage.out .tusk-test*.db

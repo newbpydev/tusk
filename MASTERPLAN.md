@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 4 planning complete; Feature 004 implementation awaits authorization (2026-09-09)
-**Active Implementation Target**: 4.2 — Unit 004-1 / U1: Cobra Root, Lazy Composition & Compatibility (ready; execute only after a new implementation instruction)
+**Active Phase**: Phase 4 implementation active (authorized 2026-09-28)
+**Active Implementation Target**: 4.2 — Unit 004-5 / U5: Explicit JSON DTOs, Output Failures & Exit/Outcome Contract (next after U1 commit)
 **Overall Completion**: 57% (4 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -184,7 +184,7 @@ Feature 003 completed seven units in the declared order with separate canonical 
 ---
 
 ### Phase 4: Feature 004 - CLI Interface & Scripting
-- **Status**: ⏳ **PLANNING COMPLETE — NOT IMPLEMENTED** (2026-09-09; Phase 3 prerequisite locally accepted and merged)
+- **Status**: 🚧 **IMPLEMENTATION ACTIVE — U1 LOCALLY VERIFIED** (2026-09-28; Phase 3 prerequisite locally accepted and merged)
 - **Plan**: [Feature 004](docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md)
 - **Verification Plan**: [Feature 004 matrix](docs/verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md)
 - **Issue Workorder**: [Feature 004 findings](docs/workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md)
@@ -193,7 +193,7 @@ Feature 003 completed seven units in the declared order with separate canonical 
   - [x] Deepened Plan, Verification Plan, and Workorder (25 requirements, seven ordered units, 91 planned scenarios, 25 findings)
   - [x] Sequential planning/document review and synchronized product handoff; no runtime acceptance inferred
 - [ ] **4.2 Implementation Units** — execute U1 → U5 → U4 → U2 → U7 → U3 → U6; validate/synchronize/commit each before advancing
-  - [ ] Unit 004-1 / U1: Cobra Root, Lazy Composition & Dependency/Executable Compatibility
+  - [x] Unit 004-1 / U1: Cobra Root, Lazy Composition & Dependency/Executable Compatibility
   - [ ] Unit 004-5 / U5: Explicit JSON DTOs, Output Failures & Exit/Outcome Contract
   - [ ] Unit 004-4 / U4: Safe Human Formatter, Unicode Width & Terminal Capability Styling
   - [ ] Unit 004-2 / U2: Add, Edit & Complete Through the Accepted Service
@@ -208,7 +208,7 @@ Feature 003 completed seven units in the declared order with separate canonical 
   - [ ] `make validate build check-generated` passes and unit commits/evidence are synchronized
   - [ ] Feature 005 TUI and Feature 006 native/hosted/completion/release obligations handed off
 
-Planning-only on 2026-09-09: source/contract inspection, dependency-source research, confidence check and sequential document review produced the complete triplet. No code, dependencies, tests or release artifacts changed; no implementation or product scenario was checked. Five execution/release evidence gates remain in the workorder. The next implementation target is U1 after authorization.
+Planning-only on 2026-09-09: source/contract inspection, dependency-source research, confidence check and sequential document review produced the complete triplet. No code, dependencies, tests or release artifacts changed; no implementation or product scenario was checked. Five execution/release evidence gates remain in the workorder. Implementation was authorized on 2026-09-28. U1 has passing canonical gates, minimum-Go/five-target builds and actual Kitty visual verification. Session permissions were restored; the display and Git blockers are resolved. U5 follows its unit commit. See [U1 execution evidence](docs/verification-evidence/004/README.md).
 
 ---
 

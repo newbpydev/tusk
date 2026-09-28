@@ -2,8 +2,8 @@
 feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 verification-plan: docs/verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md
-status: Planning reviewed - execution gates open
-evidence-scope: Planning findings only
+status: U1 locally verified - later execution gates open
+evidence-scope: Planning findings and partial U1 execution
 ---
 
 # Feature 004 Issue Workorder
@@ -38,7 +38,7 @@ All findings were raised during planning on 2026-09-09. V-IDs use the 004 prefix
 | 004-ISS-018 | Headless feasibility pass; CLI owner | P1 | Fixed in plan | Cobra help callbacks can swallow writes; buffer help/version and route checked writer | R1,R14–R15; V01,V24 |
 | 004-ISS-019 | Headless design pass; terminal owner | P2 | Fixed in plan | Width 1 cannot fit a wide cluster or deep indent; escaped fallback and bounded indent guarantee progress | R17–R18; V30–V34,V36 |
 | 004-ISS-020 | Encoding/test scope; API owner | P2 | Fixed in plan | int64 history sequence could lose precision through float64 test decoding; integer-aware round-trip | R13; V21 |
-| 004-ISS-021 | Chosen module sources; U1 build owner | P1 | Open execution gate | Prove combined CLI graph/Go minimum/full-package targets before U1 closes | R5,R23; V14,V15,V84; module graph/build logs |
+| 004-ISS-021 | Chosen module sources; U1 build owner | P1 | Closed locally in U1 | Prove combined CLI graph/Go minimum/full-package targets before U1 closes | R5,R23; V14,V15,V84; module graph/build logs |
 | 004-ISS-022 | Signal/terminal lifecycle; U1/U7/U6 owners | P1 | Open execution gate | Prove bounded cancellation, joined prompt reader and actual EPIPE behavior; native console remains separate | R15,R20–R21; V57,V62,V78,V79,V86 |
 | 004-ISS-023 | Product G3; U6 performance owner | P1 | Open execution gate | Freeze reference manifest, implement runner and meet every-sample bounds without trimming | R22; V87–V89; raw samples, byte checks, manifest |
 | 004-ISS-024 | Product G4; Feature 006 release owner | P2 | Open release gate | Run exact candidate natively and hosted; retained obligation blocks release, not CLI implementation | R23; V90–V91; native logs/job URLs/hashes |
@@ -136,3 +136,44 @@ Leave every item unchecked during planning.
 - [ ] Feature 005/006 handoff and all planning/checklist artifacts synchronized.
 - [ ] ISS-024 / V90–V91 exact candidate native/hosted release acceptance complete before publication.
 - [ ] No unresolved local blocker; any observed acceptance change has explicit decision-owner approval.
+
+## Execution checkpoint — 2026-09-28
+
+U1 headless evidence is in the [execution receipt](../verification-evidence/004/README.md).
+ISS-021 has passing dependency/minimum-Go/cross-build evidence, but U1 acceptance
+and commit remain pending. ISS-022 still needs real terminal/process evidence in
+its declared units. No later unit or release gate is complete.
+
+### 004-ISS-026: Required Kitty verification cannot reach the desktop
+
+- **Owner:** U1 execution; **severity:** P1; **status:** Open execution blocker.
+- **Requirement:** User instruction on 2026-09-28, now recorded in AGENTS.md:
+  always verify using Kitty and inspect the current behavior against the plan.
+- **Observed:** Kitty is installed. Wayland reports `Failed to connect to display`;
+  explicit X11 reports `Failed to open display :0`; both exit 1 before checks run.
+- **Disposition:** Headless tests remain useful partial evidence, but do not close
+  Kitty acceptance. No existing user terminal was changed. Resume from U1 in a
+  session with desktop access, run the retained verification script in an owned
+  Kitty window, inspect help/version/error behavior, retain the terminal result,
+  review U1, synchronize this triplet/masterplan, and commit before advancing U5.
+- **Git state:** Initial staging succeeded, but restoring those owned paths to the
+  unstaged state failed: `Unable to create .git/index.lock: Read-only file system`.
+  The implementation remains staged, with later documentation updates unstaged.
+  No commit was attempted because Kitty acceptance is still pending. Preserve
+  both index and working tree; restore normal Git write access before the boundary
+  commit. No workaround outside the configured permission boundary was attempted.
+- **Root cause confirmed:** [Permission diagnosis](../verification-evidence/004/session-permissions.json)
+  records Kitty 0.49.1, existing Wayland/X11 sockets and readable Xauthority, with
+  both socket connections denied by EPERM. The Git mount is explicitly read-only.
+  Restore session permission for desktop connections and Git writes; reinstalling
+  Kitty is unnecessary. The agent cannot change the enclosing session sandbox.
+
+### U1 acceptance after permission restoration
+
+ISS-026 is closed: restored session permissions allowed an owned Kitty window,
+canonical gates and actual help/version/error inspection. Git is writable again.
+ISS-021 is closed locally by the retained Go 1.25/full graph/five-target evidence.
+ISS-022 still needs the later consent and real mutation/pipe cases. See [U1 acceptance](../verification-evidence/004/u1-accepted.json).
+The unit was reviewed sequentially for architecture, contracts, dependency
+compatibility, reliability and portability; no blocking finding remains. No
+independent peer review or release acceptance is claimed.

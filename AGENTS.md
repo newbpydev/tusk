@@ -60,6 +60,20 @@ All verification and build operations must use the canonical Makefile:
 - `make clean`      : Remove build artifacts, coverage reports, and test databases.
 </canonical_commands>
 
+<kitty_verification>
+Kitty is mandatory for verification. Run the canonical Makefile checks in an
+owned Kitty window and exercise the current CLI/TUI behavior there before
+accepting each implementation unit. Check the visible output and interactions
+against the active plan to confirm the implementation is moving in the intended
+direction. Keep command results and terminal evidence with the unit's receipts;
+automated tests and visual terminal checks are distinct evidence.
+
+Use an isolated temporary database for interactive checks. Do not reuse or close
+the user's existing terminal sessions. If Kitty or desktop access is unavailable,
+record the blocker and leave Kitty verification pending; headless or synthetic
+terminal results do not satisfy this requirement. Keep `make validate` mandatory.
+</kitty_verification>
+
 ---
 
 <architecture_boundaries>

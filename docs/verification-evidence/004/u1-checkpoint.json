@@ -1,0 +1,53 @@
+{
+  "unit": "004-U1",
+  "status": "blocked before acceptance and commit",
+  "baseline_sha": "6a8aff0c6e708183db5710ad2b204c5f2a9e3b45",
+  "branch": "feat/cli-interface-and-scripting",
+  "date": "2026-09-28",
+  "host": "Linux-7.2.8-1-cachyos-x86_64-with-glibc2.44",
+  "checks": [
+    {
+      "command": "GOCACHE=/tmp/tusk-004-go-cache make validate build",
+      "exit": 0,
+      "evidence": "u1-validate-build.log.gz"
+    },
+    {
+      "command": "GOCACHE=/tmp/tusk-004-go-cache GOTOOLCHAIN=go1.25.0 make test build-cli",
+      "exit": 0,
+      "evidence": "u1-minimum-go-full-and-build.log.gz"
+    },
+    {
+      "command": "GOCACHE=/tmp/tusk-004-go-cache GOTOOLCHAIN=go1.25.0 make test-cli build-cli",
+      "exit": 0,
+      "evidence": "u1-minimum-go-final-cli-and-build.log.gz"
+    }
+  ],
+  "coverage": {
+    "cmd/tusk": 100.0,
+    "internal/cli": 98.4
+  },
+  "blockers": [
+    "Kitty verification blocked: session denies Wayland and X11 socket connections with EPERM (errno 1)",
+    "Git metadata mounted read-only; implementation remains staged, later docs unstaged"
+  ],
+  "source_sha256": {
+    "AGENTS.md": "324e96201a74f6e686976aa9b20a36a32d11e042d73910573d0d230170fda80a",
+    "MASTERPLAN.md": "3fbe5b3fda27cb72a14437801acb3c32d8ac92ba114d1861078ed39e10a95c44",
+    "Makefile": "784de3e82247f57d9d9ecfa3a63bac7d545a121b7be8e0eac63cf5a0f989fdfd",
+    "cmd/tusk/app.go": "21eb1d3913a5d670a32381b6a0dc131a11ea37e7264eaf71419cad2578e575ac",
+    "cmd/tusk/app_test.go": "1d7e4f2b119440c7febc35b78a86a478fac11612c1277f4cc3ddc417d9ccb5ef",
+    "cmd/tusk/main.go": "073a56bb3caeb2bc4a893fb6e40d28d1db457dedea326924101c552d88894c8a",
+    "cmd/tusk/main_test.go": "357fa4cb56f043b5debd6c5b7b397de92006a98b59bf1a02006ba404441d8bbe",
+    "cmd/tusk/signal_unix.go": "b78a18f5fb8c5f8048ee7a543dcd9e95332ba3b8f2ad3e919891c063e77ef93f",
+    "cmd/tusk/signal_windows.go": "7ea1f9f5dfc55ebe7bc14c2521d2fcf8153cd77180af2672fde7f433929361ed",
+    "go.mod": "df55a78e727f09314364b884124605f4c6a4e4a4656bf29fad5af8b8602953de",
+    "go.sum": "828b5d682bd425ac1145b29d1a685a235aa0298506f7190fbcc18ab64add674b",
+    "internal/cli/compatibility_test.go": "9eb3ab5e82ec4a4269b73c68fc3507784ee81be37544fa2b1a95e916d6a353f6",
+    "internal/cli/config.go": "ccdfa121d80c4c4d9965b3f3ffb9f67dd4d3fd1291d155ad4d317537aeb2fb04",
+    "internal/cli/errors.go": "913c25647af6644be9f744a9481fd4550ee979aa89d8d93f2fe9acd8bc92ea8b",
+    "internal/cli/root.go": "1e650a9d6cf2f3001eae6c4233d7c8b1db232439abf94d5034b6ca51289fd633",
+    "internal/cli/root_test.go": "ae56b332b4234748d8b6091ea70967b4502c5c63621b94f7b707aa3c9de51740",
+    "scripts/test/test_scripts.sh": "5f4b6891ddeb6ec3760dd7efc3e55f41ccfe4fdf1ae76fd7b188be0e6995ccf0"
+  },
+  "permission_diagnosis": "session-permissions.json"
+}

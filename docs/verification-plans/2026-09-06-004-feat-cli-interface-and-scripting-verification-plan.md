@@ -2,8 +2,8 @@
 feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 surface-profiles: [cli, service-adapter, persistence-lifecycle, process-terminal, documentation]
-status: Planned - not executed
-evidence-scope: Planning only
+status: U1 locally verified - remaining units pending
+evidence-scope: U1 local acceptance; later units pending
 ---
 
 # Feature 004 Verification Plan
@@ -12,7 +12,7 @@ evidence-scope: Planning only
 
 Companion to the [plan](../plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md) and [workorder](../workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md). [MASTERPLAN.md](../../MASTERPLAN.md) controls activation. The command grammar, JSON schema v1, process outcome table and terminal format in KTD1–KTD10 are normative.
 
-All 91 scenarios are planned, not executed. Local acceptance requires V01–V89. V90–V91 are Feature 006 native/hosted release obligations and cannot be checked from cross-builds. Product TUSK-V39–V53 map here; TUSK-V38's output recovery and TUSK-V73 governance are included. The product's 73 check states remain unchanged.
+At planning completion all 91 scenarios were unexecuted. U1 now has partial execution evidence below; all acceptance checkboxes remain pending. Local acceptance requires V01–V89. V90–V91 are Feature 006 native/hosted release obligations and cannot be checked from cross-builds. Product TUSK-V39–V53 map here; TUSK-V38's output recovery and TUSK-V73 governance are included. The product's 73 check states remain unchanged.
 
 Use table cases for every enumerated variant. A compilation failure can be an observed initial red for a missing API; no claim of red exists until the named command is run and retained. CLI fakes prove adapter behavior, disk service fixtures prove integration, actual executable tests prove OS exit/streams, and a real terminal proves consent/style behavior. No single tier substitutes for another.
 
@@ -54,21 +54,21 @@ Scenario labels Vnn below have durable full IDs 004-Vnn. The short form is used 
 
 ### U1: Root, composition, configuration and build seams
 
-- [ ] 004-V01 **Normal / compatibility:** Empty args, -h, --help, help, -v, --version and version preserve banner/version text, LF, stdout and exit 0; factory not called; failing stdout on help/version returns 1 through the checked writer.
-- [ ] 004-V02 **No-I/O / failure:** Help/version with invalid path, policy, timezone and a confirmation reader that fails on access still succeed; no filesystem/environment-dependent configuration work or terminal probe.
-- [ ] 004-V03 **Syntax:** Unknown command/flag, missing flag value, extra/missing args and malformed bool/numeric values exit 2, empty stdout, sanitized usage on stderr, factory count 0.
-- [ ] 004-V04 **Classification:** Explicitly tagged parse errors are 2; same-looking service error text is 1; no substring matching of errors to choose exit code.
-- [ ] 004-V05 **Argument boundary:** Quoted multiword title stays one argument; unquoted multiple titles fail; -- permits -dash title; scalar last occurrence wins; collection occurrences accumulate.
-- [ ] 004-V06 **Help precedence:** Valid command --help bypasses data arity/config; malformed supplied flag still returns 2; help unknown-command fails safely; no data command silently executes.
-- [ ] 004-V07 **Policy precedence:** Flag true/false beats valid/invalid env; nonempty env parses strconv bool forms; empty/unset env defaults false; winning invalid env exits 1 with no open.
-- [ ] 004-V08 **Timezone:** Explicit zone overrides env; UTC/IANA zone accepted; unknown or explicit empty zone exits 1 before open; invalid losing env ignored; default uses injected local zone.
-- [ ] 004-V09 **Path precedence:** Temp fixtures exercise TUSK_DB_PATH, absolute/relative XDG and fallback home; relative explicit path resolves against invocation cwd with no DSN interpretation.
-- [ ] 004-V10 **Config/open failure:** Unwritable/invalid path does not select another DB; service-construction failure closes already opened repository once; no stdout or raw path/driver leak.
-- [ ] 004-V11 **Injection / repeatability:** Independent Run instances do not share flags, renderer, service or results; imports preserve CLI→ports/core and composition→service/storage direction.
-- [ ] 004-V12 **Ownership:** Success, service error, conversion error, panic-free early return and cancellation close acquired owner exactly once; no close on absent owner; no service use afterward.
-- [ ] 004-V13 **Concurrency:** Parallel independent commands using distinct injected dependencies pass race tests without global environment/flag/renderer mutations; close waits for admitted work.
-- [ ] 004-V14 **Compatibility:** Minimum Go 1.25 compiles/tests chosen CLI graph, immutable version, timezone import and concrete composition without downgrading SQLite/libc.
-- [ ] 004-V15 **Harness / negative test:** New test-cli/build-cli targets select real cmd/cli packages, propagate deliberate failures and clean only own temp outputs; make build includes a sibling source and respects isolated BUILD_OUTPUT.
+- [x] 004-V01 **Normal / compatibility:** Empty args, -h, --help, help, -v, --version and version preserve banner/version text, LF, stdout and exit 0; factory not called; failing stdout on help/version returns 1 through the checked writer.
+- [x] 004-V02 **No-I/O / failure:** Help/version with invalid path, policy, timezone and a confirmation reader that fails on access still succeed; no filesystem/environment-dependent configuration work or terminal probe.
+- [x] 004-V03 **Syntax:** Unknown command/flag, missing flag value, extra/missing args and malformed bool/numeric values exit 2, empty stdout, sanitized usage on stderr, factory count 0.
+- [x] 004-V04 **Classification:** Explicitly tagged parse errors are 2; same-looking service error text is 1; no substring matching of errors to choose exit code.
+- [x] 004-V05 **Argument boundary:** Quoted multiword title stays one argument; unquoted multiple titles fail; -- permits -dash title; scalar last occurrence wins; collection occurrences accumulate.
+- [x] 004-V06 **Help precedence:** Valid command --help bypasses data arity/config; malformed supplied flag still returns 2; help unknown-command fails safely; no data command silently executes.
+- [x] 004-V07 **Policy precedence:** Flag true/false beats valid/invalid env; nonempty env parses strconv bool forms; empty/unset env defaults false; winning invalid env exits 1 with no open.
+- [x] 004-V08 **Timezone:** Explicit zone overrides env; UTC/IANA zone accepted; unknown or explicit empty zone exits 1 before open; invalid losing env ignored; default uses injected local zone.
+- [x] 004-V09 **Path precedence:** Temp fixtures exercise TUSK_DB_PATH, absolute/relative XDG and fallback home; relative explicit path resolves against invocation cwd with no DSN interpretation.
+- [x] 004-V10 **Config/open failure:** Unwritable/invalid path does not select another DB; service-construction failure closes already opened repository once; no stdout or raw path/driver leak.
+- [x] 004-V11 **Injection / repeatability:** Independent Run instances do not share flags, renderer, service or results; imports preserve CLI→ports/core and composition→service/storage direction.
+- [x] 004-V12 **Ownership:** Success, service error, conversion error, panic-free early return and cancellation close acquired owner exactly once; no close on absent owner; no service use afterward.
+- [x] 004-V13 **Concurrency:** Parallel independent commands using distinct injected dependencies pass race tests without global environment/flag/renderer mutations; close waits for admitted work.
+- [x] 004-V14 **Compatibility:** Minimum Go 1.25 compiles/tests chosen CLI graph, immutable version, timezone import and concrete composition without downgrading SQLite/libc.
+- [x] 004-V15 **Harness / negative test:** New test-cli/build-cli targets select real cmd/cli packages, propagate deliberate failures and clean only own temp outputs; make build includes a sibling source and respects isolated BUILD_OUTPUT.
 
 ### U5: JSON and output outcome
 
@@ -155,7 +155,7 @@ Scenario labels Vnn below have durable full IDs 004-Vnn. The short form is used 
 - [ ] 004-V81 **Host/abuse isolation:** Literal ?, #, %, quotes, spaces and Unicode database paths; symlink/nonregular/read-only/corrupt/newer-schema targets fail safely preserving originals/sidecars; diagnostics contain no private markers.
 - [ ] 004-V82 **Concurrent CLI writers:** Two children completed by separate processes while a reader loops; final graph/event state correct, no lost rollup or mixed snapshot; bounded contention yields documented error, no adapter retry.
 - [ ] 004-V83 **Aggregate/non-regression:** make validate build check-generated passes; no generated/schema/core/service change or coverage exemption silently added; canonical script failure fixtures propagate.
-- [ ] 004-V84 **Five target compile (U1 owner):** Go 1.25 complete CLI/main executable/test binaries cross-compile CGO=0 for five declared targets, package main includes sibling signal/composition/tzdata files; retain logs.
+- [x] 004-V84 **Five target compile (U1 owner):** Go 1.25 complete CLI/main executable/test binaries cross-compile CGO=0 for five declared targets, package main includes sibling signal/composition/tzdata files; retain logs.
 - [ ] 004-V85 **Docs/parity/minimum:** Minimum Go full tests and build-cli pass; docs examples/schema/config/recovery cover every durable TUI action; Feature 005/006 deferred boundaries and all pack links/statuses synchronized.
 - [ ] 004-V86 **Local Linux terminal:** Actual PTY/terminal with stdin/stdout/stderr attached proves y/no/EOF/cancel, color-disabled modes, widths 40/80/120 and Unicode; child reaped and shell terminal usable afterward.
 - [ ] 004-V87 **Latency reference:** KTD9 help/version and every query human/JSON on empty/100/1,000-task fixtures meet every-sample <5/<15 ms; retain all 100 consecutive durations per case, raw bytes/exit checks and host manifest.
@@ -191,3 +191,26 @@ Production subprocesses use argument arrays, an isolated working directory and t
 ## Execution record
 
 No execution result is populated during planning. Each later unit creates evidence under docs/verification-evidence/004/ with date, exact parent/current SHA, host/Go/module graph, command, exit/result, scenario IDs, original red cause, green result and make validate log. Before commit a receipt may use the parent SHA plus diff digest; the following receipt can identify the resulting commit without self-referential amend cycles. Raw performance samples and the reference manifest accompany summaries. Hosted links and native/manual results occupy separate fields.
+
+## U1 execution checkpoint — 2026-09-28
+
+See [retained logs and source manifest](../verification-evidence/004/README.md).
+Root/configuration/lifetime/composition tests and canonical headless gates pass.
+The minimum Go full-suite and five-target build results are compile/local evidence,
+not native target acceptance. Kitty Wayland and X11 launch failures are retained;
+no visible terminal interaction or Kitty gate execution occurred. The new mandatory
+Kitty check blocks U1 acceptance and its commit. Keep V01–V15/V84 unchecked until
+that proof and the full unit review are complete; later scenarios remain unexecuted.
+
+Follow-up root-cause evidence: [session permissions](../verification-evidence/004/session-permissions.json).
+Both display sockets exist but connect returns EPERM; Kitty installation and X11
+credentials are present. `.git` is mounted read-only. No terminal acceptance is
+claimed from these diagnostics.
+
+### U1 acceptance after permission restoration
+
+V01–V15 and V84 are locally verified by the root/configuration/lifecycle tests,
+real composition/path tests, negative Make fixtures, minimum compiler and five
+complete target builds. `make validate build test-cli` passed inside Kitty;
+actual help/version/error output was inspected. See [U1 receipt](../verification-evidence/004/u1-accepted.json).
+No later unit or target-native release scenario is accepted by this result.
