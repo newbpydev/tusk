@@ -72,18 +72,18 @@ Scenario labels Vnn below have durable full IDs 004-Vnn. The short form is used 
 
 ### U5: JSON and output outcome
 
-- [ ] 004-V16 **Task schema:** Assert all exact keys/types, empty description, priority integer, full opaque ID, null parent/dates, empty tags [] and UTC fractional timestamps.
-- [ ] 004-V17 **Lists:** Empty list is []; nonempty output preserves order and complete notes/tags without truncation, including very long fields.
-- [ ] 004-V18 **Mutation DTOs:** Add/done/edit each emit one Task; deletion emits sorted deleted_ids/count/deleted; no envelope or extra success string.
-- [ ] 004-V19 **Tree schema:** Empty forest [], leaf children [], depths 1 through 10; selected subtree root depth 1 retains stored parent_id.
-- [ ] 004-V20 **Stats schema:** Empty/nonempty stats include every integer field and all four status keys, including zeros; no velocity or floating percentage.
-- [ ] 004-V21 **History schema:** Empty [], kind/changed_fields/time retained, int64 sequence above 2^53 remains exact using an integer-aware decoder.
-- [ ] 004-V22 **Escaping / stream contract:** Unicode, permitted control bytes, quotes, backslashes and HTML-like notes round-trip; one compact value+LF, no BOM/ANSI or second JSON value; empty/singleton forms are covered for every DTO collection.
-- [ ] 004-V23 **Pre-output failure:** Inject invalid encodable timestamp/fixture conversion failure and failing close; stdout remains empty, close called once, exit 1.
-- [ ] 004-V24 **Writer failure:** Fail before byte 1, midway and with short write without error; exit 1, no human stdout suffix, no second write attempt or repeated service call.
-- [ ] 004-V25 **Unknown outcome precedence:** Typed transaction uncertainty joined/wrapped with cancellation, conflict, busy or schema categories wins; no partial result or retry hint.
-- [ ] 004-V26 **Known commit:** Confirmed mutation followed by cancellation still publishes if encode/close/write succeed; output/close failure says committed, exits 1 and never repeats mutation.
-- [ ] 004-V27 **Diagnostic privacy:** Private path/SQL/note/flag-value markers in wrapped errors never escape; known categories remain useful, unknown error is generic; broken stderr cannot recurse.
+- [x] 004-V16 **Task schema:** Assert all exact keys/types, empty description, priority integer, full opaque ID, null parent/dates, empty tags [] and UTC fractional timestamps.
+- [x] 004-V17 **Lists:** Empty list is []; nonempty output preserves order and complete notes/tags without truncation, including very long fields.
+- [x] 004-V18 **Mutation DTOs:** Add/done/edit each emit one Task; deletion emits sorted deleted_ids/count/deleted; no envelope or extra success string.
+- [x] 004-V19 **Tree schema:** Empty forest [], leaf children [], depths 1 through 10; selected subtree root depth 1 retains stored parent_id.
+- [x] 004-V20 **Stats schema:** Empty/nonempty stats include every integer field and all four status keys, including zeros; no velocity or floating percentage.
+- [x] 004-V21 **History schema:** Empty [], kind/changed_fields/time retained, int64 sequence above 2^53 remains exact using an integer-aware decoder.
+- [x] 004-V22 **Escaping / stream contract:** Unicode, permitted control bytes, quotes, backslashes and HTML-like notes round-trip; one compact value+LF, no BOM/ANSI or second JSON value; empty/singleton forms are covered for every DTO collection.
+- [x] 004-V23 **Pre-output failure:** Inject invalid encodable timestamp/fixture conversion failure and failing close; stdout remains empty, close called once, exit 1.
+- [x] 004-V24 **Writer failure:** Fail before byte 1, midway and with short write without error; exit 1, no human stdout suffix, no second write attempt or repeated service call.
+- [x] 004-V25 **Unknown outcome precedence:** Typed transaction uncertainty joined/wrapped with cancellation, conflict, busy or schema categories wins; no partial result or retry hint.
+- [x] 004-V26 **Known commit:** Confirmed mutation followed by cancellation still publishes if encode/close/write succeed; output/close failure says committed, exits 1 and never repeats mutation.
+- [x] 004-V27 **Diagnostic privacy:** Private path/SQL/note/flag-value markers in wrapped errors never escape; known categories remain useful, unknown error is generic; broken stderr cannot recurse.
 
 ### U4: Human format and terminal boundary
 
@@ -214,3 +214,13 @@ real composition/path tests, negative Make fixtures, minimum compiler and five
 complete target builds. `make validate build test-cli` passed inside Kitty;
 actual help/version/error output was inspected. See [U1 receipt](../verification-evidence/004/u1-accepted.json).
 No later unit or target-native release scenario is accepted by this result.
+
+### U5 local acceptance — 2026-09-28
+
+Explicit JSON DTOs preserve complete task and query data, nulls and arrays, UTC times and exact history sequence numbers. Output failures retain known committed state; unknown outcomes and private error redaction remain intact.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u5-accepted.json)
+retains red/green logs and source hashes. Scenarios 16-27 are locally
+verified; native release acceptance remains separate. Advance to U4
+only after this unit commit.

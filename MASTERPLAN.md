@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development
 **Active Phase**: Phase 4 implementation active (authorized 2026-09-28)
-**Active Implementation Target**: 4.2 — Unit 004-5 / U5: Explicit JSON DTOs, Output Failures & Exit/Outcome Contract (next after U1 commit)
+**Active Implementation Target**: 4.2 — Unit 004-4 / U4 (next after U5 commit)
 **Overall Completion**: 57% (4 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -194,7 +194,7 @@ Feature 003 completed seven units in the declared order with separate canonical 
   - [x] Sequential planning/document review and synchronized product handoff; no runtime acceptance inferred
 - [ ] **4.2 Implementation Units** — execute U1 → U5 → U4 → U2 → U7 → U3 → U6; validate/synchronize/commit each before advancing
   - [x] Unit 004-1 / U1: Cobra Root, Lazy Composition & Dependency/Executable Compatibility
-  - [ ] Unit 004-5 / U5: Explicit JSON DTOs, Output Failures & Exit/Outcome Contract
+  - [x] Unit 004-5 / U5: Explicit JSON DTOs, Output Failures & Exit/Outcome Contract
   - [ ] Unit 004-4 / U4: Safe Human Formatter, Unicode Width & Terminal Capability Styling
   - [ ] Unit 004-2 / U2: Add, Edit & Complete Through the Accepted Service
   - [ ] Unit 004-7 / U7: Preview, Default-No Consent & Authoritative Deletion (split from U2)

@@ -1,0 +1,36 @@
+{
+  "unit": "u5",
+  "baseline_sha": "610ea0eb6e2b390f67effbc7673ad5716d02a657",
+  "status": "locally verified before unit commit",
+  "summary": "Explicit JSON DTOs preserve complete task and query data, nulls and arrays, UTC times and exact history sequence numbers. Output failures retain known committed state; unknown outcomes and private error redaction remain intact.",
+  "scenarios": "16-27",
+  "logs": [
+    "u5-build.log.gz",
+    "u5-gates.log.gz",
+    "u5-output-red.log.gz",
+    "u5-red.log.gz"
+  ],
+  "kitty": {
+    "version": "0.49.1",
+    "display": "X11",
+    "screenshot": "u5-kitty.png",
+    "text": "u5-kitty.txt"
+  },
+  "review": "Sequential correctness, contracts, privacy, architecture and simplicity review; no independent peer claimed",
+  "source_sha256": {
+    "internal/cli/compatibility_test.go": "9eb3ab5e82ec4a4269b73c68fc3507784ee81be37544fa2b1a95e916d6a353f6",
+    "internal/cli/config.go": "ccdfa121d80c4c4d9965b3f3ffb9f67dd4d3fd1291d155ad4d317537aeb2fb04",
+    "internal/cli/errors.go": "913c25647af6644be9f744a9481fd4550ee979aa89d8d93f2fe9acd8bc92ea8b",
+    "internal/cli/json.go": "3757349112b38e70976ce03e4b62b3fe9d39e703bd30362781801c232ba8f041",
+    "internal/cli/json_test.go": "97de5eb05fb07c0bc3c4560e620a28c05eaba44e4ee2e44e55c188aa551ca3b6",
+    "internal/cli/output_test.go": "cdf0310ef95f915db46766b0f4f3d3b01f04997e39b572cb0b993db5b1b1d977",
+    "internal/cli/root.go": "2ee59a9613a51c6d7eb8efdc1926e53e35a27b4e83805a5c46e25376933972b9",
+    "internal/cli/root_test.go": "ae56b332b4234748d8b6091ea70967b4502c5c63621b94f7b707aa3c9de51740",
+    "cmd/tusk/app.go": "21eb1d3913a5d670a32381b6a0dc131a11ea37e7264eaf71419cad2578e575ac",
+    "cmd/tusk/app_test.go": "1d7e4f2b119440c7febc35b78a86a478fac11612c1277f4cc3ddc417d9ccb5ef",
+    "cmd/tusk/main.go": "073a56bb3caeb2bc4a893fb6e40d28d1db457dedea326924101c552d88894c8a",
+    "cmd/tusk/main_test.go": "357fa4cb56f043b5debd6c5b7b397de92006a98b59bf1a02006ba404441d8bbe",
+    "cmd/tusk/signal_unix.go": "b78a18f5fb8c5f8048ee7a543dcd9e95332ba3b8f2ad3e919891c063e77ef93f",
+    "cmd/tusk/signal_windows.go": "7ea1f9f5dfc55ebe7bc14c2521d2fcf8153cd77180af2672fde7f433929361ed"
+  }
+}

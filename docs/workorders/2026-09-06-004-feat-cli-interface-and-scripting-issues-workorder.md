@@ -177,3 +177,13 @@ ISS-022 still needs the later consent and real mutation/pipe cases. See [U1 acce
 The unit was reviewed sequentially for architecture, contracts, dependency
 compatibility, reliability and portability; no blocking finding remains. No
 independent peer review or release acceptance is claimed.
+
+### U5 local acceptance — 2026-09-28
+
+Explicit JSON DTOs preserve complete task and query data, nulls and arrays, UTC times and exact history sequence numbers. Output failures retain known committed state; unknown outcomes and private error redaction remain intact.
+
+Canonical `make validate` passed in an owned Kitty window; current CLI output
+was inspected there. [Receipt](../verification-evidence/004/u5-accepted.json)
+retains red/green logs and source hashes. Scenarios 16-27 are locally
+verified; native release acceptance remains separate. Advance to U4
+only after this unit commit.

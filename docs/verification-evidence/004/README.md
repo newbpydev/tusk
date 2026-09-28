@@ -54,3 +54,10 @@ and syntax-error output, retain the visible terminal result, complete the U1
 review, synchronize the triplet/masterplan, then make the U1 commit before U5.
 The script uses the temporary Go cache created during this run; use another
 writable Go cache if resuming after temporary files were removed.
+
+## U5 locally verified
+
+Explicit JSON DTOs preserve complete task and query data, nulls and arrays, UTC times and exact history sequence numbers. Output failures retain known committed state; unknown outcomes and private error redaction remain intact.
+
+See [receipt](u5-accepted.json), [Kitty screenshot](u5-kitty.png) and
+[screen text](u5-kitty.txt). Canonical gates passed; commit precedes U4.

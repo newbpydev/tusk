@@ -135,7 +135,8 @@ func (i *invocation) invoke(c *cobra.Command, work func(ports.TaskService) ([]by
 		return ports.ErrInvalidServiceOptions
 	}
 	data, committed, workErr := work(svc)
-	i.committed = committed && workErr == nil
+	// Work reports confirmed mutation success independently of serialization.
+	i.committed = committed
 	closeErr := closeOwner()
 	if workErr != nil || closeErr != nil {
 		return errors.Join(workErr, closeErr)
