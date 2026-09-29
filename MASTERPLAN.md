@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development
 **Active Phase**: Phase 5 — Feature 005 implementation authorized (2026-09-29)
-**Active Implementation Target**: Feature 005 U5 / 005-5 — forms and nondestructive mutation interactions
+**Active Implementation Target**: Feature 005 U8 / 005-8 — previewed deletion and unknown-outcome reconciliation
 
 U2 presentation direction: the owner selected spacious title/metadata rows in
 the live Kitty prototype (2026-09-29). Uniform backgrounds and modal dimming
@@ -308,7 +308,7 @@ No Phase 5 implementation, push, PR or publication occurred.
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: 🚀 **IMPLEMENTING U5 — U1, U7, U2, U3 AND U4 LOCALLY ACCEPTED** (authorized 2026-09-29)
+- **Status**: 🚀 **IMPLEMENTING U8 — U1, U7, U2, U3, U4 AND U5 LOCALLY ACCEPTED** (authorized 2026-09-29)
 - **Plan**: [Feature 005 plan](docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md)
 - **Verification Plan**: [Feature 005 verification](docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md)
 - **Issue Workorder**: [Feature 005 workorder](docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md)
@@ -321,7 +321,7 @@ No Phase 5 implementation, push, PR or publication occurred.
   - [x] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
   - [x] Unit 005-3 / U3: Forest Navigation, Filters, Search and Refresh Generations
   - [x] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
-  - [ ] Unit 005-5 / U5: Forms, Base-Checked Edits, Moves and Lifecycle Toggles
+  - [x] Unit 005-5 / U5: Forms, Base-Checked Edits, Moves and Lifecycle Toggles
   - [ ] Unit 005-8 / U8: Previewed Deletion and Unknown-Outcome Reconciliation
   - [ ] Unit 005-6 / U6: Workflow, Performance, Owned Kitty Acceptance and Handoff
 - [ ] **5.3 Quality Gate & Release Sign-off**
@@ -459,3 +459,14 @@ all target sizes, monochrome output, long-note scrolling and selection changes.
 [Receipt](docs/verification-evidence/005/u4.json). A large-word renderer stall now
 uses bounded-formatting plain fallback without dropping text; End intent survives
 pending render/resize. U5 forms/mutations is next; recovery UI remains U8.
+
+
+### Feature 005 U5 acceptance (2026-09-29)
+
+Forms, raw drafts, Base-checked edits, moves and lifecycle toggles pass canonical
+validation, minimum-Go race/cross-build checks and real-app Kitty interaction.
+Coverage is 98.4%; [receipt](docs/verification-evidence/005/u5.json) retains source,
+logs and captures. Spacious rows and uniform modal surfaces remain intact. The
+save admission/readback barrier prevents replay after an acknowledged commit;
+conflict reload and dirty discard require explicit choices. U8 deletion and
+fresh-owner recovery is next, followed by U6 acceptance/performance.

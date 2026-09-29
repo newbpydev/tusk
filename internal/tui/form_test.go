@@ -1,0 +1,288 @@
+package tui
+
+import (
+	"strings"
+	"testing"
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/newbpydev/tusk/internal/core"
+)
+
+func formKey(m *Model, key tea.KeyType) tea.Cmd {
+	_, cmd := m.Update(tea.KeyMsg{Type: key})
+	return cmd
+}
+
+func TestForm_FocusLiteralTextAndDiscard(t *testing.T) {
+	m := loadedModel()
+	press(m, "a")
+	if m.form == nil {
+		t.Fatal("create did not open")
+	}
+	press(m, "q d?x ")
+	if m.form.draft.fields[fieldTitle] != "q d?x " {
+		t.Fatal("browse keys consumed text")
+	}
+	press(m, "tab")
+	press(m, "First")
+	press(m, "enter")
+	press(m, "第二")
+	if m.form.draft.fields[fieldNotes] != "First\n第二" {
+		t.Fatalf("notes %q", m.form.draft.fields[fieldNotes])
+	}
+	formKey(m, tea.KeyShiftTab)
+	if m.form.field != fieldTitle {
+		t.Fatal("backward focus")
+	}
+	formKey(m, tea.KeyShiftTab)
+	if m.form.field != 7 {
+		t.Fatal("focus did not wrap to cancel")
+	}
+	press(m, "esc")
+	if m.form.prompt != promptDiscard || m.form.confirm {
+		t.Fatal("dirty cancel must default keep")
+	}
+	press(m, "enter")
+	if m.form == nil || m.form.prompt != promptNone {
+		t.Fatal("default discarded")
+	}
+	press(m, "esc")
+	press(m, "tab")
+	press(m, "enter")
+	if m.form != nil {
+		t.Fatal("explicit discard")
+	}
+	press(m, "a")
+	press(m, "esc")
+	if m.form != nil {
+		t.Fatal("clean close")
+	}
+}
+
+func TestForm_AtomicPasteAndReadonlyReplacement(t *testing.T) {
+	m := loadedModel()
+	press(m, "a")
+	press(m, "Title")
+	press(m, "tab")
+	_, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("a\n世界"), Paste: true})
+	original := m.form.draft.fields[fieldNotes]
+	for _, value := range []string{"bad\tvalue", "bad\x1bvalue", "bad\u202evalue", "bad\ufffdvalue", strings.Repeat("x", editorByteLimit), strings.Repeat("\n", 10000)} {
+		_, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune(value), Paste: true})
+		if m.form.draft.fields[fieldNotes] != original || m.form.err == "" {
+			t.Fatal("paste changed or silently truncated draft")
+		}
+	}
+	for _, raw := range []string{"raw\tnotes", "\x1b[31mnotes", strings.Repeat("a", editorByteLimit+1), strings.Repeat("\n", 10000)} {
+		n := fixtureNode("id", "Title", 2, nil)
+		n.Task.Description = raw
+		m = loadedModel(n)
+		press(m, "e")
+		if !m.form.readonly[fieldNotes] || m.form.draft.fields[fieldNotes] != raw {
+			t.Fatal("raw overwritten")
+		}
+		press(m, "tab")
+		formKey(m, tea.KeyCtrlU)
+		press(m, "x")
+		if m.form.draft.fields[fieldNotes] != raw {
+			t.Fatal("readonly changed")
+		}
+		formKey(m, tea.KeyCtrlE)
+		if m.form.prompt != promptReplace || m.form.confirm {
+			t.Fatal("replace default")
+		}
+		press(m, "enter")
+		if m.form.draft.fields[fieldNotes] != raw {
+			t.Fatal("default replaced")
+		}
+		formKey(m, tea.KeyCtrlE)
+		press(m, "tab")
+		press(m, "enter")
+		if m.form.readonly[fieldNotes] || m.form.draft.fields[fieldNotes] != "" || m.form.draft.original[fieldNotes] != raw {
+			t.Fatal("replacement lost original")
+		}
+	}
+}
+
+func TestForm_ParentPickerSnapshotAndPurity(t *testing.T) {
+	child := fixtureNode("child", "Child", 2, nil)
+	root := fixtureNode("root", "Root", 3, nil, child)
+	other := fixtureNode("other", "Other", 1, nil)
+	m := loadedModel(root, other)
+	m.focus = detailsFocus
+	press(m, "e")
+	for range 5 {
+		press(m, "tab")
+	}
+	formKey(m, tea.KeyCtrlP)
+	if m.form.picker == nil || len(m.form.picker.choices) != 2 {
+		t.Fatal("self/descendants in picker")
+	}
+	press(m, "Other")
+	press(m, "down")
+	press(m, "enter")
+	if m.form.draft.fields[fieldParent] != "other" {
+		t.Fatal("parent not exact ID")
+	}
+	before := m.form.draft.base.Clone()
+	root.Task.Title = "external"
+	m.prepareFrame()
+	if m.form.draft.base.Title != before.Title {
+		t.Fatal("refresh rebased draft")
+	}
+	for _, size := range []tea.WindowSizeMsg{{Width: 80, Height: 24}, {Width: 120, Height: 40}, {Width: 79, Height: 23}, {Width: 200, Height: 60}} {
+		m.Update(size)
+		frame := m.View()
+		for range 3 {
+			if m.View() != frame {
+				t.Fatal("impure View")
+			}
+		}
+	}
+	press(m, "esc")
+	press(m, "tab")
+	press(m, "enter")
+	if m.focus != detailsFocus {
+		t.Fatal("focus not restored")
+	}
+	done := fixtureNode("done", "Done", 1, nil)
+	done.Task.Status = core.StatusDone
+	m = loadedModel(done)
+	press(m, "e")
+	if !m.form.readonly[fieldProgress] {
+		t.Fatal("done progress editable")
+	}
+}
+
+func TestForm_SmallTerminalPreservesDraftAndSubmission(t *testing.T) {
+	m := loadedModel()
+	press(m, "a")
+	press(m, "Draft")
+	m.Update(tea.WindowSizeMsg{Width: 79, Height: 23})
+	before := m.form.draft.fields
+	press(m, "q")
+	press(m, "ctrl+s")
+	press(m, "esc")
+	press(m, "tab")
+	if m.form == nil || m.form.draft.fields != before || m.form.field != fieldTitle || m.form.prompt != promptNone {
+		t.Fatal("hidden form accepted input")
+	}
+	m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
+	press(m, "restored")
+	if m.form.draft.fields[fieldTitle] != "Draftrestored" {
+		t.Fatal("restore lost draft")
+	}
+}
+
+func TestForm_ControlsValidationAndParentSearch(t *testing.T) {
+	m := loadedModel(fixtureNode("parent", "Parent", 2, nil))
+	press(m, "a")
+	press(m, "ctrl+s")
+	if m.form.field != fieldTitle || m.form.err != "Enter a title." {
+		t.Fatal("validation focus")
+	}
+	press(m, "Title")
+	press(m, "ctrl+s")
+	if m.form.err != "Saving is unavailable." {
+		t.Fatal("missing writer")
+	}
+	press(m, "enter")
+	press(m, "tab")
+	press(m, "left")
+	press(m, "right")
+	formKey(m, tea.KeySpace)
+	press(m, "up")
+	press(m, "unused")
+	if m.form.draft.fields[fieldPriority] != "medium" {
+		t.Fatal("priority control")
+	}
+	press(m, "tab")
+	press(m, "tomorrow")
+	formKey(m, tea.KeyCtrlU)
+	if m.form.draft.fields[fieldDue] != "" {
+		t.Fatal("clear due")
+	}
+	press(m, "tab")
+	press(m, "work")
+	formKey(m, tea.KeyCtrlU)
+	press(m, "tab")
+	formKey(m, tea.KeyCtrlP)
+	press(m, "Missing")
+	press(m, "down")
+	press(m, "up")
+	press(m, "backspace")
+	press(m, "esc")
+	if m.form.picker != nil {
+		t.Fatal("picker escaped form")
+	}
+	formKey(m, tea.KeyCtrlP)
+	press(m, "down")
+	press(m, "enter")
+	formKey(m, tea.KeyCtrlU)
+	if m.form.draft.fields[fieldParent] != "" {
+		t.Fatal("root clear")
+	}
+	press(m, "tab")
+	press(m, "x")
+	press(m, "tab")
+	press(m, "enter")
+	press(m, "esc")
+	if m.form == nil || m.form.prompt != promptNone {
+		t.Fatal("cancel button discarded dirty draft")
+	}
+	formKey(m, tea.KeyCtrlR)
+	press(m, "esc")
+	press(m, "right")
+	press(m, "enter")
+	if m.form != nil {
+		t.Fatal("discard")
+	}
+	press(m, "e")
+	for range fieldStatus {
+		press(m, "tab")
+	}
+	press(m, "right")
+	if m.form.draft.fields[fieldStatus] != "in-progress" {
+		t.Fatal("status control")
+	}
+}
+
+func TestForm_VisiblePositionAndTimezone(t *testing.T) {
+	m := loadedModel()
+	m.options.Location = time.FixedZone("UTC-03", -3*3600)
+	press(m, "a")
+	if !strings.Contains(m.View(), "Create task · 1/6") || !strings.Contains(m.View(), "Due · UTC-03") {
+		t.Fatal("form lacks position or due timezone")
+	}
+	for range 5 {
+		press(m, "tab")
+	}
+	if !strings.Contains(m.View(), "Create task · 6/6") || !strings.Contains(m.View(), "Parent · Ctrl+P") {
+		t.Fatal("hidden fields not discoverable")
+	}
+}
+
+func TestForm_BrowseHelpAndQuitRemainVisible(t *testing.T) {
+	m := loadedModel()
+	m.notice = "Saved"
+	m.prepareFrame()
+	footer := strings.Split(m.View(), "\n")[23]
+	if !strings.Contains(footer, "? help") || !strings.Contains(footer, "q quit") {
+		t.Fatal("essential navigation hidden", footer)
+	}
+}
+
+func TestForm_ParentSearchAcceptsSpaces(t *testing.T) {
+	m := loadedModel(fixtureNode("id", "Customer research", 2, nil))
+	press(m, "a")
+	for range 5 {
+		press(m, "tab")
+	}
+	formKey(m, tea.KeyCtrlP)
+	press(m, "Customer")
+	formKey(m, tea.KeySpace)
+	press(m, "research")
+	if m.form.picker.query != "Customer research" || len(m.form.picker.matches()) != 2 {
+		t.Fatal("space omitted from parent search")
+	}
+}

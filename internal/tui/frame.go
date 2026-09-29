@@ -235,7 +235,7 @@ func (m *Model) prepareFrame() {
 	}
 	for y, s := range rows {
 		fg := textColor
-		if m.helpOpen || m.filters != nil {
+		if m.helpOpen || m.filters != nil || m.form != nil {
 			s = ansi.Strip(s)
 			fg = borderColor
 		}
@@ -243,13 +243,21 @@ func (m *Model) prepareFrame() {
 	}
 	m.help.Width = l.width - 2
 	footer := " " + m.help.ShortHelpView(browseHints())
+	if m.notice != "" {
+		footer = " " + m.notice + " ·" + footer
+	}
 	if m.focus == detailsFocus {
 		footer = " ↑↓ scroll · PgUp/PgDn · Home/End · Tab tasks · ? help · q quit"
 	}
 	if m.recoveryNeeded {
 		footer = "Read outcome unknown · Reload required · q quit"
+	} else if m.saving {
+		footer = " Saving… · Ctrl+C exits safely"
 	} else if m.stale {
-		footer = " Stale · r refresh  ·" + footer
+		footer = " Stale snapshot · writes paused · r refresh · ? help · q quit"
+		if m.awaitingRead {
+			footer = " Saved; refresh failed · writes paused · r retry · q quit"
+		}
 	} else if m.busy && m.state == loaded {
 		footer = " Refreshing ·" + footer
 	}
@@ -265,6 +273,9 @@ func (m *Model) prepareFrame() {
 	if m.filters != nil {
 		footer = " Tab next · ←→ choose · Space toggle · Ctrl+S apply · Esc cancel"
 	}
+	if m.form != nil {
+		footer = " Tab / Shift+Tab fields · Ctrl+S save · Esc cancel · Ctrl+C exit"
+	}
 	if m.stale && !strings.Contains(footer, "Stale") {
 		footer = " Stale ·" + footer
 	}
@@ -277,6 +288,15 @@ func (m *Model) prepareFrame() {
 	}
 	if m.filters != nil {
 		rows = m.overlay(rows, l, "Filter tasks", m.filterLines(l.modal.width-2), 0, "Ctrl+S apply  ·  Esc cancel")
+	}
+	if m.form != nil {
+		title, content, offset, controls := m.formContent(l.modal.width-2, l.modal.height-4)
+		rows = m.overlay(rows, l, title, content, offset, controls)
+		b := l.modal
+		y := b.y + b.height - 3
+		left := cellSlice(rows[y], 0, b.x+1)
+		right := cellSlice(rows[y], b.x+b.width-1, l.width)
+		rows[y] = left + m.surface(fitCells(" "+m.form.err, b.width-2), accentColor, dialogColor) + right
 	}
 	m.frame = strings.Join(rows, "\n")
 }

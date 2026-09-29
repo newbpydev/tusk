@@ -433,3 +433,13 @@ checks at all target sizes. See the [U4 receipt](../verification-evidence/005/u4
 Large/pathological notes use labeled full-content plain text under the explicit
 formatting budget; raw storage is preserved. U19 is next. Form identity, writes,
 consent/recovery UI and final combined-flow proof remain their designated units.
+
+
+### Feature 005 U5 handoff — 2026-09-29
+
+Feature 005 U5 now supplies create/edit/move/lifecycle forms with detached Base,
+raw preservation, explicit conflict/discard and one-write/readback barriers.
+[U5 evidence](../verification-evidence/005/u5.json) records canonical/minimum-Go
+and real Kitty checks. TUSK-V62 closes. TUSK-V61/V63 keep their remaining delete
+consent portions open for U8. Product U19 and Feature 005 overall acceptance remain
+open through U8/U6; native/hosted release evidence remains Feature 006.

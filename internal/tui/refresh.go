@@ -1,7 +1,6 @@
 package tui
 
 import (
-	"errors"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/core"
 	"time"
@@ -35,6 +34,7 @@ func (m *Model) requestRefresh() tea.Cmd {
 	}
 	m.busy = true
 	m.operation++
+	m.startRead()
 	if m.state == loadFailed {
 		m.state = loading
 	}
@@ -46,21 +46,20 @@ func (m *Model) acceptForest(msg forestMsg) tea.Cmd {
 		return nil
 	}
 	// Resource completion and uncertainty precede display freshness checks.
-	m.busy = false
-	if IsUnknown(msg.err) {
-		m.recoveryNeeded = true
-		m.stale = true
-		m.refreshPending = false
-		return nil
-	}
-	if errors.Is(msg.err, errRuntime) {
-		m.exitErr = errRuntime
-		return tea.Quit
+	if cmd, handled := m.completeRead(msg.err); handled {
+		return cmd
 	}
 	var timer tea.Cmd
 	if msg.generation == m.generation {
 		m.now = msg.now
 		if msg.err != nil {
+			if m.awaitingRead {
+				m.notice = "Saved; refresh failed"
+			}
+			if m.form != nil && m.form.reloading {
+				m.form.reloading = false
+				m.form.err = "Reload failed. Draft retained; Ctrl+R retries."
+			}
 			if m.state == loaded {
 				m.stale = true
 			} else {
@@ -70,6 +69,11 @@ func (m *Model) acceptForest(msg forestMsg) tea.Cmd {
 			m.state = loaded
 			m.stale = false
 			m.forest = msg.forest
+			if m.awaitingRead {
+				m.notice = "Saved"
+			}
+			m.awaitingRead = false
+			m.reloadForm()
 			m.historyRefresh = true
 			m.pruneCollapsed()
 			if !m.timerStarted {

@@ -214,7 +214,7 @@ Each scenario includes its fixture/action and expected outcome. The unit's named
 ### U19. Forms and confirmed mutations
 
 - [ ] TUSK-V61 **Interaction / modal focus:** Type q, d, ?, spaces and multiline notes in form; they cannot quit/toggle/delete globally. Tab cycles fields, errors stay visible, Esc restores initiating focus, second d cannot confirm delete.
-- [ ] TUSK-V62 **Failure / save lifecycle:** Submit twice rapidly; exactly one write runs. Inject validation/storage/conflict failure and retain draft. Commit then fail refresh: display saved/stale state and never resubmit. Small-terminal resize preserves draft during save.
+- [x] TUSK-V62 **Failure / save lifecycle:** Submit twice rapidly; exactly one write runs. Inject validation/storage/conflict failure and retain draft. Commit then fail refresh: display saved/stale state and never resubmit. Small-terminal resize preserves draft during save.
 - [ ] TUSK-V63 **Concurrency / TUI mutations:** External CLI edit/delete/move while TUI form/confirmation is open produces conflict or safe missing-task state. Reload/reapply is explicit; latest committed graph/events remain intact.
 
 ### U20. TUI workflow and real terminal acceptance
@@ -434,3 +434,13 @@ checks at all target sizes. See the [U4 receipt](../verification-evidence/005/u4
 Large/pathological notes use labeled full-content plain text under the explicit
 formatting budget; raw storage is preserved. U19 is next. Form identity, writes,
 consent/recovery UI and final combined-flow proof remain their designated units.
+
+
+### Feature 005 U5 handoff — 2026-09-29
+
+Feature 005 U5 now supplies create/edit/move/lifecycle forms with detached Base,
+raw preservation, explicit conflict/discard and one-write/readback barriers.
+[U5 evidence](../verification-evidence/005/u5.json) records canonical/minimum-Go
+and real Kitty checks. TUSK-V62 closes. TUSK-V61/V63 keep their remaining delete
+consent portions open for U8. Product U19 and Feature 005 overall acceptance remain
+open through U8/U6; native/hosted release evidence remains Feature 006.

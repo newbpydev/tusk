@@ -1,0 +1,40 @@
+ TUSK  /  Personal workspace                                                                                            
+╭─ > Tasks ────────────────────────────────────╮╭─ Task details · 1–36 / 37 ───────────────────────────────────────────╮
+│ 2 tasks                                      ││                                                                      │
+│                                              ││  Prepare customer interviews                                         │
+│ Upcoming                                     ││  Root task                                                           │
+│> Prepare customer interviews                 ││                                                                      │
+│  todo · high · 0%                            ││  Status    todo                                                      │
+│ Backlog                                      ││  Priority  high                                                      │
+│  Interview agenda updated externally         ││  Progress  0%                                                        │
+│  todo · medium · 0%                          ││  Due       2026-09-30 23:59:59 -03 (-03:00)                          │
+│                       ╭─ > Create task · 2/6 ────────────────────────────────────────────────╮                       │
+│                       │   Title                                                              │                       │
+│                       │   Responsive form check                                              │a                      │
+│                       │                                                                      │                       │
+│                       │ > Notes · Enter adds a line                                          │                       │
+│                       │ Keep this text                                                       │                       │
+│                       │                                                                      │                       │
+│                       │                                                                      │                       │
+│                       │                                                                      │                       │
+│                       │                                                                      │nd first impressions.  │
+│                       │   Priority · ←→ choose                                               │                       │
+│                       │   ‹ medium ›                                                         │                       │
+│                       │                                                                      │                       │
+│                       │   Due · America/Sao_Paulo · natural date / timestamp                 │─────────────────────  │
+│                       │                                                                      │                       │
+│                       │                                                                      │                       │
+│                       │   Tags · comma-separated                                             │                       │
+│                       │ Input rejected: unsupported text or editor capacity exceeded.        │                       │
+│                       │ Save task  Ctrl+S     Cancel  Esc                                    │parent_id, priority,   │
+│                       ╰──────────────────────────────────────────────────────────────────────╯                       │
+│                                              ││  2026-09-29 20:24:18 -03 (-03:00)                                    │
+│                                              ││                                                                      │
+│                                              ││  #6  rollup                                                          │
+│                                              ││  Changed progress                                                    │
+│                                              ││  2026-09-29 20:28:35 -03 (-03:00)                                    │
+│                                              ││                                                                      │
+│                                              ││  #8  rollup                                                          │
+│                                              ││  Changed progress                                                    │
+╰──────────────────────────────────────────────╯╰──────────────────────────────────────────────────────────────────────╯
+ Tab / Shift+Tab fields · Ctrl+S save · Esc cancel · Ctrl+C exit

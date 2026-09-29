@@ -19,6 +19,7 @@ type RunOptions struct {
 	Location        *time.Location
 	Profile         termenv.Profile
 	DayBounds       func(string, time.Time, *time.Location) (time.Time, time.Time, error)
+	ParseDue        DueParser
 	Program         func(tea.Model, ...tea.ProgramOption) (tea.Model, error)
 	CleanupProgress func()
 }
@@ -43,7 +44,7 @@ func Run(ctx context.Context, options RunOptions) (result Result, err error) {
 			err = errRuntime
 		}
 	}()
-	m := New(Options{Context: ctx, Load: session.Load, History: session.History, Now: time.Now, Wait: Wait, Location: options.Location, Profile: options.Profile, DayBounds: options.DayBounds})
+	m := New(Options{Context: ctx, Load: session.Load, History: session.History, Mutate: session.Mutate, ParseDue: options.ParseDue, Now: time.Now, Wait: Wait, Location: options.Location, Profile: options.Profile, DayBounds: options.DayBounds})
 	program := options.Program
 	if program == nil {
 		program = func(m tea.Model, opts ...tea.ProgramOption) (tea.Model, error) {

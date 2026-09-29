@@ -2,8 +2,8 @@
 feature-id: "005"
 plan-source: ../plans/2026-09-06-005-feat-interactive-tui-application-plan.md
 verification-plan: ../verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md
-status: Open - execution gates pending
-evidence-scope: Planning findings only
+status: In progress - U5 accepted; U8 active; final gates pending
+evidence-scope: Planning findings and local U1, U7, U2, U3, U4, U5 execution
 ---
 
 # Feature 005 Issue Workorder
@@ -40,9 +40,9 @@ scope expansion is authorized by the prototype comparison keys.
 | 005-ISS-008 | Planning/source review | Hierarchy / U3 owner | P1 | Fixed in plan; runtime unverified | Filtering before tree construction loses ancestors or manufactures roots. Project complete tree using core predicates and inclusive/exclusive due-day bounds. | R10,R11; U3; Current GetTaskTree/core filtering read; V40–V49. |
 | 005-ISS-009 | Planning/source review | Service contract / U4 owner | P2 | Fixed in plan; runtime unverified | Tree and history methods are separate snapshots; apparent joined freshness is unsupported. Give history separate token/loading/stale state; never claim atomic metadata/history. | R13,R14,R24; U4; Service queries contract; V63–V66. |
 | 005-ISS-010 | Planning/source review | Terminal security / U2/U4 owners | P1 | Fixed in plan; runtime unverified | Stored text, Markdown links and renderer options can inject terminal output or hidden I/O. Share scalar sanitization, explicit multiline policy, fixed renderer style/profile and final escape filtering. | R15; U2/U4; Current CLI sanitizer and Glamour source; V31–V36,V59–V60. |
-| 005-ISS-011 | Planning/source review | Data preservation / U5 owner | P1 | Fixed in plan; runtime unverified | Widget sanitization/line limits can silently rewrite original notes during metadata edits. Keep raw values and dirty fields; require lossless round-trip or explicit read-only replacement path; reject paste atomically. | R23; U5; Bubbles source; V33,V58,V70,V84–V85. |
-| 005-ISS-012 | Planning/source review | Parity / U5 owner | P1 | Fixed in plan; runtime unverified | Forms could omit clear intent, misuse due display values or recompute business rules. Map only dirty fields to existing Base/clear/patch APIs; service owns graph/status/progress. | R16–R18; U5; ports.TaskService and service.md; V68–V80. |
-| 005-ISS-013 | Planning/source review | Reliability / U5 owner | P1 | Fixed in plan; runtime unverified | Duplicate submit or saved-refresh-failed state can repeat an acknowledged mutation. One admission before waiting for read drain; known success closes draft, stale read blocks writes. | R19; U5; V81–V83,V20. |
+| 005-ISS-011 | Planning/source review | Data preservation / U5 owner | P1 | Closed locally in U5; u5.json | Widget sanitization/line limits can silently rewrite original notes during metadata edits. Keep raw values and dirty fields; require lossless round-trip or explicit read-only replacement path; reject paste atomically. | R23; U5; Bubbles source; V33,V58,V70,V84–V85. |
+| 005-ISS-012 | Planning/source review | Parity / U5 owner | P1 | Closed locally in U5; u5.json | Forms could omit clear intent, misuse due display values or recompute business rules. Map only dirty fields to existing Base/clear/patch APIs; service owns graph/status/progress. | R16–R18; U5; ports.TaskService and service.md; V68–V80. |
+| 005-ISS-013 | Planning/source review | Reliability / U5 owner | P1 | Closed locally in U5; u5.json | Duplicate submit or saved-refresh-failed state can repeat an acknowledged mutation. One admission before waiting for read drain; known success closes draft, stale read blocks writes. | R19; U5; V81–V83,V20. |
 | 005-ISS-014 | Planning/source review | Destructive UX / U8 owner | P1 | Fixed in plan; runtime unverified | One-key delete and changing subtree can broaden consent. Freeze preview, default Cancel, explicit recursive checkbox, Force=false; reset consent after conflict. | R20; U8; DeletePreview/Expected live contract; V87–V92. |
 | 005-ISS-015 | Planning/source review | Transaction integrity / U8 owner | P1 | Fixed in plan; runtime unverified | Unknown outcome matches retryable causes; uncertain create may expose no ID. Check typed outcome first; retire/reopen same owner path, quarantine draft, read back and never guess/replay. | R21; U7/U8; Durable outcome-redaction learning; V21–V22,V93–V99. |
 | 005-ISS-016 | Planning/source review | Process / U7 owner | P1 | Fixed in plan; runtime unverified | Competing signal handlers or lost result messages obscure committed state/cleanup failure. Keep process signal owner; raw-key cancellation is explicit; outcome receipt survives Program cancellation. | R22; U7/U6; Current processContext/CLI diagnostics read; V20,V23–V25,V98,V103. |
@@ -305,3 +305,58 @@ V35,V54,V57–V64,V66–V67 close. V65 known/missing/unknown read handling passe
 its user-facing fresh-owner Reload/readback completion remains U8. Existing
 V50–V53,V55 and form/consent presentation portions stay with U5/U8. U5 forms and
 nondestructive mutations is next. No production mutation UI is claimed yet.
+
+### U5 editor capacity contract — 2026-09-29
+
+The form editor admits at most 64 KiB per text field and at most 10,000 notes
+lines. This bounds widget preparation only; larger existing stored values remain
+raw and read-only, with explicit default-Cancel replacement and omission from
+unrelated patches. Before loading a widget, exact round-trip equality is required.
+Incoming paste is validated atomically before mutation; notes allow LF, while
+controls, bidi overrides and decoded replacement-rune input are rejected. The
+replacement rune is conservatively unsupported on input because terminal key
+messages cannot distinguish it from already-decoded invalid UTF-8. Existing
+valid stored values still follow the round-trip preservation rule. V84/V85 prove
+these boundaries; no storage/schema limit or automatic truncation is introduced.
+
+
+### U5 interaction refinements — 2026-09-29
+
+Below 80×24, hidden forms ignore ordinary input and retain their exact draft and
+focus until restored; Ctrl+C remains available and browse q still quits. This
+refines the earlier below-minimum wording that allowed invisible draft typing.
+Form headers show field position, and the due label states the configured zone.
+Saved-refresh failure explicitly says writes are paused; an admitted mutation
+says Saving rather than Refreshing. Help and quit remain visible with notices at
+80 columns. The parent picker accepts literal spaces in multiword searches.
+
+The manual `make build-tui-fixture` target compiles an application-only launcher
+from test source in Bash. Its Kitty entry point runs the production Run/model,
+real SQLite service and a controlled post-create read failure, then exits before
+the test runner prints results. It is fault-injected application evidence, not
+a test-results display or proof that an unmodified storage fault occurred.
+
+
+### U5 local acceptance — 2026-09-29
+
+U5 passes `make validate build check-generated`, minimum-Go affected race checks
+and five CGO-free application/test builds. TUI coverage is 98.4%. The
+[U5 receipt](../verification-evidence/005/u5.json) retains source/binary hashes,
+red/green observations, logs, real disk contracts and owned Kitty captures.
+Create/edit forms preserve raw fields and detached Base, reject paste atomically,
+and send only changed fields. Read cancellation drains before one admitted write;
+known failures retain drafts, conflicts require explicit reload, and committed
+writes cannot be replayed after failed readback. Moves/rollups and lifecycle
+policy use the service unchanged. Kitty confirms 80×24/120×40/200×60, undersize
+restoration, NO_COLOR, multiline paste, parent selection, conflict/discard, CLI
+JSON persistence and the controlled saved-refresh-failed screen.
+
+V38,V50,V52,V53,V68–V86 close. V30/V36/V51/V55 retain their U8 consent/recovery
+portions. Product TUSK-V62 closes; TUSK-V61/V63 retain deletion/consent portions.
+Inline contract, integrity, security, async, usability and simplification review
+resolved the recorded findings; no independent reviewer claim is made. U8 is
+next. Performance/final acceptance stays U6; native/hosted release stays Feature 006.
+
+Final Kitty readback review caught an obsolete failure notice after successful
+refresh. The red/green correction and fresh capture are retained in u5.json;
+canonical and minimum-Go gates passed again before the unit commit.

@@ -100,7 +100,12 @@ BUILD_OUTPUT ?= bin/tusk
 CLI_TEST_RUN ?= .
 TUI_TEST_RUN ?= .
 TUI_TEST_FLAGS ?=
-.PHONY: test-tui build-tui
+.PHONY: test-tui build-tui build-tui-fixture
+
+# Manual fault-injected app, never test-result verification in Kitty.
+build-tui-fixture:
+	mkdir -p bin
+	CGO_ENABLED=0 go test -c -o bin/tusk-tui-fixture ./internal/tui
 
 test-tui:
 	go test $(TUI_TEST_FLAGS) -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '$(TUI_TEST_RUN)'

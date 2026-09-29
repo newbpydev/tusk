@@ -42,9 +42,10 @@ func (m *Model) dispatchHistory() tea.Cmd {
 	}
 	m.busy = true
 	m.operation++
+	m.startRead()
 	m.history.pending = false
 	owner, operation, token, key := m.owner, m.operation, m.history.token, m.history.key
-	ctx, load := m.options.Context, m.options.History
+	ctx, load := m.readContext, m.options.History
 	return safeCommand(func() tea.Msg {
 		events, err := load(ctx, key.id)
 		return historyMsg{owner, operation, token, key, events, err}
@@ -55,17 +56,8 @@ func (m *Model) acceptHistory(msg historyMsg) tea.Cmd {
 	if msg.owner != m.owner || msg.operation != m.operation || !m.busy {
 		return nil
 	}
-	m.busy = false
-	if IsUnknown(msg.err) {
-		m.recoveryNeeded = true
-		m.stale = true
-		m.refreshPending = false
-		m.history.pending = false
-		return nil
-	}
-	if errors.Is(msg.err, errRuntime) {
-		m.exitErr = errRuntime
-		return tea.Quit
+	if cmd, handled := m.completeRead(msg.err); handled {
+		return cmd
 	}
 	if msg.key == m.history.key && msg.token == m.history.token {
 		if msg.err != nil {

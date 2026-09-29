@@ -29,6 +29,8 @@ type Options struct {
 	DayBounds func(string, time.Time, *time.Location) (time.Time, time.Time, error)
 	History   func(context.Context, string) ([]ports.TaskEvent, error)
 	Render    MarkdownRenderer
+	ParseDue  DueParser
+	Mutate    func(context.Context, mutationRequest) (*core.Task, error)
 }
 
 type loadState uint8
@@ -77,6 +79,14 @@ type Model struct {
 	markdown                  markdownState
 	history                   historyState
 	historyRefresh            bool
+	form                      *taskForm
+	formSequence              uint64
+	saving, awaitingRead      bool
+	pendingMutation           *mutationRequest
+	readContext               context.Context
+	readCancel                context.CancelFunc
+	readInterrupted           bool
+	notice                    string
 }
 
 func New(options Options) *Model {
@@ -109,13 +119,14 @@ func New(options Options) *Model {
 	h := help.New()
 	h.Styles = help.Styles{Ellipsis: plain, ShortKey: plain, ShortDesc: plain, ShortSeparator: plain, FullKey: plain, FullDesc: plain, FullSeparator: plain}
 	m := &Model{options: options, renderer: r, notes: notes, help: h, operation: 1, busy: true, width: 80, height: 24, selected: -1, collapsed: map[string]bool{}}
+	m.startRead()
 	m.prepareFrame()
 	return m
 }
 
 func (m *Model) Init() tea.Cmd {
 	// Copy every command input now. The closure must never capture m.
-	ctx, load, now, operation, owner, generation := m.options.Context, m.options.Load, m.options.Now, m.operation, m.owner, m.generation
+	ctx, load, now, operation, owner, generation := m.readContext, m.options.Load, m.options.Now, m.operation, m.owner, m.generation
 	return safeCommand(func() tea.Msg {
 		forest, err := load(ctx)
 		return forestMsg{operation: operation, owner: owner, generation: generation, now: now(), forest: forest, err: err}
@@ -131,6 +142,8 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 		}
 	}()
 	switch msg := msg.(type) {
+	case mutationMsg:
+		cmd = m.acceptMutation(msg)
 	case notesMsg:
 		m.acceptNotes(msg)
 	case historyMsg:
@@ -153,6 +166,18 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 		if msg.Type == tea.KeyCtrlC {
 			m.exitErr = context.Canceled
 			return m, tea.Quit
+		}
+		if !measure(m.width, m.height).usable() {
+			if m.form == nil && !m.saving && msg.String() == "q" {
+				return m, tea.Quit
+			}
+			return m, nil
+		}
+		if m.form != nil {
+			return m.finish(m.formKey(msg))
+		}
+		if m.saving {
+			return m.finish(nil)
 		}
 		if m.helpOpen {
 			switch msg.String() {
@@ -182,6 +207,12 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 			return m.finish(nil)
 		}
 		switch msg.String() {
+		case "a":
+			m.beginForm(false)
+		case "e":
+			m.beginForm(true)
+		case "x", " ":
+			cmd = m.toggleTask()
 		case "q":
 			return m, tea.Quit
 		case "tab", "shift+tab":

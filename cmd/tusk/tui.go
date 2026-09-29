@@ -18,7 +18,7 @@ import (
 
 func tuiRunner(input io.Reader, output, diagnostics io.Writer) func(context.Context, cli.Config) (cli.TUIResult, error) {
 	return func(ctx context.Context, cfg cli.Config) (cli.TUIResult, error) {
-		result, err := tui.Run(ctx, tui.RunOptions{Input: input, Output: output, Open: tuiFactory(cfg), Location: cfg.Location, Profile: tuiProfile(os.Getenv), DayBounds: dateparse.DayBounds,
+		result, err := tui.Run(ctx, tui.RunOptions{Input: input, Output: output, Open: tuiFactory(cfg), Location: cfg.Location, Profile: tuiProfile(os.Getenv), DayBounds: dateparse.DayBounds, ParseDue: dateparse.ParseDue,
 			CleanupProgress: func() { _, _ = io.WriteString(diagnostics, "tusk: cleanup in progress; waiting for active work\n") }})
 		return cli.TUIResult{HadCommittedChanges: result.HadCommittedChanges, OutcomeUnknown: result.OutcomeUnknown}, err
 	}

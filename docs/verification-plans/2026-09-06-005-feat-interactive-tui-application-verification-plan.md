@@ -2,8 +2,8 @@
 feature-id: "005"
 plan-source: ../plans/2026-09-06-005-feat-interactive-tui-application-plan.md
 surface-profiles: [cli-tui, internal-service-consumer, persistence-lifecycle, documentation]
-status: In progress - U1, U7, U2, U3 and U4 accepted, U5 active
-evidence-scope: Local U1, U7 and U2 execution; later units pending
+status: In progress - U1, U7, U2, U3, U4 and U5 accepted, U8 active
+evidence-scope: Local U1, U7, U2, U3, U4 and U5 execution; U8/U6 pending
 ---
 
 # Feature 005 Verification Plan
@@ -161,7 +161,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [x] V37 (R5,R9; Purity): After every resize/modal transition, repeated root View calls only return stored frame; no child render, recomposition or I/O occurs.
 
-- [ ] V38 (R9,R12,R22; Small terminal): Shrink while editing/saving: draft and operation tokens remain; mutation may finish, Ctrl+C exits, and browse q remains available without triggering form actions.
+- [x] V38 (R9,R12,R22; Small terminal): Shrink while editing/saving: draft and operation tokens remain; mutation may finish, Ctrl+C exits, and browse q remains available without triggering form actions.
 
 - [x] V39 (R9,R12,R15,R26; Kitty): Inspect all three supported sizes plus undersized restore, long Unicode and NO_COLOR in owned Kitty; record focus, clipping and visible absence of jitter.
 
@@ -187,13 +187,13 @@ those states, without claiming they exist in the U2 shell.
 
 - [x] V49 (R11; Dates): Relative due filter resolves on Apply, shows resolved local date and does not drift at midnight; group clock still refreshes.
 
-- [ ] V50 (R8; Refresh): Initial/manual/post-write/2-second triggers call service through commands only; active-read triggers coalesce and cannot starve completion with perpetual generation invalidation.
+- [x] V50 (R8; Refresh): Initial/manual/post-write/2-second triggers call service through commands only; active-read triggers coalesce and cannot starve completion with perpetual generation invalidation.
 
 - [ ] V51 (R8,R19,R24; Concurrency): Reverse stale forest replies across a mutation/owner change; process matching-owner unknown outcomes before stale-payload rejection, release the busy slot, and prioritize recovery over waiting writes. Known deliberate read cancellation permits the waiting write; other read failure aborts it and preserves draft.
 
-- [ ] V52 (R7,R8; Failure): Initial read failure renders retry/quit; refresh failure keeps labeled stale snapshot and disables mutations; successful read clears stale state.
+- [x] V52 (R7,R8; Failure): Initial read failure renders retry/quit; refresh failure keeps labeled stale snapshot and disables mutations; successful read clears stale state.
 
-- [ ] V53 (R8,R17,R24; Draft): Periodic refresh while editing/help/filter modal stays open cannot steal focus, replace raw fields, reset Base or apply reply to another form instance.
+- [x] V53 (R8,R17,R24; Draft): Periodic refresh while editing/help/filter modal stays open cannot steal focus, replace raw fields, reset Base or apply reply to another form instance.
 
 - [x] V54 (R8,R24; Resources): Rapid r/search/selection/ticks produce at most one service operation, one pending refresh/latest history request and bounded timers; no retry storm or accumulating queues.
 
@@ -227,43 +227,43 @@ those states, without claiming they exist in the U2 shell.
 
 ### Forms and mutation contracts — U5
 
-- [ ] V68 (R12,R16; Create): Create root with minimal title defaults todo/medium/0/empty notes/null parent/due; optional parent chosen by exact ID creates subtask through service.
+- [x] V68 (R12,R16; Create): Create root with minimal title defaults todo/medium/0/empty notes/null parent/due; optional parent chosen by exact ID creates subtask through service.
 
-- [ ] V69 (R16; Fields): Title/notes/priority/due/tags/parent and edit-only status/progress map to exact existing command fields; service normalization/date grammar remains authoritative.
+- [x] V69 (R16; Fields): Title/notes/priority/due/tags/parent and edit-only status/progress map to exact existing command fields; service normalization/date grammar remains authoritative.
 
-- [ ] V70 (R16,R23; Patch): Changing one field omits every other field; unchanged raw notes/dates/IDs survive; explicit clear sends ClearDue/ClearParent/empty tags intent.
+- [x] V70 (R16,R23; Patch): Changing one field omits every other field; unchanged raw notes/dates/IDs survive; explicit clear sends ClearDue/ClearParent/empty tags intent.
 
-- [ ] V71 (R16,R19; No-op): Empty/equal edit closes with No changes, zero mutation calls and no added history/timestamp update.
+- [x] V71 (R16,R19; No-op): Empty/equal edit closes with No changes, zero mutation calls and no added history/timestamp update.
 
-- [ ] V72 (R12; Focus): Literal q/d/?/x/space in text fields never invokes browse actions; Tab loops form focus, Enter in notes inserts LF, focused Save or Ctrl+S submits.
+- [x] V72 (R12; Focus): Literal q/d/?/x/space in text fields never invokes browse actions; Tab loops form focus, Enter in notes inserts LF, focused Save or Ctrl+S submits.
 
-- [ ] V73 (R12,R17; Cancel): Esc on dirty draft defaults Keep editing; explicit Discard closes, clean draft closes directly; restoring focus does not act on a stale selection.
+- [x] V73 (R12,R17; Cancel): Esc on dirty draft defaults Keep editing; explicit Discard closes, clean draft closes directly; restoring focus does not act on a stale selection.
 
-- [ ] V74 (R16,R17; Validation): Empty/256-codepoint title, invalid tags/date/status/priority, bad parent, NUL and invalid UTF-8 retain draft and focus first invalid field; no partial mutation.
+- [x] V74 (R16,R17; Validation): Empty/256-codepoint title, invalid tags/date/status/priority, bad parent, NUL and invalid UTF-8 retain draft and focus first invalid field; no partial mutation.
 
-- [ ] V75 (R17; Conflict): Independent owner edits same task after form opens: ErrConflict retains exact Base/draft; Keep draft cannot silently rebase; Reload explicitly discards.
+- [x] V75 (R17; Conflict): Independent owner edits same task after form opens: ErrConflict retains exact Base/draft; Keep draft cannot silently rebase; Reload explicitly discards.
 
-- [ ] V76 (R17,R24; Conflict): Independent owner deletes/recreates an ID or changes it then restores equality: obey service incarnation/value semantics; absent task never turns edit into create.
+- [x] V76 (R17,R24; Conflict): Independent owner deletes/recreates an ID or changes it then restores equality: obey service incarnation/value semantics; absent task never turns edit into create.
 
-- [ ] V77 (R18; Lifecycle): x/Space on open task completes subtree; done task reopens to todo without reopening descendants; repeated satisfied actions create no extra event.
+- [x] V77 (R18; Lifecycle): x/Space on open task completes subtree; done task reopens to todo without reopening descendants; repeated satisfied actions create no extra event.
 
-- [ ] V78 (R18; Progress): Open leaf accepts 0 and 99, rejects 100/negative/non-numeric; done and parent progress are read-only; parent/status plus dirty progress requires separate saves.
+- [x] V78 (R18; Progress): Open leaf accepts 0 and 99, rejects 100/negative/non-numeric; done and parent progress are read-only; parent/status plus dirty progress requires separate saves.
 
-- [ ] V79 (R18; Hierarchy): Move to root/other parent recalculates both chains; missing/self/cyclic parent and final depth 11 fail without partial graph/history changes.
+- [x] V79 (R18; Hierarchy): Move to root/other parent recalculates both chains; missing/self/cyclic parent and final depth 11 fail without partial graph/history changes.
 
-- [ ] V80 (R18; Policy): With default/true parent-completion policy, add/remove/done/reopen/move verifies direct-child rollup, all-done completion, open-at-100 and last-child removal.
+- [x] V80 (R18; Policy): With default/true parent-completion policy, add/remove/done/reopen/move verifies direct-child rollup, all-done completion, open-at-100 and last-child removal.
 
-- [ ] V81 (R19; Concurrency): Double Enter/Ctrl+S/repeated toggle while read is draining or save pending yields one admitted mutation and one completion; saving blocks Esc/ordinary quit.
+- [x] V81 (R19; Concurrency): Double Enter/Ctrl+S/repeated toggle while read is draining or save pending yields one admitted mutation and one completion; saving blocks Esc/ordinary quit.
 
-- [ ] V82 (R17,R19; Failure): Inject known busy/deadline/storage/domain errors; no optimistic persisted values, no retry timer; draft remains available for explicit retry.
+- [x] V82 (R17,R19; Failure): Inject known busy/deadline/storage/domain errors; no optimistic persisted values, no retry timer; draft remains available for explicit retry.
 
-- [ ] V83 (R19; Partial failure): Commit succeeds, refresh fails: close saved draft, show Saved; refresh failed, block writes until fresh read, never issue second create/edit.
+- [x] V83 (R19; Partial failure): Commit succeeds, refresh fails: close saved draft, show Saved; refresh failed, block writes until fresh read, never issue second create/edit.
 
-- [ ] V84 (R23; Raw preservation): Load controls/tabs and >10,000-line stored notes that a widget cannot round-trip: read-only safe display, omitted patch field, explicit default-Cancel replacement starts blank.
+- [x] V84 (R23; Raw preservation): Load controls/tabs and >10,000-line stored notes that a widget cannot round-trip: read-only safe display, omitted patch field, explicit default-Cancel replacement starts blank.
 
-- [ ] V85 (R23; Paste): Bracketed paste with LF/Unicode succeeds within supported capacity; invalid/oversized/control input is rejected atomically with previous raw draft intact, not truncated or normalized; OS clipboard command stays disabled.
+- [x] V85 (R23; Paste): Bracketed paste with LF/Unicode succeeds within supported capacity; invalid/oversized/control input is rejected atomically with previous raw draft intact, not truncated or normalized; OS clipboard command stays disabled.
 
-- [ ] V86 (R12,R16,R17,R18,R19,R23,R26; Kitty): Create/edit/move/toggle, multiline paste, validation, conflict, dirty cancel and saved-refresh-failed display in owned Kitty; inspect actual persisted state through CLI JSON.
+- [x] V86 (R12,R16,R17,R18,R19,R23,R26; Kitty): Create/edit/move/toggle, multiline paste, validation, conflict, dirty cancel and saved-refresh-failed display in owned Kitty; inspect actual persisted state through CLI JSON.
 
 ### Deletion and reconciliation — U8
 
@@ -582,3 +582,58 @@ V35,V54,V57–V64,V66–V67 close. V65 known/missing/unknown read handling passe
 its user-facing fresh-owner Reload/readback completion remains U8. Existing
 V50–V53,V55 and form/consent presentation portions stay with U5/U8. U5 forms and
 nondestructive mutations is next. No production mutation UI is claimed yet.
+
+### U5 editor capacity contract — 2026-09-29
+
+The form editor admits at most 64 KiB per text field and at most 10,000 notes
+lines. This bounds widget preparation only; larger existing stored values remain
+raw and read-only, with explicit default-Cancel replacement and omission from
+unrelated patches. Before loading a widget, exact round-trip equality is required.
+Incoming paste is validated atomically before mutation; notes allow LF, while
+controls, bidi overrides and decoded replacement-rune input are rejected. The
+replacement rune is conservatively unsupported on input because terminal key
+messages cannot distinguish it from already-decoded invalid UTF-8. Existing
+valid stored values still follow the round-trip preservation rule. V84/V85 prove
+these boundaries; no storage/schema limit or automatic truncation is introduced.
+
+
+### U5 interaction refinements — 2026-09-29
+
+Below 80×24, hidden forms ignore ordinary input and retain their exact draft and
+focus until restored; Ctrl+C remains available and browse q still quits. This
+refines the earlier below-minimum wording that allowed invisible draft typing.
+Form headers show field position, and the due label states the configured zone.
+Saved-refresh failure explicitly says writes are paused; an admitted mutation
+says Saving rather than Refreshing. Help and quit remain visible with notices at
+80 columns. The parent picker accepts literal spaces in multiword searches.
+
+The manual `make build-tui-fixture` target compiles an application-only launcher
+from test source in Bash. Its Kitty entry point runs the production Run/model,
+real SQLite service and a controlled post-create read failure, then exits before
+the test runner prints results. It is fault-injected application evidence, not
+a test-results display or proof that an unmodified storage fault occurred.
+
+
+### U5 local acceptance — 2026-09-29
+
+U5 passes `make validate build check-generated`, minimum-Go affected race checks
+and five CGO-free application/test builds. TUI coverage is 98.4%. The
+[U5 receipt](../verification-evidence/005/u5.json) retains source/binary hashes,
+red/green observations, logs, real disk contracts and owned Kitty captures.
+Create/edit forms preserve raw fields and detached Base, reject paste atomically,
+and send only changed fields. Read cancellation drains before one admitted write;
+known failures retain drafts, conflicts require explicit reload, and committed
+writes cannot be replayed after failed readback. Moves/rollups and lifecycle
+policy use the service unchanged. Kitty confirms 80×24/120×40/200×60, undersize
+restoration, NO_COLOR, multiline paste, parent selection, conflict/discard, CLI
+JSON persistence and the controlled saved-refresh-failed screen.
+
+V38,V50,V52,V53,V68–V86 close. V30/V36/V51/V55 retain their U8 consent/recovery
+portions. Product TUSK-V62 closes; TUSK-V61/V63 retain deletion/consent portions.
+Inline contract, integrity, security, async, usability and simplification review
+resolved the recorded findings; no independent reviewer claim is made. U8 is
+next. Performance/final acceptance stays U6; native/hosted release stays Feature 006.
+
+Final Kitty readback review caught an obsolete failure notice after successful
+refresh. The red/green correction and fresh capture are retained in u5.json;
+canonical and minimum-Go gates passed again before the unit commit.

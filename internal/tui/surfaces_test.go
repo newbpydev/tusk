@@ -15,14 +15,19 @@ import (
 // the Kitty prototype. A plain string/screenshot golden misses SGR inheritance.
 func TestOverlay_UniformSurfaces(t *testing.T) {
 	for _, size := range [][2]int{{80, 24}, {120, 40}, {200, 60}} {
-		for _, modal := range []bool{false, true} {
-			t.Run(fmt.Sprintf("%dx%d/help=%t", size[0], size[1], modal), func(t *testing.T) {
+		for _, modalKind := range []string{"none", "help", "form"} {
+			modal := modalKind != "none"
+			t.Run(fmt.Sprintf("%dx%d/modal=%s", size[0], size[1], modalKind), func(t *testing.T) {
 				o := testOptions()
 				o.Profile = termenv.TrueColor
 				m := New(o)
 				m.state = loaded
 				m.forest = []*core.TaskNode{{Task: core.Task{Title: "A task", Status: core.StatusTodo, Priority: core.PriorityMedium}}}
-				m.helpOpen = modal
+				m.helpOpen = modalKind == "help"
+				if modalKind == "form" {
+					m.beginForm(false)
+					m.form.err = "Enter a title."
+				}
 				m.Update(tea.WindowSizeMsg{Width: size[0], Height: size[1]})
 				l := measure(size[0], size[1])
 				b := l.modal

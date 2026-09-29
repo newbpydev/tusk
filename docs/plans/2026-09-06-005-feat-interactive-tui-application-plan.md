@@ -31,8 +31,8 @@ drafts when operations fail, and restore the terminal on exit.
   and recovery interactions from U5. Tests accompany every unit; U6 is acceptance,
   not the first opportunity to write tests.
 - **Execution authorization:** the owner invoked ce-work on 2026-09-29 with
-  hands-on owned Kitty verification. U1, U7 and U2 are locally accepted; U3 is active.
-  See [U1 receipt](../verification-evidence/005/u1.json). Later unit and release
+  hands-on owned Kitty verification. U1, U7, U2, U3, U4 and U5 are locally accepted; U8 is active.
+  See [U5 receipt](../verification-evidence/005/u5.json). Later unit and release
   acceptance remains pending; planning observations below remain historical.
 - **Completion boundary:** each implemented unit needs red/green evidence,
   applicable terminal evidence, `make validate`, synchronized triplet/masterplan,
@@ -456,8 +456,8 @@ content but does not merge it onto the existing frame. Clip at cell/grapheme
 boundaries, reset styles at clipping boundaries, and pad the full frame without
 an extra trailing newline. Width-zero input returns an empty frame; below minimum
 show a clipped “Resize to 80×24; Ctrl+C quits” message and retain all model state.
-Normal browse `q` still quits there; with a draft it stays draft text and Ctrl+C
-is the always-available exit. Resizes during saving do not cancel the mutation.
+Normal browse `q` still quits there; with a draft ordinary input is ignored until the layout is restored;
+Ctrl+C is the always-available exit. Resizes during saving do not cancel the mutation.
 
 Use ASCII focus/selection marker `>`, explicit status/priority words and numeric
 progress with an optional bar. Colors are supplementary. Fixed neutral styling,
@@ -848,3 +848,58 @@ V35,V54,V57–V64,V66–V67 close. V65 known/missing/unknown read handling passe
 its user-facing fresh-owner Reload/readback completion remains U8. Existing
 V50–V53,V55 and form/consent presentation portions stay with U5/U8. U5 forms and
 nondestructive mutations is next. No production mutation UI is claimed yet.
+
+### U5 editor capacity contract — 2026-09-29
+
+The form editor admits at most 64 KiB per text field and at most 10,000 notes
+lines. This bounds widget preparation only; larger existing stored values remain
+raw and read-only, with explicit default-Cancel replacement and omission from
+unrelated patches. Before loading a widget, exact round-trip equality is required.
+Incoming paste is validated atomically before mutation; notes allow LF, while
+controls, bidi overrides and decoded replacement-rune input are rejected. The
+replacement rune is conservatively unsupported on input because terminal key
+messages cannot distinguish it from already-decoded invalid UTF-8. Existing
+valid stored values still follow the round-trip preservation rule. V84/V85 prove
+these boundaries; no storage/schema limit or automatic truncation is introduced.
+
+
+### U5 interaction refinements — 2026-09-29
+
+Below 80×24, hidden forms ignore ordinary input and retain their exact draft and
+focus until restored; Ctrl+C remains available and browse q still quits. This
+refines the earlier below-minimum wording that allowed invisible draft typing.
+Form headers show field position, and the due label states the configured zone.
+Saved-refresh failure explicitly says writes are paused; an admitted mutation
+says Saving rather than Refreshing. Help and quit remain visible with notices at
+80 columns. The parent picker accepts literal spaces in multiword searches.
+
+The manual `make build-tui-fixture` target compiles an application-only launcher
+from test source in Bash. Its Kitty entry point runs the production Run/model,
+real SQLite service and a controlled post-create read failure, then exits before
+the test runner prints results. It is fault-injected application evidence, not
+a test-results display or proof that an unmodified storage fault occurred.
+
+
+### U5 local acceptance — 2026-09-29
+
+U5 passes `make validate build check-generated`, minimum-Go affected race checks
+and five CGO-free application/test builds. TUI coverage is 98.4%. The
+[U5 receipt](../verification-evidence/005/u5.json) retains source/binary hashes,
+red/green observations, logs, real disk contracts and owned Kitty captures.
+Create/edit forms preserve raw fields and detached Base, reject paste atomically,
+and send only changed fields. Read cancellation drains before one admitted write;
+known failures retain drafts, conflicts require explicit reload, and committed
+writes cannot be replayed after failed readback. Moves/rollups and lifecycle
+policy use the service unchanged. Kitty confirms 80×24/120×40/200×60, undersize
+restoration, NO_COLOR, multiline paste, parent selection, conflict/discard, CLI
+JSON persistence and the controlled saved-refresh-failed screen.
+
+V38,V50,V52,V53,V68–V86 close. V30/V36/V51/V55 retain their U8 consent/recovery
+portions. Product TUSK-V62 closes; TUSK-V61/V63 retain deletion/consent portions.
+Inline contract, integrity, security, async, usability and simplification review
+resolved the recorded findings; no independent reviewer claim is made. U8 is
+next. Performance/final acceptance stays U6; native/hosted release stays Feature 006.
+
+Final Kitty readback review caught an obsolete failure notice after successful
+refresh. The red/green correction and fresh capture are retained in u5.json;
+canonical and minimum-Go gates passed again before the unit commit.
