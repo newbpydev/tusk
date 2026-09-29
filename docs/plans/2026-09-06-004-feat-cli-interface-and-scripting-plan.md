@@ -236,7 +236,7 @@ Check errors.As for ports.TransactionError before errors.Is for cancellation/bus
 | Stdout broken/short write | 1 / possibly partial | No appended stdout diagnostic; no replay; readback for mutations |
 | Successful query, then close failure | 1 / empty | Discard pending query output; fresh owner on next invocation |
 
-Do not retry stderr failures or recursively report them. On Unix install process-local SIGPIPE handling so fd1/fd2 EPIPE reaches Run instead of signal exit 141; isolate signal code with explicit Unix/Windows build constraints (a _unix.go filename alone is not a Go OS selector). Signal handlers are installed only at the executable boundary and stopped on return; shared in-process command tests use injected contexts. Cancellation uses signal.NotifyContext for interrupt and Unix termination; stop notification and clean resources before os.Exit. Tests use direct contexts except dedicated subprocess signal tests. Source: [Go SIGPIPE behavior](https://pkg.go.dev/os/signal#hdr-SIGPIPE).
+Do not retry stderr failures or recursively report them. On Unix install process-local SIGPIPE handling so fd1/fd2 EPIPE reaches Run instead of signal exit 141; isolate signal code with explicit Unix/Windows build constraints (a _unix.go filename alone is not a Go OS selector). Signal handlers are installed only at the executable boundary and stopped on return; shared in-process command tests use injected contexts. The first interrupt or Unix termination restores default signal handling before publishing context cancellation; a later signal can force termination if graceful cleanup stalls. Normal cancellation joins the confirmation reader; no live reader is abandoned to simulate cleanup. Stop notification and clean resources before os.Exit. Tests use direct contexts except dedicated subprocess signal tests. Source: [Go SIGPIPE behavior](https://pkg.go.dev/os/signal#hdr-SIGPIPE).
 
 ### KTD8. Human format, terminal safety and accessibility
 
@@ -248,7 +248,7 @@ Tree uses ASCII branches, full IDs, status/progress and title; carry ancestor pr
 
 Sanitize before width calculation/styling: render C0/C1 controls, DEL, ESC, CR/LF/TAB, Unicode line/paragraph separators and bidi embedding/override/isolate controls as visible ASCII escapes. Preserve ordinary Unicode, combining marks, emoji variation selectors and ZWJ. In particular an OSC payload contains no active ESC/BEL after escaping. Do not globally strip Unicode format characters. Diagnostics/consent use the same sanitizer.
 
-Use x/ansi cell width and grapheme-safe truncation/wrapping, with "…" for clipped terminal titles. No byte/rune-count width assumptions; test combining/CJK/emoji and width 1. When one grapheme exceeds the available width, use visible ASCII code-point escapes and wrap those escapes; never emit half a grapheme or enter a zero-progress wrapping loop. Expand narrow indentation to at most width minus one, retaining depth via wrapped text if branches cannot fit. Lipgloss styles come from one invocation renderer with explicitly set profile/background. Select plain versus ANSI 16-color profile from TTY, NO_COLOR and TERM only; fixed green/yellow/blue/red status foregrounds with bold labels, no background. This is adaptive capability/theming without OSC background queries. Do not call package-global style setters or terminal-probing AdaptiveColor. Help/JSON construct no renderer. Sources: [renderer ownership](https://raw.githubusercontent.com/charmbracelet/lipgloss/v1.1.0/renderer.go), [terminal size API](https://raw.githubusercontent.com/charmbracelet/x/term/v0.2.1/term/term.go).
+Use x/ansi cell width and grapheme-safe truncation/wrapping, with "…" for clipped terminal titles. No byte/rune-count width assumptions; test combining/CJK/emoji and width 1. When one grapheme exceeds the available width, use visible ASCII code-point escapes and wrap those escapes; never emit half a grapheme or enter a zero-progress wrapping loop. Expand narrow indentation to at most width minus one, retaining depth via wrapped text if branches cannot fit. Lipgloss styles come from one invocation renderer with explicitly set profile/background. Select plain versus ANSI 16-color profile from TTY, NO_COLOR and TERM only; absent/empty TERM selects plain output; fixed green/yellow/blue/red status foregrounds with bold labels, no background. This is adaptive capability/theming without OSC background queries. Do not call package-global style setters or terminal-probing AdaptiveColor. Help/JSON construct no renderer. Sources: [renderer ownership](https://raw.githubusercontent.com/charmbracelet/lipgloss/v1.1.0/renderer.go), [terminal size API](https://raw.githubusercontent.com/charmbracelet/x/term/v0.2.1/term/term.go).
 
 ### KTD9. Verification seams and evidence
 
@@ -740,3 +740,25 @@ accepted source hashes are unchanged. No fresh latency or Kitty result is claime
 See [review receipt](../verification-evidence/004/review-final.md) for coverage,
 peer availability and all requirement dispositions. Feature 005 remains planning
 only; Feature 006 native/hosted release proof remains deferred.
+
+### PR #4 review remediation — 2026-09-29 (locally verified)
+
+The explicit babysit invocation authorizes this Feature 004 follow-up before
+Feature 005 planning resumes. Scope: terminal escaping and capability detection,
+trusted configuration/deletion hints, second-signal termination during stalled
+cleanup, colocated filter semantics, reader ownership documentation, ordering
+regressions, module metadata and benchmark tooling. EOF still declines deletion;
+transaction uncertainty retains precedence. Native console proof remains V90.
+
+Historical timing diagnostics that combined child settings with parent GC and
+preallocation remain unchanged artifacts; they cannot isolate child-only effects.
+New child diagnostic modes isolate those settings. New reference report fields
+use snake_case; historical reports retain their original field names.
+
+Red/green regressions, `make validate build check-generated check-modules`,
+Go 1.25 full tests/five-target builds and owned Kitty inspection pass. The isolated
+reference matrix passes all 84 case-runs with 8,400 samples retained (worst query
+p90 12.495 ms). An earlier run overlapped final cross-builds and failed six cases;
+its complete samples remain diagnostic evidence. See
+[review dispositions and receipts](../verification-evidence/004/review-pr4-r1.md).
+Hosted feedback settlement remains separate from these local results.

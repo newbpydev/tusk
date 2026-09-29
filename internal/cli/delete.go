@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const errForceRequired core.Error = "noninteractive deletion requires --force; deleting descendants also requires --recursive"
+const errForceRequired core.Error = "noninteractive deletion requires --force; to confirm interactively, omit --json and restore terminal input/output (stdin, stdout and stderr); deleting descendants also requires --recursive"
 
 func (i *invocation) deleteCommand() *cobra.Command {
 	c := dataCommand("delete <id>", "Delete a task with explicit consent", cobra.ExactArgs(1))

@@ -34,9 +34,9 @@ func newFormatter(facts TerminalFacts, location *time.Location, getenv func(stri
 	}
 	f := &formatter{terminal: facts.Out, width: width, location: location}
 	if facts.Out {
-		profile := termenv.ANSI
-		if getenv != nil && (getenv("NO_COLOR") != "" || getenv("TERM") == "dumb") {
-			profile = termenv.Ascii
+		profile := termenv.Ascii
+		if getenv != nil && getenv("NO_COLOR") == "" && getenv("TERM") != "" && getenv("TERM") != "dumb" {
+			profile = termenv.ANSI
 		}
 		f.renderer = lipgloss.NewRenderer(io.Discard, termenv.WithProfile(profile))
 		f.renderer.SetColorProfile(profile)

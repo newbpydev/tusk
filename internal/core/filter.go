@@ -39,6 +39,13 @@ type TaskFilter struct {
 	SearchTerm string
 }
 
+// HasPredicates reports whether filtering is needed. Keep this with TaskFilter
+// so adapters share its empty-filter semantics when selecting a fast path.
+func (f TaskFilter) HasPredicates() bool {
+	return len(f.Statuses) != 0 || len(f.Priorities) != 0 || len(f.Tags) != 0 ||
+		f.ParentID != nil || f.RootOnly || f.DueBefore != nil || f.DueAfter != nil || f.SearchTerm != ""
+}
+
 // FilterTasks applies the filter criteria in-memory to the task slice.
 func FilterTasks(tasks []Task, filter TaskFilter) []Task {
 	if len(tasks) == 0 {

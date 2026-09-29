@@ -65,6 +65,29 @@ func TestTree_OrderingAllocation(t *testing.T) {
 	}
 }
 
+func TestTree_ReordersSiblingsAndDepths(t *testing.T) {
+	node := func(id string, priority core.Priority) *core.TaskNode {
+		return &core.TaskNode{Task: core.Task{ID: id, Priority: priority}}
+	}
+	nodes := []*core.TaskNode{node("z", core.PriorityLow), node("a", core.PriorityHigh)}
+	nodes[1].Children = []*core.TaskNode{node("d", core.PriorityHigh), node("c", core.PriorityHigh), node("b", core.PriorityUrgent)}
+	if err := orderTree(context.Background(), nodes, 1); err != nil {
+		t.Fatal(err)
+	}
+	if nodes[0].Task.ID != "a" || nodes[1].Task.ID != "z" {
+		t.Fatal("root order")
+	}
+	for i, id := range []string{"b", "c", "d"} {
+		child := nodes[0].Children[i]
+		if child.Task.ID != id || child.Depth != 2 {
+			t.Fatalf("child %d: %+v", i, child)
+		}
+	}
+	if nodes[0].Depth != 1 || nodes[1].Depth != 1 {
+		t.Fatal("root depth")
+	}
+}
+
 func TestList_DefaultsParityAndDay(t *testing.T) {
 	a := task("a", "", 0, core.StatusTodo)
 	a.DueDate = ptr(time.Date(2026, 9, 1, 0, 0, 0, 0, time.UTC))

@@ -11,6 +11,38 @@ import (
 	"github.com/newbpydev/tusk/internal/core"
 )
 
+func TestTaskFilter_HasPredicates(t *testing.T) {
+	now, parent := time.Now(), "parent"
+	for _, filter := range []core.TaskFilter{
+		{Statuses: []core.Status{core.StatusDone}}, {Priorities: []core.Priority{core.PriorityHigh}},
+		{Tags: []core.Tag{"tag"}}, {ParentID: &parent}, {RootOnly: true},
+		{DueBefore: &now}, {DueAfter: &now}, {SearchTerm: "text"},
+	} {
+		if !filter.HasPredicates() {
+			t.Errorf("predicate missed: %+v", filter)
+		}
+	}
+	for _, filter := range []core.TaskFilter{{}, {Statuses: []core.Status{}, Priorities: []core.Priority{}, Tags: []core.Tag{}}} {
+		if filter.HasPredicates() {
+			t.Errorf("empty filter: %+v", filter)
+		}
+	}
+}
+
+func TestSortTasks_ShuffledExpectedOrder(t *testing.T) {
+	tasks := []core.Task{
+		{ID: "z", Priority: core.PriorityLow}, {ID: "b", Title: "first", Priority: core.PriorityHigh},
+		{ID: "a", Priority: core.PriorityHigh}, {ID: "b", Title: "second", Priority: core.PriorityHigh},
+	}
+	core.SortTasks(tasks, []core.SortOrder{{Field: core.SortByPriority, Direction: core.SortDesc}})
+	want := []string{"a:", "b:first", "b:second", "z:"}
+	for i, task := range tasks {
+		if task.ID+":"+task.Title != want[i] {
+			t.Fatalf("position %d: %+v", i, task)
+		}
+	}
+}
+
 func TestSortTasks_UnorderedAllocationAndParity(t *testing.T) {
 	order := []core.SortOrder{{Field: core.SortByPriority, Direction: core.SortDesc}}
 	rng := rand.New(rand.NewPCG(42, 99))

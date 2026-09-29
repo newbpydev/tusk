@@ -9,6 +9,8 @@ import (
 // threadConfirmation keeps the synchronous reader pinned until cancellation has
 // completed. CancelSynchronousIo can race entry into ReadFile (no pending IO), so
 // cancellation is retried while awaiting the reader, never treated as a join.
+// If the OS cannot cancel the read, processContext restores the next interrupt's
+// default termination behavior. Returning here would abandon a live stdin reader.
 func threadConfirmation(ctx context.Context, setup func() (read func() (byte, error), cancel func() error, release func(), err error)) (bool, error) {
 	type admission struct {
 		cancel func() error

@@ -25,23 +25,30 @@ import (
 )
 
 type caseResult struct {
-	Run                                int      `json:"run"`
-	Name                               string   `json:"name"`
-	Args                               []string `json:"args"`
-	Warmups                            []int64  `json:"warmup_ns"`
-	Samples                            []int64  `json:"samples_ns"`
-	LimitNS                            int64    `json:"limit_ns"`
-	OutputBytes                        int      `json:"output_bytes"`
-	Min, Median, P90, P95, P99, Max    int64
-	P95LimitNS, P99LimitNS, MaxLimitNS int64
-	Violations                         int
-	Passed                             bool
-	Error                              string `json:"error,omitempty"`
+	Run         int      `json:"run"`
+	Name        string   `json:"name"`
+	Args        []string `json:"args"`
+	Warmups     []int64  `json:"warmup_ns"`
+	Samples     []int64  `json:"samples_ns"`
+	LimitNS     int64    `json:"limit_ns"`
+	OutputBytes int      `json:"output_bytes"`
+	Min         int64    `json:"min_ns"`
+	Median      int64    `json:"median_ns"`
+	P90         int64    `json:"p90_ns"`
+	P95         int64    `json:"p95_ns"`
+	P99         int64    `json:"p99_ns"`
+	Max         int64    `json:"max_ns"`
+	P95LimitNS  int64    `json:"p95_limit_ns"`
+	P99LimitNS  int64    `json:"p99_limit_ns"`
+	MaxLimitNS  int64    `json:"max_limit_ns"`
+	Violations  int      `json:"violations"`
+	Passed      bool     `json:"passed"`
+	Error       string   `json:"error,omitempty"`
 }
 type report struct {
-	Manifest map[string]string
-	Cases    []caseResult
-	Passed   bool
+	Manifest map[string]string `json:"manifest"`
+	Cases    []caseResult      `json:"cases"`
+	Passed   bool              `json:"passed"`
 }
 type executor func(string, []string, []string) (int64, []byte, error)
 

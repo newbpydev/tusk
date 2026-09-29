@@ -8,12 +8,26 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/newbpydev/tusk/internal/ports"
 	"github.com/newbpydev/tusk/internal/storage"
 )
+
+func TestCLIConditions_StartFailure(t *testing.T) {
+	binary := filepath.Join(t.TempDir(), "not-executable")
+	if err := os.WriteFile(binary, []byte("not an executable"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command(os.Args[0], "-test.run=^TestCLIConditions$")
+	cmd.Env = append(os.Environ(), "TUSK_CLI_CONDITIONS=1", "TUSK_CLI_TIMING_DIAGNOSTIC=0", "TUSK_CLI_BINARY="+binary)
+	out, err := cmd.CombinedOutput()
+	if err == nil || strings.Contains(string(out), "panic:") || !strings.Contains(string(out), "first-use: fork/exec") {
+		t.Fatalf("expected controlled launch failure: %v\n%s", err, out)
+	}
+}
 
 type slowOutput struct{ bytes.Buffer }
 

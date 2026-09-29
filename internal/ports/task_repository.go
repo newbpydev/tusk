@@ -6,6 +6,9 @@ import (
 )
 
 // TaskReader returns detached values materialized in one transaction snapshot.
+// Each call transfers exclusive ownership of its result slice and all mutable
+// fields to the caller, which may reorder, compact or clear them. Results must
+// not share mutable backing storage with another call, even in one snapshot.
 type TaskReader interface {
 	GetByID(context.Context, string) (*core.Task, error)
 	List(context.Context, core.TaskFilter) ([]core.Task, error)

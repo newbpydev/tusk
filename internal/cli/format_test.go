@@ -39,6 +39,14 @@ func TestSanitize_Controls(t *testing.T) {
 		t.Fatal(got)
 	}
 }
+
+func TestSanitize_DirectionalMarks(t *testing.T) {
+	for _, r := range []rune{0x061c, 0x200e, 0x200f, 0xfeff} {
+		if got, want := sanitize("a"+string(r)+"b"), fmt.Sprintf(`a\u%04xb`, r); got != want {
+			t.Errorf("%U: got %q, want %q", r, got, want)
+		}
+	}
+}
 func TestFormat_Plain(t *testing.T) {
 	task := jsonFixture()
 	task.Title = "safe\n\x1b]52;bad\a"
@@ -96,7 +104,7 @@ func TestFormat_CellWidths(t *testing.T) {
 func TestTerminal_Capabilities(t *testing.T) {
 	for _, tty := range []bool{false, true} {
 		for _, noColor := range []string{"", "1"} {
-			for _, term := range []string{"xterm-kitty", "dumb"} {
+			for _, term := range []string{"xterm-kitty", "dumb", ""} {
 				task := jsonFixture()
 				f := newFormatter(TerminalFacts{Out: tty, Width: 120}, time.UTC, func(k string) string {
 					if k == "NO_COLOR" {
@@ -109,7 +117,7 @@ func TestTerminal_Capabilities(t *testing.T) {
 					t.Fatal(err)
 				}
 				colored := bytes.Contains(out, []byte{27})
-				if colored != (tty && noColor == "" && term != "dumb") {
+				if colored != (tty && noColor == "" && term != "dumb" && term != "") {
 					t.Fatalf("color %v tty %v no %q term %q", colored, tty, noColor, term)
 				}
 			}

@@ -17,6 +17,33 @@ import (
 	"time"
 )
 
+func TestCLIBenchmark_ReportJSONKeys(t *testing.T) {
+	data, err := json.Marshal(report{Cases: []caseResult{{}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &fields); err != nil {
+		t.Fatal(err)
+	}
+	if len(fields) != 3 || fields["manifest"] == nil || fields["cases"] == nil || fields["passed"] == nil {
+		t.Fatalf("report keys: %s", data)
+	}
+	var cases []map[string]json.RawMessage
+	if err := json.Unmarshal(fields["cases"], &cases); err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"run", "name", "args", "warmup_ns", "samples_ns", "limit_ns", "output_bytes", "min_ns", "median_ns", "p90_ns", "p95_ns", "p99_ns", "max_ns", "p95_limit_ns", "p99_limit_ns", "max_limit_ns", "violations", "passed"}
+	if len(cases[0]) != len(want) {
+		t.Fatalf("case keys: %s", data)
+	}
+	for _, key := range want {
+		if cases[0][key] == nil {
+			t.Errorf("missing %s", key)
+		}
+	}
+}
+
 func TestCLIBenchmark_RejectsInvalidAndMissingSamples(t *testing.T) {
 	good := make([]int64, 100)
 	for n := range good {

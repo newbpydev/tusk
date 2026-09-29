@@ -140,6 +140,46 @@ func TestConfig_Precedence(t *testing.T) {
 	}
 }
 
+func TestConfig_ActionablePrivateDiagnostics(t *testing.T) {
+	for _, tc := range []struct{ key, value, hint string }{
+		{"TUSK_AUTO_COMPLETE_PARENT", "PRIVATE", "TUSK_AUTO_COMPLETE_PARENT"},
+		{"TUSK_TIMEZONE", "PRIVATE", "TUSK_TIMEZONE"},
+	} {
+		var stderr bytes.Buffer
+		code := Run(context.Background(), []string{"list"}, Options{Stderr: &stderr, Getenv: func(k string) string {
+			if k == tc.key {
+				return tc.value
+			}
+			return ""
+		}, OpenService: func(context.Context, Config) (ports.TaskService, func() error, error) {
+			t.Fatal("opened for invalid configuration")
+			return nil, nil, nil
+		}})
+		if code != 1 || !strings.Contains(stderr.String(), tc.hint) || strings.Contains(stderr.String(), tc.value) {
+			t.Errorf("code %d, diagnostic %q", code, stderr.String())
+		}
+	}
+	var stderr bytes.Buffer
+	if code := Run(context.Background(), []string{"list", "--timezone="}, Options{Stderr: &stderr}); code != 1 || !strings.Contains(stderr.String(), "--timezone") {
+		t.Fatalf("code %d, diagnostic %q", code, stderr.String())
+	}
+}
+
+func TestDiagnostic_DeletionRemediation(t *testing.T) {
+	for _, tc := range []struct {
+		err  error
+		hint string
+	}{
+		{ports.ErrChildrenPresent, "--recursive"},
+		{errForceRequired, "restore terminal input/output"},
+	} {
+		code, message := diagnostic(tc.err, false)
+		if code != 1 || !strings.Contains(message, tc.hint) {
+			t.Errorf("%d %q", code, message)
+		}
+	}
+}
+
 func TestRoot_HelpPrecedenceAndBoundaries(t *testing.T) {
 	for _, args := range [][]string{{"probe", "--help"}, {"probe", "--timezone=bad", "--help"}} {
 		if got := fixtureRun(context.Background(), args, Options{Stdout: io.Discard}, nil); got != 0 {

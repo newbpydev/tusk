@@ -73,7 +73,7 @@ not imply recursion. Deletion removes associated history; there is no undo.
 
 Human output uses readable status labels, full IDs and cell-aware Unicode
 layout. Narrow terminals stack fields and wrap text. Color is disabled for
-redirected stdout, nonempty `NO_COLOR`, or `TERM=dumb`. Redirected tables are
+redirected stdout, nonempty `NO_COLOR`, or empty/unset `TERM` or `TERM=dumb`. Redirected tables are
 plain TSV. Human output escapes terminal controls, bidi controls and line
 separators; JSON preserves the original text using JSON escaping. Titles can
 be clipped in terminal columns; use JSON for complete notes and other fields.
@@ -141,7 +141,10 @@ An **outcome unknown** diagnostic means commit may or may not have happened.
 Start a new process against the same database and inspect tasks/history before
 deciding whether to retry. Preserve database/WAL/SHM files. A deleted task has no
 history, so use absence from a full fresh snapshot as deletion readback. Killing
-a process differs from graceful cancellation; local tests cover both.
+a process differs from graceful cancellation; local tests cover both. The first
+interrupt requests graceful cancellation. A second interrupt (or Unix SIGTERM)
+can terminate stalled cleanup; reopen and inspect state afterward. Confirmation
+readers remain joined on graceful exit, even if OS cancellation must be retried.
 
 ## Verification and handoff
 
@@ -160,7 +163,11 @@ counts, output sizes, binary hash and host manifest; no outlier is discarded. Se
 [execution evidence](verification-evidence/004/README.md) for the current result.
 `make bench-cli-conditions` separately observes first-use, 10,000 tasks, 1 MiB
 notes, a held writer and a throttled pipe. `make profile-cli` is an in-process
-diagnostic; it cannot replace process acceptance.
+diagnostic; it cannot replace process acceptance. New reference reports use
+snake_case JSON keys throughout (for example `cases`, `p90_ns`, `p95_limit_ns`
+and `passed`); historical evidence retains its original keys. Old `u6-timing-*`
+diagnostics combine child settings with parent interventions and cannot establish
+child-only effects. New timing modes isolate those interventions.
 
 Feature 005 owns TUI registration, consent, refresh and draft handling using the
 same service/configuration/outcome contracts. Feature 006 owns completion/man

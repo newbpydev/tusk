@@ -7,7 +7,7 @@ import (
 )
 
 func terminalControl(r rune) bool {
-	return r < 32 || r >= 127 && r <= 159 || r == 0x2028 || r == 0x2029 || r >= 0x202a && r <= 0x202e || r >= 0x2066 && r <= 0x2069
+	return r < 32 || r >= 127 && r <= 159 || r == 0x061c || r == 0x200e || r == 0x200f || r == 0xfeff || r == 0x2028 || r == 0x2029 || r >= 0x202a && r <= 0x202e || r >= 0x2066 && r <= 0x2069
 }
 
 func sanitize(text string) string {

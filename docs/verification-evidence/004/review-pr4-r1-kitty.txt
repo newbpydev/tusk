@@ -1,0 +1,21 @@
+PR #4 — terminal review
+
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0ee44-0eca-7300-bdb4-a43f1823ea26  todo         medium  0%        -           Directional marks: A\u061cB\u200eC\u200f…
+
+Invalid configuration (value remains private):
+tusk: invalid timezone; set --timezone or TUSK_TIMEZONE to an IANA zone such as UTC
+
+Redirected prompt: safe recovery hint
+tusk: noninteractive deletion requires --force; to confirm interactively, omit --json and restore terminal input/output (stdin, stdout and stderr); deleting descendants also requires --recursive
+
+Interactive decline: type n then Enter
+Directional marks: A\u061cB\u200eC\u200fD\ufeffE (01a0ee44-0eca-7300-bdb4-a43f1823ea26)
+Delete 1 task(s)? [y/N] n
+Deletion canceled.
+
+Remaining task after decline:
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0ee44-0eca-7300-bdb4-a43f1823ea26  todo         medium  0%        -           Directional marks: A\u061cB\u200eC\u200f…
+
+Review complete — waiting for owned-window cleanup.

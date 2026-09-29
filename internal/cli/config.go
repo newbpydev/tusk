@@ -25,7 +25,7 @@ func (i *invocation) config(c *cobra.Command) (Config, error) {
 		if value := getenv("TUSK_AUTO_COMPLETE_PARENT"); value != "" {
 			parsed, err := strconv.ParseBool(value)
 			if err != nil {
-				return Config{}, errConfiguration
+				return Config{}, errAutoCompleteConfiguration
 			}
 			cfg.AutoCompleteParent = parsed
 		}
@@ -37,11 +37,11 @@ func (i *invocation) config(c *cobra.Command) (Config, error) {
 	}
 	if explicit || zone != "" {
 		if zone == "" {
-			return Config{}, errConfiguration
+			return Config{}, errTimezoneConfiguration
 		}
 		location, err := time.LoadLocation(zone)
 		if err != nil {
-			return Config{}, errConfiguration
+			return Config{}, errTimezoneConfiguration
 		}
 		cfg.Location = location
 	}

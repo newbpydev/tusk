@@ -94,8 +94,7 @@ func (h *taskHandle) List(ctx context.Context, f core.TaskFilter) ([]core.Task, 
 		if f.DueAfter != nil && validTime(*f.DueAfter) {
 			p.DueAfter = sql.NullString{String: f.DueAfter.UTC().Format(dateLayout), Valid: true}
 		}
-		unfiltered := len(f.Statuses) == 0 && len(f.Priorities) == 0 && len(f.Tags) == 0 &&
-			f.ParentID == nil && !f.RootOnly && f.DueBefore == nil && f.DueAfter == nil && f.SearchTerm == ""
+		unfiltered := !f.HasPredicates()
 		var rows []*generated.Task
 		var err error
 		if unfiltered {

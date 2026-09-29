@@ -152,7 +152,11 @@ bench-cli: build
 .PHONY: profile-cli
 CLI_PROFILE_OUTPUT ?= /tmp/tusk-cli.cpu
 profile-cli:
-	go test ./scripts/cli-bench -run '^$$' -bench '^BenchmarkCLIProfile$$' -benchtime=3s -cpuprofile "$(CLI_PROFILE_OUTPUT)" -o /tmp/tusk-cli-profile.test
+	go test ./scripts/cli-bench -run '^$$' -bench '^BenchmarkCLIProfile$$' -benchtime=3s -cpuprofile "$(CLI_PROFILE_OUTPUT)" -o "$(CLI_PROFILE_OUTPUT).test"
+
+.PHONY: check-modules
+check-modules:
+	go mod tidy -diff
 
 .PHONY: test-cli-latency-codec
 test-cli-latency-codec:

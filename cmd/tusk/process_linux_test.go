@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -15,6 +16,65 @@ import (
 
 	"golang.org/x/sys/unix"
 )
+
+func TestProcess_SecondSignalEndsStalledConfirmation(t *testing.T) {
+	if os.Getenv("TUSK_TEST_STALLED_CONFIRM") == "1" {
+		ctx, stop := processContext()
+		defer stop()
+		go func() { <-ctx.Done(); fmt.Println("canceled") }()
+		_, _ = threadConfirmation(ctx, func() (func() (byte, error), func() error, func(), error) {
+			return func() (byte, error) { fmt.Println("ready"); select {} },
+				func() error { return errors.New("permanent cancel failure") }, func() {}, nil
+		})
+		os.Exit(99)
+	}
+	for _, sig := range []os.Signal{syscall.SIGINT, syscall.SIGTERM} {
+		t.Run(sig.String(), func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestProcess_SecondSignalEndsStalledConfirmation$")
+			cmd.Env = append(os.Environ(), "TUSK_TEST_STALLED_CONFIRM=1")
+			stdout, err := cmd.StdoutPipe()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err = cmd.Start(); err != nil {
+				t.Fatal(err)
+			}
+			defer func() {
+				if cmd.ProcessState == nil {
+					_ = cmd.Process.Kill()
+					_ = cmd.Wait()
+				}
+			}()
+			scanner := bufio.NewScanner(stdout)
+			if !scanner.Scan() || scanner.Text() != "ready" {
+				t.Fatal("missing ready barrier")
+			}
+			if err = cmd.Process.Signal(sig); err != nil {
+				t.Fatal(err)
+			}
+			if !scanner.Scan() || scanner.Text() != "canceled" {
+				t.Fatal("missing cancellation barrier")
+			}
+			if err = cmd.Process.Signal(sig); err != nil {
+				t.Fatal(err)
+			}
+			err = cmd.Wait()
+			if ctx.Err() != nil {
+				t.Fatal("second signal swallowed while console cancellation failed")
+			}
+			var exit *exec.ExitError
+			if !errors.As(err, &exit) {
+				t.Fatalf("expected signal exit, got %v", err)
+			}
+			status := exit.Sys().(syscall.WaitStatus)
+			if !status.Signaled() || status.Signal() != sig {
+				t.Fatalf("exit status %v", status)
+			}
+		})
+	}
+}
 
 func TestProcess_RealTerminalSignals(t *testing.T) {
 	if testing.Short() {

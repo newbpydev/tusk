@@ -199,3 +199,9 @@ List, tree, stats and metadata history consume authoritative service read models
 
 See [receipt](u3-accepted.json), [Kitty screenshot](u3-kitty.png) and
 [screen text](u3-kitty.txt). Canonical gates passed; commit precedes U6.
+
+## PR #4 review remediation
+
+[Round 1](review-pr4-r1.md) records all 21 dispositions, red/green and canonical
+checks, Go 1.25/five-target builds, owned Kitty proof and the isolated 84-case
+latency pass. The overlapping diagnostic run remains retained separately.

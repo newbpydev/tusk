@@ -3,7 +3,7 @@ feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 verification-plan: docs/verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md
 status: Locally accepted - native and hosted release pending
-evidence-scope: Local functional gates pass; ISS-023 latency open; native and hosted release pending
+evidence-scope: Local acceptance complete; PR 4 remediation locally verified; native and hosted release pending
 ---
 
 # Feature 004 Issue Workorder
@@ -568,3 +568,25 @@ accepted source hashes are unchanged. No fresh latency or Kitty result is claime
 See [review receipt](../verification-evidence/004/review-final.md) for coverage,
 peer availability and all requirement dispositions. Feature 005 remains planning
 only; Feature 006 native/hosted release proof remains deferred.
+
+### PR #4 review remediation — 2026-09-29 (locally verified)
+
+The explicit babysit invocation authorizes this Feature 004 follow-up before
+Feature 005 planning resumes. Scope: terminal escaping and capability detection,
+trusted configuration/deletion hints, second-signal termination during stalled
+cleanup, colocated filter semantics, reader ownership documentation, ordering
+regressions, module metadata and benchmark tooling. EOF still declines deletion;
+transaction uncertainty retains precedence. Native console proof remains V90.
+
+Historical timing diagnostics that combined child settings with parent GC and
+preallocation remain unchanged artifacts; they cannot isolate child-only effects.
+New child diagnostic modes isolate those settings. New reference report fields
+use snake_case; historical reports retain their original field names.
+
+Red/green regressions, `make validate build check-generated check-modules`,
+Go 1.25 full tests/five-target builds and owned Kitty inspection pass. The isolated
+reference matrix passes all 84 case-runs with 8,400 samples retained (worst query
+p90 12.495 ms). An earlier run overlapped final cross-builds and failed six cases;
+its complete samples remain diagnostic evidence. See
+[review dispositions and receipts](../verification-evidence/004/review-pr4-r1.md).
+Hosted feedback settlement remains separate from these local results.

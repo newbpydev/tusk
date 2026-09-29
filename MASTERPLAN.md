@@ -1,10 +1,18 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 4 locally complete; Phase 5 planning next
-**Active Implementation Target**: 5.1 — Feature 005 planning triplet; no Phase 5 implementation authorized
+**Active Phase**: Phase 4 locally complete; PR #4 hosted review watch
+**Active Implementation Target**: PR #4 hosted review settlement; 5.1 Feature 005 planning resumes afterward; no Phase 5 implementation authorized
 **Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
+
+### Feature 004 PR #4 review remediation
+
+- [x] Investigate all 21 review findings, implement 17 code/test/documentation
+  outcomes, and document four evidence-based no-change decisions. Canonical
+  validation, minimum-Go builds, isolated latency and owned Kitty checks pass.
+  [Review evidence](docs/verification-evidence/004/review-pr4-r1.md).
+- [ ] Complete current-head hosted review settlement; merge remains user-owned.
 
 ### Feature 004 final local review follow-up
 

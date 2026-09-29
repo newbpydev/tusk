@@ -3,7 +3,7 @@ feature-id: "004"
 plan-source: docs/plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md
 surface-profiles: [cli, service-adapter, persistence-lifecycle, process-terminal, documentation]
 status: Locally accepted - native and hosted release pending
-evidence-scope: V01-V86 and V88-V89 locally verified; V87 failed; V90-V91 deferred release proof
+evidence-scope: V01-V89 locally accepted; PR 4 remediation locally verified; V90-V91 deferred release proof
 ---
 
 # Feature 004 Verification Plan
@@ -52,7 +52,7 @@ support the method; the thresholds above preserve Tusk's fast interactive purpos
 
 Companion to the [plan](../plans/2026-09-06-004-feat-cli-interface-and-scripting-plan.md) and [workorder](../workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md). [MASTERPLAN.md](../../MASTERPLAN.md) controls activation. The command grammar, JSON schema v1, process outcome table and terminal format in KTD1–KTD10 are normative.
 
-At planning completion all 91 scenarios were unexecuted. Current execution verifies V01–V86 and V88–V89; V87 fails the reference latency gate. Local acceptance requires V01–V89. V90–V91 are Feature 006 native/hosted release obligations and cannot be checked from cross-builds. Product TUSK-V39–V53 map here; TUSK-V38's output recovery and TUSK-V73 governance are included. The product's 73 check states remain unchanged.
+At planning completion all 91 scenarios were unexecuted. U6 acceptance verifies V01–V89, including V87 under the current distribution policy; PR #4 remediation is locally verified. Local acceptance requires V01–V89. V90–V91 are Feature 006 native/hosted release obligations and cannot be checked from cross-builds. Product TUSK-V39–V53 map here; TUSK-V38's output recovery and TUSK-V73 governance are included. The product's 73 check states remain unchanged.
 
 Use table cases for every enumerated variant. A compilation failure can be an observed initial red for a missing API; no claim of red exists until the named command is run and retained. CLI fakes prove adapter behavior, disk service fixtures prove integration, actual executable tests prove OS exit/streams, and a real terminal proves consent/style behavior. No single tier substitutes for another.
 
@@ -128,7 +128,7 @@ Scenario labels Vnn below have durable full IDs 004-Vnn. The short form is used 
 ### U4: Human format and terminal boundary
 
 - [x] 004-V28 **Plain mode:** Non-TTY stdout uses deterministic TSV headers, all full IDs/rows, no ANSI; empty list/history header only, empty tree message and all zero stats visible.
-- [x] 004-V29 **Capability matrix:** TTY/non-TTY × NO_COLOR unset/empty/nonempty × TERM normal/dumb controls color; labels remain readable without color and JSON/help never create renderer.
+- [x] 004-V29 **Capability matrix:** TTY/non-TTY × NO_COLOR unset/empty/nonempty × TERM normal/dumb/empty/unset controls color; labels remain readable without color and JSON/help never create renderer.
 - [x] 004-V30 **Layout:** At 1/20/40/80/120/200 cells, task rows switch to stacked/wrapped layout as decided; title clipping never truncates IDs or omits tasks.
 - [x] 004-V31 **Grapheme width:** CJK, combining accents, emoji ZWJ/variation selectors and long opaque IDs fit/wrap by display cells with no broken clusters.
 - [x] 004-V32 **Dimension boundary:** Failed/zero/negative width falls back/clamps as specified; every formatter remains finite and panic-free.
@@ -605,3 +605,25 @@ accepted source hashes are unchanged. No fresh latency or Kitty result is claime
 See [review receipt](../verification-evidence/004/review-final.md) for coverage,
 peer availability and all requirement dispositions. Feature 005 remains planning
 only; Feature 006 native/hosted release proof remains deferred.
+
+### PR #4 review remediation — 2026-09-29 (locally verified)
+
+The explicit babysit invocation authorizes this Feature 004 follow-up before
+Feature 005 planning resumes. Scope: terminal escaping and capability detection,
+trusted configuration/deletion hints, second-signal termination during stalled
+cleanup, colocated filter semantics, reader ownership documentation, ordering
+regressions, module metadata and benchmark tooling. EOF still declines deletion;
+transaction uncertainty retains precedence. Native console proof remains V90.
+
+Historical timing diagnostics that combined child settings with parent GC and
+preallocation remain unchanged artifacts; they cannot isolate child-only effects.
+New child diagnostic modes isolate those settings. New reference report fields
+use snake_case; historical reports retain their original field names.
+
+Red/green regressions, `make validate build check-generated check-modules`,
+Go 1.25 full tests/five-target builds and owned Kitty inspection pass. The isolated
+reference matrix passes all 84 case-runs with 8,400 samples retained (worst query
+p90 12.495 ms). An earlier run overlapped final cross-builds and failed six cases;
+its complete samples remain diagnostic evidence. See
+[review dispositions and receipts](../verification-evidence/004/review-pr4-r1.md).
+Hosted feedback settlement remains separate from these local results.
