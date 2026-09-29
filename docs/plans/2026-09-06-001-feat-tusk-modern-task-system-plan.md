@@ -711,3 +711,14 @@ checkbox closes from planning. No application tests, make validate, benchmarks
 or Kitty acceptance ran. MASTERPLAN's next unit is Feature 005 U1 only after
 an implementation instruction. Historical handoffs above retain their dated
 meaning; this is the current planning handoff.
+
+### Feature 005 runtime compatibility correction — 2026-09-29
+
+Feature 005 U7 exposed an eager global terminal-color query in Bubble Tea
+v1.3.10's package initializer. The local dependency copy removes only that
+initializer, retains the upstream version/APIs/license, and records source
+hashes in `third_party/bubbletea/TUSK-PATCH.json`. Actual child PTY regressions
+prove the unsolicited query is absent and ordinary CLI/TUI startup works again.
+This amends the selected v1 runtime without a v2 migration or weaker CLI latency
+gate. U6 still owns final-candidate distributions; native/hosted proof stays with
+Feature 006. See the Feature 005 U7 receipt for execution evidence.

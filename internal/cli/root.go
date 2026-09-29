@@ -21,6 +21,7 @@ type Options struct {
 	OpenService    func(context.Context, Config) (ports.TaskService, func() error, error)
 	Terminal       func() TerminalFacts
 	Confirm        Confirmation
+	RunTUI         func(context.Context, Config) (TUIResult, error)
 }
 
 type invocation struct {
@@ -34,6 +35,7 @@ type invocation struct {
 	configValue     Config
 	terminalFacts   TerminalFacts
 	terminalSampled bool
+	tuiResult       *TUIResult
 }
 
 func Run(ctx context.Context, args []string, options Options) int {
@@ -70,6 +72,7 @@ func newInvocation(options Options) *invocation {
 	root.AddCommand(version)
 	root.AddCommand(i.addCommand(), i.editCommand(), i.doneCommand(), i.deleteCommand())
 	root.AddCommand(i.listCommand(), i.treeCommand(), i.statsCommand(), i.historyCommand())
+	root.AddCommand(i.tuiCommand())
 	root.SetHelpCommand(&cobra.Command{Use: "help [command]", Short: "Help about any command", RunE: func(c *cobra.Command, args []string) error {
 		target, remaining, err := root.Find(args)
 		if err != nil || len(remaining) != 0 {
@@ -108,6 +111,9 @@ func (i *invocation) execute(ctx context.Context, args []string) int {
 		return 0
 	}
 	code, message := diagnostic(err, i.committed)
+	if i.tuiResult != nil {
+		code, message = tuiDiagnostic(err, *i.tuiResult)
+	}
 	// A diagnostic write failure is terminal; never recursively report it.
 	_ = writeAll(i.options.Stderr, []byte("tusk: "+message+"\n"))
 	return code

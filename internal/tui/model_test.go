@@ -200,3 +200,37 @@ func TestCommand_CanceledWait(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestTUI_QuitAndRetry(t *testing.T) {
+	for _, key := range []tea.KeyMsg{{Type: tea.KeyRunes, Runes: []rune{'q'}}, {Type: tea.KeyCtrlC}} {
+		m := New(testOptions())
+		_, cmd := m.Update(key)
+		if cmd == nil {
+			t.Fatal("quit not dispatched")
+		}
+		if _, ok := cmd().(tea.QuitMsg); !ok {
+			t.Fatal("not quit")
+		}
+		if (m.exitErr != nil) != (key.Type == tea.KeyCtrlC) {
+			t.Fatal("incorrect exit outcome")
+		}
+	}
+	m := New(testOptions())
+	m.Update(forestMsg{operation: 1, err: errors.New("private")})
+	_, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'r'}})
+	if cmd == nil || m.state != loading {
+		t.Fatal("no retry")
+	}
+	m.Update(cmd())
+	if m.state != loaded {
+		t.Fatal("retry failed")
+	}
+}
+
+func TestTUI_ServicePanicTerminatesSession(t *testing.T) {
+	m := New(testOptions())
+	_, cmd := m.Update(forestMsg{operation: 1, err: errRuntime})
+	if cmd == nil || m.exitErr != errRuntime {
+		t.Fatal("service panic left unsafe session open")
+	}
+}

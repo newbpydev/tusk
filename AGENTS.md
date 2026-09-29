@@ -62,7 +62,10 @@ All verification and build operations must use the canonical Makefile:
 
 <kitty_verification>
 Use Codex's default Bash for canonical Makefile checks, automated tests and
-latency measurements. Use an owned Kitty window for the terminal verification
+latency measurements. Do not run or display test, build, or benchmark results in
+Kitty for verification. Kitty is only for operating and inspecting the real app:
+CLI commands, TUI interactions, visible output, and terminal restoration.
+Use an owned Kitty window for the terminal verification
 required by the active verification plan: exercise CLI/TUI behavior and inspect
 visible output and interactions. Keep those terminal results with the unit's
 verification receipts. Automated checks, latency measurements and visible

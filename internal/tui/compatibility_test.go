@@ -1,6 +1,9 @@
 package tui
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -12,6 +15,41 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 )
+
+func TestTUI_DependencyPatchIntegrity(t *testing.T) {
+	const dir = "../../third_party/bubbletea"
+	data, err := os.ReadFile(dir + "/TUSK-PATCH.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var manifest struct {
+		Version  string
+		Upstream map[string]string `json:"upstream_sha256"`
+		Patches  map[string]string `json:"patches"`
+	}
+	if err = json.Unmarshal(data, &manifest); err != nil {
+		t.Fatal(err)
+	}
+	if manifest.Version != "v1.3.10" || len(manifest.Patches) != 1 {
+		t.Fatal("unexpected dependency patch")
+	}
+	for name, want := range manifest.Upstream {
+		if patched, ok := manifest.Patches[name]; ok {
+			if name != "tea_init.go" {
+				t.Fatal("unapproved patch")
+			}
+			want = patched
+		}
+		data, err = os.ReadFile(filepath.Join(dir, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		sum := sha256.Sum256(data)
+		if hex.EncodeToString(sum[:]) != want {
+			t.Errorf("dependency source drift: %s", name)
+		}
+	}
+}
 
 func TestTUI_Architecture(t *testing.T) {
 	files, err := filepath.Glob("*.go")

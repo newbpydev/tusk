@@ -4,6 +4,7 @@ package tui
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -48,6 +49,7 @@ type Model struct {
 	state         loadState
 	operation     uint64
 	forest        []*core.TaskNode
+	exitErr       error
 }
 
 func New(options Options) *Model {
@@ -72,19 +74,48 @@ func New(options Options) *Model {
 func (m *Model) Init() tea.Cmd {
 	// Copy every command input now. The closure must never capture m.
 	ctx, load, operation := m.options.Context, m.options.Load, m.operation
-	return func() tea.Msg {
+	return safeCommand(func() tea.Msg {
 		forest, err := load(ctx)
 		return forestMsg{operation: operation, forest: forest, err: err}
-	}
+	})
 }
 
-func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
+	defer func() {
+		if recover() != nil {
+			m.exitErr = errRuntime
+			m.frame = "Interactive session failed."
+			next, cmd = m, tea.Quit
+		}
+	}()
 	switch msg := msg.(type) {
+	case fatalMsg:
+		m.exitErr = msg.err
+		return m, tea.Quit
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "q":
+			return m, tea.Quit
+		case "ctrl+c":
+			m.exitErr = context.Canceled
+			return m, tea.Quit
+		case "r":
+			if m.state == loadFailed {
+				m.operation++
+				m.state = loading
+				m.prepareFrame()
+				return m, m.Init()
+			}
+		}
 	case tea.WindowSizeMsg:
 		m.width, m.height = max(1, msg.Width), max(1, msg.Height)
 	case forestMsg:
 		if msg.operation != m.operation {
 			return m, nil
+		}
+		if errors.Is(msg.err, errRuntime) {
+			m.exitErr = errRuntime
+			return m, tea.Quit
 		}
 		if msg.err != nil {
 			m.state = loadFailed

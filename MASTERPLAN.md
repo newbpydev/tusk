@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development
 **Active Phase**: Phase 5 — Feature 005 implementation authorized (2026-09-29)
-**Active Implementation Target**: Feature 005 U7 / 005-7 — CLI registration, session ownership and terminal lifecycle
+**Active Implementation Target**: Feature 005 U2 / 005-2 — bounded layout and shared terminal-safe text
 **Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -303,7 +303,7 @@ No Phase 5 implementation, push, PR or publication occurred.
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: 🚀 **IMPLEMENTING U7 — U1 LOCALLY ACCEPTED** (authorized 2026-09-29)
+- **Status**: 🚀 **IMPLEMENTING U2 — U1 AND U7 LOCALLY ACCEPTED** (authorized 2026-09-29)
 - **Plan**: [Feature 005 plan](docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md)
 - **Verification Plan**: [Feature 005 verification](docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md)
 - **Issue Workorder**: [Feature 005 workorder](docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md)
@@ -312,7 +312,7 @@ No Phase 5 implementation, push, PR or publication occurred.
   - [x] Deepened Plan, Verification Plan, and Workorder: 28 requirements, eight units, 112 planned scenarios
 - [ ] **5.2 Implementation Units**
   - [x] Unit 005-1 / U1: Pure Root, v1 Dependency Graph and Deterministic Test Seams
-  - [ ] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
+  - [x] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
   - [ ] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
   - [ ] Unit 005-3 / U3: Forest Navigation, Filters, Search and Refresh Generations
   - [ ] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
@@ -417,3 +417,11 @@ Pure prepared-frame root, dependency pins and deterministic test seams pass
 `make validate build check-generated`; Go 1.25 short suite and all five
 CGO-free application/test cross-builds pass. [Receipt](docs/verification-evidence/005/u1.json).
 No visible session exists yet; U7 owns the first actual Kitty interactions.
+
+### Feature 005 U7 acceptance — 2026-09-29
+
+`tusk tui` lifecycle passes canonical, minimum-Go and five-target checks plus
+real Kitty launch/quit/relaunch/Ctrl+C inspection. A source-pinned Bubble Tea
+patch removes eager global terminal discovery. [Receipt](docs/verification-evidence/005/u7.json).
+AGENTS.md explicitly keeps tests/builds/benchmarks in Bash and Kitty for real app
+use only. The active next unit is U2.

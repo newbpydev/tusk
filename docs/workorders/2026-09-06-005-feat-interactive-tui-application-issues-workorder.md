@@ -199,3 +199,29 @@ initial compatibility proof; final linked-candidate proof remains U6. ISS-022
 and other runtime gates remain open. V06/V10 evidence is scoped to current
 widgets/wait primitive and must be extended by their later consumer units.
 Next: U7, including actual owned Kitty session/lifecycle acceptance.
+
+### U7 compatibility finding — eager terminal discovery (2026-09-29)
+
+The first linked application exposes Bubble Tea v1.3.10 `tea_init.go`: its
+package initializer calls global `lipgloss.HasDarkBackground` before CLI
+admission. An unanswered OSC query delays startup by five seconds and breaks
+existing real-PTY CLI confirmation tests. The new no-discovery regression is
+Red; see `docs/verification-evidence/005/u7-red-global-terminal-query.log.gz`.
+
+KTD1 is amended before remediation: retain the v1.3.10 APIs and module graph,
+but use a repository-local copy under `third_party/bubbletea` with only that
+initializer removed. Preserve the upstream MIT license, complete source/test
+files, version/checksum provenance and per-file hashes. The TUI already owns
+explicit per-session color/background settings. Do not set global renderer
+state, require environment workarounds or relax timing/readiness gates.
+Canonical module checks, source-integrity tests, the real PTY suite and Kitty
+relaunch must pass before U7 can complete. This is a narrow compatibility patch,
+not a v2 migration; U6 must repeat final-candidate CLI distribution checks.
+
+### U7 local acceptance — 2026-09-29
+
+[Lifecycle receipt](../verification-evidence/005/u7.json) records V13–V26,
+red/green regressions, canonical validation, minimum-Go/race/cross-build proof
+and real Kitty app usage. The pinned-source initializer patch is verified;
+final CLI distributions remain U6. No test/build/benchmark results run in Kitty.
+U2 bounded geometry and shared safe text is next.

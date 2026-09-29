@@ -99,10 +99,11 @@ validate: fmt vet test race coverage test-scripts check-modules
 BUILD_OUTPUT ?= bin/tusk
 CLI_TEST_RUN ?= .
 TUI_TEST_RUN ?= .
+TUI_TEST_FLAGS ?=
 .PHONY: test-tui build-tui
 
 test-tui:
-	go test -v ./internal/tui ./internal/cli ./cmd/tusk -run '$(TUI_TEST_RUN)'
+	go test $(TUI_TEST_FLAGS) -v ./internal/tui ./internal/cli ./cmd/tusk -run '$(TUI_TEST_RUN)'
 
 build-tui: build-cli
 	@set -e; build_tmp=$$(mktemp -d); trap 'rm -rf "$$build_tmp"' EXIT; \

@@ -2,8 +2,8 @@
 feature-id: "005"
 plan-source: ../plans/2026-09-06-005-feat-interactive-tui-application-plan.md
 surface-profiles: [cli-tui, internal-service-consumer, persistence-lifecycle, documentation]
-status: In progress - U1 accepted, U7 active
-evidence-scope: Local U1 execution; later units pending
+status: In progress - U1 and U7 accepted, U2 active
+evidence-scope: Local U1 and U7 execution; later units pending
 ---
 
 # Feature 005 Verification Plan
@@ -100,33 +100,33 @@ Product checkboxes remain unchanged until execution establishes their own scope.
 
 ### Invocation and session ownership — U7
 
-- [ ] V13 (R1; Grammar): Exercise tui, tui --help, help tui, extra args, unknown flags and --json; only valid explicit tui reaches its runner; syntax exits 2.
+- [x] V13 (R1; Grammar): Exercise tui, tui --help, help tui, extra args, unknown flags and --json; only valid explicit tui reaches its runner; syntax exits 2.
 
-- [ ] V14 (R1,R2; Regression): Bare invocation/help/version and tui help under invalid env, non-TTY and unwritable DB path return their ordinary help output with zero open/mkdir calls.
+- [x] V14 (R1,R2; Regression): Bare invocation/help/version and tui help under invalid env, non-TTY and unwritable DB path return their ordinary help output with zero open/mkdir calls.
 
-- [ ] V15 (R2; Admission): Try stdin-only TTY, stdout-only TTY, neither, TERM=dumb and valid TTY streams; invalid terminals exit 1 before open/raw mode; stderr need not be a TTY.
+- [x] V15 (R2; Admission): Try stdin-only TTY, stdout-only TTY, neither, TERM=dumb and valid TTY streams; invalid terminals exit 1 before open/raw mode; stderr need not be a TTY.
 
-- [ ] V16 (R2; Configuration): Verify timezone and parent-policy flag > env > default and DB path precedence, including explicit false, invalid values and relative paths; recovery uses resolved initial identity.
+- [x] V16 (R2; Configuration): Verify timezone and parent-policy flag > env > default and DB path precedence, including explicit false, invalid values and relative paths; recovery uses resolved initial identity.
 
-- [ ] V17 (R3,R6,R7; Lifecycle): Successful command-based open loads once; factory partial-open failure retains factory cleanup responsibility; nil service/closer is refused safely.
+- [x] V17 (R3,R6,R7; Lifecycle): Successful command-based open loads once; factory partial-open failure retains factory cleanup responsibility; nil service/closer is refused safely.
 
-- [ ] V18 (R3,R22; Lifecycle): Normal quit and failed Program startup restore the terminal and close each successfully opened owner exactly once; open failure closes no nonexistent owner.
+- [x] V18 (R3,R22; Lifecycle): Normal quit and failed Program startup restore the terminal and close each successfully opened owner exactly once; open failure closes no nonexistent owner.
 
-- [ ] V19 (R3,R22; Cancellation): Hold a read, cancel Program, release read: cancellation arrives before close; late commands refused after admission closure do not access the owner.
+- [x] V19 (R3,R22; Cancellation): Hold a read, cancel Program, release read: cancellation arrives before close; late commands refused after admission closure do not access the owner.
 
-- [ ] V20 (R3,R19,R22; Outcome): Hold a committed mutation before UI message delivery, cancel Program, then release; runtime receipt reports committed state and readback guidance, never unsaved/retry.
+- [x] V20 (R3,R19,R22; Outcome): Hold a committed mutation before UI message delivery, cancel Program, then release; runtime receipt reports committed state and readback guidance, never unsaved/retry.
 
-- [ ] V21 (R3,R21,R22; Failure): Inject joined run/close errors, pointer/value TransactionError and unknown read cleanup; unknown classification survives cause matching. An earlier successful save followed by a later uncertain or rejected write reports those distinct facts; HadCommittedChanges never hides OutcomeUnknown or labels the rejected write committed. Existing CLI diagnostics remain unchanged.
+- [x] V21 (R3,R21,R22; Failure): Inject joined run/close errors, pointer/value TransactionError and unknown read cleanup; unknown classification survives cause matching. An earlier successful save followed by a later uncertain or rejected write reports those distinct facts; HadCommittedChanges never hides OutcomeUnknown or labels the rejected write committed. Existing CLI diagnostics remain unchanged.
 
-- [ ] V22 (R3,R21; Recovery): Retire old owner before reopening exactly the same absolute database; close failure blocks in-session reopen; failed replacement factory cleans its own partial resources.
+- [x] V22 (R3,R21; Recovery): Retire old owner before reopening exactly the same absolute database; close failure blocks in-session reopen; failed replacement factory cleans its own partial resources.
 
-- [ ] V23 (R22; Signals): Test raw Ctrl+C key, process interrupt and Unix SIGTERM through the existing process signal owner; graceful exit is 1 and terminal restored; ordinary q is 0.
+- [x] V23 (R22; Signals): Test raw Ctrl+C key, process interrupt and Unix SIGTERM through the existing process signal owner; graceful exit is 1 and terminal restored; ordinary q is 0.
 
-- [ ] V24 (R3,R22; Failure): Inject short/error output writer even when the framework ignores returned writer errors; the recording wrapper cancels the run and preserves the failure. Inject command/model panic payload containing private notes; drain resources, report generic failure, and emit no private payload.
+- [x] V24 (R3,R22; Failure): Inject short/error output writer even when the framework ignores returned writer errors; the recording wrapper cancels the run and preserves the failure. Inject command/model panic payload containing private notes; drain resources, report generic failure, and emit no private payload.
 
-- [ ] V25 (R3,R6,R22; Boundary): Race queued command start against shutdown admission; no WaitGroup Add-after-Wait race, post-close service call or lost outcome; delayed cleanup keeps owner open and reports progress.
+- [x] V25 (R3,R6,R22; Boundary): Race queued command start against shutdown admission; no WaitGroup Add-after-Wait race, post-close service call or lost outcome; delayed cleanup keeps owner open and reports progress.
 
-- [ ] V26 (R1,R2,R3,R22,R26; Kitty): Owned Kitty with temporary DB: launch, inspect loading shell, q, relaunch, Ctrl+C; verify echo/cursor/alternate screen restored. Record actual visible observation.
+- [x] V26 (R1,R2,R3,R22,R26; Kitty): Owned Kitty with temporary DB: launch, inspect loading shell, q, relaunch, Ctrl+C; verify echo/cursor/alternate screen restored. Record actual visible observation.
 
 ### Geometry and terminal presentation — U2
 
@@ -477,3 +477,29 @@ V06 proves the current widget caches and structural View guarantee; each later
 modal/history/form addition must repeat populated purity tests. V10 proves the
 cancellable wait primitive; U3 owns bounded timer/debounce chains. No visible
 application session exists yet. U7 is the active next unit.
+
+### U7 compatibility finding — eager terminal discovery (2026-09-29)
+
+The first linked application exposes Bubble Tea v1.3.10 `tea_init.go`: its
+package initializer calls global `lipgloss.HasDarkBackground` before CLI
+admission. An unanswered OSC query delays startup by five seconds and breaks
+existing real-PTY CLI confirmation tests. The new no-discovery regression is
+Red; see `docs/verification-evidence/005/u7-red-global-terminal-query.log.gz`.
+
+KTD1 is amended before remediation: retain the v1.3.10 APIs and module graph,
+but use a repository-local copy under `third_party/bubbletea` with only that
+initializer removed. Preserve the upstream MIT license, complete source/test
+files, version/checksum provenance and per-file hashes. The TUI already owns
+explicit per-session color/background settings. Do not set global renderer
+state, require environment workarounds or relax timing/readiness gates.
+Canonical module checks, source-integrity tests, the real PTY suite and Kitty
+relaunch must pass before U7 can complete. This is a narrow compatibility patch,
+not a v2 migration; U6 must repeat final-candidate CLI distribution checks.
+
+### U7 local acceptance — 2026-09-29
+
+[Lifecycle receipt](../verification-evidence/005/u7.json) records V13–V26,
+red/green regressions, canonical validation, minimum-Go/race/cross-build proof
+and real Kitty app usage. The pinned-source initializer patch is verified;
+final CLI distributions remain U6. No test/build/benchmark results run in Kitty.
+U2 bounded geometry and shared safe text is next.

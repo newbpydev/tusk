@@ -31,7 +31,7 @@ drafts when operations fail, and restore the terminal on exit.
   and recovery interactions from U5. Tests accompany every unit; U6 is acceptance,
   not the first opportunity to write tests.
 - **Execution authorization:** the owner invoked ce-work on 2026-09-29 with
-  hands-on owned Kitty verification. U1 is locally accepted; U7 is active.
+  hands-on owned Kitty verification. U1 and U7 are locally accepted; U2 is active.
   See [U1 receipt](../verification-evidence/005/u1.json). Later unit and release
   acceptance remains pending; planning observations below remain historical.
 - **Completion boundary:** each implemented unit needs red/green evidence,
@@ -737,3 +737,29 @@ candidate performance, real terminal behavior and native/hosted proof remain
 execution gates with owners and closure evidence. If those invalidate a selected
 dependency or product contract, stop that unit and synchronize the affected
 triplets before adopting a replacement; do not silently weaken the gate.
+
+### U7 compatibility finding — eager terminal discovery (2026-09-29)
+
+The first linked application exposes Bubble Tea v1.3.10 `tea_init.go`: its
+package initializer calls global `lipgloss.HasDarkBackground` before CLI
+admission. An unanswered OSC query delays startup by five seconds and breaks
+existing real-PTY CLI confirmation tests. The new no-discovery regression is
+Red; see `docs/verification-evidence/005/u7-red-global-terminal-query.log.gz`.
+
+KTD1 is amended before remediation: retain the v1.3.10 APIs and module graph,
+but use a repository-local copy under `third_party/bubbletea` with only that
+initializer removed. Preserve the upstream MIT license, complete source/test
+files, version/checksum provenance and per-file hashes. The TUI already owns
+explicit per-session color/background settings. Do not set global renderer
+state, require environment workarounds or relax timing/readiness gates.
+Canonical module checks, source-integrity tests, the real PTY suite and Kitty
+relaunch must pass before U7 can complete. This is a narrow compatibility patch,
+not a v2 migration; U6 must repeat final-candidate CLI distribution checks.
+
+### U7 local acceptance — 2026-09-29
+
+[Lifecycle receipt](../verification-evidence/005/u7.json) records V13–V26,
+red/green regressions, canonical validation, minimum-Go/race/cross-build proof
+and real Kitty app usage. The pinned-source initializer patch is verified;
+final CLI distributions remain U6. No test/build/benchmark results run in Kitty.
+U2 bounded geometry and shared safe text is next.

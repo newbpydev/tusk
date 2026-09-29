@@ -36,7 +36,7 @@ func diagnostic(err error, committed bool) (int, string) {
 	}
 	// Only trusted constants cross the diagnostic boundary, never wrapper text.
 	for _, safe := range []error{
-		context.Canceled, context.DeadlineExceeded, errAutoCompleteConfiguration, errTimezoneConfiguration, errForceRequired,
+		context.Canceled, context.DeadlineExceeded, errAutoCompleteConfiguration, errTimezoneConfiguration, errForceRequired, errTUITerminal,
 		core.ErrTaskNotFound, core.ErrEmptyTitle, core.ErrTitleTooLong, core.ErrInvalidStatus, core.ErrInvalidPriority, core.ErrInvalidStatusTransition, core.ErrSelfParenting, core.ErrCyclicDependency, core.ErrMaxDepthExceeded, core.ErrInvalidTag, core.ErrInvalidProgress, core.ErrInvalidTaskID, core.ErrDuplicateTaskID, core.ErrInvalidDepth,
 		ports.ErrInvalidRecord, ports.ErrCorrupt, ports.ErrIncompatibleSchema, ports.ErrBusy, ports.ErrStorage, ports.ErrReadOnly, ports.ErrClosedRepository, ports.ErrInvalidCallback, ports.ErrNestedTransaction, ports.ErrTransactionClosed, ports.ErrTransactionInUse,
 		ports.ErrInvalidCommand, ports.ErrInvalidText, ports.ErrInvalidDate, ports.ErrInvalidReferenceTime, ports.ErrIdentityGeneration, ports.ErrConflict, ports.ErrConfirmationRequired, ports.ErrInvalidServiceOptions,
