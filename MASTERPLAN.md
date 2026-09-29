@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 4 locally complete; PR #4 hosted review watch
-**Active Implementation Target**: PR #4 hosted review settlement; 5.1 Feature 005 planning resumes afterward; no Phase 5 implementation authorized
+**Active Phase**: Phase 4 locally complete; Feature 005 planning is next
+**Active Implementation Target**: 5.1 Feature 005 planning only; PR #4 final publication watch remains separate; no Phase 5 implementation authorized
 **Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -19,7 +19,10 @@
   profiled JSON buffer reservation reduction passes canonical validation,
   minimum-Go JSON tests and all 84 reference case-runs. All samples are retained;
   query p90 <= 12.900 ms. [Performance evidence](docs/verification-evidence/004/review-pr4-r3.md).
-- [ ] Complete current-head hosted review settlement; merge remains user-owned.
+- [x] Resolve all 32 observed threads and verify MERGEABLE/CLEAN with passing
+  hosted checks on implementation commit `486dbcc`. Final documentation-only
+  publication is watched separately; merge remains user-owned.
+  [Settlement checkpoint](docs/verification-evidence/004/review-pr4-settlement.md).
 
 ### Feature 004 final local review follow-up
 

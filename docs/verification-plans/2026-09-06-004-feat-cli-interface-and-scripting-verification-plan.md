@@ -669,3 +669,17 @@ above, while the earlier failed reports remain failures and all limits remain
 unchanged. See [performance receipt](../verification-evidence/004/review-pr4-r3.md). No fresh Kitty timing or interactive verification is used in this
 unit, following the owner's Bash direction. Existing JSON parity and pipeline
 checks verify the unchanged output contract.
+
+### PR #4 review settlement checkpoint — 2026-09-29
+
+All 32 observed threads have verified replies and resolutions. Implementation
+commit `486dbcc` is MERGEABLE/CLEAN with completed passing hosted checks and no
+parked decisions. `make validate` passes again, and every source hash still
+matches the accepted performance receipt. The final allocation-headroom claim
+was disproved on both Go versions; no test or runtime source changed. See the
+[settlement checkpoint](../verification-evidence/004/review-pr4-settlement.md).
+
+Feature 005 planning is next; implementation remains unauthorized. The final
+documentation-only publication still goes through the hosted quiet-period watch,
+and merge remains user-owned. This checkpoint does not claim the later published
+head was already reviewed or that native/hosted release proof is complete.
