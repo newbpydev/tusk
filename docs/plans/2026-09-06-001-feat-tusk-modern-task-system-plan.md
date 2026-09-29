@@ -61,7 +61,7 @@ Give developers a local task manager usable immediately from a terminal, shell s
 - **Surfaces:** CLI/TUI, internal library/service, persistence/migration, packaging/operations, documentation.
 - **Artifact triplet:** This plan, its [verification plan](../verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md), and [issue workorder](../workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md), under `docs/` in this first-party repository.
 - **Readiness:** Deepened product planning baseline with explicit gates. This umbrella remains `requirements-only` as an execution entrypoint. It does not replace the phase-specific triplets or authorize implementation.
-- **Current handoff:** Features 002/003 are locally accepted and merged per MASTERPLAN.md. [Feature 004](2026-09-06-004-feat-cli-interface-and-scripting-plan.md) now owns the CLI planning pack: 25 requirements, seven units and 91 unexecuted scenarios. Its U1 / 004-1 is next under a new implementation instruction. Product U11–U15 map below; later phases and native/hosted acceptance remain pending.
+- **Current handoff:** Features 002–004 are locally accepted; local main records PR #4 merged at `e899491`. [Feature 005](2026-09-06-005-feat-interactive-tui-application-plan.md) now has 28 requirements, eight ordered units and 112 unexecuted scenarios. U1 / 005-1 is next only under new implementation authority. Product U16–U20 map below; Feature 006 retains native/hosted release gates.
 
 ## Product Contract
 
@@ -169,7 +169,7 @@ Planning defaults are R9 opt-in completion, R15 date times, R17 retained-task me
 
 ### Technical decisions
 
-- KTD1. **Phase plans own execution.** Units below are handoffs. Feature 002 has its complete execution triplet; Features 003/004 now have complete planning packs; Feature 005–006 outline metadata is not readiness. Gate G1 applies per feature. Follow the masterplan's phase order even where its DAG allows concurrency.
+- KTD1. **Phase plans own execution.** Units below are handoffs. Features 002–005 have complete planning packs; Features 002–004 have local execution evidence. Feature 006 outline metadata is not readiness. Gate G1 applies per feature. Follow the masterplan sequence even where the DAG allows concurrency.
 - KTD2. **Retain the accepted modernc SQLite runtime.** Keep `database/sql` in storage. Feature 002 records local proof for the matching engine/driver/libc/Go 1.25 baseline; native/hosted G2/G4 acceptance remains pending. The Feature 003 planning pass changes no dependencies.
 - KTD3. **Migration-owning `db` package.** `db/embed.go` embeds adjacent `migrations/*.sql`; storage imports it. Embedding `../../db` from storage is invalid. Generate queries into `internal/storage/sqlc/`; test generated behavior through the adapter. [Go embed](https://pkg.go.dev/embed), [sqlc configuration](https://docs.sqlc.dev/en/latest/reference/config.html).
 - KTD4. **One writer, bounded readers.** Use one writer connection and up to four reader connections. Begin writes IMMEDIATE before reading graph state; read snapshots use separate deferred transactions. Configure connection-scoped pragmas for every new/replacement connection. No transaction callback may borrow another write connection. Verify cancellation and driver transaction options at G2. Create new application-owned directories as 0700 and database files as 0600 on POSIX; preserve existing parent permissions and use the user's private profile ACL on Windows. Reject symlink/non-regular database targets; encode path characters as literal filename data when constructing an internal DSN. This is a single-user boundary, not protection against a malicious process with the same OS identity. [Driver documentation](https://pkg.go.dev/modernc.org/sqlite).
@@ -181,7 +181,7 @@ Planning defaults are R9 opt-in completion, R15 date times, R17 retained-task me
 - KTD10. **Bound durability claims.** NORMAL is retained, without promising the last acknowledged transaction survives power loss. App termination, transaction rollback, reopen and integrity each have scenarios. SQLite owns WAL cleanup; never unlink WAL/SHM to repair data. Require suitable local filesystem semantics. [SQLite WAL](https://www.sqlite.org/wal.html), [pragmas and in-memory limits](https://www.sqlite.org/pragma.html).
 - KTD11. **Inject identity/time.** One clock value per mutation, explicit location for dates. A small service helper constructs RFC 9562 UUIDv7 from supplied time and cryptographic randomness, without package mutable state. Entropy/duplicate failures abort; no retry after uncertain commit. Sort by R14, not assumed monotonic UUID order. [UUIDv7](https://www.rfc-editor.org/rfc/rfc9562.html#section-5.7).
 - KTD12. **Prevent stale overwrite.** Apply only supplied patch fields to the latest task under writer lock. TUI forms compare their base editable fields to authoritative values; differences return conflict and retain draft. Confirmation compares subtree membership and target metadata. CLI patches operate on the latest row; no long-lived stale row replacement.
-- KTD13. **Preserve v1 UI family.** Candidate pins: Bubble Tea v1.3.10, Lipgloss v1.1.0, Bubbles v0.21.0; validate combined graph in Phase 5. No silent v2 `View`/key API switch. [v1 source](https://raw.githubusercontent.com/charmbracelet/bubbletea/v1.3.10/tea.go), [Go baseline](https://raw.githubusercontent.com/charmbracelet/bubbletea/v1.3.10/go.mod).
+- KTD13. **Preserve v1 UI family.** Feature 005 KTD1 selects Bubble Tea v1.3.10, Lipgloss v1.1.0, Bubbles v0.21.0, Glamour v0.9.1 and x/ansi v0.10.1 on the existing Go 1.25 baseline. U1 must prove the combined graph; no silent v2 View/key switch. [Selected pack and versioned sources](2026-09-06-005-feat-interactive-tui-application-plan.md#dependency-evidence).
 - KTD14. **Refresh through commands.** Load at start, after mutation, on `r`, and every 2 seconds through a typed timer command. Use request generations, invalidate pending reads after writes, allow one write at a time, preserve drafts. Failed refresh keeps the snapshot labeled stale. No service cache/goroutine pool.
 - KTD15. **Separate release from race builds.** CGO=0 for binaries; race gates retain compiler support. Document Bash/Make on Windows and check for formatting-induced diffs in CI. Keep immutable release version metadata using generated constants, not a mutable package variable.
 
@@ -264,15 +264,25 @@ Root groups: Today (includes overdue open roots), Upcoming (future due roots), B
 | Modal | Ordinary text including `q`, `d`, `?` | Input only; no global mutation/navigation |
 | Any | Ctrl+C | Cancel/exit and restore terminal |
 
-One `d` opens confirmation; another `d` is not consent. Default button is Cancel. Forms expose title, notes, priority, due, tags and parent/root; status and manual leaf progress are edit-only, matching CLI parity and creation defaults. Field errors stay visible. Saving disables duplicate submit/modal close; Ctrl+C follows R22. Markdown is display-only: no remote fetch, link launch, or execution. Successful save followed by failed refresh says “saved; refresh failed”, never invites resubmission.
+One `d` opens confirmation; another `d` is not consent. Default button is Cancel. Forms expose title, notes, priority, due, tags and parent/root; status and manual leaf progress are edit-only, matching CLI parity and creation defaults. Field errors stay visible. Saving disables duplicate submit/modal close; Ctrl+C follows R22. Enter in notes inserts a newline; Ctrl+S or the focused Save button submits. Dirty-form cancellation defaults to Keep editing. Markdown is display-only: no remote fetch, link launch, or execution. Successful save followed by failed refresh says “saved; refresh failed”, never invites resubmission.
+
+Feature 005 refines these interactions without changing durable service behavior:
+`tusk tui` requires capable terminal stdin/stdout, rejects TERM=dumb before open,
+and offers monochrome content under NO_COLOR (terminal cursor controls remain).
+The filter modal exposes status/priority/tags/due and live search retains ancestry.
+Root View returns a frame prepared by Update to avoid pointer-backed widget cache
+writes. Unchanged raw text is preserved even when widgets cannot round-trip it;
+explicit replacement is default-Cancel. Unknown outcomes require fresh-owner
+readback and discarded uncertain intent before new writes. See the Feature 005
+pack for exact contracts and local/native evidence boundaries.
 
 ### Rollout and gates
 
 | Gate | Owner and closure evidence | Blocking effect |
 | --- | --- | --- |
-| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002, 003 and 004 packs completed; remains open for Features 005–006 |
+| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002–005 packs completed; remains open for Feature 006 |
 | G2 | Feature 002 KTD1 and durable acceptance evidence record Go 1.25.0, modernc v1.58.0, libc v1.75.6 and SQLite 3.53.4 local proof | Local prerequisite satisfied; native/hosted release proof remains Phase 6. Feature 003 retains the installed graph |
-| G3 | Phase 4/5 owners pin CLI/UI dependencies before their first unit; U15/U20 add benchmark runners and evidence | Feature 004 KTD1 selects CLI pins; its U1 proves the combined graph and U6 measures latency. Feature 005 dependency selection remains open; measurement blocks phase acceptance, not planning |
+| G3 | Phase 4/5 owners pin CLI/UI dependencies before their first unit; U15/U20 supply measurement | Feature 004 local graph/latency proof recorded. Feature 005 KTD1 selects its graph; U1 build proof and U6 measurements remain unexecuted gates |
 | G4 | Phase 6 maintainer proves exact candidate on OS/architectures and terminals, licenses, distribution destination, release metadata | Blocks publication; local green/cross-compilation are insufficient |
 
 G2 planning choice is now owned by [Feature 002 KTD1](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md#key-technical-decisions): raise the build minimum to Go 1.25 with the pinned patched driver/libc. This is a technical planning default, not a claim of explicit user approval or executed compatibility proof. The earlier affected Go 1.24 candidate is not selected. [Affected engine](https://pkg.go.dev/modernc.org/sqlite@v1.46.1), [WAL fix](https://www.sqlite.org/wal.html#walresetbug), [selected module](https://proxy.golang.org/modernc.org/sqlite/@v/v1.58.0.mod).
@@ -303,10 +313,10 @@ These units are handoff contracts, not completed work or activation of future ph
 | U13 | 004-3 | List, tree, stats and history commands: `internal/cli/list.go` | U12 |
 | U14 | 004-5/004-4 | Stable JSON and human formatting: `internal/cli/format.go` | U11 |
 | U15 | 004-6 | Real CLI workflows and latency: `internal/cli/process_test.go` | U13 |
-| U16 | 005-1/005-2 | Pure TUI model and deterministic layout: `internal/tui/model.go` | Phase 4 accepted per masterplan; G1 and G3 dependency decision for Feature 005 |
+| U16 | 005-1/005-7/005-2 | Pure TUI model and deterministic layout: `internal/tui/model.go` | Phase 4 accepted per masterplan; G1 and G3 dependency decision for Feature 005 |
 | U17 | 005-3 | Navigation, filtering and refresh generations: `internal/tui/navigation.go` | U16 |
 | U18 | 005-4 | Details, Markdown and timeline: `internal/tui/details.go` | U17 |
-| U19 | 005-5 | Forms and confirmed mutations: `internal/tui/forms.go` | U18 |
+| U19 | 005-5/005-8 | Forms and confirmed mutations: `internal/tui/forms.go` | U18 |
 | U20 | 005-6 | TUI workflow and real terminal acceptance: `internal/tui/workflow_test.go` | U19 |
 | U21 | 006-1 | Hosted platform quality gates: `.github/workflows/ci.yml` | Phases 4/5 accepted; G1 for Feature 006 |
 | U22 | 006-2 | Release artifacts and installation lifecycle: `.goreleaser.yaml` | U21; G4 distribution decisions |
@@ -492,7 +502,7 @@ Feature 004 refines the CLI handoff order without changing product IDs: U11 → 
 
 ### U16. Pure TUI model and deterministic layout
 
-- **Goal / requirements:** Pure TUI model and deterministic layout; R23–R26, R29. Feature unit 005-1/005-2.
+- **Goal / requirements:** Pure TUI model and deterministic layout; R23–R26, R29. Feature units 005-1/005-7/005-2.
 - **Dependencies:** Phase 4 accepted per masterplan; G1 and G3 dependency decision for Feature 005. U20 closes G3's later measurement portion.
 - **Ownership:** `internal/tui/model.go`, `internal/tui/layout.go`, `internal/tui/model_test.go`, `internal/tui/layout_test.go`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
 - **Approach:** KTD13/R24–R26: constructor-initialized components, typed commands, layout in Update, bounded small-terminal state and content-independent geometry.
@@ -525,7 +535,7 @@ Feature 004 refines the CLI handoff order without changing product IDs: U11 → 
 
 ### U19. Forms and confirmed mutations
 
-- **Goal / requirements:** Forms and confirmed mutations; R4–R10, R18–R20, R22, R24–R26. Feature unit 005-5.
+- **Goal / requirements:** Forms and confirmed mutations; R4–R10, R18–R20, R22, R24–R26. Feature units 005-5/005-8.
 - **Dependencies:** U18.
 - **Ownership:** `internal/tui/forms.go`, `internal/tui/forms_test.go`, `internal/tui/confirm.go`, `internal/tui/confirm_test.go`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
 - **Approach:** Fields cover R19 parity; focus trapped in modal; draft/base snapshot tracked; no duplicate submissions; one-key delete confirmation defaults Cancel.
@@ -677,3 +687,27 @@ V01–V89 and ISS-021/022/023/025 are closed locally. The U6 commit contains thi
 receipt and synchronized acceptance checks. V90–V91 / ISS-024 remain pending
 Feature 006 native/hosted release proof. The next target is Feature 005 planning;
 its implementation has not started. No push, PR, merge or publication occurred.
+
+## Feature 005 planning handoff — 2026-09-29
+
+The [Feature 005 plan](2026-09-06-005-feat-interactive-tui-application-plan.md), [verification matrix](../verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md) and
+[workorder](../workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md) complete G1 for TUI planning: 28 feature requirements, eight
+units, 112 unexecuted scenarios and 25 findings/gates (20 corrected in planning,
+five execution/release gates). Product U16→feature U1/U7/U2, U17→U3, U18→U4,
+U19→U5/U8 and U20→U6. Order: U1 → U7 → U2 → U3 → U4 → U5 → U8 → U6.
+Existing product requirement, handoff and scenario IDs/check states are preserved.
+
+Local main at e899491 records Feature 004 PR #4 merged; its local acceptance
+receipts remain valid historical evidence, not rerun by this pass. Feature 005
+selects its v1 dependency graph and defines prepared-frame purity, single-operation
+service ownership, draft/consent conflicts, raw-text preservation and fresh-owner
+unknown-outcome readback. G3 remains open for its U1 build proof/U6 measurement;
+V01–V110 are local feature obligations, V111–V112 stay with Feature 006 native and
+hosted release proof. The TUI source/Makefile targets do not exist yet.
+
+TUSK-V54–V66 now map to that detailed matrix, with TUSK-V35/V38 and governance
+covered at the consumer boundary. No product scenario or implementation/release
+checkbox closes from planning. No application tests, make validate, benchmarks
+or Kitty acceptance ran. MASTERPLAN's next unit is Feature 005 U1 only after
+an implementation instruction. Historical handoffs above retain their dated
+meaning; this is the current planning handoff.

@@ -369,3 +369,27 @@ V01–V89 and ISS-021/022/023/025 are closed locally. The U6 commit contains thi
 receipt and synchronized acceptance checks. V90–V91 / ISS-024 remain pending
 Feature 006 native/hosted release proof. The next target is Feature 005 planning;
 its implementation has not started. No push, PR, merge or publication occurred.
+
+## Feature 005 planning handoff — 2026-09-29
+
+The [Feature 005 plan](../plans/2026-09-06-005-feat-interactive-tui-application-plan.md), [verification matrix](2026-09-06-005-feat-interactive-tui-application-verification-plan.md) and
+[workorder](../workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md) complete G1 for TUI planning: 28 feature requirements, eight
+units, 112 unexecuted scenarios and 25 findings/gates (20 corrected in planning,
+five execution/release gates). Product U16→feature U1/U7/U2, U17→U3, U18→U4,
+U19→U5/U8 and U20→U6. Order: U1 → U7 → U2 → U3 → U4 → U5 → U8 → U6.
+Existing product requirement, handoff and scenario IDs/check states are preserved.
+
+Local main at e899491 records Feature 004 PR #4 merged; its local acceptance
+receipts remain valid historical evidence, not rerun by this pass. Feature 005
+selects its v1 dependency graph and defines prepared-frame purity, single-operation
+service ownership, draft/consent conflicts, raw-text preservation and fresh-owner
+unknown-outcome readback. G3 remains open for its U1 build proof/U6 measurement;
+V01–V110 are local feature obligations, V111–V112 stay with Feature 006 native and
+hosted release proof. The TUI source/Makefile targets do not exist yet.
+
+TUSK-V54–V66 now map to that detailed matrix, with TUSK-V35/V38 and governance
+covered at the consumer boundary. No product scenario or implementation/release
+checkbox closes from planning. No application tests, make validate, benchmarks
+or Kitty acceptance ran. MASTERPLAN's next unit is Feature 005 U1 only after
+an implementation instruction. Historical handoffs above retain their dated
+meaning; this is the current planning handoff.

@@ -1,12 +1,12 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 4 locally complete; Feature 005 planning is next
-**Active Implementation Target**: 5.1 Feature 005 planning only; PR #4 final publication watch remains separate; no Phase 5 implementation authorized
+**Active Phase**: Phase 4 locally complete and merged; Feature 005 planning complete, implementation pending
+**Active Implementation Target**: Feature 005 U1 / 005-1 is next only after implementation authorization; planning pack complete, no Phase 5 code authorized
 **Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
-### Feature 004 PR #4 review remediation
+### Historical Feature 004 PR #4 review remediation
 
 - [x] Investigate all 21 review findings, implement 17 code/test/documentation
   outcomes, and document four evidence-based no-change decisions. Canonical
@@ -36,6 +36,15 @@
   reverted after a latency gate miss; no production/test changes retained.
   [Evaluation](docs/verification-evidence/004/simplify-review.md) preserves the
   patch, red/green, Kitty output and candidate/control measurements.
+
+### Feature 005 planning checkpoint (2026-09-29)
+
+The synchronized Feature 005 pack is ready for a later implementation instruction.
+Its dependency, cold-View purity, single-operation lifecycle, raw-draft safety,
+explicit delete consent and fresh-owner recovery decisions now have red-first
+units and scenario ownership. Local Git records PR #4 merged at `e899491`;
+the historical publication-watch wording below is no longer the active target.
+No fresh hosted-check claim or implementation/release checkbox is added here.
 
 ### Feature 004 local acceptance (2026-09-28)
 
@@ -294,22 +303,39 @@ No Phase 5 implementation, push, PR or publication occurred.
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: ⏳ **PLANNED** (Pending Phase 4 local acceptance and Feature 005 planning)
-- **Plan**: `docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md`
+- **Status**: 📋 **PLANNING COMPLETE — IMPLEMENTATION NOT STARTED** (2026-09-29)
+- **Plan**: [Feature 005 plan](docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md)
+- **Verification Plan**: [Feature 005 verification](docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md)
+- **Issue Workorder**: [Feature 005 workorder](docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md)
 
-- [ ] **5.1 Ultrathink Planning Pack**
-  - [ ] Deepened Plan, Verification Plan, and Workorder
+- [x] **5.1 Ultrathink Planning Pack**
+  - [x] Deepened Plan, Verification Plan, and Workorder: 28 requirements, eight units, 112 planned scenarios
 - [ ] **5.2 Implementation Units**
-  - [ ] Unit 005-1: Pure Elm Root Model & Idempotent `View()` Implementation
-  - [ ] Unit 005-2: Multi-Panel Layout Engine (Left List, Right Details, Bottom Help)
-  - [ ] Unit 005-3: Task Tree / List Navigation (`j/k`, `Space` toggle, visual cursor)
-  - [ ] Unit 005-4: Detail Viewport & Markdown Notes Rendering
-  - [ ] Unit 005-5: Modal Forms (Create, Edit, Delete Confirmation Overlay)
-  - [ ] Unit 005-6: Headless Synthetic `tea.Msg` Test Suite
+  - [ ] Unit 005-1 / U1: Pure Root, v1 Dependency Graph and Deterministic Test Seams
+  - [ ] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
+  - [ ] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
+  - [ ] Unit 005-3 / U3: Forest Navigation, Filters, Search and Refresh Generations
+  - [ ] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
+  - [ ] Unit 005-5 / U5: Forms, Base-Checked Edits, Moves and Lifecycle Toggles
+  - [ ] Unit 005-8 / U8: Previewed Deletion and Unknown-Outcome Reconciliation
+  - [ ] Unit 005-6 / U6: Workflow, Performance, Owned Kitty Acceptance and Handoff
 - [ ] **5.3 Quality Gate & Release Sign-off**
-  - [ ] Pure `View()` test: 100 consecutive calls produce identical output with zero model mutation
-  - [ ] Terminal resize resilience across 80x24, 120x40, 200x60
-  - [ ] `make validate` passes
+  - [ ] Cold and populated View purity: 100 calls without nested/cache mutation
+  - [ ] Resize/focus/plain presentation and every required owned Kitty scenario
+  - [ ] Real disk concurrency, draft/consent conflicts, fresh-owner recovery and terminal cleanup
+  - [ ] Minimum Go 1.25, five CGO-free cross-builds and unchanged CLI contracts
+  - [ ] CLI distribution gate and retained TUI frame-preparation measurements
+  - [ ] V01–V110 local scenarios, current-candidate reviews and synchronized per-unit commits
+  - [ ] `make validate build check-generated` passes
+
+Execution order is U1 → U7 → U2 → U3 → U4 → U5 → U8 → U6. U1–U6 keep their
+original IDs; U7/U8 split lifecycle and destructive-action responsibilities.
+All implementation and release checks remain pending. V111–V112 belong to
+Feature 006 native/hosted release proof. The planning pass inspected clean main
+at `e899491` (PR #4 merge) and versioned framework source, then audited the docs;
+it ran no application tests, dependency builds, make validate, latency or Kitty
+checks. Only planning completion is checked above. Await a new implementation
+instruction before U1; no commit, push, PR or release is implied.
 
 ---
 
