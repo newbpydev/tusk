@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/x/ansi"
-	"github.com/newbpydev/tusk/internal/core"
 	"github.com/newbpydev/tusk/internal/terminaltext"
 	"github.com/rivo/uniseg"
 )
@@ -102,46 +101,100 @@ func (m *Model) listLines(w, h int) []string {
 	if len(m.forest) == 0 {
 		return []string{"", " No tasks", " Your workspace is ready."}
 	}
-	lines := []string{m.paint(fmt.Sprintf(" %d task roots", len(m.forest)), mutedColor, false), ""}
-	var visit func([]*core.TaskNode, int)
-	visit = func(nodes []*core.TaskNode, depth int) {
-		for _, n := range nodes {
-			if len(lines) >= h {
-				return
+	if len(m.rows) == 0 {
+		return []string{"", " No matching tasks", " Esc clears filters."}
+	}
+	type entry struct {
+		row, part int
+		text      string
+	}
+	noun := "tasks"
+	if len(m.rows) == 1 {
+		noun = "task"
+	}
+	entries := []entry{{row: -1, text: fmt.Sprintf(" %d %s", len(m.rows), noun)}, {row: -1}}
+	group := ""
+	selectedLine := 0
+	for i, row := range m.rows {
+		if row.group != group {
+			group = row.group
+			entries = append(entries, entry{row: -1, text: " " + group})
+		}
+		if i == m.selected {
+			selectedLine = len(entries)
+		}
+		entries = append(entries, entry{row: i}, entry{row: i, part: 1})
+	}
+	if selectedLine < m.listOffset {
+		m.listOffset = selectedLine
+	}
+	if selectedLine+2 > m.listOffset+h {
+		m.listOffset = selectedLine + 2 - h
+	}
+	m.listOffset = max(0, min(m.listOffset, max(0, len(entries)-h)))
+	var lines []string
+	for _, entry := range entries[m.listOffset:min(len(entries), m.listOffset+max(0, h))] {
+		if entry.row < 0 {
+			lines = append(lines, m.paint(entry.text, mutedColor, true))
+			continue
+		}
+		row := m.rows[entry.row]
+		task := row.node.Task
+		s := ""
+		if entry.part == 1 {
+			indent := 2 + min(row.depth*2, max(0, w-7))
+			if row.depth > 0 {
+				indent += 2
 			}
-			indent := min(depth*2, max(0, w-7))
+			if len(row.node.Children) > 0 {
+				indent += 2
+			}
+			indent = min(indent, max(0, w-18))
+			s = strings.Repeat(" ", indent) + terminaltext.Scalar(string(task.Status)) + " · " + task.Priority.String() + fmt.Sprintf(" · %d%%", task.Progress)
+		} else {
+			context := ""
+			if row.context {
+				context = "[context] "
+			}
+			indent := min(row.depth*2, max(0, w-7-len(context)))
 			prefix := "  " + strings.Repeat(" ", indent)
-			if depth > 0 {
+			if row.depth*2 > indent {
+				prefix = "  … " + strings.Repeat(" ", max(0, indent-2))
+			} else if row.depth > 0 {
 				prefix += "└ "
 			}
-			if depth*2 > indent {
-				prefix = "  … " + strings.Repeat(" ", max(0, indent-2))
+			if len(row.node.Children) > 0 {
+				if m.collapsed[task.ID] && !m.filter.HasPredicates() && m.dueStart == nil {
+					prefix += "▸ "
+				} else {
+					prefix += "▾ "
+				}
 			}
-			selected := n == m.forest[0]
-			if selected {
+			if entry.row == m.selected {
 				prefix = ">" + prefix[1:]
 			}
-			title := titleCells(prefix+terminaltext.Scalar(n.Task.Title), w)
-			meta := titleCells("  "+terminaltext.Scalar(string(n.Task.Status))+" · "+n.Task.Priority.String()+fmt.Sprintf(" · %d%%", n.Task.Progress), w)
-			if selected {
-				title = m.surface(m.paint(title, textColor, true), textColor, selectionColor)
-				meta = m.surface(meta, accentColor, selectionColor)
-			} else {
-				meta = m.paint(meta, mutedColor, false)
-			}
-			lines = append(lines, title, meta)
-			visit(n.Children, depth+1)
+			s = prefix + context + terminaltext.Scalar(task.Title)
 		}
+		s = titleCells(s, w)
+		if entry.row == m.selected {
+			fg := textColor
+			if entry.part == 1 {
+				fg = accentColor
+			}
+			s = m.surface(m.paint(s, fg, entry.part == 0), fg, selectionColor)
+		} else if entry.part == 1 {
+			s = m.paint(s, mutedColor, false)
+		}
+		lines = append(lines, s)
 	}
-	visit(m.forest, 0)
 	return lines
 }
 
 func (m *Model) detailLines(w int) []string {
-	if len(m.forest) == 0 {
+	t := m.selectedTask()
+	if t == nil {
 		return []string{"", " Select a task to see its details."}
 	}
-	t := m.forest[0].Task
 	lines := []string{"", "  " + m.paint(titleCells(terminaltext.Scalar(t.Title), max(0, w-4)), textColor, true), "",
 		"  Status      " + terminaltext.Scalar(string(t.Status)), "  Priority    " + t.Priority.String(), fmt.Sprintf("  Progress    %d%%", t.Progress), "", "  " + m.paint("Notes", textColor, true), ""}
 	for _, line := range strings.Split(terminaltext.Multiline(t.Description), "\n") {
@@ -154,6 +207,7 @@ func (m *Model) detailLines(w int) []string {
 }
 
 func (m *Model) prepareFrame() {
+	m.rebuildRows()
 	l := measure(m.width, m.height)
 	if l.width == 0 || l.height == 0 {
 		m.frame = ""
@@ -172,15 +226,25 @@ func (m *Model) prepareFrame() {
 		return
 	}
 	left := m.panel("Tasks", m.listLines(l.listWidth-2, l.bodyHeight-2), l.listWidth, l.bodyHeight, m.focus == listFocus)
-	right := m.panel("Task details", m.detailLines(l.detailsWidth-2), l.detailsWidth, l.bodyHeight, m.focus == detailsFocus)
+	details := m.detailLines(l.detailsWidth - 2)
+	m.detailsScroll = max(0, min(m.detailsScroll, max(0, len(details)-(l.bodyHeight-2))))
+	right := m.panel("Task details", details[m.detailsScroll:], l.detailsWidth, l.bodyHeight, m.focus == detailsFocus)
 	header := m.paint(" TUSK", accentColor, true) + m.paint("  /  Personal workspace", mutedColor, false)
+	if m.searching {
+		header = m.paint(" TUSK  / ", accentColor, true) + terminaltext.Scalar(m.searchDraft) + "▎"
+	} else if m.filter.HasPredicates() || m.dueStart != nil {
+		header += "  /  Filtered · Esc clears"
+		if m.dueLabel != "" {
+			header += " · Due " + m.dueLabel
+		}
+	}
 	rows := []string{fitCells(header, l.width)}
 	for y := 0; y < l.bodyHeight; y++ {
 		rows = append(rows, left[y]+right[y])
 	}
 	for y, s := range rows {
 		fg := textColor
-		if m.helpOpen {
+		if m.helpOpen || m.filters != nil {
 			s = ansi.Strip(s)
 			fg = borderColor
 		}
@@ -188,11 +252,27 @@ func (m *Model) prepareFrame() {
 	}
 	m.help.Width = l.width - 2
 	footer := " " + m.help.ShortHelpView(browseHints())
+	if m.recoveryNeeded {
+		footer = "Read outcome unknown · Reload required · q quit"
+	} else if m.stale {
+		footer = " Stale · r refresh  ·" + footer
+	} else if m.busy && m.state == loaded {
+		footer = " Refreshing ·" + footer
+	}
 	if m.state == loadFailed {
 		footer = " r retry  ·" + footer
 	}
 	if m.helpOpen {
 		footer = " ↑↓ scroll help  ·  Esc / ? / q close  ·  Ctrl+C exit"
+	}
+	if m.searching {
+		footer = " Type to search  ·  Enter accept  ·  Esc restore"
+	}
+	if m.filters != nil {
+		footer = " Tab next · ←→ choose · Space toggle · Ctrl+S apply · Esc cancel"
+	}
+	if m.stale && !strings.Contains(footer, "Stale") {
+		footer = " Stale ·" + footer
 	}
 	rows = append(rows, m.surface(fitCells(footer, l.width), mutedColor, footerColor))
 	if m.helpOpen {
@@ -200,6 +280,9 @@ func (m *Model) prepareFrame() {
 		area := max(0, l.modal.height-4)
 		m.helpScroll = min(max(0, m.helpScroll), max(0, len(content)-area))
 		rows = m.overlay(rows, l, "Keyboard shortcuts", content, m.helpScroll, "Esc / ? / q close  ·  Ctrl+C exit")
+	}
+	if m.filters != nil {
+		rows = m.overlay(rows, l, "Filter tasks", m.filterLines(l.modal.width-2), 0, "Ctrl+S apply  ·  Esc cancel")
 	}
 	m.frame = strings.Join(rows, "\n")
 }

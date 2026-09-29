@@ -202,11 +202,15 @@ func TestTerminal_DeepTreeKeepsTitlesAndRawText(t *testing.T) {
 		last = child
 	}
 	before := snapshot(m.forest)
+	m.rebuildRows()
 	lines := m.listLines(12, 40)
-	if len(lines) != 24 || !strings.Contains(lines[len(lines)-2], "…") || !strings.Contains(lines[len(lines)-2], "界") {
+	if len(lines) != 25 || !strings.Contains(lines[len(lines)-2], "…") || !strings.Contains(lines[len(lines)-2], "界") {
 		t.Fatalf("deep title/context lost: %q", lines)
 	}
-	for _, line := range lines[2:] {
+	if !strings.Contains(lines[len(lines)-1], "todo") {
+		t.Fatal("deep metadata lost to indentation")
+	}
+	for _, line := range lines[3:] {
 		if ansi.StringWidth(line) != 12 {
 			t.Fatalf("deep line overflow: %q", line)
 		}

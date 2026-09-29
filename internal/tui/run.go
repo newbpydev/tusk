@@ -18,6 +18,7 @@ type RunOptions struct {
 	Open            Factory
 	Location        *time.Location
 	Profile         termenv.Profile
+	DayBounds       func(string, time.Time, *time.Location) (time.Time, time.Time, error)
 	Program         func(tea.Model, ...tea.ProgramOption) (tea.Model, error)
 	CleanupProgress func()
 }
@@ -42,7 +43,7 @@ func Run(ctx context.Context, options RunOptions) (result Result, err error) {
 			err = errRuntime
 		}
 	}()
-	m := New(Options{Context: ctx, Load: session.Load, Now: time.Now, Wait: Wait, Location: options.Location, Profile: options.Profile})
+	m := New(Options{Context: ctx, Load: session.Load, Now: time.Now, Wait: Wait, Location: options.Location, Profile: options.Profile, DayBounds: options.DayBounds})
 	program := options.Program
 	if program == nil {
 		program = func(m tea.Model, opts ...tea.ProgramOption) (tea.Model, error) {

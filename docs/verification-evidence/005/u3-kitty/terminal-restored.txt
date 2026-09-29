@@ -1,0 +1,16 @@
+01a0ef4a-cc47-7652-a7dc-cd90e50af08b  todo         low     0%        -           Collect customer feedback
+|-- 01a0ef4a-cbe7-7aee-8b16-3ebd9fb2aa9e [todo 0%] Ship customer onboarding (depth 1)
+|   |-- 01a0ef4a-cc25-7245-9253-586be5b6aec7 [todo 0%] Invite teammates (depth 2)
+|   |-- 01a0ef4a-cc05-709f-92c8-d5df8016f2e5 [todo 0%] Welcome screens (depth 2)
+|   `-- 01a0ef4a-cc2b-7dcd-a95d-5bf1d9a40735 [todo 0%] Review permissions (depth 2)
+|-- 01a0ef4a-cc32-7dc4-a40f-58bd88117b09 [todo 0%] Write the launch announcement (depth 1)
+|-- 01a0ef4a-cc38-7f82-a091-92802d6e74b5 [todo 0%] Check keyboard navigation (depth 1)
+|-- 01a0ef4a-cc40-7afc-8dc4-db78d391e162 [todo 0%] Explore dashboard ideas (depth 1)
+`-- 01a0ef4a-cc47-7652-a7dc-cd90e50af08b [todo 0%] Collect customer feedback (depth 1)
+bash-5.3$ ./bin/tusk tui
+bash-5.3$ ./bin/tusk tui
+bash-5.3$ NO_COLOR=1 ./bin/tusk tui
+tusk: context canceled
+bash-5.3$ echo terminal-restored
+terminal-restored
+bash-5.3$

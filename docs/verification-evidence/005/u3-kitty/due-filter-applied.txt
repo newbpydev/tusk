@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace  /  Filtered · Esc clears · Due 2026-09-29         
+╭─ > Tasks ────────────────────╮╭─ Task details ───────────────────────────────╮
+│ 1 task                       ││                                              │
+│                              ││  Ship customer onboarding                    │
+│ Today                        ││                                              │
+│> ▾ Ship customer onboarding  ││  Status      todo                            │
+│    todo · high · 0%          ││  Priority    high                            │
+│                              ││  Progress    0%                              │
+│                              ││                                              │
+│                              ││  Notes                                       │
+│                              ││                                              │
+│                              ││  Make the first five minutes feel effortle…  │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ / search • f filter • r refresh • Tab focus • ? help • q quit

@@ -633,7 +633,7 @@ are specifications, not observed results.
 
 - **Goal / requirements:** R7,R8,R10–R12,R24; product U17; KTD4–KTD6.
 - **Dependencies / ownership:** U2; `internal/tui/navigation.go`, `projection.go`,
-  `refresh.go`, `search.go`, `filters.go`, messages and corresponding tests.
+  `refresh.go`, `search.go`, `filter.go`, messages and corresponding tests.
 - **Approach:** complete-snapshot projection, coalesced single service operation,
   independent timer tokens, selection by ID and retained modal drafts.
 - **Red first:** TestRefresh_ReorderedRepliesAndWriteBarrier,
@@ -794,3 +794,24 @@ coverage for selection, saving, real forms/consent and Markdown. Their shared
 geometry/widget/help portions pass now; no unimplemented state is claimed.
 The standalone prototype stays outside production; the owner-selected spacious
 density and shadow correction carry forward. U3 navigation/search/refresh is next.
+
+### U3 local acceptance — 2026-09-29
+
+[Navigation receipt](../verification-evidence/005/u3.json) records complete-forest
+groups, spacious tree rows, selection by ID/incarnation, temporary search expansion,
+150 ms cancellable debounce, status/priority/tag/due filters and coalesced refresh.
+The due-day parser is injected from the composition root and resolves relative
+expressions only on Apply. Root View still returns its prepared immutable frame.
+
+Canonical validation, Go 1.25 race checks and five CGO-free target builds pass.
+A real two-owner SQLite test and owned Kitty CLI/TUI interactions cover external
+rename, priority change, reparent and deletion while searching. Live inspection
+also verifies collapse restoration, filter draft shrink/restore, 80x24 controls,
+NO_COLOR focus and clean terminal restoration. No tests/builds ran in Kitty.
+
+V40–V49 and V56 close here. V50–V55 retain their later consumer portions:
+post-write refresh and write admission (U5), history dispatch (U4), edit Base and
+form identity (U5), and fresh-owner recovery UI (U8). The current scheduler
+releases matching busy slots and freezes unknown outcomes before rejecting stale
+payloads; U8 must connect its Reload/readback UI before feature acceptance.
+U4 details, Markdown and timeline is next. No mutation UI is claimed yet.

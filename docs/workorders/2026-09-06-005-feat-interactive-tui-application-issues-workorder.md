@@ -251,3 +251,24 @@ ISS-018's geometry/help/overlay foundation is accepted; form/consent and saving
 portions remain with U5/U8. ISS-010's shared safe-text portion is accepted; U4
 still owns Markdown. ISS-022/023 remain open for later units, with U2 evidence
 complete. U3 navigation/search/refresh is next.
+
+### U3 local acceptance — 2026-09-29
+
+[Navigation receipt](../verification-evidence/005/u3.json) records complete-forest
+groups, spacious tree rows, selection by ID/incarnation, temporary search expansion,
+150 ms cancellable debounce, status/priority/tag/due filters and coalesced refresh.
+The due-day parser is injected from the composition root and resolves relative
+expressions only on Apply. Root View still returns its prepared immutable frame.
+
+Canonical validation, Go 1.25 race checks and five CGO-free target builds pass.
+A real two-owner SQLite test and owned Kitty CLI/TUI interactions cover external
+rename, priority change, reparent and deletion while searching. Live inspection
+also verifies collapse restoration, filter draft shrink/restore, 80x24 controls,
+NO_COLOR focus and clean terminal restoration. No tests/builds ran in Kitty.
+
+V40–V49 and V56 close here. V50–V55 retain their later consumer portions:
+post-write refresh and write admission (U5), history dispatch (U4), edit Base and
+form identity (U5), and fresh-owner recovery UI (U8). The current scheduler
+releases matching busy slots and freezes unknown outcomes before rejecting stale
+payloads; U8 must connect its Reload/readback UI before feature acceptance.
+U4 details, Markdown and timeline is next. No mutation UI is claimed yet.

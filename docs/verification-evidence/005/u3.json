@@ -1,0 +1,114 @@
+{
+  "unit": "U3 / 005-3",
+  "status": "accepted locally",
+  "date_utc": "2026-09-29T22:39:26.622962+00:00",
+  "base_commit": "9ea9de4c17ab646b9bcf4b8a1e30458d2ce96b81",
+  "source_sha256": {
+    "cmd/tusk/tui.go": "72af9f236218f6b2075138be931a6f0b3da7ce2b396ace0f1e8b6f4a55c20465",
+    "internal/tui/filter.go": "5af7e0520d535d0751450b14d7651b05de958dd8e2972ce6f9f8004a6df26ce3",
+    "internal/tui/filter_test.go": "5a195014f677d9884439c28af12484ebbb81db691c21fb99e7734c16ef6ed41b",
+    "internal/tui/frame.go": "4ed10252ce193c85abce260d47fccb432abc87ff136ecab6f5b9e9d2ff7f1388",
+    "internal/tui/keymap.go": "f563a0246b21584128f81f6b5bb2dec203a1fe96bd4c8aed3f7fe48d096e7226",
+    "internal/tui/layout_test.go": "ea3a4b901191bb6c093de7e14a34c41f01731816189ca5dfdae5401bb415cea5",
+    "internal/tui/messages.go": "730098ce13b8181aec309e6064581135084ae6c9ce06b42a7443ae5d090956da",
+    "internal/tui/model.go": "3e10162a73b5ae018953c8f59d912879c6e8e3fb39dfab174fa83a91228f09a8",
+    "internal/tui/model_test.go": "3637e1e92c20d4b4eab5fe4a3843bead73c759e05727a8f8c5ab0e61a475588a",
+    "internal/tui/navigation.go": "672962452df1a7a4597d4378edd774a1abd97af04b156af8413c3d7424d5b3e9",
+    "internal/tui/navigation_test.go": "d3a2544549ba2783d13a07cb6aa19e622dff35b9e7d250b37273a9330e8e3efa",
+    "internal/tui/projection.go": "81190df363bb650bb99e4901a36ddec612f54bec46d2c9437198b61de71ac941",
+    "internal/tui/projection_test.go": "e9652c412f8bc21202965041f2cac68c40b17c2a845e9ca7a5193b1c1928a526",
+    "internal/tui/refresh.go": "cc8060e3bc0e1e5b943d34be7f6cf70fe6adb29fa72faf733ff7b5b3dbea7bb0",
+    "internal/tui/refresh_integration_test.go": "1ea1cb7452690db93198e5a36f21d9fde4e6e3cba49d5218ab873b570319ff2c",
+    "internal/tui/refresh_test.go": "c445d7e12386d972fd02de5c67068088f20a65ed91fa82d74b117e849ca7aa03",
+    "internal/tui/run.go": "13935aed81ad5faaf2fbf9d761f5281b499bc549fc445d8427d3cd0242f44ea3",
+    "internal/tui/search.go": "078140d6d0e8c627eef50cdfd84df26e6ba86817e2de71353952a9a27ecb6d38",
+    "internal/tui/surfaces_test.go": "1a6a29495d89a021f0a62a4eeb85b313628119049c7be5223de984ab183deb2c"
+  },
+  "binary_sha256": "062d6773aea7b905555f4240bb7150cf2705a49d963aa5cbe45606c9dc67ce3b",
+  "canonical": "u3-accepted.log.gz: make validate build check-generated; u3-validation-final.log.gz: make validate including added two-owner disk integration",
+  "coverage": {
+    "internal/tui": 99.0,
+    "internal/terminaltext": 100.0,
+    "internal/cli": 96.6,
+    "cmd/tusk": 96.2
+  },
+  "minimum_go": "Go 1.25.0 full affected race suite; final changed layout/filter tests and five CGO-free application/CLI/TUI/terminaltext builds; added disk test also passes minimum-Go race.",
+  "red_observations": [
+    "Missing projection/navigation/scheduler/filter capabilities (compile Red).",
+    "Browse footer omitted search/filter/refresh.",
+    "Monochrome checkbox choice lacked a focus marker.",
+    "Child metadata did not follow title indentation.",
+    "Deep metadata disappeared behind indentation and one-task count used plural."
+  ],
+  "scenarios_closed": [
+    "V40",
+    "V41",
+    "V42",
+    "V43",
+    "V44",
+    "V45",
+    "V46",
+    "V47",
+    "V48",
+    "V49",
+    "V56"
+  ],
+  "partial_scenarios": {
+    "V50": "Initial/manual/two-second refresh and coalescing pass; post-write trigger remains U5.",
+    "V51": "Matching busy-slot release, old-owner rejection and stale unknown freeze pass; waiting mutation admission and recovery UI remain U5/U8.",
+    "V52": "Initial failure/retry and stale snapshot/recovery pass; mutation-disable interaction remains U5.",
+    "V53": "Help/filter focus and raw filter draft survive refresh/resize; edit Base/form identity remains U5.",
+    "V54": "One read/pending refresh, separate bounded timer chains and canceled superseded debounce pass; history queue remains U4.",
+    "V55": "Empty/search/filter/navigation safe no-ops pass; add/edit/delete interactions remain U5/U8."
+  },
+  "kitty": {
+    "owned_windows": [
+      3,
+      4
+    ],
+    "isolated_database": "/tmp/tusk-005-kitty.OIGt5C/u3-tasks.db",
+    "evidence": "u3-kitty/",
+    "checks": [
+      "External CLI title/priority edit retained searched child selection.",
+      "External CLI reparent retained selected identity and rebuilt context.",
+      "External deletion removed selected task and showed filtered-empty.",
+      "Clearing search restored collapsed root.",
+      "79x23 resize hint and 80x24 restoration retained filter raw text.",
+      "Due filter applied resolved local date.",
+      "Final binary external move/delete, color and monochrome filter surfaces repeated.",
+      "q/Ctrl+C restored shell echo and input."
+    ],
+    "tests_in_kitty": false
+  },
+  "review": "Sequential inline correctness, concurrency, keyboard accessibility, architecture and test review. No independent subagent review claimed. Fixed plain checkbox focus, child metadata alignment and deep metadata clipping. No unresolved U3-owned finding.",
+  "limits": [
+    "Mutation admission, history scheduling and recovery UI are deliberate later-unit consumers; scenario boxes remain open.",
+    "Native macOS/Windows and hosted proof remain Feature 006.",
+    "Final candidate performance and repeated combined-flow acceptance remain U6."
+  ],
+  "logs": [
+    "u3-acceptance-final.log.gz",
+    "u3-accepted.log.gz",
+    "u3-cross-build.log.gz",
+    "u3-deep-metadata-red.log.gz",
+    "u3-disk-go125.log.gz",
+    "u3-disk-integration.log.gz",
+    "u3-filter-green.log.gz",
+    "u3-filter-red.log.gz",
+    "u3-final-go125.log.gz",
+    "u3-hints-red.log.gz",
+    "u3-indent-green.log.gz",
+    "u3-indent-red.log.gz",
+    "u3-minimum-final.log.gz",
+    "u3-minimum-go.log.gz",
+    "u3-navigation-green.log.gz",
+    "u3-navigation-red.log.gz",
+    "u3-plain-focus-red.log.gz",
+    "u3-projection-green.log.gz",
+    "u3-projection-red.log.gz",
+    "u3-refresh-green.log.gz",
+    "u3-refresh-red.log.gz",
+    "u3-search-green.log.gz",
+    "u3-validation-final.log.gz"
+  ]
+}

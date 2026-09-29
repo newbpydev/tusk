@@ -4,7 +4,6 @@ package tui
 
 import (
 	"context"
-	"errors"
 	"io"
 	"time"
 
@@ -20,12 +19,13 @@ import (
 // Options contains per-session dependencies. Callers provide resolved terminal
 // and calendar facts; construction never queries the environment or a terminal.
 type Options struct {
-	Context  context.Context
-	Load     func(context.Context) ([]*core.TaskNode, error)
-	Now      func() time.Time
-	Wait     func(context.Context, time.Duration) error
-	Location *time.Location
-	Profile  termenv.Profile
+	Context   context.Context
+	Load      func(context.Context) ([]*core.TaskNode, error)
+	Now       func() time.Time
+	Wait      func(context.Context, time.Duration) error
+	Location  *time.Location
+	Profile   termenv.Profile
+	DayBounds func(string, time.Time, *time.Location) (time.Time, time.Time, error)
 }
 
 type loadState uint8
@@ -37,22 +37,53 @@ const (
 )
 
 type Model struct {
-	options       Options
-	renderer      *lipgloss.Renderer
-	notes         textarea.Model
-	help          help.Model
-	frame         string
-	width, height int
-	state         loadState
-	operation     uint64
-	forest        []*core.TaskNode
-	exitErr       error
-	focus         panelFocus
-	helpOpen      bool
-	helpScroll    int
+	options                   Options
+	renderer                  *lipgloss.Renderer
+	notes                     textarea.Model
+	help                      help.Model
+	frame                     string
+	width, height             int
+	state                     loadState
+	operation                 uint64
+	forest                    []*core.TaskNode
+	exitErr                   error
+	focus                     panelFocus
+	helpOpen                  bool
+	helpScroll                int
+	rows                      []taskRow
+	selected                  int
+	listOffset, detailsScroll int
+	collapsed                 map[string]bool
+	filter                    core.TaskFilter
+	dueStart, dueEnd          *time.Time
+	now                       time.Time
+	searching                 bool
+	searchDraft               string
+	searchBefore              searchSnapshot
+	searchToken               uint64
+	searchCancel              context.CancelFunc
+	owner, generation         uint64
+	busy, refreshPending      bool
+	stale, recoveryNeeded     bool
+	tickToken                 uint64
+	timerStarted              bool
+	filters                   *filterDraft
+	dueExpression, dueLabel   string
 }
 
 func New(options Options) *Model {
+	if options.Context == nil {
+		options.Context = context.Background()
+	}
+	if options.Location == nil {
+		options.Location = time.UTC
+	}
+	if options.Now == nil {
+		options.Now = time.Now
+	}
+	if options.Wait == nil {
+		options.Wait = Wait
+	}
 	r := lipgloss.NewRenderer(io.Discard, termenv.WithProfile(options.Profile))
 	r.SetColorProfile(options.Profile)
 	r.SetHasDarkBackground(true)
@@ -66,17 +97,17 @@ func New(options Options) *Model {
 	notes.Blur()
 	h := help.New()
 	h.Styles = help.Styles{Ellipsis: plain, ShortKey: plain, ShortDesc: plain, ShortSeparator: plain, FullKey: plain, FullDesc: plain, FullSeparator: plain}
-	m := &Model{options: options, renderer: r, notes: notes, help: h, operation: 1, width: 80, height: 24}
+	m := &Model{options: options, renderer: r, notes: notes, help: h, operation: 1, busy: true, width: 80, height: 24, selected: -1, collapsed: map[string]bool{}}
 	m.prepareFrame()
 	return m
 }
 
 func (m *Model) Init() tea.Cmd {
 	// Copy every command input now. The closure must never capture m.
-	ctx, load, operation := m.options.Context, m.options.Load, m.operation
+	ctx, load, now, operation, owner, generation := m.options.Context, m.options.Load, m.options.Now, m.operation, m.owner, m.generation
 	return safeCommand(func() tea.Msg {
 		forest, err := load(ctx)
-		return forestMsg{operation: operation, forest: forest, err: err}
+		return forestMsg{operation: operation, owner: owner, generation: generation, now: now(), forest: forest, err: err}
 	})
 }
 
@@ -89,6 +120,17 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 		}
 	}()
 	switch msg := msg.(type) {
+	case tickMsg:
+		if msg.token != m.tickToken || msg.err != nil {
+			return m, nil
+		}
+		m.now = msg.now
+		cmd = tea.Batch(m.nextTick(), m.requestRefresh())
+	case searchMsg:
+		if !m.searching || msg.token != m.searchToken || msg.err != nil {
+			return m, nil
+		}
+		m.filter.SearchTerm = msg.query
 	case fatalMsg:
 		m.exitErr = msg.err
 		return m, tea.Quit
@@ -117,6 +159,16 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 			m.prepareFrame()
 			return m, nil
 		}
+		if m.searching {
+			cmd = m.searchKey(msg)
+			m.prepareFrame()
+			return m, cmd
+		}
+		if m.filters != nil {
+			m.filterKey(msg)
+			m.prepareFrame()
+			return m, nil
+		}
 		switch msg.String() {
 		case "q":
 			return m, tea.Quit
@@ -125,33 +177,24 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 		case "?":
 			m.helpOpen = true
 			m.helpScroll = 0
+		case "/":
+			m.beginSearch()
+		case "f":
+			m.beginFilters()
+		case "esc":
+			m.clearFilters()
 		case "r":
-			if m.state == loadFailed {
-				m.operation++
-				m.state = loading
-				m.prepareFrame()
-				return m, m.Init()
-			}
+			cmd = m.requestRefresh()
+		default:
+			m.navigate(msg.String())
 		}
 	case tea.WindowSizeMsg:
 		m.width, m.height = max(0, msg.Width), max(0, msg.Height)
 	case forestMsg:
-		if msg.operation != m.operation {
-			return m, nil
-		}
-		if errors.Is(msg.err, errRuntime) {
-			m.exitErr = errRuntime
-			return m, tea.Quit
-		}
-		if msg.err != nil {
-			m.state = loadFailed
-		} else {
-			m.state = loaded
-			m.forest = msg.forest
-		}
+		cmd = m.acceptForest(msg)
 	}
 	m.prepareFrame()
-	return m, nil
+	return m, cmd
 }
 func (m *Model) View() string { return m.frame }
 

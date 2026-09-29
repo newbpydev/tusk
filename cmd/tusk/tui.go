@@ -11,13 +11,14 @@ import (
 	"github.com/newbpydev/tusk/internal/cli"
 	"github.com/newbpydev/tusk/internal/ports"
 	"github.com/newbpydev/tusk/internal/service"
+	"github.com/newbpydev/tusk/internal/service/dateparse"
 	"github.com/newbpydev/tusk/internal/storage"
 	"github.com/newbpydev/tusk/internal/tui"
 )
 
 func tuiRunner(input io.Reader, output, diagnostics io.Writer) func(context.Context, cli.Config) (cli.TUIResult, error) {
 	return func(ctx context.Context, cfg cli.Config) (cli.TUIResult, error) {
-		result, err := tui.Run(ctx, tui.RunOptions{Input: input, Output: output, Open: tuiFactory(cfg), Location: cfg.Location, Profile: tuiProfile(os.Getenv),
+		result, err := tui.Run(ctx, tui.RunOptions{Input: input, Output: output, Open: tuiFactory(cfg), Location: cfg.Location, Profile: tuiProfile(os.Getenv), DayBounds: dateparse.DayBounds,
 			CleanupProgress: func() { _, _ = io.WriteString(diagnostics, "tusk: cleanup in progress; waiting for active work\n") }})
 		return cli.TUIResult{HadCommittedChanges: result.HadCommittedChanges, OutcomeUnknown: result.OutcomeUnknown}, err
 	}

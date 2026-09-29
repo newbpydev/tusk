@@ -204,7 +204,7 @@ Each scenario includes its fixture/action and expected outcome. The unit's named
 
 - [ ] TUSK-V56 **Normal / navigation:** Exercise all keys in list/details/empty/filter modes, group collapse, depth-10 scroll, first/last selection and disappearing selected task. Tab focus is visible, selection stays by ID, and all actions remain reachable without color.
 - [ ] TUSK-V57 **Race / refresh results:** Deliver older read after newer read, read after successful mutation, and result for closed/replaced modal. Stale messages cannot overwrite current state, reopen modal, or move selection to an unrelated task.
-- [ ] TUSK-V58 **Recovery / search and timer:** Use typed fake timers for 150-ms debounce and 2-second refresh; rapidly change/clear search and resize. Cancelled generations are ignored, collapse state restores, failed load preserves labeled stale data, retry succeeds.
+- [x] TUSK-V58 **Recovery / search and timer:** Use typed fake timers for 150-ms debounce and 2-second refresh; rapidly change/clear search and resize. Cancelled generations are ignored, collapse state restores, failed load preserves labeled stale data, retry succeeds.
 
 ### U18. Details, Markdown and timeline
 
@@ -415,3 +415,13 @@ Kitty checks; see [U2 evidence](../verification-evidence/005/u2.json).
 Product TUSK-V54/V55 retain their later form/selection/saving repetitions;
 U17–U20 remain pending. Feature U3 is the next execution target. No release,
 native-platform or final CLI-distribution acceptance is added by this checkpoint.
+
+### Product U17 navigation handoff — 2026-09-29
+
+Feature 005 U3 supplies forest grouping, navigation, selection identity, literal
+search, filters and single-operation refresh; see the synchronized
+[U3 receipt](../verification-evidence/005/u3.json). TUSK-V58 passes injected
+search/timer, stale snapshot, retry and resize checks. TUSK-V56 has list/filter
+and Kitty proof but retains final detail/form keyboard coverage in U4/U5/U6;
+TUSK-V57 retains post-mutation/form identity proof in U5/U8. U18 is the current
+feature target. No native, hosted, release or complete TUI claim is added.

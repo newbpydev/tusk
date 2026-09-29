@@ -11,6 +11,9 @@ const (
 
 func browseHints() []key.Binding {
 	return []key.Binding{
+		key.NewBinding(key.WithKeys("/"), key.WithHelp("/", "search")),
+		key.NewBinding(key.WithKeys("f"), key.WithHelp("f", "filter")),
+		key.NewBinding(key.WithKeys("r"), key.WithHelp("r", "refresh")),
 		key.NewBinding(key.WithKeys("tab"), key.WithHelp("Tab", "focus")),
 		key.NewBinding(key.WithKeys("?"), key.WithHelp("?", "help")),
 		key.NewBinding(key.WithKeys("q"), key.WithHelp("q", "quit")),

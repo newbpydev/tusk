@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace                                                    
+╭─ > Tasks ────────────────────╮╭─ Task details ───────────────────────────────╮
+│ 5 ╭─ > Filter tasks ─────────────────────────────────────────────────────╮   │
+│   │ Choose any statuses and priorities; empty means all.                 │   │
+│ To│                                                                      │   │
+│> ▸│   Status                                                             │   │
+│   │    [ ] Todo   [ ] In progress   [ ] Blocked   [ ] Done               │   │
+│ Up│   Priority                                                           │   │
+│  W│    [ ] Low   [ ] Medium   [ ] High   [ ] Urgent                      │   │
+│  t│                                                                      │   │
+│  C│ > Tags · all must match                                              │   │
+│  t│   design▎                                                            │…  │
+│ Ba│   Due day · today, tomorrow or YYYY-MM-DD                            │   │
+│  E│                                                                      │   │
+│  t│                                                                      │   │
+│  C│   [ Apply filters ]      [ Clear all ]                               │   │
+│  t│                                                                      │   │
+│   │                                                                      │   │
+│   │                                                                      │   │
+│   │                                                                      │   │
+│   │ Ctrl+S apply  ·  Esc cancel                                          │   │
+│   ╰──────────────────────────────────────────────────────────────────────╯   │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ Tab next · ←→ choose · Space toggle · Ctrl+S apply · Esc cancel

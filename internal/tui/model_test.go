@@ -118,18 +118,20 @@ func TestCommand_NoLiveModelCapture(t *testing.T) {
 	o := testOptions()
 	calls := 0
 	o.Load = func(context.Context) ([]*core.TaskNode, error) { calls++; return nil, nil }
-	o.Now = func() time.Time { t.Fatal("unexpected clock use"); return time.Time{} }
+	clocks := 0
+	o.Now = func() time.Time { clocks++; return time.Date(2026, 9, 29, 12, 0, 0, 0, time.UTC) }
 	o.Wait = func(context.Context, time.Duration) error { t.Fatal("unexpected wait"); return nil }
 	m := New(o)
 	cmd := m.Init()
-	if calls != 0 {
+	if calls != 0 || clocks != 0 {
 		t.Fatal("constructor/Init performed I/O")
 	}
 	m.options.Load = func(context.Context) ([]*core.TaskNode, error) { t.Fatal("captured live options"); return nil, nil }
+	m.options.Now = func() time.Time { t.Fatal("captured live clock"); return time.Time{} }
 	m.operation = 20
 	before := snapshot(m)
 	reply := cmd().(forestMsg)
-	if reply.operation != 1 || calls != 1 || snapshot(m) != before {
+	if reply.operation != 1 || calls != 1 || clocks != 1 || snapshot(m) != before {
 		t.Fatal("command captured or mutated model")
 	}
 	m.Update(reply)
@@ -146,7 +148,7 @@ func TestTUI_LoadStates(t *testing.T) {
 		want  string
 	}{
 		{"empty", nil, nil, "No tasks"},
-		{"loaded", []*core.TaskNode{{Task: core.Task{ID: "one", Title: "demo"}}}, nil, "1 task"},
+		{"loaded", []*core.TaskNode{{Task: core.Task{ID: "one", Title: "demo"}}}, nil, "1 task "},
 		{"error", nil, errors.New("private path"), "Could not load tasks"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

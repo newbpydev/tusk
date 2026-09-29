@@ -2,7 +2,7 @@
 feature-id: "005"
 plan-source: ../plans/2026-09-06-005-feat-interactive-tui-application-plan.md
 surface-profiles: [cli-tui, internal-service-consumer, persistence-lifecycle, documentation]
-status: In progress - U1, U7 and U2 accepted, U3 active
+status: In progress - U1, U7, U2 and U3 accepted, U4 active
 evidence-scope: Local U1, U7 and U2 execution; later units pending
 ---
 
@@ -167,25 +167,25 @@ those states, without claiming they exist in the U2 shell.
 
 ### Projection, keyboard and refresh — U3
 
-- [ ] V40 (R10; Normal): Build zero-, one- and ten-level forests; stable root groups and canonical priority/due/created/ID sibling order include done descendants.
+- [x] V40 (R10; Normal): Build zero-, one- and ten-level forests; stable root groups and canonical priority/due/created/ID sibling order include done descendants.
 
-- [ ] V41 (R10; Boundary): Inject clock around local midnight/DST: Today includes overdue open roots, Upcoming later due roots, Backlog undated, Completed done roots; descendants stay with root.
+- [x] V41 (R10; Boundary): Inject clock around local midnight/DST: Today includes overdue open roots, Upcoming later due roots, Backlog undated, Completed done roots; descendants stay with root.
 
-- [ ] V42 (R10,R12; Navigation): j/k/arrows/g/G/pages clamp and scroll; h/l collapse/expand branches and leaf no-op; Tab reverses with Shift+Tab; headers cannot be selected.
+- [x] V42 (R10,R12; Navigation): j/k/arrows/g/G/pages clamp and scroll; h/l collapse/expand branches and leaf no-op; Tab reverses with Shift+Tab; headers cannot be selected.
 
-- [ ] V43 (R10,R24; Selection): External reorder/move preserves selected ID/incarnation; disappearance chooses clamped former index; collapse selects containing ancestor; empty data has no selection.
+- [x] V43 (R10,R24; Selection): External reorder/move preserves selected ID/incarnation; disappearance chooses clamped former index; collapse selects containing ancestor; empty data has no selection.
 
-- [ ] V44 (R11; Normal): Literal case-insensitive title/notes substring search follows core semantics, trims search term, finds deep child and preserves only matching/context paths.
+- [x] V44 (R11; Normal): Literal case-insensitive title/notes substring search follows core semantics, trims search term, finds deep child and preserves only matching/context paths.
 
-- [ ] V45 (R11; Boundary): Search that matches a parent excludes unrelated descendants; context nodes are labeled; no matches gives filtered-empty, and clearing restores prefilter collapse state.
+- [x] V45 (R11; Boundary): Search that matches a parent excludes unrelated descendants; context nodes are labeled; no matches gives filtered-empty, and clearing restores prefilter collapse state.
 
-- [ ] V46 (R8,R11,R24; Debounce): Deliver 150 ms search timer replies out of order, accept with Enter and cancel with Esc; only latest live query applies and Esc restores the entry snapshot.
+- [x] V46 (R8,R11,R24; Debounce): Deliver 150 ms search timer replies out of order, accept with Enter and cancel with Esc; only latest live query applies and Esc restores the entry snapshot.
 
-- [ ] V47 (R11; Filters): Status/priority OR, all-of tags and cross-field AND work on the complete forest; empty statuses includes done; Apply/Clear and browse Esc have decided behavior.
+- [x] V47 (R11; Filters): Status/priority OR, all-of tags and cross-field AND work on the complete forest; empty statuses includes done; Apply/Clear and browse Esc have decided behavior.
 
-- [ ] V48 (R11; Dates): Due expressions use injected DayBounds inclusive start/exclusive end, missing dates excluded, invalid expression retained with field error; DST days aren't fixed 24 hours.
+- [x] V48 (R11; Dates): Due expressions use injected DayBounds inclusive start/exclusive end, missing dates excluded, invalid expression retained with field error; DST days aren't fixed 24 hours.
 
-- [ ] V49 (R11; Dates): Relative due filter resolves on Apply, shows resolved local date and does not drift at midnight; group clock still refreshes.
+- [x] V49 (R11; Dates): Relative due filter resolves on Apply, shows resolved local date and does not drift at midnight; group clock still refreshes.
 
 - [ ] V50 (R8; Refresh): Initial/manual/post-write/2-second triggers call service through commands only; active-read triggers coalesce and cannot starve completion with perpetual generation invalidation.
 
@@ -199,7 +199,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [ ] V55 (R10,R11,R12; Boundary): Empty/filtered-empty list receives all browse/navigation keys; safe no-ops for absent selection and useful add/clear/search/quit controls.
 
-- [ ] V56 (R8,R10,R11,R24,R26; Kitty): Use a second CLI process on isolated DB to edit/reparent/delete during browse and search; inspect live refresh, selection preservation and collapse restoration.
+- [x] V56 (R8,R10,R11,R24,R26; Kitty): Use a second CLI process on isolated DB to edit/reparent/delete during browse and search; inspect live refresh, selection preservation and collapse restoration.
 
 ### Details, notes and history — U4
 
@@ -528,3 +528,24 @@ it is failing evidence. The real PTY test was red when the output wrapper hid
 `term.File` and green after preserving that interface. Final Kitty screenshots
 show resizing and modal restoration without the stale frame or background
 bands. No test, build or benchmark ran in Kitty. U3 is next.
+
+### U3 local acceptance — 2026-09-29
+
+[Navigation receipt](../verification-evidence/005/u3.json) records complete-forest
+groups, spacious tree rows, selection by ID/incarnation, temporary search expansion,
+150 ms cancellable debounce, status/priority/tag/due filters and coalesced refresh.
+The due-day parser is injected from the composition root and resolves relative
+expressions only on Apply. Root View still returns its prepared immutable frame.
+
+Canonical validation, Go 1.25 race checks and five CGO-free target builds pass.
+A real two-owner SQLite test and owned Kitty CLI/TUI interactions cover external
+rename, priority change, reparent and deletion while searching. Live inspection
+also verifies collapse restoration, filter draft shrink/restore, 80x24 controls,
+NO_COLOR focus and clean terminal restoration. No tests/builds ran in Kitty.
+
+V40–V49 and V56 close here. V50–V55 retain their later consumer portions:
+post-write refresh and write admission (U5), history dispatch (U4), edit Base and
+form identity (U5), and fresh-owner recovery UI (U8). The current scheduler
+releases matching busy slots and freezes unknown outcomes before rejecting stale
+payloads; U8 must connect its Reload/readback UI before feature acceptance.
+U4 details, Markdown and timeline is next. No mutation UI is claimed yet.

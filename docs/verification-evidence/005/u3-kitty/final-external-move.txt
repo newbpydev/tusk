@@ -1,0 +1,40 @@
+ TUSK  /  Personal workspace  /  Filtered · Esc clears                                                                  
+╭─ > Tasks ────────────────────────────────────╮╭─ Task details ───────────────────────────────────────────────────────╮
+│ 1 task                                       ││                                                                      │
+│                                              ││  Welcome screens final refreshed                                     │
+│ Backlog                                      ││                                                                      │
+│> Welcome screens final refreshed             ││  Status      todo                                                    │
+│  todo · urgent · 0%                          ││  Priority    urgent                                                  │
+│                                              ││  Progress    0%                                                      │
+│                                              ││                                                                      │
+│                                              ││  Notes                                                               │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+╰──────────────────────────────────────────────╯╰──────────────────────────────────────────────────────────────────────╯
+ / search • f filter • r refresh • Tab focus • ? help • q quit

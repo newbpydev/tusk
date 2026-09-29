@@ -58,7 +58,7 @@ func TestOverlay_UniformSurfaces(t *testing.T) {
 							if modal && x >= b.x && x < b.x+b.width && y >= b.y && y < b.y+b.height {
 								want = "24,35,44"
 							}
-							if !modal && (y == 4 || y == 5) && x >= 1 && x < l.listWidth-1 {
+							if !modal && (y == 5 || y == 6) && x >= 1 && x < l.listWidth-1 {
 								want = "25,60,65"
 							}
 							if bg != want {
