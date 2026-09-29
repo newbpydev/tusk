@@ -5,14 +5,11 @@ package tui
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
-	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -50,6 +47,9 @@ type Model struct {
 	operation     uint64
 	forest        []*core.TaskNode
 	exitErr       error
+	focus         panelFocus
+	helpOpen      bool
+	helpScroll    int
 }
 
 func New(options Options) *Model {
@@ -93,12 +93,38 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 		m.exitErr = msg.err
 		return m, tea.Quit
 	case tea.KeyMsg:
+		if msg.Type == tea.KeyCtrlC {
+			m.exitErr = context.Canceled
+			return m, tea.Quit
+		}
+		if m.helpOpen {
+			switch msg.String() {
+			case "?", "esc", "q":
+				m.helpOpen = false
+			case "j", "down":
+				m.helpScroll++
+			case "k", "up":
+				m.helpScroll--
+			case "pgdown":
+				m.helpScroll += max(1, measure(m.width, m.height).modal.height-4)
+			case "pgup":
+				m.helpScroll -= max(1, measure(m.width, m.height).modal.height-4)
+			case "g", "home":
+				m.helpScroll = 0
+			case "G", "end":
+				m.helpScroll = len(helpLines())
+			}
+			m.prepareFrame()
+			return m, nil
+		}
 		switch msg.String() {
 		case "q":
 			return m, tea.Quit
-		case "ctrl+c":
-			m.exitErr = context.Canceled
-			return m, tea.Quit
+		case "tab", "shift+tab":
+			m.focus = 1 - m.focus
+		case "?":
+			m.helpOpen = true
+			m.helpScroll = 0
 		case "r":
 			if m.state == loadFailed {
 				m.operation++
@@ -108,7 +134,7 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 			}
 		}
 	case tea.WindowSizeMsg:
-		m.width, m.height = max(1, msg.Width), max(1, msg.Height)
+		m.width, m.height = max(0, msg.Width), max(0, msg.Height)
 	case forestMsg:
 		if msg.operation != m.operation {
 			return m, nil
@@ -128,26 +154,6 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 	return m, nil
 }
 func (m *Model) View() string { return m.frame }
-func (m *Model) prepareFrame() {
-	text := "Loading tasks…"
-	switch m.state {
-	case loaded:
-		text = "No tasks"
-		if len(m.forest) > 0 {
-			text = fmt.Sprintf("%d task roots", len(m.forest))
-		}
-	case loadFailed:
-		text = "Could not load tasks. Press r to retry."
-	}
-	// Child components may maintain caches while rendering. They run here only,
-	// under constructor/Update ownership, never from root View.
-	if m.notes.Focused() {
-		text += "\n" + m.notes.View()
-	}
-	help := m.help.ShortHelpView([]key.Binding{key.NewBinding(key.WithKeys("q"), key.WithHelp("q", "quit"))})
-	lines := []string{m.renderer.NewStyle().Bold(true).Render("TUSK"), text, help}
-	m.frame = strings.Join(lines, "\n")
-}
 
 // Wait is a cancellable timer seam. It performs work only inside a command.
 func Wait(ctx context.Context, delay time.Duration) error {

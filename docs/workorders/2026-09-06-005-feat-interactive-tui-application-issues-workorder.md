@@ -20,6 +20,14 @@ U1; U1 may start only when implementation is authorized.
 
 ## Planning issue register
 
+**U2 owner direction, 2026-09-29:** the user selected spacious title/metadata
+rows after the live Kitty design prototype and requested removal of modal/list
+shadow artifacts. Carry uniform surfaces, whole-backdrop dimming and explicit
+SGR reset handling into production. Prototype fixes and Bash cell-color checks
+are complete; production layout and V39 Kitty evidence now pass. This
+refines 005-ISS-018 within the accepted sequence; no new density setting or
+scope expansion is authorized by the prototype comparison keys.
+
 | ID | Source | Owner/lens | Severity | Status | Gap and correction | Affected scope / retest |
 | --- | --- | --- | --- | --- | --- | --- |
 | 005-ISS-001 | Planning/source review | Coherence / planning owner | P1 | Fixed in plan; runtime unverified | Outline falsely labeled ready; no companion artifacts or executable units. Replace outline with complete linked pack and preserve planning-only status. | R28; all units; Plan Goal Capsule, 28 requirements, eight units and verification coverage audit. |
@@ -225,3 +233,21 @@ red/green regressions, canonical validation, minimum-Go/race/cross-build proof
 and real Kitty app usage. The pinned-source initializer patch is verified;
 final CLI distributions remain U6. No test/build/benchmark results run in Kitty.
 U2 bounded geometry and shared safe text is next.
+
+### U2 local acceptance and runtime findings — 2026-09-29
+
+[Receipt](../verification-evidence/005/u2.json) closes the U2 implementation
+boundary with canonical/minimum-Go gates, unchanged CLI fixtures and real Kitty
+inspection. The user-selected spacious rows and shadow correction are adopted.
+Uniform cell backgrounds, grapheme clipping, plain focus and resize are proven.
+
+Kitty found that the U7 recording writer hid `term.File`, so Bubble Tea never
+received initial size or subsequent resize events. The failing child PTY resize
+case and screenshot are retained; preserving the interface fixes the cause
+without bypassing output-error recording. TERM/COLORTERM select available TUI
+colors and NO_COLOR remains authoritative; no appearance query was introduced.
+
+ISS-018's geometry/help/overlay foundation is accepted; form/consent and saving
+portions remain with U5/U8. ISS-010's shared safe-text portion is accepted; U4
+still owns Markdown. ISS-022/023 remain open for later units, with U2 evidence
+complete. U3 navigation/search/refresh is next.

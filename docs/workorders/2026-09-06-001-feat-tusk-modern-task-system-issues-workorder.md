@@ -403,3 +403,14 @@ prove the unsolicited query is absent and ordinary CLI/TUI startup works again.
 This amends the selected v1 runtime without a v2 migration or weaker CLI latency
 gate. U6 still owns final-candidate distributions; native/hosted proof stays with
 Feature 006. See the Feature 005 U7 receipt for execution evidence.
+
+### Feature 005 presentation checkpoint — 2026-09-29
+
+Feature U1/U7/U2 now provide product U16's pure root, owned lifecycle and bounded
+layout foundation. The owner selected spacious title/metadata rows after a
+Kitty prototype and requested uniform modal/panel backgrounds. The production
+surface and actual terminal resize fixes pass canonical, minimum-Go and owned
+Kitty checks; see [U2 evidence](../verification-evidence/005/u2.json).
+Product TUSK-V54/V55 retain their later form/selection/saving repetitions;
+U17–U20 remain pending. Feature U3 is the next execution target. No release,
+native-platform or final CLI-distribution acceptance is added by this checkpoint.

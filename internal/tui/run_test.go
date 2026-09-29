@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -84,6 +85,34 @@ func TestSession_RecordingWriter(t *testing.T) {
 	w := &recordingWriter{writer: &out, cancel: cancel}
 	if _, err := w.Write([]byte("screen")); err != nil || w.failure() != nil || ctx.Err() != nil {
 		t.Fatal("valid output failed")
+	}
+}
+
+func TestSession_TerminalWriterPreservesDescriptorAndErrors(t *testing.T) {
+	file, err := os.CreateTemp(t.TempDir(), "terminal-output")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	recorder := &recordingWriter{writer: file, cancel: cancel}
+	w := recordingTerminalWriter{File: file, recorder: recorder}
+	if w.Fd() != file.Fd() {
+		t.Fatal("terminal descriptor hidden")
+	}
+	if n, err := w.Write([]byte("frame")); err != nil || n != 5 {
+		t.Fatalf("write %d %v", n, err)
+	}
+	recorder.writer = failedOutput{}
+	if _, err := w.Write([]byte("frame")); err == nil || ctx.Err() == nil || recorder.failure() == nil {
+		t.Fatal("terminal wrapper bypassed error recording")
+	}
+	_, err = Run(context.Background(), RunOptions{Input: strings.NewReader("q"), Output: file, Open: func(context.Context) (ports.TaskService, func() error, error) {
+		return sessionService{}, func() error { return nil }, nil
+	}})
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 

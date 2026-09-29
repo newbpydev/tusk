@@ -8,6 +8,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/x/term"
 	"github.com/muesli/termenv"
 )
 
@@ -25,6 +26,10 @@ func Run(ctx context.Context, options RunOptions) (result Result, err error) {
 	ctx, cancel := context.WithCancel(ctx)
 	session := NewSession(ctx, options.Open)
 	out := &recordingWriter{writer: options.Output, cancel: cancel}
+	var programOutput io.Writer = out
+	if file, ok := options.Output.(term.File); ok {
+		programOutput = recordingTerminalWriter{File: file, recorder: out}
+	}
 	defer func() {
 		if recover() != nil {
 			err = errRuntime
@@ -44,9 +49,18 @@ func Run(ctx context.Context, options RunOptions) (result Result, err error) {
 			return tea.NewProgram(m, opts...).Run()
 		}
 	}
-	_, err = program(m, tea.WithInput(options.Input), tea.WithOutput(out), tea.WithContext(ctx), tea.WithAltScreen(), tea.WithoutSignalHandler())
+	_, err = program(m, tea.WithInput(options.Input), tea.WithOutput(programOutput), tea.WithContext(ctx), tea.WithAltScreen(), tea.WithoutSignalHandler())
 	return result, errors.Join(err, m.exitErr)
 }
+
+// Bubble Tea detects resize support through term.File, not Fd alone. Preserve
+// that capability while sending every output write through the error recorder.
+type recordingTerminalWriter struct {
+	term.File
+	recorder *recordingWriter
+}
+
+func (w recordingTerminalWriter) Write(p []byte) (int, error) { return w.recorder.Write(p) }
 
 type recordingWriter struct {
 	writer io.Writer

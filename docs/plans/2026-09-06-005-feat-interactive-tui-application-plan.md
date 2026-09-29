@@ -31,7 +31,7 @@ drafts when operations fail, and restore the terminal on exit.
   and recovery interactions from U5. Tests accompany every unit; U6 is acceptance,
   not the first opportunity to write tests.
 - **Execution authorization:** the owner invoked ce-work on 2026-09-29 with
-  hands-on owned Kitty verification. U1 and U7 are locally accepted; U2 is active.
+  hands-on owned Kitty verification. U1, U7 and U2 are locally accepted; U3 is active.
   See [U1 receipt](../verification-evidence/005/u1.json). Later unit and release
   acceptance remains pending; planning observations below remain historical.
 - **Completion boundary:** each implemented unit needs red/green evidence,
@@ -431,6 +431,17 @@ for removed IDs are pruned only on an accepted full forest, not filtered output.
 
 ### Layout and safe presentation
 
+**Presentation refinement — session-settled: user-approved (2026-09-29):** use
+spacious task rows: title first, status/priority/numeric progress beneath.
+The user chose this after operating the Kitty prototype. Retain the existing
+R9/R12 geometry and keyboard contracts; the prototype's density toggle is not
+a new production preference. Paint complete panel/dialog surfaces, restore
+surface colors after child SGR resets, and dim the entire modal backdrop
+consistently. Offset shadows and partially dimmed row bands are defects.
+This refines presentation within the accepted units; it does not replace their
+workflow, verification, or execution order. Prototype evidence is design
+evidence only; U2 and later units still need their own real-application checks.
+
 For W≥80 and H≥24: body height H−2, one fixed status/search row and one help row.
 List outer width floor(0.4×W); details gets the remainder, including their own
 borders. Inner dimensions subtract frame/padding and clamp at zero. At 80×24
@@ -763,3 +774,23 @@ red/green regressions, canonical validation, minimum-Go/race/cross-build proof
 and real Kitty app usage. The pinned-source initializer patch is verified;
 final CLI distributions remain U6. No test/build/benchmark results run in Kitty.
 U2 bounded geometry and shared safe text is next.
+
+### U2 local acceptance — 2026-09-29
+
+[Presentation receipt](../verification-evidence/005/u2.json) records bounded
+geometry, shared scalar/multiline sanitization, spacious rows, monochrome focus,
+grapheme clipping and uniform modal surfaces. `make validate build check-generated`,
+minimum-Go race checks and all five CGO-free builds pass. Owned Kitty inspection
+covers 80x24, 120x40, 200x60, undersize/restore, help, Unicode and NO_COLOR.
+
+Kitty exposed that U7's output recorder hid `term.File`, suppressing all initial
+size discovery and SIGWINCH handling. U2 preserves that interface while keeping
+error recording; a red/green real child PTY resize test proves the fix. TUI
+color capability now follows explicit TERM/COLORTERM/NO_COLOR facts without
+appearance queries. Existing CLI formatter behavior remains unchanged.
+
+V27,V31–V34,V37,V39 close here. V28–V30,V35–V36,V38 retain explicit later-unit
+coverage for selection, saving, real forms/consent and Markdown. Their shared
+geometry/widget/help portions pass now; no unimplemented state is claimed.
+The standalone prototype stays outside production; the owner-selected spacious
+density and shadow correction carry forward. U3 navigation/search/refresh is next.

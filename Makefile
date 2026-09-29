@@ -103,13 +103,14 @@ TUI_TEST_FLAGS ?=
 .PHONY: test-tui build-tui
 
 test-tui:
-	go test $(TUI_TEST_FLAGS) -v ./internal/tui ./internal/cli ./cmd/tusk -run '$(TUI_TEST_RUN)'
+	go test $(TUI_TEST_FLAGS) -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '$(TUI_TEST_RUN)'
 
 build-tui: build-cli
 	@set -e; build_tmp=$$(mktemp -d); trap 'rm -rf "$$build_tmp"' EXIT; \
 	for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do \
 		echo "Compiling TUI tests: $$target (CGO_ENABLED=0; native execution separate)"; \
 		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/tui-$${target%/*}-$${target#*/}.test" ./internal/tui; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/text-$${target%/*}-$${target#*/}.test" ./internal/terminaltext; \
 	done
 
 .PHONY: test-cli build-cli

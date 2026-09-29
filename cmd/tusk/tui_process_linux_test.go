@@ -9,10 +9,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"syscall"
 	"testing"
 	"time"
 
+	"github.com/charmbracelet/x/ansi"
 	"golang.org/x/sys/unix"
 )
 
@@ -26,7 +28,7 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("%v %s", err, out)
 	}
-	for _, mode := range []string{"q", "ctrlc", "interrupt", "terminate"} {
+	for _, mode := range []string{"q", "resize", "ctrlc", "interrupt", "terminate"} {
 		t.Run(mode, func(t *testing.T) {
 			fd, err := unix.Open("/dev/ptmx", unix.O_RDWR|unix.O_NOCTTY|unix.O_NONBLOCK, 0)
 			if err != nil {
@@ -92,8 +94,43 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 			if bytes.Contains(screen.Bytes(), []byte("\x1b]11;?")) || bytes.Contains(screen.Bytes(), []byte("\x1b]10;?")) {
 				t.Fatal("unsolicited global terminal color discovery")
 			}
+			if mode == "resize" {
+				for _, step := range []struct {
+					cols, rows uint16
+					want       string
+				}{
+					{79, 23, "Resize to 80×24; Ctrl+C quits"},
+					{120, 40, "╭─ > Tasks " + strings.Repeat("─", 36) + "╮"},
+				} {
+					if err = unix.IoctlSetWinsize(fd, unix.TIOCSWINSZ, &unix.Winsize{Row: step.rows, Col: step.cols}); err != nil {
+						t.Fatal(err)
+					}
+					var resized bytes.Buffer
+					deadline := time.Now().Add(3 * time.Second)
+					for !strings.Contains(ansi.Strip(resized.String()), step.want) {
+						if time.Now().After(deadline) {
+							t.Fatalf("no %dx%d resize frame containing %q; output=%q", step.cols, step.rows, step.want, resized.String())
+						}
+						if _, err = unix.Poll([]unix.PollFd{{Fd: int32(fd), Events: unix.POLLIN}}, 50); err != nil {
+							if errors.Is(err, unix.EINTR) {
+								continue
+							}
+							t.Fatal(err)
+						}
+						n, e := unix.Read(fd, chunk[:])
+						if errors.Is(e, unix.EAGAIN) || errors.Is(e, unix.EINTR) {
+							continue
+						}
+						if e != nil {
+							t.Fatal(e)
+						}
+						resized.Write(chunk[:n])
+						screen.Write(chunk[:n])
+					}
+				}
+			}
 			switch mode {
-			case "q":
+			case "q", "resize":
 				_, err = master.Write([]byte("q"))
 			case "ctrlc":
 				_, err = master.Write([]byte{3})
@@ -107,7 +144,7 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 			}
 			err = cmd.Wait()
 			want := 0
-			if mode != "q" {
+			if mode != "q" && mode != "resize" {
 				want = 1
 			}
 			if got := cmd.ProcessState.ExitCode(); got != want {

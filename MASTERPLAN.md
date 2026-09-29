@@ -2,7 +2,12 @@
 
 **Current Status**: 🟢 Active Development
 **Active Phase**: Phase 5 — Feature 005 implementation authorized (2026-09-29)
-**Active Implementation Target**: Feature 005 U2 / 005-2 — bounded layout and shared terminal-safe text
+**Active Implementation Target**: Feature 005 U3 / 005-3 — forest navigation, search, filters and refresh
+
+U2 presentation direction: the owner selected spacious title/metadata rows in
+the live Kitty prototype (2026-09-29). Uniform backgrounds and modal dimming
+must remove the reported shadow artifacts. The prototype is design evidence;
+production U2 validation and Kitty acceptance now pass (receipt below).
 **Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -303,7 +308,7 @@ No Phase 5 implementation, push, PR or publication occurred.
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: 🚀 **IMPLEMENTING U2 — U1 AND U7 LOCALLY ACCEPTED** (authorized 2026-09-29)
+- **Status**: 🚀 **IMPLEMENTING U3 — U1, U7 AND U2 LOCALLY ACCEPTED** (authorized 2026-09-29)
 - **Plan**: [Feature 005 plan](docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md)
 - **Verification Plan**: [Feature 005 verification](docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md)
 - **Issue Workorder**: [Feature 005 workorder](docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md)
@@ -313,7 +318,7 @@ No Phase 5 implementation, push, PR or publication occurred.
 - [ ] **5.2 Implementation Units**
   - [x] Unit 005-1 / U1: Pure Root, v1 Dependency Graph and Deterministic Test Seams
   - [x] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
-  - [ ] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
+  - [x] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
   - [ ] Unit 005-3 / U3: Forest Navigation, Filters, Search and Refresh Generations
   - [ ] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
   - [ ] Unit 005-5 / U5: Forms, Base-Checked Edits, Moves and Lifecycle Toggles
@@ -425,3 +430,14 @@ real Kitty launch/quit/relaunch/Ctrl+C inspection. A source-pinned Bubble Tea
 patch removes eager global terminal discovery. [Receipt](docs/verification-evidence/005/u7.json).
 AGENTS.md explicitly keeps tests/builds/benchmarks in Bash and Kitty for real app
 use only. The active next unit is U2.
+
+### Feature 005 U2 acceptance — 2026-09-29
+
+Bounded 40/60 layout, spacious rows, safe shared text, pure frames and modal
+surfaces pass `make validate build check-generated`; minimum-Go race tests and
+all five CGO-free builds pass. [Receipt](docs/verification-evidence/005/u2.json).
+Actual Kitty use caught and fixed a hidden terminal descriptor that prevented
+resize events; a real child PTY regression now covers shrink/restore. Color,
+NO_COLOR, Unicode, 80x24/120x40/200x60 and modal shrink/restore were inspected.
+Later selection, saving, form/consent and Markdown scenarios remain explicitly
+open for their owning units. U3 is next; no navigation or form delivery is claimed.

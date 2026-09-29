@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/muesli/termenv"
 	"github.com/newbpydev/tusk/internal/cli"
@@ -16,14 +17,26 @@ import (
 
 func tuiRunner(input io.Reader, output, diagnostics io.Writer) func(context.Context, cli.Config) (cli.TUIResult, error) {
 	return func(ctx context.Context, cfg cli.Config) (cli.TUIResult, error) {
-		profile := termenv.Ascii
-		if os.Getenv("NO_COLOR") == "" && os.Getenv("TERM") != "" {
-			profile = termenv.ANSI
-		}
-		result, err := tui.Run(ctx, tui.RunOptions{Input: input, Output: output, Open: tuiFactory(cfg), Location: cfg.Location, Profile: profile,
+		result, err := tui.Run(ctx, tui.RunOptions{Input: input, Output: output, Open: tuiFactory(cfg), Location: cfg.Location, Profile: tuiProfile(os.Getenv),
 			CleanupProgress: func() { _, _ = io.WriteString(diagnostics, "tusk: cleanup in progress; waiting for active work\n") }})
 		return cli.TUIResult{HadCommittedChanges: result.HadCommittedChanges, OutcomeUnknown: result.OutcomeUnknown}, err
 	}
+}
+
+// Select color capability from declared terminal facts, without querying the
+// terminal, changing a global renderer, or probing background appearance.
+func tuiProfile(getenv func(string) string) termenv.Profile {
+	term := getenv("TERM")
+	if getenv("NO_COLOR") != "" || term == "" || term == "dumb" {
+		return termenv.Ascii
+	}
+	if color := getenv("COLORTERM"); color == "truecolor" || color == "24bit" {
+		return termenv.TrueColor
+	}
+	if strings.Contains(term, "256color") {
+		return termenv.ANSI256
+	}
+	return termenv.ANSI
 }
 
 func tuiFactory(cfg cli.Config) tui.Factory {

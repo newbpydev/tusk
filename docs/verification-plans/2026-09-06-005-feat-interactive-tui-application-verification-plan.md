@@ -2,8 +2,8 @@
 feature-id: "005"
 plan-source: ../plans/2026-09-06-005-feat-interactive-tui-application-plan.md
 surface-profiles: [cli-tui, internal-service-consumer, persistence-lifecycle, documentation]
-status: In progress - U1 and U7 accepted, U2 active
-evidence-scope: Local U1 and U7 execution; later units pending
+status: In progress - U1, U7 and U2 accepted, U3 active
+evidence-scope: Local U1, U7 and U2 execution; later units pending
 ---
 
 # Feature 005 Verification Plan
@@ -130,7 +130,16 @@ Product checkboxes remain unchanged until execution establishes their own scope.
 
 ### Geometry and terminal presentation — U2
 
-- [ ] V27 (R9; Layout): At 80x24, 120x40, 200x60 assert outer widths/heights, fixed footer positions and every rendered line's cell width; no trailing newline adds a row.
+The owner selected spacious two-line task rows in the Kitty prototype on
+2026-09-29. Include a terminal-cell SGR regression for the reported shadow
+artifact: uniform canvas/dialog backgrounds, consistent whole-backdrop dimming,
+and no background bleed at borders or clipping boundaries. Check accented
+graphemes and monochrome focus as well as total cell widths. Prototype captures
+do not close V39; repeat on the built application. Shared geometry is tested in
+U2; later form/consent, saving and Markdown scenarios repeat when U5/U8/U4 add
+those states, without claiming they exist in the U2 shell.
+
+- [x] V27 (R9; Layout): At 80x24, 120x40, 200x60 assert outer widths/heights, fixed footer positions and every rendered line's cell width; no trailing newline adds a row.
 
 - [ ] V28 (R9,R24; Boundary): Send 0x0, 1x1, 79x24, 80x23, negative synthetic dimensions and repeated grow/shrink; clamp safely, preserve selection/draft and restore layout.
 
@@ -138,23 +147,23 @@ Product checkboxes remain unchanged until execution establishes their own scope.
 
 - [ ] V30 (R9,R12; Overlay): Center overflowing form/help/consent content within bounds, scroll fields while retaining buttons, and trap focus with Tab/Shift+Tab.
 
-- [ ] V31 (R9,R10,R15; Unicode): Render CJK, combining accents, emoji ZWJ clusters, invalid UTF-8 replacement and ten-level indentation at cell boundaries; clip without half-clusters, negative widths or style bleed.
+- [x] V31 (R9,R10,R15; Unicode): Render CJK, combining accents, emoji ZWJ clusters, invalid UTF-8 replacement and ten-level indentation at cell boundaries; clip without half-clusters, negative widths or style bleed.
 
-- [ ] V32 (R15; Security): ESC, C0/C1, OSC 8/52, bidi controls, CR, DEL and embedded ANSI in every scalar field render as visible safe data, never executable terminal sequences.
+- [x] V32 (R15; Security): ESC, C0/C1, OSC 8/52, bidi controls, CR, DEL and embedded ANSI in every scalar field render as visible safe data, never executable terminal sequences.
 
-- [ ] V33 (R15,R23; Security): Multiline display preserves LF, expands tabs to four spaces and escapes remaining controls; raw values remain byte-for-byte unchanged in model/service fixtures.
+- [x] V33 (R15,R23; Security): Multiline display preserves LF, expands tabs to four spaces and escapes remaining controls; raw values remain byte-for-byte unchanged in model/service fixtures.
 
-- [ ] V34 (R15; Regression): The shared scalar sanitizer reproduces all existing CLI fixtures and human/JSON separation; extracting it does not change command bytes.
+- [x] V34 (R15; Regression): The shared scalar sanitizer reproduces all existing CLI fixtures and human/JSON separation; extracting it does not change command bytes.
 
 - [ ] V35 (R2,R15; Presentation): NO_COLOR strips all content SGR including Markdown; fixed explicit profile avoids appearance queries. Framework cursor/alternate-screen controls are distinguished from content escapes.
 
 - [ ] V36 (R12,R15; Accessibility): Every action has a textual key hint and visible focus; status, priority, stale/error and disabled-save meaning survives monochrome output.
 
-- [ ] V37 (R5,R9; Purity): After every resize/modal transition, repeated root View calls only return stored frame; no child render, recomposition or I/O occurs.
+- [x] V37 (R5,R9; Purity): After every resize/modal transition, repeated root View calls only return stored frame; no child render, recomposition or I/O occurs.
 
 - [ ] V38 (R9,R12,R22; Small terminal): Shrink while editing/saving: draft and operation tokens remain; mutation may finish, Ctrl+C exits, and browse q remains available without triggering form actions.
 
-- [ ] V39 (R9,R12,R15,R26; Kitty): Inspect all three supported sizes plus undersized restore, long Unicode and NO_COLOR in owned Kitty; record focus, clipping and visible absence of jitter.
+- [x] V39 (R9,R12,R15,R26; Kitty): Inspect all three supported sizes plus undersized restore, long Unicode and NO_COLOR in owned Kitty; record focus, clipping and visible absence of jitter.
 
 ### Projection, keyboard and refresh — U3
 
@@ -503,3 +512,19 @@ red/green regressions, canonical validation, minimum-Go/race/cross-build proof
 and real Kitty app usage. The pinned-source initializer patch is verified;
 final CLI distributions remain U6. No test/build/benchmark results run in Kitty.
 U2 bounded geometry and shared safe text is next.
+
+### U2 local acceptance — 2026-09-29
+
+[Receipt](../verification-evidence/005/u2.json) retains red/green logs, final
+source and binary hashes, canonical validation, minimum-Go race/cross-builds,
+and real Kitty screenshots. V27,V31–V34,V37,V39 pass. V28's widget-draft bounds,
+V29's current states/task counts, V30's generic overlay/help, V35's current
+content, V36's focus and V38's retained widget state pass as partial evidence;
+their selection/saving/real form/consent/Markdown portions remain pending in
+U3/U4/U5/U8. Keep those boxes open until the stated states actually exist.
+
+The visible resize failure is retained as `u2-kitty/resize-regression-before.png`;
+it is failing evidence. The real PTY test was red when the output wrapper hid
+`term.File` and green after preserving that interface. Final Kitty screenshots
+show resizing and modal restoration without the stale frame or background
+bands. No test, build or benchmark ran in Kitty. U3 is next.
