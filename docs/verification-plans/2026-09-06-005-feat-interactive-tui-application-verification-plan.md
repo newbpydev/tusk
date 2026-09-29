@@ -2,7 +2,7 @@
 feature-id: "005"
 plan-source: ../plans/2026-09-06-005-feat-interactive-tui-application-plan.md
 surface-profiles: [cli-tui, internal-service-consumer, persistence-lifecycle, documentation]
-status: In progress - U1, U7, U2 and U3 accepted, U4 active
+status: In progress - U1, U7, U2, U3 and U4 accepted, U5 active
 evidence-scope: Local U1, U7 and U2 execution; later units pending
 ---
 
@@ -155,7 +155,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [x] V34 (R15; Regression): The shared scalar sanitizer reproduces all existing CLI fixtures and human/JSON separation; extracting it does not change command bytes.
 
-- [ ] V35 (R2,R15; Presentation): NO_COLOR strips all content SGR including Markdown; fixed explicit profile avoids appearance queries. Framework cursor/alternate-screen controls are distinguished from content escapes.
+- [x] V35 (R2,R15; Presentation): NO_COLOR strips all content SGR including Markdown; fixed explicit profile avoids appearance queries. Framework cursor/alternate-screen controls are distinguished from content escapes.
 
 - [ ] V36 (R12,R15; Accessibility): Every action has a textual key hint and visible focus; status, priority, stale/error and disabled-save meaning survives monochrome output.
 
@@ -195,7 +195,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [ ] V53 (R8,R17,R24; Draft): Periodic refresh while editing/help/filter modal stays open cannot steal focus, replace raw fields, reset Base or apply reply to another form instance.
 
-- [ ] V54 (R8,R24; Resources): Rapid r/search/selection/ticks produce at most one service operation, one pending refresh/latest history request and bounded timers; no retry storm or accumulating queues.
+- [x] V54 (R8,R24; Resources): Rapid r/search/selection/ticks produce at most one service operation, one pending refresh/latest history request and bounded timers; no retry storm or accumulating queues.
 
 - [ ] V55 (R10,R11,R12; Boundary): Empty/filtered-empty list receives all browse/navigation keys; safe no-ops for absent selection and useful add/clear/search/quit controls.
 
@@ -203,27 +203,27 @@ those states, without claiming they exist in the U2 shell.
 
 ### Details, notes and history — U4
 
-- [ ] V57 (R13; Normal): Details show full/wrapped ID, all metadata, optional-value placeholders, numeric progress and timezone/offset; dates remain UTC in stored data.
+- [x] V57 (R13; Normal): Details show full/wrapped ID, all metadata, optional-value placeholders, numeric progress and timezone/offset; dates remain UTC in stored data.
 
-- [ ] V58 (R13,R23; Boundary): Scroll 1 MiB notes, long unbroken text, CJK/combining glyphs and deep tasks at minimum width; no overflow or loss of raw stored notes.
+- [x] V58 (R13,R23; Boundary): Scroll 1 MiB notes, long unbroken text, CJK/combining glyphs and deep tasks at minimum width; no overflow or loss of raw stored notes.
 
-- [ ] V59 (R13,R15; Markdown): Render headings, lists, fenced code, tables, inline links and images as terminal text; fixed built-in style/width/profile, no remote image loading or link launch.
+- [x] V59 (R13,R15; Markdown): Render headings, lists, fenced code, tables, inline links and images as terminal text; fixed built-in style/width/profile, no remote image loading or link launch.
 
-- [ ] V60 (R13,R15; Security): Malicious Markdown containing OSC/bidi/ANSI/raw HTML, file-like style strings and URL payloads causes no file-style lookup, network, subprocess or terminal-control injection.
+- [x] V60 (R13,R15; Security): Malicious Markdown containing OSC/bidi/ANSI/raw HTML, file-like style strings and URL payloads causes no file-style lookup, network, subprocess or terminal-control injection.
 
-- [ ] V61 (R13,R24; Concurrency): Delay render then select another task, edit content or resize; only matching ID/incarnation/content/width/profile result enters details.
+- [x] V61 (R13,R24; Concurrency): Delay render then select another task, edit content or resize; only matching ID/incarnation/content/width/profile result enters details.
 
-- [ ] V62 (R13; Failure): Renderer error shows safe plain-text fallback; at most one render runs and only newest pending render is retained; no shared mutable renderer.
+- [x] V62 (R13; Failure): Renderer error shows safe plain-text fallback; at most one render runs and only newest pending render is retained; no shared mutable renderer.
 
-- [ ] V63 (R14; Normal): Timeline displays true ascending int64 sequences, kinds, changed fields and localized time; empty existing history is distinct from missing task.
+- [x] V63 (R14; Normal): Timeline displays true ascending int64 sequences, kinds, changed fields and localized time; empty existing history is distinct from missing task.
 
-- [ ] V64 (R14,R24; Concurrency): Out-of-order history results for different selections/owner epochs cannot appear under current task; metadata and history freshness are independent.
+- [x] V64 (R14,R24; Concurrency): Out-of-order history results for different selections/owner epochs cannot appear under current task; metadata and history freshness are independent.
 
 - [ ] V65 (R14; Failure): Known history error is visible and retryable as a read, missing task refreshes forest, unknown cleanup routes to owner recovery; no fabricated events.
 
-- [ ] V66 (R13,R14,R19; Integration): After committed edit/status/move, refresh shows actual service metadata events and rollups; history is not claimed atomically consistent with an earlier forest snapshot.
+- [x] V66 (R13,R14,R19; Integration): After committed edit/status/move, refresh shows actual service metadata events and rollups; history is not claimed atomically consistent with an earlier forest snapshot.
 
-- [ ] V67 (R13,R14,R15,R26; Kitty): Inspect Markdown, metadata/history scrolling, no-color text, long notes and selection changes in owned Kitty; safe links remain inert.
+- [x] V67 (R13,R14,R15,R26; Kitty): Inspect Markdown, metadata/history scrolling, no-color text, long notes and selection changes in owned Kitty; safe links remain inert.
 
 ### Forms and mutation contracts — U5
 
@@ -549,3 +549,36 @@ form identity (U5), and fresh-owner recovery UI (U8). The current scheduler
 releases matching busy slots and freezes unknown outcomes before rejecting stale
 payloads; U8 must connect its Reload/readback UI before feature acceptance.
 U4 details, Markdown and timeline is next. No mutation UI is claimed yet.
+
+### U4 renderer budget finding — 2026-09-29
+
+A 1.0625 MiB unbroken Unicode note spent 146 seconds in Glamour's reflow
+word-wrapper before the owned test process was stopped with a retained stack
+trace. KTD9 is refined before integration: Markdown formatting is admitted only
+for at most 32 KiB of sanitized source with no whitespace-delimited token above
+2 KiB. Larger/pathological notes use labeled, safely wrapped plain text in the
+same asynchronous render lane. Every byte of raw notes remains untouched and
+all displayed text remains scrollable. This is a formatting budget, not a storage
+or editing limit. V58/V62 must prove full content and bounded pending work; U6
+retains final preparation/render measurements. U4 remains in progress.
+
+### U4 local acceptance — 2026-09-29
+
+[Details receipt](../verification-evidence/005/u4.json) records complete wrapped
+metadata, one scrollable notes/activity viewport, fixed workspace Markdown
+styling, generated-output filtering and real ascending int64 service events.
+History uses the single service-operation slot; Markdown has one active render
+and one latest pending request. Task incarnation, content, width and profile
+reject obsolete render replies; history freshness remains independent.
+
+Canonical validation (TUI coverage 98.6%), Go 1.25 affected race checks and all
+five CGO-free builds pass. Kitty verifies 80x24/120x40/200x60, monochrome Markdown,
+selection changes, real history and long-note Home/End/page scrolling. Live
+inspection added contextual scrolling hints and preserved End intent through
+pending rendering and resize. The 1.0625 MiB test uses complete plain fallback
+under the documented formatting budget; no raw note is truncated or rewritten.
+
+V35,V54,V57–V64,V66–V67 close. V65 known/missing/unknown read handling passes;
+its user-facing fresh-owner Reload/readback completion remains U8. Existing
+V50–V53,V55 and form/consent presentation portions stay with U5/U8. U5 forms and
+nondestructive mutations is next. No production mutation UI is claimed yet.

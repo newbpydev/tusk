@@ -26,7 +26,7 @@ func loadedModel(nodes ...*core.TaskNode) *Model {
 	o := testOptions()
 	o.Load = func(context.Context) ([]*core.TaskNode, error) { return nodes, nil }
 	m := New(o)
-	m.Update(m.Init()())
+	deliverUI(m, m.Init())
 	return m
 }
 
@@ -226,7 +226,7 @@ func TestNavigation_ViewportAndSearchCollapseIsolation(t *testing.T) {
 	}
 	nodes[999].Task.Description = strings.Repeat("notes\n", 100)
 	m := loadedModel(nodes...)
-	press(m, "end")
+	deliverUI(m, press(m, "end"))
 	if m.selectedTask().ID != "0999" || !strings.Contains(m.View(), "Task 0999") || m.listOffset == 0 {
 		t.Fatal("last selected task is outside viewport")
 	}

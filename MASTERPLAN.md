@@ -2,7 +2,7 @@
 
 **Current Status**: 🟢 Active Development
 **Active Phase**: Phase 5 — Feature 005 implementation authorized (2026-09-29)
-**Active Implementation Target**: Feature 005 U4 / 005-4 — details, safe Markdown and history
+**Active Implementation Target**: Feature 005 U5 / 005-5 — forms and nondestructive mutation interactions
 
 U2 presentation direction: the owner selected spacious title/metadata rows in
 the live Kitty prototype (2026-09-29). Uniform backgrounds and modal dimming
@@ -308,7 +308,7 @@ No Phase 5 implementation, push, PR or publication occurred.
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: 🚀 **IMPLEMENTING U4 — U1, U7, U2 AND U3 LOCALLY ACCEPTED** (authorized 2026-09-29)
+- **Status**: 🚀 **IMPLEMENTING U5 — U1, U7, U2, U3 AND U4 LOCALLY ACCEPTED** (authorized 2026-09-29)
 - **Plan**: [Feature 005 plan](docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md)
 - **Verification Plan**: [Feature 005 verification](docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md)
 - **Issue Workorder**: [Feature 005 workorder](docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md)
@@ -320,7 +320,7 @@ No Phase 5 implementation, push, PR or publication occurred.
   - [x] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
   - [x] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
   - [x] Unit 005-3 / U3: Forest Navigation, Filters, Search and Refresh Generations
-  - [ ] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
+  - [x] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
   - [ ] Unit 005-5 / U5: Forms, Base-Checked Edits, Moves and Lifecycle Toggles
   - [ ] Unit 005-8 / U8: Previewed Deletion and Unknown-Outcome Reconciliation
   - [ ] Unit 005-6 / U6: Workflow, Performance, Owned Kitty Acceptance and Handoff
@@ -450,3 +450,12 @@ Actual Kitty external rename/reparent/delete, collapse restoration, filter
 resize and monochrome checks pass. [Receipt](docs/verification-evidence/005/u3.json).
 Later mutation/history/form/recovery portions of V50–V55 remain explicitly open
 for U4/U5/U8; no write UI is claimed. U4 details/Markdown/history is next.
+
+### Feature 005 U4 acceptance — 2026-09-29
+
+Details, safe Markdown and actual metadata history pass canonical validation
+(98.6% TUI coverage), minimum-Go/race and five CGO-free builds. Kitty confirms
+all target sizes, monochrome output, long-note scrolling and selection changes.
+[Receipt](docs/verification-evidence/005/u4.json). A large-word renderer stall now
+uses bounded-formatting plain fallback without dropping text; End intent survives
+pending render/resize. U5 forms/mutations is next; recovery UI remains U8.

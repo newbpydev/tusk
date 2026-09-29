@@ -208,8 +208,8 @@ Each scenario includes its fixture/action and expected outcome. The unit's named
 
 ### U18. Details, Markdown and timeline
 
-- [ ] TUSK-V59 **Normal / detail viewport:** Scroll long multiline Markdown, tags, history and Unicode at each target size; fields match selected task and CLI history. No selection clears details; terminal output stays within cell bounds.
-- [ ] TUSK-V60 **Security / notes:** Feed Markdown with remote image URLs, links, raw controls and malformed formatting. Rendering performs no network/file execution or link launch; safe plain fallback remains readable and storage text is unchanged.
+- [x] TUSK-V59 **Normal / detail viewport:** Scroll long multiline Markdown, tags, history and Unicode at each target size; fields match selected task and CLI history. No selection clears details; terminal output stays within cell bounds.
+- [x] TUSK-V60 **Security / notes:** Feed Markdown with remote image URLs, links, raw controls and malformed formatting. Rendering performs no network/file execution or link launch; safe plain fallback remains readable and storage text is unchanged.
 
 ### U19. Forms and confirmed mutations
 
@@ -425,3 +425,12 @@ search/timer, stale snapshot, retry and resize checks. TUSK-V56 has list/filter
 and Kitty proof but retains final detail/form keyboard coverage in U4/U5/U6;
 TUSK-V57 retains post-mutation/form identity proof in U5/U8. U18 is the current
 feature target. No native, hosted, release or complete TUI claim is added.
+
+### Product U18 details handoff — 2026-09-29
+
+Feature 005 U4 supplies wrapped metadata, safe asynchronous Markdown and actual
+ordered history; TUSK-V59/TUSK-V60 pass current synthetic, disk and owned Kitty
+checks at all target sizes. See the [U4 receipt](../verification-evidence/005/u4.json).
+Large/pathological notes use labeled full-content plain text under the explicit
+formatting budget; raw storage is preserved. U19 is next. Form identity, writes,
+consent/recovery UI and final combined-flow proof remain their designated units.

@@ -43,7 +43,7 @@ func Run(ctx context.Context, options RunOptions) (result Result, err error) {
 			err = errRuntime
 		}
 	}()
-	m := New(Options{Context: ctx, Load: session.Load, Now: time.Now, Wait: Wait, Location: options.Location, Profile: options.Profile, DayBounds: options.DayBounds})
+	m := New(Options{Context: ctx, Load: session.Load, History: session.History, Now: time.Now, Wait: Wait, Location: options.Location, Profile: options.Profile, DayBounds: options.DayBounds})
 	program := options.Program
 	if program == nil {
 		program = func(m tea.Model, opts ...tea.ProgramOption) (tea.Model, error) {

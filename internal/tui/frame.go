@@ -190,22 +190,6 @@ func (m *Model) listLines(w, h int) []string {
 	return lines
 }
 
-func (m *Model) detailLines(w int) []string {
-	t := m.selectedTask()
-	if t == nil {
-		return []string{"", " Select a task to see its details."}
-	}
-	lines := []string{"", "  " + m.paint(titleCells(terminaltext.Scalar(t.Title), max(0, w-4)), textColor, true), "",
-		"  Status      " + terminaltext.Scalar(string(t.Status)), "  Priority    " + t.Priority.String(), fmt.Sprintf("  Progress    %d%%", t.Progress), "", "  " + m.paint("Notes", textColor, true), ""}
-	for _, line := range strings.Split(terminaltext.Multiline(t.Description), "\n") {
-		lines = append(lines, "  "+titleCells(line, max(0, w-4)))
-	}
-	if m.notes.Focused() {
-		lines = append(lines, strings.Split(m.notes.View(), "\n")...)
-	}
-	return lines
-}
-
 func (m *Model) prepareFrame() {
 	m.rebuildRows()
 	l := measure(m.width, m.height)
@@ -227,8 +211,15 @@ func (m *Model) prepareFrame() {
 	}
 	left := m.panel("Tasks", m.listLines(l.listWidth-2, l.bodyHeight-2), l.listWidth, l.bodyHeight, m.focus == listFocus)
 	details := m.detailLines(l.detailsWidth - 2)
+	if m.detailsEnd {
+		m.detailsScroll = max(0, len(details)-(l.bodyHeight-2))
+	}
 	m.detailsScroll = max(0, min(m.detailsScroll, max(0, len(details)-(l.bodyHeight-2))))
-	right := m.panel("Task details", details[m.detailsScroll:], l.detailsWidth, l.bodyHeight, m.focus == detailsFocus)
+	detailTitle := "Task details"
+	if len(details) > l.bodyHeight-2 {
+		detailTitle += fmt.Sprintf(" · %d–%d / %d", m.detailsScroll+1, min(len(details), m.detailsScroll+l.bodyHeight-2), len(details))
+	}
+	right := m.panel(detailTitle, details[m.detailsScroll:], l.detailsWidth, l.bodyHeight, m.focus == detailsFocus)
 	header := m.paint(" TUSK", accentColor, true) + m.paint("  /  Personal workspace", mutedColor, false)
 	if m.searching {
 		header = m.paint(" TUSK  / ", accentColor, true) + terminaltext.Scalar(m.searchDraft) + "▎"
@@ -252,6 +243,9 @@ func (m *Model) prepareFrame() {
 	}
 	m.help.Width = l.width - 2
 	footer := " " + m.help.ShortHelpView(browseHints())
+	if m.focus == detailsFocus {
+		footer = " ↑↓ scroll · PgUp/PgDn · Home/End · Tab tasks · ? help · q quit"
+	}
 	if m.recoveryNeeded {
 		footer = "Read outcome unknown · Reload required · q quit"
 	} else if m.stale {

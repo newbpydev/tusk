@@ -272,3 +272,36 @@ form identity (U5), and fresh-owner recovery UI (U8). The current scheduler
 releases matching busy slots and freezes unknown outcomes before rejecting stale
 payloads; U8 must connect its Reload/readback UI before feature acceptance.
 U4 details, Markdown and timeline is next. No mutation UI is claimed yet.
+
+### U4 renderer budget finding — 2026-09-29
+
+A 1.0625 MiB unbroken Unicode note spent 146 seconds in Glamour's reflow
+word-wrapper before the owned test process was stopped with a retained stack
+trace. KTD9 is refined before integration: Markdown formatting is admitted only
+for at most 32 KiB of sanitized source with no whitespace-delimited token above
+2 KiB. Larger/pathological notes use labeled, safely wrapped plain text in the
+same asynchronous render lane. Every byte of raw notes remains untouched and
+all displayed text remains scrollable. This is a formatting budget, not a storage
+or editing limit. V58/V62 must prove full content and bounded pending work; U6
+retains final preparation/render measurements. U4 remains in progress.
+
+### U4 local acceptance — 2026-09-29
+
+[Details receipt](../verification-evidence/005/u4.json) records complete wrapped
+metadata, one scrollable notes/activity viewport, fixed workspace Markdown
+styling, generated-output filtering and real ascending int64 service events.
+History uses the single service-operation slot; Markdown has one active render
+and one latest pending request. Task incarnation, content, width and profile
+reject obsolete render replies; history freshness remains independent.
+
+Canonical validation (TUI coverage 98.6%), Go 1.25 affected race checks and all
+five CGO-free builds pass. Kitty verifies 80x24/120x40/200x60, monochrome Markdown,
+selection changes, real history and long-note Home/End/page scrolling. Live
+inspection added contextual scrolling hints and preserved End intent through
+pending rendering and resize. The 1.0625 MiB test uses complete plain fallback
+under the documented formatting budget; no raw note is truncated or rewritten.
+
+V35,V54,V57–V64,V66–V67 close. V65 known/missing/unknown read handling passes;
+its user-facing fresh-owner Reload/readback completion remains U8. Existing
+V50–V53,V55 and form/consent presentation portions stay with U5/U8. U5 forms and
+nondestructive mutations is next. No production mutation UI is claimed yet.

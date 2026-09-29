@@ -45,23 +45,43 @@ func TestRefresh_TwoDiskOwnersPreserveSelectionAndSearch(t *testing.T) {
 	defer session.Close(nil)
 	o := testOptions()
 	o.Load = session.Load
+	o.History = session.History
 	m := New(o)
-	m.Update(m.Init()())
-	press(m, "/")
-	press(m, "needle")
-	press(m, "enter")
-	press(m, "end")
+	deliverUI(m, m.Init())
+	key := func(k string) { deliverUI(m, press(m, k)) }
+	key("/")
+	key("needle")
+	key("enter")
+	key("end")
 	if m.selectedTask().ID != child.ID || len(m.rows) != 2 {
 		t.Fatal("real forest projection lost path")
+	}
+	child, err = external.CompleteTask(ctx, ports.TaskCommand{ID: child.ID, Base: child})
+	if err != nil {
+		t.Fatal(err)
+	}
+	deliverUI(m, m.requestRefresh())
+	if m.forest[0].Task.Progress != 100 {
+		t.Fatal("external completion did not show ancestor rollup")
 	}
 	title := "Needle changed externally"
 	_, err = external.UpdateTask(ctx, ports.UpdateTaskCommand{ID: child.ID, Title: &title, ClearParent: true, Base: child})
 	if err != nil {
 		t.Fatal(err)
 	}
-	m.Update(m.requestRefresh()())
+	deliverUI(m, m.requestRefresh())
 	if len(m.rows) != 1 || m.selectedTask().ID != child.ID || m.selectedTask().ParentID != nil || !strings.Contains(m.View(), title) {
 		t.Fatal("external move replaced selection or left stale hierarchy")
+	}
+	kinds := map[ports.EventKind]bool{}
+	for i, event := range m.history.events {
+		kinds[event.Kind] = true
+		if event.TaskID != child.ID || i > 0 && event.Sequence <= m.history.events[i-1].Sequence {
+			t.Fatal("timeline differs from ordered service events")
+		}
+	}
+	if !kinds[ports.EventCreate] || !kinds[ports.EventStatus] || !kinds[ports.EventMove] || !kinds[ports.EventMetadata] {
+		t.Fatalf("missing real timeline events: %v", kinds)
 	}
 	preview, err := external.PreviewDeleteTask(ctx, child.ID)
 	if err != nil {
@@ -70,11 +90,11 @@ func TestRefresh_TwoDiskOwnersPreserveSelectionAndSearch(t *testing.T) {
 	if _, err = external.DeleteTask(ctx, ports.DeleteTaskCommand{ID: child.ID, Expected: &preview}); err != nil {
 		t.Fatal(err)
 	}
-	m.Update(m.requestRefresh()())
+	deliverUI(m, m.requestRefresh())
 	if m.selectedTask() != nil || !strings.Contains(m.View(), "No matching tasks") {
 		t.Fatal("deleted row survived refresh")
 	}
-	press(m, "esc")
+	key("esc")
 	if m.selectedTask().ID != parent.ID {
 		t.Fatal("clear failed to restore surviving forest")
 	}

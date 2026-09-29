@@ -70,6 +70,7 @@ func (m *Model) acceptForest(msg forestMsg) tea.Cmd {
 			m.state = loaded
 			m.stale = false
 			m.forest = msg.forest
+			m.historyRefresh = true
 			m.pruneCollapsed()
 			if !m.timerStarted {
 				m.timerStarted = true

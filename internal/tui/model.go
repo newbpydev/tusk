@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/muesli/termenv"
 	"github.com/newbpydev/tusk/internal/core"
+	"github.com/newbpydev/tusk/internal/ports"
 )
 
 // Options contains per-session dependencies. Callers provide resolved terminal
@@ -26,6 +27,8 @@ type Options struct {
 	Location  *time.Location
 	Profile   termenv.Profile
 	DayBounds func(string, time.Time, *time.Location) (time.Time, time.Time, error)
+	History   func(context.Context, string) ([]ports.TaskEvent, error)
+	Render    MarkdownRenderer
 }
 
 type loadState uint8
@@ -53,6 +56,7 @@ type Model struct {
 	rows                      []taskRow
 	selected                  int
 	listOffset, detailsScroll int
+	detailsEnd                bool
 	collapsed                 map[string]bool
 	filter                    core.TaskFilter
 	dueStart, dueEnd          *time.Time
@@ -69,6 +73,10 @@ type Model struct {
 	timerStarted              bool
 	filters                   *filterDraft
 	dueExpression, dueLabel   string
+	detailRef                 taskRef
+	markdown                  markdownState
+	history                   historyState
+	historyRefresh            bool
 }
 
 func New(options Options) *Model {
@@ -83,6 +91,9 @@ func New(options Options) *Model {
 	}
 	if options.Wait == nil {
 		options.Wait = Wait
+	}
+	if options.Render == nil {
+		options.Render = RenderMarkdown
 	}
 	r := lipgloss.NewRenderer(io.Discard, termenv.WithProfile(options.Profile))
 	r.SetColorProfile(options.Profile)
@@ -120,6 +131,10 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 		}
 	}()
 	switch msg := msg.(type) {
+	case notesMsg:
+		m.acceptNotes(msg)
+	case historyMsg:
+		cmd = m.acceptHistory(msg)
 	case tickMsg:
 		if msg.token != m.tickToken || msg.err != nil {
 			return m, nil
@@ -156,18 +171,15 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 			case "G", "end":
 				m.helpScroll = len(helpLines())
 			}
-			m.prepareFrame()
-			return m, nil
+			return m.finish(nil)
 		}
 		if m.searching {
 			cmd = m.searchKey(msg)
-			m.prepareFrame()
-			return m, cmd
+			return m.finish(cmd)
 		}
 		if m.filters != nil {
 			m.filterKey(msg)
-			m.prepareFrame()
-			return m, nil
+			return m.finish(nil)
 		}
 		switch msg.String() {
 		case "q":
@@ -193,8 +205,7 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 	case forestMsg:
 		cmd = m.acceptForest(msg)
 	}
-	m.prepareFrame()
-	return m, cmd
+	return m.finish(cmd)
 }
 func (m *Model) View() string { return m.frame }
 

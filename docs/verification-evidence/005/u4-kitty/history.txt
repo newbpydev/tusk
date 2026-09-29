@@ -1,0 +1,40 @@
+ TUSK  /  Personal workspace                                                                                            
+╭─ Tasks ──────────────────────────────────────╮╭─ > Task details · 31–66 / 66 ────────────────────────────────────────╮
+│ 2 tasks                                      ││  ────────────────────────────────┼───────────────────────────────    │
+│                                              ││   Welcome                        │ Explain the first action          │
+│ Upcoming                                     ││   Team                           │ Invite a teammate                 │
+│> Review the customer onboarding experience   ││   Review                         │ Verify keyboard access            │
+│  in-progress · urgent · 37%                  ││                                                                      │
+│ Backlog                                      ││    // Small, explicit steps.                                         │
+│  Long research notes                         ││    func nextAction() string { return "Create your first task" }      │
+│  todo · medium · 0%                          ││                                                                      │
+│                                              ││  Design reference https://example.invalid/design stays text. Image:  │
+│                                              ││  Example illustration → https://example.invalid/illustration.png     │
+│                                              ││  stays text too.                                                     │
+│                                              ││                                                                      │
+│                                              ││  Unicode: 界 é 👩‍💻 — every detail should remain readable.             │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││  ──────────────────────────────────────────────────────────────────  │
+│                                              ││  Activity                                                            │
+│                                              ││  History is refreshed separately                                     │
+│                                              ││                                                                      │
+│                                              ││  #1  create                                                          │
+│                                              ││  Changed completed_at, description, due_date, parent_id, priority,   │
+│                                              ││  progress, status, tags, title                                       │
+│                                              ││  2026-09-29 19:52:19 -03 (-03:00)                                    │
+│                                              ││                                                                      │
+│                                              ││  #2  metadata                                                        │
+│                                              ││  Changed title                                                       │
+│                                              ││  2026-09-29 19:52:20 -03 (-03:00)                                    │
+│                                              ││                                                                      │
+│                                              ││  #3  status                                                          │
+│                                              ││  Changed status                                                      │
+│                                              ││  2026-09-29 19:52:20 -03 (-03:00)                                    │
+│                                              ││                                                                      │
+│                                              ││  #4  progress                                                        │
+│                                              ││  Changed progress                                                    │
+│                                              ││  2026-09-29 19:52:20 -03 (-03:00)                                    │
+╰──────────────────────────────────────────────╯╰──────────────────────────────────────────────────────────────────────╯
+ ↑↓ scroll · PgUp/PgDn · Home/End · Tab tasks · ? help · q quit

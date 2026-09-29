@@ -53,6 +53,10 @@ func (m *Model) navigate(k string) {
 	page := max(1, (measure(m.width, m.height).bodyHeight-2)/2)
 	if m.focus == detailsFocus {
 		switch k {
+		case "j", "down", "k", "up", "pgdown", "pgup", "g", "home":
+			m.detailsEnd = false
+		}
+		switch k {
 		case "j", "down":
 			m.detailsScroll++
 		case "k", "up":
@@ -64,6 +68,7 @@ func (m *Model) navigate(k string) {
 		case "g", "home":
 			m.detailsScroll = 0
 		case "G", "end":
+			m.detailsEnd = true
 			m.detailsScroll = int(^uint(0) >> 1)
 		}
 		return
