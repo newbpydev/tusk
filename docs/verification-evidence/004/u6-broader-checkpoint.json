@@ -1,0 +1,71 @@
+{
+  "unit": "004-6 / U6",
+  "date": "2026-09-28T20:47:14.374411+00:00",
+  "status": "broader optimization checkpoint; V87 and ISS-023 remain failed; not unit acceptance",
+  "parent_sha": "5c1647f57f9ec0fa1da8a2d51a4b87f01c4fdebd",
+  "source_sha256": {
+    "Makefile": "5629ceaa772862a1a33316fb854a7bf83e6975007d7c8179d0cc1788e07090ce",
+    "cmd/tusk/main.go": "d910d214737d2d5714d6dd36f03f486bfdc5e75a8ece3c85fdb9bbc91d65f432",
+    "cmd/tusk/process_linux_test.go": "d918fa9da64272d6660df2022627831b6d782967677279daa95310509062a08b",
+    "cmd/tusk/runtime_test.go": "359dd2eaefea11b4fcc954c348b9b525bf3fb6b5b15f91d8559031930b1831b9",
+    "db/queries.sql": "142560deb77c4b694aa26b25e8bea3a6fdba30d38aa2fba0ff4112a36aff9233",
+    "internal/cli/edit.go": "2a628caeb6f9711b4c556bef1870c772264f2fbd17981e687815e3a86758483f",
+    "internal/cli/flags.go": "0c6688c8e88ec54a47ad2d8517c1a1a74708de9d3d26913d55bb7dbf86ba17f6",
+    "internal/cli/format_test.go": "6e187aee25918689e983ae14bb969947cc2af3e7c4dd8a512ee6245969963e07",
+    "internal/cli/json.go": "404dd5b39e80e0d9451e585d9b262ddc807ccf06f698bd2dae4b45a182443314",
+    "internal/cli/json_tasks.go": "8f1d4c238920127f05d8d8cd8600b2659525c7ee751a83eba4f23e64972cd5a1",
+    "internal/cli/json_test.go": "9f4bbf5fdeaf047f61a0dfa1bb8263fa7b003779313030bbd898e44cd824838d",
+    "internal/cli/mutations_test.go": "ffcd023cff14d8573443766e2760a77278f68a06c529586c6a347ced6b934091",
+    "internal/cli/output_test.go": "eed30c0b87b4a74f071af98f029d3294327cf5b9004617c1c9f748f3e359e3c7",
+    "internal/cli/process_test.go": "47ef77cd8531c770c3fd0a38aa751fa45c0c2e9a868c28bd1c635d10dd0cdb19",
+    "internal/cli/root.go": "d515e642ffd37b18d5bbe6917e1893f376ac246d50122b9258952966a9469c74",
+    "internal/cli/sanitize.go": "f46e12d6ea691e83bb86235164ca88af33ee69ccbd02d8296cad965a9da1bd97",
+    "internal/core/filter.go": "c04f70621b3b9e443a6a0cc7c24e88379a719c3076bd036b6714c359673cfd5e",
+    "internal/core/filter_test.go": "46e40ccc59a9353068008de1fc620cebb6524f8e304b4cd194cbf0a35f4c13ca",
+    "internal/service/queries.go": "716ffa63cbd08ff0a97d1dd9760f9768cf72c21cd3aece1de6f3eebdf679c5a3",
+    "internal/service/queries_test.go": "05fe7cd151805150c156d9c820ade4e484f1ae31f643b8638ee9893b581044fa",
+    "internal/storage/codec.go": "aede0beea3f7da358b0fad6506f2595b19f97a9d42d589e5f4411ceaff44f04a",
+    "internal/storage/codec_test.go": "043fb4073604cfcd29c8340805766f97ddfcbd651b772449a267d1bbf4adb2c6",
+    "internal/storage/migrations.go": "62569553e31fa55d95b2d4d8f20df4f1444d6d7782fdb327a1501e20cff3fefa",
+    "internal/storage/migrations_test.go": "f424ee484fee5b0cb3330ce549c7862402fdcf1c14e762dc879a47d840965894",
+    "internal/storage/open.go": "ff68311e86b4f9ac1ded487805eb129adf09d4cebe5ee1cae1d002880ac77d6c",
+    "internal/storage/queries_test.go": "cab83879181f86459a7721a8a8046eab85ca632cdd0a686fde50b13c71441464",
+    "internal/storage/repository_fault_test.go": "7a98eb014c8a562763031f5239b023608e6019eb7117d9c90899c95761931e0d",
+    "internal/storage/sqlc/queries.sql.go": "e1f439498d573730d7bfce35ef5ebb2db0079178cb90280f8fe3db8a379c6383",
+    "internal/storage/sqlite_repository.go": "fbbf28998f1a9af1a3d6850075156d688ed3c037e9cf468cfd5ede7b956d315b",
+    "internal/storage/sqlite_repository_test.go": "0542abcfad6d84553dddd66687cbf4da4c5058d0cecc8b8831553c29f653be85",
+    "scripts/cli-bench/conditions_test.go": "bc1118bae91b2406e5ac04338270dc65f508d582ce40d0db335c7245e394ca31",
+    "scripts/cli-bench/main.go": "62b9239c9a2c5119469e8ea693bd0895daf8ef246f4ea0708909177da8656ae2",
+    "scripts/cli-bench/main_test.go": "9eb615dfcc8714f0997eb0ca6d8567fd112c7a339710009e656687e7040a62b8",
+    "scripts/cli-bench/profile_test.go": "c10e8021dda87b5f2d475ad42ac2bc2fdc70f04436882faff2230b097647cddc",
+    "scripts/cli-bench/timing_test.go": "d70375897c1c592f3847b683c367070461a09eeb26dd544f7bb80d14a1a4be1b",
+    "scripts/test/test_scripts.sh": "6ab07475c8d604eb2923342c9c072565da9e8c7b9b1ca9f4348205509216b53b",
+    "sqlc.yaml": "f7a9a62c18af223bd2a7c7bf6d6ed39fac411aede11f8411dc90214c37b93e95"
+  },
+  "owner_decision": "Keep the 15 ms requirement and continue broader storage/query optimization.",
+  "verification": {
+    "canonical": "make validate build check-generated: exit 0 (u6-checkpoint-gate.log.gz)",
+    "minimum": "GOTOOLCHAIN=go1.25.0 make test build-cli: exit 0 (u6-checkpoint-minimum.log.gz)",
+    "kitty": "u6-current-kitty.png and matching text inspected; isolated database; decimal progress, syntax exit and fresh readback correct"
+  },
+  "latency": {
+    "balanced": "u6-latency-index.json",
+    "minimum_go": "u6-latency-index-go125.json",
+    "affinity_diagnostic": "u6-latency-affinity.json",
+    "temporary_performance_profile": "u6-latency-performance.json",
+    "acceptance": "all failed; all raw samples retained; no threshold or sample-rule change"
+  },
+  "power_profile_after": "balanced",
+  "review": "u6-review.json predates the broader optimization; a fresh ce-code-review is still required before a commit or acceptance",
+  "remaining": [
+    "Meet V87 every-sample latency bounds with a complete unchanged-fixture reference run",
+    "Review broader optimization delta",
+    "Synchronize final acceptance evidence and commit U6; do not start Phase 5"
+  ],
+  "diagnostic_notes": [
+    "In-process profiles are not reference acceptance",
+    "Allocation-run report overlapped test compilation and is diagnostic only",
+    "Temporary instrumented executable and fixture differ from the fixed reference (timestamp variants/history); stage data is diagnostic only",
+    "GC, processor count, affinity and temporary power-profile experiments did not establish acceptance; no GC threshold or permanent power setting changed"
+  ]
+}

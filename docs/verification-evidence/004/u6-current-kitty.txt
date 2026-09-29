@@ -1,0 +1,19 @@
+Tusk U6 — actual CLI review fixes in Kitty
+
+$ tusk edit ID --progress 010
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0e9c4-7e76-7814-bc75-85c0f6b6d713  todo         medium  10%       -           Decimal progress: 010 means ten
+
+$ tusk edit ID --progress 0x10
+tusk: invalid invocation
+Usage: tusk [command] [flags]
+Run tusk help for usage.
+Exit: 2 (expected 2)
+
+Fresh process readback:
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0e9c4-7e76-7814-bc75-85c0f6b6d713  todo         medium  10%       -           Decimal progress: 010 means ten
+
+Canonical validate/build/generated checks: PASS
+Reference latency: FAIL; U6 and Phase 4 acceptance pending
+Press Enter to close this owned tab.

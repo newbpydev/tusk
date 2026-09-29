@@ -1,0 +1,193 @@
+{
+  "status": "incomplete",
+  "active_target": "004-6 / U6",
+  "head": "5c1647f57f9ec0fa1da8a2d51a4b87f01c4fdebd",
+  "owner_decision": "Keep the 15 ms requirement and continue broader storage/query optimization.",
+  "verification_policy": "Codex Bash for automated checks and latency; Kitty for required visible terminal scenarios.",
+  "retained_changes": [
+    "generated expected schema catalog, pinned to actual migration SQL hashes with live SQLite fallback",
+    "one allocation for tree node storage, detached tasks preserved",
+    "coordinator GOMAXPROCS recorded in benchmark manifests",
+    "AGENTS and Feature 004 triplet updated for clarified verification policy"
+  ],
+  "discarded_experiments": [
+    "reader connection reuse (no useful latency gain; experiment-only stale journal regression fixed before removal)",
+    "PGO (reference medians not materially improved)",
+    "JSON row transport (5.2-6.0 ms vs 2.33 ms typed column transport)",
+    "single-threaded benchmark coordinator (large JSON output regressed)",
+    "1 MiB kernel output pipe (reference gate still failed, no material median gain)"
+  ],
+  "checks": [
+    {
+      "command": "GOCACHE=/tmp/tusk-004-go-cache make validate build check-generated",
+      "exit": 0,
+      "surface": "Codex Bash",
+      "log": "u6-bash-gate.log.gz"
+    },
+    {
+      "command": "GOCACHE=/tmp/tusk-004-go-cache GOTOOLCHAIN=go1.25.0 make test-unit build-cli",
+      "exit": 0,
+      "surface": "Codex Bash",
+      "log": "u6-bash-minimum.log.gz"
+    },
+    {
+      "command": "GOCACHE=/tmp/tusk-004-go-cache make bench-cli CLI_BENCH_OUTPUT=/tmp/tusk-004-u6-latency-bash.json",
+      "exit": 2,
+      "surface": "Codex Bash",
+      "report": "u6-latency-bash.json"
+    },
+    {
+      "command": "GOCACHE=/tmp/tusk-004-go-cache powerprofilesctl launch --profile performance --reason \"Tusk U6 controlled reference benchmark\" --appid tusk-verification make bench-cli CLI_BENCH_OUTPUT=/tmp/tusk-004-u6-latency-bash-performance.json",
+      "exit": 2,
+      "surface": "Codex Bash",
+      "report": "u6-latency-bash-performance.json",
+      "power_profile_after": "balanced"
+    }
+  ],
+  "balanced_1000_queries": [
+    {
+      "name": "1000/list/json=false",
+      "median_ns": 9156796,
+      "max_ns": 16590724,
+      "violations": 1
+    },
+    {
+      "name": "1000/list/json=true",
+      "median_ns": 9687316,
+      "max_ns": 16884759,
+      "violations": 3
+    },
+    {
+      "name": "1000/tree/json=false",
+      "median_ns": 9967034,
+      "max_ns": 18812612,
+      "violations": 2
+    },
+    {
+      "name": "1000/tree/json=true",
+      "median_ns": 10655817,
+      "max_ns": 18073892,
+      "violations": 10
+    },
+    {
+      "name": "1000/stats/json=false",
+      "median_ns": 8284467,
+      "max_ns": 10612445,
+      "violations": 0
+    },
+    {
+      "name": "1000/stats/json=true",
+      "median_ns": 8290403,
+      "max_ns": 10893979,
+      "violations": 0
+    },
+    {
+      "name": "1000/history/json=false",
+      "median_ns": 4098826,
+      "max_ns": 5644922,
+      "violations": 0
+    },
+    {
+      "name": "1000/history/json=true",
+      "median_ns": 4201076,
+      "max_ns": 5716161,
+      "violations": 0
+    }
+  ],
+  "other_observations": [
+    "Balanced Bash empty-fixture human history retained a 22.135 ms outlier; performance-profile invalid-config help retained a 5.32 ms outlier. Exact samples are authoritative.",
+    "No evidence establishes that Kitty, pipe capacity, CPU scheduling, frequency, or application work alone explains every slow sample."
+  ],
+  "kitty": {
+    "script": "u6-bash-checkpoint-visual.sh",
+    "text": "u6-bash-checkpoint-kitty.txt",
+    "image": "u6-bash-checkpoint-kitty.png",
+    "observed": "Correct depth 1/2 tree; decimal 010 rendered as 10%; done child rolled parent to 100% without changing parent status under disabled auto-completion; stats 2 total / 1 done / 50%; full IDs and aligned columns.",
+    "capture": "Spectacle active-window capture; X11 window-pixmap capture became stale after resizing and was not used as final evidence."
+  },
+  "simplification": "u6-simplify-broad.md",
+  "review": "Existing u6-review.json predates broader changes. Fresh ce-code-review remains required before acceptance/commit.",
+  "remaining": [
+    "Resolve strict reference latency without trimming samples or changing limits.",
+    "Run fresh ce-code-review after performance implementation settles; fix validated findings.",
+    "Synchronize acceptance and make the unit commit only after all required gates pass."
+  ],
+  "source_sha256": {
+    "AGENTS.md": "f5c8cf2589b67c6f1b5782bf9dbf50d848fa784fb8044b0c360ad992f9b22d08",
+    "MASTERPLAN.md": "1aa475b9c0be8d1c129758d06634402e5150c54ce9c65e7975b004a9b3ae55d0",
+    "Makefile": "1c119b8d9041d123c5e7445fea1b2a79df9b961d233d373e5192b80dcaf30741",
+    "cmd/tusk/main.go": "d910d214737d2d5714d6dd36f03f486bfdc5e75a8ece3c85fdb9bbc91d65f432",
+    "cmd/tusk/process_linux_test.go": "d918fa9da64272d6660df2022627831b6d782967677279daa95310509062a08b",
+    "cmd/tusk/runtime_test.go": "359dd2eaefea11b4fcc954c348b9b525bf3fb6b5b15f91d8559031930b1831b9",
+    "db/embed.go": "91dd2e4c0d6c6d0ee1bf1b295dd0c9ef13947470e599a302f00f98bdd87f6b0b",
+    "db/queries.sql": "142560deb77c4b694aa26b25e8bea3a6fdba30d38aa2fba0ff4112a36aff9233",
+    "db/schema_catalog.json": "5e9d1ed1a04e0aeefef9e9d4593cc35cbcb56b463e8e83995a912e038c0a7bc3",
+    "internal/cli/edit.go": "2a628caeb6f9711b4c556bef1870c772264f2fbd17981e687815e3a86758483f",
+    "internal/cli/flags.go": "0c6688c8e88ec54a47ad2d8517c1a1a74708de9d3d26913d55bb7dbf86ba17f6",
+    "internal/cli/format_test.go": "6e187aee25918689e983ae14bb969947cc2af3e7c4dd8a512ee6245969963e07",
+    "internal/cli/json.go": "404dd5b39e80e0d9451e585d9b262ddc807ccf06f698bd2dae4b45a182443314",
+    "internal/cli/json_tasks.go": "8f1d4c238920127f05d8d8cd8600b2659525c7ee751a83eba4f23e64972cd5a1",
+    "internal/cli/json_test.go": "9f4bbf5fdeaf047f61a0dfa1bb8263fa7b003779313030bbd898e44cd824838d",
+    "internal/cli/mutations_test.go": "ffcd023cff14d8573443766e2760a77278f68a06c529586c6a347ced6b934091",
+    "internal/cli/output_test.go": "eed30c0b87b4a74f071af98f029d3294327cf5b9004617c1c9f748f3e359e3c7",
+    "internal/cli/process_test.go": "47ef77cd8531c770c3fd0a38aa751fa45c0c2e9a868c28bd1c635d10dd0cdb19",
+    "internal/cli/root.go": "d515e642ffd37b18d5bbe6917e1893f376ac246d50122b9258952966a9469c74",
+    "internal/cli/sanitize.go": "f46e12d6ea691e83bb86235164ca88af33ee69ccbd02d8296cad965a9da1bd97",
+    "internal/core/filter.go": "c04f70621b3b9e443a6a0cc7c24e88379a719c3076bd036b6714c359673cfd5e",
+    "internal/core/filter_test.go": "46e40ccc59a9353068008de1fc620cebb6524f8e304b4cd194cbf0a35f4c13ca",
+    "internal/core/tree.go": "a11b7e040a611ee7c08410f19910b9db90b52e25f03ea410a51250998db12347",
+    "internal/core/tree_test.go": "ca7f624597643de0202f4be4921f7cb88940603de333c4e705d5bd6337193275",
+    "internal/service/queries.go": "716ffa63cbd08ff0a97d1dd9760f9768cf72c21cd3aece1de6f3eebdf679c5a3",
+    "internal/service/queries_test.go": "05fe7cd151805150c156d9c820ade4e484f1ae31f643b8638ee9893b581044fa",
+    "internal/storage/codec.go": "aede0beea3f7da358b0fad6506f2595b19f97a9d42d589e5f4411ceaff44f04a",
+    "internal/storage/codec_test.go": "043fb4073604cfcd29c8340805766f97ddfcbd651b772449a267d1bbf4adb2c6",
+    "internal/storage/migrations.go": "e8b931a1760c6be977eff9f911f1a8dc26114f44aad8227f956a13981aa2865c",
+    "internal/storage/migrations_test.go": "338ab554d8e9539a4e51f49d85603ea0d61a97c7a9709eb76333b21f47531ebf",
+    "internal/storage/open.go": "ff68311e86b4f9ac1ded487805eb129adf09d4cebe5ee1cae1d002880ac77d6c",
+    "internal/storage/queries_test.go": "cab83879181f86459a7721a8a8046eab85ca632cdd0a686fde50b13c71441464",
+    "internal/storage/repository_fault_test.go": "7a98eb014c8a562763031f5239b023608e6019eb7117d9c90899c95761931e0d",
+    "internal/storage/schema_catalog.go": "090cf1795e7ef8ef2a05bd998d8a1adf8cfded5b794400c59ca30517dd0460ca",
+    "internal/storage/schema_catalog_test.go": "39e4f16146d9c222ebc1f6409686e7ae6b00e9ea2e2781d56fff50c79fda4443",
+    "internal/storage/sqlc/queries.sql.go": "e1f439498d573730d7bfce35ef5ebb2db0079178cb90280f8fe3db8a379c6383",
+    "internal/storage/sqlite_repository.go": "fbbf28998f1a9af1a3d6850075156d688ed3c037e9cf468cfd5ede7b956d315b",
+    "internal/storage/sqlite_repository_test.go": "0542abcfad6d84553dddd66687cbf4da4c5058d0cecc8b8831553c29f653be85",
+    "scripts/cli-bench/conditions_test.go": "bc1118bae91b2406e5ac04338270dc65f508d582ce40d0db335c7245e394ca31",
+    "scripts/cli-bench/main.go": "b28cd9f1717718bcd27864f7f45aa1b8dc907d6b8f818c5b257e59a8576ec675",
+    "scripts/cli-bench/main_test.go": "741c860aff7245e7d145d129101c0543c3fe4fabd4cbf2585b1d19ac21d698e0",
+    "scripts/cli-bench/profile_test.go": "c10e8021dda87b5f2d475ad42ac2bc2fdc70f04436882faff2230b097647cddc",
+    "scripts/cli-bench/timing_test.go": "d70375897c1c592f3847b683c367070461a09eeb26dd544f7bb80d14a1a4be1b",
+    "scripts/test/test_scripts.sh": "c442086040f935b43e17a107a382e6a287f0611633a05bd6432c40ec4856d7cd",
+    "sqlc.yaml": "f7a9a62c18af223bd2a7c7bf6d6ed39fac411aede11f8411dc90214c37b93e95"
+  },
+  "binary_sha256": "522ecc1a73f31e727373ea0f639ab8c5a99f8d4e6828f4a68904cbf9f5558b85",
+  "pgo_profile_sha256": "7a38c9b88a1bd4cfc3762ed839e1b9fc7535a24a38e33c235ccc01004b34d1a8",
+  "balanced_other_failures": [
+    {
+      "name": "0/history/json=false",
+      "max_ns": 22142407,
+      "violations": 1
+    }
+  ],
+  "performance_failures": [
+    {
+      "name": "--help/invalid-config=true",
+      "max_ns": 5318339,
+      "violations": 1
+    },
+    {
+      "name": "1000/list/json=true",
+      "max_ns": 18873164,
+      "violations": 9
+    },
+    {
+      "name": "1000/tree/json=false",
+      "max_ns": 19728241,
+      "violations": 2
+    },
+    {
+      "name": "1000/tree/json=true",
+      "max_ns": 21477229,
+      "violations": 8
+    }
+  ]
+}

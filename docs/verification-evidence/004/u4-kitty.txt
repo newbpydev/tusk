@@ -1,0 +1,14 @@
+u4-preview — canonical verification in Kitty
+go test -v ./internal/cli ./cmd/tusk -run 'TestFormat_KittyPreview'
+=== RUN   TestFormat_KittyPreview
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01987654-1234-7000-8000-0123456789ab  todo         medium  0%        -           Review Unicode: 界…
+--- PASS: TestFormat_KittyPreview (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.004s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	(cached) [no tests to run]
+
+u4-preview exit: 0
+Press Enter to close this owned verification tab.

@@ -1,0 +1,28 @@
+Tusk U6 — retained terminal verification
+
+$ tusk tree
+`-- 01a0ea1b-9587-74f2-bbb1-fc78c25d4435 [todo 10%] Verify tree snapshot (depth 1)
+    `-- 01a0ea1b-95a0-76ec-b3c4-e164cd147d96 [todo 10%] Verify child progress (depth 2)
+
+$ tusk done CHILD
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0ea1b-95a0-76ec-b3c4-e164cd147d96  done         medium  100%      -           Verify child progress
+
+$ tusk tree
+`-- 01a0ea1b-9587-74f2-bbb1-fc78c25d4435 [todo 100%] Verify tree snapshot (depth 1)
+    `-- 01a0ea1b-95a0-76ec-b3c4-e164cd147d96 [done 100%] Verify child progress (depth 2)
+
+$ tusk stats
+Total: 2
+todo: 1
+in-progress: 0
+blocked: 0
+done: 1
+Done: 1
+Completion percent: 50
+Overdue: 0
+Completed last 7 days: 1
+
+Automated validation: passed in Codex Bash
+Reference latency: unresolved; U6 remains open
+Press Enter to close this owned verification tab.

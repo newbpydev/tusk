@@ -134,8 +134,9 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 		return []*TaskNode{}, nil
 	}
 
-	taskMap := make(map[string]*TaskNode, len(tasks))
-	for _, t := range tasks {
+	taskMap := make(map[string]int, len(tasks))
+	nodes := make([]TaskNode, len(tasks))
+	for i, t := range tasks {
 		id := strings.TrimSpace(t.ID)
 		if id == "" || t.ID != id {
 			return nil, ErrInvalidTaskID
@@ -152,17 +153,20 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 		if _, exists := taskMap[id]; exists {
 			return nil, fmt.Errorf("task with id %s already exists: %w", id, ErrDuplicateTaskID)
 		}
-		taskMap[id] = &TaskNode{
+		nodes[i] = TaskNode{
 			Task:     t.Clone(),
 			Children: []*TaskNode{},
 			Depth:    1,
 		}
+		taskMap[id] = i
 	}
 
 	var roots []*TaskNode
-	for _, t := range tasks {
-		id := strings.TrimSpace(t.ID)
-		node := taskMap[id]
+	parents := make([]int, len(tasks))
+	for i, t := range tasks {
+		id := t.ID
+		node := &nodes[i]
+		parents[i] = -1
 		if t.ParentID == nil {
 			roots = append(roots, node)
 		} else {
@@ -171,59 +175,43 @@ func BuildTree(tasks []Task) ([]*TaskNode, error) {
 			if !exists {
 				return nil, fmt.Errorf("task %s references unknown parent %s: %w", id, parentID, ErrTaskNotFound)
 			}
-			parent.Children = append(parent.Children, node)
+			parents[i] = parent
+			nodes[parent].Children = append(nodes[parent].Children, node)
 		}
 	}
 
 	// Cycle check: verify the entire graph is acyclic before evaluating component depth limits.
 	// 0 = unvisited, 1 = visiting (in current ancestor stack), 2 = visited (known acyclic)
-	cycleState := make(map[string]int, len(tasks))
-	for _, t := range tasks {
-		id := strings.TrimSpace(t.ID)
-		if cycleState[id] == 2 {
+	cycleState := make([]uint8, len(tasks))
+	for i := range tasks {
+		if cycleState[i] == 2 {
 			continue
 		}
-		curr := id
-		for curr != "" {
-			st := cycleState[curr]
-			if st == 1 {
+		curr := i
+		for curr >= 0 {
+			if cycleState[curr] == 1 {
 				return nil, ErrCyclicDependency
 			}
-			if st == 2 {
+			if cycleState[curr] == 2 {
 				break
 			}
 			cycleState[curr] = 1
-			node := taskMap[curr]
-			if node.Task.ParentID == nil {
-				break
-			}
-			curr = strings.TrimSpace(*node.Task.ParentID)
+			curr = parents[curr]
 		}
-		// Mark all nodes traversed in this chain as visited (2)
-		curr = id
-		for curr != "" && cycleState[curr] == 1 {
+		for curr = i; curr >= 0 && cycleState[curr] == 1; curr = parents[curr] {
 			cycleState[curr] = 2
-			node := taskMap[curr]
-			if node.Task.ParentID == nil {
-				break
-			}
-			curr = strings.TrimSpace(*node.Task.ParentID)
 		}
 	}
 
 	visitedCount := 0
 	var setDepth func(n *TaskNode, depth int) error
-	visitedNodes := make(map[string]struct{}, len(tasks))
 
 	setDepth = func(n *TaskNode, depth int) error {
 		if depth > MaxHierarchyDepth {
 			return ErrMaxDepthExceeded
 		}
-		// Defense-in-depth: cycleState check above already guarantees graph is acyclic.
-		if _, seen := visitedNodes[n.Task.ID]; seen {
-			return ErrCyclicDependency
-		}
-		visitedNodes[n.Task.ID] = struct{}{}
+		// IDs are unique, each task has at most one parent, and the graph
+		// is already acyclic: traversal cannot encounter a node twice.
 		visitedCount++
 		n.Depth = depth
 

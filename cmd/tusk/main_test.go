@@ -52,6 +52,7 @@ func TestRunHelp(t *testing.T) {
 
 func TestMainExecution(t *testing.T) {
 	if os.Getenv("TEST_MAIN_EXEC") == "1" {
+		os.Args = []string{"tusk"}
 		main()
 		return
 	}
@@ -66,5 +67,15 @@ func TestMainExecution(t *testing.T) {
 	}
 	if !strings.Contains(string(output), "Tusk - Zero-friction terminal task management system") {
 		t.Errorf("expected help banner in main output, got %q", string(output))
+	}
+}
+
+func TestRoot_UnknownCommand(t *testing.T) {
+	var out bytes.Buffer
+	if got := run([]string{"tusk", "nonsense"}, &out); got != 2 {
+		t.Fatalf("unknown command exit = %d, want 2", got)
+	}
+	if out.Len() != 0 {
+		t.Fatalf("unexpected stdout: %q", out.String())
 	}
 }

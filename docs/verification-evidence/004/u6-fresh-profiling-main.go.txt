@@ -1,0 +1,49 @@
+package main
+
+import (
+	"context"
+	"io"
+	"os"
+	"runtime"
+"runtime/pprof"
+"time"
+"fmt"
+
+	"github.com/newbpydev/tusk/internal/cli"
+"github.com/newbpydev/tusk/internal/ports"
+)
+
+// Version defines the current application release version.
+const Version = "0.2.0-reboot"
+
+func run(args []string, stdout io.Writer) int {
+	return cli.Run(context.Background(), args[1:], cli.Options{Stdout: stdout, Stderr: os.Stderr, Version: Version, Getenv: os.Getenv, OpenService: openService, Terminal: terminalFacts, Confirm: confirm})
+}
+
+type timingWriter struct { ns int64 }
+func (w *timingWriter) Write(p []byte) (int,error) { t:=time.Now();n,e:=os.Stdout.Write(p);w.ns+=time.Since(t).Nanoseconds();return n,e }
+func main() {
+ f, err := os.Create(os.Getenv("TUSK_PROFILE_PATH")); if err != nil { panic(err) }; if err := pprof.StartCPUProfile(f); err != nil { panic(err) }
+ start:=time.Now()
+ configureRuntime()
+ ctx,stop:=processContext()
+ setup:=time.Since(start).Nanoseconds()
+ var opened int64
+ factory:=func(ctx context.Context,cfg cli.Config)(ports.TaskService,func()error,error){t:=time.Now();s,c,e:=openService(ctx,cfg);opened+=time.Since(t).Nanoseconds();return s,c,e}
+ out:=new(timingWriter)
+ code:=cli.Run(ctx,os.Args[1:],cli.Options{Stdout:out,Stderr:os.Stderr,Version:Version,Getenv:os.Getenv,OpenService:factory,Terminal:terminalFacts,Confirm:confirm})
+ run:=time.Since(start).Nanoseconds()
+ stop()
+ total:=time.Since(start).Nanoseconds()
+ fmt.Fprintf(os.Stderr,"{\"setup\":%d,\"open\":%d,\"write\":%d,\"run\":%d,\"stop\":%d,\"total\":%d}\n",setup,opened,out.ns,run,total-run,total)
+ pprof.StopCPUProfile(); f.Close(); os.Exit(code)
+}
+
+// Each CLI process executes one serial operation. Avoid parallel GC/scheduler
+// overhead for that short lifetime, while respecting an explicit Go setting.
+// Embedded cli.Run callers retain ownership of their own runtime policy.
+func configureRuntime() {
+	if os.Getenv("GOMAXPROCS") == "" {
+		runtime.GOMAXPROCS(1)
+	}
+}

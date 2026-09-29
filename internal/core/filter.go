@@ -1,7 +1,7 @@
 package core
 
 import (
-	"sort"
+	"slices"
 	"strings"
 	"time"
 )
@@ -37,6 +37,13 @@ type TaskFilter struct {
 	DueBefore  *time.Time
 	DueAfter   *time.Time
 	SearchTerm string
+}
+
+// HasPredicates reports whether filtering is needed. Keep this with TaskFilter
+// so adapters share its empty-filter semantics when selecting a fast path.
+func (f TaskFilter) HasPredicates() bool {
+	return len(f.Statuses) != 0 || len(f.Priorities) != 0 || len(f.Tags) != 0 ||
+		f.ParentID != nil || f.RootOnly || f.DueBefore != nil || f.DueAfter != nil || f.SearchTerm != ""
 }
 
 // FilterTasks applies the filter criteria in-memory to the task slice.
@@ -147,26 +154,57 @@ func SortTasks(tasks []Task, order []SortOrder) {
 		return
 	}
 
-	sort.SliceStable(tasks, func(i, j int) bool {
-		a := tasks[i]
-		b := tasks[j]
-
-		for _, ord := range order {
-			cmp := compareTasksByField(a, b, ord.Field)
-			if cmp == 0 {
-				continue
+	// Repository results often arrive in this same canonical order. Avoid
+	// another sort (and its reflection allocations) for an ordered snapshot.
+	for i := 1; i < len(tasks); i++ {
+		if CompareTasks(&tasks[i], &tasks[i-1], order) < 0 {
+			// Sort small pointer-free indices. Stable sorting whole Task values
+			// repeatedly copies their many pointer fields through GC barriers.
+			indices := make([]int, len(tasks))
+			for j := range indices {
+				indices[j] = j
 			}
-			if ord.Direction == SortDesc {
-				return cmp > 0
+			slices.SortStableFunc(indices, func(a, b int) int { return CompareTasks(&tasks[a], &tasks[b], order) })
+			// Apply each permutation cycle once, using the index buffer itself
+			// to mark positions restored to their final place.
+			for start := range tasks {
+				if indices[start] == start {
+					continue
+				}
+				saved := tasks[start]
+				at := start
+				for indices[at] != start {
+					next := indices[at]
+					tasks[at] = tasks[next]
+					indices[at] = at
+					at = next
+				}
+				tasks[at] = saved
+				indices[at] = at
 			}
-			return cmp < 0
+			return
 		}
-
-		return a.ID < b.ID
-	})
+	}
 }
 
-func compareTasksByField(a, b Task, field SortField) int {
+// CompareTasks compares non-nil tasks in the requested order, with the same
+// implicit ID tie-breaker as SortTasks. Tree consumers can sort node pointers
+// without materializing another task slice or duplicating ordering rules.
+func CompareTasks(a, b *Task, order []SortOrder) int {
+	for _, ord := range order {
+		cmp := compareTasksByField(a, b, ord.Field)
+		if cmp == 0 {
+			continue
+		}
+		if ord.Direction == SortDesc {
+			return -cmp
+		}
+		return cmp
+	}
+	return strings.Compare(a.ID, b.ID)
+}
+
+func compareTasksByField(a, b *Task, field SortField) int {
 	switch field {
 	case SortByID:
 		if a.ID < b.ID {

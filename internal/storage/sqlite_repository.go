@@ -52,20 +52,18 @@ func (h *taskHandle) get(ctx context.Context, id string) (*core.Task, error) {
 	if err != nil {
 		return nil, storageCause(err)
 	}
-	return decodeTask(row)
+	return decodeTask(*row)
 }
 func (h *taskHandle) GetByID(ctx context.Context, id string) (*core.Task, error) {
 	return handleCall(h, ctx, false, func(c context.Context) (*core.Task, error) { return h.get(c, id) })
 }
 
-func decodeTasks(rows []generated.Task) ([]core.Task, error) {
-	tasks := make([]core.Task, 0, len(rows))
-	for _, row := range rows {
-		task, err := decodeTask(row)
-		if err != nil {
+func decodeTasks(rows []*generated.Task) ([]core.Task, error) {
+	tasks := make([]core.Task, len(rows))
+	for i, row := range rows {
+		if err := decodeTaskInto(row, &tasks[i]); err != nil {
 			return nil, err
 		}
-		tasks = append(tasks, *task)
 	}
 	return tasks, nil
 }
@@ -96,7 +94,14 @@ func (h *taskHandle) List(ctx context.Context, f core.TaskFilter) ([]core.Task, 
 		if f.DueAfter != nil && validTime(*f.DueAfter) {
 			p.DueAfter = sql.NullString{String: f.DueAfter.UTC().Format(dateLayout), Valid: true}
 		}
-		rows, err := h.q.ListCandidates(c, p)
+		unfiltered := !f.HasPredicates()
+		var rows []*generated.Task
+		var err error
+		if unfiltered {
+			rows, err = h.q.ListAll(c)
+		} else {
+			rows, err = h.q.ListCandidates(c, p)
+		}
 		if err != nil {
 			return nil, storageCause(err)
 		}
@@ -104,7 +109,11 @@ func (h *taskHandle) List(ctx context.Context, f core.TaskFilter) ([]core.Task, 
 		if err != nil {
 			return nil, err
 		}
-		tasks = core.FilterTasks(tasks, f)
+		// Decoding already produces detached values. An empty predicate does
+		// not need the additional cloned slice required by core.FilterTasks.
+		if !unfiltered {
+			tasks = core.FilterTasks(tasks, f)
+		}
 		sortTasks(tasks)
 		return tasks, nil
 	})
@@ -220,7 +229,7 @@ func (h *taskHandle) ListEvents(ctx context.Context, id string) ([]ports.TaskEve
 		}
 		result := make([]ports.TaskEvent, 0, len(rows))
 		for _, row := range rows {
-			event, err := decodeEvent(row)
+			event, err := decodeEvent(*row)
 			if err != nil {
 				return nil, err
 			}

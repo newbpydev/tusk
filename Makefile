@@ -22,9 +22,17 @@ setup-sqlc:
 
 generate:
 	bash scripts/sqlc.sh generate
+	$(MAKE) generate-schema-catalog
 
-check-generated:
+check-generated: check-schema-catalog
 	bash scripts/sqlc.sh check
+
+.PHONY: generate-schema-catalog check-schema-catalog
+generate-schema-catalog:
+	TUSK_UPDATE_SCHEMA_CATALOG=1 go test ./internal/storage -run '^TestEmbeddedSchemaCatalog$$' -count=1
+
+check-schema-catalog:
+	go test ./internal/storage -run '^TestEmbeddedSchemaCatalog$$' -count=1
 
 test-scripts:
 	@./scripts/test/test_scripts.sh
@@ -85,12 +93,31 @@ bench-tree:
 
 bench-build:
 	@./scripts/bench.sh build
-validate: fmt vet test race coverage test-scripts
+validate: fmt vet test race coverage test-scripts check-modules
 	@echo "All canonical quality gates passed."
 
+BUILD_OUTPUT ?= bin/tusk
+CLI_TEST_RUN ?= .
+.PHONY: test-cli build-cli
+
+test-cli:
+	go test -v ./internal/cli ./cmd/tusk -run '$(CLI_TEST_RUN)'
+
+build-cli:
+	go version
+	@test "$$(go list -m -f '{{.Version}}' modernc.org/sqlite)" = v1.58.0
+	@test "$$(go list -m -f '{{.Version}}' modernc.org/libc)" = v1.75.6
+	@set -e; build_tmp=$$(mktemp -d); trap 'rm -rf "$$build_tmp"' EXIT; \
+	for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do \
+		echo "Building CLI and tests: $$target (CGO_ENABLED=0; native execution separate)"; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go build -o "$$build_tmp/tusk-$${target%/*}-$${target#*/}" ./cmd/tusk; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/cli-$${target%/*}-$${target#*/}.test" ./internal/cli; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/main-$${target%/*}-$${target#*/}.test" ./cmd/tusk; \
+	done
+
 build:
-	mkdir -p bin
-	go build -o bin/tusk cmd/tusk/main.go
+	mkdir -p "$(dir $(BUILD_OUTPUT))"
+	CGO_ENABLED=0 go build -o "$(BUILD_OUTPUT)" ./cmd/tusk
 
 clean:
 	rm -rf bin/ coverage.out .tusk-test*.db
@@ -108,7 +135,8 @@ help:
 	@echo "make build-service - Compile CGO-free service and tests for all five targets"
 	@echo "make bench-service - Measure fixed single-sample service workloads"
 	@echo "make race      - Run tests with data race detector"
-	@echo "make validate    - Run full verification suite (fmt, vet, test, race, coverage)"
+	@echo "make validate    - Run fmt, vet, test, race, coverage, script and module checks"
+	@echo "make check-modules - Check go.mod/go.sum with go mod tidy -diff"
 	@echo "make coverage    - Run coverage check with race detector"
 	@echo "make bench-storage - Measure storage queries and open costs"
 	@echo "make bench       - Run all core micro-benchmarks"
@@ -116,3 +144,26 @@ help:
 	@echo "make bench-build - Run tree build micro-benchmark"
 	@echo "make build     - Compile binary to bin/tusk"
 	@echo "make clean     - Clean temporary build artifacts"
+
+.PHONY: bench-cli
+CLI_BENCH_OUTPUT ?= docs/verification-evidence/004/latency.json
+bench-cli: build
+	go run ./scripts/cli-bench --binary "$(BUILD_OUTPUT)" --output "$(CLI_BENCH_OUTPUT)"
+
+.PHONY: profile-cli
+CLI_PROFILE_OUTPUT ?= /tmp/tusk-cli.cpu
+profile-cli:
+	go test ./scripts/cli-bench -run '^$$' -bench '^BenchmarkCLIProfile$$' -benchtime=3s -cpuprofile "$(CLI_PROFILE_OUTPUT)" -o "$(CLI_PROFILE_OUTPUT).test"
+
+.PHONY: check-modules
+check-modules:
+	go mod tidy -diff
+
+.PHONY: test-cli-latency-codec
+test-cli-latency-codec:
+	go test -v ./internal/storage -run '^TestCodec_'
+
+.PHONY: bench-cli-conditions
+CLI_CONDITIONS_OUTPUT ?= /tmp/tusk-cli-conditions.json
+bench-cli-conditions: build
+	TUSK_CLI_CONDITIONS=1 TUSK_CLI_BINARY="$(abspath $(BUILD_OUTPUT))" TUSK_CLI_CONDITIONS_OUTPUT="$(abspath $(CLI_CONDITIONS_OUTPUT))" go test -v ./scripts/cli-bench -run '^TestCLIConditions$$' -count=1

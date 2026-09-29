@@ -1,0 +1,180 @@
+diff --git a/internal/storage/open.go b/internal/storage/open.go
+index 2a1819a..7aab408 100644
+--- a/internal/storage/open.go
++++ b/internal/storage/open.go
+@@ -61,28 +61,28 @@ func openAt(ctx context.Context, path string, factory connectorFactory, prepare
+ 	if err != nil {
+ 		return nil, err
+ 	}
++	check := schemaInspector{inventory: inventory}
+ 	inspection, err := factory(path, inspectionConnection)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	probe := sql.OpenDB(inspection)
+ 	probe.SetMaxOpenConns(1)
++	r := &Repository{reader: probe}
++	defer func() {
++		if err != nil {
++			err = errors.Join(err, r.Close())
++		}
++	}()
+ 	read, err := probe.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+ 	if err != nil {
+-		probe.Close()
+ 		return nil, err
+ 	}
+-	_, inspectErr := inspectSchema(ctx, read, inventory)
+-	err = errors.Join(inspectErr, read.Rollback(), probe.Close())
++	_, inspectErr := check.inspect(ctx, read)
++	err = errors.Join(inspectErr, read.Rollback())
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	r := &Repository{}
+-	defer func() {
+-		if err != nil {
+-			err = errors.Join(err, r.Close())
+-		}
+-	}()
+ 	w, err := factory(path, writerConnection)
+ 	if err != nil {
+ 		return nil, err
+@@ -97,14 +97,19 @@ func openAt(ctx context.Context, path string, factory connectorFactory, prepare
+ 	if journal != "wal" {
+ 		return nil, fmt.Errorf("storage: WAL journal unavailable")
+ 	}
+-	if err := migrate(ctx, r.writer, inventory); err != nil {
++	if err := check.migrate(ctx, r.writer); err != nil {
+ 		return nil, err
+ 	}
+-	reader, err := factory(path, readerConnection)
+-	if err != nil {
++	// A connection opened before first-use migration still has the old pager
++	// mode until it reads the updated schema header. Refresh it before exposing
++	// the pool so its first transaction and journal query both observe WAL.
++	var schemaVersion int
++	if err := r.reader.QueryRowContext(ctx, "PRAGMA schema_version").Scan(&schemaVersion); err != nil {
+ 		return nil, err
+ 	}
+-	r.reader = sql.OpenDB(reader)
++	// The inspected connection has the same query-only pragmas as a reader,
++	// plus a physically read-only file handle. Retain its warmed catalog and
++	// page cache; replacement connections use that same read-only connector.
+ 	r.reader.SetMaxOpenConns(4)
+ 	r.reader.SetMaxIdleConns(4)
+ 	if err := r.reader.PingContext(ctx); err != nil {
+diff --git a/internal/storage/open_fault_test.go b/internal/storage/open_fault_test.go
+index a3afcaf..d89f2e2 100644
+--- a/internal/storage/open_fault_test.go
++++ b/internal/storage/open_fault_test.go
+@@ -55,6 +55,9 @@ func (c *openFaultConn) Ping(ctx context.Context) error {
+ 	return c.sqliteConn.Ping(ctx)
+ }
+ func (c *openFaultConn) QueryContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Rows, error) {
++	if c.stage == "refresh" && q == "PRAGMA schema_version" {
++		return nil, errors.New("injected reader refresh failure")
++	}
+ 	if c.stage == "catalog" {
+ 		return nil, errors.New("injected catalog failure")
+ 	}
+@@ -80,8 +83,8 @@ func TestOpen_FailureStagesReleaseEveryHandle(t *testing.T) {
+ 		role  connectionRole
+ 		stage string
+ 	}{
+-		{inspectionConnection, "connect"}, {inspectionConnection, "begin"}, {inspectionConnection, "catalog"}, {inspectionConnection, "close"},
+-		{writerConnection, "wal"}, {writerConnection, "journal"}, {writerConnection, "migration"}, {readerConnection, "ping"},
++		{inspectionConnection, "connect"}, {inspectionConnection, "begin"}, {inspectionConnection, "catalog"}, {inspectionConnection, "ping"}, {inspectionConnection, "refresh"},
++		{writerConnection, "wal"}, {writerConnection, "journal"}, {writerConnection, "migration"},
+ 	} {
+ 		t.Run(tc.stage, func(t *testing.T) {
+ 			var opened, closed atomic.Int32
+@@ -113,6 +116,31 @@ func TestOpen_FailureStagesReleaseEveryHandle(t *testing.T) {
+ 	}
+ }
+ 
++func TestOpen_RetainedReaderCloseFailure(t *testing.T) {
++	var opened, closed atomic.Int32
++	factory := func(path string, role connectionRole) (driver.Connector, error) {
++		base, err := connectorFor(path, role)
++		if err != nil {
++			return nil, err
++		}
++		stage := ""
++		if role == inspectionConnection {
++			stage = "close"
++		}
++		return openFaultConnector{base, stage, &opened, &closed}, nil
++	}
++	r, err := openAt(context.Background(), filepath.Join(t.TempDir(), "close.db"), factory, prepareFile)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := r.Close(); err == nil {
++		t.Fatal("retained reader close failure lost")
++	}
++	if opened.Load() != closed.Load() {
++		t.Fatalf("opened %d closed %d", opened.Load(), closed.Load())
++	}
++}
++
+ func TestOpen_CanceledAndInvalidOverrideNeverFallsBack(t *testing.T) {
+ 	base := t.TempDir()
+ 	if err := os.WriteFile(filepath.Join(base, "not-a-directory"), nil, 0600); err != nil {
+diff --git a/internal/storage/open_test.go b/internal/storage/open_test.go
+index b09e3e8..864ec70 100644
+--- a/internal/storage/open_test.go
++++ b/internal/storage/open_test.go
+@@ -8,9 +8,43 @@ import (
+ 	"path/filepath"
+ 	"runtime"
+ 	"sync"
++	"sync/atomic"
+ 	"testing"
+ )
+ 
++func TestOpen_ReusesInspectedReader(t *testing.T) {
++	var opened, closed atomic.Int32
++	factory := func(path string, role connectionRole) (driver.Connector, error) {
++		base, err := connectorFor(path, role)
++		if err != nil {
++			return nil, err
++		}
++		return openFaultConnector{base, "", &opened, &closed}, nil
++	}
++	path := filepath.Join(t.TempDir(), "reuse.db")
++	for range 2 { // First-use migration and an existing WAL database.
++		opened.Store(0)
++		closed.Store(0)
++		r, err := openAt(context.Background(), path, factory, prepareFile)
++		if err != nil {
++			t.Fatal(err)
++		}
++		var count int
++		if err := r.reader.QueryRow("SELECT count(*) FROM tasks").Scan(&count); err != nil || count != 0 {
++			t.Fatalf("reader after migration: %d %v", count, err)
++		}
++		if _, err := r.reader.Exec("DELETE FROM tasks"); err == nil {
++			t.Fatal("reader permits writes")
++		}
++		if err := r.Close(); err != nil {
++			t.Fatal(err)
++		}
++		if opened.Load() != 2 || closed.Load() != opened.Load() {
++			t.Fatalf("physical connections opened=%d closed=%d; want exactly reader and writer", opened.Load(), closed.Load())
++		}
++	}
++}
++
+ func TestOpen_LiteralFilename(t *testing.T) {
+ 	names := []string{"spaces ü % # =.db"}
+ 	if runtime.GOOS != "windows" {
+@@ -57,7 +91,7 @@ func TestOpen_RejectsUnsafeTarget(t *testing.T) {
+ }
+ 
+ func TestOpen_ClosesPartialResources(t *testing.T) {
+-	for _, role := range []connectionRole{inspectionConnection, writerConnection, readerConnection} {
++	for _, role := range []connectionRole{inspectionConnection, writerConnection} {
+ 		path := filepath.Join(t.TempDir(), "failure.db")
+ 		failure := errors.New("injected factory failure")
+ 		factory := func(path string, r connectionRole) (driver.Connector, error) {

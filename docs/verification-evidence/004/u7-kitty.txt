@@ -1,0 +1,17 @@
+U7 actual Kitty consent — isolated temporary database
+
+Force without recursive must fail:
+tusk: storage: task has children
+Observed exit: 1
+
+First prompt: decline with Enter.
+Parent: confirm exact subtree (01a0e959-d364-7263-908b-02d09893740a)
+Delete 2 task(s)? [y/N] 
+Deletion canceled.
+
+Second prompt: type yes.
+Parent: confirm exact subtree (01a0e959-d364-7263-908b-02d09893740a)
+Delete 2 task(s)? [y/N] yes
+Deleted 2 task(s): 01a0e959-d364-7263-908b-02d09893740a, 01a0e959-d37d-7d4d-aef8-104a559e32f3
+
+Confirmed deletion returned exit 0. Press Enter to close this tab.

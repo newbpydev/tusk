@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Latency gate passes with target misses",
+    "disposition": "rejected",
+    "evidence": "Owner-authorized p90 policy explicitly allows up to 10 target misses; manifest policy latency-distribution-v2 and printed p90/p95/p99/max bounds distinguish acceptance. This reverses a settled decision without a defect."
+  },
+  {
+    "title": "Validate omits latency and catalog gates",
+    "disposition": "rejected",
+    "evidence": "make validate runs test across all packages, including TestEmbeddedSchemaCatalog. U6 explicitly requires separate check-generated and bench-cli; the plan never treats validate alone as sign-off."
+  },
+  {
+    "title": "Invalid-config matrix skips query paths",
+    "disposition": "rejected",
+    "evidence": "Reference contract limits bad-config latency cases to help/version. Query bad-config exits are already process/unit behavior tests; no requirement for bad-config query latency acceptance."
+  },
+  {
+    "title": "Benchmark scrubs parent heap each sample",
+    "disposition": "rejected",
+    "evidence": "Manifest pipe_consumer already records parent GC, preallocation, unchanged child GC, and launch-through-exit/drain. Other consumer conditions are separate retained diagnostics."
+  },
+  {
+    "title": "Catalog fast path skips live compile",
+    "disposition": "rejected",
+    "evidence": "TestEmbeddedSchemaCatalog always compiles every prefix via pinned SQLite under make test, race, coverage and short tests. Claim that validate skips this test is false."
+  }
+]

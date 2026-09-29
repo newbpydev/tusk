@@ -69,14 +69,22 @@ calendar day/week/month offsets, ISO dates and strict offset timestamps. Month
 arithmetic clamps the final destination month. Missing wall times or midnight
 boundaries fail; repeated wall times select the earlier instant. Parsing uses
 only the supplied reference/location and returns UTC. Both the service and
-dateparse test binaries embed `time/tzdata`; Feature 004 must embed it in the
-production composition root.
+dateparse test binaries embed `time/tzdata`; Feature 004 now embeds it in the
+production composition root as well.
 
 Feature 004 owns CLI grammar, JSON DTOs, exit codes, policy/zone configuration,
 output-after-commit behavior and end-to-end startup/query latency. Feature 005
 owns consent UI, draft preservation, refresh generations, terminal accessibility
 and escaping. Feature 006 owns native Windows/macOS execution and hosted release
 proof. Cross-compilation does not close those gates.
+
+The CLI consumer is implemented. See [CLI grammar, JSON and recovery](cli.md)
+and [Feature 004 evidence](verification-evidence/004/README.md) for its current
+acceptance state and measured latency. Its injected factory opens one repository
+per invocation and closes it before emitting results. Human formatting sanitizes
+stored controls; machine output preserves text. Feature 005 should reuse the
+contracts, introducing shared implementation only when its second consumer
+demonstrates a concrete need.
 
 `make validate` is the local quality gate. `GOTOOLCHAIN=go1.25.0 make test
 build-service` verifies the minimum compiler and compiles service/parser tests

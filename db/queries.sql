@@ -11,6 +11,9 @@ UPDATE tasks SET title=?,description=?,status=?,priority=?,progress=?,parent_id=
 -- name: DeleteTask :execrows
 DELETE FROM tasks WHERE id=?;
 
+-- name: ListAll :many
+SELECT * FROM tasks;
+
 -- name: ListCandidates :many
 SELECT * FROM tasks
 WHERE (json_array_length(CAST(sqlc.arg(statuses) AS TEXT))=0 OR status IN (SELECT value FROM json_each(CAST(sqlc.arg(statuses) AS TEXT))))

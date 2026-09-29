@@ -1,0 +1,96 @@
+package main
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"testing"
+	"time"
+)
+
+// Diagnostic only. Compare child CPU time to launch-through-drain wall time,
+// and test whether parent validation garbage/output allocation causes delays.
+// These samples never replace the fixed reference report.
+func timingDiagnostic(t *testing.T, binary, dir string, manifest map[string]string) {
+	t.Helper()
+	path := filepath.Join(dir, "timing.db")
+	if _, err := seed(path, 1000, 128); err != nil {
+		t.Fatal(err)
+	}
+	type sample struct {
+		Mode                          string
+		Index                         int
+		Warmup                        bool
+		WallNS, UserNS, SystemNS      int64
+		ParentGCBefore, ParentGCAfter uint32
+		ChildDiagnostic               string
+	}
+	var samples []sample
+	args := []string{"tree", "--json"}
+	for _, mode := range []string{"child-procs-1", "child-procs-2", "child-procs-6"} {
+		var maxWall, maxCPU int64
+		violations := 0
+		for i := range 105 {
+			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+			cmd := exec.CommandContext(ctx, binary, args...)
+			cmd.Env = processEnv(dir, path)
+			childGC := strings.TrimPrefix(mode, "child-gc-")
+			if childGC != mode {
+				cmd.Env = append(cmd.Env, "GOGC="+childGC)
+			}
+			if mode == "child-trace" {
+				cmd.Env = append(cmd.Env, "GODEBUG=gctrace=1")
+			}
+			childProcs := strings.TrimPrefix(mode, "child-procs-")
+			if childProcs != mode {
+				cmd.Env = append(cmd.Env, "GOMAXPROCS="+childProcs)
+			}
+			var out, stderr bytes.Buffer
+			if mode == "preallocated-pipe" || mode == "parent-gc-and-preallocated-pipe" || childGC != mode || childProcs != mode {
+				out.Grow(512 << 10)
+			}
+			cmd.Stdout, cmd.Stderr = &out, &stderr
+			if mode == "parent-gc" || mode == "parent-gc-and-preallocated-pipe" || childGC != mode || childProcs != mode {
+				runtime.GC()
+			}
+			var before, after runtime.MemStats
+			runtime.ReadMemStats(&before)
+			start := time.Now()
+			err := cmd.Run()
+			elapsed := time.Since(start).Nanoseconds()
+			runtime.ReadMemStats(&after)
+			cancel()
+			if err != nil || stderr.Len() != 0 && mode != "child-trace" {
+				t.Fatalf("child: %v %s", err, stderr.String())
+			}
+			if err := validateOutput(args, out.Bytes(), 1000, 20); err != nil {
+				t.Fatal(err)
+			}
+			s := sample{mode, i, i < 5, elapsed, cmd.ProcessState.UserTime().Nanoseconds(), cmd.ProcessState.SystemTime().Nanoseconds(), before.NumGC, after.NumGC, stderr.String()}
+			samples = append(samples, s)
+			if i >= 5 {
+				maxWall = max(maxWall, s.WallNS)
+				maxCPU = max(maxCPU, s.UserNS+s.SystemNS)
+				if s.WallNS >= int64(15*time.Millisecond) {
+					violations++
+				}
+			}
+		}
+		t.Logf("%s: max wall %.3fms; max child CPU %.3fms; violations %d/100", mode, float64(maxWall)/1e6, float64(maxCPU)/1e6, violations)
+	}
+	data, err := json.MarshalIndent(struct {
+		Manifest map[string]string
+		Samples  []sample
+	}{manifest, samples}, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(os.Getenv("TUSK_CLI_CONDITIONS_OUTPUT"), append(data, '\n'), 0600); err != nil {
+		t.Fatal(err)
+	}
+}

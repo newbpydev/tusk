@@ -1,0 +1,33 @@
+U3 actual executable — query surfaces
+
+Tree (includes completed child):
+`-- 01a0e95e-0529-7529-bcae-6a3a3867b1db [todo 100%] Release checklist (depth 1)
+    `-- 01a0e95e-0543-7ff9-a870-eea6a5d40016 [done 100%] Verify output: 界 👩‍💻 (depth 2)
+
+Filtered list:
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0e95e-0543-7ff9-a870-eea6a5d40016  done         medium  100%      2026-09-28  Verify output: 界 👩‍💻
+
+Stats:
+Total: 2
+todo: 1
+in-progress: 0
+blocked: 0
+done: 1
+Done: 1
+Completion percent: 50
+Overdue: 0
+Completed last 7 days: 1
+
+Metadata history:
+Sequence: 2
+Occurred at: 2026-09-28T18:54:08.195368088Z
+Kind: create
+Changed fields: completed_at,description,due_date,parent_id,priority,progress,status,tags,title
+
+Sequence: 3
+Occurred at: 2026-09-28T18:54:08.217625406Z
+Kind: status
+Changed fields: completed_at,progress,status
+
+Press Enter to close the owned verification tab.

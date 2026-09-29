@@ -1,0 +1,20 @@
+{
+  "head_sha": "486dbcc8804c12696f0043b3cfd1475925595b41",
+  "mergeable": "MERGEABLE",
+  "merge_state_status": "CLEAN",
+  "checks_terminal": true,
+  "all_checks_ok": true,
+  "counts": {
+    "threads": 0,
+    "ci": 0,
+    "comments": 0,
+    "needs_human": 0
+  },
+  "open_needs_human": 0,
+  "base_ref_blocker": null,
+  "branch_currency_blocker": null,
+  "stack_blocker": null,
+  "quiet_seconds": 0,
+  "invocation_elapsed_seconds": 4687,
+  "meaning": "Observed review/check settlement on the implementation commit; final documentation-only publication watch remains separate."
+}

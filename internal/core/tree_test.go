@@ -392,6 +392,40 @@ func TestBuildTree_DeepCopy(t *testing.T) {
 	}
 }
 
+func TestBuildTree_NodeAllocation(t *testing.T) {
+	tasks := make([]core.Task, 1000)
+	for i := range tasks {
+		tasks[i].ID = fmt.Sprintf("root-%04d", i)
+	}
+	allocations := testing.AllocsPerRun(10, func() {
+		forest, err := core.BuildTree(tasks)
+		if err != nil || len(forest) != len(tasks) {
+			t.Fatalf("forest size %d: %v", len(forest), err)
+		}
+	})
+	if allocations > 100 {
+		t.Fatalf("building 1000 roots allocated %.0f times; node storage should be allocated as a batch", allocations)
+	}
+}
+
+func TestBuildTree_GraphWorkspaceAllocation(t *testing.T) {
+	tasks := make([]core.Task, 1000)
+	for i := range tasks {
+		tasks[i].ID = fmt.Sprintf("root-%04d", i)
+	}
+	measured := testing.Benchmark(func(b *testing.B) {
+		for range b.N {
+			forest, err := core.BuildTree(tasks)
+			if err != nil || len(forest) != len(tasks) {
+				b.Fatalf("forest size %d: %v", len(forest), err)
+			}
+		}
+	})
+	if got := measured.AllocedBytesPerOp(); got > 350*1024 {
+		t.Fatalf("graph workspace allocates %d bytes; want <= 350 KiB for 1000 roots", got)
+	}
+}
+
 func BenchmarkTreeTraversal(b *testing.B) {
 	// 10-level chain: L10 -> L9 -> ... -> L1 (root)
 	parents := make(map[string]*string)

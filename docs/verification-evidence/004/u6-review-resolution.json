@@ -1,0 +1,33 @@
+{
+  "review": "u6-review.json",
+  "parent_sha": "5c1647f57f9ec0fa1da8a2d51a4b87f01c4fdebd",
+  "scope": "U6 working tree after completed ce-code-review; source hashes in u6-checkpoint.json",
+  "status": "not ready for local phase acceptance",
+  "findings": [
+    {
+      "id": 1,
+      "status": "open",
+      "issue": "004-ISS-023",
+      "evidence": "u6-latency-final.json",
+      "reason": "Strict 15 ms reference query gate still fails after two allocation fixes. No contract revision approved."
+    },
+    {
+      "id": 2,
+      "status": "fixed",
+      "test": "TestEdit_DecimalProgress",
+      "red": "u6-review-red.log.gz",
+      "green": "u6-review-green.log.gz",
+      "change": "ParseInt base 10 pflag value; leading zero remains decimal; radix/underscore/overflow reject before storage."
+    },
+    {
+      "id": 3,
+      "status": "fixed",
+      "test": "TestCLIBenchmark_RejectsIncompleteData",
+      "red": "u6-review-red.log.gz",
+      "green": "u6-review-green.log.gz",
+      "change": "Required wire fields and representative seeded values validated, including recursive tree objects; same-count empty objects rejected."
+    }
+  ],
+  "review_limitations": "Personas and validation ran sequentially inline; Claude authentication failed; Composer actual identity/independence unverified. Peer claims and rejection evidence retained in u6-peer-disposition.json.",
+  "residual_work": "Continue measured optimization or obtain explicit owner resolution under plan Execution readiness. U6/Phase 4 remain pending. No later phase or publication."
+}

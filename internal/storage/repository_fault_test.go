@@ -67,7 +67,7 @@ func (r *faultRows) Next(values []driver.Value) error {
 }
 
 func TestRepository_QueryFailuresNeverReturnPartialValues(t *testing.T) {
-	for _, needle := range []string{"GetTask", "ListCandidates", "GetAncestors", "GetSubtree", "ListEvents", "ListChildren", "CreateTask", "UpdateTask", "DeleteTask", "AppendEvent"} {
+	for _, needle := range []string{"GetTask", "ListAll", "ListCandidates", "GetAncestors", "GetSubtree", "ListEvents", "ListChildren", "CreateTask", "UpdateTask", "DeleteTask", "AppendEvent"} {
 		t.Run(needle, func(t *testing.T) {
 			r, path := diskRepository(t)
 			createFixture(t, r, taskFixture("task"))
@@ -83,8 +83,12 @@ func TestRepository_QueryFailuresNeverReturnPartialValues(t *testing.T) {
 				case "GetTask":
 					_, err := w.GetByID(c, "task")
 					return err
-				case "ListCandidates":
-					rows, err := w.List(c, core.TaskFilter{})
+				case "ListAll", "ListCandidates":
+					filter := core.TaskFilter{}
+					if needle == "ListCandidates" {
+						filter.SearchTerm = "title"
+					}
+					rows, err := w.List(c, filter)
 					if rows != nil {
 						t.Error("partial list")
 					}
@@ -121,14 +125,20 @@ func TestRepository_QueryFailuresNeverReturnPartialValues(t *testing.T) {
 	r, path := diskRepository(t)
 	createFixture(t, r, taskFixture("a"))
 	createFixture(t, r, taskFixture("b"))
-	r.reader.Close()
 	base, err := newConnector(path, true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	r.reader = sql.OpenDB(queryFaultConnector{base, "ListCandidates", true})
-	if rows, err := r.List(context.Background(), core.TaskFilter{}); rows != nil || !errors.Is(err, ports.ErrStorage) {
-		t.Fatalf("iteration exposed partial rows: %v %v", rows, err)
+	for _, needle := range []string{"ListAll", "ListCandidates"} {
+		r.reader.Close()
+		r.reader = sql.OpenDB(queryFaultConnector{base, needle, true})
+		filter := core.TaskFilter{}
+		if needle == "ListCandidates" {
+			filter.SearchTerm = "title"
+		}
+		if rows, err := r.List(context.Background(), filter); rows != nil || !errors.Is(err, ports.ErrStorage) {
+			t.Fatalf("%s iteration exposed partial rows: %v %v", needle, rows, err)
+		}
 	}
 }
 

@@ -79,6 +79,11 @@ make bench-storage
 
 `check-generated` needs the pinned tool installed by `make setup-sqlc`; ordinary tests and plain `make` do not download it. Generation owns `internal/storage/sqlc`, uses configuration version 2 and sqlc v1.31.1, and compares complete directories without requiring Git metadata. Use `make generate` after editing query inputs. Never edit generated files manually.
 
+When upgrading the pinned SQLite runtime, run `make generate-schema-catalog`
+and review any normalized DDL changes. `TestEmbeddedSchemaCatalog` evaluates
+every migration prefix with the linked runtime and compares the embedded catalog;
+both `make validate` and `make check-generated` reject stale runtime output.
+
 `make validate` runs the runbook fixtures along with the full/race/coverage/script gates:
 
 | Behavior | Executable evidence |

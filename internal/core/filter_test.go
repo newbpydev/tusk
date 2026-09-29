@@ -1,12 +1,82 @@
 package core_test
 
 import (
+	"fmt"
+	"math/rand/v2"
 	"reflect"
+	"slices"
 	"testing"
 	"time"
 
 	"github.com/newbpydev/tusk/internal/core"
 )
+
+func TestTaskFilter_HasPredicates(t *testing.T) {
+	now, parent := time.Now(), "parent"
+	for _, filter := range []core.TaskFilter{
+		{Statuses: []core.Status{core.StatusDone}}, {Priorities: []core.Priority{core.PriorityHigh}},
+		{Tags: []core.Tag{"tag"}}, {ParentID: &parent}, {RootOnly: true},
+		{DueBefore: &now}, {DueAfter: &now}, {SearchTerm: "text"},
+	} {
+		if !filter.HasPredicates() {
+			t.Errorf("predicate missed: %+v", filter)
+		}
+	}
+	for _, filter := range []core.TaskFilter{{}, {Statuses: []core.Status{}, Priorities: []core.Priority{}, Tags: []core.Tag{}}} {
+		if filter.HasPredicates() {
+			t.Errorf("empty filter: %+v", filter)
+		}
+	}
+}
+
+func TestSortTasks_ShuffledExpectedOrder(t *testing.T) {
+	tasks := []core.Task{
+		{ID: "z", Priority: core.PriorityLow}, {ID: "b", Title: "first", Priority: core.PriorityHigh},
+		{ID: "a", Priority: core.PriorityHigh}, {ID: "b", Title: "second", Priority: core.PriorityHigh},
+	}
+	core.SortTasks(tasks, []core.SortOrder{{Field: core.SortByPriority, Direction: core.SortDesc}})
+	want := []string{"a:", "b:first", "b:second", "z:"}
+	for i, task := range tasks {
+		if task.ID+":"+task.Title != want[i] {
+			t.Fatalf("position %d: %+v", i, task)
+		}
+	}
+}
+
+func TestSortTasks_UnorderedAllocationAndParity(t *testing.T) {
+	order := []core.SortOrder{{Field: core.SortByPriority, Direction: core.SortDesc}}
+	rng := rand.New(rand.NewPCG(42, 99))
+	for _, size := range []int{0, 1, 2, 3, 20, 100, 1000} {
+		input := make([]core.Task, size)
+		for i := range input {
+			input[i] = core.Task{ID: fmt.Sprint(rng.IntN(10)), Title: fmt.Sprint(i), Priority: core.Priority(rng.IntN(4) + 1)}
+		}
+		want := slices.Clone(input)
+		slices.SortStableFunc(want, func(a, b core.Task) int { return core.CompareTasks(&a, &b, order) })
+		got := slices.Clone(input)
+		allocs := testing.AllocsPerRun(10, func() {
+			copy(got, input)
+			core.SortTasks(got, order)
+		})
+		if !reflect.DeepEqual(got, want) {
+			t.Fatalf("size %d: order or equal-key stability changed", size)
+		}
+		if allocs > 1 {
+			t.Fatalf("size %d: %.0f allocations; want at most one index buffer", size, allocs)
+		}
+	}
+}
+
+func TestSortTasks_AlreadyOrderedAllocation(t *testing.T) {
+	order := []core.SortOrder{{Field: core.SortByPriority, Direction: core.SortDesc}, {Field: core.SortByDueDate, Direction: core.SortAsc}, {Field: core.SortByCreatedAt, Direction: core.SortAsc}}
+	tasks := []core.Task{{ID: "a", Priority: core.PriorityUrgent}, {ID: "b", Priority: core.PriorityHigh}, {ID: "c", Priority: core.PriorityLow}}
+	if allocs := testing.AllocsPerRun(100, func() { core.SortTasks(tasks, order) }); allocs != 0 {
+		t.Fatalf("already ordered snapshot needs %.0f allocations; want zero", allocs)
+	}
+	if tasks[0].ID != "a" || tasks[1].ID != "b" || tasks[2].ID != "c" {
+		t.Fatal("order changed")
+	}
+}
 
 func TestFilterTasks(t *testing.T) {
 	now := time.Date(2026, 9, 6, 12, 0, 0, 0, time.UTC)

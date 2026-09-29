@@ -356,3 +356,29 @@ Red: direct entrypoints lacked executable bits; missing curl produced only comma
 ### PR #2 review unit 2.12: Review hosted fixes and compound joined-error lessons
 
 Reviewed the six remediation commits against correctness, standards, tests, maintainability, security, performance, API, data integrity, reliability and compound-failure scenarios. No additional actionable finding. Seventeen of 23 hosted comments have fixes; six retain documented boundaries with evidence. Replies await publication. Updated the compounded lesson for joined safe categories; frontmatter and source/link checks pass. Current make validate check-generated build, explicit minimum-Go compatibility, five target builds and minimum-Go focused race regressions pass. Earlier acceptance manifests remain historical snapshots. See ../verification-evidence/002/hosted-review-followups.json. Each unit passes make validate and is committed before the next begins.
+
+### Feature 004 U6 performance amendment — 2026-09-28
+
+Owner-authorized broader CLI optimization moves SQLite evaluation of immutable
+expected catalogs to a generated embedded asset. Every applied migration prefix
+is compiled by pinned SQLite in private memory during generation and checked
+again by canonical tests/generated checks. Runtime selection requires exact SQL
+hashes; other inventories retain live evaluation. User-file identity, ledger and
+complete catalog inspection remain live and transaction-scoped; no migration or
+public port changes. Feature 002's historical acceptance is unchanged; Feature
+004 U6 owns current verification and still-pending 15 ms acceptance.
+
+### Feature 004 storage amendment verification checkpoint
+
+The generated expected-catalog optimization now passes the complete Bash
+`make validate build check-generated` gate, Go 1.25 short tests and five CLI
+cross-builds. Live ownership, ledger and schema validation remain enabled.
+This changes no historical Feature 002 acceptance; Feature 004 U6 is still
+open because its strict latency gate fails. See the
+[current U6 receipt](../verification-evidence/004/u6-bash-checkpoint.json).
+
+### Feature 004 U6 storage compatibility closure — 2026-09-28
+
+Generated catalog, codec and detached-query optimizations pass full validation,
+race, generated checks and Go 1.25 tests. Persisted DDL and migrations are unchanged.
+See the [U6 acceptance receipt](../verification-evidence/004/u6-acceptance.json).

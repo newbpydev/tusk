@@ -1,0 +1,18 @@
+U2 actual executable — isolated disk database
+
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0e954-4cae-702a-9108-26dbada5f23b  todo         medium  0%        2026-09-29  Review terminal output: 界…
+
+Complete task:
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0e954-4cae-702a-9108-26dbada5f23b  done         medium  100%      2026-09-29  Review terminal output: 界…
+
+Reopen and clear date:
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0e954-4cae-702a-9108-26dbada5f23b  todo         medium  0%        -           Review terminal output: 界…
+
+Invalid progress — expected exit 1:
+tusk: task progress must be an integer between 0 and 100
+Observed exit: 1
+
+Press Enter to close the owned verification tab.

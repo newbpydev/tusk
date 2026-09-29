@@ -92,13 +92,13 @@ WITH RECURSIVE ancestors(id) AS (
 SELECT tasks.id, tasks.title, tasks.description, tasks.status, tasks.priority, tasks.progress, tasks.parent_id, tasks.tags, tasks.created_at, tasks.updated_at, tasks.due_date, tasks.completed_at FROM tasks JOIN ancestors ON tasks.id=ancestors.id
 `
 
-func (q *Queries) GetAncestors(ctx context.Context, id string) ([]Task, error) {
+func (q *Queries) GetAncestors(ctx context.Context, id string) ([]*Task, error) {
 	rows, err := q.db.QueryContext(ctx, getAncestors, id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Task{}
+	items := []*Task{}
 	for rows.Next() {
 		var i Task
 		if err := rows.Scan(
@@ -117,7 +117,7 @@ func (q *Queries) GetAncestors(ctx context.Context, id string) ([]Task, error) {
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -137,13 +137,13 @@ WITH RECURSIVE subtree(id) AS (
 SELECT tasks.id, tasks.title, tasks.description, tasks.status, tasks.priority, tasks.progress, tasks.parent_id, tasks.tags, tasks.created_at, tasks.updated_at, tasks.due_date, tasks.completed_at FROM tasks JOIN subtree ON tasks.id=subtree.id
 `
 
-func (q *Queries) GetSubtree(ctx context.Context, id string) ([]Task, error) {
+func (q *Queries) GetSubtree(ctx context.Context, id string) ([]*Task, error) {
 	rows, err := q.db.QueryContext(ctx, getSubtree, id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Task{}
+	items := []*Task{}
 	for rows.Next() {
 		var i Task
 		if err := rows.Scan(
@@ -162,7 +162,7 @@ func (q *Queries) GetSubtree(ctx context.Context, id string) ([]Task, error) {
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -177,7 +177,7 @@ const getTask = `-- name: GetTask :one
 SELECT id, title, description, status, priority, progress, parent_id, tags, created_at, updated_at, due_date, completed_at FROM tasks WHERE id = ?
 `
 
-func (q *Queries) GetTask(ctx context.Context, id string) (Task, error) {
+func (q *Queries) GetTask(ctx context.Context, id string) (*Task, error) {
 	row := q.db.QueryRowContext(ctx, getTask, id)
 	var i Task
 	err := row.Scan(
@@ -194,7 +194,47 @@ func (q *Queries) GetTask(ctx context.Context, id string) (Task, error) {
 		&i.DueDate,
 		&i.CompletedAt,
 	)
-	return i, err
+	return &i, err
+}
+
+const listAll = `-- name: ListAll :many
+SELECT id, title, description, status, priority, progress, parent_id, tags, created_at, updated_at, due_date, completed_at FROM tasks
+`
+
+func (q *Queries) ListAll(ctx context.Context) ([]*Task, error) {
+	rows, err := q.db.QueryContext(ctx, listAll)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []*Task{}
+	for rows.Next() {
+		var i Task
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.Status,
+			&i.Priority,
+			&i.Progress,
+			&i.ParentID,
+			&i.Tags,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DueDate,
+			&i.CompletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listCandidates = `-- name: ListCandidates :many
@@ -216,7 +256,7 @@ type ListCandidatesParams struct {
 	DueAfter   sql.NullString
 }
 
-func (q *Queries) ListCandidates(ctx context.Context, arg ListCandidatesParams) ([]Task, error) {
+func (q *Queries) ListCandidates(ctx context.Context, arg ListCandidatesParams) ([]*Task, error) {
 	rows, err := q.db.QueryContext(ctx, listCandidates,
 		arg.Statuses,
 		arg.Priorities,
@@ -229,7 +269,7 @@ func (q *Queries) ListCandidates(ctx context.Context, arg ListCandidatesParams) 
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Task{}
+	items := []*Task{}
 	for rows.Next() {
 		var i Task
 		if err := rows.Scan(
@@ -248,7 +288,7 @@ func (q *Queries) ListCandidates(ctx context.Context, arg ListCandidatesParams) 
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -263,13 +303,13 @@ const listChildren = `-- name: ListChildren :many
 SELECT id, title, description, status, priority, progress, parent_id, tags, created_at, updated_at, due_date, completed_at FROM tasks WHERE parent_id=?
 `
 
-func (q *Queries) ListChildren(ctx context.Context, parentID sql.NullString) ([]Task, error) {
+func (q *Queries) ListChildren(ctx context.Context, parentID sql.NullString) ([]*Task, error) {
 	rows, err := q.db.QueryContext(ctx, listChildren, parentID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Task{}
+	items := []*Task{}
 	for rows.Next() {
 		var i Task
 		if err := rows.Scan(
@@ -288,7 +328,7 @@ func (q *Queries) ListChildren(ctx context.Context, parentID sql.NullString) ([]
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -303,13 +343,13 @@ const listEvents = `-- name: ListEvents :many
 SELECT sequence, task_id, kind, changed_fields, occurred_at FROM task_events WHERE task_id=? ORDER BY sequence
 `
 
-func (q *Queries) ListEvents(ctx context.Context, taskID string) ([]TaskEvent, error) {
+func (q *Queries) ListEvents(ctx context.Context, taskID string) ([]*TaskEvent, error) {
 	rows, err := q.db.QueryContext(ctx, listEvents, taskID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []TaskEvent{}
+	items := []*TaskEvent{}
 	for rows.Next() {
 		var i TaskEvent
 		if err := rows.Scan(
@@ -321,7 +361,7 @@ func (q *Queries) ListEvents(ctx context.Context, taskID string) ([]TaskEvent, e
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

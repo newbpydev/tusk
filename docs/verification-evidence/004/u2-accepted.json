@@ -1,0 +1,46 @@
+{
+  "unit": "u2",
+  "baseline_sha": "fde0761a9f5bc7424b53651fdf82a3291d4f0609",
+  "status": "locally verified before unit commit",
+  "summary": "Add, edit and done map exact argument intent to one accepted service call. Disk integration proves subtree lifecycle, atomic combined patches, no-op history, parent policy, and supported service dates (+1d/+1w/+1m). The built CLI was exercised in Kitty on an isolated database. Shared-code reuse, quality and efficiency review ran sequentially with no behavior-preserving change warranted.",
+  "scenarios": "40-51",
+  "logs": [
+    "u2-gates.log.gz",
+    "u2-terminal-red.log.gz",
+    "u2-focused.log.gz",
+    "u2-red.log.gz"
+  ],
+  "kitty": {
+    "version": "0.49.1",
+    "display": "X11",
+    "screenshot": "u2-kitty.png",
+    "text": "u2-kitty.txt"
+  },
+  "review": "Sequential correctness, contracts, privacy, architecture and simplicity review; no independent peer claimed",
+  "source_sha256": {
+    "internal/cli/add.go": "257c7db2eca542b1e3eecc484aff68c913bda8ce2f1582e4a7efabde01c43d06",
+    "internal/cli/compatibility_test.go": "9eb3ab5e82ec4a4269b73c68fc3507784ee81be37544fa2b1a95e916d6a353f6",
+    "internal/cli/config.go": "ccdfa121d80c4c4d9965b3f3ffb9f67dd4d3fd1291d155ad4d317537aeb2fb04",
+    "internal/cli/done.go": "55030956da714909690835564adf6fcf4399016c8a9ab45e99e5556c728b7767",
+    "internal/cli/edit.go": "ca32276fd4524ca20991e8f0297c275d3444f57aed632cf8e83adc93790bdf86",
+    "internal/cli/errors.go": "913c25647af6644be9f744a9481fd4550ee979aa89d8d93f2fe9acd8bc92ea8b",
+    "internal/cli/flags.go": "b3a3680d274527baac60d1a96a635812054e0ce5fe21f596e543bb04a42a22d2",
+    "internal/cli/format.go": "2aa77e3199697d1ca6a78a02530d433636d543ff4ef9ed304c0d9ba98dd2e1b4",
+    "internal/cli/format_test.go": "dba22dcc30e172f67dd8b8f4aed2e478da7cdc5e594f0f9f2c897d634ccb4efc",
+    "internal/cli/json.go": "3757349112b38e70976ce03e4b62b3fe9d39e703bd30362781801c232ba8f041",
+    "internal/cli/json_test.go": "97de5eb05fb07c0bc3c4560e620a28c05eaba44e4ee2e44e55c188aa551ca3b6",
+    "internal/cli/mutations_test.go": "7f8f4ea8c702e3fcd7a2f2c50ee19e9548a0e88375b86dcb0430697e8ccbffe1",
+    "internal/cli/output_test.go": "cdf0310ef95f915db46766b0f4f3d3b01f04997e39b572cb0b993db5b1b1d977",
+    "internal/cli/root.go": "57bae258ad01005f5ba7841940975e3682266f368f724b657d5ca5a4648c1a3c",
+    "internal/cli/root_test.go": "ae56b332b4234748d8b6091ea70967b4502c5c63621b94f7b707aa3c9de51740",
+    "internal/cli/sanitize.go": "835b7dd255f190b27ca424e1173348be70d3a762b873909bf533ef802be715b2",
+    "internal/cli/terminal.go": "c1ee78bc7870f9cd536d4b3dfcc98f7d05fe4d8d5d22d69229677be37376fc28",
+    "cmd/tusk/app.go": "21eb1d3913a5d670a32381b6a0dc131a11ea37e7264eaf71419cad2578e575ac",
+    "cmd/tusk/app_test.go": "6d9909bce471716978ea169376d52b27b298dfb39f9013669f65a9cf6d69e0f9",
+    "cmd/tusk/main.go": "ebc56ed5e6cbc640b1bca77644a7a5989af80f44009d7e4ff8d1bb86baa22a37",
+    "cmd/tusk/main_test.go": "357fa4cb56f043b5debd6c5b7b397de92006a98b59bf1a02006ba404441d8bbe",
+    "cmd/tusk/signal_unix.go": "b78a18f5fb8c5f8048ee7a543dcd9e95332ba3b8f2ad3e919891c063e77ef93f",
+    "cmd/tusk/signal_windows.go": "7ea1f9f5dfc55ebe7bc14c2521d2fcf8153cd77180af2672fde7f433929361ed",
+    "cmd/tusk/terminal.go": "2c8aae1d1968530f527ce0d27e5aa3272d4d2d111edd3ed6cb7f5ea3756acb43"
+  }
+}

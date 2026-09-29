@@ -59,6 +59,74 @@ func TestQueries_CRUDAndCounts(t *testing.T) {
 	}
 }
 
+func TestQueries_ListAllMatchesCandidates(t *testing.T) {
+	db, inv := migrationFixture(t)
+	ctx := context.Background()
+	if err := migrate(ctx, db, inv); err != nil {
+		t.Fatal(err)
+	}
+	q := generated.New(db)
+	if rows, err := q.ListAll(ctx); err != nil || rows == nil || len(rows) != 0 {
+		t.Fatalf("empty list: %v %v", rows, err)
+	}
+	for i, status := range []core.Status{core.StatusTodo, core.StatusInProgress, core.StatusBlocked, core.StatusDone} {
+		task := taskFixture(fmt.Sprintf("task-%d", i))
+		task.Status = status
+		if status == core.StatusDone {
+			task.Progress = 100
+			task.CompletedAt = &task.CreatedAt
+		}
+		row, err := encodeTask(task)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := q.CreateTask(ctx, row); err != nil {
+			t.Fatal(err)
+		}
+	}
+	want, err := q.ListCandidates(ctx, generated.ListCandidatesParams{Statuses: "[]", Priorities: "[]"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := q.ListAll(ctx)
+	if err != nil || len(got) != 4 || len(got) != len(want) {
+		t.Fatalf("all rows: %v %v", got, err)
+	}
+	byID := make(map[string]*generated.Task)
+	for _, row := range want {
+		byID[row.ID] = row
+	}
+	for _, row := range got {
+		if expected, ok := byID[row.ID]; !ok || *row != *expected {
+			t.Fatalf("row changed: %+v", row)
+		}
+		delete(byID, row.ID)
+	}
+	if len(byID) != 0 {
+		t.Fatal("rows omitted")
+	}
+}
+
+func TestQueries_ListAllAllocation(t *testing.T) {
+	r, _ := memoryRepository(t)
+	ctx := context.Background()
+	for i := range 100 {
+		createFixture(t, r, taskFixture(fmt.Sprintf("task-%03d", i)))
+	}
+	q := generated.New(r.reader)
+	measured := testing.Benchmark(func(b *testing.B) {
+		for range b.N {
+			rows, err := q.ListAll(ctx)
+			if err != nil || len(rows) != 100 {
+				b.Fatalf("list: %v", err)
+			}
+		}
+	})
+	if n := measured.AllocedBytesPerOp(); n > 64<<10 {
+		t.Fatalf("100 raw rows allocate %d bytes; want at most 64 KiB", n)
+	}
+}
+
 func TestQueries_TreeSets(t *testing.T) {
 	db, inv := migrationFixture(t)
 	ctx := context.Background()

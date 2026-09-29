@@ -1,0 +1,321 @@
+{
+  "status": "local-review-clean",
+  "reviewed_head": "c3364619913def00f00a2f4ba040a034189e51a8",
+  "base": "6a8aff0c6e708183db5710ad2b204c5f2a9e3b45",
+  "branch": "feat/cli-interface-and-scripting",
+  "date": "2026-09-28",
+  "depth": "full",
+  "rounds": [
+    {
+      "round": 1,
+      "confirmed_P2": 2,
+      "confirmed_P0": 0,
+      "confirmed_P1": 0
+    },
+    {
+      "round": 2,
+      "scope": "applied documentation diff and synchronized records",
+      "open_P0_P2": 0
+    }
+  ],
+  "applied_findings": [
+    {
+      "#": 1,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "docs/cli.md:148 -- Run `make validate build check-generated` in an owned Kitty window and inspect",
+        "AGENTS.md kitty_verification requires Codex Bash for canonical checks and latency, owned Kitty for visible CLI/TUI scenarios."
+      ],
+      "file": "docs/cli.md",
+      "first_evidence": "docs/cli.md:148 -- Run `make validate build check-generated` in an owned Kitty window and inspect",
+      "independent_reviewers": [],
+      "line": 148,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "project-standards"
+      ],
+      "severity": "P2",
+      "suggested_fix": "State Bash for automated Makefile checks and timing, and owned Kitty with an isolated database for visible terminal scenarios.",
+      "title": "Keep automation and timing in Bash",
+      "why_it_matters": "The verification handoff directs maintainers to the superseded terminal environment, contrary to the owner-selected measurement surface; future verification could repeat the rejected setup and misattribute latency variance.",
+      "validation_status": "confirmed",
+      "disposition": "applied; round 2 clean"
+    },
+    {
+      "#": 2,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "docs/cli.md:8 -- The executable defaults to one Go execution processor for its single serial",
+        "cmd/tusk/main.go has no runtime.GOMAXPROCS call; cmd/tusk/runtime_test.go:17-23 asserts the current runtime setting is preserved.",
+        "The Feature 004 triplet repeats the trial as present-tense policy before later acceptance records."
+      ],
+      "file": "docs/cli.md",
+      "first_evidence": "docs/cli.md:8 -- The executable defaults to one Go execution processor for its single serial",
+      "independent_reviewers": [],
+      "line": 8,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "api-contract"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Describe Go runtime defaults and explicit environment control in the CLI guide; mark the one-processor paragraph as a historical, reverted trial in all three planning documents.",
+      "title": "Document the actual runtime scheduling policy",
+      "why_it_matters": "The consumer handoff claims an abandoned runtime override and tells later TUI work to reassess a policy the binary does not implement. It misstates the conditions under which accepted latency was measured.",
+      "validation_status": "confirmed",
+      "disposition": "applied; round 2 clean"
+    }
+  ],
+  "open_findings": [],
+  "checks": {
+    "command": "GOCACHE=/tmp/tusk-004-go-cache make validate build check-generated",
+    "exit": 0,
+    "surface": "Codex Bash",
+    "log": "review-final-gate.log.gz",
+    "source_files_matching_u6_acceptance": 158,
+    "new_latency_measurement": false,
+    "new_kitty_verification": false,
+    "reason": "Documentation-only fixes; all accepted implementation and test source hashes preserved."
+  },
+  "requirements": {
+    "requirements": [
+      {
+        "id": "R1",
+        "description": "Preserve empty invocation/help/version aliases with no storage/path creation, no configuration validation and no terminal query traffic.",
+        "status": "met",
+        "evidence": "internal/cli/root.go; root_test.go; cmd/tusk/process_linux_test.go"
+      },
+      {
+        "id": "R2",
+        "description": "Classify grammar failures as exit 2 before opening storage; preserve argument boundaries, `--`, scalar/repeated flags and explicit patch intent.",
+        "status": "met",
+        "evidence": "internal/cli/root.go; flags.go; root_test.go"
+      },
+      {
+        "id": "R3",
+        "description": "Resolve policy/timezone only for valid data invocations; flag overrides environment, then defaults. Reuse storage path precedence and never fall back after an open failure.",
+        "status": "met",
+        "evidence": "internal/cli/config.go; cmd/tusk/app.go; app_test.go"
+      },
+      {
+        "id": "R4",
+        "description": "Construct a fresh command tree per invocation and inject service factory, streams, terminal facts and confirmation seam; only the composition root owns storage.",
+        "status": "met",
+        "evidence": "internal/cli/root.go; cmd/tusk/app.go; root_test.go"
+      },
+      {
+        "id": "R5",
+        "description": "Keep Go 1.25, the accepted SQLite graph and five CGO-free targets; pin compatible Cobra/Lipgloss dependencies and embed production timezone data.",
+        "status": "met",
+        "evidence": "go.mod; cmd/tusk/app.go; internal/cli/compatibility_test.go; U6 acceptance cross-build receipt"
+      },
+      {
+        "id": "R6",
+        "description": "Create tasks through CreateTask with title, notes, priority, date, tags and parent; preserve service defaults and validation.",
+        "status": "met",
+        "evidence": "internal/cli/add.go; mutations_test.go"
+      },
+      {
+        "id": "R7",
+        "description": "Patch only supplied edit fields against current data, including explicit clears, moves, status and manual leaf progress; never split a compound patch into separate writes.",
+        "status": "met",
+        "evidence": "internal/cli/edit.go; mutations_test.go"
+      },
+      {
+        "id": "R8",
+        "description": "Complete a whole subtree through CompleteTask; reopening through UpdateTask preserves service lifecycle, no-op and parent policy semantics.",
+        "status": "met",
+        "evidence": "internal/cli/done.go; edit.go; mutations_test.go"
+      },
+      {
+        "id": "R9",
+        "description": "Require recursion independently from force, preview non-forced deletion, confirm default-No only in an eligible terminal, and pass exact preview back for authoritative recheck.",
+        "status": "met",
+        "evidence": "internal/cli/delete.go; delete_test.go; cmd/tusk/confirm_test.go"
+      },
+      {
+        "id": "R10",
+        "description": "Implement list OR-within/AND-across filters, default open statuses, all/status exclusion, search, parent/root and half-open local-day due selection.",
+        "status": "met",
+        "evidence": "internal/cli/list.go; queries_test.go; internal/service/queries.go"
+      },
+      {
+        "id": "R11",
+        "description": "Render complete forests or selected subtrees, including done nodes, stable sibling order and display depth 1 without changing stored parents.",
+        "status": "met",
+        "evidence": "internal/cli/tree.go; queries_test.go; internal/core/tree.go"
+      },
+      {
+        "id": "R12",
+        "description": "Expose retained-task statistics and oldest-first metadata history without inventing velocity or event snapshots.",
+        "status": "met",
+        "evidence": "internal/cli/stats.go; history.go; queries_test.go"
+      },
+      {
+        "id": "R13",
+        "description": "Publish independent, explicit JSON DTOs with stable fields/types/nulls/arrays, exact opaque IDs and full data.",
+        "status": "met",
+        "evidence": "internal/cli/json.go; json_tasks.go; json_test.go"
+      },
+      {
+        "id": "R14",
+        "description": "Emit one compact JSON value plus LF on stdout; diagnostics go to stderr. Buffer serialization before output, propagate encoding/short-write failures and never append human text to JSON.",
+        "status": "met",
+        "evidence": "internal/cli/output.go; json.go; output_test.go"
+      },
+      {
+        "id": "R15",
+        "description": "Distinguish syntax, domain/config/runtime, cancellation, unknown transaction outcome, known commit and output/close failure; no automatic mutation replay.",
+        "status": "met",
+        "evidence": "internal/cli/root.go; errors.go; output.go; output_test.go; process_test.go"
+      },
+      {
+        "id": "R16",
+        "description": "Close an opened owner exactly once on every return path before publishing the result. A close failure discards pending output and retains known commit information.",
+        "status": "met",
+        "evidence": "internal/cli/root.go; root_test.go; output_test.go"
+      },
+      {
+        "id": "R17",
+        "description": "Human output is readable with explicit status labels, complete IDs, deterministic columns/empty states and terminal-cell-aware clipping.",
+        "status": "met",
+        "evidence": "internal/cli/format.go; format_test.go; U6 accepted Kitty evidence"
+      },
+      {
+        "id": "R18",
+        "description": "Sanitize untrusted human text and diagnostics against controls/OSC/bidi presentation; JSON preserves valid stored text through encoding. Notes never execute or fetch resources.",
+        "status": "met",
+        "evidence": "internal/cli/sanitize.go; errors.go; format_test.go; json_test.go"
+      },
+      {
+        "id": "R19",
+        "description": "Disable color for non-TTY stdout, nonempty NO_COLOR or TERM=dumb; use invocation-owned styling without terminal background probes or global renderer mutation.",
+        "status": "met",
+        "evidence": "internal/cli/terminal.go; cmd/tusk/terminal.go; format_test.go; process_linux_test.go"
+      },
+      {
+        "id": "R20",
+        "description": "Read stdin only for eligible delete confirmation; support LF/CRLF and cancellation, and never prompt in JSON or redirected input/output/error flows.",
+        "status": "met",
+        "evidence": "cmd/tusk/confirm*.go; internal/cli/delete.go; delete_test.go; process_linux_test.go"
+      },
+      {
+        "id": "R21",
+        "description": "Prove the real executable's exit/stdout/stderr, storage isolation, committed recovery and concurrent mutation behavior on temporary disk databases.",
+        "status": "met",
+        "evidence": "internal/cli/process_test.go; cmd/tusk/process_linux_test.go"
+      },
+      {
+        "id": "R22",
+        "description": "Measure launch-through-exit p90 below 5 ms for help/version and below 15 ms for queries, with the current tail guards and fixed reference fixtures; preserve every sample and record larger/cold/busy/slow-output observations separately.",
+        "status": "met",
+        "evidence": "scripts/cli-bench/; Makefile; docs/verification-evidence/004/u6-latency-accepted.json (retained acceptance, not freshly measured)"
+      },
+      {
+        "id": "R23",
+        "description": "Test dependency/runtime compatibility and safe platform behavior locally; leave native Windows/macOS and hosted release acceptance explicitly with Feature 006.",
+        "status": "met",
+        "evidence": "internal/cli/compatibility_test.go; U6 acceptance cross-build receipt; native/hosted gates intentionally deferred"
+      },
+      {
+        "id": "R24",
+        "description": "Keep CLI independent of concrete storage/service; cover all durable TUI actions through scriptable commands and document the shared service/config handoff to Feature 005.",
+        "status": "met",
+        "evidence": "internal/cli imports; docs/cli.md; shared ports.TaskService"
+      },
+      {
+        "id": "R25",
+        "description": "Record red/green, canonical Make gates, review dispositions and a separate local commit per implementation unit; synchronize this triplet and masterplan before advancing.",
+        "status": "met",
+        "evidence": "unit acceptance receipts; branch unit commits; synchronized triplet and MASTERPLAN.md"
+      }
+    ],
+    "implementation_units": [
+      {
+        "id": "U1",
+        "status": "met",
+        "evidence": "Feature 004 U1 acceptance entry and unit commit; u1-checkpoint.json is historical"
+      },
+      {
+        "id": "U5",
+        "status": "met",
+        "evidence": "docs/verification-evidence/004/u5-accepted.json"
+      },
+      {
+        "id": "U4",
+        "status": "met",
+        "evidence": "docs/verification-evidence/004/u4-accepted.json"
+      },
+      {
+        "id": "U2",
+        "status": "met",
+        "evidence": "docs/verification-evidence/004/u2-accepted.json"
+      },
+      {
+        "id": "U7",
+        "status": "met",
+        "evidence": "docs/verification-evidence/004/u7-accepted.json"
+      },
+      {
+        "id": "U3",
+        "status": "met",
+        "evidence": "docs/verification-evidence/004/u3-accepted.json"
+      },
+      {
+        "id": "U6",
+        "status": "met",
+        "evidence": "docs/verification-evidence/004/u6-acceptance.json"
+      }
+    ],
+    "unrequested_behavior_rules": [],
+    "deferred": "Feature 006 native Windows/macOS and hosted release proof remain intentional, not missing Feature 004 implementation."
+  },
+  "peer": {
+    "selected": true,
+    "target": "grok",
+    "route": "grok-cursor",
+    "preference_source": "default",
+    "outcome": "no-usable-output",
+    "artifact": null,
+    "coverage": "Cross-model adversarial coverage is degraded: Claude (requested claude-opus-5-5, high) returned a provider authentication error; the one replacement, Grok via Cursor (requested grok-4.7-xhigh, model-implied effort), timed out at the shared deadline without a usable artifact. Neither attempt counts as a completed independent review. Requested serving identities were not verified. The replacement was reaped and both job directories were removed."
+  },
+  "coverage": {
+    "local_roles": "sequential main context per AGENTS.md; not independent reviewers",
+    "roles": [
+      "correctness",
+      "project-standards",
+      "maintainability",
+      "security",
+      "reliability",
+      "api-contract",
+      "performance",
+      "data-migration",
+      "testing"
+    ],
+    "validator": "same-context evidence recheck; 2 confirmed, 0 rejected/unresolved/malformed/failed/shortcut-skipped",
+    "scope_limit": "Historical bulky receipts inspected selectively; runtime diff, supporting tests and build/measurement code reviewed. Native and hosted release proof remains Feature 006.",
+    "suppressed_by_confidence": {},
+    "mode_aware_demotions": 0,
+    "first_evidence_backfilled": 0,
+    "missing_quote_demotions": 0
+  },
+  "published": false,
+  "round_2_checks": {
+    "status": "passed",
+    "checks": [
+      "guide scheduling and Bash/Kitty statements match source and AGENTS",
+      "all three follow-up sections identical",
+      "historical runtime trial explicitly superseded",
+      "current Goal Capsule matches acceptance",
+      "158 accepted source hashes preserved",
+      "git diff --check",
+      "tracked edits are Markdown only",
+      "review and evidence index links resolve"
+    ]
+  }
+}
