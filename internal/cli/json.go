@@ -97,7 +97,7 @@ func encodeJSON(value any) ([]byte, error) {
 		if v == nil {
 			return nil, ports.ErrInvalidRecord
 		}
-		data, err = appendTaskJSON(make([]byte, 0, taskJSONCapacity(*v)), taskDTO(*v))
+		data, err = appendTaskJSON(make([]byte, 0, taskJSONCapacity(*v)+1), taskDTO(*v))
 	case []core.Task:
 		size := 3
 		for _, task := range v {

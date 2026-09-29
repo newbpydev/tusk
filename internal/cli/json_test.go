@@ -194,6 +194,33 @@ func TestJSON_EncodingAllocation(t *testing.T) {
 	}
 }
 
+func TestJSON_TreeEncodingAllocation(t *testing.T) {
+	nodes := make([]core.TaskNode, 1000)
+	roots := make([]*core.TaskNode, len(nodes))
+	for i := range nodes {
+		nodes[i] = core.TaskNode{Task: jsonFixture(), Depth: 1}
+		nodes[i].Task.Title = strings.Repeat("t", 32)
+		nodes[i].Task.Description = strings.Repeat("n", 128)
+		nodes[i].Task.CreatedAt = time.Date(2026, 9, 28, 12, 0, 0, 0, time.UTC)
+		nodes[i].Task.UpdatedAt = nodes[i].Task.CreatedAt
+		roots[i] = &nodes[i]
+	}
+	data, err := encodeJSON(roots)
+	if err != nil {
+		t.Fatal(err)
+	}
+	measured := testing.Benchmark(func(b *testing.B) {
+		for range b.N {
+			if _, err := encodeJSON(roots); err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+	if n := measured.AllocedBytesPerOp(); n > int64(len(data)*11/10) {
+		t.Fatalf("tree JSON reserves %d bytes for %d output bytes; want <= 110%%", n, len(data))
+	}
+}
+
 func TestJSON_EncodingParity(t *testing.T) {
 	check := func(value any) {
 		t.Helper()

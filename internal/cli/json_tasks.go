@@ -88,23 +88,46 @@ func appendTaskJSON(dst []byte, t taskJSON) ([]byte, error) {
 	return append(dst, '}'), nil
 }
 
-// Reserve the fixed keys, punctuation and maximum timestamp widths plus the
-// unescaped text. Escaped text can grow the buffer normally; this is a capacity
-// estimate only, never an output limit or an assumption about valid user text.
+// Reserve the wire shape and present values, without charging every task for
+// absent optional timestamps. Escaped text can still grow the buffer normally;
+// this estimate is never an output limit or an assumption about valid user text.
 func taskJSONCapacity(t core.Task) int {
-	n := 320 + len(t.ID) + len(t.Title) + len(t.Description) + len(t.Status)
+	const empty = `{"id":"","title":"","description":"","status":"","priority":0,"parent_id":null,"progress":0,"tags":[],"due_date":null,"created_at":"","updated_at":"","completed_at":null}`
+	n := len(empty) + len(t.ID) + len(t.Title) + len(t.Description) + len(t.Status)
+	n += integerJSONSize(int(t.Priority)) + integerJSONSize(t.Progress) - 2
+	n += timeJSONSize(t.CreatedAt) + timeJSONSize(t.UpdatedAt)
 	if t.ParentID != nil {
-		n += len(*t.ParentID)
+		n += len(*t.ParentID) - 2 // Replace null with a quoted string.
 	}
-	for _, tag := range t.Tags {
-		n += len(tag) + 3
+	for i, tag := range t.Tags {
+		n += len(tag) + 2
+		if i > 0 {
+			n++
+		}
+	}
+	for _, date := range []*time.Time{t.DueDate, t.CompletedAt} {
+		if date != nil {
+			n += timeJSONSize(*date) - 2 // Replace null with a quoted timestamp.
+		}
 	}
 	return n
 }
 
+func integerJSONSize(n int) int {
+	var buf [20]byte
+	return len(strconv.AppendInt(buf[:0], int64(n), 10))
+}
+
+func timeJSONSize(t time.Time) int {
+	if t.Nanosecond() == 0 {
+		return len("2006-01-02T15:04:05Z")
+	}
+	return len("2006-01-02T15:04:05.999999999Z")
+}
+
 func treeJSONCapacity(nodes []*core.TaskNode) (int, error) {
 	n := 2
-	for _, node := range nodes {
+	for i, node := range nodes {
 		if node == nil {
 			return 0, ports.ErrInvalidRecord
 		}
@@ -112,7 +135,10 @@ func treeJSONCapacity(nodes []*core.TaskNode) (int, error) {
 		if err != nil {
 			return 0, err
 		}
-		n += 40 + taskJSONCapacity(node.Task) + children
+		n += len(`{"task":,"children":,"depth":}`) + taskJSONCapacity(node.Task) + children + integerJSONSize(node.Depth)
+		if i > 0 {
+			n++
+		}
 	}
 	return n, nil
 }

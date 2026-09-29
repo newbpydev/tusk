@@ -614,3 +614,21 @@ control also fails (16.276 ms). All tail guards pass, but no failed report is
 relabelled as acceptance. The prior U6/round 1 passes are historical; current-head
 latency verification remains open. The complete reports and source hashes are in
 the round 2 receipt. Functional validation and hosted review are separate gates.
+
+### PR #4 performance remediation — 2026-09-29 (locally verified)
+
+The owner explicitly authorized continued performance remediation after the
+round 2 candidate and unchanged control missed the JSON tree p90 target.
+A Bash CPU/allocation profile identified JSON buffer reservation as the largest
+single allocation. A red allocation test measured 557,074 allocated bytes for
+434,002 output bytes. The candidate estimates present nullable values and UTC
+timestamp widths instead of reserving maximum widths for absent values, while
+retaining growable buffers for escaped text and byte-for-byte JSON parity.
+Canonical validation and minimum-Go JSON tests pass. All 84 fresh-process
+case-runs now pass with 8,400 samples retained, query p90 at most 12.900 ms and
+help/version p90 at most 3.833 ms. All tail guards pass; 39 individual target
+misses remain retained. This supersedes the current-head performance exception
+above, while the earlier failed reports remain failures and all limits remain
+unchanged. See [performance receipt](../verification-evidence/004/review-pr4-r3.md). No fresh Kitty timing or interactive verification is used in this
+unit, following the owner's Bash direction. Existing JSON parity and pipeline
+checks verify the unchanged output contract.
