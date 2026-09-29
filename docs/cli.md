@@ -5,10 +5,10 @@ SQLite database; no daemon or network service is required. `tusk`, `tusk help`,
 `tusk --help`, `tusk -h`, `tusk version`, `tusk --version` and `tusk -v` do not
 open storage. Command help is available as `tusk help add` or `tusk add --help`.
 
-The executable defaults to one Go execution processor for its single serial
-operation; an explicit `GOMAXPROCS` setting is respected. Embedded `cli.Run`
-callers keep their own runtime policy. This setting does not prevent signal
-handling, asynchronous cancellation, or separate CLI processes from running.
+The executable and embedded `cli.Run` preserve Go's runtime scheduling policy,
+including an explicit `GOMAXPROCS` setting. Tusk does not override the processor
+count. The earlier single-processor experiment was removed before local
+acceptance.
 
 ## Commands
 
@@ -145,8 +145,10 @@ a process differs from graceful cancellation; local tests cover both.
 
 ## Verification and handoff
 
-Run `make validate build check-generated` in an owned Kitty window and inspect
-the current CLI with an isolated temporary database, as required by `AGENTS.md`.
+Run `make validate build check-generated` and automated latency measurements in
+Codex Bash. Use an owned Kitty window to inspect the required visible CLI
+scenarios with an isolated temporary database, as required by `AGENTS.md`. Keep
+automated results, timing measurements and visible terminal evidence distinct.
 `GOTOOLCHAIN=go1.25.0 make test build-cli` checks the minimum compiler and five
 CGO-free executable/test builds. Cross-builds do not prove native console behavior.
 

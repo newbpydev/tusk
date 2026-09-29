@@ -6,6 +6,12 @@
 **Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
+### Feature 004 final local review follow-up
+
+- [x] Review the full branch for P0–P2, fix two stale documentation contracts and
+  recheck the applied diff to a clean pass. Fresh canonical validation passes;
+  accepted runtime/test source is unchanged. [Review and coverage](docs/verification-evidence/004/review-final.md).
+
 ### Feature 004 simplification follow-up
 
 - [x] Complete reuse, quality and efficiency review. One tree-buffer trial was

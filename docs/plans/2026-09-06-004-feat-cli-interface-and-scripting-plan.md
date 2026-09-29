@@ -62,7 +62,7 @@ Expose the accepted task service through a local, scriptable Cobra CLI. Develope
 - **Prerequisite:** Phase 3 locally accepted and merged; its [consumer handoff](../service.md) is the implementation baseline.
 - **Surfaces:** CLI, service adapter/library contracts, persistence lifecycle, process/terminal portability, documentation. No browser or interactive TUI implementation.
 - **Order:** U1 → U5 → U4 → U2 → U7 → U3 → U6. Existing 004-1 through 004-6 IDs retain their concepts; new U7 splits deletion from U2. Formatting precedes consumers.
-- **Evidence:** Readiness means decisions and tests are specified. The planning pass supplied decisions only; subsequent execution evidence is recorded below, with U6 reference latency still unresolved.
+- **Evidence:** Readiness means decisions and tests are specified. The planning pass supplied decisions only; subsequent local acceptance evidence is recorded below. U6 reference latency passed the current distribution policy; native/hosted release proof remains with Feature 006.
 
 ## Product Contract
 
@@ -515,13 +515,13 @@ against encoding/json. Nullable fields, UTC timestamps, empty arrays, errors and
 one final LF remain unchanged. Safe human text can bypass copying; control/bidi
 escaping and invalid UTF-8 replacement remain covered.
 
-A scheduling diagnostic measured approximately 11.0 ms versus 9.1 ms for a serial
-query with six versus one Go execution processors. The standalone executable now
-defaults to one execution processor and respects explicit GOMAXPROCS. This is
-process startup policy, with no package-level mutable state; embedded cli.Run and
-service callers retain their runtime policy. Feature 005 must reassess the TUI's
-scheduling needs when its own implementation is authorized. Profile results are
-diagnostic only; a complete process run still decides the unchanged latency gate.
+Historical scheduling trial: a diagnostic measured approximately 11.0 ms versus
+9.1 ms for a serial query with six versus one Go execution processors. That trial
+set a single-processor default in the standalone executable while respecting
+explicit GOMAXPROCS. The override was removed before U6 local acceptance; both
+the executable and embedded cli.Run preserve Go's runtime scheduling policy.
+The diagnostic remains historical evidence and does not describe the accepted
+binary or require Feature 005 to inherit a processor-count override.
 
 ### Unfiltered SQL optimization
 
@@ -728,3 +728,15 @@ test changes remain, and the original U6 acceptance source is preserved.
 The [evaluation and retained evidence](../verification-evidence/004/simplify-review.md)
 record the rejected patch, all samples and restored-source validation.
 Feature 005 planning remains next; native/hosted release gates remain deferred.
+
+## Final branch review follow-up — 2026-09-28
+
+User-authorized P0–P2 review completed with two documentation fixes: the CLI
+guide now preserves Go runtime scheduling defaults, and directs automated gates
+and timing to Codex Bash while retaining Kitty for required visible scenarios.
+The superseded single-processor trial is explicitly historical. The follow-up
+diff review is clean; `make validate build check-generated` passes and all 158
+accepted source hashes are unchanged. No fresh latency or Kitty result is claimed.
+See [review receipt](../verification-evidence/004/review-final.md) for coverage,
+peer availability and all requirement dispositions. Feature 005 remains planning
+only; Feature 006 native/hosted release proof remains deferred.

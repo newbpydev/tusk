@@ -1,5 +1,12 @@
 # Feature 004 execution evidence
 
+## Final local branch review
+
+[Review](review-final.md) and [structured receipt](review-final.json): two P2
+runtime/verification documentation findings fixed; final diff review clean.
+Fresh canonical gate passes, with all 158 accepted source hashes preserved.
+The review records independent-peer availability and local coverage explicitly.
+
 ## Branch simplification follow-up
 
 [Review and experiment](simplify-review.md): one tree-buffer trial reduced
