@@ -190,3 +190,12 @@ required links, R/U/V coverage, preserved original U IDs and planning-only
 checkboxes audited. Source/contract review and document inspection only.
 Application tests, make validate, actual dependency builds, benchmarks and
 visible terminal scenarios were not run. No independent review is claimed.
+
+### U1 execution checkpoint — 2026-09-29
+
+U1 passes canonical validation and Go 1.25 short tests/five-target CGO-free
+cross-builds; see [receipt](../verification-evidence/005/u1.json). ISS-021 has
+initial compatibility proof; final linked-candidate proof remains U6. ISS-022
+and other runtime gates remain open. V06/V10 evidence is scoped to current
+widgets/wait primitive and must be extended by their later consumer units.
+Next: U7, including actual owned Kitty session/lifecycle acceptance.

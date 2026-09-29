@@ -98,6 +98,19 @@ validate: fmt vet test race coverage test-scripts check-modules
 
 BUILD_OUTPUT ?= bin/tusk
 CLI_TEST_RUN ?= .
+TUI_TEST_RUN ?= .
+.PHONY: test-tui build-tui
+
+test-tui:
+	go test -v ./internal/tui ./internal/cli ./cmd/tusk -run '$(TUI_TEST_RUN)'
+
+build-tui: build-cli
+	@set -e; build_tmp=$$(mktemp -d); trap 'rm -rf "$$build_tmp"' EXIT; \
+	for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do \
+		echo "Compiling TUI tests: $$target (CGO_ENABLED=0; native execution separate)"; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/tui-$${target%/*}-$${target#*/}.test" ./internal/tui; \
+	done
+
 .PHONY: test-cli build-cli
 
 test-cli:

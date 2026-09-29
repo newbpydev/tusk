@@ -2,8 +2,8 @@
 feature-id: "005"
 plan-source: ../plans/2026-09-06-005-feat-interactive-tui-application-plan.md
 surface-profiles: [cli-tui, internal-service-consumer, persistence-lifecycle, documentation]
-status: Draft - not executed
-evidence-scope: Planning only
+status: In progress - U1 accepted, U7 active
+evidence-scope: Local U1 execution; later units pending
 ---
 
 # Feature 005 Verification Plan
@@ -74,29 +74,29 @@ Product checkboxes remain unchanged until execution establishes their own scope.
 
 ### Root and compatibility — U1
 
-- [ ] V01 (R4; Compatibility): Compile against the selected v1 Model/KeyMsg/WindowSizeMsg APIs; resolve Bubble Tea 1.3.10, Bubbles 0.21.0, Lipgloss 1.1.0, Glamour 0.9.1 and ansi 0.10.1 without changing SQLite/libc pins.
+- [x] V01 (R4; Compatibility): Compile against the selected v1 Model/KeyMsg/WindowSizeMsg APIs; resolve Bubble Tea 1.3.10, Bubbles 0.21.0, Lipgloss 1.1.0, Glamour 0.9.1 and ansi 0.10.1 without changing SQLite/libc pins.
 
-- [ ] V02 (R4,R26; Compatibility): Use Go 1.25.0 for tests and five CGO-free application/TUI test cross-builds; record resolved modules. Do not label non-host binaries executed.
+- [x] V02 (R4,R26; Compatibility): Use Go 1.25.0 for tests and five CGO-free application/TUI test cross-builds; record resolved modules. Do not label non-host binaries executed.
 
-- [ ] V03 (R4,R15,R25; Regression): Run existing CLI width/control/JSON fixtures against the combined module graph; bytes and exit contracts remain unchanged despite the ansi upgrade.
+- [x] V03 (R4,R15,R25; Regression): Run existing CLI width/control/JSON fixtures against the combined module graph; bytes and exit contracts remain unchanged despite the ansi upgrade.
 
-- [ ] V04 (R1,R5,R6; Boundary): Construct Model and call Init with fail-on-use service/clock/terminal/file fakes; construction prepares state, Init only returns commands, and no storage or terminal query occurs.
+- [x] V04 (R1,R5,R6; Boundary): Construct Model and call Init with fail-on-use service/clock/terminal/file fakes; construction prepares state, Init only returns commands, and no storage or terminal query occurs.
 
-- [ ] V05 (R5; Purity): Snapshot cold model before its first View; call View 100 times without warmup; compare exact frame and deep reachable state, including component caches.
+- [x] V05 (R5; Purity): Snapshot cold model before its first View; call View 100 times without warmup; compare exact frame and deep reachable state, including component caches.
 
-- [ ] V06 (R5,R23; Purity): Repeat the purity check with populated multiline textarea, help, loading, errors, selection, history and a modal; no pointer/map/slice/style/cache writes or commands.
+- [x] V06 (R5,R23; Purity): Repeat the purity check with populated multiline textarea, help, loading, errors, selection, history and a modal; no pointer/map/slice/style/cache writes or commands.
 
-- [ ] V07 (R6,R24; Concurrency): Create a command, then change model/draft/selection and execute it; captured immutable inputs remain the original detached values and replies do not mutate the live model.
+- [x] V07 (R6,R24; Concurrency): Create a command, then change model/draft/selection and execute it; captured immutable inputs remain the original detached values and replies do not mutate the live model.
 
-- [ ] V08 (R5,R6,R27; Architecture): Review imports and constructor-owned state: no core/service UI imports, storage/CLI imports in tui, mutable package state, View callbacks or model worker goroutines.
+- [x] V08 (R5,R6,R27; Architecture): Review imports and constructor-owned state: no core/service UI imports, storage/CLI imports in tui, mutable package state, View callbacks or model worker goroutines.
 
-- [ ] V09 (R2,R5,R15; Isolation): Construct two sessions with different injected profiles/zones; their frames/options stay independent and no global Lipgloss/background/environment state leaks.
+- [x] V09 (R2,R5,R15; Isolation): Construct two sessions with different injected profiles/zones; their frames/options stay independent and no global Lipgloss/background/environment state leaks.
 
-- [ ] V10 (R6,R8,R22; Cancellation): Cancel a pending injected timer/debounce wait; it produces no new service work, duplicate timer chain or retained running wait.
+- [x] V10 (R6,R8,R22; Cancellation): Cancel a pending injected timer/debounce wait; it produces no new service work, duplicate timer chain or retained running wait.
 
-- [ ] V11 (R7; States): Drive initial loading, empty, loaded and known load failure messages with fake data; distinguish messages without changing outer dimensions or fabricating success.
+- [x] V11 (R7; States): Drive initial loading, empty, loaded and known load failure messages with fake data; distinguish messages without changing outer dimensions or fabricating success.
 
-- [ ] V12 (R4,R27; Gate): Retain dependency/license inventory and canonical validation with no new coverage exemption; absent pins/failed module tidy or <95% package coverage prevents U1 completion.
+- [x] V12 (R4,R27; Gate): Retain dependency/license inventory and canonical validation with no new coverage exemption; absent pins/failed module tidy or <95% package coverage prevents U1 completion.
 
 ### Invocation and session ownership — U7
 
@@ -468,3 +468,12 @@ directory, not fabricated now), one per unit plus final acceptance:
 | Commit | coherent unit commit before the next unit; no implied publication |
 
 Never backfill a planning checkbox from a later test with different scope.
+
+### U1 local acceptance — 2026-09-29
+
+[Receipt](../verification-evidence/005/u1.json) retains compile and behavioral
+Red, focused Green, canonical gates, minimum-Go builds and module inventory.
+V06 proves the current widget caches and structural View guarantee; each later
+modal/history/form addition must repeat populated purity tests. V10 proves the
+cancellable wait primitive; U3 owns bounded timer/debounce chains. No visible
+application session exists yet. U7 is the active next unit.

@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
 **Current Status**: 🟢 Active Development
-**Active Phase**: Phase 4 locally complete and merged; Feature 005 planning complete, implementation pending
-**Active Implementation Target**: Feature 005 U1 / 005-1 is next only after implementation authorization; planning pack complete, no Phase 5 code authorized
+**Active Phase**: Phase 5 — Feature 005 implementation authorized (2026-09-29)
+**Active Implementation Target**: Feature 005 U7 / 005-7 — CLI registration, session ownership and terminal lifecycle
 **Overall Completion**: 71% (5 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
@@ -303,7 +303,7 @@ No Phase 5 implementation, push, PR or publication occurred.
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: 📋 **PLANNING COMPLETE — IMPLEMENTATION NOT STARTED** (2026-09-29)
+- **Status**: 🚀 **IMPLEMENTING U7 — U1 LOCALLY ACCEPTED** (authorized 2026-09-29)
 - **Plan**: [Feature 005 plan](docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md)
 - **Verification Plan**: [Feature 005 verification](docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md)
 - **Issue Workorder**: [Feature 005 workorder](docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md)
@@ -311,7 +311,7 @@ No Phase 5 implementation, push, PR or publication occurred.
 - [x] **5.1 Ultrathink Planning Pack**
   - [x] Deepened Plan, Verification Plan, and Workorder: 28 requirements, eight units, 112 planned scenarios
 - [ ] **5.2 Implementation Units**
-  - [ ] Unit 005-1 / U1: Pure Root, v1 Dependency Graph and Deterministic Test Seams
+  - [x] Unit 005-1 / U1: Pure Root, v1 Dependency Graph and Deterministic Test Seams
   - [ ] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
   - [ ] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
   - [ ] Unit 005-3 / U3: Forest Navigation, Filters, Search and Refresh Generations
@@ -410,3 +410,10 @@ U6 acceptance: make validate passed (service coverage 95.5%); see docs/verificat
 U7 acceptance: make validate passed (service coverage 95.2%); real per-statement/event fault matrix proves rollback of five public mutation flows. See docs/verification-evidence/003/u7.json.
 
 U4 acceptance: make validate passed; the concrete service now satisfies the entire inbound port. See docs/verification-evidence/003/u4.json.
+
+### Feature 005 U1 acceptance — 2026-09-29
+
+Pure prepared-frame root, dependency pins and deterministic test seams pass
+`make validate build check-generated`; Go 1.25 short suite and all five
+CGO-free application/test cross-builds pass. [Receipt](docs/verification-evidence/005/u1.json).
+No visible session exists yet; U7 owns the first actual Kitty interactions.

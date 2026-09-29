@@ -30,9 +30,10 @@ drafts when operations fail, and restore the terminal on exit.
   masterplan identities; U7 splits runtime ownership from U1, U8 splits deletion
   and recovery interactions from U5. Tests accompany every unit; U6 is acceptance,
   not the first opportunity to write tests.
-- **Readiness:** decision-complete planning, not implementation authorization.
-  No runtime, terminal, latency, hosted or native acceptance was executed in this
-  planning pass. Start U1 only after a new implementation instruction.
+- **Execution authorization:** the owner invoked ce-work on 2026-09-29 with
+  hands-on owned Kitty verification. U1 is locally accepted; U7 is active.
+  See [U1 receipt](../verification-evidence/005/u1.json). Later unit and release
+  acceptance remains pending; planning observations below remain historical.
 - **Completion boundary:** each implemented unit needs red/green evidence,
   applicable terminal evidence, `make validate`, synchronized triplet/masterplan,
   and its own coherent local commit before advancing. Push, PR, merge and release
