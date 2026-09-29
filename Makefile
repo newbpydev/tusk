@@ -93,7 +93,7 @@ bench-tree:
 
 bench-build:
 	@./scripts/bench.sh build
-validate: fmt vet test race coverage test-scripts
+validate: fmt vet test race coverage test-scripts check-modules
 	@echo "All canonical quality gates passed."
 
 BUILD_OUTPUT ?= bin/tusk
@@ -135,7 +135,8 @@ help:
 	@echo "make build-service - Compile CGO-free service and tests for all five targets"
 	@echo "make bench-service - Measure fixed single-sample service workloads"
 	@echo "make race      - Run tests with data race detector"
-	@echo "make validate    - Run full verification suite (fmt, vet, test, race, coverage)"
+	@echo "make validate    - Run fmt, vet, test, race, coverage, script and module checks"
+	@echo "make check-modules - Check go.mod/go.sum with go mod tidy -diff"
 	@echo "make coverage    - Run coverage check with race detector"
 	@echo "make bench-storage - Measure storage queries and open costs"
 	@echo "make bench       - Run all core micro-benchmarks"

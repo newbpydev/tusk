@@ -142,9 +142,12 @@ Start a new process against the same database and inspect tasks/history before
 deciding whether to retry. Preserve database/WAL/SHM files. A deleted task has no
 history, so use absence from a full fresh snapshot as deletion readback. Killing
 a process differs from graceful cancellation; local tests cover both. The first
-interrupt requests graceful cancellation. A second interrupt (or Unix SIGTERM)
-can terminate stalled cleanup; reopen and inspect state afterward. Confirmation
-readers remain joined on graceful exit, even if OS cancellation must be retried.
+interrupt requests graceful cancellation. After cancellation is published, a
+later interrupt (or Unix SIGTERM) can terminate even progressing cleanup. Forced exit can leave partial output;
+reopen and inspect state afterward. Rapid signals can coalesce, so two
+back-to-back signals do not guarantee exit. This assumes the normal inherited
+signal disposition. Confirmation readers remain joined on graceful exit, even
+if OS cancellation must be retried.
 
 ## Verification and handoff
 

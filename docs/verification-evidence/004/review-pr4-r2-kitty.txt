@@ -1,0 +1,14 @@
+PR #4 review round 2: timezone recovery
+
+Explicit empty flag overrides valid UTC environment:
+tusk: invalid timezone; use an IANA zone such as UTC; --timezone overrides TUSK_TIMEZONE
+
+Correct the flag to UTC:
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+
+Signal policy:
+First interrupt requests cancellation.
+After cancellation, another signal may force exit during cleanup.
+Rapid signals may coalesce; inspect stored state after force exit.
+
+Inspection complete; Enter closes this owned window.

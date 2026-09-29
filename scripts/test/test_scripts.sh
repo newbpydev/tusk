@@ -108,6 +108,15 @@ result=1
 if [[ "$default_recipe" == *"All canonical quality gates passed."* && "$default_recipe" != *"scripts/sqlc.sh setup"* ]]; then result=0; fi
 assert_eq 0 "$result" "default make validates and builds without downloading tools"
 
+recipe=$(make --no-print-directory -n -C "${ROOT_DIR}" validate)
+result=1
+if [[ "$recipe" == *"go mod tidy -diff"* ]]; then result=0; fi
+assert_eq 0 "$result" "validate rejects module metadata drift"
+recipe=$(make --no-print-directory -C "${ROOT_DIR}" help)
+result=1
+if [[ "$recipe" == *"make check-modules"* ]]; then result=0; fi
+assert_eq 0 "$result" "help lists the module metadata gate"
+
 echo "========================================"
 for target in build-service bench-service; do
     result=0

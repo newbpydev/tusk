@@ -354,6 +354,11 @@ type staticRepository struct {
 	rows   []core.Task
 	cancel context.CancelFunc
 }
+
+// staticReader deliberately bypasses TaskReader's detached-result contract:
+// corruption tests supply one-use rows, and allocation tests reuse unmodified,
+// unfiltered rows to measure service allocations without repository cloning.
+// Do not reuse this fake for filtered or mutating repeated reads.
 type staticReader struct {
 	ports.TaskReader
 	rows   []core.Task

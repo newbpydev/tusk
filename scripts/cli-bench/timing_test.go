@@ -30,12 +30,31 @@ func TestTimingDiagnostic_ParentIsolation(t *testing.T) {
 	}
 }
 
+func TestTimingDiagnostic_RejectUnknownMode(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Fatal("misspelled timing mode silently ran baseline conditions")
+		}
+	}()
+	timingParentSetup("pre-allocated-pipe")
+}
+
 // Diagnostic only. Compare child CPU time to launch-through-drain wall time,
 // and test whether parent validation garbage/output allocation causes delays.
 // These samples never replace the fixed reference report.
 func timingParentSetup(mode string) (gc, preallocate bool) {
-	return mode == "parent-gc" || mode == "parent-gc-and-preallocated-pipe",
-		mode == "preallocated-pipe" || mode == "parent-gc-and-preallocated-pipe"
+	switch mode {
+	case "baseline", "child-gc-200", "child-gc-400", "child-trace", "child-procs-2", "child-procs-6":
+		return false, false
+	case "parent-gc":
+		return true, false
+	case "preallocated-pipe":
+		return false, true
+	case "parent-gc-and-preallocated-pipe":
+		return true, true
+	default:
+		panic("unknown timing mode: " + mode)
+	}
 }
 
 func timingDiagnostic(t *testing.T, binary, dir string, manifest map[string]string) {

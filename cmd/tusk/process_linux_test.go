@@ -19,6 +19,9 @@ import (
 
 func TestProcess_SecondSignalEndsStalledConfirmation(t *testing.T) {
 	if os.Getenv("TUSK_TEST_STALLED_CONFIRM") == "1" {
+		if os.Getenv("TUSK_TEST_SLOW_START") == "1" {
+			time.Sleep(4 * time.Second)
+		}
 		ctx, stop := processContext()
 		defer stop()
 		go func() { <-ctx.Done(); fmt.Println("canceled") }()
@@ -28,12 +31,24 @@ func TestProcess_SecondSignalEndsStalledConfirmation(t *testing.T) {
 		})
 		os.Exit(99)
 	}
-	for _, sig := range []os.Signal{syscall.SIGINT, syscall.SIGTERM} {
-		t.Run(sig.String(), func(t *testing.T) {
-			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	for _, tc := range []struct {
+		name      string
+		sig       os.Signal
+		slowStart bool
+	}{
+		{"interrupt", syscall.SIGINT, false},
+		{"terminate", syscall.SIGTERM, false},
+		{"slow-start", syscall.SIGINT, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			sig := tc.sig
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 			defer cancel()
 			cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestProcess_SecondSignalEndsStalledConfirmation$")
 			cmd.Env = append(os.Environ(), "TUSK_TEST_STALLED_CONFIRM=1")
+			if tc.slowStart {
+				cmd.Env = append(cmd.Env, "TUSK_TEST_SLOW_START=1")
+			}
 			stdout, err := cmd.StdoutPipe()
 			if err != nil {
 				t.Fatal(err)
@@ -60,9 +75,16 @@ func TestProcess_SecondSignalEndsStalledConfirmation(t *testing.T) {
 			if err = cmd.Process.Signal(sig); err != nil {
 				t.Fatal(err)
 			}
-			err = cmd.Wait()
-			if ctx.Err() != nil {
-				t.Fatal("second signal swallowed while console cancellation failed")
+			// Startup and the two barriers have their own generous outer budget.
+			// Only time after escalation counts toward the stalled-exit assertion.
+			waited := make(chan error, 1)
+			go func() { waited <- cmd.Wait() }()
+			select {
+			case err = <-waited:
+			case <-time.After(5 * time.Second):
+				_ = cmd.Process.Kill()
+				<-waited
+				t.Fatal("second signal did not terminate stalled confirmation within 5s")
 			}
 			var exit *exec.ExitError
 			if !errors.As(err, &exit) {

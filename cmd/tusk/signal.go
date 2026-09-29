@@ -6,8 +6,10 @@ import (
 	"os/signal"
 )
 
-// interruptContext restores default handling before publishing cancellation.
-// A later signal can terminate a process whose graceful cleanup has stalled.
+// interruptContext restores prior signal handling before publishing cancellation.
+// With the normal process disposition, a signal delivered after cancellation
+// can force exit even during progressing cleanup. Rapid signals may coalesce;
+// this is an escalation policy, not an exact signal-count guarantee.
 func interruptContext(signals ...os.Signal) (context.Context, func()) {
 	ctx, cancel := context.WithCancel(context.Background())
 	incoming := make(chan os.Signal, 1)

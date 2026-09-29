@@ -160,7 +160,7 @@ func TestConfig_ActionablePrivateDiagnostics(t *testing.T) {
 		}
 	}
 	var stderr bytes.Buffer
-	if code := Run(context.Background(), []string{"list", "--timezone="}, Options{Stderr: &stderr}); code != 1 || !strings.Contains(stderr.String(), "--timezone") {
+	if code := Run(context.Background(), []string{"list", "--timezone="}, Options{Stderr: &stderr}); code != 1 || !strings.Contains(stderr.String(), "--timezone overrides TUSK_TIMEZONE") {
 		t.Fatalf("code %d, diagnostic %q", code, stderr.String())
 	}
 }

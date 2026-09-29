@@ -627,3 +627,27 @@ p90 12.495 ms). An earlier run overlapped final cross-builds and failed six case
 its complete samples remain diagnostic evidence. See
 [review dispositions and receipts](../verification-evidence/004/review-pr4-r1.md).
 Hosted feedback settlement remains separate from these local results.
+
+### PR #4 second review round — 2026-09-29 (locally verified)
+
+Eight follow-up suggestions have bounded outcomes: explicit signal-escalation
+limits, separate startup/escalation test budgets, timezone precedence guidance,
+removal of a dead sentinel, an explicit allocation-fixture ownership exception,
+unknown timing-mode rejection, and module checks in the canonical gate. The
+signal implementation retains Stop-before-cancel; rapid signals may coalesce,
+and force termination can interrupt progressing cleanup and leave partial output.
+No grace timer or exact signal-count guarantee is introduced. Normal cancellation
+still joins the reader. The round 1 no-change decisions and Feature 006 native
+Windows/macOS obligations remain in force. See the
+[round 2 decisions and receipts](../verification-evidence/004/review-pr4-r2.md).
+
+Canonical validation, minimum-Go unit/module checks and owned Kitty timezone
+recovery inspection pass. The hosted review watch follows the pushed commit;
+merge remains user-owned and Phase 5 implementation remains unauthorized.
+
+**Current-head performance exception:** two fresh Bash reference matrices fail
+one JSON tree p90 case each (16.405 ms and 15.009 ms). The unchanged round 1
+control also fails (16.276 ms). All tail guards pass, but no failed report is
+relabelled as acceptance. The prior U6/round 1 passes are historical; current-head
+latency verification remains open. The complete reports and source hashes are in
+the round 2 receipt. Functional validation and hosted review are separate gates.

@@ -10,7 +10,7 @@ import (
 
 const (
 	errAutoCompleteConfiguration core.Error = "invalid TUSK_AUTO_COMPLETE_PARENT; use true or false"
-	errTimezoneConfiguration     core.Error = "invalid timezone; set --timezone or TUSK_TIMEZONE to an IANA zone such as UTC"
+	errTimezoneConfiguration     core.Error = "invalid timezone; use an IANA zone such as UTC; --timezone overrides TUSK_TIMEZONE"
 )
 
 type syntaxError struct{ cause error }
@@ -38,7 +38,7 @@ func diagnostic(err error, committed bool) (int, string) {
 	for _, safe := range []error{
 		context.Canceled, context.DeadlineExceeded, errAutoCompleteConfiguration, errTimezoneConfiguration, errForceRequired,
 		core.ErrTaskNotFound, core.ErrEmptyTitle, core.ErrTitleTooLong, core.ErrInvalidStatus, core.ErrInvalidPriority, core.ErrInvalidStatusTransition, core.ErrSelfParenting, core.ErrCyclicDependency, core.ErrMaxDepthExceeded, core.ErrInvalidTag, core.ErrInvalidProgress, core.ErrInvalidTaskID, core.ErrDuplicateTaskID, core.ErrInvalidDepth,
-		ports.ErrInvalidRecord, ports.ErrCorrupt, ports.ErrIncompatibleSchema, ports.ErrBusy, ports.ErrStorage, ports.ErrReadOnly, ports.ErrClosedRepository, ports.ErrInvalidCallback, ports.ErrNestedTransaction, ports.ErrTransactionClosed, ports.ErrTransactionInUse, ports.ErrChildrenPresent,
+		ports.ErrInvalidRecord, ports.ErrCorrupt, ports.ErrIncompatibleSchema, ports.ErrBusy, ports.ErrStorage, ports.ErrReadOnly, ports.ErrClosedRepository, ports.ErrInvalidCallback, ports.ErrNestedTransaction, ports.ErrTransactionClosed, ports.ErrTransactionInUse,
 		ports.ErrInvalidCommand, ports.ErrInvalidText, ports.ErrInvalidDate, ports.ErrInvalidReferenceTime, ports.ErrIdentityGeneration, ports.ErrConflict, ports.ErrConfirmationRequired, ports.ErrInvalidServiceOptions,
 	} {
 		if errors.Is(err, safe) {

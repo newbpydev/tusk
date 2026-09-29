@@ -236,7 +236,7 @@ Check errors.As for ports.TransactionError before errors.Is for cancellation/bus
 | Stdout broken/short write | 1 / possibly partial | No appended stdout diagnostic; no replay; readback for mutations |
 | Successful query, then close failure | 1 / empty | Discard pending query output; fresh owner on next invocation |
 
-Do not retry stderr failures or recursively report them. On Unix install process-local SIGPIPE handling so fd1/fd2 EPIPE reaches Run instead of signal exit 141; isolate signal code with explicit Unix/Windows build constraints (a _unix.go filename alone is not a Go OS selector). Signal handlers are installed only at the executable boundary and stopped on return; shared in-process command tests use injected contexts. The first interrupt or Unix termination restores default signal handling before publishing context cancellation; a later signal can force termination if graceful cleanup stalls. Normal cancellation joins the confirmation reader; no live reader is abandoned to simulate cleanup. Stop notification and clean resources before os.Exit. Tests use direct contexts except dedicated subprocess signal tests. Source: [Go SIGPIPE behavior](https://pkg.go.dev/os/signal#hdr-SIGPIPE).
+Do not retry stderr failures or recursively report them. On Unix install process-local SIGPIPE handling so fd1/fd2 EPIPE reaches Run instead of signal exit 141; isolate signal code with explicit Unix/Windows build constraints (a _unix.go filename alone is not a Go OS selector). Signal handlers are installed only at the executable boundary and stopped on return; shared in-process command tests use injected contexts. The first interrupt or Unix termination restores prior signal handling before publishing context cancellation. With the normal inherited disposition, a signal delivered afterward can force termination even during progressing cleanup, possibly truncating output. There is no grace timer or exact signal-count guarantee: rapid signals may coalesce. After force termination reopen and inspect state before retrying a mutation. Normal cancellation joins the confirmation reader; no live reader is abandoned to simulate cleanup. Stop notification and clean resources before os.Exit. Tests use direct contexts except dedicated subprocess signal tests. Source: [Go SIGPIPE behavior](https://pkg.go.dev/os/signal#hdr-SIGPIPE).
 
 ### KTD8. Human format, terminal safety and accessibility
 
@@ -762,3 +762,27 @@ p90 12.495 ms). An earlier run overlapped final cross-builds and failed six case
 its complete samples remain diagnostic evidence. See
 [review dispositions and receipts](../verification-evidence/004/review-pr4-r1.md).
 Hosted feedback settlement remains separate from these local results.
+
+### PR #4 second review round — 2026-09-29 (locally verified)
+
+Eight follow-up suggestions have bounded outcomes: explicit signal-escalation
+limits, separate startup/escalation test budgets, timezone precedence guidance,
+removal of a dead sentinel, an explicit allocation-fixture ownership exception,
+unknown timing-mode rejection, and module checks in the canonical gate. The
+signal implementation retains Stop-before-cancel; rapid signals may coalesce,
+and force termination can interrupt progressing cleanup and leave partial output.
+No grace timer or exact signal-count guarantee is introduced. Normal cancellation
+still joins the reader. The round 1 no-change decisions and Feature 006 native
+Windows/macOS obligations remain in force. See the
+[round 2 decisions and receipts](../verification-evidence/004/review-pr4-r2.md).
+
+Canonical validation, minimum-Go unit/module checks and owned Kitty timezone
+recovery inspection pass. The hosted review watch follows the pushed commit;
+merge remains user-owned and Phase 5 implementation remains unauthorized.
+
+**Current-head performance exception:** two fresh Bash reference matrices fail
+one JSON tree p90 case each (16.405 ms and 15.009 ms). The unchanged round 1
+control also fails (16.276 ms). All tail guards pass, but no failed report is
+relabelled as acceptance. The prior U6/round 1 passes are historical; current-head
+latency verification remains open. The complete reports and source hashes are in
+the round 2 receipt. Functional validation and hosted review are separate gates.
