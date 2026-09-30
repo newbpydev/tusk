@@ -1,13 +1,19 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 005 locally accepted; second review round's confirmed findings fixed and committed locally
+**Current Status**: Feature 005 locally accepted; review round's confirmed findings fixed and the four P2 coverage gaps closed by tests, committed locally
 **Active Phase**: Phase 6 planning awaits instruction
-**Active Implementation Target**: None — Feature 005 review fixes committed; repeat review pass next
+**Active Implementation Target**: None — Feature 005 review fixes and coverage commits done; repeat review pass next
 
 - [x] Re-review the full feature diff targeting all P0-P2 issues before cloud review.
 - [x] Fix the four validator-confirmed findings (path-resolution duplication,
       double per-Update projection, parent-picker rescans, empty-filter header)
       with red/green evidence and canonical validation.
+- [x] Cover the four review-flagged P2 coverage gaps with tests only (no
+      production change): delete-consent retry/scroll/tab-wrap, recovery
+      saved-state detail and keymap, Model.Update panic containment, and
+      edit-diff notes/priority patches. TUI confirmKey/draft command/recovery
+      content now 100%, model.go recover body exercised; package coverage
+      97.2% -> 98.9%. make validate passes.
 - [ ] Repeat the review to a clean pass before handing off to cloud reviewers.
 
 A second full-branch ce-code-review round (11 reviewers, depth:full) confirmed

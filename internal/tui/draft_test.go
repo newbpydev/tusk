@@ -65,6 +65,72 @@ func TestForm_NoChangesAndExplicitClears(t *testing.T) {
 	}
 }
 
+func TestForm_EditDiffPatchesNotesAndPriority(t *testing.T) {
+	for _, tc := range []struct {
+		name                    string
+		notes, priority         string
+		wantNotes, wantPriority bool
+	}{
+		{"notes only", "fresh notes", "medium", true, false},
+		{"priority only", "stored notes", "high", false, true},
+		{"notes and priority", "rewritten notes", "urgent", true, true},
+		{"unchanged edit", "stored notes", "medium", false, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			base := fixtureNode("one", "Original", core.PriorityMedium, nil).Task
+			base.Description = "stored notes"
+			d := newTaskDraft(&base, false, time.UTC)
+			d.fields[fieldNotes] = tc.notes
+			d.fields[fieldPriority] = tc.priority
+			req, field, message := draftCommand(d)
+			if message != "" || field != 0 {
+				t.Fatalf("unexpected failure: field %d %q", field, message)
+			}
+			patch := req.update
+			if tc.wantNotes {
+				if req.kind != mutationEdit || patch.Description == nil || *patch.Description != tc.notes {
+					t.Fatalf("notes edit dropped: kind %d %+v", req.kind, patch.Description)
+				}
+			} else if patch.Description != nil {
+				t.Fatalf("unchanged notes patched: %q", *patch.Description)
+			}
+			priority, err := core.ParsePriority(tc.priority)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if tc.wantPriority {
+				if req.kind != mutationEdit || patch.Priority == nil || *patch.Priority != priority {
+					t.Fatalf("priority edit dropped: kind %d %+v", req.kind, patch.Priority)
+				}
+			} else if patch.Priority != nil {
+				t.Fatalf("unchanged priority patched: %v", *patch.Priority)
+			}
+			if patch.Title != nil || patch.Tags != nil || patch.Due != nil || patch.ClearDue || patch.ParentID != nil || patch.ClearParent || patch.Status != nil || patch.Progress != nil {
+				t.Fatalf("spurious patch entries: %+v", patch)
+			}
+			if !tc.wantNotes && !tc.wantPriority {
+				if req.kind != mutationNone {
+					t.Fatalf("unchanged edit issued a mutation: %+v", req)
+				}
+				return
+			}
+			if req.kind != mutationEdit || patch.ID != base.ID || patch.Base == nil || patch.Base.Description != "stored notes" || patch.Base.Priority != core.PriorityMedium {
+				t.Fatalf("patch targets the wrong base: %+v", patch)
+			}
+		})
+	}
+}
+
+func TestForm_DueWithoutParserIsRejected(t *testing.T) {
+	d := newTaskDraft(nil, false, time.UTC)
+	d.fields[fieldTitle] = "Task"
+	d.fields[fieldDue] = "tomorrow"
+	_, field, message := d.command(testOptions().Now(), time.UTC, nil)
+	if field != fieldDue || message != "Due-date parsing is unavailable." {
+		t.Fatalf("nil parser accepted a due date: field %d %q", field, message)
+	}
+}
+
 func TestForm_ValidationFocusAndProgressContracts(t *testing.T) {
 	for _, tc := range []struct {
 		field int

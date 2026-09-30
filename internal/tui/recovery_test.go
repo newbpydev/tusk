@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/core"
 	"github.com/newbpydev/tusk/internal/ports"
 )
@@ -219,5 +220,200 @@ func TestRecovery_NamesUncertainTaskActionBeforeReload(t *testing.T) {
 		if !strings.Contains(content, "Affected task") || !strings.Contains(content, "full-target-id") || !strings.Contains(content, "Attempted action:") {
 			t.Fatal("uncertain action lacks context", kind, content)
 		}
+	}
+}
+
+func findRecovery(t *testing.T, cmd tea.Cmd) recoveryMsg {
+	t.Helper()
+	if cmd == nil {
+		t.Fatal("no recovery command")
+	}
+	msg := cmd()
+	if r, ok := msg.(recoveryMsg); ok {
+		return r
+	}
+	if batch, ok := msg.(tea.BatchMsg); ok {
+		for _, c := range batch {
+			if c == nil {
+				continue
+			}
+			v := c()
+			if r, ok := v.(recoveryMsg); ok {
+				return r
+			}
+			if b, ok := v.(tea.BatchMsg); ok {
+				return findRecovery(t, tea.Batch(b...))
+			}
+		}
+	}
+	t.Fatalf("missing recovery message: %T", msg)
+	return recoveryMsg{}
+}
+
+func TestRecovery_SavedNestedSubtaskDetailRendersParentDueAndCompletion(t *testing.T) {
+	due := time.Date(2026, 10, 1, 9, 30, 0, 0, time.UTC)
+	completed := time.Date(2026, 9, 28, 18, 5, 0, 0, time.UTC)
+	grand := fixtureNode("grand", "Stored subtask", core.PriorityHigh, &due)
+	grand.Task.Status = core.StatusDone
+	grand.Task.Progress = 100
+	grand.Task.CompletedAt = &completed
+	grand.Task.Description = "Stored body"
+	middle := "middle"
+	grand.Task.ParentID = &middle
+	root := fixtureNode("root", "Root", core.PriorityMedium, nil, fixtureNode("middle", "Middle", core.PriorityMedium, nil, grand))
+	m := loadedModel(root)
+	press(m, "down")
+	press(m, "down")
+	if m.selectedTask().ID != "grand" {
+		t.Fatal("fixture: nested subtask not selected", m.selectedTask().ID)
+	}
+	events := []ports.TaskEvent{
+		{TaskID: "grand", Sequence: 4, Kind: ports.EventStatus, OccurredAt: completed},
+		{TaskID: "grand", Sequence: 5, Kind: ports.EventProgress, OccurredAt: completed},
+	}
+	m.options.Recover = func(context.Context, string) (recoverySnapshot, error) {
+		return recoverySnapshot{forest: []*core.TaskNode{root}, history: events}, nil
+	}
+	m.freezeWrites()
+	if m.recovery.target.id != "grand" {
+		t.Fatal("recovery lost the nested target", m.recovery.target)
+	}
+	deliverUI(m, press(m, "r"))
+	r := m.recovery
+	if r.state != loaded || r.observed == nil || r.observed.ID != "grand" {
+		t.Fatal("readback did not observe the nested subtask", r)
+	}
+	lines, _, _ := m.recoveryContent(68, 16)
+	all := strings.Join(lines, "\n")
+	for _, want := range []string{
+		"Parent: middle",
+		"Due: " + due.Format(time.RFC3339Nano),
+		"Completed: " + completed.Format(time.RFC3339Nano),
+		"Status: done · Progress: 100%",
+		"2 stored activity events",
+		"#5 progress",
+	} {
+		if !strings.Contains(all, want) {
+			t.Fatal("saved detail omitted", want, all)
+		}
+	}
+}
+
+func TestRecovery_ReplacedIncarnationIsFlagged(t *testing.T) {
+	n := fixtureNode("id", "Replacement body", core.PriorityMedium, nil)
+	m := loadedModel(n)
+	replacement := n.Task.Clone()
+	replacement.CreatedAt = replacement.CreatedAt.Add(time.Hour)
+	m.options.Recover = func(context.Context, string) (recoverySnapshot, error) {
+		return recoverySnapshot{forest: []*core.TaskNode{{Task: replacement}}}, nil
+	}
+	m.freezeWrites()
+	deliverUI(m, press(m, "r"))
+	lines, _, _ := m.recoveryContent(68, 16)
+	if !strings.Contains(strings.Join(lines, "\n"), "A different task now uses this ID.") {
+		t.Fatal("replacement incarnation not flagged")
+	}
+}
+
+func TestRecovery_KeysScrollMoveFocusAndEnterReloads(t *testing.T) {
+	n := fixtureNode("id", "Task", core.PriorityMedium, nil)
+	m := loadedModel(n)
+	m.options.Recover = func(context.Context, string) (recoverySnapshot, error) {
+		return recoverySnapshot{forest: []*core.TaskNode{n}, history: []ports.TaskEvent{
+			{TaskID: "id", Sequence: 1, Kind: ports.EventCreate, OccurredAt: n.Task.CreatedAt},
+			{TaskID: "id", Sequence: 2, Kind: ports.EventStatus, OccurredAt: n.Task.CreatedAt},
+			{TaskID: "id", Sequence: 3, Kind: ports.EventProgress, OccurredAt: n.Task.CreatedAt},
+		}}, nil
+	}
+	m.freezeWrites()
+	r := m.recovery
+	if r.field != 0 || r.state != loadFailed {
+		t.Fatal("fixture: reload is not the default focus", r.field, r.state)
+	}
+	cmd := press(m, "enter")
+	findRecovery(t, cmd)
+	if !m.busy || r.state != loading {
+		t.Fatal("enter on reload did not dispatch the readback")
+	}
+	deliverUI(m, cmd)
+	if r.state != loaded || r.field != 0 {
+		t.Fatal("readback result ignored", r.state, r.field)
+	}
+
+	area := measure(m.width, m.height).modal.height - 6
+	page := max(1, area)
+	lines, _, _ := m.recoveryContent(measure(m.width, m.height).modal.width-6, area)
+	maxScroll := max(0, len(lines)-area)
+	if maxScroll == 0 {
+		t.Fatal("fixture: saved detail fits without scrolling")
+	}
+	press(m, "down")
+	if r.scroll != 1 {
+		t.Fatal("down did not scroll one line", r.scroll)
+	}
+	press(m, "up")
+	press(m, "up")
+	if r.scroll != 0 {
+		t.Fatal("up did not reverse and clamp at the top", r.scroll)
+	}
+	press(m, "pgdown")
+	if r.scroll != min(page, maxScroll) {
+		t.Fatal("pgdown did not scroll one modal page", r.scroll)
+	}
+	press(m, "pgup")
+	if r.scroll != 0 {
+		t.Fatal("pgup did not scroll back one page", r.scroll)
+	}
+	press(m, "end")
+	if r.scroll != maxScroll {
+		t.Fatal("end did not land on the last reviewable line", r.scroll, maxScroll)
+	}
+	press(m, "home")
+	if r.scroll != 0 {
+		t.Fatal("home did not return to the top", r.scroll)
+	}
+
+	formKey(m, tea.KeyShiftTab)
+	if r.field != 2 {
+		t.Fatal("shift+tab did not step back to quit", r.field)
+	}
+	formKey(m, tea.KeyShiftTab)
+	if r.field != 1 {
+		t.Fatal("shift+tab did not reach acknowledge", r.field)
+	}
+	formKey(m, tea.KeyShiftTab)
+	if r.field != 0 {
+		t.Fatal("backward wrap did not return to reload", r.field)
+	}
+
+	blocked := loadedModel(n)
+	blocked.options.Recover = func(context.Context, string) (recoverySnapshot, error) {
+		return recoverySnapshot{}, errors.Join(errRetireFailed, ports.ErrStorage)
+	}
+	blocked.freezeWrites()
+	deliverUI(blocked, press(blocked, "r"))
+	if !blocked.recovery.blocked {
+		t.Fatal("fixture: storage close failure not blocking")
+	}
+	formKey(blocked, tea.KeyShiftTab)
+	press(blocked, "tab")
+	if blocked.recovery.field != 0 {
+		t.Fatal("blocked readback offered focus changes", blocked.recovery.field)
+	}
+}
+
+func TestRecovery_UnavailableReloadFreezesWrites(t *testing.T) {
+	m := loadedModel(fixtureNode("id", "Task", core.PriorityMedium, nil))
+	m.freezeWrites()
+	if cmd := press(m, "r"); cmd != nil {
+		t.Fatal("dispatched a reload without a recovery seam")
+	}
+	if !strings.Contains(m.View(), "Reload is unavailable") {
+		t.Fatal("CLI guidance missing")
+	}
+	press(m, "a")
+	press(m, "e")
+	if m.form != nil || m.canWrite() {
+		t.Fatal("write admission unfrozen without a readback")
 	}
 }

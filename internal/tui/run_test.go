@@ -10,11 +10,21 @@ import (
 	"testing"
 	"time"
 
+	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/newbpydev/tusk/internal/core"
 	"github.com/newbpydev/tusk/internal/ports"
 )
+
+// brokenEditor returns a focused editor whose uninitialized buffer panics on
+// the next Update, so a later key press fails inside Model.Update itself.
+func brokenEditor() textarea.Model {
+	editing := textarea.Model{}
+	editing.Cursor.SetMode(cursor.CursorStatic)
+	editing.Focus()
+	return editing
+}
 
 type failedOutput struct{ short bool }
 
@@ -43,9 +53,16 @@ func TestSession_Run(t *testing.T) {
 						panic("PRIVATE")
 					}
 					if mode == "update panic" {
-						m.(*Model).notes = textarea.Model{}
-						m.(*Model).notes.Focus()
-						m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
+						// The panic must come from inside Model.Update, not from
+						// this callback, or Run's own guard would mask it.
+						tm := m.(*Model)
+						tm.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("a")})
+						tm.Update(tea.KeyMsg{Type: tea.KeyTab})
+						tm.form.notes = brokenEditor()
+						tm.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("x")})
+						if !errors.Is(tm.exitErr, errRuntime) {
+							panic("update panic escaped Model.Update containment")
+						}
 						return m, nil
 					}
 					key := tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}}
@@ -66,6 +83,26 @@ func TestSession_Run(t *testing.T) {
 				t.Fatal("panic leaked")
 			}
 		})
+	}
+}
+
+func TestSession_UpdatePanicQuitsSafely(t *testing.T) {
+	m := loadedModel()
+	press(m, "a")
+	press(m, "tab")
+	if m.form == nil || m.form.field != fieldNotes {
+		t.Fatal("fixture: notes editor not focused")
+	}
+	m.form.notes = brokenEditor()
+	_, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'x'}})
+	if !errors.Is(m.exitErr, errRuntime) {
+		t.Fatal("update panic escaped the model", m.exitErr)
+	}
+	if m.frame != "Interactive session failed." {
+		t.Fatalf("failure frame %q", m.frame)
+	}
+	if _, ok := cmd().(tea.QuitMsg); !ok {
+		t.Fatalf("panic did not request quit: %T", cmd)
 	}
 }
 
