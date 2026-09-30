@@ -13,7 +13,11 @@ func (m *Model) selectedTask() *core.Task {
 
 func (m *Model) rebuildRows() {
 	m.updateTodayBounds()
-	previous, index := m.selectedTask(), m.selected
+	ref, index := taskIdentity(m.selectedTask()), m.selected
+	if r := m.restore; r != nil {
+		m.restore = nil
+		ref, index = r.ref, r.index
+	}
 	m.rows = project(m.forest, m.filter, m.dueStart, m.dueEnd, m.collapsed, m.now, m.options.Location)
 	m.selected = -1
 	if len(m.rows) == 0 {
@@ -21,9 +25,9 @@ func (m *Model) rebuildRows() {
 		return
 	}
 	m.selected = max(0, min(index, len(m.rows)-1))
-	if previous != nil {
+	if ref != (taskRef{}) {
 		for i, row := range m.rows {
-			if row.node.Task.ID == previous.ID && row.node.Task.CreatedAt.Equal(previous.CreatedAt) {
+			if row.node.Task.ID == ref.id && row.node.Task.CreatedAt.Equal(ref.created) {
 				m.selected = i
 				break
 			}

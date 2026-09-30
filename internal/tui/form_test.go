@@ -347,3 +347,42 @@ func TestForm_ParentPickerWindowsLargeMatchLists(t *testing.T) {
 		t.Fatalf("enter chose %q", m.form.draft.fields[fieldParent])
 	}
 }
+
+// A deep selection must materialize only the visible window: the picker hands
+// the overlay a pre-trimmed content slice at offset 0, so allocation follows
+// the modal area instead of the selection depth.
+func TestForm_ParentPickerDeepSelectionBuildsOnlyVisibleWindow(t *testing.T) {
+	var nodes []*core.TaskNode
+	for i := range 40 {
+		nodes = append(nodes, fixtureNode(fmt.Sprintf("id-%02d", i), fmt.Sprintf("Task %02d", i), core.PriorityMedium, nil))
+	}
+	m := loadedModel(nodes...)
+	press(m, "a")
+	for range 5 {
+		press(m, "tab")
+	}
+	formKey(m, tea.KeyCtrlP)
+	press(m, "Task")
+	for range 40 {
+		press(m, "down")
+	}
+	const area = 18
+	_, content, offset, _ := m.formContent(74, area)
+	if offset != 0 {
+		t.Fatalf("picker returned scroll offset %d; the window must be pre-trimmed", offset)
+	}
+	if len(content) > area {
+		t.Fatalf("deep selection materialized %d lines for a %d-line window", len(content), area)
+	}
+	joined := strings.Join(content, "\n")
+	if !strings.Contains(joined, "id-39") || !strings.Contains(joined, "Task 39") {
+		t.Fatal("selected match outside the built window")
+	}
+	if strings.Contains(joined, "id-00") {
+		t.Fatal("off-window match materialized")
+	}
+	press(m, "enter")
+	if m.form.picker != nil || m.form.draft.fields[fieldParent] != "id-39" {
+		t.Fatalf("enter chose %q", m.form.draft.fields[fieldParent])
+	}
+}

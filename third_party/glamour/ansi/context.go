@@ -37,7 +37,9 @@ func (ctx RenderContext) SanitizeHTML(s string, trimSpaces bool) string {
 			break
 		}
 		switch kind {
-		case html.StartTagToken:
+		// Self-closing raw-text tags (<script/>) still enter rawtext mode in
+		// x/net/html, so the skip must arm on both token kinds.
+		case html.StartTagToken, html.SelfClosingTagToken:
 			name, _ := tokens.TagName()
 			if string(name) == "script" || string(name) == "style" {
 				skip = string(name)

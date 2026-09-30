@@ -156,6 +156,42 @@ func TestSearch_LiteralEntryAndRestore(t *testing.T) {
 	}
 }
 
+// Every search dismissal must project the forest exactly once: searchKey's
+// Esc branch hands the pre-search selection to finish, whose rebuildRows is
+// the single projection for that Update (frame.go: callers own rebuilds).
+// The Today tab makes each rebuild visible as a fresh dueEnd pointer.
+func TestSearch_EscDismissalProjectsOnce(t *testing.T) {
+	due := time.Date(2026, 9, 29, 10, 0, 0, 0, time.UTC)
+	nodes := make([]*core.TaskNode, 50)
+	for i := range nodes {
+		nodes[i] = fixtureNode(fmt.Sprintf("id-%02d", i), fmt.Sprintf("Task %02d", i), core.PriorityMedium, &due)
+	}
+	m := loadedModel(nodes...)
+	m.chooseWorkspaceTab(1)
+	m.rebuildRows()
+	m.prepareFrame()
+	for range 20 {
+		press(m, "down")
+	}
+	if m.selectedTask().ID != "id-20" {
+		t.Fatalf("fixture selection %q", m.selectedTask().ID)
+	}
+	press(m, "/")
+	press(m, "nomatch")
+	armed := m.dueEnd
+	m.searchKey(tea.KeyMsg{Type: tea.KeyEsc})
+	if m.dueEnd != armed {
+		t.Fatal("Esc dismissal rebuilt rows in searchKey; finish must own the single rebuild")
+	}
+	m.finish(nil)
+	if m.dueEnd == armed {
+		t.Fatal("finish did not rebuild after search dismissal")
+	}
+	if got := m.selectedTask(); got == nil || got.ID != "id-20" {
+		t.Fatalf("pre-search selection lost: %v", got)
+	}
+}
+
 func TestSelection_IncarnationAndRemovedCollapse(t *testing.T) {
 	a, b := fixtureNode("a", "A", 3, nil), fixtureNode("b", "B", 2, nil)
 	m := loadedModel(a, b)

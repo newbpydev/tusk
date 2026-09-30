@@ -20,6 +20,14 @@ type searchMsg struct {
 	err   error
 }
 
+// selectionRestore defers a selection restoration to the next rebuildRows, so
+// a caller that restores view state can leave the projection to finish's
+// single rebuild instead of projecting twice in one Update.
+type selectionRestore struct {
+	ref   taskRef
+	index int
+}
+
 func (m *Model) beginSearch() {
 	m.searching = true
 	m.searchDraft = m.filter.SearchTerm
@@ -38,14 +46,10 @@ func (m *Model) searchKey(msg tea.KeyMsg) tea.Cmd {
 		m.filter.SearchTerm = m.searchBefore.query
 		m.collapsed = maps.Clone(m.searchBefore.collapsed)
 		m.pruneCollapsed()
-		m.rebuildRows()
-		m.selected = max(-1, min(m.searchBefore.index, len(m.rows)-1))
-		for i, row := range m.rows {
-			if row.node.Task.ID == m.searchBefore.id && row.node.Task.CreatedAt.Equal(m.searchBefore.created) {
-				m.selected = i
-				break
-			}
-		}
+		// finish owns the single rebuild for this Update; hand it the
+		// pre-search selection so rebuildRows restores by ID exactly as the
+		// dismissal always has, without projecting the forest twice.
+		m.restore = &selectionRestore{ref: taskRef{m.searchBefore.id, m.searchBefore.created.UTC()}, index: m.searchBefore.index}
 		return nil
 	case tea.KeyEnter:
 		m.cancelSearchTimer()

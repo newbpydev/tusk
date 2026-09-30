@@ -70,6 +70,7 @@ type Model struct {
 	searching                 bool
 	searchDraft               string
 	searchBefore              searchSnapshot
+	restore                   *selectionRestore
 	searchToken               uint64
 	searchCancel              context.CancelFunc
 	owner, generation         uint64

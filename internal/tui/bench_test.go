@@ -306,6 +306,19 @@ func BenchmarkForm_ParentPickerTyping10000Tasks(b *testing.B) {
 	}
 }
 
+// Search dismissal at the budgeted 1000-task scale: one Esc per iteration
+// through Update, which must project the forest exactly once (finish's
+// rebuild) while restoring the pre-search selection.
+func BenchmarkSearch_EscRestore1000Tasks(b *testing.B) {
+	m := benchmarkModel(1000, 120, 40, 32*1024, 100)
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		m.beginSearch()
+		m.Update(tea.KeyMsg{Type: tea.KeyEsc})
+	}
+}
+
 func TestWorkflow_StressCommandsStayBounded(t *testing.T) {
 	if testing.Short() {
 		t.Skip("large TUI stress fixture")

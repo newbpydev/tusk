@@ -403,30 +403,34 @@ func (m *Model) formContent(width, area int) (string, []string, int, string) {
 	}
 	if p := f.picker; p != nil {
 		matches := p.matches()
-		// The offset math keeps the selected pair at the bottom of the modal;
-		// materialize only the lines the overlay can actually display.
+		// The offset math keeps the selected pair at the bottom of the modal.
+		// Build only the visible window and hand the overlay a pre-trimmed
+		// slice at offset 0: the overlay reads content[offset+i], so this
+		// renders identically while allocation follows the modal area rather
+		// than the selection depth.
 		offset := max(0, 2+p.selected*2-area+2)
 		limit := min(2+2*len(matches), offset+area)
-		lines := make([]string, max(0, limit))
+		lines := make([]string, max(0, limit-offset))
 		if offset == 0 && limit >= 2 {
 			lines[0] = "Search: " + terminaltext.Scalar(p.query) + "▎"
 			lines[1] = ""
 		}
-		first := max(0, (offset-2)/2)
-		for i := first; i < len(matches); i++ {
+		for i := 0; i < len(matches); i++ {
 			if 2+2*i >= limit {
 				break
 			}
-			prefix := "  "
-			if i == p.selected {
-				prefix = "> "
+			if 2+2*i >= offset {
+				prefix := "  "
+				if i == p.selected {
+					prefix = "> "
+				}
+				lines[2+2*i-offset] = prefix + terminaltext.Scalar(matches[i].title)
 			}
-			lines[2+2*i] = prefix + terminaltext.Scalar(matches[i].title)
-			if 3+2*i < limit {
-				lines[3+2*i] = "    " + terminaltext.Scalar(matches[i].id)
+			if 3+2*i >= offset && 3+2*i < limit {
+				lines[3+2*i-offset] = "    " + terminaltext.Scalar(matches[i].id)
 			}
 		}
-		return "Choose parent", lines, offset, "↑↓ choose · Enter select · Esc cancel"
+		return "Choose parent", lines, 0, "↑↓ choose · Enter select · Esc cancel"
 	}
 	labels := []string{"Title", "Notes · Enter adds a line", "Priority · ←→ choose", "Due date · e.g. 2026-10-15 or tomorrow", "Tags · comma-separated", "Parent · Ctrl+P choose · Ctrl+U root", "Status · ←→ choose", "Progress · 0–99 for open leaves"}
 	lines := []string{}

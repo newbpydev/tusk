@@ -194,7 +194,7 @@
   },
   "patches": {
     "ansi/codeblock.go": "59bd42ff01c277eff54804f52b39094b3ed279c51ed15b436e69d3067eb1aa1a",
-    "ansi/context.go": "4adbb21fef5ac2ed857315ae7b61f0219127cf539ddde075b879610901bb1fbc"
+    "ansi/context.go": "37a99bc0830d674ba3a9bd9c311900444e2bc9761d8120d0c64a9592f9020963"
   },
   "reason": "Avoid eager syntax and CSS policy registries before CLI routing: use base-styled code blocks and tokenizer-only HTML text extraction. All output still crosses Tusk terminal-control sanitization."
 }

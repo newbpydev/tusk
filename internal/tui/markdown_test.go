@@ -24,6 +24,13 @@ func TestMarkdown_HTMLTextOnly(t *testing.T) {
 		{"<!-- hidden -->visible", "visible"},
 		{"<script>unclosed", ""},
 		{"&lt;tag&gt; &amp; &#27;", "<tag> & \x1b"},
+		// x/net/html returns SelfClosingTagToken for self-closed raw-text tags
+		// while still entering rawtext mode, so the skip must arm there too.
+		{"<script/>alert('leak')</script>ok", "ok"},
+		{"<style/>body{}</style>ok", "ok"},
+		{"<SCRIPT/>X</SCRIPT>ok", "ok"},
+		{"<script/>unterminated", ""},
+		{"<b/>kept", "kept"},
 	} {
 		if got := ctx.SanitizeHTML(tc.source, false); got != tc.want {
 			t.Errorf("%q: got %q, want %q", tc.source, got, tc.want)
