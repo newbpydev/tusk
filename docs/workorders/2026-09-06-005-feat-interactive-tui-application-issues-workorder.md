@@ -576,7 +576,7 @@ validation, affected minimum-Go checks, retained CLI/TUI measurements, code
 review and actual owned Kitty checks at 80x24 and 120x40 in color/plain modes.
 Owner visual confirmation and a coherent local follow-up commit close this
 refinement. Earlier acceptance receipts remain unchanged; release proof stays
-with Feature 006. Current refinement status: in progress.
+with Feature 006. Current refinement status: locally accepted; final receipt below.
 
 ### Darkmatter palette refinement (2026-09-30)
 
@@ -592,11 +592,10 @@ destructive color, because its dark destructive token is teal. Keep all surfaces
 opaque, existing non-color focus markers and the approved spacing/geometry.
 The owner confirmed “Yes, keep Darkmatter”; the tree/count approval is also
 recorded. Canonical, affected Go 1.25, owned Kitty and all 78 TUI timing cases
-pass. Final CLI timing and the local commit remain pending: the first follow-up
-matrix passed 80/84 cases. All samples are retained; host activity and an
-accepted-baseline comparison are being checked before any final measurement.
+pass. The initial 80/84 CLI checkpoint is preserved below as historical
+evidence; the final acceptance section records the resolved timing gate.
 
-### U6 visual follow-up checkpoint (2026-09-30, 17:59 UTC)
+### Historical U6 visual follow-up checkpoint (2026-09-30, 17:59 UTC)
 
 The owner approves the connected task guides, fractional progress counts and
 Darkmatter palette. Red/green, canonical validation, affected Go 1.25 checks,
@@ -613,3 +612,24 @@ for a quieter window or to retain the timing gate explicitly pending.
 
 This is approved implementation with incomplete final acceptance. U6 remains
 the active follow-up; Feature 006 implementation and publication are not started.
+
+### U6 hierarchy and Darkmatter follow-up accepted (2026-09-30)
+
+The owner approved the final app checks and reported Cline CLI shut down.
+The unchanged application source now passes all 84 CLI timing cases across
+three complete runs: worst query/help p90 14.291/4.112 ms; all tail guards
+pass. Every sample, warmup and earlier failed report remains retained. Limits,
+host settings and application behavior were not changed to obtain acceptance.
+
+Fresh `make validate build check-generated` passes. The reviewed source hashes
+still match the affected Go 1.25 checks, owned Kitty inspections and all 78
+passing TUI timing cases (worst preparation p95 13.929 ms). The latter are
+unchanged-source evidence, not a newly executed TUI matrix. The owner-approved
+Spacious layout, calendar, Darkmatter palette, connected guides and fractional
+direct-item counts are complete; product R7 stored rollup semantics are unchanged.
+
+Implementation commit 246db8c and this containing acceptance commit close the
+U6 follow-up and restore Phase 5 local acceptance. See the
+[final receipt](../verification-evidence/005/u6-hierarchy/acceptance.json).
+Feature 006 planning awaits instruction. V111/V112, remaining native TUSK-V66
+coverage and hosted release proof remain separate; nothing was published.

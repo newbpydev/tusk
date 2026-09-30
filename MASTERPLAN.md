@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: 🟢 Feature 005 owner-requested UX follow-up
-**Active Phase**: Phase 5 — Feature 005 visual refinement authorized 2026-09-30
-**Active Implementation Target**: Feature 005 U6 follow-up — connected tree guides, fractional progress counts and Darkmatter palette
+**Current Status**: 🟢 Feature 005 locally accepted, including approved UX refinement
+**Active Phase**: Phase 6 planning — awaiting instruction
+**Active Implementation Target**: None — Feature 005 and the U6 refinement are locally complete
 
 - [x] Connect visible siblings and ancestor paths through title/metadata rows;
   reserve the last-child elbow for the final visible sibling.
@@ -10,20 +10,19 @@
   fractional credit, using authoritative service progress without changing rollup.
 - [x] Match the owner-requested Darkmatter dark palette; preserve contrast,
   opaque surfaces and color-independent focus. Tree/count and palette approved.
-- [ ] Retain red/green, canonical, current-candidate timing, review and owned
+- [x] Retain red/green, canonical, current-candidate timing, review and owned
   Kitty evidence; obtain visual confirmation and commit the follow-up locally.
 
-The prior U6 acceptance below remains historical evidence for `03c5381`.
-This authorized follow-up must complete before advancing to Feature 006.
+The owner approved the final app checks. After the owner reported Cline CLI
+shut down, the unchanged source passed all 84 CLI timing cases: worst query/help
+p90 14.291/4.112 ms, with all tail guards passing. Fresh canonical validation
+passes. The existing minimum-Go, owned Kitty, review and 78-case TUI evidence
+matches the current source. Prior failed reports and every sample are retained.
+See the [follow-up acceptance](docs/verification-evidence/005/u6-hierarchy/acceptance.json).
+Implementation commit 246db8c and the containing acceptance commit close U6.
+Feature 006 planning awaits instruction; no implementation or publication began.
 
-The implementation and visual design are approved. Red/green, canonical,
-affected Go 1.25, owned Kitty and all 78 TUI timing cases pass; scoped review has
-no findings. Final CLI acceptance remains open: candidate runs pass 80/84 and
-77/84, while accepted-source control 03c5381 passes 81/84 on this host. Sustained
-Chrome activity remains after Kilo quieted; a quieter window is pending. See the
-[current checkpoint](docs/verification-evidence/005/u6-hierarchy/checkpoint.json).
-The containing local checkpoint commit saves the approved implementation and
-all evidence; it does not close the remaining CLI acceptance gate.
+The original U6 acceptance at 03c5381 remains historical evidence below.
 
 The approved Spacious TUI, opaque surfaces, due-date calendar and input examples
 are locally accepted. Canonical validation, Go 1.25 checks, five-target builds,
