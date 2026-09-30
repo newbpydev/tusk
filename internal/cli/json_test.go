@@ -267,6 +267,24 @@ func TestJSON_EncodingParity(t *testing.T) {
 	}
 }
 
+func BenchmarkJSON(b *testing.B) {
+	nodes := make([]core.TaskNode, 1000)
+	roots := make([]*core.TaskNode, len(nodes))
+	for i := range nodes {
+		nodes[i] = core.TaskNode{Task: jsonFixture(), Depth: 1}
+		nodes[i].Task.Title = strings.Repeat("t", 64)
+		nodes[i].Task.Description = strings.Repeat("n", 128)
+		roots[i] = &nodes[i]
+	}
+	b.ReportAllocs()
+	b.ResetTimer()
+	for range b.N {
+		if _, err := encodeJSON(roots); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
 // Standard-library oracle for the explicit task schema, independent of the
 // production append encoder. Batch DTO construction is only needed in tests.
 type nodeJSON struct {

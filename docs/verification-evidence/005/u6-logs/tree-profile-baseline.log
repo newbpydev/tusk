@@ -1,0 +1,9 @@
+go test ./scripts/cli-bench -run '^$' -bench '^BenchmarkCLIProfile$' -benchtime=3s -cpuprofile "/tmp/tusk-u6-tree-profile.cpu" -o "/tmp/tusk-u6-tree-profile.cpu.test"
+goos: linux
+goarch: amd64
+pkg: github.com/newbpydev/tusk/scripts/cli-bench
+cpu: AMD Ryzen 5 4500U with Radeon Graphics         
+BenchmarkCLIProfile/list-6         	     426	   9188032 ns/op	 1610084 B/op	   22684 allocs/op
+BenchmarkCLIProfile/tree-6         	     357	   9801998 ns/op	 2036561 B/op	   26024 allocs/op
+PASS
+ok  	github.com/newbpydev/tusk/scripts/cli-bench	9.377s

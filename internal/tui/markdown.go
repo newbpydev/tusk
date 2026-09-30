@@ -65,11 +65,10 @@ func markdownStyles() glamouransi.StyleConfig {
 	s.ImageText.Color = &fg
 	s.Code.Color = &accent
 	s.Code.BackgroundColor = &bg
-	if s.CodeBlock.Chroma != nil {
-		chroma := *s.CodeBlock.Chroma
-		chroma.Comment.Color = &muted
-		s.CodeBlock.Chroma = &chroma
-	}
+	s.CodeBlock.Chroma = nil
+	s.CodeBlock.Theme = ""
+	s.CodeBlock.Color = &fg
+	s.CodeBlock.BackgroundColor = &bg
 	return s
 }
 

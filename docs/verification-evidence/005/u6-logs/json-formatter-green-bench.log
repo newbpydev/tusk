@@ -1,0 +1,10 @@
+go test ./internal/cli -run '^$' -bench '^BenchmarkJSON$' -benchmem -count=3
+goos: linux
+goarch: amd64
+pkg: github.com/newbpydev/tusk/internal/cli
+cpu: AMD Ryzen 5 4500U with Radeon Graphics         
+BenchmarkJSON-6   	    2067	    810543 ns/op	  491530 B/op	       1 allocs/op
+BenchmarkJSON-6   	    1531	    877308 ns/op	  491526 B/op	       1 allocs/op
+BenchmarkJSON-6   	    1552	    877990 ns/op	  491525 B/op	       1 allocs/op
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	4.614s

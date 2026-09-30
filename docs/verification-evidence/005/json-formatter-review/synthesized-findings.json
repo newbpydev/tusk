@@ -1,0 +1,13 @@
+{
+  "findings": [],
+  "pre_existing_findings": [],
+  "soft_buckets": [],
+  "triage_groups": [],
+  "coverage_notes": [
+    "Sequential parent-context review follows the user-provided AGENTS tool mapping. No independent subagents or cross-model corroboration are claimed.",
+    "Full depth for the JSON serialization boundary; 21 changed executable non-test lines. New benchmarks are diagnostic only and do not modify acceptance limits, sampling, or pass logic. No adversarial runtime trigger selected.",
+    "The base is an unreferenced commit object of the previously validated index. No branch or HEAD moved. Earlier full-feature and calendar reviews cover inherited source.",
+    "AGENTS.md is the applicable criteria fallback. docs/solutions contains only a transaction-outcome learning, unrelated to this pure formatter delta.",
+    "Untracked measurement logs are excluded from source review; retained as verification evidence separately."
+  ]
+}

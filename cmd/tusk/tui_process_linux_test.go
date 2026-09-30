@@ -100,7 +100,7 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 					want       string
 				}{
 					{79, 23, "Resize to 80×24; Ctrl+C quits"},
-					{120, 40, "╭─ > Tasks " + strings.Repeat("─", 36) + "╮"},
+					{120, 40, "╭─ > Tasks · 0 tasks " + strings.Repeat("─", 26) + "╮"},
 				} {
 					if err = unix.IoctlSetWinsize(fd, unix.TIOCSWINSZ, &unix.Winsize{Row: step.rows, Col: step.cols}); err != nil {
 						t.Fatal(err)

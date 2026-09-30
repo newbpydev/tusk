@@ -3,6 +3,7 @@ package tui
 import (
 	"slices"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
@@ -41,11 +42,35 @@ func (m *Model) beginFilters() {
 }
 
 func (m *Model) clearFilters() {
+	m.workspaceTab = 0
 	m.filter = core.TaskFilter{}
 	m.dueStart = nil
 	m.dueEnd = nil
 	m.dueExpression = ""
 	m.dueLabel = ""
+}
+
+func (m *Model) chooseWorkspaceTab(tab int) {
+	query := m.filter.SearchTerm
+	m.clearFilters()
+	m.filter.SearchTerm = query
+	m.workspaceTab = tab
+	if tab == 1 {
+		m.dueLabel = "Today and overdue"
+		m.filter.Statuses = []core.Status{core.StatusTodo, core.StatusInProgress, core.StatusBlocked}
+	} else if tab == 2 {
+		m.filter.Statuses = []core.Status{core.StatusDone}
+	}
+	m.listOffset = 0
+}
+
+func (m *Model) updateTodayBounds() {
+	if m.workspaceTab != 1 {
+		return
+	}
+	local := m.now.In(m.options.Location)
+	end := time.Date(local.Year(), local.Month(), local.Day()+1, 0, 0, 0, 0, m.options.Location)
+	m.dueEnd = &end
 }
 
 func (m *Model) applyFilters() {
@@ -92,6 +117,7 @@ func (m *Model) applyFilters() {
 	}
 	m.dueExpression = f.due
 	m.filter = next
+	m.workspaceTab = -1
 	m.filters = nil
 }
 
@@ -183,27 +209,17 @@ func (m *Model) filterLines(width int) []string {
 	choices := func(field int, names []string, values [4]bool) string {
 		var labels []string
 		for i, name := range names {
-			box := "[ ] "
-			if values[i] {
-				box = "[x] "
-			}
-			s := box + name
-			if f.field == field && f.choice == i {
-				s = m.paint(">"+s, accentColor, true)
-			} else {
-				s = " " + s
-			}
+			s := m.checkbox(name, values[i], f.field == field && f.choice == i)
 			labels = append(labels, s)
 		}
 		return "  " + strings.Join(labels, "  ")
 	}
 	return []string{
 		"Choose any statuses and priorities; empty means all.", "",
-		label(0, "Status"), choices(0, []string{"Todo", "In progress", "Blocked", "Done"}, f.statuses),
+		label(0, "Status"), choices(0, []string{"Todo", "In progress", "Blocked", "Done"}, f.statuses), "",
 		label(1, "Priority"), choices(1, []string{"Low", "Medium", "High", "Urgent"}, f.priorities), "",
-		label(2, "Tags · all must match"), "  " + inputLine(f.tags, f.field == 2, width-4),
-		label(3, "Due day · today, tomorrow or YYYY-MM-DD"), "  " + inputLine(f.due, f.field == 3, width-4), "",
-		label(4, "[ Apply filters ]") + "    " + label(5, "[ Clear all ]"),
+		label(2, "Tags · all must match"), "  │ " + inputLine(f.tags, f.field == 2, width-4), "",
+		label(3, "Due day · today, tomorrow or YYYY-MM-DD"), "  │ " + inputLine(f.due, f.field == 3, width-4),
 		m.paint(f.err, accentColor, false),
 	}
 }

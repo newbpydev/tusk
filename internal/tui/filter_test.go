@@ -177,7 +177,7 @@ func TestFilter_PlainChoiceHasVisibleFocus(t *testing.T) {
 		t.Fatal("plain profile hides selected checkbox focus")
 	}
 	press(m, " ")
-	if !strings.Contains(m.View(), ">[x] In progress") {
+	if !strings.Contains(m.View(), ">[✓] In progress") {
 		t.Fatal("checked focus hidden")
 	}
 }

@@ -1,0 +1,21 @@
+{
+  "status": "correctness verified; local acceptance completed by final gate receipt",
+  "prior_cli_latency": {
+    "passed": false,
+    "case_runs_passed": 76,
+    "case_runs_total": 84,
+    "report": "../u6-logs/cli-latency-before-konsole.json"
+  },
+  "canonical": "../u6-logs/final-checklist-validate.log",
+  "minimum_go": "../u6-logs/json-formatter-go125-full.log and final-resize-go125.log",
+  "test_only_follow_up": {
+    "review": "V28/V29 assertions reviewed inline for independent expected selection/draft and fixed geometry across input sizes and loading/refresh/saving states; no production change",
+    "findings": [],
+    "sha256": {
+      "internal/tui/form_test.go": "13c3e4bc3ace258a7f5cd3c7e512d65dfbf0a0c497474624a8937e110b152699",
+      "internal/tui/layout_test.go": "92f8fb509b3884952d57be89d2ea69c78a1b613abc61a715fe696b8539fdc126"
+    }
+  },
+  "owner_decision": "Owner closed Zed and continued the existing local gate; no deferral or waiver.",
+  "final_acceptance": "../review-acceptance.json"
+}

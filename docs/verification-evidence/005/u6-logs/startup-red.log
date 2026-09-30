@@ -1,0 +1,18 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestCLIStartup_NoSyntaxRegistryInitialization|TestWorkflow_StressTimerCommandsDrain'
+=== RUN   TestWorkflow_StressTimerCommandsDrain
+--- PASS: TestWorkflow_StressTimerCommandsDrain (0.02s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.046s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+=== RUN   TestCLIStartup_NoSyntaxRegistryInitialization
+    startup_test.go:32: --help eagerly initializes syntax registries before CLI routing
+--- FAIL: TestCLIStartup_NoSyntaxRegistryInitialization (0.73s)
+FAIL
+FAIL	github.com/newbpydev/tusk/cmd/tusk	0.747s
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

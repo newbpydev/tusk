@@ -64,6 +64,7 @@ type Model struct {
 	detailsEnd                bool
 	collapsed                 map[string]bool
 	filter                    core.TaskFilter
+	workspaceTab              int // 0 all, 1 today, 2 done, -1 custom filters
 	dueStart, dueEnd          *time.Time
 	now                       time.Time
 	searching                 bool
@@ -205,9 +206,9 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 			case "k", "up":
 				m.helpScroll--
 			case "pgdown":
-				m.helpScroll += max(1, measure(m.width, m.height).modal.height-4)
+				m.helpScroll += max(1, measure(m.width, m.height).modal.height-6)
 			case "pgup":
-				m.helpScroll -= max(1, measure(m.width, m.height).modal.height-4)
+				m.helpScroll -= max(1, measure(m.width, m.height).modal.height-6)
 			case "g", "home":
 				m.helpScroll = 0
 			case "G", "end":
@@ -224,6 +225,8 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 			return m.finish(nil)
 		}
 		switch msg.String() {
+		case "1", "2", "3":
+			m.chooseWorkspaceTab(int(msg.Runes[0] - '1'))
 		case "d":
 			m.beginDelete()
 		case "a":

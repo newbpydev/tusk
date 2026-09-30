@@ -1,0 +1,7 @@
+mkdir -p "bin/"
+CGO_ENABLED=0 go build -o "bin/tusk" ./cmd/tusk
+TUSK_TUI_BENCH_OUTPUT="/tmp/tusk-u6-tui-baseline.json" go test ./internal/tui -run '^TestTUIMeasurements$' -count=1 -timeout=20m -v
+=== RUN   TestTUIMeasurements
+--- PASS: TestTUIMeasurements (182.33s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	182.346s

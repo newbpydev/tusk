@@ -1,0 +1,33 @@
+==> Formatting Go files with gofmt -s...
+==> Successfully formatted Go files.
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestWorkflow|TestTUIMeasurement_Summary|TestTUIProcess_TerminalRestoredOnFailure'
+=== RUN   TestWorkflow_StressCommandsStayBounded
+--- PASS: TestWorkflow_StressCommandsStayBounded (1.30s)
+=== RUN   TestTUIMeasurement_SummaryRetainsSamplesAndRejectsMisses
+--- PASS: TestTUIMeasurement_SummaryRetainsSamplesAndRejectsMisses (0.00s)
+=== RUN   TestWorkflow_EditConflictReadbackAndQuit
+--- PASS: TestWorkflow_EditConflictReadbackAndQuit (0.05s)
+=== RUN   TestWorkflow_ToggleErrorsHaveActionableBrowseHints
+--- PASS: TestWorkflow_ToggleErrorsHaveActionableBrowseHints (0.03s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	1.403s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.004s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/startup
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/output
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/committed-cancel
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/unknown-cancel
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/recover-cancel
+--- PASS: TestTUIProcess_TerminalRestoredOnFailure (0.51s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/startup (0.07s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/output (0.07s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/committed-cancel (0.12s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/unknown-cancel (0.11s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/recover-cancel (0.13s)
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.533s

@@ -1,0 +1,40 @@
+ TUSK  /  Personal workspace                                                                     f Filters   a New task 
+╭─ > Tasks · 9 tasks ──────────────────────────╮╭─ Task details · 1–36 / 52 ───────────────────────────────────────────╮
+│ /  Search tasks                              ││                                                                      │
+│ [1 All tasks]  2 Today  3 Done               ││  Launch customer workspace                                           │
+│──────────────────────────────────────────────││  Root task                                                           │
+│  Today                                       ││                                                                      │
+│ >▾ ○ Launch customer workspace               ││  Status                            Priority                          │
+│      Todo · Urgent · 100%                    ││  ○ Todo                            Urgent                            │
+│    └ ✓ Design welcome screens                ││                                                                      │
+│        Done · High · 100%                    ││  Due date                          Tags                              │
+│  ○ Prepare onboarding                        ││  Sep 29 · 23:59                    design, launch                    │
+│    Todo · High                               ││                                                                      │
+│                                              ││  Progress                                                            │
+│  Upcoming                                    ││  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100%   │
+│  ○ Calendar usability check                  ││                                                                      │
+│    Todo · Medium                             ││  Notes                                                               │
+│                                              ││                                                                      │
+│  Backlog                                     ││  Launch checklist                                                    │
+│  ▾ ○ New Task edited                         ││                                                                      │
+│      Todo · Urgent                           ││  A calm workspace for focused work.                                  │
+│    └ ○ New Subtask                           ││                                                                      │
+│        Todo · Medium                         ││  • Review keyboard navigation                                        │
+│    └ ○ New subtask                           ││  • Keep forms readable                                               │
+│        Todo · Medium                         ││  • Confirm destructive changes                                       │
+│  ○ Customer interviews changed externally    ││                                                                      │
+│    Todo · Medium                             ││  Links stay inert: Project https://example.test.                     │
+│  ○ Explore dashboard ideas                   ││                                                                      │
+│    Todo · Low                                ││  世界 · café · 👩‍💻                                                    │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││  ──────────────────────────────────────────────────────────────────  │
+│                                              ││  Activity                                                            │
+│                                              ││                                                                      │
+│                                              ││  #1  create                                                          │
+│                                              ││  Changed completed_at, description, due_date, parent_id, priority,   │
+│                                              ││  progress, status, tags, title                                       │
+│                                              ││  2026-09-29 21:36:16 -03 (-03:00)                                    │
+╰──────────────────────────────────────────────╯╰──────────────────────────────────────────────────────────────────────╯
+ Saved · r refresh · ? help · q quit

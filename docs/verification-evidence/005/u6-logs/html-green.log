@@ -1,0 +1,37 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestCLIStartup|TestMarkdown|TestTUI_DependencyPatchIntegrity'
+=== RUN   TestTUI_DependencyPatchIntegrity
+=== RUN   TestTUI_DependencyPatchIntegrity/bubbletea
+=== RUN   TestTUI_DependencyPatchIntegrity/glamour
+--- PASS: TestTUI_DependencyPatchIntegrity (0.00s)
+    --- PASS: TestTUI_DependencyPatchIntegrity/bubbletea (0.00s)
+    --- PASS: TestTUI_DependencyPatchIntegrity/glamour (0.00s)
+=== RUN   TestMarkdown_LatestPendingRenderAndFallback
+--- PASS: TestMarkdown_LatestPendingRenderAndFallback (0.01s)
+=== RUN   TestMarkdown_IdentityWidthProfileAndPanicFallback
+--- PASS: TestMarkdown_IdentityWidthProfileAndPanicFallback (0.02s)
+=== RUN   TestMarkdown_HTMLTextOnly
+--- PASS: TestMarkdown_HTMLTextOnly (0.00s)
+=== RUN   TestMarkdown_ControlsAndNoExternalEffects
+--- PASS: TestMarkdown_ControlsAndNoExternalEffects (0.00s)
+=== RUN   TestMarkdown_GeneratedOutputAllowsOnlySGR
+--- PASS: TestMarkdown_GeneratedOutputAllowsOnlySGR (0.00s)
+=== RUN   TestMarkdown_LongUnicodeAndCancellation
+--- PASS: TestMarkdown_LongUnicodeAndCancellation (0.05s)
+=== RUN   TestMarkdown_BudgetBoundariesAndGeneratedSGRGrammar
+--- PASS: TestMarkdown_BudgetBoundariesAndGeneratedSGRGrammar (0.00s)
+=== RUN   TestMarkdown_StyleMatchesWorkspaceWithoutSharedMutation
+--- PASS: TestMarkdown_StyleMatchesWorkspaceWithoutSharedMutation (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.094s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+=== RUN   TestCLIStartup_NoSyntaxRegistryInitialization
+--- PASS: TestCLIStartup_NoSyntaxRegistryInitialization (1.12s)
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	1.130s
+mkdir -p "bin/"
+CGO_ENABLED=0 go build -o "bin/tusk" ./cmd/tusk

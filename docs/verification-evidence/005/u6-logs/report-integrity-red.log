@@ -1,0 +1,15 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestTUIMeasurement'
+# github.com/newbpydev/tusk/internal/tui [github.com/newbpydev/tusk/internal/tui.test]
+internal/tui/measurement_test.go:53:20: r.P50 undefined (type tuiMeasurement has no field or method P50)
+FAIL	github.com/newbpydev/tusk/internal/tui [build failed]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	(cached) [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	(cached) [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.018s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

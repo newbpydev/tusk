@@ -100,6 +100,12 @@ BUILD_OUTPUT ?= bin/tusk
 CLI_TEST_RUN ?= .
 TUI_TEST_RUN ?= .
 TUI_TEST_FLAGS ?=
+.PHONY: bench-tui
+TUI_BENCH_OUTPUT ?= docs/verification-evidence/005/tui-latency.json
+bench-tui: build
+	TUSK_TUI_BENCH_OUTPUT="$(abspath $(TUI_BENCH_OUTPUT))" go test ./internal/tui -run '^TestTUIMeasurements$$' -count=1 -timeout=20m -v
+	TUSK_TUI_STARTUP_OUTPUT="$(abspath $(TUI_BENCH_OUTPUT)).startup.json" go test ./cmd/tusk -run '^TestTUIStartupMeasurements$$' -count=1 -timeout=5m -v
+
 .PHONY: test-tui build-tui build-tui-fixture
 
 # Manual fault-injected app, never test-result verification in Kitty.
@@ -174,6 +180,10 @@ bench-cli: build
 CLI_PROFILE_OUTPUT ?= /tmp/tusk-cli.cpu
 profile-cli:
 	go test ./scripts/cli-bench -run '^$$' -bench '^BenchmarkCLIProfile$$' -benchtime=3s -cpuprofile "$(CLI_PROFILE_OUTPUT)" -o "$(CLI_PROFILE_OUTPUT).test"
+
+.PHONY: bench-cli-json
+bench-cli-json:
+	go test ./internal/cli -run '^$$' -bench '^BenchmarkJSON$$' -benchmem -count=3
 
 .PHONY: check-modules
 check-modules:

@@ -1,0 +1,28 @@
+go test -v ./internal/cli ./cmd/tusk -run '^TestJSON_|^TestOutput_'
+=== RUN   TestJSON_ExplicitFields
+--- PASS: TestJSON_ExplicitFields (0.00s)
+=== RUN   TestJSON_Collections
+--- PASS: TestJSON_Collections (0.00s)
+=== RUN   TestJSON_StatsDeleteHistory
+--- PASS: TestJSON_StatsDeleteHistory (0.00s)
+=== RUN   TestJSON_Invalid
+--- PASS: TestJSON_Invalid (0.00s)
+=== RUN   TestJSON_EncodingAllocation
+--- PASS: TestJSON_EncodingAllocation (2.47s)
+=== RUN   TestJSON_TreeEncodingAllocation
+--- PASS: TestJSON_TreeEncodingAllocation (2.35s)
+=== RUN   TestJSON_EncodingParity
+--- PASS: TestJSON_EncodingParity (0.01s)
+=== RUN   TestOutput_CommittedEncodeFailure
+--- PASS: TestOutput_CommittedEncodeFailure (0.00s)
+=== RUN   TestOutput_WriterFailures
+--- PASS: TestOutput_WriterFailures (0.00s)
+=== RUN   TestOutput_UnknownOutcomePrecedesCause
+--- PASS: TestOutput_UnknownOutcomePrecedesCause (0.00s)
+=== RUN   TestOutput_LargeJSONAllocation
+--- PASS: TestOutput_LargeJSONAllocation (1.22s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	6.057s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.005s [no tests to run]

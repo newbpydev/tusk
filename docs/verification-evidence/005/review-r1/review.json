@@ -1,0 +1,280 @@
+{
+  "status": "complete",
+  "verdict": "Not ready",
+  "scope": {
+    "base": "4f4873c78c484da12f766e700bb69b92f46335a9",
+    "branch": "feat/interactive-tui-application",
+    "head_sha": "3a65e8a336d73334e99cfed992b71e894955f566",
+    "pr_url": null,
+    "files_changed": 555
+  },
+  "intent": "Deliver the explicit, keyboard-operated TUI with approved Spacious visual design, safe lifecycle/consent/recovery and evidence-separated local acceptance. U6 performance acceptance remains actively in progress.",
+  "intent_confidence": "explicit",
+  "reviewers": [
+    "correctness",
+    "project-standards",
+    "testing",
+    "maintainability",
+    "security",
+    "performance",
+    "reliability",
+    "api-contract",
+    "julik-frontend-races",
+    "learnings-researcher",
+    "agent-native-reviewer",
+    "adversarial-grok"
+  ],
+  "findings": [],
+  "actionable_findings": [],
+  "triage_groups": [],
+  "pre_existing_findings": [],
+  "requirements_completeness": {
+    "requirements": [
+      {
+        "id": "R1",
+        "requirement": "Explicit `tusk tui` with zero positional arguments; bare/help/version/syntax remain storage-free",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R2",
+        "requirement": "Require terminal stdin/stdout; use existing DB, timezone and parent-completion precedence; reject invalid config before open",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R3",
+        "requirement": "Own one session repository, restore terminal and close exactly once per owner after admitted work finishes",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R4",
+        "requirement": "Pin the v1 UI family on Go 1.25; keep CGO-free release builds and existing CLI/storage contracts",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R5",
+        "requirement": "Root `View() string` is read-only, deterministic and performs no component work, I/O or time queries",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R6",
+        "requirement": "Every service call, wait and asynchronous render runs as a typed command; no model/service goroutine pool",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R7",
+        "requirement": "Represent initial loading, empty, filtered-empty, loaded, refreshing, stale, load failure, saving and save failure explicitly",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R8",
+        "requirement": "Start/post-write/manual/2-second refresh; at most one service operation at a time; reject obsolete replies",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R9",
+        "requirement": "Stable 40/60 list/details geometry at 80\u00d724 and larger; smaller terminals preserve state and offer bounded resize/quit",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R10",
+        "requirement": "Complete forest grouped Today/Upcoming/Backlog/Completed; canonical sibling order, depth context and selection by ID",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R11",
+        "requirement": "Literal Unicode search with 150 ms debounce and filters; include matching descendants' ancestors without corrupting the graph",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R12",
+        "requirement": "Contextual keyboard routing, scrolling, focus indicators and modal focus trap; text never invokes browse actions",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R13",
+        "requirement": "Details show identity, metadata, local dates and numeric progress; asynchronous Markdown is bounded by viewport and freshness",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R14",
+        "requirement": "Timeline shows actual ordered metadata events; independent load/failure state, no fabricated old values",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R15",
+        "requirement": "User text cannot inject terminal controls, bidi overrides or OSC; plain presentation remains readable",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R16",
+        "requirement": "Create defaults and all editable fields map to existing commands; unchanged/clear/set remain distinct",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R17",
+        "requirement": "Edit/lifecycle operations carry detached Base; preserve drafts on validation/storage/conflict failures",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R18",
+        "requirement": "Manual leaf progress, moves, subtree completion and reopen obey service invariants; no optimistic persisted state",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R19",
+        "requirement": "One admitted mutation, no duplicate submit; known save plus failed refresh never offers resubmission",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R20",
+        "requirement": "Delete previews target and exact scope; default Cancel, separate recursive intent, Expected check, no Force",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R21",
+        "requirement": "Unknown outcomes freeze writes, retire the owner and require fresh-owner readback; never replay uncertain intent",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R22",
+        "requirement": "Quit, Ctrl+C, process cancellation and output failures preserve outcome evidence and terminal/resource cleanup",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R23",
+        "requirement": "Long/unsupported editable text is never silently truncated or normalized; preserve raw unchanged fields",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R24",
+        "requirement": "External edits/deletes/reparenting and resize cannot overwrite a different selection, form, history or render",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R25",
+        "requirement": "Keep the existing CLI latency distribution gate; characterize TUI projection/render/startup with retained evidence",
+        "status": "partially addressed",
+        "note": "Final latency/commit acceptance is intentionally still in progress."
+      },
+      {
+        "id": "R26",
+        "requirement": "Synthetic, disk, PTY, owned Kitty, cross-build, native and hosted evidence remain distinct",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      },
+      {
+        "id": "R27",
+        "requirement": "Red-first tests and \u226595% per nonexempt package coverage; canonical validation and separate commit per unit",
+        "status": "partially addressed",
+        "note": "Final latency/commit acceptance is intentionally still in progress."
+      },
+      {
+        "id": "R28",
+        "requirement": "Document command, keys, failures, recovery and accessibility; synchronize product/feature handoffs without claiming execution",
+        "status": "met",
+        "note": "Implementation and unit evidence present; native/hosted portions explicitly belong to Feature 006."
+      }
+    ],
+    "implementation_units": [
+      {
+        "id": "U1",
+        "status": "met"
+      },
+      {
+        "id": "U7",
+        "status": "met"
+      },
+      {
+        "id": "U2",
+        "status": "met"
+      },
+      {
+        "id": "U3",
+        "status": "met"
+      },
+      {
+        "id": "U4",
+        "status": "met"
+      },
+      {
+        "id": "U5",
+        "status": "met"
+      },
+      {
+        "id": "U8",
+        "status": "met"
+      },
+      {
+        "id": "U6",
+        "status": "partially addressed"
+      }
+    ],
+    "note": "U6 acceptance is intentionally still open: failed CLI gate, final timing receipt and unit commit. Native and hosted execution belongs to Feature 006."
+  },
+  "learnings": [
+    {
+      "type": "known_pattern",
+      "title": "Preserve transaction outcomes through error redaction",
+      "citation": "docs/solutions/database-issues/preserve-transaction-outcomes-through-error-redaction.md",
+      "note": "Typed uncertainty precedes cause-specific handling and survives cancellation; fresh-owner readback never replays writes."
+    }
+  ],
+  "agent_native_gaps": [],
+  "deployment_notes": [],
+  "residual_risks": [],
+  "testing_gaps": [
+    "Add production-binary committed-write then SIGINT coverage, alongside deterministic injected in-flight cancellation tests.",
+    "Current CLI matrix passes 74/84. Final current-binary measurements and local U6 commit remain open."
+  ],
+  "coverage": {
+    "local_execution": "Sequential inline per AGENTS.md; local independence not claimed.",
+    "cross_model": "Claude provider-capable dispatch returned HTTP 401 invalid OAuth token and no review. Replacement Grok through Cursor completed; requested cursor-grok-4.6-high, actual serving family/model/effort unverified, independence_verified=false. Findings are attributed evidence with no independent-agreement promotion. Both persisted job directories were deleted after terminal collection.",
+    "suppressed_by_confidence": {},
+    "rejected_candidates": 3,
+    "mode_aware_demotions": 1,
+    "first_evidence_backfilled": 0,
+    "malformed_findings": 0,
+    "validators": {
+      "outcome": "empty-batch",
+      "confirmed": 0,
+      "rejected": 0,
+      "unresolved": 0,
+      "malformed": 0,
+      "failed": 0,
+      "shortcut_skipped": 0
+    },
+    "failed_reviewers": [],
+    "compound_packs": {
+      "roots": [],
+      "warnings": [],
+      "errors": []
+    }
+  },
+  "artifact_path": "/tmp/compound-engineering-1000/ce-code-review/20260929-223225-255d126a",
+  "run_id": "20260929-223225-255d126a",
+  "verdict_reason": "Review complete with no admitted code defect. Acceptance remains blocked by the intentionally open performance gate; add the useful production post-commit signal test before closing U6."
+}

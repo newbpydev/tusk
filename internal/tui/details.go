@@ -144,10 +144,27 @@ func (m *Model) detailLines(w int) []string {
 		add(m.paint("Subtask of "+terminaltext.Scalar(*t.ParentID), mutedColor, false))
 	}
 	add("")
-	add("Status    " + terminaltext.Scalar(string(t.Status)))
-	add("Priority  " + t.Priority.String())
-	add(fmt.Sprintf("Progress  %d%%", t.Progress))
-	add("Due       " + date(t.DueDate))
+	// Keep the task's everyday information above its audit metadata. Pairs
+	// wrap independently so long tags or narrow terminals never lose content.
+	pair := func(leftLabel, left, rightLabel, right string) {
+		column := max(1, (width-3)/2)
+		add(m.paint(fitCells(leftLabel, column)+"   "+rightLabel, mutedColor, false))
+		a := strings.Split(ansi.Wrap(left, column, ""), "\n")
+		b := strings.Split(ansi.Wrap(right, column, ""), "\n")
+		for i := 0; i < max(len(a), len(b)); i++ {
+			l, r := "", ""
+			if i < len(a) {
+				l = a[i]
+			}
+			if i < len(b) {
+				r = b[i]
+			}
+			add(fitCells(l, column) + "   " + r)
+		}
+	}
+	mark, status := statusText(t.Status)
+	pair("Status", m.paint(mark+" "+status, accentColor, true), "Priority", m.paint(priorityLabel(t.Priority), priorityColor(t.Priority), true))
+	add("")
 	tags := make([]string, len(t.Tags))
 	for i, tag := range t.Tags {
 		tags[i] = terminaltext.Scalar(string(tag))
@@ -156,12 +173,16 @@ func (m *Model) detailLines(w int) []string {
 	if tagText == "" {
 		tagText = "None"
 	}
-	add("Tags      " + tagText)
+	due := "Not set"
+	if t.DueDate != nil {
+		due = t.DueDate.In(m.options.Location).Format("Jan 2 · 15:04")
+	}
+	pair("Due date", due, "Tags", m.paint(tagText, accentColor, false))
 	add("")
-	add("ID        " + terminaltext.Scalar(t.ID))
-	add("Created   " + date(&t.CreatedAt))
-	add("Updated   " + date(&t.UpdatedAt))
-	add("Completed " + date(t.CompletedAt))
+	add(m.paint("Progress", mutedColor, false))
+	barWidth := max(1, width-6)
+	filled := min(barWidth, max(0, int(t.Progress)*barWidth/100))
+	add(m.paint(strings.Repeat("━", filled), accentColor, false) + m.paint(strings.Repeat("─", barWidth-filled), borderColor, false) + fmt.Sprintf(" %3d%%", t.Progress))
 	add("")
 	label("Notes")
 	if m.markdown.plain {
@@ -180,7 +201,6 @@ func (m *Model) detailLines(w int) []string {
 	add("")
 	add(m.paint(strings.Repeat("─", width), borderColor, false))
 	label("Activity")
-	add(m.paint("History is refreshed separately", mutedColor, false))
 	switch {
 	case m.options.History == nil:
 		add("History unavailable")
@@ -202,5 +222,13 @@ func (m *Model) detailLines(w int) []string {
 			add(m.paint(date(&event.OccurredAt), mutedColor, false))
 		}
 	}
+	add("")
+	add(m.paint(strings.Repeat("─", width), borderColor, false))
+	label("Task information")
+	add("ID        " + terminaltext.Scalar(t.ID))
+	add("Due       " + date(t.DueDate))
+	add("Created   " + date(&t.CreatedAt))
+	add("Updated   " + date(&t.UpdatedAt))
+	add("Completed " + date(t.CompletedAt))
 	return lines
 }

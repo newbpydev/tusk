@@ -92,33 +92,56 @@ func (m *Model) panel(title string, lines []string, w, h int, focus bool) []stri
 }
 
 func (m *Model) listLines(w, h int) []string {
+	query := m.filter.SearchTerm
+	if m.searching {
+		query = m.searchDraft
+	}
+	search := m.paint(" /  Search tasks", mutedColor, false)
+	if query != "" || m.searching {
+		search = m.paint(" /  ", accentColor, true) + inputLine(query, m.searching, max(1, w-6))
+	}
+	all := "1 All tasks"
+	if w < 40 {
+		all = "1 All"
+	}
+	var tabs []string
+	for i, label := range []string{all, "2 Today", "3 Done"} {
+		if i == m.workspaceTab {
+			label = m.paint("["+label+"]", accentColor, true)
+		} else {
+			label = m.paint(label, mutedColor, false)
+		}
+		tabs = append(tabs, label)
+	}
+	toolbar := []string{fitCells(search, w), fitCells(" "+strings.Join(tabs, "  "), w), m.paint(strings.Repeat("─", w), borderColor, false)}
+	h = max(0, h-len(toolbar))
+	withToolbar := func(lines []string) []string { return append(toolbar, lines...) }
 	switch m.state {
 	case loading:
-		return []string{"", " Loading tasks…"}
+		return withToolbar([]string{"", "  Loading tasks…"})
 	case loadFailed:
-		return []string{"", " Could not load tasks.", " Press r to retry."}
+		return withToolbar([]string{"", "  Could not load tasks.", "  Press r to retry."})
 	}
 	if len(m.forest) == 0 {
-		return []string{"", " No tasks", " Your workspace is ready."}
+		return withToolbar([]string{"", "  No tasks", "  Your workspace is ready.", "", "  a  Create your first task"})
 	}
 	if len(m.rows) == 0 {
-		return []string{"", " No matching tasks", " Esc clears filters."}
+		return withToolbar([]string{"", "  No matching tasks", "  Esc clears filters."})
 	}
 	type entry struct {
 		row, part int
 		text      string
 	}
-	noun := "tasks"
-	if len(m.rows) == 1 {
-		noun = "task"
-	}
-	entries := []entry{{row: -1, text: fmt.Sprintf(" %d %s", len(m.rows), noun)}, {row: -1}}
+	var entries []entry
 	group := ""
 	selectedLine := 0
 	for i, row := range m.rows {
 		if row.group != group {
+			if group != "" {
+				entries = append(entries, entry{row: -1})
+			}
 			group = row.group
-			entries = append(entries, entry{row: -1, text: " " + group})
+			entries = append(entries, entry{row: -1, text: "  " + group})
 		}
 		if i == m.selected {
 			selectedLine = len(entries)
@@ -135,14 +158,14 @@ func (m *Model) listLines(w, h int) []string {
 	var lines []string
 	for _, entry := range entries[m.listOffset:min(len(entries), m.listOffset+max(0, h))] {
 		if entry.row < 0 {
-			lines = append(lines, m.paint(entry.text, mutedColor, true))
+			lines = append(lines, m.paint(fitCells(entry.text, w), mutedColor, true))
 			continue
 		}
 		row := m.rows[entry.row]
 		task := row.node.Task
 		s := ""
 		if entry.part == 1 {
-			indent := 2 + min(row.depth*2, max(0, w-7))
+			indent := 4 + min(row.depth*2, max(0, w-7))
 			if row.depth > 0 {
 				indent += 2
 			}
@@ -150,7 +173,11 @@ func (m *Model) listLines(w, h int) []string {
 				indent += 2
 			}
 			indent = min(indent, max(0, w-18))
-			s = strings.Repeat(" ", indent) + terminaltext.Scalar(string(task.Status)) + " · " + task.Priority.String() + fmt.Sprintf(" · %d%%", task.Progress)
+			_, status := statusText(task.Status)
+			s = strings.Repeat(" ", indent) + status + " · " + priorityLabel(task.Priority)
+			if task.Progress > 0 {
+				s += fmt.Sprintf(" · %d%%", task.Progress)
+			}
 		} else {
 			context := ""
 			if row.context {
@@ -171,9 +198,10 @@ func (m *Model) listLines(w, h int) []string {
 				}
 			}
 			if entry.row == m.selected {
-				prefix = ">" + prefix[1:]
+				prefix = " >" + prefix[2:]
 			}
-			s = prefix + context + terminaltext.Scalar(task.Title)
+			mark, _ := statusText(task.Status)
+			s = prefix + context + mark + " " + terminaltext.Scalar(task.Title)
 		}
 		s = titleCells(s, w)
 		if entry.row == m.selected {
@@ -187,7 +215,7 @@ func (m *Model) listLines(w, h int) []string {
 		}
 		lines = append(lines, s)
 	}
-	return lines
+	return withToolbar(lines)
 }
 
 func (m *Model) prepareFrame() {
@@ -209,7 +237,15 @@ func (m *Model) prepareFrame() {
 		m.frame = strings.Join(lines, "\n")
 		return
 	}
-	left := m.panel("Tasks", m.listLines(l.listWidth-2, l.bodyHeight-2), l.listWidth, l.bodyHeight, m.focus == listFocus)
+	if m.form != nil && m.form.calendar != nil {
+		l.modal.height = min(l.modal.height, 18)
+		l.modal.y = (l.height - l.modal.height) / 2
+	}
+	noun := "tasks"
+	if len(m.rows) == 1 {
+		noun = "task"
+	}
+	left := m.panel(fmt.Sprintf("Tasks · %d %s", len(m.rows), noun), m.listLines(l.listWidth-2, l.bodyHeight-2), l.listWidth, l.bodyHeight, m.focus == listFocus)
 	details := m.detailLines(l.detailsWidth - 2)
 	if m.detailsEnd {
 		m.detailsScroll = max(0, len(details)-(l.bodyHeight-2))
@@ -221,14 +257,15 @@ func (m *Model) prepareFrame() {
 	}
 	right := m.panel(detailTitle, details[m.detailsScroll:], l.detailsWidth, l.bodyHeight, m.focus == detailsFocus)
 	header := m.paint(" TUSK", accentColor, true) + m.paint("  /  Personal workspace", mutedColor, false)
-	if m.searching {
-		header = m.paint(" TUSK  / ", accentColor, true) + terminaltext.Scalar(m.searchDraft) + "▎"
-	} else if m.filter.HasPredicates() || m.dueStart != nil {
-		header += "  /  Filtered · Esc clears"
+	actions := m.paint("f Filters", mutedColor, false) + "   " + m.paint("a New task", accentColor, true) + " "
+	if m.workspaceTab == -1 {
+		label := "f Filters active"
 		if m.dueLabel != "" {
-			header += " · Due " + m.dueLabel
+			label = "f Filters · " + m.dueLabel
 		}
+		actions = m.paint(label, accentColor, true) + "   " + m.paint("a New task", accentColor, true) + " "
 	}
+	header = fitCells(header, max(0, l.width-ansi.StringWidth(actions))) + actions
 	rows := []string{fitCells(header, l.width)}
 	for y := 0; y < l.bodyHeight; y++ {
 		rows = append(rows, left[y]+right[y])
@@ -244,7 +281,8 @@ func (m *Model) prepareFrame() {
 	m.help.Width = l.width - 2
 	footer := " " + m.help.ShortHelpView(browseHints())
 	if m.notice != "" {
-		footer = " " + m.notice + " ·" + footer
+		hints := " · r refresh · ? help · q quit"
+		footer = " " + strings.TrimRight(titleCells(m.notice, max(1, l.width-1-ansi.StringWidth(hints))), " ") + hints
 	}
 	if m.focus == detailsFocus {
 		footer = " ↑↓ scroll · PgUp/PgDn · Home/End · Tab tasks · ? help · q quit"
@@ -278,6 +316,9 @@ func (m *Model) prepareFrame() {
 	}
 	if m.form != nil && !m.recoveryNeeded {
 		footer = " Tab / Shift+Tab fields · Ctrl+S save · Esc cancel · Ctrl+C exit"
+		if m.form.calendar != nil {
+			footer = " ←→ day · ↑↓ week · PgUp/PgDn month · t today · Enter choose · Esc back"
+		}
 	}
 	if m.confirmation != nil && !m.recoveryNeeded {
 		footer = " Tab choose · Space subtree · Enter confirm · Esc cancel · ↑↓ scroll"
@@ -288,46 +329,48 @@ func (m *Model) prepareFrame() {
 	rows = append(rows, m.surface(fitCells(footer, l.width), mutedColor, footerColor))
 	if m.helpOpen {
 		content := helpLines()
-		area := max(0, l.modal.height-4)
+		area := max(0, l.modal.height-6)
 		m.helpScroll = min(max(0, m.helpScroll), max(0, len(content)-area))
 		rows = m.overlay(rows, l, "Keyboard shortcuts", content, m.helpScroll, "Esc / ? / q close  ·  Ctrl+C exit")
 	}
 	if m.filters != nil {
-		rows = m.overlay(rows, l, "Filter tasks", m.filterLines(l.modal.width-2), 0, "Ctrl+S apply  ·  Esc cancel")
+		controls := m.actionButton("Apply filters", m.filters.field == 4, true, false) + "  " + m.actionButton("Clear all", m.filters.field == 5, false, false)
+		rows = m.overlay(rows, l, "Filter tasks", m.filterLines(l.modal.width-6), 0, controls)
 	}
 	if m.form != nil && !m.recoveryNeeded {
-		title, content, offset, controls := m.formContent(l.modal.width-2, l.modal.height-4)
+		title, content, offset, controls := m.formContent(l.modal.width-6, l.modal.height-6)
 		rows = m.overlay(rows, l, title, content, offset, controls)
 		b := l.modal
-		y := b.y + b.height - 3
+		y := b.y + b.height - 4
 		left := cellSlice(rows[y], 0, b.x+1)
 		right := cellSlice(rows[y], b.x+b.width-1, l.width)
-		rows[y] = left + m.surface(fitCells(" "+m.form.err, b.width-2), accentColor, dialogColor) + right
+		rows[y] = left + m.surface("  "+fitCells(m.form.err, b.width-6)+"  ", warningColor, dialogColor) + right
 	}
 	if m.confirmation != nil && !m.recoveryNeeded {
-		content, controls := m.confirmContent(l.modal.width - 2)
-		m.confirmation.scroll = max(0, min(m.confirmation.scroll, max(0, len(content)-(l.modal.height-4))))
+		content, controls := m.confirmContent(l.modal.width - 6)
+		m.confirmation.scroll = max(0, min(m.confirmation.scroll, max(0, len(content)-(l.modal.height-6))))
 		rows = m.overlay(rows, l, "Delete task", content, m.confirmation.scroll, controls)
 	}
 	if m.recoveryNeeded && m.recovery != nil {
-		content, offset, controls := m.recoveryContent(l.modal.width-2, l.modal.height-4)
+		content, offset, controls := m.recoveryContent(l.modal.width-6, l.modal.height-6)
 		rows = m.overlay(rows, l, "Readback and recovery", content, offset, controls)
 	}
 	m.frame = strings.Join(rows, "\n")
 }
 
-// overlay reserves the final inner row for controls; only the content scrolls.
+// overlay keeps two horizontal cells and one vertical row of padding, with
+// separate error and action rows so scrolling never hides the controls.
 func (m *Model) overlay(rows []string, l layout, title string, content []string, offset int, controls string) []string {
 	b := l.modal
-	area := max(0, b.height-4)
+	area := max(0, b.height-6)
 	lines := make([]string, b.height-2)
 	for i := 0; i < area; i++ {
 		j := max(0, offset) + i
 		if j < len(content) {
-			lines[i] = " " + content[j]
+			lines[i+1] = "  " + fitCells(content[j], b.width-6) + "  "
 		}
 	}
-	lines[len(lines)-1] = " " + controls
+	lines[len(lines)-2] = "  " + fitCells(controls, b.width-6) + "  "
 	box := m.panel(title, lines, b.width, b.height, true)
 	for i, row := range box {
 		y := b.y + i

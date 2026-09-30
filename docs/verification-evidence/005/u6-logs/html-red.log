@@ -1,0 +1,18 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestCLIStartup|TestMarkdown_HTMLTextOnly'
+=== RUN   TestMarkdown_HTMLTextOnly
+--- PASS: TestMarkdown_HTMLTextOnly (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.010s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.004s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.005s [no tests to run]
+=== RUN   TestCLIStartup_NoSyntaxRegistryInitialization
+    startup_test.go:33: --help eagerly initializes rendering registries (github.com/microcosm-cc/bluemonday) before CLI routing
+--- FAIL: TestCLIStartup_NoSyntaxRegistryInitialization (0.58s)
+FAIL
+FAIL	github.com/newbpydev/tusk/cmd/tusk	0.593s
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

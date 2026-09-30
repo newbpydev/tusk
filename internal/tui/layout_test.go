@@ -78,10 +78,17 @@ func TestResize_StateAndUnicodeBounds(t *testing.T) {
 				m.forest = append(m.forest, &core.TaskNode{Depth: 10, Task: core.Task{ID: fmt.Sprint(i), Title: "界 é 👩‍💻 " + strings.Repeat("長", 100) + "\x1b]52;c;secret\a", Description: "notes\n\ttwo\r\u202e", Status: core.StatusTodo, Priority: core.PriorityHigh, Progress: 25}})
 			}
 			before := snapshot(m.forest)
-			for _, state := range []loadState{loading, loaded, loadFailed} {
-				m.state = state
+			for _, state := range []struct {
+				load         loadState
+				busy, saving bool
+			}{{loading, true, false}, {loaded, false, false}, {loadFailed, false, false}, {loaded, true, false}, {loaded, true, true}} {
+				m.state, m.busy, m.saving = state.load, state.busy, state.saving
 				m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
 				assertFrameBounds(t, m.View(), 80, 24)
+				rows := strings.Split(ansi.Strip(m.View()), "\n")
+				if ansi.Cut(rows[1], 31, 33) != "╮╭" || ansi.Cut(rows[22], 31, 33) != "╯╰" {
+					t.Fatalf("panel geometry shifted in state %+v", state)
+				}
 				if strings.Contains(m.View(), "\x1b]52") || strings.Contains(m.View(), "\u202e") {
 					t.Fatal("terminal injection")
 				}
@@ -159,7 +166,7 @@ func TestOverlay_GraphemeBoundaries(t *testing.T) {
 	}
 	rows = m.overlay(rows, l, "Edit", content, 85, "Save · Cancel")
 	assertFrameBounds(t, strings.Join(rows, "\n"), 80, 24)
-	if !strings.Contains(rows[l.modal.y+l.modal.height-2], "Save · Cancel") {
+	if !strings.Contains(rows[l.modal.y+l.modal.height-3], "Save · Cancel") {
 		t.Fatal("scroll hid buttons")
 	}
 	if !strings.Contains(strings.Join(rows, "\n"), "Field 85") {
@@ -204,10 +211,10 @@ func TestTerminal_DeepTreeKeepsTitlesAndRawText(t *testing.T) {
 	before := snapshot(m.forest)
 	m.rebuildRows()
 	lines := m.listLines(12, 40)
-	if len(lines) != 25 || !strings.Contains(lines[len(lines)-2], "…") || !strings.Contains(lines[len(lines)-2], "界") {
+	if len(lines) != 26 || !strings.Contains(lines[len(lines)-2], "…") || !strings.Contains(lines[len(lines)-2], "界") {
 		t.Fatalf("deep title/context lost: %q", lines)
 	}
-	if !strings.Contains(lines[len(lines)-1], "todo") {
+	if !strings.Contains(lines[len(lines)-1], "Todo") {
 		t.Fatal("deep metadata lost to indentation")
 	}
 	for _, line := range lines[3:] {

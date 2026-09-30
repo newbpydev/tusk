@@ -1,0 +1,32 @@
+2026-09-30T01:54:36.640650+00:00
+2.19 1.69 1.87 1/1362 1435303
+         S %CPU     ELAPSED
+python3         S 50.0       00:00
+zed-editor      R 30.9    11:03:30
+codex           S  6.6    01:03:38
+kwin_wayland    S  5.5    12:19:34
+plasmashell     S  2.4    12:19:33
+kworker/u25:9-b I  2.4       00:28
+opencode        S  1.6       29:14
+codex           S  1.5    01:08:06
+kworker/u26:3-b I  1.2       00:42
+kworker/u26:9-b I  1.2       00:42
+node            S  1.0    02:58:58
+irq/70-rtw88_pc S  0.8    12:19:56
+kiro-cli-term   S  0.8    12:19:30
+kworker/u26:4-e I  0.8       00:42
+kiro-cli-term   S  0.8    08:48:55
+kworker/u26:12- I  0.7       00:24
+kiro-cli-term   S  0.6       48:15
+kworker/u25:7-b I  0.6       00:41
+gopls_0.23.0_go S  0.6    02:47:34
+kswapd0         S  0.5    12:20:03
+kworker/u25:5-b I  0.5       00:41
+kworker/3:0-mm_ I  0.4       00:18
+kworker/u26:5-b I  0.4       00:42
+kworker/u26:14- I  0.3       00:23
+kworker/u26:2-b I  0.3       02:17
+ksystemstats    S  0.2    12:19:33
+kworker/u26:0-b I  0.2       02:17
+kworker/u24:3-g I  0.2     
+Earlier in this matrix, observed via ps: pacman processes at 64.7%, 58.8%, 57.0%; perl 21.9%; cli-bench 36.7%; loadavg 2.48 1.71 1.88. Processes had exited by the next snapshot. All samples retained; no conclusion of code regression from this disturbed run.

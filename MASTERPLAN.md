@@ -1,14 +1,22 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: 🟢 Active Development
-**Active Phase**: Phase 5 — Feature 005 implementation authorized (2026-09-29)
-**Active Implementation Target**: Feature 005 U6 / 005-6 — workflow, performance, owned Kitty acceptance and handoff
+**Current Status**: 🟢 Feature 005 locally complete
+**Active Phase**: Phase 6 — Feature 006 planning is next, awaiting instruction
+**Active Implementation Target**: None — Feature 005 U6 closes with this local commit; Feature 006 needs its planning triplet and authorization
 
-U2 presentation direction: the owner selected spacious title/metadata rows in
-the live Kitty prototype (2026-09-29). Uniform backgrounds and modal dimming
-must remove the reported shadow artifacts. The prototype is design evidence;
-production U2 validation and Kitty acceptance now pass (receipt below).
-**Overall Completion**: 71% (5 of 7 Phases Locally Complete)
+The approved Spacious TUI, opaque surfaces, due-date calendar and input examples
+are locally accepted. Canonical validation, Go 1.25 checks, five-target builds,
+owned Kitty inspection and all 78 TUI measurement case-runs pass.
+After the owner closed Zed and moved the session to Konsole, the unchanged
+candidate passed all 84 CLI cases across three complete runs: worst query p90
+13.873 ms and help/version p90 4.592 ms. All tail guards pass; all samples and
+earlier failed reports remain retained. The limits were not changed or deferred.
+V01–V110 and U1 → U7 → U2 → U3 → U4 → U5 → U8 → U6 are locally complete.
+See the [acceptance receipt](docs/verification-evidence/005/u6-acceptance.json).
+Feature 006 retains V111–V112 native/hosted release proof. No push, PR or release
+has been performed or authorized by this acceptance.
+
+**Overall Completion**: 86% (6 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
 ### Historical Feature 004 PR #4 review remediation
@@ -115,7 +123,7 @@ graph TD
     P1 --> P2[Phase 2: SQLite Storage & Repo<br/>✅ COMPLETE]
     P2 --> P3[Phase 3: Task Service Engine<br/>✅ LOCALLY COMPLETE]
     P3 --> P4[Phase 4: CLI & Scripting<br/>✅ LOCALLY COMPLETE]
-    P3 --> P5[Phase 5: Interactive TUI<br/>⏳ PLANNED]
+    P3 --> P5[Phase 5: Interactive TUI<br/>✅ LOCALLY COMPLETE]
     P4 --> P6[Phase 6: Packaging & Release<br/>⏳ PLANNED]
     P5 --> P6
 ```
@@ -308,14 +316,14 @@ No Phase 5 implementation, push, PR or publication occurred.
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: 🚀 **IMPLEMENTING U6 — U1, U7, U2, U3, U4, U5 AND U8 LOCALLY ACCEPTED** (authorized 2026-09-29)
+- **Status**: ✅ **LOCALLY COMPLETE** (accepted 2026-09-30; native/hosted release proof remains Feature 006)
 - **Plan**: [Feature 005 plan](docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md)
 - **Verification Plan**: [Feature 005 verification](docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md)
 - **Issue Workorder**: [Feature 005 workorder](docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md)
 
 - [x] **5.1 Ultrathink Planning Pack**
   - [x] Deepened Plan, Verification Plan, and Workorder: 28 requirements, eight units, 112 planned scenarios
-- [ ] **5.2 Implementation Units**
+- [x] **5.2 Implementation Units**
   - [x] Unit 005-1 / U1: Pure Root, v1 Dependency Graph and Deterministic Test Seams
   - [x] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
   - [x] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
@@ -323,29 +331,29 @@ No Phase 5 implementation, push, PR or publication occurred.
   - [x] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
   - [x] Unit 005-5 / U5: Forms, Base-Checked Edits, Moves and Lifecycle Toggles
   - [x] Unit 005-8 / U8: Previewed Deletion and Unknown-Outcome Reconciliation
-  - [ ] Unit 005-6 / U6: Workflow, Performance, Owned Kitty Acceptance and Handoff
-- [ ] **5.3 Quality Gate & Release Sign-off**
-  - [ ] Cold and populated View purity: 100 calls without nested/cache mutation
-  - [ ] Resize/focus/plain presentation and every required owned Kitty scenario
-  - [ ] Real disk concurrency, draft/consent conflicts, fresh-owner recovery and terminal cleanup
-  - [ ] Minimum Go 1.25, five CGO-free cross-builds and unchanged CLI contracts
-  - [ ] CLI distribution gate and retained TUI frame-preparation measurements
-  - [ ] V01–V110 local scenarios, current-candidate reviews and synchronized per-unit commits
-  - [ ] `make validate build check-generated` passes
+  - [x] Unit 005-6 / U6: Workflow, Performance, Owned Kitty Acceptance and Handoff
+    - [x] Due-date calendar and input examples: owner approved; canonical/Go 1.25, owned Kitty and 78 TUI measurements pass ([receipt](docs/verification-evidence/005/u6-calendar.md)).
+- [x] **5.3 Local Quality Gate & Release Handoff**
+  - [x] Cold and populated View purity: 100 calls without nested/cache mutation
+  - [x] Resize/focus/plain presentation and every required owned Kitty scenario
+  - [x] Real disk concurrency, draft/consent conflicts, fresh-owner recovery and terminal cleanup
+  - [x] Minimum Go 1.25, five CGO-free cross-builds and unchanged CLI contracts
+  - [x] CLI distribution gate (84/84) and retained TUI frame-preparation measurements (78/78)
+  - [x] V01–V110 local scenarios, current-candidate reviews and synchronized per-unit commits
+  - [x] `make validate build check-generated` passes
 
 Execution order is U1 → U7 → U2 → U3 → U4 → U5 → U8 → U6. U1–U6 keep their
 original IDs; U7/U8 split lifecycle and destructive-action responsibilities.
-All implementation and release checks remain pending. V111–V112 belong to
-Feature 006 native/hosted release proof. The planning pass inspected clean main
-at `e899491` (PR #4 merge) and versioned framework source, then audited the docs;
-it ran no application tests, dependency builds, make validate, latency or Kitty
-checks. Only planning completion is checked above. Await a new implementation
-instruction before U1; no commit, push, PR or release is implied.
+All eight units have separate local commit boundaries. U6 workflow, terminal,
+canonical, minimum-Go, performance and review acceptance pass on the recorded
+candidate. Its [acceptance receipt](docs/verification-evidence/005/u6-acceptance.json)
+binds source hashes, unit commits and distinct verification tiers. V111–V112
+belong to Feature 006 native/hosted release proof. No push, PR or release is implied.
 
 ---
 
 ### Phase 6: Feature 006 - Automation, Packaging & Release
-- **Status**: ⏳ **PLANNED** (Pending Phases 4 & 5 Completion)
+- **Status**: ⏳ **AWAITING PLANNING INSTRUCTION** (Phases 4 & 5 locally complete; implementation not authorized)
 - **Plan**: `docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md`
 
 - [ ] **6.1 Ultrathink Planning Pack**

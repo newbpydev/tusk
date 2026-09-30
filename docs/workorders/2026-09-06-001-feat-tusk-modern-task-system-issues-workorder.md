@@ -2,8 +2,8 @@
 feature-id: TUSK
 plan-source: docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md
 verification-plan: docs/verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md
-status: Open - phase gates pending
-evidence-scope: Planning findings only
+status: Features 002–005 locally accepted; Feature 006 planning and release gates pending
+evidence-scope: Planning findings plus linked local feature acceptance receipts
 ---
 
 # Tusk Modern Task System Issue Workorder
@@ -12,7 +12,7 @@ This register accompanies the [product plan](../plans/2026-09-06-001-feat-tusk-m
 
 **Fixed in plan** means the document now decides the behavior; it does not mean implemented or tested. **Open gate/decision** means the named owner must supply the stated evidence before the dependent unit/phase proceeds. Owners are accountable project roles, not claims that a human has accepted an assignment. G1–G4 are the plan's shared gate IDs.
 
-Gate sequencing: Features 002–004 record local acceptance in their own packs; local main records PR #4 merged. G1 is satisfied for Features 002–005 and remains open for Feature 006. Feature 005 KTD1 selects its UI graph; U1 compatibility and U6 performance/terminal evidence are still unexecuted. G4 native/hosted/distribution proof remains a release gate.
+Gate sequencing: Features 002–005 record local acceptance in their own packs; local main records PR #4 merged. G1 is satisfied for Features 002–005 and remains open for Feature 006. Feature 005 U1/U6 close local graph, minimum-Go, CLI/TUI performance and owned Kitty acceptance. G4 native/hosted/distribution proof remains a release gate.
 
 ### Current latency acceptance policy (owner-delegated judgment)
 
@@ -58,9 +58,9 @@ support the method; the thresholds above preserve Tusk's fast interactive purpos
 
 | ID | Gate | Source / lens | Owner | Severity | Status | Next action and retest |
 | --- | --- | --- | --- | --- | --- | --- |
-| TUSK-ISS-001 | G1 | Architecture/status | Each feature owner | P1 | Open for 006 | Features 002–005 have synchronized packs; Feature 005 has 28 requirements/eight units/112 unexecuted scenarios. U1 awaits new implementation authority. Feature 006 must complete its own triplet. |
+| TUSK-ISS-001 | G1 | Architecture/status | Each feature owner | P1 | Open for 006 | Features 002–005 have synchronized, locally accepted packs. Feature 005 completes all eight units and 110 local scenarios; two release scenarios remain with Feature 006, which must complete its own triplet. |
 | TUSK-ISS-002 | G2 | Dependency/security | Phase 2 / Phase 6 owners | P1 | Local proof recorded; native pending | Retain accepted Go 1.25.0, modernc v1.58.0/libc v1.75.6 graph. Feature 002 durable evidence owns local compatibility; native/hosted runtime remains Phase 6. No runtime tests were rerun during Feature 003 planning. |
-| TUSK-ISS-003 | G3 | Dependency/performance | Phase 4/5 owners | P2 | Open for Feature 005 execution | Feature 004 has recorded local graph/latency proof. Feature 005 KTD1 selects v1 pins; U1 must prove combined graph/Go minimum and U6 must retain CLI/TUI measurements. Planning alone closes neither gate. |
+| TUSK-ISS-003 | G3 | Dependency/performance | Phase 4/5 owners | P2 | Closed locally | Feature 005 U1/U6 retain combined graph/minimum-Go proof plus 84/84 CLI and 78/78 TUI case-runs; see u6-acceptance.json. |
 | TUSK-ISS-004 | G4 | Release/operations | Phase 6 release maintainer | P2 | Open gate | Establish release candidate and destination/ownership/license/version policy; run hosted/manual matrix before publication. Evidence: Candidate SHA, job URLs, binary hashes, manual terminal record, checksums/notices and actual authorized publication result when released. |
 | TUSK-ISS-005 | — | Core contract/coherence | Core/service reviewers | P1 | Fixed in plan | Retain shipped core; update product R5/R6 and map integration tests without reopening completed Phase 1 work. Evidence: Planning source comparison completed; runtime regression evidence remains Phase 3 execution. |
 | TUSK-ISS-006 | — | Rollup/product | Service owner | P1 | Fixed in plan | R7–R9 and mutation table define defaults, reopen-before-rollup, explicit reopen precedence and last-child reset. Evidence: Table-driven lifecycle, nested 100%, both policy settings, rollback; not executed. |
@@ -85,10 +85,10 @@ support the method; the thresholds above preserve Tusk's fast interactive purpos
 
 - **Found:** Product planning/source review; severity P1. Current G1 remains open for Feature 006.
 - **Owner / affected contract:** Each feature owner; R29; all units; TUSK-V73.
-- **Evidence / gap:** Features 002–005 have complete triplets. Feature 005 has 28 requirements, eight units and 112 unexecuted scenarios; Feature 006 still has an outline.
-- **Decision / next action:** Keep the umbrella requirements-only. Feature 005 U1 is next only after new implementation authority; Feature 006 owns its future planning pack.
-- **Retest / closure:** Feature 005 workorder records its source/links/coverage/status planning audit. Features 002–004 runtime receipts remain in their own packs; no product scenario is checked by the new planning pass.
-- **Blocking boundary:** G1 blocks Feature 006 implementation until its pack exists. Feature 005 planning readiness does not waive compatibility, runtime, performance or terminal gates.
+- **Evidence / gap:** Features 002–005 have complete, locally accepted triplets. Feature 005 closes eight units and 110 local scenarios; Feature 006 still has an outline and owns the remaining two release scenarios.
+- **Decision / next action:** Keep the umbrella requirements-only. Feature 006 planning is next, awaiting instruction.
+- **Retest / closure:** Feature 005 u6-acceptance.json binds local runtime, review, performance, terminal and documentation evidence.
+- **Blocking boundary:** G1 blocks Feature 006 implementation until its pack exists; G4 native/hosted release proof remains open.
 
 ### TUSK-ISS-002. Dependency/security
 
@@ -101,12 +101,12 @@ support the method; the thresholds above preserve Tusk's fast interactive purpos
 
 ### TUSK-ISS-003. Dependency/performance
 
-- **Found:** Product planning/source review; severity P2. Open for Feature 005 execution.
+- **Found:** Product planning/source review; severity P2. Closed locally by Feature 005 U1/U6.
 - **Owner / affected contract:** Phase 4/5 owners; R24,R28; U11,U15,U16,U20; TUSK-V51,TUSK-V65.
-- **Evidence / gap:** Feature 004 has local module/minimum-Go/CLI latency evidence. Feature 005 selects its graph from versioned upstream source; no UI graph build or performance evidence exists yet.
-- **Decision / next action:** Feature 005 U1 proves Bubble Tea 1.3.10/Bubbles 0.21.0/Lipgloss 1.1.0/Glamour 0.9.1 and ansi 0.10.1; U6 measures the final binary and UI workloads on a declared host.
+- **Evidence / gap:** Feature 005 retains the accepted graph, full minimum-Go checks, five-target builds and passing CLI/TUI measurement matrices in u6-acceptance.json.
+- **Decision / next action:** Retain source/hash-bound compatibility and performance proof; remeasure affected behavior after future production changes.
 - **Retest / closure:** Exact dependency graph, minimum-Go builds, v1 API/purity checks and retained CLI/TUI samples; Feature 005 ISS-021/024 own the evidence.
-- **Blocking boundary:** U1 compatibility blocks dependent feature units; final performance blocks local phase acceptance. Native/hosted release proof stays G4.
+- **Blocking boundary:** No local dependency/performance blocker remains for Feature 005. Native/hosted release proof stays G4.
 
 ### TUSK-ISS-004. Release/operations
 
@@ -452,3 +452,116 @@ and the U19 forms/consent implementation. Exact preview consent, fresh-owner
 unknown-outcome readback, no replay, explicit acknowledgment and real Kitty
 checks pass. U20 / Feature 005 U6 final workflow, performance, documentation and
 review remain active; native/hosted release evidence remains Feature 006.
+
+### Feature 005 U6 visual and validation checkpoint — 2026-09-29
+
+The owner approved the refined Spacious production TUI, including padding,
+tabs, checkboxes and opaque dialog backgrounds. Feature V101–V105 and V109
+pass: workflow, disk/lifecycle, child PTY, owned Kitty, canonical validation,
+minimum-Go/five-target builds and documentation. The visual proof is separate
+from automated test output.
+
+Product U20 remains open. The final linked CLI matrix passes 74/84 cases after
+removing eager syntax/CSS registry initialization from the pinned Markdown
+renderer. All failed samples are retained. Final performance and code-review
+settlement are required before Phase 5 acceptance and the U6 local commit.
+Native macOS/Windows and hosted release proof remain Feature 006 obligations.
+
+### U6 final TUI measurements and open CLI gate (2026-09-29)
+
+All 69 current-binary TUI case-runs pass. Synchronous preparation worst p95 is
+11.245 ms and maximum 12.361 ms; pure View remains allocation-free. Three real
+child-PTY startup runs retain 300 samples plus 15 warmups: median about 27 ms,
+worst run p95 43.259 ms and maximum 48.828 ms, with maximum child RSS 23,620 KiB.
+Async 32 KiB Markdown remains an observation (run 3 p95 about 600 ms); 1 MiB
+plain fallback about 49 ms. Neither is claimed as synchronous frame preparation.
+Feature V107/V108 and product TUSK-V54/V55/V56/V57/V64/V65 now pass. Native
+terminal TUSK-V66 and Feature V111/V112 remain explicitly deferred in part/all.
+
+The post-package-update CLI matrix still passes only 79/84: five 1,000-task JSON
+list/tree case-runs miss p90, with worst p90 19.317 ms against 15 ms. Help/version
+and other query cases pass. The same-host Feature 004 control passes 82/84.
+Profiling puts about half of repeated CLI CPU in task reads and about 19% in
+storage open; JSON formatting is about 8%. Runtime GC/processor experiments are
+retained diagnostics only and do not supply an acceptance substitute. No limits,
+fixtures, database safety rules or runtime defaults were changed. V106 and final
+U6 acceptance remain open pending a stable-host measurement or a justified fix.
+
+### U6 due-date usability refinement (2026-09-30)
+
+The owner approves the current visual direction and requests a due-date calendar
+and accepted-input examples beside the label. This extends the existing U6
+form polish (Feature R9/R12/R16/R23/R24; V68/V70/V86/V104), without a new phase.
+Keep Spacious rows, shared controls, padding and opaque dialog surfaces. Ctrl+P
+on Due opens a month grid; arrows move by day/week, PgUp/PgDn by month, and `t`
+jumps to today. Enter copies an ISO day into the draft; Esc leaves the original
+text untouched. Typed dates and natural expressions remain available. Examples
+and timezone stay visible; selecting a day uses the existing local end-of-day
+parser at save. Verify leap/month boundaries, local today, cancellation, focus
+trapping, unchanged raw timestamps, resize/pure View, real storage readback and
+owned Kitty at 80×24/120×40 in color and plain presentation. These new subcases
+pass canonical validation and real Kitty inspection; see the
+[calendar receipt](../verification-evidence/005/u6-calendar.md). The owner
+approved the calendar on 2026-09-30: “it looks good”; prior UI approval remains. All 78
+current-candidate TUI case-runs pass, including nine calendar navigation cases:
+calendar preparation worst p95 12.334 ms, maximum 12.968 ms. CLI V106 /
+005-ISS-024 and the U6 local commit remain open; the last CLI 79/84 report is
+explicitly the pre-calendar candidate, not acceptance of the new binary.
+
+### U6 final measurement context (2026-09-30)
+
+The owner clarified that Zed hosts this Codex terminal session. Keep the editor
+running and record its ambient load. As the product latency policy specifies,
+run no concurrent verification workload; do not require the owner to close the
+session host. After minimum-Go checks finish, quit only the owned Kitty app and
+measure the current calendar candidate once through the unchanged three-run
+CLI matrix. Preserve the earlier 79/84 report and all new samples. No performance
+limit, compiler default, power setting, fixture or storage safety rule changes.
+
+
+### U6 final JSON correction and acceptance checkpoint (2026-09-30)
+
+The calendar candidate passed 82/84 CLI case-runs: two 1,000-task JSON tree
+p90 values were 15.029 and 15.174 ms. A profile-guided formatter correction
+preserves exact JSON bytes and lowers isolated encoding median by 18.8%.
+Canonical validation, full Go 1.25 tests/five-target builds, and real Kitty
+CLI readback pass. The approved TUI/calendar source is unchanged; its retained
+78-case TUI matrix remains passing. V28/V29 now have explicit final selection,
+draft, refreshing and saving geometry coverage as well.
+
+The corrected binary's full CLI matrix passes 76/84, with query p90 up to
+19.110 ms and first-run help/version p90 up to 11.568 ms. Later help/version
+runs pass. Both complete reports and all samples are retained; no claim assigns
+every miss to host load. See [formatter receipt](../verification-evidence/005/u6-json-formatter.md)
+and [current checkpoint](../verification-evidence/005/u6-checkpoint.json).
+U6, V106, V110 and 005-ISS-024 remain open. The owner is being asked whether to
+retain this local acceptance gate or explicitly hand it to Feature 006 as a
+release blocker. No such handoff, threshold change or local completion is
+assumed. Zed and the user's other applications remain untouched.
+
+### Feature 005 final local acceptance (2026-09-30)
+
+The owner closed Zed and moved this session to Konsole, explicitly requesting
+continued verification. A new full matrix of the unchanged final binary passes
+84/84 CLI case-runs (three runs, five warmups and 100 retained samples per case).
+Worst query p90/p95/p99/max: 13.873/14.533/19.546/27.451 ms; help/version:
+4.592/4.866/6.279/6.297 ms. All original distribution limits pass. The earlier
+76/84 report is preserved as u6-logs/cli-latency-before-konsole.json; no failed
+sample was removed and no performance gate was waived or handed off.
+
+All 78 TUI measurement case-runs, canonical validation, minimum-Go tests and
+five-target builds pass. Source hashes still match those validated and reviewed;
+this acceptance adds only evidence and documentation. Owned Kitty inspection
+and owner approval cover the Spacious layout, opaque dialogs, padding, tabs,
+checkboxes, calendar and due-input examples. The app is reopened in the owned
+window against its isolated database; test and timing output stayed in Bash.
+
+[U6 acceptance](../verification-evidence/005/u6-acceptance.json) binds the
+candidate hashes, eight unit commit boundaries, red/green receipts, canonical
+logs, three completed code reviews, terminal evidence and retained measurements.
+V01–V110 and ISS-021–ISS-024 are closed locally. Product U20 is locally accepted;
+the non-Linux portion of TUSK-V66 remains open alongside V111–V112/ISS-025.
+
+This containing U6 commit closes Phase 5. Feature 006 planning is next, awaiting
+instruction; its native/hosted release checks and publication authority remain
+separate. No push, PR, merge or release was performed by this acceptance.

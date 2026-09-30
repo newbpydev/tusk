@@ -222,6 +222,12 @@ func (m *Model) acceptMutation(msg mutationMsg) tea.Cmd {
 	}
 	if msg.err != nil {
 		m.notice = mutationError(msg.err)
+		if f == nil {
+			m.notice = "Action failed; refresh before retrying"
+			if errors.Is(msg.err, ports.ErrConflict) || errors.Is(msg.err, core.ErrTaskNotFound) {
+				m.notice = "Task changed; refresh before retrying"
+			}
+		}
 		if f != nil {
 			f.err = m.notice
 			if errors.Is(msg.err, core.ErrTaskNotFound) && f.draft.base == nil {

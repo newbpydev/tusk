@@ -184,9 +184,9 @@ func (m *Model) recoveryKey(key tea.KeyMsg) tea.Cmd {
 	case "up", "k":
 		r.scroll--
 	case "pgdown":
-		r.scroll += max(1, measure(m.width, m.height).modal.height-4)
+		r.scroll += max(1, measure(m.width, m.height).modal.height-6)
 	case "pgup":
-		r.scroll -= max(1, measure(m.width, m.height).modal.height-4)
+		r.scroll -= max(1, measure(m.width, m.height).modal.height-6)
 	case "home":
 		r.scroll = 0
 	case "end":
@@ -333,6 +333,8 @@ func (m *Model) recoveryContent(width, area int) ([]string, int, string) {
 	if r.state == loaded {
 		labels = []string{"Reload", "Acknowledge / discard", "Quit"}
 	}
-	labels[r.field] = "[ " + labels[r.field] + " ]"
-	return lines, r.scroll, strings.Join(labels, "   ")
+	for i, label := range labels {
+		labels[i] = m.actionButton(label, r.field == i, false, false)
+	}
+	return lines, r.scroll, strings.Join(labels, " ")
 }

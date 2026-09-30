@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace                             f Filters   a New task 
+╭─ > Tasks · 5 tasks ──────────╮╭─ Task details · 1–20 / 33 ───────────────────╮
+│ / ╭─ > Keyboard shortcuts ───────────────────────────────────────────────╮   │
+│ [1│                                                                      │   │
+│───│  Space / x         Complete subtree / reopen task                    │   │
+│  T│  /  Search    f  Filter    r  Refresh                                │   │
+│  ▾│  1 / 2 / 3         All tasks / Today / Done                          │   │
+│   │                                                                      │   │
+│   │  Forms                                                               │   │
+│   │  Tab / Shift+Tab   Next / previous field                             │   │
+│   │  Ctrl+S            Save                                              │   │
+│  U│  Enter in notes    New line                                          │   │
+│  ○│  Ctrl+P            Choose parent                                     │   │
+│   │  Ctrl+U            Clear due, tags or parent                         │   │
+│   │  Ctrl+E            Replace read-only text                            │   │
+│  B│  Ctrl+R            Refresh / reload conflicted draft                 │   │
+│  ○│  Esc               Cancel / clear filters                            │   │
+│   │  Ctrl+C            Exit safely                                       │   │
+│ >○│                                                                      │─  │
+│   │  Esc / ? / q close  ·  Ctrl+C exit                                   │   │
+│   │                                                                      │   │
+│   ╰──────────────────────────────────────────────────────────────────────╯   │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ ↑↓ scroll help  ·  Esc / ? / q close  ·  Ctrl+C exit

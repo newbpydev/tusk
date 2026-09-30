@@ -1,0 +1,6 @@
+bash-5.3$ env -u NO_COLOR TUSK_DB_PATH=/tmp/tusk-005-kitty.OIGt5C/u6-tasks.db TUSK_TIMEZONE=America/Sao_Paulo ./bin/tusk tui
+bash-5.3$ env -u NO_COLOR TUSK_DB_PATH=/tmp/tusk-005-kitty.OIGt5C/u6-tasks.db TUSK_TIMEZONE=America/Sao_Paulo ./bin/tusk tui
+bash-5.3$ env -u NO_COLOR TUSK_DB_PATH=/tmp/tusk-005-kitty.OIGt5C/u6-tasks.db TUSK_TIMEZONE=America/Sao_Paulo ./bin/tusk tui
+bash-5.3$ env TUSK_DB_PATH=/tmp/tusk-005-kitty.OIGt5C/u6-tasks.db TUSK_TIMEZONE=America/Sao_Paulo ./bin/tusk list --all --search "Calendar usability check" --json
+[{"id":"01a0f2bd-cdfe-76ad-b87d-75609fb42b2e","title":"Calendar usability check","description":"","status":"todo","priority":2,"parent_id":null,"progress":0,"tags":[],"due_date":"2026-10-17T02:59:59.999999999Z","created_at":"2026-09-30T14:35:20.446782395Z","updated_at":"2026-09-30T14:35:20.446782395Z","completed_at":null}]
+bash-5.3$

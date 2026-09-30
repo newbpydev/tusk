@@ -1,0 +1,34 @@
+File: tusk-u6-cli-profile.cpu.test
+Build ID: 090e020c96ba559c441d6594845fc0b87cf1d8d0
+Type: cpu
+Time: 2026-09-29 23:02:45 -03
+Duration: 4.98s, Total samples = 5.97s (119.77%)
+Showing nodes accounting for 0.20s, 3.35% of 5.97s total
+Dropped 460 nodes (cum <= 0.03s)
+Showing top 25 nodes out of 365
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      5.03s 84.25%  github.com/newbpydev/tusk/scripts/cli-bench.BenchmarkCLIProfile
+         0     0%     0%      5.03s 84.25%  testing.(*B).runN
+         0     0%     0%      4.95s 82.91%  testing.(*B).launch
+         0     0%     0%      4.83s 80.90%  github.com/newbpydev/tusk/internal/cli.Run
+     0.01s  0.17%  0.17%      4.80s 80.40%  github.com/newbpydev/tusk/internal/cli.(*invocation).execute
+         0     0%  0.17%      4.78s 80.07%  github.com/spf13/cobra.(*Command).ExecuteC
+         0     0%  0.17%      4.78s 80.07%  github.com/spf13/cobra.(*Command).ExecuteContextC (inline)
+         0     0%  0.17%      4.77s 79.90%  github.com/spf13/cobra.(*Command).execute
+         0     0%  0.17%      4.76s 79.73%  github.com/newbpydev/tusk/internal/cli.(*invocation).invoke
+         0     0%  0.17%      4.76s 79.73%  github.com/newbpydev/tusk/internal/cli.(*invocation).listCommand.func2
+         0     0%  0.17%      3.55s 59.46%  github.com/newbpydev/tusk/internal/cli.(*invocation).listCommand.func2.1
+         0     0%  0.17%      3.25s 54.44%  github.com/newbpydev/tusk/internal/storage.(*Repository).transact
+         0     0%  0.17%      3.07s 51.42%  github.com/newbpydev/tusk/internal/service.(*TaskService).ListTasks
+         0     0%  0.17%      3.07s 51.42%  github.com/newbpydev/tusk/internal/storage.(*Repository).WithRead
+         0     0%  0.17%      3.06s 51.26%  github.com/newbpydev/tusk/internal/storage.(*Repository).WithRead.func1
+     0.05s  0.84%  1.01%      3.05s 51.09%  github.com/newbpydev/tusk/internal/service.(*TaskService).ListTasks.func1
+         0     0%  1.01%      2.97s 49.75%  github.com/newbpydev/tusk/internal/storage.(*taskHandle).List
+         0     0%  1.01%      2.97s 49.75%  github.com/newbpydev/tusk/internal/storage.handleCall[go.shape.[]github.com/newbpydev/tusk/internal/core.Task]
+         0     0%  1.01%      2.96s 49.58%  github.com/newbpydev/tusk/internal/storage.(*taskHandle).List.func1
+     0.02s  0.34%  1.34%      2.21s 37.02%  github.com/newbpydev/tusk/internal/storage/sqlc.(*Queries).ListAll
+     0.03s   0.5%  1.84%      1.90s 31.83%  database/sql.(*Rows).Next
+     0.01s  0.17%  2.01%      1.86s 31.16%  database/sql.(*Rows).Next.func1
+     0.02s  0.34%  2.35%      1.84s 30.82%  database/sql.(*Rows).nextLocked
+     0.06s  1.01%  3.35%      1.82s 30.49%  modernc.org/sqlite.(*rows).Next
+         0     0%  3.35%      1.12s 18.76%  github.com/newbpydev/tusk/internal/storage.Open

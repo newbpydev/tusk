@@ -29,9 +29,10 @@ func helpLines() []string {
 		"PgUp / PgDn       Move one page", "← → / h l         Collapse / expand",
 		"", "Work with tasks", "a  Create    e  Edit    d  Delete",
 		"Space / x         Complete subtree / reopen task", "/  Search    f  Filter    r  Refresh",
+		"1 / 2 / 3         All tasks / Today / Done",
 		"", "Forms", "Tab / Shift+Tab   Next / previous field",
 		"Ctrl+S            Save", "Enter in notes    New line",
-		"Ctrl+P            Choose parent", "Ctrl+U            Clear due, tags or parent",
+		"Ctrl+P            Calendar / choose parent", "Ctrl+U            Clear due, tags or parent",
 		"Ctrl+E            Replace read-only text", "Ctrl+R            Refresh / reload conflicted draft",
 		"Esc               Cancel / clear filters", "Ctrl+C            Exit safely",
 	}

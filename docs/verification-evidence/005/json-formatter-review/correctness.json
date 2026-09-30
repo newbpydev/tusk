@@ -1,0 +1,12 @@
+{
+  "reviewer": "correctness",
+  "findings": [],
+  "residual_risks": [],
+  "testing_gaps": [],
+  "review_method": "sequential parent context",
+  "independent_reviewers": [],
+  "checked": [
+    "All 128 ASCII table entries checked by the existing independent standard-library parity oracle over bytes 0..255. The >=128 short circuit bounds the lookup.",
+    "UTC AppendText preserves RFC3339Nano and rejects years outside 0..9999; caller discards partial output on error. Nil and optional fields retain their existing paths."
+  ]
+}

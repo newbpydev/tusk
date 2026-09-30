@@ -13,9 +13,19 @@ import (
 // A large snapshot need not also allocate a full slice of intermediate DTOs.
 // Non-ASCII and escaped strings use the standard encoder's exact semantics.
 func appendJSONString(dst []byte, s string) []byte {
+	// One immutable lookup per byte for the common ASCII path. A '1' means
+	// JSON can copy the byte unchanged, including HTML-safe escaping rules.
+	const safeASCII = "0000000000000000" + // 00–0f: controls
+		"0000000000000000" + // 10–1f: controls
+		"1101110111111111" + // 20–2f: quote, ampersand
+		"1111111111110101" + // 30–3f: angle brackets
+		"1111111111111111" + // 40–4f
+		"1111111111110111" + // 50–5f: backslash
+		"1111111111111111" + // 60–6f
+		"1111111111111111" // 70–7f
 	for i := range len(s) {
 		c := s[i]
-		if c < 0x20 || c >= 0x80 || c == '"' || c == '\\' || c == '<' || c == '>' || c == '&' {
+		if c >= 0x80 || safeASCII[c] == '0' {
 			encoded, _ := json.Marshal(s) // A string cannot fail JSON encoding.
 			return append(dst, encoded...)
 		}
@@ -26,12 +36,13 @@ func appendJSONString(dst []byte, s string) []byte {
 }
 
 func appendJSONTime(dst []byte, t time.Time) ([]byte, error) {
-	t = t.UTC()
-	if t.Year() < 0 || t.Year() > 9999 {
+	// AppendText validates the RFC3339 year while formatting it, avoiding
+	// separate calendar conversions for the range check and output.
+	var err error
+	dst, err = t.UTC().AppendText(append(dst, '"'))
+	if err != nil {
 		return nil, ports.ErrInvalidRecord
 	}
-	dst = append(dst, '"')
-	dst = t.AppendFormat(dst, time.RFC3339Nano)
 	return append(dst, '"'), nil
 }
 

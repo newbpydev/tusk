@@ -1,0 +1,114 @@
+{
+  "captured_at": "2026-09-30T16:02:18.888327+00:00",
+  "sample_seconds": 5.013274008000735,
+  "logical_cpus": 6,
+  "loadavg": [
+    0.912109375,
+    0.802734375,
+    0.5830078125
+  ],
+  "zed_processes": [],
+  "top_cpu_processes": [
+    {
+      "pid": 1648,
+      "name": "kwin_wayland",
+      "cpu_percent_one_core": 21.74
+    },
+    {
+      "pid": 1620975,
+      "name": "chrome",
+      "cpu_percent_one_core": 19.95
+    },
+    {
+      "pid": 1621032,
+      "name": "chrome",
+      "cpu_percent_one_core": 18.35
+    },
+    {
+      "pid": 1622165,
+      "name": "chrome",
+      "cpu_percent_one_core": 11.97
+    },
+    {
+      "pid": 2135,
+      "name": "konsole",
+      "cpu_percent_one_core": 10.77
+    },
+    {
+      "pid": 1799513,
+      "name": "codex",
+      "cpu_percent_one_core": 5.39
+    },
+    {
+      "pid": 1797,
+      "name": "plasmashell",
+      "cpu_percent_one_core": 2.79
+    },
+    {
+      "pid": 1621209,
+      "name": "chrome",
+      "cpu_percent_one_core": 2.39
+    },
+    {
+      "pid": 2184,
+      "name": "kiro-cli-term",
+      "cpu_percent_one_core": 1.2
+    },
+    {
+      "pid": 1715256,
+      "name": "kworker/u24:1-gfx",
+      "cpu_percent_one_core": 1.0
+    },
+    {
+      "pid": 1169720,
+      "name": "opencode",
+      "cpu_percent_one_core": 0.8
+    },
+    {
+      "pid": 1798461,
+      "name": "kworker/u25:2-events_unbound",
+      "cpu_percent_one_core": 0.8
+    },
+    {
+      "pid": 987059,
+      "name": "kiro-cli-term",
+      "cpu_percent_one_core": 0.6
+    },
+    {
+      "pid": 1798585,
+      "name": "kworker/u24:0-gfx",
+      "cpu_percent_one_core": 0.6
+    },
+    {
+      "pid": 1800670,
+      "name": "python3",
+      "cpu_percent_one_core": 0.6
+    },
+    {
+      "pid": 16,
+      "name": "rcu_preempt",
+      "cpu_percent_one_core": 0.4
+    },
+    {
+      "pid": 565,
+      "name": "irq/70-rtw88_pci",
+      "cpu_percent_one_core": 0.4
+    },
+    {
+      "pid": 1918,
+      "name": "ksystemstats",
+      "cpu_percent_one_core": 0.4
+    },
+    {
+      "pid": 67604,
+      "name": "kiro-cli-term",
+      "cpu_percent_one_core": 0.4
+    },
+    {
+      "pid": 1621874,
+      "name": "kworker/u26:22-events_unbound",
+      "cpu_percent_one_core": 0.4
+    }
+  ],
+  "condition": "Owner closed Zed and moved agent session to Konsole; owned TUI quit; no concurrent verification jobs."
+}

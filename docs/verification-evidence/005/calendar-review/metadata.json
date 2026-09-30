@@ -1,0 +1,57 @@
+{
+  "branch": "feat/interactive-tui-application",
+  "completed_at": "2026-09-30T14:37:58.892787+00:00",
+  "cost": {
+    "host": "codex",
+    "scope": {
+      "changed_lines": 434,
+      "depth": "lite",
+      "exec_nontest_lines": 133,
+      "size_band": "small",
+      "unclassified_lines": {
+        ".md": 104
+      }
+    },
+    "stages": [
+      {
+        "elapsed_seconds": 0.202,
+        "ended_at": "2026-09-30T14:31:00.142237+00:00",
+        "facts": {
+          "changed_lines": 434,
+          "depth": "lite",
+          "exec_nontest_lines": 133,
+          "size_band": "small",
+          "unclassified_lines": {
+            ".md": 104
+          }
+        },
+        "stage": "scope",
+        "started_at": "2026-09-30T14:30:59.940574+00:00"
+      },
+      {
+        "candidates": 0,
+        "elapsed_seconds": 418.804,
+        "ended_at": "2026-09-30T14:37:58.946630+00:00",
+        "stage": "review",
+        "started_at": "2026-09-30T14:31:00.142237+00:00"
+      },
+      {
+        "elapsed_seconds": 0.057,
+        "ended_at": "2026-09-30T14:37:59.003219+00:00",
+        "stage": "receipt",
+        "started_at": "2026-09-30T14:37:58.946630+00:00"
+      }
+    ],
+    "status": "complete",
+    "totals": {
+      "artifact_bytes": 6435,
+      "candidates": 0,
+      "elapsed_seconds": 419.063,
+      "reviewers": 0
+    },
+    "truncated_events": 0
+  },
+  "head_sha": "3a65e8a336d73334e99cfed992b71e894955f566",
+  "run_id": "20260930-113059-c533acd1",
+  "verdict": "Ready to merge"
+}

@@ -12,6 +12,7 @@ func (m *Model) selectedTask() *core.Task {
 }
 
 func (m *Model) rebuildRows() {
+	m.updateTodayBounds()
 	previous, index := m.selectedTask(), m.selected
 	m.rows = project(m.forest, m.filter, m.dueStart, m.dueEnd, m.collapsed, m.now, m.options.Location)
 	m.selected = -1

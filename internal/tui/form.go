@@ -36,12 +36,14 @@ type taskForm struct {
 	inputs                               [fieldCount]textinput.Model
 	notes                                textarea.Model
 	readonly                             [fieldCount]bool
+	previews                             [fieldCount]string
 	field, offset                        int
 	origin                               panelFocus
 	err                                  string
 	prompt                               formPrompt
 	confirm, saving, conflict, reloading bool
 	picker                               *parentPicker
+	calendar                             *datePicker
 }
 
 func (f *taskForm) count() int {
@@ -82,7 +84,7 @@ func (m *Model) beginForm(edit bool) {
 	f.notes.MaxHeight = 0
 	f.notes.ShowLineNumbers = false
 	f.notes.Prompt = ""
-	f.notes.SetHeight(4)
+	f.notes.SetHeight(3)
 	for i := range f.inputs {
 		input := textinput.New()
 		input.Prompt = ""
@@ -105,6 +107,9 @@ func (m *Model) beginForm(edit bool) {
 
 func (m *Model) loadFormField(f *taskForm, i int) {
 	value := f.draft.fields[i]
+	// Only one display row is shown for unsupported text. Prepare it once;
+	// the complete raw value remains in the draft for omission/replacement.
+	f.previews[i] = titleCells(terminaltext.Scalar(value), modalMaxWidth)
 	f.readonly[i] = !editableText(value, i == fieldNotes)
 	if f.readonly[i] {
 		return
@@ -151,6 +156,10 @@ func (m *Model) formKey(key tea.KeyMsg) tea.Cmd {
 	}
 	if f.picker != nil {
 		m.parentKey(key)
+		return nil
+	}
+	if f.calendar != nil {
+		m.calendarKey(key)
 		return nil
 	}
 	if f.prompt != promptNone {
@@ -227,6 +236,10 @@ func (m *Model) formKey(key tea.KeyMsg) tea.Cmd {
 	}
 	if key.String() == "ctrl+p" && i == fieldParent {
 		m.beginParentPicker()
+		return nil
+	}
+	if key.String() == "ctrl+p" && i == fieldDue {
+		m.beginCalendar()
 		return nil
 	}
 	if key.String() == "ctrl+u" && (i == fieldDue || i == fieldTags || i == fieldParent) {
@@ -340,6 +353,10 @@ func (m *Model) parentKey(key tea.KeyMsg) {
 
 func (m *Model) formContent(width, area int) (string, []string, int, string) {
 	f := m.form
+	if f.calendar != nil {
+		return "Choose due date", m.calendarLines(width), 0,
+			m.actionButton("Choose date  Enter", true, true, false) + "  " + m.actionButton("Cancel  Esc", false, false, false)
+	}
 	title := "Create task"
 	if f.draft.base != nil {
 		title = "Edit task"
@@ -359,10 +376,7 @@ func (m *Model) formContent(width, area int) (string, []string, int, string) {
 			keep = "Keep draft"
 			accept = "Reload task"
 		}
-		controls := "[ " + keep + " ]    " + accept
-		if f.confirm {
-			controls = keep + "    [ " + accept + " ]"
-		}
+		controls := m.actionButton(keep, !f.confirm, false, false) + "  " + m.actionButton(accept, f.confirm, false, false)
 		return title, []string{"", message, "", "Tab chooses · Enter confirms"}, 0, controls
 	}
 	if p := f.picker; p != nil {
@@ -377,7 +391,7 @@ func (m *Model) formContent(width, area int) (string, []string, int, string) {
 		offset := max(0, 2+p.selected*2-area+2)
 		return "Choose parent", lines, offset, "↑↓ choose · Enter select · Esc cancel"
 	}
-	labels := []string{"Title", "Notes · Enter adds a line", "Priority · ←→ choose", "Due · " + m.options.Location.String() + " · natural date / timestamp", "Tags · comma-separated", "Parent · Ctrl+P choose · Ctrl+U root", "Status · ←→ choose", "Progress · 0–99 for open leaves"}
+	labels := []string{"Title", "Notes · Enter adds a line", "Priority · ←→ choose", "Due date · e.g. 2026-10-15 or tomorrow", "Tags · comma-separated", "Parent · Ctrl+P choose · Ctrl+U root", "Status · ←→ choose", "Progress · 0–99 for open leaves"}
 	lines := []string{}
 	start, end := 0, 0
 	for i := 0; i < f.count(); i++ {
@@ -392,11 +406,16 @@ func (m *Model) formContent(width, area int) (string, []string, int, string) {
 		if f.readonly[i] {
 			label += " · read-only"
 		}
-		lines = append(lines, m.paint(label, accentColor, i == f.field))
+		color := mutedColor
+		if i == f.field {
+			color = accentColor
+		}
+		lines = append(lines, m.paint(label, color, i == f.field))
+		rule := m.paint("  │ ", color, false)
 		switch {
 		case f.readonly[i]:
-			preview := titleCells(terminaltext.Scalar(f.draft.fields[i]), width-4)
-			lines = append(lines, "  "+preview)
+			preview := titleCells(f.previews[i], width-4)
+			lines = append(lines, rule+preview)
 			if i == fieldProgress {
 				lines = append(lines, "  Derived from status or subtasks.")
 			} else {
@@ -404,12 +423,24 @@ func (m *Model) formContent(width, area int) (string, []string, int, string) {
 			}
 		case i == fieldNotes:
 			f.notes.SetWidth(max(1, width-4))
-			lines = append(lines, strings.Split(f.notes.View(), "\n")...)
+			for _, line := range strings.Split(f.notes.View(), "\n") {
+				lines = append(lines, rule+line)
+			}
 		case i == fieldPriority || i == fieldStatus:
-			lines = append(lines, "  ‹ "+f.draft.fields[i]+" ›")
+			value := f.draft.fields[i]
+			if i == fieldPriority {
+				priority, _ := core.ParsePriority(value)
+				value = priorityLabel(priority)
+			} else {
+				_, value = statusText(core.Status(value))
+			}
+			lines = append(lines, rule+"‹ "+value+" ›")
 		default:
 			f.inputs[i].Width = max(1, width-4)
-			lines = append(lines, "  "+f.inputs[i].View())
+			lines = append(lines, rule+f.inputs[i].View())
+		}
+		if i == fieldDue && !f.readonly[i] {
+			lines = append(lines, m.paint("  Ctrl+P calendar · Ctrl+U clear · "+m.options.Location.String(), mutedColor, false))
 		}
 		if i == f.field {
 			end = len(lines)
@@ -425,14 +456,7 @@ func (m *Model) formContent(width, area int) (string, []string, int, string) {
 		}
 	}
 	f.offset = max(0, min(f.offset, max(0, len(lines)-area)))
-	save, cancel := "Save task", "Cancel"
-	if f.field == f.count() {
-		save = "[ Save task ]"
-	}
-	if f.field == f.count()+1 {
-		cancel = "[ Cancel ]"
-	}
-	controls := save + "  Ctrl+S     " + cancel + "  Esc"
+	controls := m.actionButton("Save task  Ctrl+S", f.field == f.count(), true, false) + "  " + m.actionButton("Cancel  Esc", f.field == f.count()+1, false, false)
 	if f.saving {
 		controls = "Saving… · Ctrl+C exits safely"
 	} else if f.reloading {

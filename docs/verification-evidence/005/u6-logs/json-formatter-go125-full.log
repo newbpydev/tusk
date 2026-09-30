@@ -1,0 +1,2211 @@
+go test -v ./...
+=== RUN   TestOpenService
+--- PASS: TestOpenService (0.00s)
+=== RUN   TestOpenService_Failures
+--- PASS: TestOpenService_Failures (0.00s)
+=== RUN   TestProcessContext
+--- PASS: TestProcessContext (0.00s)
+=== RUN   TestOpenService_PathPrecedence
+=== RUN   TestOpenService_PathPrecedence/explicit
+=== RUN   TestOpenService_PathPrecedence/relative_explicit
+=== RUN   TestOpenService_PathPrecedence/xdg
+=== RUN   TestOpenService_PathPrecedence/relative_xdg
+=== RUN   TestOpenService_PathPrecedence/home
+--- PASS: TestOpenService_PathPrecedence (0.02s)
+    --- PASS: TestOpenService_PathPrecedence/explicit (0.00s)
+    --- PASS: TestOpenService_PathPrecedence/relative_explicit (0.01s)
+    --- PASS: TestOpenService_PathPrecedence/xdg (0.00s)
+    --- PASS: TestOpenService_PathPrecedence/relative_xdg (0.00s)
+    --- PASS: TestOpenService_PathPrecedence/home (0.00s)
+=== RUN   TestOpenService_NoFallback
+--- PASS: TestOpenService_NoFallback (0.00s)
+=== RUN   TestTerminalFacts
+--- PASS: TestTerminalFacts (0.00s)
+=== RUN   TestConfirm_Lines
+--- PASS: TestConfirm_Lines (0.00s)
+=== RUN   TestConfirm_ReadFailureAndCancel
+--- PASS: TestConfirm_ReadFailureAndCancel (0.00s)
+=== RUN   TestConfirm_CancelJoinsReader
+--- PASS: TestConfirm_CancelJoinsReader (0.01s)
+=== RUN   TestConfirm_ThreadSetupFailure
+--- PASS: TestConfirm_ThreadSetupFailure (0.00s)
+=== RUN   TestConfirm_ThreadSuccess
+--- PASS: TestConfirm_ThreadSuccess (0.00s)
+=== RUN   TestConfirm_UnixPipe
+--- PASS: TestConfirm_UnixPipe (0.10s)
+=== RUN   TestConfirm_UnixReadError
+--- PASS: TestConfirm_UnixReadError (0.00s)
+=== RUN   TestRunVersion
+--- PASS: TestRunVersion (0.00s)
+=== RUN   TestRunHelp
+=== RUN   TestRunHelp/flag_-h
+=== RUN   TestRunHelp/flag_--help
+=== RUN   TestRunHelp/subcommand_help
+=== RUN   TestRunHelp/no_arguments
+--- PASS: TestRunHelp (0.00s)
+    --- PASS: TestRunHelp/flag_-h (0.00s)
+    --- PASS: TestRunHelp/flag_--help (0.00s)
+    --- PASS: TestRunHelp/subcommand_help (0.00s)
+    --- PASS: TestRunHelp/no_arguments (0.00s)
+=== RUN   TestMainExecution
+--- PASS: TestMainExecution (0.01s)
+=== RUN   TestRoot_UnknownCommand
+tusk: invalid invocation
+Usage: tusk [command] [flags]
+Run tusk help for usage.
+--- PASS: TestRoot_UnknownCommand (0.00s)
+=== RUN   TestProcess_SecondSignalEndsStalledConfirmation
+=== RUN   TestProcess_SecondSignalEndsStalledConfirmation/interrupt
+=== RUN   TestProcess_SecondSignalEndsStalledConfirmation/terminate
+=== RUN   TestProcess_SecondSignalEndsStalledConfirmation/slow-start
+--- PASS: TestProcess_SecondSignalEndsStalledConfirmation (4.02s)
+    --- PASS: TestProcess_SecondSignalEndsStalledConfirmation/interrupt (0.01s)
+    --- PASS: TestProcess_SecondSignalEndsStalledConfirmation/terminate (0.01s)
+    --- PASS: TestProcess_SecondSignalEndsStalledConfirmation/slow-start (4.01s)
+=== RUN   TestProcess_RealTerminalSignals
+=== RUN   TestProcess_RealTerminalSignals/yes
+=== RUN   TestProcess_RealTerminalSignals/no
+=== RUN   TestProcess_RealTerminalSignals/eof
+=== RUN   TestProcess_RealTerminalSignals/interrupt
+=== RUN   TestProcess_RealTerminalSignals/terminate
+--- PASS: TestProcess_RealTerminalSignals (1.04s)
+    --- PASS: TestProcess_RealTerminalSignals/yes (0.02s)
+    --- PASS: TestProcess_RealTerminalSignals/no (0.02s)
+    --- PASS: TestProcess_RealTerminalSignals/eof (0.02s)
+    --- PASS: TestProcess_RealTerminalSignals/interrupt (0.07s)
+    --- PASS: TestProcess_RealTerminalSignals/terminate (0.07s)
+=== RUN   TestRuntimePolicy
+=== RUN   TestRuntimePolicy/preserve_runtime_default
+=== RUN   TestRuntimePolicy/explicit_runtime_setting
+--- PASS: TestRuntimePolicy (0.00s)
+    --- PASS: TestRuntimePolicy/preserve_runtime_default (0.00s)
+    --- PASS: TestRuntimePolicy/explicit_runtime_setting (0.00s)
+=== RUN   TestCLIStartup_NoSyntaxRegistryInitialization
+--- PASS: TestCLIStartup_NoSyntaxRegistryInitialization (0.58s)
+=== RUN   TestTUIProcess_FaultChild
+    tui_acceptance_linux_test.go:231: child-only fault launcher
+--- SKIP: TestTUIProcess_FaultChild (0.00s)
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/startup
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/output
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/committed-cancel
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/unknown-cancel
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/recover-cancel
+--- PASS: TestTUIProcess_TerminalRestoredOnFailure (0.37s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/startup (0.04s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/output (0.05s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/committed-cancel (0.08s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/unknown-cancel (0.09s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/recover-cancel (0.11s)
+=== RUN   TestTUIStartupMeasurements
+    tui_acceptance_linux_test.go:317: make bench-tui startup observation
+--- SKIP: TestTUIStartupMeasurements (0.00s)
+=== RUN   TestTUIProcess_CommittedBeforeInterrupt
+--- PASS: TestTUIProcess_CommittedBeforeInterrupt (0.72s)
+=== RUN   TestTUIProcess_TerminalLifecycle
+=== RUN   TestTUIProcess_TerminalLifecycle/q
+=== RUN   TestTUIProcess_TerminalLifecycle/resize
+=== RUN   TestTUIProcess_TerminalLifecycle/ctrlc
+=== RUN   TestTUIProcess_TerminalLifecycle/interrupt
+=== RUN   TestTUIProcess_TerminalLifecycle/terminate
+--- PASS: TestTUIProcess_TerminalLifecycle (0.80s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/q (0.04s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/resize (0.09s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/ctrlc (0.04s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/interrupt (0.04s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/terminate (0.04s)
+=== RUN   TestTerminal_TUIProfile
+=== RUN   TestTerminal_TUIProfile/truecolor
+=== RUN   TestTerminal_TUIProfile/24bit
+=== RUN   TestTerminal_TUIProfile/256
+=== RUN   TestTerminal_TUIProfile/basic
+=== RUN   TestTerminal_TUIProfile/no_color
+=== RUN   TestTerminal_TUIProfile/dumb
+=== RUN   TestTerminal_TUIProfile/missing
+--- PASS: TestTerminal_TUIProfile (0.00s)
+    --- PASS: TestTerminal_TUIProfile/truecolor (0.00s)
+    --- PASS: TestTerminal_TUIProfile/24bit (0.00s)
+    --- PASS: TestTerminal_TUIProfile/256 (0.00s)
+    --- PASS: TestTerminal_TUIProfile/basic (0.00s)
+    --- PASS: TestTerminal_TUIProfile/no_color (0.00s)
+    --- PASS: TestTerminal_TUIProfile/dumb (0.00s)
+    --- PASS: TestTerminal_TUIProfile/missing (0.00s)
+=== RUN   TestSession_ReopenSamePath
+--- PASS: TestSession_ReopenSamePath (0.00s)
+=== RUN   TestSession_PathPrecedence
+=== RUN   TestSession_PathPrecedence/explicit
+=== RUN   TestSession_PathPrecedence/relative
+=== RUN   TestSession_PathPrecedence/xdg
+=== RUN   TestSession_PathPrecedence/relative_xdg
+=== RUN   TestSession_PathPrecedence/home
+=== RUN   TestSession_PathPrecedence/invalid
+--- PASS: TestSession_PathPrecedence (0.01s)
+    --- PASS: TestSession_PathPrecedence/explicit (0.00s)
+    --- PASS: TestSession_PathPrecedence/relative (0.00s)
+    --- PASS: TestSession_PathPrecedence/xdg (0.00s)
+    --- PASS: TestSession_PathPrecedence/relative_xdg (0.00s)
+    --- PASS: TestSession_PathPrecedence/home (0.00s)
+    --- PASS: TestSession_PathPrecedence/invalid (0.00s)
+=== RUN   TestSession_ComposedRunner
+--- PASS: TestSession_ComposedRunner (0.00s)
+=== RUN   TestSession_PathErrors
+=== RUN   TestSession_PathErrors/missing_home
+=== RUN   TestSession_PathErrors/relative_home
+=== RUN   TestSession_PathErrors/missing_cwd
+--- PASS: TestSession_PathErrors (0.00s)
+    --- PASS: TestSession_PathErrors/missing_home (0.00s)
+    --- PASS: TestSession_PathErrors/relative_home (0.00s)
+    --- PASS: TestSession_PathErrors/missing_cwd (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	7.697s
+=== RUN   TestEmbed_ForwardOnly
+--- PASS: TestEmbed_ForwardOnly (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/db	(cached)
+=== RUN   TestCompatibility_Presentation
+--- PASS: TestCompatibility_Presentation (0.00s)
+=== RUN   TestDelete_ForceNeverImpliesRecursive
+--- PASS: TestDelete_ForceNeverImpliesRecursive (0.00s)
+=== RUN   TestDelete_NonTTYNeverReads
+--- PASS: TestDelete_NonTTYNeverReads (0.00s)
+=== RUN   TestDelete_Confirmation
+=== RUN   TestDelete_Confirmation/yes
+=== RUN   TestDelete_Confirmation/decline
+=== RUN   TestDelete_Confirmation/read_error
+=== RUN   TestDelete_Confirmation/cancel
+=== RUN   TestDelete_Confirmation/preview_error
+=== RUN   TestDelete_Confirmation/children
+=== RUN   TestDelete_Confirmation/recursive
+=== RUN   TestDelete_Confirmation/stale
+=== RUN   TestDelete_Confirmation/unknown
+=== RUN   TestDelete_Confirmation/prompt_write
+--- PASS: TestDelete_Confirmation (0.00s)
+    --- PASS: TestDelete_Confirmation/yes (0.00s)
+    --- PASS: TestDelete_Confirmation/decline (0.00s)
+    --- PASS: TestDelete_Confirmation/read_error (0.00s)
+    --- PASS: TestDelete_Confirmation/cancel (0.00s)
+    --- PASS: TestDelete_Confirmation/preview_error (0.00s)
+    --- PASS: TestDelete_Confirmation/children (0.00s)
+    --- PASS: TestDelete_Confirmation/recursive (0.00s)
+    --- PASS: TestDelete_Confirmation/stale (0.00s)
+    --- PASS: TestDelete_Confirmation/unknown (0.00s)
+    --- PASS: TestDelete_Confirmation/prompt_write (0.00s)
+=== RUN   TestDelete_StalePreview
+=== RUN   TestDelete_StalePreview/membership
+=== RUN   TestDelete_StalePreview/target
+--- PASS: TestDelete_StalePreview (0.01s)
+    --- PASS: TestDelete_StalePreview/membership (0.01s)
+    --- PASS: TestDelete_StalePreview/target (0.01s)
+=== RUN   TestDelete_CommittedOutputFailure
+--- PASS: TestDelete_CommittedOutputFailure (0.00s)
+=== RUN   TestDelete_SecondOwnerBarrier
+=== RUN   TestDelete_SecondOwnerBarrier/add
+=== RUN   TestDelete_SecondOwnerBarrier/remove
+=== RUN   TestDelete_SecondOwnerBarrier/move
+=== RUN   TestDelete_SecondOwnerBarrier/metadata
+--- PASS: TestDelete_SecondOwnerBarrier (0.02s)
+    --- PASS: TestDelete_SecondOwnerBarrier/add (0.01s)
+    --- PASS: TestDelete_SecondOwnerBarrier/remove (0.01s)
+    --- PASS: TestDelete_SecondOwnerBarrier/move (0.01s)
+    --- PASS: TestDelete_SecondOwnerBarrier/metadata (0.00s)
+=== RUN   TestSanitize_SafeTextAllocation
+--- PASS: TestSanitize_SafeTextAllocation (0.00s)
+=== RUN   TestSanitize_Controls
+--- PASS: TestSanitize_Controls (0.00s)
+=== RUN   TestSanitize_DirectionalMarks
+--- PASS: TestSanitize_DirectionalMarks (0.00s)
+=== RUN   TestFormat_Plain
+--- PASS: TestFormat_Plain (0.00s)
+=== RUN   TestFormat_CellWidths
+--- PASS: TestFormat_CellWidths (0.00s)
+=== RUN   TestTerminal_Capabilities
+--- PASS: TestTerminal_Capabilities (0.00s)
+=== RUN   TestFormat_OtherValues
+--- PASS: TestFormat_OtherValues (0.00s)
+=== RUN   TestFormat_Parallel
+=== RUN   TestFormat_Parallel/0
+=== PAUSE TestFormat_Parallel/0
+=== RUN   TestFormat_Parallel/1
+=== PAUSE TestFormat_Parallel/1
+=== RUN   TestFormat_Parallel/2
+=== PAUSE TestFormat_Parallel/2
+=== RUN   TestFormat_Parallel/3
+=== PAUSE TestFormat_Parallel/3
+=== RUN   TestFormat_Parallel/4
+=== PAUSE TestFormat_Parallel/4
+=== RUN   TestFormat_Parallel/5
+=== PAUSE TestFormat_Parallel/5
+=== RUN   TestFormat_Parallel/6
+=== PAUSE TestFormat_Parallel/6
+=== RUN   TestFormat_Parallel/7
+=== PAUSE TestFormat_Parallel/7
+=== RUN   TestFormat_Parallel/8
+=== PAUSE TestFormat_Parallel/8
+=== RUN   TestFormat_Parallel/9
+=== PAUSE TestFormat_Parallel/9
+=== CONT  TestFormat_Parallel/0
+=== CONT  TestFormat_Parallel/9
+=== CONT  TestFormat_Parallel/8
+=== CONT  TestFormat_Parallel/7
+=== CONT  TestFormat_Parallel/6
+=== CONT  TestFormat_Parallel/5
+=== CONT  TestFormat_Parallel/4
+=== CONT  TestFormat_Parallel/3
+=== CONT  TestFormat_Parallel/2
+=== CONT  TestFormat_Parallel/1
+--- PASS: TestFormat_Parallel (0.00s)
+    --- PASS: TestFormat_Parallel/0 (0.00s)
+    --- PASS: TestFormat_Parallel/9 (0.00s)
+    --- PASS: TestFormat_Parallel/8 (0.00s)
+    --- PASS: TestFormat_Parallel/7 (0.00s)
+    --- PASS: TestFormat_Parallel/6 (0.00s)
+    --- PASS: TestFormat_Parallel/5 (0.00s)
+    --- PASS: TestFormat_Parallel/4 (0.00s)
+    --- PASS: TestFormat_Parallel/3 (0.00s)
+    --- PASS: TestFormat_Parallel/2 (0.00s)
+    --- PASS: TestFormat_Parallel/1 (0.00s)
+=== RUN   TestFormat_KittyPreview
+    format_test.go:171: explicit visual fixture
+--- SKIP: TestFormat_KittyPreview (0.00s)
+=== RUN   TestFormat_NoTerminalProbe
+--- PASS: TestFormat_NoTerminalProbe (0.00s)
+=== RUN   TestFormat_TreeContinuations
+--- PASS: TestFormat_TreeContinuations (0.00s)
+=== RUN   TestFormat_HeaderAlignment
+--- PASS: TestFormat_HeaderAlignment (0.00s)
+=== RUN   TestFormat_HistoryNarrowRecords
+--- PASS: TestFormat_HistoryNarrowRecords (0.00s)
+=== RUN   TestJSON_ExplicitFields
+--- PASS: TestJSON_ExplicitFields (0.00s)
+=== RUN   TestJSON_Collections
+--- PASS: TestJSON_Collections (0.00s)
+=== RUN   TestJSON_StatsDeleteHistory
+--- PASS: TestJSON_StatsDeleteHistory (0.00s)
+=== RUN   TestJSON_Invalid
+--- PASS: TestJSON_Invalid (0.00s)
+=== RUN   TestJSON_EncodingAllocation
+--- PASS: TestJSON_EncodingAllocation (2.44s)
+=== RUN   TestJSON_TreeEncodingAllocation
+--- PASS: TestJSON_TreeEncodingAllocation (1.51s)
+=== RUN   TestJSON_EncodingParity
+--- PASS: TestJSON_EncodingParity (0.01s)
+=== RUN   TestAdd_ExactCommand
+--- PASS: TestAdd_ExactCommand (0.00s)
+=== RUN   TestEdit_OmittedVersusClear
+--- PASS: TestEdit_OmittedVersusClear (0.00s)
+=== RUN   TestEdit_DecimalProgress
+--- PASS: TestEdit_DecimalProgress (0.00s)
+=== RUN   TestMutation_SyntaxAndDomains
+--- PASS: TestMutation_SyntaxAndDomains (0.00s)
+=== RUN   TestMutation_Failures
+--- PASS: TestMutation_Failures (0.00s)
+=== RUN   TestDone_SubtreeAndReopen
+--- PASS: TestDone_SubtreeAndReopen (0.01s)
+=== RUN   TestMutation_PolicyAndDates
+=== RUN   TestMutation_PolicyAndDates/true
+=== RUN   TestMutation_PolicyAndDates/false
+--- PASS: TestMutation_PolicyAndDates (0.02s)
+    --- PASS: TestMutation_PolicyAndDates/true (0.01s)
+    --- PASS: TestMutation_PolicyAndDates/false (0.01s)
+=== RUN   TestOutput_CommittedEncodeFailure
+--- PASS: TestOutput_CommittedEncodeFailure (0.00s)
+=== RUN   TestOutput_WriterFailures
+--- PASS: TestOutput_WriterFailures (0.00s)
+=== RUN   TestOutput_UnknownOutcomePrecedesCause
+--- PASS: TestOutput_UnknownOutcomePrecedesCause (0.00s)
+=== RUN   TestOutput_LargeJSONAllocation
+--- PASS: TestOutput_LargeJSONAllocation (2.15s)
+=== RUN   TestCLIProcessKillHelper
+    process_test.go:53: child only
+--- SKIP: TestCLIProcessKillHelper (0.00s)
+=== RUN   TestProcess_HardKillReadback
+=== RUN   TestProcess_HardKillReadback/staged
+=== RUN   TestProcess_HardKillReadback/committed
+--- PASS: TestProcess_HardKillReadback (0.02s)
+    --- PASS: TestProcess_HardKillReadback/staged (0.01s)
+    --- PASS: TestProcess_HardKillReadback/committed (0.01s)
+=== RUN   TestProcess_Workflow
+=== RUN   TestProcess_Workflow/isolation
+=== RUN   TestProcess_Workflow/durable_workflow
+=== RUN   TestProcess_Workflow/broken_pipe_preserves_commit
+=== RUN   TestProcess_Workflow/concurrent_writers
+=== RUN   TestProcess_Workflow/unsafe_paths
+--- PASS: TestProcess_Workflow (0.81s)
+    --- PASS: TestProcess_Workflow/isolation (0.02s)
+    --- PASS: TestProcess_Workflow/durable_workflow (0.06s)
+    --- PASS: TestProcess_Workflow/broken_pipe_preserves_commit (0.03s)
+    --- PASS: TestProcess_Workflow/concurrent_writers (0.05s)
+    --- PASS: TestProcess_Workflow/unsafe_paths (0.05s)
+=== RUN   TestProcess_UnknownOutcomeReadback
+=== RUN   TestProcess_UnknownOutcomeReadback/false
+=== RUN   TestProcess_UnknownOutcomeReadback/true
+--- PASS: TestProcess_UnknownOutcomeReadback (0.01s)
+    --- PASS: TestProcess_UnknownOutcomeReadback/false (0.01s)
+    --- PASS: TestProcess_UnknownOutcomeReadback/true (0.01s)
+=== RUN   TestList_FilterContract
+--- PASS: TestList_FilterContract (0.00s)
+=== RUN   TestQuery_SyntaxAndInvalid
+--- PASS: TestQuery_SyntaxAndInvalid (0.00s)
+=== RUN   TestTree_StoredParentAndDepth
+--- PASS: TestTree_StoredParentAndDepth (0.00s)
+=== RUN   TestQuery_Failures
+--- PASS: TestQuery_Failures (0.00s)
+=== RUN   TestQuery_DiskReadModels
+--- PASS: TestQuery_DiskReadModels (0.01s)
+=== RUN   TestHistory_EmptyVersusMissing
+--- PASS: TestHistory_EmptyVersusMissing (0.00s)
+=== RUN   TestRoot_NoStorageForHelp
+=== RUN   TestRoot_NoStorageForHelp/#00
+=== RUN   TestRoot_NoStorageForHelp/-h
+=== RUN   TestRoot_NoStorageForHelp/--help
+=== RUN   TestRoot_NoStorageForHelp/help
+=== RUN   TestRoot_NoStorageForHelp/-v
+=== RUN   TestRoot_NoStorageForHelp/--version
+=== RUN   TestRoot_NoStorageForHelp/version
+--- PASS: TestRoot_NoStorageForHelp (0.00s)
+    --- PASS: TestRoot_NoStorageForHelp/#00 (0.00s)
+    --- PASS: TestRoot_NoStorageForHelp/-h (0.00s)
+    --- PASS: TestRoot_NoStorageForHelp/--help (0.00s)
+    --- PASS: TestRoot_NoStorageForHelp/help (0.00s)
+    --- PASS: TestRoot_NoStorageForHelp/-v (0.00s)
+    --- PASS: TestRoot_NoStorageForHelp/--version (0.00s)
+    --- PASS: TestRoot_NoStorageForHelp/version (0.00s)
+=== RUN   TestRoot_Syntax
+--- PASS: TestRoot_Syntax (0.00s)
+=== RUN   TestRun_CloseAndOutcome
+=== RUN   TestRun_CloseAndOutcome/success
+=== RUN   TestRun_CloseAndOutcome/service
+=== RUN   TestRun_CloseAndOutcome/close
+=== RUN   TestRun_CloseAndOutcome/committed_close
+=== RUN   TestRun_CloseAndOutcome/committed_writer
+=== RUN   TestRun_CloseAndOutcome/short
+=== RUN   TestRun_CloseAndOutcome/unknown
+=== RUN   TestRun_CloseAndOutcome/cancel
+--- PASS: TestRun_CloseAndOutcome (0.00s)
+    --- PASS: TestRun_CloseAndOutcome/success (0.00s)
+    --- PASS: TestRun_CloseAndOutcome/service (0.00s)
+    --- PASS: TestRun_CloseAndOutcome/close (0.00s)
+    --- PASS: TestRun_CloseAndOutcome/committed_close (0.00s)
+    --- PASS: TestRun_CloseAndOutcome/committed_writer (0.00s)
+    --- PASS: TestRun_CloseAndOutcome/short (0.00s)
+    --- PASS: TestRun_CloseAndOutcome/unknown (0.00s)
+    --- PASS: TestRun_CloseAndOutcome/cancel (0.00s)
+=== RUN   TestConfig_Precedence
+--- PASS: TestConfig_Precedence (0.00s)
+=== RUN   TestConfig_ActionablePrivateDiagnostics
+--- PASS: TestConfig_ActionablePrivateDiagnostics (0.00s)
+=== RUN   TestDiagnostic_DeletionRemediation
+--- PASS: TestDiagnostic_DeletionRemediation (0.00s)
+=== RUN   TestRoot_HelpPrecedenceAndBoundaries
+--- PASS: TestRoot_HelpPrecedenceAndBoundaries (0.00s)
+=== RUN   TestRoot_Independent
+=== RUN   TestRoot_Independent/independent
+=== PAUSE TestRoot_Independent/independent
+=== RUN   TestRoot_Independent/independent#01
+=== PAUSE TestRoot_Independent/independent#01
+=== RUN   TestRoot_Independent/independent#02
+=== PAUSE TestRoot_Independent/independent#02
+=== RUN   TestRoot_Independent/independent#03
+=== PAUSE TestRoot_Independent/independent#03
+=== RUN   TestRoot_Independent/independent#04
+=== PAUSE TestRoot_Independent/independent#04
+=== RUN   TestRoot_Independent/independent#05
+=== PAUSE TestRoot_Independent/independent#05
+=== RUN   TestRoot_Independent/independent#06
+=== PAUSE TestRoot_Independent/independent#06
+=== RUN   TestRoot_Independent/independent#07
+=== PAUSE TestRoot_Independent/independent#07
+=== RUN   TestRoot_Independent/independent#08
+=== PAUSE TestRoot_Independent/independent#08
+=== RUN   TestRoot_Independent/independent#09
+=== PAUSE TestRoot_Independent/independent#09
+=== RUN   TestRoot_Independent/independent#10
+=== PAUSE TestRoot_Independent/independent#10
+=== RUN   TestRoot_Independent/independent#11
+=== PAUSE TestRoot_Independent/independent#11
+=== RUN   TestRoot_Independent/independent#12
+=== PAUSE TestRoot_Independent/independent#12
+=== RUN   TestRoot_Independent/independent#13
+=== PAUSE TestRoot_Independent/independent#13
+=== RUN   TestRoot_Independent/independent#14
+=== PAUSE TestRoot_Independent/independent#14
+=== RUN   TestRoot_Independent/independent#15
+=== PAUSE TestRoot_Independent/independent#15
+=== RUN   TestRoot_Independent/independent#16
+=== PAUSE TestRoot_Independent/independent#16
+=== RUN   TestRoot_Independent/independent#17
+=== PAUSE TestRoot_Independent/independent#17
+=== RUN   TestRoot_Independent/independent#18
+=== PAUSE TestRoot_Independent/independent#18
+=== RUN   TestRoot_Independent/independent#19
+=== PAUSE TestRoot_Independent/independent#19
+=== CONT  TestRoot_Independent/independent
+=== CONT  TestRoot_Independent/independent#14
+=== CONT  TestRoot_Independent/independent#07
+=== CONT  TestRoot_Independent/independent#06
+=== CONT  TestRoot_Independent/independent#19
+=== CONT  TestRoot_Independent/independent#13
+=== CONT  TestRoot_Independent/independent#05
+=== CONT  TestRoot_Independent/independent#18
+=== CONT  TestRoot_Independent/independent#12
+=== CONT  TestRoot_Independent/independent#04
+=== CONT  TestRoot_Independent/independent#11
+=== CONT  TestRoot_Independent/independent#17
+=== CONT  TestRoot_Independent/independent#03
+=== CONT  TestRoot_Independent/independent#10
+=== CONT  TestRoot_Independent/independent#16
+=== CONT  TestRoot_Independent/independent#15
+=== CONT  TestRoot_Independent/independent#09
+=== CONT  TestRoot_Independent/independent#08
+=== CONT  TestRoot_Independent/independent#02
+=== CONT  TestRoot_Independent/independent#01
+--- PASS: TestRoot_Independent (0.00s)
+    --- PASS: TestRoot_Independent/independent (0.00s)
+    --- PASS: TestRoot_Independent/independent#14 (0.00s)
+    --- PASS: TestRoot_Independent/independent#07 (0.00s)
+    --- PASS: TestRoot_Independent/independent#06 (0.00s)
+    --- PASS: TestRoot_Independent/independent#19 (0.00s)
+    --- PASS: TestRoot_Independent/independent#13 (0.00s)
+    --- PASS: TestRoot_Independent/independent#05 (0.00s)
+    --- PASS: TestRoot_Independent/independent#12 (0.00s)
+    --- PASS: TestRoot_Independent/independent#18 (0.00s)
+    --- PASS: TestRoot_Independent/independent#04 (0.00s)
+    --- PASS: TestRoot_Independent/independent#11 (0.00s)
+    --- PASS: TestRoot_Independent/independent#17 (0.00s)
+    --- PASS: TestRoot_Independent/independent#10 (0.00s)
+    --- PASS: TestRoot_Independent/independent#09 (0.00s)
+    --- PASS: TestRoot_Independent/independent#15 (0.00s)
+    --- PASS: TestRoot_Independent/independent#03 (0.00s)
+    --- PASS: TestRoot_Independent/independent#16 (0.00s)
+    --- PASS: TestRoot_Independent/independent#02 (0.00s)
+    --- PASS: TestRoot_Independent/independent#08 (0.00s)
+    --- PASS: TestRoot_Independent/independent#01 (0.00s)
+=== RUN   TestRun_FactoryAndCancellation
+=== RUN   TestRun_FactoryAndCancellation/factory_error
+=== RUN   TestRun_FactoryAndCancellation/nil_service
+=== RUN   TestRun_FactoryAndCancellation/nil_closer
+=== RUN   TestRun_FactoryAndCancellation/canceled_before_open
+--- PASS: TestRun_FactoryAndCancellation (0.00s)
+    --- PASS: TestRun_FactoryAndCancellation/factory_error (0.00s)
+    --- PASS: TestRun_FactoryAndCancellation/nil_service (0.00s)
+    --- PASS: TestRun_FactoryAndCancellation/nil_closer (0.00s)
+    --- PASS: TestRun_FactoryAndCancellation/canceled_before_open (0.00s)
+=== RUN   TestDiagnostic_UnknownPointer
+--- PASS: TestDiagnostic_UnknownPointer (0.00s)
+=== RUN   TestRun_CloseBeforePublish
+--- PASS: TestRun_CloseBeforePublish (0.00s)
+=== RUN   TestCLI_SanitizerCompatibility
+--- PASS: TestCLI_SanitizerCompatibility (0.00s)
+=== RUN   TestTUIAdmission_NoOpen
+=== RUN   TestTUIAdmission_NoOpen/tuixterm\x00
+=== RUN   TestTUIAdmission_NoOpen/tui\x00
+=== RUN   TestTUIAdmission_NoOpen/tuixterm\x01
+=== RUN   TestTUIAdmission_NoOpen/tuixterm\x01#01
+=== RUN   TestTUIAdmission_NoOpen/tuixterm\x01#02
+=== RUN   TestTUIAdmission_NoOpen/tuidumb\x01
+=== RUN   TestTUIAdmission_NoOpen/tui_--jsonxterm\x02
+=== RUN   TestTUIAdmission_NoOpen/tui_extraxterm\x02
+=== RUN   TestTUIAdmission_NoOpen/tui_--watxterm\x02
+=== RUN   TestTUIAdmission_NoOpen/tui_--helpdumb\x00
+=== RUN   TestTUIAdmission_NoOpen/help_tuidumb\x00
+--- PASS: TestTUIAdmission_NoOpen (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tuixterm\x00 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tui\x00 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tuixterm\x01 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tuixterm\x01#01 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tuixterm\x01#02 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tuidumb\x01 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tui_--jsonxterm\x02 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tui_extraxterm\x02 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tui_--watxterm\x02 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/tui_--helpdumb\x00 (0.00s)
+    --- PASS: TestTUIAdmission_NoOpen/help_tuidumb\x00 (0.00s)
+=== RUN   TestTUI_Diagnostics
+--- PASS: TestTUI_Diagnostics (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	7.051s
+=== RUN   TestCoverage_FilterAndSortFields
+--- PASS: TestCoverage_FilterAndSortFields (0.00s)
+=== RUN   TestCoverage_TaskFallbacksAndValidations
+--- PASS: TestCoverage_TaskFallbacksAndValidations (0.00s)
+=== RUN   TestCoverage_RollupClamping
+--- PASS: TestCoverage_RollupClamping (0.00s)
+=== RUN   TestCoverage_PriorityStringAndParse
+--- PASS: TestCoverage_PriorityStringAndParse (0.00s)
+=== RUN   TestCoverage_TreeErrorsAndLoops
+--- PASS: TestCoverage_TreeErrorsAndLoops (0.00s)
+=== RUN   TestErrorsExist
+=== RUN   TestErrorsExist/ErrTaskNotFound
+=== RUN   TestErrorsExist/ErrEmptyTitle
+=== RUN   TestErrorsExist/ErrTitleTooLong
+=== RUN   TestErrorsExist/ErrInvalidStatus
+=== RUN   TestErrorsExist/ErrInvalidPriority
+=== RUN   TestErrorsExist/ErrInvalidStatusTransition
+=== RUN   TestErrorsExist/ErrCyclicDependency
+=== RUN   TestErrorsExist/ErrSelfParenting
+=== RUN   TestErrorsExist/ErrMaxDepthExceeded
+=== RUN   TestErrorsExist/ErrInvalidTag
+=== RUN   TestErrorsExist/ErrInvalidProgress
+=== RUN   TestErrorsExist/ErrInvalidTaskID
+=== RUN   TestErrorsExist/ErrDuplicateTaskID
+=== RUN   TestErrorsExist/ErrInvalidDepth
+--- PASS: TestErrorsExist (0.00s)
+    --- PASS: TestErrorsExist/ErrTaskNotFound (0.00s)
+    --- PASS: TestErrorsExist/ErrEmptyTitle (0.00s)
+    --- PASS: TestErrorsExist/ErrTitleTooLong (0.00s)
+    --- PASS: TestErrorsExist/ErrInvalidStatus (0.00s)
+    --- PASS: TestErrorsExist/ErrInvalidPriority (0.00s)
+    --- PASS: TestErrorsExist/ErrInvalidStatusTransition (0.00s)
+    --- PASS: TestErrorsExist/ErrCyclicDependency (0.00s)
+    --- PASS: TestErrorsExist/ErrSelfParenting (0.00s)
+    --- PASS: TestErrorsExist/ErrMaxDepthExceeded (0.00s)
+    --- PASS: TestErrorsExist/ErrInvalidTag (0.00s)
+    --- PASS: TestErrorsExist/ErrInvalidProgress (0.00s)
+    --- PASS: TestErrorsExist/ErrInvalidTaskID (0.00s)
+    --- PASS: TestErrorsExist/ErrDuplicateTaskID (0.00s)
+    --- PASS: TestErrorsExist/ErrInvalidDepth (0.00s)
+=== RUN   TestErrors_SentinelIntegrity
+=== RUN   TestErrors_SentinelIntegrity/task_not_found
+=== RUN   TestErrors_SentinelIntegrity/task_title_cannot_be_empty
+=== RUN   TestErrors_SentinelIntegrity/task_title_exceeds_maximum_length_of_255_characters
+=== RUN   TestErrors_SentinelIntegrity/invalid_task_status
+=== RUN   TestErrors_SentinelIntegrity/invalid_task_priority
+=== RUN   TestErrors_SentinelIntegrity/invalid_status_transition
+=== RUN   TestErrors_SentinelIntegrity/cyclic_dependency_detected:_a_task_cannot_be_its_own_ancestor
+=== RUN   TestErrors_SentinelIntegrity/task_cannot_reference_itself_as_parent
+=== RUN   TestErrors_SentinelIntegrity/maximum_subtask_hierarchy_depth_exceeded
+=== RUN   TestErrors_SentinelIntegrity/invalid_tag_format:_tags_must_be_alphanumeric_with_hyphens
+=== RUN   TestErrors_SentinelIntegrity/task_progress_must_be_an_integer_between_0_and_100
+=== RUN   TestErrors_SentinelIntegrity/invalid_task_id:_id_cannot_be_empty
+=== RUN   TestErrors_SentinelIntegrity/duplicate_task_id_in_hierarchy
+=== RUN   TestErrors_SentinelIntegrity/invalid_hierarchy_depth:_depth_cannot_be_negative
+--- PASS: TestErrors_SentinelIntegrity (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/task_not_found (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/task_title_cannot_be_empty (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/task_title_exceeds_maximum_length_of_255_characters (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/invalid_task_status (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/invalid_task_priority (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/invalid_status_transition (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/cyclic_dependency_detected:_a_task_cannot_be_its_own_ancestor (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/task_cannot_reference_itself_as_parent (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/maximum_subtask_hierarchy_depth_exceeded (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/invalid_tag_format:_tags_must_be_alphanumeric_with_hyphens (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/task_progress_must_be_an_integer_between_0_and_100 (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/invalid_task_id:_id_cannot_be_empty (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/duplicate_task_id_in_hierarchy (0.00s)
+    --- PASS: TestErrors_SentinelIntegrity/invalid_hierarchy_depth:_depth_cannot_be_negative (0.00s)
+=== RUN   TestTaskFilter_HasPredicates
+--- PASS: TestTaskFilter_HasPredicates (0.00s)
+=== RUN   TestSortTasks_ShuffledExpectedOrder
+--- PASS: TestSortTasks_ShuffledExpectedOrder (0.00s)
+=== RUN   TestSortTasks_UnorderedAllocationAndParity
+--- PASS: TestSortTasks_UnorderedAllocationAndParity (0.02s)
+=== RUN   TestSortTasks_AlreadyOrderedAllocation
+--- PASS: TestSortTasks_AlreadyOrderedAllocation (0.00s)
+=== RUN   TestFilterTasks
+--- PASS: TestFilterTasks (0.00s)
+=== RUN   TestSortTasks_MultiKey
+--- PASS: TestSortTasks_MultiKey (0.00s)
+=== RUN   TestFilterTasks_DeepCopy
+--- PASS: TestFilterTasks_DeepCopy (0.00s)
+=== RUN   TestParsePriority
+=== RUN   TestParsePriority/low
+=== RUN   TestParsePriority/1
+=== RUN   TestParsePriority/medium
+=== RUN   TestParsePriority/2
+=== RUN   TestParsePriority/high
+=== RUN   TestParsePriority/3
+=== RUN   TestParsePriority/urgent
+=== RUN   TestParsePriority/4
+=== RUN   TestParsePriority/_LOW_
+=== RUN   TestParsePriority/Urgent
+=== RUN   TestParsePriority/0
+=== RUN   TestParsePriority/5
+=== RUN   TestParsePriority/critical
+=== RUN   TestParsePriority/+1
+=== RUN   TestParsePriority/01
+=== RUN   TestParsePriority/004
+=== RUN   TestParsePriority/#00
+--- PASS: TestParsePriority (0.00s)
+    --- PASS: TestParsePriority/low (0.00s)
+    --- PASS: TestParsePriority/1 (0.00s)
+    --- PASS: TestParsePriority/medium (0.00s)
+    --- PASS: TestParsePriority/2 (0.00s)
+    --- PASS: TestParsePriority/high (0.00s)
+    --- PASS: TestParsePriority/3 (0.00s)
+    --- PASS: TestParsePriority/urgent (0.00s)
+    --- PASS: TestParsePriority/4 (0.00s)
+    --- PASS: TestParsePriority/_LOW_ (0.00s)
+    --- PASS: TestParsePriority/Urgent (0.00s)
+    --- PASS: TestParsePriority/0 (0.00s)
+    --- PASS: TestParsePriority/5 (0.00s)
+    --- PASS: TestParsePriority/critical (0.00s)
+    --- PASS: TestParsePriority/+1 (0.00s)
+    --- PASS: TestParsePriority/01 (0.00s)
+    --- PASS: TestParsePriority/004 (0.00s)
+    --- PASS: TestParsePriority/#00 (0.00s)
+=== RUN   TestPriority_IsValid
+--- PASS: TestPriority_IsValid (0.00s)
+=== RUN   TestCalculateProgress_Leaf
+--- PASS: TestCalculateProgress_Leaf (0.00s)
+=== RUN   TestCalculateProgress_Subtasks
+--- PASS: TestCalculateProgress_Subtasks (0.00s)
+=== RUN   TestCalculateProgress_FloorRounding
+--- PASS: TestCalculateProgress_FloorRounding (0.00s)
+=== RUN   TestCalculateProgress_AllDone
+--- PASS: TestCalculateProgress_AllDone (0.00s)
+=== RUN   TestCalculateProgress_Mutations
+--- PASS: TestCalculateProgress_Mutations (0.00s)
+=== RUN   TestCalculateProgress_NestedHierarchy100
+--- PASS: TestCalculateProgress_NestedHierarchy100 (0.00s)
+=== RUN   TestCalculateProgress_DoneParentIncompleteSubtasks
+--- PASS: TestCalculateProgress_DoneParentIncompleteSubtasks (0.00s)
+=== RUN   TestParseStatus
+=== RUN   TestParseStatus/todo
+=== RUN   TestParseStatus/in-progress
+=== RUN   TestParseStatus/blocked
+=== RUN   TestParseStatus/done
+=== RUN   TestParseStatus/_TODO_
+=== RUN   TestParseStatus/In-Progress
+=== RUN   TestParseStatus/BLOCKED
+=== RUN   TestParseStatus/Done
+=== RUN   TestParseStatus/invalid
+=== RUN   TestParseStatus/#00
+=== RUN   TestParseStatus/review
+--- PASS: TestParseStatus (0.00s)
+    --- PASS: TestParseStatus/todo (0.00s)
+    --- PASS: TestParseStatus/in-progress (0.00s)
+    --- PASS: TestParseStatus/blocked (0.00s)
+    --- PASS: TestParseStatus/done (0.00s)
+    --- PASS: TestParseStatus/_TODO_ (0.00s)
+    --- PASS: TestParseStatus/In-Progress (0.00s)
+    --- PASS: TestParseStatus/BLOCKED (0.00s)
+    --- PASS: TestParseStatus/Done (0.00s)
+    --- PASS: TestParseStatus/invalid (0.00s)
+    --- PASS: TestParseStatus/#00 (0.00s)
+    --- PASS: TestParseStatus/review (0.00s)
+=== RUN   TestStatus_IsTerminal
+--- PASS: TestStatus_IsTerminal (0.00s)
+=== RUN   TestStatusTransitions
+=== RUN   TestStatusTransitions/todo->todo
+=== RUN   TestStatusTransitions/todo->in-progress
+=== RUN   TestStatusTransitions/todo->blocked
+=== RUN   TestStatusTransitions/todo->done
+=== RUN   TestStatusTransitions/in-progress->in-progress
+=== RUN   TestStatusTransitions/in-progress->todo
+=== RUN   TestStatusTransitions/in-progress->blocked
+=== RUN   TestStatusTransitions/in-progress->done
+=== RUN   TestStatusTransitions/blocked->blocked
+=== RUN   TestStatusTransitions/blocked->todo
+=== RUN   TestStatusTransitions/blocked->in-progress
+=== RUN   TestStatusTransitions/blocked->done
+=== RUN   TestStatusTransitions/done->done
+=== RUN   TestStatusTransitions/done->todo
+=== RUN   TestStatusTransitions/done->in-progress
+=== RUN   TestStatusTransitions/invalid_done->blocked
+=== RUN   TestStatusTransitions/invalid_unknown->todo
+=== RUN   TestStatusTransitions/invalid_todo->unknown
+--- PASS: TestStatusTransitions (0.00s)
+    --- PASS: TestStatusTransitions/todo->todo (0.00s)
+    --- PASS: TestStatusTransitions/todo->in-progress (0.00s)
+    --- PASS: TestStatusTransitions/todo->blocked (0.00s)
+    --- PASS: TestStatusTransitions/todo->done (0.00s)
+    --- PASS: TestStatusTransitions/in-progress->in-progress (0.00s)
+    --- PASS: TestStatusTransitions/in-progress->todo (0.00s)
+    --- PASS: TestStatusTransitions/in-progress->blocked (0.00s)
+    --- PASS: TestStatusTransitions/in-progress->done (0.00s)
+    --- PASS: TestStatusTransitions/blocked->blocked (0.00s)
+    --- PASS: TestStatusTransitions/blocked->todo (0.00s)
+    --- PASS: TestStatusTransitions/blocked->in-progress (0.00s)
+    --- PASS: TestStatusTransitions/blocked->done (0.00s)
+    --- PASS: TestStatusTransitions/done->done (0.00s)
+    --- PASS: TestStatusTransitions/done->todo (0.00s)
+    --- PASS: TestStatusTransitions/done->in-progress (0.00s)
+    --- PASS: TestStatusTransitions/invalid_done->blocked (0.00s)
+    --- PASS: TestStatusTransitions/invalid_unknown->todo (0.00s)
+    --- PASS: TestStatusTransitions/invalid_todo->unknown (0.00s)
+=== RUN   TestNormalizeTag
+=== RUN   TestNormalizeTag/backend
+=== RUN   TestNormalizeTag/#backend
+=== RUN   TestNormalizeTag/__#Backend__
+=== RUN   TestNormalizeTag/frontend-v2
+=== RUN   TestNormalizeTag/k8s
+=== RUN   TestNormalizeTag/ci-cd-pipeline
+=== RUN   TestNormalizeTag/#00
+=== RUN   TestNormalizeTag/#
+=== RUN   TestNormalizeTag/___
+=== RUN   TestNormalizeTag/invalid_tag
+=== RUN   TestNormalizeTag/bad_tag
+=== RUN   TestNormalizeTag/-leading-dash
+=== RUN   TestNormalizeTag/trailing-dash-
+=== RUN   TestNormalizeTag/double--dash
+=== RUN   TestNormalizeTag/#_backend
+=== RUN   TestNormalizeTag/##backend
+=== RUN   TestNormalizeTag/#--backend
+=== RUN   TestNormalizeTag/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+=== RUN   TestNormalizeTag/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+--- PASS: TestNormalizeTag (0.00s)
+    --- PASS: TestNormalizeTag/backend (0.00s)
+    --- PASS: TestNormalizeTag/#backend (0.00s)
+    --- PASS: TestNormalizeTag/__#Backend__ (0.00s)
+    --- PASS: TestNormalizeTag/frontend-v2 (0.00s)
+    --- PASS: TestNormalizeTag/k8s (0.00s)
+    --- PASS: TestNormalizeTag/ci-cd-pipeline (0.00s)
+    --- PASS: TestNormalizeTag/#00 (0.00s)
+    --- PASS: TestNormalizeTag/# (0.00s)
+    --- PASS: TestNormalizeTag/___ (0.00s)
+    --- PASS: TestNormalizeTag/invalid_tag (0.00s)
+    --- PASS: TestNormalizeTag/bad_tag (0.00s)
+    --- PASS: TestNormalizeTag/-leading-dash (0.00s)
+    --- PASS: TestNormalizeTag/trailing-dash- (0.00s)
+    --- PASS: TestNormalizeTag/double--dash (0.00s)
+    --- PASS: TestNormalizeTag/#_backend (0.00s)
+    --- PASS: TestNormalizeTag/##backend (0.00s)
+    --- PASS: TestNormalizeTag/#--backend (0.00s)
+    --- PASS: TestNormalizeTag/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa (0.00s)
+    --- PASS: TestNormalizeTag/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa (0.00s)
+=== RUN   TestNormalizeTags
+--- PASS: TestNormalizeTags (0.00s)
+=== RUN   TestNormalizeTagSlice
+--- PASS: TestNormalizeTagSlice (0.00s)
+=== RUN   TestNewTask_Validation
+--- PASS: TestNewTask_Validation (0.00s)
+=== RUN   TestTask_TransitionToDone_And_Reopen
+--- PASS: TestTask_TransitionToDone_And_Reopen (0.00s)
+=== RUN   TestTask_TransitionTo_IdempotentRepair
+--- PASS: TestTask_TransitionTo_IdempotentRepair (0.00s)
+=== RUN   TestTask_TransitionTo_NonDoneRepair
+--- PASS: TestTask_TransitionTo_NonDoneRepair (0.00s)
+=== RUN   TestTask_ZeroStatusRejected
+--- PASS: TestTask_ZeroStatusRejected (0.00s)
+=== RUN   TestTask_SetParent
+--- PASS: TestTask_SetParent (0.00s)
+=== RUN   TestTask_SetProgress_Validation
+--- PASS: TestTask_SetProgress_Validation (0.00s)
+=== RUN   TestTask_SetRollupProgress
+--- PASS: TestTask_SetRollupProgress (0.00s)
+=== RUN   TestTask_RollupSubtasksRemoved
+--- PASS: TestTask_RollupSubtasksRemoved (0.00s)
+=== RUN   TestTask_ResetLeaf
+--- PASS: TestTask_ResetLeaf (0.00s)
+=== RUN   TestTask_DescriptionPreservesMarkdownIndentation
+--- PASS: TestTask_DescriptionPreservesMarkdownIndentation (0.00s)
+=== RUN   TestTask_Update
+--- PASS: TestTask_Update (0.00s)
+=== RUN   TestTask_DefensiveCopiesAndUTC
+--- PASS: TestTask_DefensiveCopiesAndUTC (0.00s)
+=== RUN   TestTask_Clone
+--- PASS: TestTask_Clone (0.00s)
+=== RUN   TestTask_Clone_NilFields
+--- PASS: TestTask_Clone_NilFields (0.00s)
+=== RUN   TestTask_Clone_FieldExhaustiveness
+--- PASS: TestTask_Clone_FieldExhaustiveness (0.00s)
+=== RUN   TestDetectCycles_DirectSelf
+--- PASS: TestDetectCycles_DirectSelf (0.00s)
+=== RUN   TestDetectCycles_RootPromotion
+--- PASS: TestDetectCycles_RootPromotion (0.00s)
+=== RUN   TestDetectCycles_TwoNodeLoop
+--- PASS: TestDetectCycles_TwoNodeLoop (0.00s)
+=== RUN   TestDetectCycles_DeepLoop
+--- PASS: TestDetectCycles_DeepLoop (0.03s)
+=== RUN   TestValidateHierarchyDepth_Subtree
+--- PASS: TestValidateHierarchyDepth_Subtree (0.07s)
+=== RUN   TestBuildTree_Forest
+--- PASS: TestBuildTree_Forest (0.00s)
+=== RUN   TestBuildTree_Errors
+--- PASS: TestBuildTree_Errors (0.00s)
+=== RUN   TestBuildTree_DeepCopy
+--- PASS: TestBuildTree_DeepCopy (0.00s)
+=== RUN   TestBuildTree_NodeAllocation
+--- PASS: TestBuildTree_NodeAllocation (0.01s)
+=== RUN   TestBuildTree_GraphWorkspaceAllocation
+--- PASS: TestBuildTree_GraphWorkspaceAllocation (2.10s)
+=== RUN   TestTree_LookupParentError
+--- PASS: TestTree_LookupParentError (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/core	(cached)
+=== RUN   TestTransactionError_OptionalCause
+=== RUN   TestTransactionError_OptionalCause/missing
+=== RUN   TestTransactionError_OptionalCause/zero
+=== RUN   TestTransactionError_OptionalCause/known
+--- PASS: TestTransactionError_OptionalCause (0.00s)
+    --- PASS: TestTransactionError_OptionalCause/missing (0.00s)
+    --- PASS: TestTransactionError_OptionalCause/zero (0.00s)
+    --- PASS: TestTransactionError_OptionalCause/known (0.00s)
+=== RUN   TestServiceErrorCatalog
+--- PASS: TestServiceErrorCatalog (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/ports	(cached)
+=== RUN   TestChanges_FailureAtomicity
+=== RUN   TestChanges_FailureAtomicity/get
+=== RUN   TestChanges_FailureAtomicity/children
+=== RUN   TestChanges_FailureAtomicity/update
+=== RUN   TestChanges_FailureAtomicity/event
+=== RUN   TestChanges_FailureAtomicity/create
+--- PASS: TestChanges_FailureAtomicity (0.03s)
+    --- PASS: TestChanges_FailureAtomicity/get (0.01s)
+    --- PASS: TestChanges_FailureAtomicity/children (0.00s)
+    --- PASS: TestChanges_FailureAtomicity/update (0.00s)
+    --- PASS: TestChanges_FailureAtomicity/event (0.01s)
+    --- PASS: TestChanges_FailureAtomicity/create (0.00s)
+=== RUN   TestChanges_GraphGuards
+--- PASS: TestChanges_GraphGuards (0.01s)
+=== RUN   TestChanges_CreationAndSameParent
+--- PASS: TestChanges_CreationAndSameParent (0.00s)
+=== RUN   TestCommandValidation_PatchIntent
+--- PASS: TestCommandValidation_PatchIntent (0.00s)
+=== RUN   TestCommandValidation_Metadata
+--- PASS: TestCommandValidation_Metadata (0.00s)
+=== RUN   TestCommandValidation_DetachesInput
+--- PASS: TestCommandValidation_DetachesInput (0.00s)
+=== RUN   TestBaseComparison
+--- PASS: TestBaseComparison (0.00s)
+=== RUN   TestQueryValidation
+--- PASS: TestQueryValidation (0.00s)
+=== RUN   TestCommandValidation_MalformedSnapshots
+--- PASS: TestCommandValidation_MalformedSnapshots (0.00s)
+=== RUN   TestService_ConcurrentSiblingCompletion
+--- PASS: TestService_ConcurrentSiblingCompletion (0.01s)
+=== RUN   TestService_OppositeMoves
+--- PASS: TestService_OppositeMoves (0.01s)
+=== RUN   TestService_DescendantHeightRace
+--- PASS: TestService_DescendantHeightRace (0.01s)
+=== RUN   TestService_StalePatchAndDeletePreview
+--- PASS: TestService_StalePatchAndDeletePreview (0.01s)
+=== RUN   TestService_WriterAdmission
+--- PASS: TestService_WriterAdmission (5.08s)
+=== RUN   TestCreate_AtomicDefaultsAndParent
+--- PASS: TestCreate_AtomicDefaultsAndParent (0.01s)
+=== RUN   TestCreate_IdentityFailureAndCollision
+=== RUN   TestCreate_IdentityFailureAndCollision/bad-shape
+=== RUN   TestCreate_IdentityFailureAndCollision/bad-clock
+=== RUN   TestCreate_IdentityFailureAndCollision/id-error
+=== RUN   TestCreate_IdentityFailureAndCollision/id-format
+=== RUN   TestCreate_IdentityFailureAndCollision/bad-date
+=== RUN   TestCreate_IdentityFailureAndCollision/missing-parent
+=== RUN   TestCreate_IdentityFailureAndCollision/duplicate
+--- PASS: TestCreate_IdentityFailureAndCollision (0.02s)
+    --- PASS: TestCreate_IdentityFailureAndCollision/bad-shape (0.00s)
+    --- PASS: TestCreate_IdentityFailureAndCollision/bad-clock (0.00s)
+    --- PASS: TestCreate_IdentityFailureAndCollision/id-error (0.00s)
+    --- PASS: TestCreate_IdentityFailureAndCollision/id-format (0.00s)
+    --- PASS: TestCreate_IdentityFailureAndCollision/bad-date (0.00s)
+    --- PASS: TestCreate_IdentityFailureAndCollision/missing-parent (0.00s)
+    --- PASS: TestCreate_IdentityFailureAndCollision/duplicate (0.00s)
+=== RUN   TestCreate_FailureAndUnknownOutcome
+=== RUN   TestCreate_FailureAndUnknownOutcome/create
+=== RUN   TestCreate_FailureAndUnknownOutcome/update
+=== RUN   TestCreate_FailureAndUnknownOutcome/event
+=== RUN   TestCreate_FailureAndUnknownOutcome/unknown
+--- PASS: TestCreate_FailureAndUnknownOutcome (0.01s)
+    --- PASS: TestCreate_FailureAndUnknownOutcome/create (0.00s)
+    --- PASS: TestCreate_FailureAndUnknownOutcome/update (0.00s)
+    --- PASS: TestCreate_FailureAndUnknownOutcome/event (0.00s)
+    --- PASS: TestCreate_FailureAndUnknownOutcome/unknown (0.00s)
+=== RUN   TestCreate_CollisionWithLoadedHierarchy
+=== RUN   TestCreate_CollisionWithLoadedHierarchy/existing-child
+=== RUN   TestCreate_CollisionWithLoadedHierarchy/existing-parent
+--- PASS: TestCreate_CollisionWithLoadedHierarchy (0.01s)
+    --- PASS: TestCreate_CollisionWithLoadedHierarchy/existing-child (0.00s)
+    --- PASS: TestCreate_CollisionWithLoadedHierarchy/existing-parent (0.00s)
+=== RUN   TestDelete_ConsentChanged
+--- PASS: TestDelete_ConsentChanged (0.00s)
+=== RUN   TestDelete_LeafAndLastChild
+--- PASS: TestDelete_LeafAndLastChild (0.00s)
+=== RUN   TestDelete_MalformedAndMetadataConsent
+--- PASS: TestDelete_MalformedAndMetadataConsent (0.00s)
+=== RUN   TestDelete_FailuresAndInvalidInputs
+--- PASS: TestDelete_FailuresAndInvalidInputs (0.03s)
+=== RUN   TestEvents_NetDiff
+--- PASS: TestEvents_NetDiff (0.00s)
+=== RUN   TestHistory_EmptyMissingAndDetached
+--- PASS: TestHistory_EmptyMissingAndDetached (0.01s)
+=== RUN   TestUUIDv7_LayoutAndFailure
+--- PASS: TestUUIDv7_LayoutAndFailure (0.00s)
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/a
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/a
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/b
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/b
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/c
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/c
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/d
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/d
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/e
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/e
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/f
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/f
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/g
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/g
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/h
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/h
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/i
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/i
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/j
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/j
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/k
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/k
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/l
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/l
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/m
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/m
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/n
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/n
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/o
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/o
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/p
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/p
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/q
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/q
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/r
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/r
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/s
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/s
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/t
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/t
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/u
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/u
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/v
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/v
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/w
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/w
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/x
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/x
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/y
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/y
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/z
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/z
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/{
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/{
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/|
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/|
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/}
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/}
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/~
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/~
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/\x7f
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/\x7f
+=== RUN   TestUUIDv7_IndependentEntropyAndClockReversal/\u0080
+=== PAUSE TestUUIDv7_IndependentEntropyAndClockReversal/\u0080
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/a
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/\u0080
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/q
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/\x7f
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/~
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/}
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/|
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/{
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/z
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/y
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/x
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/w
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/v
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/u
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/t
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/s
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/r
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/i
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/h
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/g
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/f
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/e
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/d
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/c
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/b
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/m
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/p
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/o
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/n
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/k
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/l
+=== CONT  TestUUIDv7_IndependentEntropyAndClockReversal/j
+--- PASS: TestUUIDv7_IndependentEntropyAndClockReversal (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/a (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/\u0080 (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/q (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/\x7f (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/~ (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/} (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/| (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/{ (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/z (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/y (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/x (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/w (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/v (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/u (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/t (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/s (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/r (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/h (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/g (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/f (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/e (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/d (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/c (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/b (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/m (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/p (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/o (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/n (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/k (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/l (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/j (0.00s)
+    --- PASS: TestUUIDv7_IndependentEntropyAndClockReversal/i (0.00s)
+=== RUN   TestService_DeepLifecycleAndUnrelatedBranch
+--- PASS: TestService_DeepLifecycleAndUnrelatedBranch (0.02s)
+=== RUN   TestService_CompoundMoveCompletionAndOpenPrecedence
+--- PASS: TestService_CompoundMoveCompletionAndOpenPrecedence (0.02s)
+=== RUN   TestService_ListOrderAndEmptyRanges
+--- PASS: TestService_ListOrderAndEmptyRanges (0.01s)
+=== RUN   TestService_RelatedMoveAndMetadataNoOp
+--- PASS: TestService_RelatedMoveAndMetadataNoOp (0.02s)
+=== RUN   TestService_OneTimeAndExactMetadata
+--- PASS: TestService_OneTimeAndExactMetadata (0.02s)
+=== RUN   TestService_IncarnationAndConsentVariants
+--- PASS: TestService_IncarnationAndConsentVariants (0.06s)
+=== RUN   TestService_FilterOracleAndDSTIntersection
+--- PASS: TestService_FilterOracleAndDSTIntersection (0.01s)
+=== RUN   TestService_RetainedStatsTransitions
+--- PASS: TestService_RetainedStatsTransitions (0.01s)
+=== RUN   TestService_TreeCorruptionAndTraversalCancellation
+--- PASS: TestService_TreeCorruptionAndTraversalCancellation (0.05s)
+=== RUN   TestComplete_SubtreeAndRepeat
+--- PASS: TestComplete_SubtreeAndRepeat (0.01s)
+=== RUN   TestReopen_InvalidStatusCategory
+--- PASS: TestReopen_InvalidStatusCategory (0.00s)
+=== RUN   TestReopen_ParentAtHundred
+--- PASS: TestReopen_ParentAtHundred (0.01s)
+=== RUN   TestMove_SharedChainsAndDepth
+--- PASS: TestMove_SharedChainsAndDepth (0.03s)
+=== RUN   TestMutation_PreflightAndFailures
+--- PASS: TestMutation_PreflightAndFailures (0.00s)
+=== RUN   TestMutation_FailureAtEveryWrite
+=== RUN   TestMutation_FailureAtEveryWrite/complete/after=false
+=== RUN   TestMutation_FailureAtEveryWrite/complete/after=true
+=== RUN   TestMutation_FailureAtEveryWrite/reopen/after=false
+=== RUN   TestMutation_FailureAtEveryWrite/reopen/after=true
+=== RUN   TestMutation_FailureAtEveryWrite/move/after=false
+=== RUN   TestMutation_FailureAtEveryWrite/move/after=true
+=== RUN   TestMutation_FailureAtEveryWrite/delete/after=false
+=== RUN   TestMutation_FailureAtEveryWrite/delete/after=true
+=== RUN   TestMutation_FailureAtEveryWrite/create/after=false
+=== RUN   TestMutation_FailureAtEveryWrite/create/after=true
+--- PASS: TestMutation_FailureAtEveryWrite (0.27s)
+    --- PASS: TestMutation_FailureAtEveryWrite/complete/after=false (0.01s)
+    --- PASS: TestMutation_FailureAtEveryWrite/complete/after=true (0.01s)
+    --- PASS: TestMutation_FailureAtEveryWrite/reopen/after=false (0.05s)
+    --- PASS: TestMutation_FailureAtEveryWrite/reopen/after=true (0.05s)
+    --- PASS: TestMutation_FailureAtEveryWrite/move/after=false (0.02s)
+    --- PASS: TestMutation_FailureAtEveryWrite/move/after=true (0.02s)
+    --- PASS: TestMutation_FailureAtEveryWrite/delete/after=false (0.01s)
+    --- PASS: TestMutation_FailureAtEveryWrite/delete/after=true (0.01s)
+    --- PASS: TestMutation_FailureAtEveryWrite/create/after=false (0.04s)
+    --- PASS: TestMutation_FailureAtEveryWrite/create/after=true (0.04s)
+=== RUN   TestMutation_StatusAndReadFailures
+--- PASS: TestMutation_StatusAndReadFailures (0.01s)
+=== RUN   TestPatch_SetClearNoOp
+--- PASS: TestPatch_SetClearNoOp (0.00s)
+=== RUN   TestPatch_ParentAndDoneProgress
+--- PASS: TestPatch_ParentAndDoneProgress (0.00s)
+=== RUN   TestServiceProcessHelper
+    process_test.go:48: subprocess helper
+--- SKIP: TestServiceProcessHelper (0.00s)
+=== RUN   TestService_ProcessTermination
+=== RUN   TestService_ProcessTermination/before
+=== RUN   TestService_ProcessTermination/partial
+=== RUN   TestService_ProcessTermination/committed
+--- PASS: TestService_ProcessTermination (0.06s)
+    --- PASS: TestService_ProcessTermination/before (0.02s)
+    --- PASS: TestService_ProcessTermination/partial (0.02s)
+    --- PASS: TestService_ProcessTermination/committed (0.02s)
+=== RUN   TestList_DetachedSnapshotAllocation
+--- PASS: TestList_DetachedSnapshotAllocation (0.01s)
+=== RUN   TestTree_OrderingAllocation
+--- PASS: TestTree_OrderingAllocation (0.00s)
+=== RUN   TestTree_ReordersSiblingsAndDepths
+--- PASS: TestTree_ReordersSiblingsAndDepths (0.00s)
+=== RUN   TestList_DefaultsParityAndDay
+--- PASS: TestList_DefaultsParityAndDay (0.00s)
+=== RUN   TestTree_SelectedRootPreservesParent
+--- PASS: TestTree_SelectedRootPreservesParent (0.01s)
+=== RUN   TestStats_RetainedWindow
+--- PASS: TestStats_RetainedWindow (0.01s)
+=== RUN   TestRead_NoPartialValues
+--- PASS: TestRead_NoPartialValues (0.00s)
+=== RUN   TestRead_PreflightAndRepositoryFailures
+--- PASS: TestRead_PreflightAndRepositoryFailures (0.00s)
+=== RUN   TestTree_SiblingOrderAndDepth
+--- PASS: TestTree_SiblingOrderAndDepth (0.00s)
+=== RUN   TestUnknownRepository_CallbackFailure
+--- PASS: TestUnknownRepository_CallbackFailure (0.00s)
+=== RUN   TestService_RollbackAndUnknownOutcome
+--- PASS: TestService_RollbackAndUnknownOutcome (0.02s)
+=== RUN   TestService_CommittedThenCanceled
+--- PASS: TestService_CommittedThenCanceled (0.01s)
+=== RUN   TestService_ReadSnapshot
+--- PASS: TestService_ReadSnapshot (0.01s)
+=== RUN   TestRollup_ChainAndPolicy
+=== RUN   TestRollup_ChainAndPolicy/manual
+=== RUN   TestRollup_ChainAndPolicy/auto
+--- PASS: TestRollup_ChainAndPolicy (0.02s)
+    --- PASS: TestRollup_ChainAndPolicy/manual (0.01s)
+    --- PASS: TestRollup_ChainAndPolicy/auto (0.01s)
+=== RUN   TestRollup_LastChildAndExplicitOpen
+--- PASS: TestRollup_LastChildAndExplicitOpen (0.01s)
+=== RUN   TestRollup_SharedAncestorOnce
+--- PASS: TestRollup_SharedAncestorOnce (0.00s)
+=== RUN   TestChanges_CancelAndNoOp
+--- PASS: TestChanges_CancelAndNoOp (0.00s)
+=== RUN   TestRollup_UnchangedLeafPreservesManualProgress
+--- PASS: TestRollup_UnchangedLeafPreservesManualProgress (0.00s)
+=== RUN   TestServiceOptions_NoIO
+--- PASS: TestServiceOptions_NoIO (0.00s)
+=== RUN   TestReferenceTimeAndCancellation
+--- PASS: TestReferenceTimeAndCancellation (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/service	(cached)
+=== RUN   TestTonight_RepeatedWallTime
+--- PASS: TestTonight_RepeatedWallTime (0.00s)
+=== RUN   TestParseDue_Calendar
+=== RUN   TestParseDue_Calendar/today
+=== RUN   TestParseDue_Calendar/tomorrow
+=== RUN   TestParseDue_Calendar/+1d
+=== RUN   TestParseDue_Calendar/+3d
+=== RUN   TestParseDue_Calendar/+1w
+=== RUN   TestParseDue_Calendar/+2w
+=== RUN   TestParseDue_Calendar/+1m
+=== RUN   TestParseDue_Calendar/+2m
+=== RUN   TestParseDue_Calendar/_+001M_
+=== RUN   TestParseDue_Calendar/mon
+=== RUN   TestParseDue_Calendar/TUE
+=== RUN   TestParseDue_Calendar/wed
+=== RUN   TestParseDue_Calendar/thu
+=== RUN   TestParseDue_Calendar/fri
+=== RUN   TestParseDue_Calendar/sat
+=== RUN   TestParseDue_Calendar/sun
+=== RUN   TestParseDue_Calendar/2024-02-29
+--- PASS: TestParseDue_Calendar (0.00s)
+    --- PASS: TestParseDue_Calendar/today (0.00s)
+    --- PASS: TestParseDue_Calendar/tomorrow (0.00s)
+    --- PASS: TestParseDue_Calendar/+1d (0.00s)
+    --- PASS: TestParseDue_Calendar/+3d (0.00s)
+    --- PASS: TestParseDue_Calendar/+1w (0.00s)
+    --- PASS: TestParseDue_Calendar/+2w (0.00s)
+    --- PASS: TestParseDue_Calendar/+1m (0.00s)
+    --- PASS: TestParseDue_Calendar/+2m (0.00s)
+    --- PASS: TestParseDue_Calendar/_+001M_ (0.00s)
+    --- PASS: TestParseDue_Calendar/mon (0.00s)
+    --- PASS: TestParseDue_Calendar/TUE (0.00s)
+    --- PASS: TestParseDue_Calendar/wed (0.00s)
+    --- PASS: TestParseDue_Calendar/thu (0.00s)
+    --- PASS: TestParseDue_Calendar/fri (0.00s)
+    --- PASS: TestParseDue_Calendar/sat (0.00s)
+    --- PASS: TestParseDue_Calendar/sun (0.00s)
+    --- PASS: TestParseDue_Calendar/2024-02-29 (0.00s)
+=== RUN   TestParseDue_InvalidAndAmbiguous
+=== RUN   TestParseDue_InvalidAndAmbiguous/#00
+=== RUN   TestParseDue_InvalidAndAmbiguous/_
+=== RUN   TestParseDue_InvalidAndAmbiguous/monday
+=== RUN   TestParseDue_InvalidAndAmbiguous/next_week
+=== RUN   TestParseDue_InvalidAndAmbiguous/+0d
+=== RUN   TestParseDue_InvalidAndAmbiguous/+-1d
+=== RUN   TestParseDue_InvalidAndAmbiguous/+1.2d
+=== RUN   TestParseDue_InvalidAndAmbiguous/+1_d
+=== RUN   TestParseDue_InvalidAndAmbiguous/+1x
+=== RUN   TestParseDue_InvalidAndAmbiguous/+9999999999999999999999999w
+=== RUN   TestParseDue_InvalidAndAmbiguous/+99999999m
+=== RUN   TestParseDue_InvalidAndAmbiguous/+99999999d
+=== RUN   TestParseDue_InvalidAndAmbiguous/+99999999w
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-02-29
+=== RUN   TestParseDue_InvalidAndAmbiguous/0000-01-01
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-00-01
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-1-01
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-00
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-32
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-13-01
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01t00:00:00Z
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00z
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:60Z
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00,1Z
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00.1234567890Z
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00+24:00
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00+00:60
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00
+=== RUN   TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00Zx
+=== RUN   TestParseDue_InvalidAndAmbiguous/0001-01-01T00:00:00+23:59
+=== RUN   TestParseDue_InvalidAndAmbiguous/9999-12-31T23:59:59-23:59
+--- PASS: TestParseDue_InvalidAndAmbiguous (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/#00 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/_ (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/monday (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/next_week (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+0d (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+-1d (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+1.2d (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+1_d (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+1x (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+9999999999999999999999999w (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+99999999m (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+99999999d (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/+99999999w (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-02-29 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/0000-01-01 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-00-01 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-1-01 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-00 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-32 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-13-01 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01t00:00:00Z (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00z (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:60Z (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00,1Z (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00.1234567890Z (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00+24:00 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00+00:60 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/2026-01-01T00:00:00Zx (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/0001-01-01T00:00:00+23:59 (0.00s)
+    --- PASS: TestParseDue_InvalidAndAmbiguous/9999-12-31T23:59:59-23:59 (0.00s)
+=== RUN   TestDayBounds_DST
+--- PASS: TestDayBounds_DST (0.00s)
+=== RUN   TestDateOptionsAndRange
+--- PASS: TestDateOptionsAndRange (0.00s)
+=== RUN   TestDayBounds_FirstRepresentableDay
+--- PASS: TestDayBounds_FirstRepresentableDay (0.00s)
+=== RUN   TestParseDue_UTCYearBoundary
+=== RUN   TestParseDue_UTCYearBoundary/today_from_local_year_zero
+=== RUN   TestParseDue_UTCYearBoundary/tonight_from_local_year_zero
+=== RUN   TestParseDue_UTCYearBoundary/absolute_year_zero_stays_invalid
+=== RUN   TestParseDue_UTCYearBoundary/due_before_UTC_year_one
+--- PASS: TestParseDue_UTCYearBoundary (0.00s)
+    --- PASS: TestParseDue_UTCYearBoundary/today_from_local_year_zero (0.00s)
+    --- PASS: TestParseDue_UTCYearBoundary/tonight_from_local_year_zero (0.00s)
+    --- PASS: TestParseDue_UTCYearBoundary/absolute_year_zero_stays_invalid (0.00s)
+    --- PASS: TestParseDue_UTCYearBoundary/due_before_UTC_year_one (0.00s)
+=== RUN   TestDayBounds_UTCYearBoundary
+--- PASS: TestDayBounds_UTCYearBoundary (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/service/dateparse	(cached)
+=== RUN   TestCodec_TagDecodeAllocation
+--- PASS: TestCodec_TagDecodeAllocation (0.00s)
+=== RUN   TestCodec_BatchDecodeAllocation
+--- PASS: TestCodec_BatchDecodeAllocation (0.01s)
+=== RUN   TestCodec_TagDecodeCanonicalParity
+--- PASS: TestCodec_TagDecodeCanonicalParity (0.02s)
+=== RUN   TestCodec_RejectsInvalidInput
+--- PASS: TestCodec_RejectsInvalidInput (0.00s)
+=== RUN   TestCodec_RejectsCorruptRows
+--- PASS: TestCodec_RejectsCorruptRows (0.00s)
+=== RUN   TestCodec_EventValidation
+--- PASS: TestCodec_EventValidation (0.00s)
+=== RUN   TestCodec_CanonicalDateAllocation
+--- PASS: TestCodec_CanonicalDateAllocation (0.00s)
+=== RUN   TestCodec_DateCanonicalParity
+--- PASS: TestCodec_DateCanonicalParity (0.00s)
+=== RUN   TestSQLiteCompatibility
+    compatibility_test.go:37: compiler=go1.25.0 SQLite=3.53.4
+--- PASS: TestSQLiteCompatibility (0.00s)
+=== RUN   TestConnectorConstruction_NoIO
+--- PASS: TestConnectorConstruction_NoIO (0.00s)
+=== RUN   TestConnectionFactory_Pragmas
+--- PASS: TestConnectionFactory_Pragmas (0.00s)
+=== RUN   TestReaderConnection_QueryOnly
+--- PASS: TestReaderConnection_QueryOnly (0.00s)
+=== RUN   TestAcquire_CanceledContext
+--- PASS: TestAcquire_CanceledContext (0.10s)
+=== RUN   TestWriterConnection_BeginsImmediate
+    compatibility_test.go:165: 100ms lock deadline returned after 114.464803ms: context deadline exceeded
+--- PASS: TestWriterConnection_BeginsImmediate (0.12s)
+=== RUN   TestWriterConnection_CancelAndRestore
+--- PASS: TestWriterConnection_CancelAndRestore (0.11s)
+=== RUN   TestStorageProcessHelper
+    concurrency_test.go:23: child entry point
+--- SKIP: TestStorageProcessHelper (0.00s)
+=== RUN   TestDiskWriters_NoLostUpdate
+--- PASS: TestDiskWriters_NoLostUpdate (0.10s)
+=== RUN   TestDiskReaders_SnapshotAcrossWriterCommit
+--- PASS: TestDiskReaders_SnapshotAcrossWriterCommit (0.02s)
+=== RUN   TestDiskWriter_BusyAndCancelRecovery
+    concurrency_test.go:226: external writer: canceled in 107.388539ms; busy bound 5.016055194s
+--- PASS: TestDiskWriter_BusyAndCancelRecovery (5.15s)
+=== RUN   TestConnection_AcquisitionFailures
+=== RUN   TestConnection_AcquisitionFailures/configure
+=== RUN   TestConnection_AcquisitionFailures/begin
+=== RUN   TestConnection_AcquisitionFailures/restore
+=== RUN   TestConnection_AcquisitionFailures/restore-after-begin-error
+--- PASS: TestConnection_AcquisitionFailures (0.00s)
+    --- PASS: TestConnection_AcquisitionFailures/configure (0.00s)
+    --- PASS: TestConnection_AcquisitionFailures/begin (0.00s)
+    --- PASS: TestConnection_AcquisitionFailures/restore (0.00s)
+    --- PASS: TestConnection_AcquisitionFailures/restore-after-begin-error (0.00s)
+=== RUN   TestConnection_CancelBetweenAttempts
+--- PASS: TestConnection_CancelBetweenAttempts (0.00s)
+=== RUN   TestConnector_RejectsIncompatibleAndFailedConnections
+--- PASS: TestConnector_RejectsIncompatibleAndFailedConnections (0.00s)
+=== RUN   TestWriterConnection_WaitBudget
+--- PASS: TestWriterConnection_WaitBudget (5.01s)
+=== RUN   TestReaderConnection_DeferredReplacement
+--- PASS: TestReaderConnection_DeferredReplacement (0.00s)
+=== RUN   TestWriterConnection_ReleaseDuringAcquisition
+--- PASS: TestWriterConnection_ReleaseDuringAcquisition (0.21s)
+=== RUN   TestWriterConnection_ExtendedBusyAcquisition
+--- PASS: TestWriterConnection_ExtendedBusyAcquisition (0.00s)
+=== RUN   TestStorageErrors_RedactData
+--- PASS: TestStorageErrors_RedactData (0.00s)
+=== RUN   TestStorageErrors_CategoriesAndNoDriverUnwrap
+--- PASS: TestStorageErrors_CategoriesAndNoDriverUnwrap (0.00s)
+=== RUN   TestStorageErrors_ConstraintCategories
+--- PASS: TestStorageErrors_ConstraintCategories (0.00s)
+=== RUN   TestInspection_PreservesCancellationCause
+=== RUN   TestInspection_PreservesCancellationCause/ledger
+=== RUN   TestInspection_PreservesCancellationCause/deadline
+=== RUN   TestInspection_PreservesCancellationCause/canonical_replay
+--- PASS: TestInspection_PreservesCancellationCause (0.00s)
+    --- PASS: TestInspection_PreservesCancellationCause/ledger (0.00s)
+    --- PASS: TestInspection_PreservesCancellationCause/deadline (0.00s)
+    --- PASS: TestInspection_PreservesCancellationCause/canonical_replay (0.00s)
+=== RUN   TestOpenCause_RetainsMigrationUnknownOutcome
+--- PASS: TestOpenCause_RetainsMigrationUnknownOutcome (0.00s)
+=== RUN   TestOpen_MemoryLifetimeAndIsolation
+--- PASS: TestOpen_MemoryLifetimeAndIsolation (0.00s)
+=== RUN   TestMigrate_InjectedFailures
+=== RUN   TestMigrate_InjectedFailures/ledger
+=== RUN   TestMigrate_InjectedFailures/app
+=== RUN   TestMigrate_InjectedFailures/begin
+=== RUN   TestMigrate_InjectedFailures/commit-before
+=== RUN   TestMigrate_InjectedFailures/commit-after
+=== RUN   TestMigrate_InjectedFailures/rollback
+--- PASS: TestMigrate_InjectedFailures (0.01s)
+    --- PASS: TestMigrate_InjectedFailures/ledger (0.00s)
+    --- PASS: TestMigrate_InjectedFailures/app (0.00s)
+    --- PASS: TestMigrate_InjectedFailures/begin (0.00s)
+    --- PASS: TestMigrate_InjectedFailures/commit-before (0.00s)
+    --- PASS: TestMigrate_InjectedFailures/commit-after (0.00s)
+    --- PASS: TestMigrate_InjectedFailures/rollback (0.00s)
+=== RUN   TestMigrate_InspectionUsesOneSnapshot
+--- PASS: TestMigrate_InspectionUsesOneSnapshot (0.00s)
+=== RUN   TestMigrate_PreservesCancellationCause
+=== RUN   TestMigrate_PreservesCancellationCause/cancel-ddl
+=== RUN   TestMigrate_PreservesCancellationCause/cancel-ledger
+=== RUN   TestMigrate_PreservesCancellationCause/cancel-commit
+=== RUN   TestMigrate_PreservesCancellationCause/cancel-rollback
+--- PASS: TestMigrate_PreservesCancellationCause (0.00s)
+    --- PASS: TestMigrate_PreservesCancellationCause/cancel-ddl (0.00s)
+    --- PASS: TestMigrate_PreservesCancellationCause/cancel-ledger (0.00s)
+    --- PASS: TestMigrate_PreservesCancellationCause/cancel-commit (0.00s)
+    --- PASS: TestMigrate_PreservesCancellationCause/cancel-rollback (0.00s)
+=== RUN   TestMigrate_ConcurrentInitializers
+--- PASS: TestMigrate_ConcurrentInitializers (0.01s)
+=== RUN   TestMigrate_EmptyDatabase
+--- PASS: TestMigrate_EmptyDatabase (0.00s)
+=== RUN   TestSchemaInspection_ReusesOnlyExpectedCatalog
+--- PASS: TestSchemaInspection_ReusesOnlyExpectedCatalog (0.00s)
+=== RUN   TestExpectedSchema_EmbeddedAllocation
+    migrations_test.go:90: immutable expected catalog allocations: 46
+--- PASS: TestExpectedSchema_EmbeddedAllocation (0.00s)
+=== RUN   TestMigrationInventory_Invalid
+--- PASS: TestMigrationInventory_Invalid (0.00s)
+=== RUN   TestMigrate_FailurePreservesPreviousVersion
+--- PASS: TestMigrate_FailurePreservesPreviousVersion (0.00s)
+=== RUN   TestMigrate_RefusalPreservesFile
+--- PASS: TestMigrate_RefusalPreservesFile (0.00s)
+=== RUN   TestMigrate_RefusesForeignOrNewer
+--- PASS: TestMigrate_RefusesForeignOrNewer (0.00s)
+=== RUN   TestMigrate_BrokenLedger
+=== RUN   TestMigrate_BrokenLedger/DROP_TABLE_schema_migrations
+=== RUN   TestMigrate_BrokenLedger/DROP_INDEX_tasks_status_idx
+=== RUN   TestMigrate_BrokenLedger/CREATE_TABLE_surprise_(x_TEXT)
+=== RUN   TestMigrate_BrokenLedger/UPDATE_schema_migrations_SET_filename='001_changed.sql'
+=== RUN   TestMigrate_BrokenLedger/UPDATE_schema_migrations_SET_checksum='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+=== RUN   TestMigrate_BrokenLedger/DELETE_FROM_schema_migrations
+=== RUN   TestMigrate_BrokenLedger/ALTER_TABLE_tasks_ADD_COLUMN_unexpected_TEXT
+--- PASS: TestMigrate_BrokenLedger (0.01s)
+    --- PASS: TestMigrate_BrokenLedger/DROP_TABLE_schema_migrations (0.00s)
+    --- PASS: TestMigrate_BrokenLedger/DROP_INDEX_tasks_status_idx (0.00s)
+    --- PASS: TestMigrate_BrokenLedger/CREATE_TABLE_surprise_(x_TEXT) (0.00s)
+    --- PASS: TestMigrate_BrokenLedger/UPDATE_schema_migrations_SET_filename='001_changed.sql' (0.00s)
+    --- PASS: TestMigrate_BrokenLedger/UPDATE_schema_migrations_SET_checksum='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' (0.00s)
+    --- PASS: TestMigrate_BrokenLedger/DELETE_FROM_schema_migrations (0.00s)
+    --- PASS: TestMigrate_BrokenLedger/ALTER_TABLE_tasks_ADD_COLUMN_unexpected_TEXT (0.00s)
+=== RUN   TestMigrationInventory_StableBytes
+--- PASS: TestMigrationInventory_StableBytes (0.00s)
+=== RUN   TestMigrate_CorruptLedgerAndCanceledInspection
+--- PASS: TestMigrate_CorruptLedgerAndCanceledInspection (0.01s)
+=== RUN   TestMigrationInventory_Unreadable
+--- PASS: TestMigrationInventory_Unreadable (0.00s)
+=== RUN   TestInspection_FailureReturnsNoPartialCatalog
+--- PASS: TestInspection_FailureReturnsNoPartialCatalog (0.00s)
+=== RUN   TestMigrate_MemoryAndInverseFixture
+--- PASS: TestMigrate_MemoryAndInverseFixture (0.00s)
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle/connect
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle/begin
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle/catalog
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle/close
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle/wal
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle/journal
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle/migration
+=== RUN   TestOpen_FailureStagesReleaseEveryHandle/ping
+--- PASS: TestOpen_FailureStagesReleaseEveryHandle (0.02s)
+    --- PASS: TestOpen_FailureStagesReleaseEveryHandle/connect (0.00s)
+    --- PASS: TestOpen_FailureStagesReleaseEveryHandle/begin (0.00s)
+    --- PASS: TestOpen_FailureStagesReleaseEveryHandle/catalog (0.00s)
+    --- PASS: TestOpen_FailureStagesReleaseEveryHandle/close (0.00s)
+    --- PASS: TestOpen_FailureStagesReleaseEveryHandle/wal (0.00s)
+    --- PASS: TestOpen_FailureStagesReleaseEveryHandle/journal (0.00s)
+    --- PASS: TestOpen_FailureStagesReleaseEveryHandle/migration (0.00s)
+    --- PASS: TestOpen_FailureStagesReleaseEveryHandle/ping (0.00s)
+=== RUN   TestOpen_CanceledAndInvalidOverrideNeverFallsBack
+--- PASS: TestOpen_CanceledAndInvalidOverrideNeverFallsBack (0.00s)
+=== RUN   TestOpen_LiteralFilename
+--- PASS: TestOpen_LiteralFilename (0.01s)
+=== RUN   TestOpen_RejectsUnsafeTarget
+--- PASS: TestOpen_RejectsUnsafeTarget (0.00s)
+=== RUN   TestOpen_ClosesPartialResources
+--- PASS: TestOpen_ClosesPartialResources (0.01s)
+=== RUN   TestOpen_ReplacementConnectionPragmas
+--- PASS: TestOpen_ReplacementConnectionPragmas (0.00s)
+=== RUN   TestOpen_CloseAdmissionAndIdempotency
+--- PASS: TestOpen_CloseAdmissionAndIdempotency (0.00s)
+=== RUN   TestOpen_CurrentSchemaNoMigrationWrite
+--- PASS: TestOpen_CurrentSchemaNoMigrationWrite (0.00s)
+=== RUN   TestResolvePath_Precedence
+--- PASS: TestResolvePath_Precedence (0.00s)
+=== RUN   TestPrepareFile_RejectsCreatedDevice
+--- PASS: TestPrepareFile_RejectsCreatedDevice (0.00s)
+=== RUN   TestOpen_POSIXPermissions
+--- PASS: TestOpen_POSIXPermissions (0.00s)
+=== RUN   TestQueries_CRUDAndCounts
+--- PASS: TestQueries_CRUDAndCounts (0.00s)
+=== RUN   TestQueries_ListAllMatchesCandidates
+--- PASS: TestQueries_ListAllMatchesCandidates (0.00s)
+=== RUN   TestQueries_ListAllAllocation
+--- PASS: TestQueries_ListAllAllocation (1.28s)
+=== RUN   TestQueries_TreeSets
+--- PASS: TestQueries_TreeSets (0.00s)
+=== RUN   TestQueries_CandidateSuperset
+--- PASS: TestQueries_CandidateSuperset (0.02s)
+=== RUN   TestQueries_NullableCandidateParameters
+--- PASS: TestQueries_NullableCandidateParameters (0.00s)
+=== RUN   TestRecovery_KilledWriterAtomic
+=== RUN   TestRecovery_KilledWriterAtomic/before
+=== RUN   TestRecovery_KilledWriterAtomic/after
+--- PASS: TestRecovery_KilledWriterAtomic (0.02s)
+    --- PASS: TestRecovery_KilledWriterAtomic/before (0.01s)
+    --- PASS: TestRecovery_KilledWriterAtomic/after (0.01s)
+=== RUN   TestRecovery_AtomicStateAfterFailure
+=== RUN   TestRecovery_AtomicStateAfterFailure/statement
+=== RUN   TestRecovery_AtomicStateAfterFailure/event
+=== RUN   TestRecovery_AtomicStateAfterFailure/commit-before
+=== RUN   TestRecovery_AtomicStateAfterFailure/commit-after
+=== RUN   TestRecovery_AtomicStateAfterFailure/rollback
+--- PASS: TestRecovery_AtomicStateAfterFailure (0.02s)
+    --- PASS: TestRecovery_AtomicStateAfterFailure/statement (0.00s)
+    --- PASS: TestRecovery_AtomicStateAfterFailure/event (0.00s)
+    --- PASS: TestRecovery_AtomicStateAfterFailure/commit-before (0.00s)
+    --- PASS: TestRecovery_AtomicStateAfterFailure/commit-after (0.00s)
+    --- PASS: TestRecovery_AtomicStateAfterFailure/rollback (0.00s)
+=== RUN   TestDiskLifecycle_IntegrityAndCleanup
+    recovery_test.go:195: automatic WAL restart sequence 0 -> 5; size 9962192 -> 10023992 (no explicit checkpoint)
+--- PASS: TestDiskLifecycle_IntegrityAndCleanup (0.16s)
+=== RUN   TestStorageRunbookReplay_OfflineBackup
+--- PASS: TestStorageRunbookReplay_OfflineBackup (0.00s)
+=== RUN   TestRepository_FilterMatchesCore
+--- PASS: TestRepository_FilterMatchesCore (0.00s)
+=== RUN   TestRepository_TreeReadContract
+--- PASS: TestRepository_TreeReadContract (0.00s)
+=== RUN   TestRepository_TraversalRejectsCorruption
+--- PASS: TestRepository_TraversalRejectsCorruption (0.01s)
+=== RUN   TestRepository_DeleteContractAndEventRetention
+--- PASS: TestRepository_DeleteContractAndEventRetention (0.00s)
+=== RUN   TestRepository_DomainErrors
+--- PASS: TestRepository_DomainErrors (0.00s)
+=== RUN   TestRepository_ChildrenReadOnlyRequestedRows
+--- PASS: TestRepository_ChildrenReadOnlyRequestedRows (0.00s)
+=== RUN   TestRepository_InvalidRowsReturnNoPartialCollection
+--- PASS: TestRepository_InvalidRowsReturnNoPartialCollection (0.00s)
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/GetTask
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/ListAll
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/ListCandidates
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/GetAncestors
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/GetSubtree
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/ListEvents
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/ListChildren
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/CreateTask
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/UpdateTask
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/DeleteTask
+=== RUN   TestRepository_QueryFailuresNeverReturnPartialValues/AppendEvent
+--- PASS: TestRepository_QueryFailuresNeverReturnPartialValues (0.03s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/GetTask (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/ListAll (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/ListCandidates (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/GetAncestors (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/GetSubtree (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/ListEvents (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/ListChildren (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/CreateTask (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/UpdateTask (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/DeleteTask (0.00s)
+    --- PASS: TestRepository_QueryFailuresNeverReturnPartialValues/AppendEvent (0.00s)
+=== RUN   TestHandle_CancellationReadOnlyAndLatchedFailure
+--- PASS: TestHandle_CancellationReadOnlyAndLatchedFailure (0.00s)
+=== RUN   TestEmbeddedSchemaCatalog
+--- PASS: TestEmbeddedSchemaCatalog (0.00s)
+=== RUN   TestSchemaCatalog_RejectsMismatchAndFallsBack
+--- PASS: TestSchemaCatalog_RejectsMismatchAndFallsBack (0.00s)
+=== RUN   TestSchema_RejectsInvalidRows
+--- PASS: TestSchema_RejectsInvalidRows (0.00s)
+=== RUN   TestRepository_UnfilteredAllocation
+--- PASS: TestRepository_UnfilteredAllocation (0.02s)
+=== RUN   TestRepository_RoundTripAndDetachedValues
+--- PASS: TestRepository_RoundTripAndDetachedValues (0.00s)
+=== RUN   TestWithWrite_ChildAndHistoryRollback
+--- PASS: TestWithWrite_ChildAndHistoryRollback (0.00s)
+=== RUN   TestTransaction_CallbackLifetime
+--- PASS: TestTransaction_CallbackLifetime (0.00s)
+=== RUN   TestWithWrite_CommitFailureNeverReplays
+=== RUN   TestWithWrite_CommitFailureNeverReplays/commit-before
+=== RUN   TestWithWrite_CommitFailureNeverReplays/commit-after
+=== RUN   TestWithWrite_CommitFailureNeverReplays/rollback
+--- PASS: TestWithWrite_CommitFailureNeverReplays (0.01s)
+    --- PASS: TestWithWrite_CommitFailureNeverReplays/commit-before (0.00s)
+    --- PASS: TestWithWrite_CommitFailureNeverReplays/commit-after (0.00s)
+    --- PASS: TestWithWrite_CommitFailureNeverReplays/rollback (0.00s)
+=== RUN   TestTransaction_ReadCleanupReturnsNoPartialValue
+--- PASS: TestTransaction_ReadCleanupReturnsNoPartialValue (0.00s)
+=== RUN   TestWithRead_StableSnapshot
+--- PASS: TestWithRead_StableSnapshot (0.00s)
+=== RUN   TestWithWrite_CancellationAtCommit
+=== RUN   TestWithWrite_CancellationAtCommit/before
+=== RUN   TestWithWrite_CancellationAtCommit/statement-cancel
+=== RUN   TestWithWrite_CancellationAtCommit/before-commit
+=== RUN   TestWithWrite_CancellationAtCommit/commit-cancel
+--- PASS: TestWithWrite_CancellationAtCommit (0.02s)
+    --- PASS: TestWithWrite_CancellationAtCommit/before (0.00s)
+    --- PASS: TestWithWrite_CancellationAtCommit/statement-cancel (0.00s)
+    --- PASS: TestWithWrite_CancellationAtCommit/before-commit (0.00s)
+    --- PASS: TestWithWrite_CancellationAtCommit/commit-cancel (0.00s)
+=== RUN   TestTransaction_ConcurrentHandleAndCompletion
+--- PASS: TestTransaction_ConcurrentHandleAndCompletion (0.00s)
+=== RUN   TestTransaction_RollbackFailurePreservesCause
+=== RUN   TestTransaction_RollbackFailurePreservesCause/context_canceled
+=== RUN   TestTransaction_RollbackFailurePreservesCause/context_deadline_exceeded
+=== RUN   TestTransaction_RollbackFailurePreservesCause/task_not_found
+=== RUN   TestTransaction_RollbackFailurePreservesCause/task_title_cannot_be_empty
+=== RUN   TestTransaction_RollbackFailurePreservesCause/task_title_exceeds_maximum_length_of_255_characters
+=== RUN   TestTransaction_RollbackFailurePreservesCause/invalid_task_status
+=== RUN   TestTransaction_RollbackFailurePreservesCause/invalid_task_priority
+=== RUN   TestTransaction_RollbackFailurePreservesCause/invalid_status_transition
+=== RUN   TestTransaction_RollbackFailurePreservesCause/cyclic_dependency_detected:_a_task_cannot_be_its_own_ancestor
+=== RUN   TestTransaction_RollbackFailurePreservesCause/task_cannot_reference_itself_as_parent
+=== RUN   TestTransaction_RollbackFailurePreservesCause/maximum_subtask_hierarchy_depth_exceeded
+=== RUN   TestTransaction_RollbackFailurePreservesCause/invalid_tag_format:_tags_must_be_alphanumeric_with_hyphens
+=== RUN   TestTransaction_RollbackFailurePreservesCause/task_progress_must_be_an_integer_between_0_and_100
+=== RUN   TestTransaction_RollbackFailurePreservesCause/invalid_task_id:_id_cannot_be_empty
+=== RUN   TestTransaction_RollbackFailurePreservesCause/duplicate_task_id_in_hierarchy
+=== RUN   TestTransaction_RollbackFailurePreservesCause/invalid_hierarchy_depth:_depth_cannot_be_negative
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_invalid_record
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_corrupt_data
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_incompatible_database_schema
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_database_busy
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_operation_failed
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_read-only_operation
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_repository_closed
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_callback_is_nil
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_nested_transaction
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_transaction_closed
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_transaction_already_in_use
+=== RUN   TestTransaction_RollbackFailurePreservesCause/storage:_task_has_children
+--- PASS: TestTransaction_RollbackFailurePreservesCause (0.05s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/context_canceled (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/context_deadline_exceeded (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/task_not_found (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/task_title_cannot_be_empty (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/task_title_exceeds_maximum_length_of_255_characters (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/invalid_task_status (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/invalid_task_priority (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/invalid_status_transition (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/cyclic_dependency_detected:_a_task_cannot_be_its_own_ancestor (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/task_cannot_reference_itself_as_parent (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/maximum_subtask_hierarchy_depth_exceeded (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/invalid_tag_format:_tags_must_be_alphanumeric_with_hyphens (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/task_progress_must_be_an_integer_between_0_and_100 (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/invalid_task_id:_id_cannot_be_empty (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/duplicate_task_id_in_hierarchy (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/invalid_hierarchy_depth:_depth_cannot_be_negative (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_invalid_record (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_corrupt_data (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_incompatible_database_schema (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_database_busy (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_operation_failed (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_read-only_operation (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_repository_closed (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_callback_is_nil (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_nested_transaction (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_transaction_closed (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_transaction_already_in_use (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesCause/storage:_task_has_children (0.00s)
+=== RUN   TestTransaction_RollbackFailurePreservesJoinedCauses
+=== RUN   TestTransaction_RollbackFailurePreservesJoinedCauses/invalid_task_id:_id_cannot_be_empty
+=== RUN   TestTransaction_RollbackFailurePreservesJoinedCauses/task_cannot_reference_itself_as_parent
+=== RUN   TestTransaction_RollbackFailurePreservesJoinedCauses/cyclic_dependency_detected:_a_task_cannot_be_its_own_ancestor
+=== RUN   TestTransaction_RollbackFailurePreservesJoinedCauses/maximum_subtask_hierarchy_depth_exceeded
+=== RUN   TestTransaction_RollbackFailurePreservesJoinedCauses/task_not_found
+=== RUN   TestTransaction_RollbackFailurePreservesJoinedCauses/duplicate_task_id_in_hierarchy
+--- PASS: TestTransaction_RollbackFailurePreservesJoinedCauses (0.01s)
+    --- PASS: TestTransaction_RollbackFailurePreservesJoinedCauses/invalid_task_id:_id_cannot_be_empty (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesJoinedCauses/task_cannot_reference_itself_as_parent (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesJoinedCauses/cyclic_dependency_detected:_a_task_cannot_be_its_own_ancestor (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesJoinedCauses/maximum_subtask_hierarchy_depth_exceeded (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesJoinedCauses/task_not_found (0.00s)
+    --- PASS: TestTransaction_RollbackFailurePreservesJoinedCauses/duplicate_task_id_in_hierarchy (0.00s)
+=== RUN   TestServiceErrors_RollbackFailure
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_command/joined=false
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_command/joined=true
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_text/joined=false
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_text/joined=true
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_date/joined=false
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_date/joined=true
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_reference_time/joined=false
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_reference_time/joined=true
+=== RUN   TestServiceErrors_RollbackFailure/service:_identity_generation_failed/joined=false
+=== RUN   TestServiceErrors_RollbackFailure/service:_identity_generation_failed/joined=true
+=== RUN   TestServiceErrors_RollbackFailure/service:_task_changed/joined=false
+=== RUN   TestServiceErrors_RollbackFailure/service:_task_changed/joined=true
+=== RUN   TestServiceErrors_RollbackFailure/service:_delete_confirmation_required/joined=false
+=== RUN   TestServiceErrors_RollbackFailure/service:_delete_confirmation_required/joined=true
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_options/joined=false
+=== RUN   TestServiceErrors_RollbackFailure/service:_invalid_options/joined=true
+--- PASS: TestServiceErrors_RollbackFailure (0.03s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_command/joined=false (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_command/joined=true (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_text/joined=false (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_text/joined=true (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_date/joined=false (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_date/joined=true (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_reference_time/joined=false (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_reference_time/joined=true (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_identity_generation_failed/joined=false (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_identity_generation_failed/joined=true (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_task_changed/joined=false (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_task_changed/joined=true (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_delete_confirmation_required/joined=false (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_delete_confirmation_required/joined=true (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_options/joined=false (0.00s)
+    --- PASS: TestServiceErrors_RollbackFailure/service:_invalid_options/joined=true (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/storage	(cached)
+?   	github.com/newbpydev/tusk/internal/storage/sqlc	[no test files]
+=== RUN   TestTerminalText_ControlAndUnicode
+--- PASS: TestTerminalText_ControlAndUnicode (0.00s)
+=== RUN   FuzzTerminalText
+=== RUN   FuzzTerminalText/seed#0
+=== RUN   FuzzTerminalText/seed#1
+=== RUN   FuzzTerminalText/seed#2
+--- PASS: FuzzTerminalText (0.00s)
+    --- PASS: FuzzTerminalText/seed#0 (0.00s)
+    --- PASS: FuzzTerminalText/seed#1 (0.00s)
+    --- PASS: FuzzTerminalText/seed#2 (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	(cached)
+=== RUN   TestTUIMeasurements
+    bench_test.go:158: retained measurements run only through make bench-tui
+--- SKIP: TestTUIMeasurements (0.00s)
+=== RUN   TestWorkflow_StressCommandsStayBounded
+--- PASS: TestWorkflow_StressCommandsStayBounded (1.26s)
+=== RUN   TestWorkflow_StressTimerCommandsDrain
+--- PASS: TestWorkflow_StressTimerCommandsDrain (0.03s)
+=== RUN   TestCalendar_ChooseAndCancelPreserveDraft
+--- PASS: TestCalendar_ChooseAndCancelPreserveDraft (0.02s)
+=== RUN   TestCalendar_CivilNavigation
+=== RUN   TestCalendar_CivilNavigation/2024-01-31/pgdown
+=== RUN   TestCalendar_CivilNavigation/2025-01-31/pgdown
+=== RUN   TestCalendar_CivilNavigation/2026-03-31/pgup
+=== RUN   TestCalendar_CivilNavigation/2026-12-31/right
+=== RUN   TestCalendar_CivilNavigation/2026-01-01/left
+=== RUN   TestCalendar_CivilNavigation/2026-09-29/up_down_down
+=== RUN   TestCalendar_CivilNavigation/2026-10-15/t
+=== RUN   TestCalendar_CivilNavigation/tomorrow/
+=== RUN   TestCalendar_CivilNavigation/invalid/
+=== RUN   TestCalendar_CivilNavigation//
+=== RUN   TestCalendar_CivilNavigation/0001-01-01/left_up_pgup
+=== RUN   TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown
+--- PASS: TestCalendar_CivilNavigation (0.10s)
+    --- PASS: TestCalendar_CivilNavigation/2024-01-31/pgdown (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2025-01-31/pgdown (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-03-31/pgup (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-12-31/right (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-01-01/left (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-09-29/up_down_down (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-10-15/t (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/tomorrow/ (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/invalid/ (0.01s)
+    --- PASS: TestCalendar_CivilNavigation// (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/0001-01-01/left_up_pgup (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown (0.01s)
+=== RUN   TestCalendar_LocalTodayAndDST
+--- PASS: TestCalendar_LocalTodayAndDST (0.03s)
+=== RUN   TestCalendar_LayoutPurityAndResize
+--- PASS: TestCalendar_LayoutPurityAndResize (0.09s)
+=== RUN   TestCalendar_RealStorageSaveAndUnchangedEdit
+--- PASS: TestCalendar_RealStorageSaveAndUnchangedEdit (0.02s)
+=== RUN   TestTUI_DependencyPatchIntegrity
+=== RUN   TestTUI_DependencyPatchIntegrity/bubbletea
+=== RUN   TestTUI_DependencyPatchIntegrity/glamour
+--- PASS: TestTUI_DependencyPatchIntegrity (0.00s)
+    --- PASS: TestTUI_DependencyPatchIntegrity/bubbletea (0.00s)
+    --- PASS: TestTUI_DependencyPatchIntegrity/glamour (0.00s)
+=== RUN   TestTUI_Architecture
+--- PASS: TestTUI_Architecture (0.01s)
+=== RUN   TestTUI_V1Compatibility
+--- PASS: TestTUI_V1Compatibility (0.00s)
+=== RUN   TestDelete_DiskLeafSubtreeConflictAndNeighbor
+--- PASS: TestDelete_DiskLeafSubtreeConflictAndNeighbor (0.04s)
+=== RUN   TestRecovery_DiskUnknownDeletionObservesAbsence
+--- PASS: TestRecovery_DiskUnknownDeletionObservesAbsence (0.02s)
+=== RUN   TestRecovery_DiskUnknownCreateNeverInfersIdentity
+--- PASS: TestRecovery_DiskUnknownCreateNeverInfersIdentity (0.03s)
+=== RUN   TestDelete_DefaultCancelAndSeparateRecursiveIntent
+--- PASS: TestDelete_DefaultCancelAndSeparateRecursiveIntent (0.03s)
+=== RUN   TestDelete_ChangedMembershipRequiresNewConsent
+--- PASS: TestDelete_ChangedMembershipRequiresNewConsent (0.01s)
+=== RUN   TestDelete_DepartedPreviewCannotArmNewDialog
+--- PASS: TestDelete_DepartedPreviewCannotArmNewDialog (0.00s)
+=== RUN   TestDelete_LongConsentScrollAndCanceledReadRefresh
+--- PASS: TestDelete_LongConsentScrollAndCanceledReadRefresh (0.01s)
+=== RUN   TestDelete_PreviewFailureOrMissingNeverWrites
+--- PASS: TestDelete_PreviewFailureOrMissingNeverWrites (0.01s)
+=== RUN   TestDelete_UnknownAndWrongIncarnationNeverArmConsent
+--- PASS: TestDelete_UnknownAndWrongIncarnationNeverArmConsent (0.00s)
+=== RUN   TestDelete_KnownFailureRefreshesPreviewBeforeRetry
+--- PASS: TestDelete_KnownFailureRefreshesPreviewBeforeRetry (0.01s)
+=== RUN   TestDelete_ReadableCountsAndScrollHint
+--- PASS: TestDelete_ReadableCountsAndScrollHint (0.00s)
+=== RUN   TestDetails_MetadataAndIndependentTimeline
+--- PASS: TestDetails_MetadataAndIndependentTimeline (0.00s)
+=== RUN   TestMarkdown_LatestPendingRenderAndFallback
+--- PASS: TestMarkdown_LatestPendingRenderAndFallback (0.01s)
+=== RUN   TestDetails_LateHistoryForOtherTask
+--- PASS: TestDetails_LateHistoryForOtherTask (0.00s)
+=== RUN   TestDetails_FatalReadDoesNotStartPendingHistory
+--- PASS: TestDetails_FatalReadDoesNotStartPendingHistory (0.00s)
+=== RUN   TestMarkdown_IdentityWidthProfileAndPanicFallback
+--- PASS: TestMarkdown_IdentityWidthProfileAndPanicFallback (0.02s)
+=== RUN   TestDetails_VisibleScrollPositionAndControls
+--- PASS: TestDetails_VisibleScrollPositionAndControls (0.01s)
+=== RUN   TestDetails_EndIntentSurvivesPendingRenderAndResize
+--- PASS: TestDetails_EndIntentSurvivesPendingRenderAndResize (0.01s)
+=== RUN   TestForm_DefaultsAndDetachedDirtyPatch
+--- PASS: TestForm_DefaultsAndDetachedDirtyPatch (0.00s)
+=== RUN   TestForm_NoChangesAndExplicitClears
+--- PASS: TestForm_NoChangesAndExplicitClears (0.00s)
+=== RUN   TestForm_ValidationFocusAndProgressContracts
+--- PASS: TestForm_ValidationFocusAndProgressContracts (0.00s)
+=== RUN   TestFilter_ApplyClearAndLiteralRouting
+--- PASS: TestFilter_ApplyClearAndLiteralRouting (0.02s)
+=== RUN   TestFilter_DayIsResolvedOnlyOnApply
+--- PASS: TestFilter_DayIsResolvedOnlyOnApply (0.01s)
+=== RUN   TestFilter_RefreshAndResizePreserveDraft
+--- PASS: TestFilter_RefreshAndResizePreserveDraft (0.01s)
+=== RUN   TestFilter_FieldNavigationErrorsAndWideInput
+--- PASS: TestFilter_FieldNavigationErrorsAndWideInput (0.02s)
+=== RUN   TestFilter_PlainChoiceHasVisibleFocus
+--- PASS: TestFilter_PlainChoiceHasVisibleFocus (0.00s)
+=== RUN   TestForm_ReadonlyPreviewPreparationIsBounded
+--- PASS: TestForm_ReadonlyPreviewPreparationIsBounded (0.10s)
+=== RUN   TestForm_FocusLiteralTextAndDiscard
+--- PASS: TestForm_FocusLiteralTextAndDiscard (0.01s)
+=== RUN   TestForm_AtomicPasteAndReadonlyReplacement
+--- PASS: TestForm_AtomicPasteAndReadonlyReplacement (0.05s)
+=== RUN   TestForm_ParentPickerSnapshotAndPurity
+--- PASS: TestForm_ParentPickerSnapshotAndPurity (0.02s)
+=== RUN   TestForm_SmallTerminalPreservesDraftAndSubmission
+--- PASS: TestForm_SmallTerminalPreservesDraftAndSubmission (0.00s)
+=== RUN   TestForm_ControlsValidationAndParentSearch
+--- PASS: TestForm_ControlsValidationAndParentSearch (0.04s)
+=== RUN   TestForm_VisiblePositionAndTimezone
+--- PASS: TestForm_VisiblePositionAndTimezone (0.00s)
+=== RUN   TestForm_BrowseHelpAndQuitRemainVisible
+--- PASS: TestForm_BrowseHelpAndQuitRemainVisible (0.00s)
+=== RUN   TestForm_ParentSearchAcceptsSpaces
+--- PASS: TestForm_ParentSearchAcceptsSpaces (0.01s)
+=== RUN   TestHistory_FailuresRetryAndUnknownPrecedeFreshness
+=== RUN   TestHistory_FailuresRetryAndUnknownPrecedeFreshness/known
+=== RUN   TestHistory_FailuresRetryAndUnknownPrecedeFreshness/missing
+=== RUN   TestHistory_FailuresRetryAndUnknownPrecedeFreshness/unknown
+=== RUN   TestHistory_FailuresRetryAndUnknownPrecedeFreshness/panic
+--- PASS: TestHistory_FailuresRetryAndUnknownPrecedeFreshness (0.01s)
+    --- PASS: TestHistory_FailuresRetryAndUnknownPrecedeFreshness/known (0.00s)
+    --- PASS: TestHistory_FailuresRetryAndUnknownPrecedeFreshness/missing (0.00s)
+    --- PASS: TestHistory_FailuresRetryAndUnknownPrecedeFreshness/unknown (0.00s)
+    --- PASS: TestHistory_FailuresRetryAndUnknownPrecedeFreshness/panic (0.00s)
+=== RUN   TestHistory_RefreshTakesPriorityAndCoalesces
+--- PASS: TestHistory_RefreshTakesPriorityAndCoalesces (0.01s)
+=== RUN   TestSession_HistoryUsesOwnedService
+--- PASS: TestSession_HistoryUsesOwnedService (0.00s)
+=== RUN   TestTUIInteractiveFixture
+    kitty_fixture_test.go:27: manual application fixture; not automated terminal evidence
+--- SKIP: TestTUIInteractiveFixture (0.00s)
+=== RUN   TestResize_CellBoundsAndDraftRetention
+--- PASS: TestResize_CellBoundsAndDraftRetention (0.01s)
+=== RUN   TestResize_StateAndUnicodeBounds
+--- PASS: TestResize_StateAndUnicodeBounds (0.20s)
+=== RUN   TestOverlay_FocusAndClip
+--- PASS: TestOverlay_FocusAndClip (0.01s)
+=== RUN   TestOverlay_GraphemeBoundaries
+--- PASS: TestOverlay_GraphemeBoundaries (0.00s)
+=== RUN   TestOverlay_HelpScrollAndPureViews
+--- PASS: TestOverlay_HelpScrollAndPureViews (0.02s)
+=== RUN   TestTerminal_DeepTreeKeepsTitlesAndRawText
+--- PASS: TestTerminal_DeepTreeKeepsTitlesAndRawText (0.00s)
+=== RUN   TestMarkdown_HTMLTextOnly
+--- PASS: TestMarkdown_HTMLTextOnly (0.00s)
+=== RUN   TestMarkdown_ControlsAndNoExternalEffects
+--- PASS: TestMarkdown_ControlsAndNoExternalEffects (0.00s)
+=== RUN   TestMarkdown_GeneratedOutputAllowsOnlySGR
+--- PASS: TestMarkdown_GeneratedOutputAllowsOnlySGR (0.00s)
+=== RUN   TestMarkdown_LongUnicodeAndCancellation
+--- PASS: TestMarkdown_LongUnicodeAndCancellation (0.06s)
+=== RUN   TestMarkdown_BudgetBoundariesAndGeneratedSGRGrammar
+--- PASS: TestMarkdown_BudgetBoundariesAndGeneratedSGRGrammar (0.00s)
+=== RUN   TestMarkdown_StyleMatchesWorkspaceWithoutSharedMutation
+--- PASS: TestMarkdown_StyleMatchesWorkspaceWithoutSharedMutation (0.00s)
+=== RUN   TestTUIMeasurement_SummaryRetainsSamplesAndRejectsMisses
+--- PASS: TestTUIMeasurement_SummaryRetainsSamplesAndRejectsMisses (0.00s)
+=== RUN   TestTUIMeasurement_RejectsInvalidWarmupsAndEmptyWork
+--- PASS: TestTUIMeasurement_RejectsInvalidWarmupsAndEmptyWork (0.01s)
+=== RUN   TestView_ColdAndRepeatedCallsPreserveDeepState
+=== RUN   TestView_ColdAndRepeatedCallsPreserveDeepState/false
+=== RUN   TestView_ColdAndRepeatedCallsPreserveDeepState/true
+--- PASS: TestView_ColdAndRepeatedCallsPreserveDeepState (0.01s)
+    --- PASS: TestView_ColdAndRepeatedCallsPreserveDeepState/false (0.00s)
+    --- PASS: TestView_ColdAndRepeatedCallsPreserveDeepState/true (0.00s)
+=== RUN   TestCommand_NoLiveModelCapture
+--- PASS: TestCommand_NoLiveModelCapture (0.00s)
+=== RUN   TestTUI_LoadStates
+=== RUN   TestTUI_LoadStates/empty
+=== RUN   TestTUI_LoadStates/loaded
+=== RUN   TestTUI_LoadStates/error
+--- PASS: TestTUI_LoadStates (0.00s)
+    --- PASS: TestTUI_LoadStates/empty (0.00s)
+    --- PASS: TestTUI_LoadStates/loaded (0.00s)
+    --- PASS: TestTUI_LoadStates/error (0.00s)
+=== RUN   TestTUI_SessionIsolation
+--- PASS: TestTUI_SessionIsolation (0.01s)
+=== RUN   TestCommand_CanceledWait
+--- PASS: TestCommand_CanceledWait (0.00s)
+=== RUN   TestTUI_QuitAndRetry
+--- PASS: TestTUI_QuitAndRetry (0.00s)
+=== RUN   TestTUI_ServicePanicTerminatesSession
+--- PASS: TestTUI_ServicePanicTerminatesSession (0.00s)
+=== RUN   TestMutation_DiskFormsLifecycleAndRollup
+=== RUN   TestMutation_DiskFormsLifecycleAndRollup/default
+=== RUN   TestMutation_DiskFormsLifecycleAndRollup/autocomplete
+--- PASS: TestMutation_DiskFormsLifecycleAndRollup (0.11s)
+    --- PASS: TestMutation_DiskFormsLifecycleAndRollup/default (0.06s)
+    --- PASS: TestMutation_DiskFormsLifecycleAndRollup/autocomplete (0.05s)
+=== RUN   TestMutation_DiskConflictReloadAndMissing
+--- PASS: TestMutation_DiskConflictReloadAndMissing (0.03s)
+=== RUN   TestSession_MutationNilAndInvalidRequest
+--- PASS: TestSession_MutationNilAndInvalidRequest (0.00s)
+=== RUN   TestMutation_DiskDepthAndFailedMoveAreAtomic
+--- PASS: TestMutation_DiskDepthAndFailedMoveAreAtomic (0.02s)
+=== RUN   TestMutation_DrainDuplicateAndReadbackBarrier
+--- PASS: TestMutation_DrainDuplicateAndReadbackBarrier (0.01s)
+=== RUN   TestMutation_KnownConflictAndUnknownRetainDraft
+--- PASS: TestMutation_KnownConflictAndUnknownRetainDraft (0.03s)
+=== RUN   TestMutation_ReadFailureCannotAdmitQueuedWrite
+--- PASS: TestMutation_ReadFailureCannotAdmitQueuedWrite (0.01s)
+=== RUN   TestMutation_NoOpAndToggle
+--- PASS: TestMutation_NoOpAndToggle (0.01s)
+=== RUN   TestMutation_MissingCreateParentRetainsRetryableDraft
+--- PASS: TestMutation_MissingCreateParentRetainsRetryableDraft (0.00s)
+=== RUN   TestMutation_ConflictReloadFailureAndStaleReplies
+--- PASS: TestMutation_ConflictReloadFailureAndStaleReplies (0.01s)
+=== RUN   TestMutation_HistoryDrainBeforeWrite
+--- PASS: TestMutation_HistoryDrainBeforeWrite (0.01s)
+=== RUN   TestMutation_DisabledWriteHints
+--- PASS: TestMutation_DisabledWriteHints (0.00s)
+=== RUN   TestNavigation_SelectionCollapseAndPages
+--- PASS: TestNavigation_SelectionCollapseAndPages (0.01s)
+=== RUN   TestSelection_RemovedMovedAndIncarnation
+--- PASS: TestSelection_RemovedMovedAndIncarnation (0.01s)
+=== RUN   TestSearch_LiteralEntryAndRestore
+--- PASS: TestSearch_LiteralEntryAndRestore (0.00s)
+=== RUN   TestSelection_IncarnationAndRemovedCollapse
+--- PASS: TestSelection_IncarnationAndRemovedCollapse (0.00s)
+=== RUN   TestSearch_DebounceOrderAcceptCancelAndLiteralKeys
+--- PASS: TestSearch_DebounceOrderAcceptCancelAndLiteralKeys (0.01s)
+=== RUN   TestNavigation_DiscoverableBrowseActions
+--- PASS: TestNavigation_DiscoverableBrowseActions (0.00s)
+=== RUN   TestNavigation_ViewportAndSearchCollapseIsolation
+--- PASS: TestNavigation_ViewportAndSearchCollapseIsolation (0.02s)
+=== RUN   TestView_NewBrowseModesArePure
+--- PASS: TestView_NewBrowseModesArePure (0.01s)
+=== RUN   TestNavigation_SpaciousMetadataFollowsTreeIndent
+--- PASS: TestNavigation_SpaciousMetadataFollowsTreeIndent (0.00s)
+=== RUN   TestWorkspace_PersistentControlsAndQuickViews
+--- PASS: TestWorkspace_PersistentControlsAndQuickViews (0.01s)
+=== RUN   TestPresentation_ModalInsetsAndFieldAlignment
+--- PASS: TestPresentation_ModalInsetsAndFieldAlignment (0.01s)
+=== RUN   TestWorkspace_TodayRollsOverAtLocalMidnight
+--- PASS: TestWorkspace_TodayRollsOverAtLocalMidnight (0.00s)
+=== RUN   TestPresentation_DetailsPrioritizeTaskContent
+--- PASS: TestPresentation_DetailsPrioritizeTaskContent (0.00s)
+=== RUN   TestProjection_GroupsAndCanonicalOrder
+--- PASS: TestProjection_GroupsAndCanonicalOrder (0.00s)
+=== RUN   TestSearch_ContextCollapseAndPredicates
+--- PASS: TestSearch_ContextCollapseAndPredicates (0.00s)
+=== RUN   TestProjection_DueDayDST
+--- PASS: TestProjection_DueDayDST (0.00s)
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/none
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/close
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/open
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/tree
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/history
+--- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/none (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/close (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/open (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/tree (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/history (0.00s)
+=== RUN   TestDelete_InvalidSuccessCannotLookCommitted
+--- PASS: TestDelete_InvalidSuccessCannotLookCommitted (0.00s)
+=== RUN   TestRecovery_CloseFailureOnlyAllowsQuit
+--- PASS: TestRecovery_CloseFailureOnlyAllowsQuit (0.00s)
+=== RUN   TestRecovery_CancelDrainsBeforeClosingFreshOwner
+--- PASS: TestRecovery_CancelDrainsBeforeClosingFreshOwner (0.00s)
+=== RUN   TestRecovery_UnknownCreateNeverReplays
+--- PASS: TestRecovery_UnknownCreateNeverReplays (0.01s)
+=== RUN   TestRecovery_OldOwnerMessagesIgnored
+--- PASS: TestRecovery_OldOwnerMessagesIgnored (0.01s)
+=== RUN   TestRecovery_FailedReadbackCannotUnfreeze
+--- PASS: TestRecovery_FailedReadbackCannotUnfreeze (0.00s)
+=== RUN   TestRecovery_OwnsFocusAboveEveryModal
+--- PASS: TestRecovery_OwnsFocusAboveEveryModal (0.01s)
+=== RUN   TestRecovery_ComparisonIncludesRawAndObservedFields
+--- PASS: TestRecovery_ComparisonIncludesRawAndObservedFields (0.01s)
+=== RUN   TestRecovery_InitialUnknownStartsRefreshTimerAfterReadback
+--- PASS: TestRecovery_InitialUnknownStartsRefreshTimerAfterReadback (0.00s)
+=== RUN   TestRecovery_ErrorVisibleAboveLongDraft
+--- PASS: TestRecovery_ErrorVisibleAboveLongDraft (0.01s)
+=== RUN   TestRecovery_ReadbackStateIsClearWithoutRuntimeTerms
+--- PASS: TestRecovery_ReadbackStateIsClearWithoutRuntimeTerms (0.00s)
+=== RUN   TestRecovery_OldRenderReleasesLaneWithoutPublishing
+--- PASS: TestRecovery_OldRenderReleasesLaneWithoutPublishing (0.00s)
+=== RUN   TestRecovery_NamesUncertainTaskActionBeforeReload
+--- PASS: TestRecovery_NamesUncertainTaskActionBeforeReload (0.00s)
+=== RUN   TestRefresh_TwoDiskOwnersPreserveSelectionAndSearch
+--- PASS: TestRefresh_TwoDiskOwnersPreserveSelectionAndSearch (0.01s)
+=== RUN   TestRefresh_CoalescesAndKeepsOneTimer
+--- PASS: TestRefresh_CoalescesAndKeepsOneTimer (0.04s)
+=== RUN   TestRefresh_FailureKeepsSnapshotAndModal
+--- PASS: TestRefresh_FailureKeepsSnapshotAndModal (0.00s)
+=== RUN   TestRefresh_RejectsOldPayloadButRetiresMatchingOperation
+--- PASS: TestRefresh_RejectsOldPayloadButRetiresMatchingOperation (0.00s)
+=== RUN   TestRefresh_CanceledTickDoesNotRestart
+--- PASS: TestRefresh_CanceledTickDoesNotRestart (0.00s)
+=== RUN   TestSession_Run
+=== RUN   TestSession_Run/quit
+=== RUN   TestSession_Run/startup
+=== RUN   TestSession_Run/ctrlc
+=== RUN   TestSession_Run/panic
+=== RUN   TestSession_Run/update_panic
+--- PASS: TestSession_Run (0.01s)
+    --- PASS: TestSession_Run/quit (0.00s)
+    --- PASS: TestSession_Run/startup (0.00s)
+    --- PASS: TestSession_Run/ctrlc (0.00s)
+    --- PASS: TestSession_Run/panic (0.00s)
+    --- PASS: TestSession_Run/update_panic (0.00s)
+=== RUN   TestSession_RecordingWriter
+--- PASS: TestSession_RecordingWriter (0.00s)
+=== RUN   TestSession_TerminalWriterPreservesDescriptorAndErrors
+--- PASS: TestSession_TerminalWriterPreservesDescriptorAndErrors (0.01s)
+=== RUN   TestSession_CommandPanic
+--- PASS: TestSession_CommandPanic (0.00s)
+=== RUN   TestSession_UnknownCannotExitSuccessfully
+--- PASS: TestSession_UnknownCannotExitSuccessfully (0.00s)
+=== RUN   TestSession_RealProgramAndOutputFailure
+=== RUN   TestSession_RealProgramAndOutputFailure/quit
+=== RUN   TestSession_RealProgramAndOutputFailure/output_failure
+--- PASS: TestSession_RealProgramAndOutputFailure (0.02s)
+    --- PASS: TestSession_RealProgramAndOutputFailure/quit (0.01s)
+    --- PASS: TestSession_RealProgramAndOutputFailure/output_failure (0.01s)
+=== RUN   TestSession_CancelDrainsBeforeClose
+--- PASS: TestSession_CancelDrainsBeforeClose (0.00s)
+=== RUN   TestSession_CommitBeforeDroppedMessage
+--- PASS: TestSession_CommitBeforeDroppedMessage (0.00s)
+=== RUN   TestSession_Reopen
+=== RUN   TestSession_Reopen/success
+=== RUN   TestSession_Reopen/close_failure
+--- PASS: TestSession_Reopen (0.00s)
+    --- PASS: TestSession_Reopen/success (0.00s)
+    --- PASS: TestSession_Reopen/close_failure (0.00s)
+=== RUN   TestSession_LateCommandDoesNotOpen
+--- PASS: TestSession_LateCommandDoesNotOpen (0.00s)
+=== RUN   TestSession_AdmissionAndCleanupProgress
+--- PASS: TestSession_AdmissionAndCleanupProgress (0.00s)
+=== RUN   TestSession_UnknownReadAndInvalidReceipt
+--- PASS: TestSession_UnknownReadAndInvalidReceipt (0.00s)
+=== RUN   TestSession_FactoryAndPanic
+=== RUN   TestSession_FactoryAndPanic/error
+=== RUN   TestSession_FactoryAndPanic/nil
+=== RUN   TestSession_FactoryAndPanic/nil_service
+=== RUN   TestSession_FactoryAndPanic/panic
+--- PASS: TestSession_FactoryAndPanic (0.00s)
+    --- PASS: TestSession_FactoryAndPanic/error (0.00s)
+    --- PASS: TestSession_FactoryAndPanic/nil (0.00s)
+    --- PASS: TestSession_FactoryAndPanic/nil_service (0.00s)
+    --- PASS: TestSession_FactoryAndPanic/panic (0.00s)
+=== RUN   TestOverlay_UniformSurfaces
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=none
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=help
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=form
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=delete
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=recovery
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=none
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=help
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=form
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=delete
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=recovery
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=none
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=help
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=form
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=delete
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=recovery
+--- PASS: TestOverlay_UniformSurfaces (0.06s)
+    --- PASS: TestOverlay_UniformSurfaces/80x24/modal=none (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/80x24/modal=help (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/80x24/modal=form (0.01s)
+    --- PASS: TestOverlay_UniformSurfaces/80x24/modal=delete (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/80x24/modal=recovery (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/120x40/modal=none (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/120x40/modal=help (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/120x40/modal=form (0.01s)
+    --- PASS: TestOverlay_UniformSurfaces/120x40/modal=delete (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/120x40/modal=recovery (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/200x60/modal=none (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/200x60/modal=help (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/200x60/modal=form (0.01s)
+    --- PASS: TestOverlay_UniformSurfaces/200x60/modal=delete (0.00s)
+    --- PASS: TestOverlay_UniformSurfaces/200x60/modal=recovery (0.00s)
+=== RUN   TestWorkflow_EditConflictReadbackAndQuit
+--- PASS: TestWorkflow_EditConflictReadbackAndQuit (0.05s)
+=== RUN   TestWorkflow_ToggleErrorsHaveActionableBrowseHints
+--- PASS: TestWorkflow_ToggleErrorsHaveActionableBrowseHints (0.03s)
+=== RUN   TestWorkflow_AllStatesKeepViewPure
+=== RUN   TestWorkflow_AllStatesKeepViewPure/loading
+=== RUN   TestWorkflow_AllStatesKeepViewPure/empty
+=== RUN   TestWorkflow_AllStatesKeepViewPure/loaded
+=== RUN   TestWorkflow_AllStatesKeepViewPure/failure
+=== RUN   TestWorkflow_AllStatesKeepViewPure/stale
+=== RUN   TestWorkflow_AllStatesKeepViewPure/form
+=== RUN   TestWorkflow_AllStatesKeepViewPure/filter
+=== RUN   TestWorkflow_AllStatesKeepViewPure/delete
+=== RUN   TestWorkflow_AllStatesKeepViewPure/recovery
+--- PASS: TestWorkflow_AllStatesKeepViewPure (0.03s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/loading (0.00s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/empty (0.00s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/loaded (0.00s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/failure (0.00s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/stale (0.00s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/form (0.01s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/filter (0.00s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/delete (0.00s)
+    --- PASS: TestWorkflow_AllStatesKeepViewPure/recovery (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	(cached)
+=== RUN   TestCLIConditions_StartFailure
+--- PASS: TestCLIConditions_StartFailure (0.00s)
+=== RUN   TestCLIConditions
+    conditions_test.go:42: make bench-cli-conditions
+--- SKIP: TestCLIConditions (0.00s)
+=== RUN   TestCLIBenchmark_ReportJSONKeys
+--- PASS: TestCLIBenchmark_ReportJSONKeys (0.00s)
+=== RUN   TestCLIBenchmark_RejectsInvalidAndMissingSamples
+=== RUN   TestCLIBenchmark_RejectsInvalidAndMissingSamples/good
+=== RUN   TestCLIBenchmark_RejectsInvalidAndMissingSamples/missing
+=== RUN   TestCLIBenchmark_RejectsInvalidAndMissingSamples/empty
+=== RUN   TestCLIBenchmark_RejectsInvalidAndMissingSamples/isolated_target_miss
+=== RUN   TestCLIBenchmark_RejectsInvalidAndMissingSamples/negative
+--- PASS: TestCLIBenchmark_RejectsInvalidAndMissingSamples (0.00s)
+    --- PASS: TestCLIBenchmark_RejectsInvalidAndMissingSamples/good (0.00s)
+    --- PASS: TestCLIBenchmark_RejectsInvalidAndMissingSamples/missing (0.00s)
+    --- PASS: TestCLIBenchmark_RejectsInvalidAndMissingSamples/empty (0.00s)
+    --- PASS: TestCLIBenchmark_RejectsInvalidAndMissingSamples/isolated_target_miss (0.00s)
+    --- PASS: TestCLIBenchmark_RejectsInvalidAndMissingSamples/negative (0.00s)
+=== RUN   TestCLIBenchmark_DistributionGate
+=== RUN   TestCLIBenchmark_DistributionGate/5ms/occasional_target_misses
+=== RUN   TestCLIBenchmark_DistributionGate/5ms/p90_boundary
+=== RUN   TestCLIBenchmark_DistributionGate/5ms/p95_boundary
+=== RUN   TestCLIBenchmark_DistributionGate/5ms/p99_boundary
+=== RUN   TestCLIBenchmark_DistributionGate/5ms/maximum_boundary
+=== RUN   TestCLIBenchmark_DistributionGate/5ms/retained_tail_below_maximum
+=== RUN   TestCLIBenchmark_DistributionGate/15ms/occasional_target_misses
+=== RUN   TestCLIBenchmark_DistributionGate/15ms/p90_boundary
+=== RUN   TestCLIBenchmark_DistributionGate/15ms/p95_boundary
+=== RUN   TestCLIBenchmark_DistributionGate/15ms/p99_boundary
+=== RUN   TestCLIBenchmark_DistributionGate/15ms/maximum_boundary
+=== RUN   TestCLIBenchmark_DistributionGate/15ms/retained_tail_below_maximum
+--- PASS: TestCLIBenchmark_DistributionGate (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/5ms/occasional_target_misses (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/5ms/p90_boundary (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/5ms/p95_boundary (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/5ms/p99_boundary (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/5ms/maximum_boundary (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/5ms/retained_tail_below_maximum (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/15ms/occasional_target_misses (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/15ms/p90_boundary (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/15ms/p95_boundary (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/15ms/p99_boundary (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/15ms/maximum_boundary (0.00s)
+    --- PASS: TestCLIBenchmark_DistributionGate/15ms/retained_tail_below_maximum (0.00s)
+=== RUN   TestCLIBenchmark_Collect
+--- PASS: TestCLIBenchmark_Collect (0.00s)
+=== RUN   TestCLIBenchmark_OutputValidation
+--- PASS: TestCLIBenchmark_OutputValidation (0.00s)
+=== RUN   TestCLIBenchmark_RejectsIncompleteData
+--- PASS: TestCLIBenchmark_RejectsIncompleteData (0.00s)
+=== RUN   TestCLIBenchmark_EveryRunMustPass
+--- PASS: TestCLIBenchmark_EveryRunMustPass (0.02s)
+=== RUN   TestCLIBenchmark_ReportAndFailures
+=== RUN   TestCLIBenchmark_ReportAndFailures/unavailable_filesystem_probe
+=== RUN   TestCLIBenchmark_ReportAndFailures/temporary_directory_failure
+=== RUN   TestCLIBenchmark_ReportAndFailures/final_report_failure
+--- PASS: TestCLIBenchmark_ReportAndFailures (0.37s)
+    --- PASS: TestCLIBenchmark_ReportAndFailures/unavailable_filesystem_probe (0.00s)
+    --- PASS: TestCLIBenchmark_ReportAndFailures/temporary_directory_failure (0.00s)
+    --- PASS: TestCLIBenchmark_ReportAndFailures/final_report_failure (0.00s)
+=== RUN   TestCLIBenchmark_Seed
+--- PASS: TestCLIBenchmark_Seed (0.06s)
+=== RUN   TestCLIBenchmark_Execute
+--- PASS: TestCLIBenchmark_Execute (0.01s)
+=== RUN   TestCLIBenchmark_Capture
+--- PASS: TestCLIBenchmark_Capture (0.00s)
+=== RUN   TestCLIBenchmark_Main
+--- PASS: TestCLIBenchmark_Main (0.00s)
+=== RUN   TestCLIBenchmark_RejectsNullAndMissingWarmups
+--- PASS: TestCLIBenchmark_RejectsNullAndMissingWarmups (0.00s)
+=== RUN   TestCLIBenchmark_InvalidFixtures
+--- PASS: TestCLIBenchmark_InvalidFixtures (0.00s)
+=== RUN   TestTimingDiagnostic_ParentIsolation
+--- PASS: TestTimingDiagnostic_ParentIsolation (0.00s)
+=== RUN   TestTimingDiagnostic_RejectUnknownMode
+--- PASS: TestTimingDiagnostic_RejectUnknownMode (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/scripts/cli-bench	0.469s
+go version
+go version go1.25.0 linux/amd64
+Building CLI and tests: linux/amd64 (CGO_ENABLED=0; native execution separate)
+Building CLI and tests: linux/arm64 (CGO_ENABLED=0; native execution separate)
+Building CLI and tests: darwin/amd64 (CGO_ENABLED=0; native execution separate)
+Building CLI and tests: darwin/arm64 (CGO_ENABLED=0; native execution separate)
+Building CLI and tests: windows/amd64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: linux/amd64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: linux/arm64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: darwin/amd64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: darwin/arm64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: windows/amd64 (CGO_ENABLED=0; native execution separate)

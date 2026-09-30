@@ -31,9 +31,10 @@ drafts when operations fail, and restore the terminal on exit.
   and recovery interactions from U5. Tests accompany every unit; U6 is acceptance,
   not the first opportunity to write tests.
 - **Execution authorization:** the owner invoked ce-work on 2026-09-29 with
-  hands-on owned Kitty verification. U1, U7, U2, U3, U4, U5 and U8 are locally accepted; U6 is active.
-  See [U5 receipt](../verification-evidence/005/u5.json). Later unit and release
-  acceptance remains pending; planning observations below remain historical.
+  hands-on owned Kitty verification. All eight units are locally accepted on
+  2026-09-30. See [U6 acceptance](../verification-evidence/005/u6-acceptance.json).
+  V01–V110 pass locally; V111–V112 remain Feature 006 release obligations.
+  Earlier planning and execution checkpoints below remain historical.
 - **Completion boundary:** each implemented unit needs red/green evidence,
   applicable terminal evidence, `make validate`, synchronized triplet/masterplan,
   and its own coherent local commit before advancing. Push, PR, merge and release
@@ -711,7 +712,7 @@ are specifications, not observed results.
   this plan defines a fixture budget, not by blessing a failing measurement.
 - **Verify:** `make validate build check-generated`; minimum-Go `make test build-tui`;
   `make bench-tui`; `make bench-cli CLI_BENCH_OUTPUT=docs/verification-evidence/005/cli-latency.json`;
-  full owned Kitty matrix. No concurrent workload during latency measurement.
+  full owned Kitty matrix. No concurrent verification workload during latency measurement; record ambient desktop load.
 - **Failure / reviews:** missing visual proof leaves phase acceptance open;
   performance/cleanup failures block local acceptance; cross-build is not native
   proof. Sequential architecture, correctness, security, simplicity, accessibility,
@@ -925,3 +926,177 @@ no independent review is claimed. U6 now owns final workflow, performance,
 documentation and review, including long browse notices/action-specific toggle
 errors and measured large-preview/projection costs. Native/hosted release proof
 remains Feature 006.
+
+
+### U6 presentation refinement checkpoint (2026-09-29)
+
+The owner's UI/UX steering makes visual fidelity part of local acceptance.
+The Spacious reference now governs persistent search and working All/Today/Done
+tabs, status symbols, consistent modal insets, aligned input rules, checkboxes,
+buttons and focus markers. Task details put everyday information and notes before
+audit metadata. Today follows local midnight; custom date filters remain fixed.
+Raw drafts, exact deletion consent, single-operation admission and recovery
+barriers are unchanged. Canonical validation, minimum-Go tests/five-target builds
+and focused visual regressions pass. Owned Kitty inspection covers colored/plain
+controls, 80x24/120x40 and large layouts; final performance, review and remaining
+terminal acceptance are still in progress. U6 remains the active target.
+
+### U6 CLI startup regression and correction (2026-09-29)
+
+The first final CLI matrix failed all 84 case-runs. The retained report is
+`docs/verification-evidence/005/u6-logs/cli-latency-eager-markdown.json`;
+`GODEBUG=inittrace=1` identified Chroma's eager language and theme XML loading
+as the dominant cost before command routing (about 11 ms on this host).
+Glamour remains pinned at v0.9.1, with two local renderer
+patches: base-styled code blocks without Chroma, and HTML text extraction using
+the existing HTML tokenizer without CSS/URL policy registries. Markdown headings,
+lists, tables, safe links and code text remain supported; tags/attributes and
+script/style contents are omitted and decoded text crosses the terminal sanitizer;
+code blocks use uniform coloring rather than language-specific highlighting.
+The source/license copy and SHA-256 manifest live in `third_party/glamour`;
+`TestCLIStartup_NoSyntaxRegistryInitialization` is Red before the patch and
+Green after it. The full unmodified timing policy must still pass before U6
+acceptance. This is a measured startup correction, not a waived latency gate.
+
+The syntax-only correction passed 56/84 CLI case-runs but retained help/version
+and large-query misses (`u6-logs/cli-latency-no-syntax.json`). The second patch
+removes the remaining sanitizer registry initialization; HTML text/markup/entity
+characterization passes, and the startup regression remains Red-to-Green.
+
+### U6 owner approval and remaining latency gate (2026-09-29)
+
+The owner approved the refined Spacious UI: “Yes, keep this direction.” Padding,
+quick tabs, checkboxes and opaque dialog backgrounds are the accepted visual
+baseline. Final owned Kitty checks cover 80×24, 120×40 and exact 200×60, help
+paging, terminal restoration, CLI usage, relaunch and injected recovery. See
+[u6-kitty receipt](../verification-evidence/005/u6-kitty/README.md).
+
+The two startup corrections pass canonical validation and Go 1.25 tests/builds.
+The retained CLI report improves to 74/84 passing case-runs but still fails the
+unchanged gate. A same-host Feature 004 control is being measured to distinguish
+startup overhead from desktop contention. No failed samples are removed. U6,
+V106 and Phase 5 acceptance remain open; final review and measurements must be
+settled before the unit commit.
+
+U6 scenario settlement: V101–V105 and V109 are checked against the current
+canonical, minimum-Go and Kitty receipts. V106–V108 and V110 remain open for
+final measurements and review; the unit and Phase 5 are not yet accepted.
+
+### U6 review follow-up (2026-09-29)
+
+The full-branch ce-code-review round is complete. Local lenses ran sequentially
+inline per AGENTS. Claude returned a provider authentication failure; the Grok
+replacement through Cursor returned four observations, with serving identity
+unverified and no independent-agreement promotion. Three claims were rejected
+against explicit existing contracts; the useful production-process test gap was
+closed by TestTUIProcess_CommittedBeforeInterrupt. It creates a real task using
+the production binary, then verifies SIGINT restoration, committed receipt and
+fresh CLI readback. Focused, canonical and minimum-Go checks pass. See
+[review receipt](../verification-evidence/005/review-r1/review.json) and its
+[follow-up](../verification-evidence/005/review-r1/follow-up.json).
+
+A same-host Feature 004 control passed 82/84 cases; a later current run passed
+77/84 while system package updates were observed consuming CPU. Reports and
+host observations are retained. The update has ended; one separate current
+matrix is running with no owned test/build/review workload. The limits and
+fixtures remain unchanged. This is diagnosis of changed host conditions, not
+selection of individual passing runs or deletion of outliers.
+
+### U6 final TUI measurements and open CLI gate (2026-09-29)
+
+All 69 current-binary TUI case-runs pass. Synchronous preparation worst p95 is
+11.245 ms and maximum 12.361 ms; pure View remains allocation-free. Three real
+child-PTY startup runs retain 300 samples plus 15 warmups: median about 27 ms,
+worst run p95 43.259 ms and maximum 48.828 ms, with maximum child RSS 23,620 KiB.
+Async 32 KiB Markdown remains an observation (run 3 p95 about 600 ms); 1 MiB
+plain fallback about 49 ms. Neither is claimed as synchronous frame preparation.
+Feature V107/V108 and product TUSK-V54/V55/V56/V57/V64/V65 now pass. Native
+terminal TUSK-V66 and Feature V111/V112 remain explicitly deferred in part/all.
+
+The post-package-update CLI matrix still passes only 79/84: five 1,000-task JSON
+list/tree case-runs miss p90, with worst p90 19.317 ms against 15 ms. Help/version
+and other query cases pass. The same-host Feature 004 control passes 82/84.
+Profiling puts about half of repeated CLI CPU in task reads and about 19% in
+storage open; JSON formatting is about 8%. Runtime GC/processor experiments are
+retained diagnostics only and do not supply an acceptance substitute. No limits,
+fixtures, database safety rules or runtime defaults were changed. V106 and final
+U6 acceptance remain open pending a stable-host measurement or a justified fix.
+
+### U6 due-date usability refinement (2026-09-30)
+
+The owner approves the current visual direction and requests a due-date calendar
+and accepted-input examples beside the label. This extends the existing U6
+form polish (Feature R9/R12/R16/R23/R24; V68/V70/V86/V104), without a new phase.
+Keep Spacious rows, shared controls, padding and opaque dialog surfaces. Ctrl+P
+on Due opens a month grid; arrows move by day/week, PgUp/PgDn by month, and `t`
+jumps to today. Enter copies an ISO day into the draft; Esc leaves the original
+text untouched. Typed dates and natural expressions remain available. Examples
+and timezone stay visible; selecting a day uses the existing local end-of-day
+parser at save. Verify leap/month boundaries, local today, cancellation, focus
+trapping, unchanged raw timestamps, resize/pure View, real storage readback and
+owned Kitty at 80×24/120×40 in color and plain presentation. These new subcases
+pass canonical validation and real Kitty inspection; see the
+[calendar receipt](../verification-evidence/005/u6-calendar.md). The owner
+approved the calendar on 2026-09-30: “it looks good”; prior UI approval remains. All 78
+current-candidate TUI case-runs pass, including nine calendar navigation cases:
+calendar preparation worst p95 12.334 ms, maximum 12.968 ms. CLI V106 /
+005-ISS-024 and the U6 local commit remain open; the last CLI 79/84 report is
+explicitly the pre-calendar candidate, not acceptance of the new binary.
+
+### U6 final measurement context (2026-09-30)
+
+The owner clarified that Zed hosts this Codex terminal session. Keep the editor
+running and record its ambient load. As the product latency policy specifies,
+run no concurrent verification workload; do not require the owner to close the
+session host. After minimum-Go checks finish, quit only the owned Kitty app and
+measure the current calendar candidate once through the unchanged three-run
+CLI matrix. Preserve the earlier 79/84 report and all new samples. No performance
+limit, compiler default, power setting, fixture or storage safety rule changes.
+
+
+### U6 final JSON correction and acceptance checkpoint (2026-09-30)
+
+The calendar candidate passed 82/84 CLI case-runs: two 1,000-task JSON tree
+p90 values were 15.029 and 15.174 ms. A profile-guided formatter correction
+preserves exact JSON bytes and lowers isolated encoding median by 18.8%.
+Canonical validation, full Go 1.25 tests/five-target builds, and real Kitty
+CLI readback pass. The approved TUI/calendar source is unchanged; its retained
+78-case TUI matrix remains passing. V28/V29 now have explicit final selection,
+draft, refreshing and saving geometry coverage as well.
+
+The corrected binary's full CLI matrix passes 76/84, with query p90 up to
+19.110 ms and first-run help/version p90 up to 11.568 ms. Later help/version
+runs pass. Both complete reports and all samples are retained; no claim assigns
+every miss to host load. See [formatter receipt](../verification-evidence/005/u6-json-formatter.md)
+and [current checkpoint](../verification-evidence/005/u6-checkpoint.json).
+U6, V106, V110 and 005-ISS-024 remain open. The owner is being asked whether to
+retain this local acceptance gate or explicitly hand it to Feature 006 as a
+release blocker. No such handoff, threshold change or local completion is
+assumed. Zed and the user's other applications remain untouched.
+
+### Feature 005 final local acceptance (2026-09-30)
+
+The owner closed Zed and moved this session to Konsole, explicitly requesting
+continued verification. A new full matrix of the unchanged final binary passes
+84/84 CLI case-runs (three runs, five warmups and 100 retained samples per case).
+Worst query p90/p95/p99/max: 13.873/14.533/19.546/27.451 ms; help/version:
+4.592/4.866/6.279/6.297 ms. All original distribution limits pass. The earlier
+76/84 report is preserved as u6-logs/cli-latency-before-konsole.json; no failed
+sample was removed and no performance gate was waived or handed off.
+
+All 78 TUI measurement case-runs, canonical validation, minimum-Go tests and
+five-target builds pass. Source hashes still match those validated and reviewed;
+this acceptance adds only evidence and documentation. Owned Kitty inspection
+and owner approval cover the Spacious layout, opaque dialogs, padding, tabs,
+checkboxes, calendar and due-input examples. The app is reopened in the owned
+window against its isolated database; test and timing output stayed in Bash.
+
+[U6 acceptance](../verification-evidence/005/u6-acceptance.json) binds the
+candidate hashes, eight unit commit boundaries, red/green receipts, canonical
+logs, three completed code reviews, terminal evidence and retained measurements.
+V01–V110 and ISS-021–ISS-024 are closed locally. Product U20 is locally accepted;
+the non-Linux portion of TUSK-V66 remains open alongside V111–V112/ISS-025.
+
+This containing U6 commit closes Phase 5. Feature 006 planning is next, awaiting
+instruction; its native/hosted release checks and publication authority remain
+separate. No push, PR, merge or release was performed by this acceptance.

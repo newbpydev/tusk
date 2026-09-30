@@ -1,0 +1,19 @@
+{
+  "status": "applied; canonical and minimum-Go checks passed",
+  "changes": [
+    {
+      "source": "adversarial-grok production executable coverage advisory",
+      "path": "cmd/tusk/tui_acceptance_linux_test.go",
+      "test": "TestTUIProcess_CommittedBeforeInterrupt",
+      "behavior": "Build production tusk, create real Unicode task in PTY, await acknowledged save, deliver SIGINT, compare terminal state and escape restoration, assert committed diagnostic and fresh CLI JSON readback.",
+      "red_first": "Characterization-only test addition; no production change or fabricated failing assertion. Existing deterministic injected tests retain in-flight cancellation proof.",
+      "verification": "make test-tui TUI_TEST_RUN=^TestTUIProcess_CommittedBeforeInterrupt$ passed"
+    }
+  ],
+  "rejected_claims": "candidate-dispositions.json",
+  "residual": "Historical CLI blocker closed by final 84/84 matrix; native/hosted proof remains Feature 006.",
+  "execution": "Inline per AGENTS.md; no subagent independence claim.",
+  "canonical": "make validate build check-generated: u6-logs/review-final-validate.log",
+  "minimum_go": "Go 1.25 production-binary post-commit SIGINT test: u6-logs/review-go125.log",
+  "final_acceptance": "../review-acceptance.json"
+}

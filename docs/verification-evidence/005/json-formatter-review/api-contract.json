@@ -1,0 +1,12 @@
+{
+  "reviewer": "api-contract",
+  "findings": [],
+  "residual_risks": [],
+  "testing_gaps": [],
+  "review_method": "sequential parent context",
+  "independent_reviewers": [],
+  "checked": [
+    "Explicit field names/order, null/empty arrays, exact escaping, terminal newline, UTC normalization and ports.ErrInvalidRecord are unchanged.",
+    "Existing byte-for-byte standard-library oracle and process/output regressions pass under make validate."
+  ]
+}

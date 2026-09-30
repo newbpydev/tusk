@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -12,6 +13,24 @@ import (
 func formKey(m *Model, key tea.KeyType) tea.Cmd {
 	_, cmd := m.Update(tea.KeyMsg{Type: key})
 	return cmd
+}
+
+func TestForm_ReadonlyPreviewPreparationIsBounded(t *testing.T) {
+	n := fixtureNode("id", "Read-only preview", 2, nil)
+	raw := "prefix\t界 " + strings.Repeat("large note\n", 100000)
+	n.Task.Description = raw
+	m := loadedModel(n)
+	press(m, "e")
+	var before, after runtime.MemStats
+	runtime.ReadMemStats(&before)
+	_, lines, _, _ := m.formContent(68, 16)
+	runtime.ReadMemStats(&after)
+	if after.TotalAlloc-before.TotalAlloc > 128*1024 {
+		t.Fatalf("one-line read-only preview allocated %d bytes", after.TotalAlloc-before.TotalAlloc)
+	}
+	if !strings.Contains(strings.Join(lines, "\n"), `prefix\t界`) || m.form.draft.fields[fieldNotes] != raw {
+		t.Fatal("preview or raw text lost")
+	}
 }
 
 func TestForm_FocusLiteralTextAndDiscard(t *testing.T) {
@@ -155,17 +174,24 @@ func TestForm_ParentPickerSnapshotAndPurity(t *testing.T) {
 }
 
 func TestForm_SmallTerminalPreservesDraftAndSubmission(t *testing.T) {
-	m := loadedModel()
+	m := loadedModel(fixtureNode("first", "First", 2, nil), fixtureNode("second", "Second", 2, nil))
+	selectTask(t, m, "second")
 	press(m, "a")
 	press(m, "Draft")
-	m.Update(tea.WindowSizeMsg{Width: 79, Height: 23})
 	before := m.form.draft.fields
-	press(m, "q")
-	press(m, "ctrl+s")
-	press(m, "esc")
-	press(m, "tab")
-	if m.form == nil || m.form.draft.fields != before || m.form.field != fieldTitle || m.form.prompt != promptNone {
-		t.Fatal("hidden form accepted input")
+	for _, size := range [][2]int{{0, 0}, {1, 1}, {79, 24}, {80, 23}, {-9, -4}, {79, 23}} {
+		m.Update(tea.WindowSizeMsg{Width: size[0], Height: size[1]})
+		press(m, "q")
+		press(m, "ctrl+s")
+		press(m, "esc")
+		press(m, "tab")
+		if m.form == nil || m.form.draft.fields != before || m.form.field != fieldTitle || m.form.prompt != promptNone {
+			t.Fatal("hidden form accepted input")
+		}
+		m.Update(tea.WindowSizeMsg{Width: 120, Height: 40})
+		if m.selectedTask().ID != "second" || m.form.draft.fields != before {
+			t.Fatal("resize lost selection or draft")
+		}
 	}
 	m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
 	press(m, "restored")
@@ -251,7 +277,7 @@ func TestForm_VisiblePositionAndTimezone(t *testing.T) {
 	m := loadedModel()
 	m.options.Location = time.FixedZone("UTC-03", -3*3600)
 	press(m, "a")
-	if !strings.Contains(m.View(), "Create task · 1/6") || !strings.Contains(m.View(), "Due · UTC-03") {
+	if !strings.Contains(m.View(), "Create task · 1/6") || !strings.Contains(m.View(), "Due date · e.g. 2026-10-15 or tomorrow") || !strings.Contains(m.View(), "Ctrl+P calendar · Ctrl+U clear · UTC-03") {
 		t.Fatal("form lacks position or due timezone")
 	}
 	for range 5 {

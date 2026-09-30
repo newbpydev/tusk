@@ -151,9 +151,9 @@ func (m *Model) confirmKey(key tea.KeyMsg) tea.Cmd {
 	case "up":
 		d.scroll--
 	case "pgdown":
-		d.scroll += max(1, measure(m.width, m.height).modal.height-4)
+		d.scroll += max(1, measure(m.width, m.height).modal.height-6)
 	case "pgup":
-		d.scroll -= max(1, measure(m.width, m.height).modal.height-4)
+		d.scroll -= max(1, measure(m.width, m.height).modal.height-6)
 	case "r":
 		if d.preview == nil {
 			d.pending = true
@@ -213,10 +213,7 @@ func (m *Model) confirmContent(width int) ([]string, string) {
 	lines = append(lines, strings.Split(ansi.Wrap(terminaltext.Scalar(d.title), width-2, ""), "\n")...)
 	lines = append(lines, strings.Split(ansi.Wrap("ID: "+terminaltext.Scalar(d.target.id), width-2, ""), "\n")...)
 	lines = append(lines, "", "Cannot undo. Task history will be removed.", "")
-	cancel, remove := "Cancel", "Delete"
-	if d.field == 0 {
-		cancel = "[ Cancel ]"
-	}
+	cancel := m.actionButton("Cancel", d.field == 0, false, false)
 	if d.preview == nil {
 		if d.err != "" {
 			lines = append(lines, d.err)
@@ -235,30 +232,19 @@ func (m *Model) confirmContent(width int) ([]string, string) {
 	}
 	lines = append(lines, fmt.Sprintf("%d %s total · %d %s", total, taskNoun, total-1, descendantNoun), "")
 	if total > 1 {
-		checkbox := "[ ] Delete entire subtree"
-		if d.recursive {
-			checkbox = "[x] Delete entire subtree"
-		}
-		if d.field == 1 {
-			checkbox = "> " + checkbox
-		}
+		checkbox := m.checkbox("Delete entire subtree", d.recursive, d.field == 1)
 		lines = append(lines, checkbox, "Space toggles the focused checkbox.")
-		if !d.recursive {
-			remove = "Delete (disabled)"
-		}
 	}
 	deleteField := 1
 	if total > 1 {
 		deleteField = 2
 	}
-	if d.field == deleteField {
-		remove = "[ " + remove + " ]"
-	}
+	remove := m.actionButton("Delete", d.field == deleteField, false, total > 1 && !d.recursive)
 	if d.err != "" {
 		lines = append(lines, "", d.err)
 	}
 	if m.saving {
 		return lines, "Deleting… · Ctrl+C exits safely"
 	}
-	return lines, cancel + "     " + remove + "  · Tab choose · Enter confirm"
+	return lines, cancel + "  " + remove
 }

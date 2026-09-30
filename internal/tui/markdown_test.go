@@ -10,9 +10,29 @@ import (
 	"sync/atomic"
 	"testing"
 
+	glamouransi "github.com/charmbracelet/glamour/ansi"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/muesli/termenv"
 )
+
+func TestMarkdown_HTMLTextOnly(t *testing.T) {
+	ctx := glamouransi.NewRenderContext(glamouransi.Options{})
+	for _, tc := range []struct{ source, want string }{
+		{"<b>Hello</b> &amp; <i>界</i>", "Hello & 界"},
+		{"before<script>alert('bad')</script><style>css</style>after", "beforeafter"},
+		{"<a href='https://invalid' onclick='bad'>label</a><img src='invalid'>", "label"},
+		{"<!-- hidden -->visible", "visible"},
+		{"<script>unclosed", ""},
+		{"&lt;tag&gt; &amp; &#27;", "<tag> & \x1b"},
+	} {
+		if got := ctx.SanitizeHTML(tc.source, false); got != tc.want {
+			t.Errorf("%q: got %q, want %q", tc.source, got, tc.want)
+		}
+	}
+	if got := ctx.SanitizeHTML("  <b> text </b>  ", true); got != "text" {
+		t.Fatalf("trimmed: %q", got)
+	}
+}
 
 func TestMarkdown_ControlsAndNoExternalEffects(t *testing.T) {
 	var requests atomic.Int32
