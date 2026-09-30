@@ -82,6 +82,11 @@ verification in Bash. Keep `make validate` mandatory.
 ---
 
 <architecture_boundaries>
+`docs/solutions/` contains searchable lessons from solved problems, organized by
+category with YAML frontmatter (`module`, `tags`, `problem_type`), relevant when
+implementing or debugging in documented areas. `CONCEPTS.md` defines shared
+domain vocabulary for codebase orientation.
+
 ### Bubble Tea TUI Invariants
 1. **Pure `View()`**: `func (m Model) View() string` (or pointer receiver if non-mutating) MUST NEVER mutate any field, map, slice, or pointer in the model. Any state mutation in `View()` is a catastrophic defect.
 2. **Deterministic Layout**: Dynamic calculations must account for terminal dimensions from `tea.WindowSizeMsg`. Panels must never cause terminal jitter or layout shifts.
