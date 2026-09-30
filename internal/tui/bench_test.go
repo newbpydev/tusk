@@ -273,6 +273,39 @@ func TestTUIMeasurements(t *testing.T) {
 	}
 }
 
+// One keystroke through the full Update path (finish: projection plus frame
+// preparation) at the budgeted 1000-task scale.
+func BenchmarkUpdate_Keystroke1000Tasks(b *testing.B) {
+	m := benchmarkModel(1000, 120, 40, 32*1024, 100)
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%2 == 0 {
+			m.Update(tea.KeyMsg{Type: tea.KeyDown})
+		} else {
+			m.Update(tea.KeyMsg{Type: tea.KeyUp})
+		}
+	}
+}
+
+// Parent-picker typing over the repo's 10000-task stress forest: one query
+// keystroke per iteration through Update (match plus windowed modal render).
+func BenchmarkForm_ParentPickerTyping10000Tasks(b *testing.B) {
+	m := benchmarkModel(10000, 120, 40, 1024, 100)
+	m.beginForm(false)
+	m.focusForm(fieldParent)
+	m.beginParentPicker()
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if i%8 == 7 {
+			m.Update(tea.KeyMsg{Type: tea.KeyBackspace})
+		} else {
+			m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("a")})
+		}
+	}
+}
+
 func TestWorkflow_StressCommandsStayBounded(t *testing.T) {
 	if testing.Short() {
 		t.Skip("large TUI stress fixture")

@@ -4,7 +4,6 @@ import (
 	"context"
 	"io"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/muesli/termenv"
@@ -42,30 +41,19 @@ func tuiProfile(getenv func(string) string) termenv.Profile {
 
 func tuiFactory(cfg cli.Config) tui.Factory {
 	// Only the session's admitted command accesses this closure. Resolve once,
-	// at first open, so recovery cannot redirect after environment/cwd changes.
+	// at first open, through storage's canonical resolver so the TUI and the
+	// CLI share one precedence owner; recovery cannot redirect afterward.
 	var path string
 	return func(ctx context.Context) (ports.TaskService, func() error, error) {
 		if path == "" {
 			if err := ctx.Err(); err != nil {
 				return nil, nil, err
 			}
-			candidate := os.Getenv("TUSK_DB_PATH")
-			if candidate == "" {
-				base := os.Getenv("XDG_DATA_HOME")
-				if !filepath.IsAbs(base) {
-					home, err := os.UserHomeDir()
-					if err != nil || !filepath.IsAbs(home) {
-						return nil, nil, ports.ErrStorage
-					}
-					base = filepath.Join(home, ".local", "share")
-				}
-				candidate = filepath.Join(base, "tusk", "tusk.db")
-			}
-			var err error
-			path, err = filepath.Abs(candidate)
+			resolved, err := storage.Resolve("")
 			if err != nil {
-				return nil, nil, ports.ErrStorage
+				return nil, nil, err
 			}
+			path = resolved
 		}
 		return composeService(ctx, cfg, func(ctx context.Context, _ storage.Options) (*storage.Repository, error) {
 			return storage.Open(ctx, storage.Options{Path: path})

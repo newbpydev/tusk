@@ -38,6 +38,7 @@ func TestHierarchy_ConnectedSpaciousBranches(t *testing.T) {
 		"    └─ ○ Last", "         Todo · Low",
 	})
 	m.collapse("first")
+	m.rebuildRows()
 	m.prepareFrame()
 	assertRows([]string{
 		" >▾ ○ Root", "    │ Todo · Medium",
@@ -47,6 +48,7 @@ func TestHierarchy_ConnectedSpaciousBranches(t *testing.T) {
 	// Only visible siblings determine connectors; a filtered-out sibling must
 	// not leave a dangling continuation. Ancestors still retain context labels.
 	m.filter.SearchTerm = "Grand first"
+	m.rebuildRows()
 	m.prepareFrame()
 	assertRows([]string{
 		" >▾ [context] ○ Root", "    │ Todo · Medium",
@@ -106,11 +108,13 @@ func TestHierarchy_ProgressCountsUseCompleteSnapshot(t *testing.T) {
 	}
 	m := loadedModel(root)
 	m.collapse("root")
+	m.rebuildRows()
 	m.prepareFrame()
 	if !strings.Contains(m.View(), "(0.5 / 3)") {
 		t.Fatal("collapse changed progress denominator")
 	}
 	m.filter.SearchTerm = "done"
+	m.rebuildRows()
 	m.prepareFrame()
 	if !strings.Contains(m.View(), "(0.5 / 3)") {
 		t.Fatal("search changed progress denominator")

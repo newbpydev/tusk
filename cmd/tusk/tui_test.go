@@ -11,8 +11,47 @@ import (
 
 	"github.com/newbpydev/tusk/internal/cli"
 	"github.com/newbpydev/tusk/internal/ports"
+	"github.com/newbpydev/tusk/internal/storage"
 	"github.com/newbpydev/tusk/internal/tui"
 )
+
+// The TUI factory must open exactly the path the storage layer resolves; a
+// second precedence implementation here can silently fork the data space.
+func TestTUIFactory_PathMatchesStorageResolution(t *testing.T) {
+	for _, mode := range []string{"explicit", "relative", "xdg", "relative xdg", "home"} {
+		t.Run(mode, func(t *testing.T) {
+			base := t.TempDir()
+			t.Chdir(base)
+			t.Setenv("HOME", base)
+			t.Setenv("TUSK_DB_PATH", "")
+			t.Setenv("XDG_DATA_HOME", "")
+			switch mode {
+			case "explicit":
+				t.Setenv("TUSK_DB_PATH", filepath.Join(base, "tasks.db"))
+			case "relative":
+				t.Setenv("TUSK_DB_PATH", "tasks.db")
+			case "xdg":
+				t.Setenv("XDG_DATA_HOME", filepath.Join(base, "xdg"))
+			case "relative xdg":
+				t.Setenv("XDG_DATA_HOME", "ignored")
+			}
+			want, err := storage.Resolve("")
+			if err != nil {
+				t.Fatal(err)
+			}
+			_, closeOwner, err := tuiFactory(cli.Config{Location: time.UTC})(context.Background())
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err = closeOwner(); err != nil {
+				t.Fatal(err)
+			}
+			if _, err = os.Stat(want); err != nil {
+				t.Fatalf("factory opened a path other than the storage resolution %s: %v", want, err)
+			}
+		})
+	}
+}
 
 func TestSession_ReopenSamePath(t *testing.T) {
 	base := t.TempDir()

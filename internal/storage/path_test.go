@@ -48,6 +48,34 @@ func TestResolvePath_Precedence(t *testing.T) {
 	}
 }
 
+func TestResolve_EnvironmentPrecedence(t *testing.T) {
+	base := t.TempDir()
+	t.Chdir(base)
+	t.Setenv("HOME", base)
+	t.Setenv("TUSK_DB_PATH", "")
+	t.Setenv("XDG_DATA_HOME", "")
+	for _, tc := range []struct{ name, env, xdg, want string }{
+		{"explicit env path", filepath.Join(base, "env.db"), "", filepath.Join(base, "env.db")},
+		{"relative env path joins cwd", "tasks.db", "", filepath.Join(base, "tasks.db")},
+		{"absolute xdg", "", filepath.Join(base, "xdg"), filepath.Join(base, "xdg", "tusk", "tusk.db")},
+		{"relative xdg ignored", "", "ignored", filepath.Join(base, ".local", "share", "tusk", "tusk.db")},
+		{"home fallback", "", "", filepath.Join(base, ".local", "share", "tusk", "tusk.db")},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("TUSK_DB_PATH", tc.env)
+			t.Setenv("XDG_DATA_HOME", tc.xdg)
+			got, err := Resolve("")
+			if err != nil || got != tc.want {
+				t.Fatalf("Resolve(\"\")=%s want=%s err=%v", got, tc.want, err)
+			}
+		})
+	}
+	t.Setenv("TUSK_DB_PATH", "bad\xffpath")
+	if _, err := Resolve(""); err == nil {
+		t.Fatal("invalid path accepted")
+	}
+}
+
 func TestPrepareFile_RejectsCreatedDevice(t *testing.T) {
 	var opened *os.File
 	err := prepareFileWith(filepath.Join(t.TempDir(), "device.db"), func(string, int, os.FileMode) (*os.File, error) {

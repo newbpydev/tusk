@@ -118,7 +118,14 @@ func (m *Model) applyFilters() {
 	}
 	m.dueExpression = f.due
 	m.filter = next
-	m.workspaceTab = -1
+	// Enter the custom tab only when the applied draft actually constrains
+	// the view; an empty apply is equivalent to Clear all, so the header must
+	// not report filters that do not exist.
+	if next.HasPredicates() || m.dueStart != nil {
+		m.workspaceTab = -1
+	} else {
+		m.workspaceTab = 0
+	}
 	m.filters = nil
 }
 

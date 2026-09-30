@@ -25,9 +25,15 @@ const (
 	promptConflict
 )
 
-type parentChoice struct{ id, title string }
+// parentChoice.key is the precomputed lowercased "id title" search key, built
+// once when the picker collects choices, so filtering never re-concatenates
+// and re-lowercases every candidate.
+type parentChoice struct{ id, title, key string }
 type parentPicker struct {
-	choices  []parentChoice
+	choices []parentChoice
+	// matched caches the choices visible for the current query; query edits
+	// clear it so each Update computes the match list exactly once.
+	matched  []parentChoice
 	query    string
 	selected int
 }
@@ -297,22 +303,35 @@ func (m *Model) beginParentPicker() {
 			if f.draft.base != nil && n.Task.ID == f.draft.base.ID {
 				continue
 			}
-			p.choices = append(p.choices, parentChoice{n.Task.ID, n.Task.Title})
+			id, title := n.Task.ID, n.Task.Title
+			p.choices = append(p.choices, parentChoice{id, title, strings.ToLower(id + " " + title)})
 			walk(n.Children)
 		}
 	}
 	walk(m.forest)
+	p.rematch()
 	f.picker = p
 }
+
+// matches returns the choices visible for the current query, recomputing them
+// only after a query edit. The root entry always matches.
 func (p *parentPicker) matches() []parentChoice {
-	result := []parentChoice{p.choices[0]}
+	if p.matched == nil {
+		p.rematch()
+	}
+	return p.matched
+}
+
+func (p *parentPicker) rematch() {
+	result := make([]parentChoice, 0, len(p.choices))
+	result = append(result, p.choices[0])
 	query := strings.ToLower(p.query)
 	for _, v := range p.choices[1:] {
-		if strings.Contains(strings.ToLower(v.id+" "+v.title), query) {
+		if strings.Contains(v.key, query) {
 			result = append(result, v)
 		}
 	}
-	return result
+	p.matched = result
 }
 func (m *Model) parentKey(key tea.KeyMsg) {
 	f := m.form
@@ -337,15 +356,18 @@ func (m *Model) parentKey(key tea.KeyMsg) {
 			p.query = string(r[:len(r)-1])
 		}
 		p.selected = 0
+		p.matched = nil
 	case " ":
 		if len(p.query) < 255 {
 			p.query += " "
 			p.selected = 0
+			p.matched = nil
 		}
 	default:
 		if key.Type == tea.KeyRunes && editableText(string(key.Runes), false) && len(p.query)+len(string(key.Runes)) <= 255 {
 			p.query += string(key.Runes)
 			p.selected = 0
+			p.matched = nil
 		}
 	}
 	p.selected = max(0, min(p.selected, len(p.matches())-1))
@@ -380,15 +402,30 @@ func (m *Model) formContent(width, area int) (string, []string, int, string) {
 		return title, []string{"", message, "", "Tab chooses · Enter confirms"}, 0, controls
 	}
 	if p := f.picker; p != nil {
-		lines := []string{"Search: " + terminaltext.Scalar(p.query) + "▎", ""}
-		for i, v := range p.matches() {
+		matches := p.matches()
+		// The offset math keeps the selected pair at the bottom of the modal;
+		// materialize only the lines the overlay can actually display.
+		offset := max(0, 2+p.selected*2-area+2)
+		limit := min(2+2*len(matches), offset+area)
+		lines := make([]string, max(0, limit))
+		if offset == 0 && limit >= 2 {
+			lines[0] = "Search: " + terminaltext.Scalar(p.query) + "▎"
+			lines[1] = ""
+		}
+		first := max(0, (offset-2)/2)
+		for i := first; i < len(matches); i++ {
+			if 2+2*i >= limit {
+				break
+			}
 			prefix := "  "
 			if i == p.selected {
 				prefix = "> "
 			}
-			lines = append(lines, prefix+terminaltext.Scalar(v.title), "    "+terminaltext.Scalar(v.id))
+			lines[2+2*i] = prefix + terminaltext.Scalar(matches[i].title)
+			if 3+2*i < limit {
+				lines[3+2*i] = "    " + terminaltext.Scalar(matches[i].id)
+			}
 		}
-		offset := max(0, 2+p.selected*2-area+2)
 		return "Choose parent", lines, offset, "↑↓ choose · Enter select · Esc cancel"
 	}
 	labels := []string{"Title", "Notes · Enter adds a line", "Priority · ←→ choose", "Due date · e.g. 2026-10-15 or tomorrow", "Tags · comma-separated", "Parent · Ctrl+P choose · Ctrl+U root", "Status · ←→ choose", "Progress · 0–99 for open leaves"}

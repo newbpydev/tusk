@@ -1,8 +1,29 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 005 locally accepted; clean review fixes and approved learnings committed locally
+**Current Status**: Feature 005 locally accepted; second review round's confirmed findings fixed and committed locally
 **Active Phase**: Phase 6 planning awaits instruction
-**Active Implementation Target**: None — Feature 005 review complete; no new unit authorized
+**Active Implementation Target**: None — Feature 005 review fixes committed; repeat review pass next
+
+- [x] Re-review the full feature diff targeting all P0-P2 issues before cloud review.
+- [x] Fix the four validator-confirmed findings (path-resolution duplication,
+      double per-Update projection, parent-picker rescans, empty-filter header)
+      with red/green evidence and canonical validation.
+- [ ] Repeat the review to a clean pass before handing off to cloud reviewers.
+
+A second full-branch ce-code-review round (11 reviewers, depth:full) confirmed
+four findings; all four are fixed in one isolated review-fix commit. Storage now
+exports the canonical DB-path resolver and the TUI factory delegates to it
+(parity pinned by test); prepareFrame no longer re-projects the forest so each
+Update projects once (keystroke benchmark 1000 tasks: ~3.4 ms -> ~2.8 ms,
+allocations -27%); the parent picker precomputes search keys, matches once per
+keystroke and windows the modal (10000-task typing: ~28 ms -> ~9 ms, allocations
+-58%); applying an empty filter keeps the header truthful. make validate
+(fmt+vet+test+race) passes; the two new Go benchmarks retain the deltas.
+Owned-Kitty interactive re-verification was not re-run for this set: the changes
+are behavior-preserving refactors plus the unit-asserted filter-label
+truthfulness fix. Report-only items (P3 #14 modal keys below 80x24, demoted
+testing gaps and residual risks) await the next pass. No new implementation
+unit or publication has begun.
 
 - [x] Complete systematic full-branch review and reproduce confirmed P0–P2 findings.
 - [x] Fix confirmed findings with red/green evidence and applicable real-app checks.

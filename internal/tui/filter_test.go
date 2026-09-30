@@ -61,6 +61,27 @@ func TestFilter_ApplyClearAndLiteralRouting(t *testing.T) {
 	}
 }
 
+func TestFilter_EmptyApplyKeepsHeaderTruthful(t *testing.T) {
+	m := loadedModel(fixtureNode("a", "Alpha", core.PriorityMedium, nil))
+	press(m, "f")
+	press(m, "ctrl+s")
+	if m.filters != nil {
+		t.Fatal("empty apply left the dialog open")
+	}
+	if m.workspaceTab != 0 {
+		t.Fatalf("empty apply entered custom mode: workspaceTab=%d", m.workspaceTab)
+	}
+	if strings.Contains(m.View(), "Filters active") {
+		t.Fatal("header reports filters with none active")
+	}
+	press(m, "f")
+	press(m, " ")
+	press(m, "ctrl+s")
+	if m.workspaceTab != -1 || !strings.Contains(m.View(), "Filters active") {
+		t.Fatal("predicate filter lost custom mode")
+	}
+}
+
 func TestFilter_DayIsResolvedOnlyOnApply(t *testing.T) {
 	m := loadedModel()
 	zone, err := time.LoadLocation("America/New_York")

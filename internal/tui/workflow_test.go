@@ -128,6 +128,7 @@ func TestWorkflow_AllStatesKeepViewPure(t *testing.T) {
 				m.state = loading
 			case "empty":
 				m.forest = nil
+				m.rebuildRows()
 			case "failure":
 				m.state = loadFailed
 			case "stale":

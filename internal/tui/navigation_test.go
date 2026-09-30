@@ -30,6 +30,18 @@ func loadedModel(nodes ...*core.TaskNode) *Model {
 	return m
 }
 
+func TestPrepareFrame_RendersRowsWithoutReprojecting(t *testing.T) {
+	m := loadedModel(fixtureNode("a", "Alpha", core.PriorityMedium, nil))
+	if len(m.rows) != 1 {
+		t.Fatal("fixture did not load a row")
+	}
+	m.forest = nil
+	m.prepareFrame()
+	if len(m.rows) != 1 {
+		t.Fatal("prepareFrame re-projected the forest; rebuilds belong to explicit callers")
+	}
+}
+
 func TestNavigation_SelectionCollapseAndPages(t *testing.T) {
 	child := fixtureNode("child", "Child", 2, nil)
 	root := fixtureNode("root", "Root", 3, nil, child)
@@ -47,6 +59,7 @@ func TestNavigation_SelectionCollapseAndPages(t *testing.T) {
 		t.Fatal("leaf collapse changed tree")
 	}
 	m.collapse("root")
+	m.rebuildRows()
 	m.prepareFrame()
 	if m.selectedTask().ID != "root" || len(m.rows) != 2 {
 		t.Fatal("collapsing selected descendant did not choose ancestor")
@@ -92,16 +105,19 @@ func TestSelection_RemovedMovedAndIncarnation(t *testing.T) {
 	}
 	b.Task.Priority = 4
 	m.forest = []*core.TaskNode{c, b, a}
+	m.rebuildRows()
 	m.prepareFrame()
 	if m.selectedTask().ID != "b" {
 		t.Fatal("reorder lost ID")
 	}
 	m.forest = []*core.TaskNode{a, c}
+	m.rebuildRows()
 	m.prepareFrame()
 	if m.selectedTask().ID != "a" {
 		t.Fatal("removed selection did not use clamped prior index")
 	}
 	m.forest = nil
+	m.rebuildRows()
 	m.prepareFrame()
 	if m.selectedTask() != nil || m.selected != -1 {
 		t.Fatal("empty selection retained")
@@ -118,6 +134,7 @@ func TestSearch_LiteralEntryAndRestore(t *testing.T) {
 	root := fixtureNode("root", "Root", 3, nil, child)
 	m := loadedModel(root)
 	m.collapse("root")
+	m.rebuildRows()
 	m.prepareFrame()
 	press(m, "/")
 	press(m, "needle")
@@ -250,6 +267,7 @@ func TestNavigation_ViewportAndSearchCollapseIsolation(t *testing.T) {
 	root := fixtureNode("root", "Root", 2, nil, fixtureNode("child", "Child", 1, nil))
 	m = loadedModel(root)
 	m.collapse("root")
+	m.rebuildRows()
 	m.prepareFrame()
 	press(m, "/")
 	press(m, "child")

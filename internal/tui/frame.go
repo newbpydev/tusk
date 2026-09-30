@@ -228,8 +228,10 @@ func clippedTreeGuide(guide string, width int) string {
 	return cellSlice(guide, 0, max(0, width-2)) + cellSlice("… ", 0, width)
 }
 
+// prepareFrame renders the current state. It never re-projects the forest:
+// callers own rebuilds (finish rebuilds once per Update, New before the first
+// frame), so a render can never duplicate or reorder projections.
 func (m *Model) prepareFrame() {
-	m.rebuildRows()
 	l := measure(m.width, m.height)
 	if l.width == 0 || l.height == 0 {
 		m.frame = ""

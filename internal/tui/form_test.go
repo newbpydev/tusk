@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"runtime"
 	"strings"
 	"testing"
@@ -310,5 +311,39 @@ func TestForm_ParentSearchAcceptsSpaces(t *testing.T) {
 	press(m, "research")
 	if m.form.picker.query != "Customer research" || len(m.form.picker.matches()) != 2 {
 		t.Fatal("space omitted from parent search")
+	}
+}
+
+func TestForm_ParentPickerWindowsLargeMatchLists(t *testing.T) {
+	var nodes []*core.TaskNode
+	for i := range 40 {
+		nodes = append(nodes, fixtureNode(fmt.Sprintf("id-%02d", i), fmt.Sprintf("Task %02d", i), core.PriorityMedium, nil))
+	}
+	m := loadedModel(nodes...)
+	press(m, "a")
+	for range 5 {
+		press(m, "tab")
+	}
+	formKey(m, tea.KeyCtrlP)
+	if m.form.picker == nil {
+		t.Fatal("picker not opened")
+	}
+	press(m, "Task")
+	if matches := m.form.picker.matches(); len(matches) != 41 {
+		t.Fatalf("match count %d, want Root plus 40 tasks", len(matches))
+	}
+	for range 30 {
+		press(m, "down")
+	}
+	frame := m.View()
+	if !strings.Contains(frame, "id-29") {
+		t.Fatal("selected match scrolled outside the visible window")
+	}
+	if strings.Contains(frame, "id-00") {
+		t.Fatal("off-screen match rendered inside the modal")
+	}
+	press(m, "enter")
+	if m.form.picker != nil || m.form.draft.fields[fieldParent] != "id-29" {
+		t.Fatalf("enter chose %q", m.form.draft.fields[fieldParent])
 	}
 }
