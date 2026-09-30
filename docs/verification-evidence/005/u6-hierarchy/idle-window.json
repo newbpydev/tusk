@@ -1,0 +1,158 @@
+{
+  "samples": [
+    {
+      "utc": "2026-09-30T17:58:05.389427+00:00",
+      "total_process_cpu_percent": 226.4,
+      "top": [
+        {
+          "command": "chrome",
+          "cpu_percent": 104.6
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 55.1
+        },
+        {
+          "command": "konsole",
+          "cpu_percent": 15.6
+        },
+        {
+          "command": "kwin_wayland",
+          "cpu_percent": 14.9
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 12.6
+        },
+        {
+          "command": "codex",
+          "cpu_percent": 5.0
+        },
+        {
+          "command": "plasmashell",
+          "cpu_percent": 3.0
+        },
+        {
+          "command": "codex",
+          "cpu_percent": 2.3
+        }
+      ]
+    },
+    {
+      "utc": "2026-09-30T17:58:20.421959+00:00",
+      "total_process_cpu_percent": 254.5,
+      "top": [
+        {
+          "command": "chrome",
+          "cpu_percent": 119.4
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 48.8
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 27.9
+        },
+        {
+          "command": "konsole",
+          "cpu_percent": 14.6
+        },
+        {
+          "command": "kwin_wayland",
+          "cpu_percent": 11.3
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 10.3
+        },
+        {
+          "command": "codex",
+          "cpu_percent": 4.6
+        },
+        {
+          "command": "plasmashell",
+          "cpu_percent": 3.0
+        }
+      ]
+    },
+    {
+      "utc": "2026-09-30T17:58:35.447431+00:00",
+      "total_process_cpu_percent": 231.9,
+      "top": [
+        {
+          "command": "chrome",
+          "cpu_percent": 102.2
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 57.4
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 17.9
+        },
+        {
+          "command": "konsole",
+          "cpu_percent": 14.9
+        },
+        {
+          "command": "kwin_wayland",
+          "cpu_percent": 13.3
+        },
+        {
+          "command": "codex",
+          "cpu_percent": 6.3
+        },
+        {
+          "command": "plasmashell",
+          "cpu_percent": 2.7
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 2.0
+        }
+      ]
+    },
+    {
+      "utc": "2026-09-30T17:58:50.488547+00:00",
+      "total_process_cpu_percent": 229.2,
+      "top": [
+        {
+          "command": "chrome",
+          "cpu_percent": 102.1
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 49.4
+        },
+        {
+          "command": "konsole",
+          "cpu_percent": 16.9
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 16.2
+        },
+        {
+          "command": "kwin_wayland",
+          "cpu_percent": 15.6
+        },
+        {
+          "command": "chrome",
+          "cpu_percent": 7.0
+        },
+        {
+          "command": "codex",
+          "cpu_percent": 5.6
+        },
+        {
+          "command": "plasmashell",
+          "cpu_percent": 3.0
+        }
+      ]
+    }
+  ],
+  "stable_idle_observed": false,
+  "criterion": "Three successive 3-second observations with process CPU sum below 60 percent of one core, separated by 12 seconds; this is host observation, not a replacement performance gate."
+}

@@ -552,3 +552,64 @@ the non-Linux portion of TUSK-V66 remains open alongside V111–V112/ISS-025.
 This containing U6 commit closes Phase 5. Feature 006 planning is next, awaiting
 instruction; its native/hosted release checks and publication authority remain
 separate. No push, PR, merge or release was performed by this acceptance.
+
+### U6 owner-requested tree and progress refinement (2026-09-30)
+
+The owner authorized this follow-up after local acceptance at 03c5381. R9/R10/R12
+and R13/R18 retain their contracts while presentation improves: draw connected
+visible sibling branches with ancestor continuations through spacious metadata
+rows; only the last visible sibling receives an elbow. Search, sorting, collapse,
+scrolling and narrow layouts must preserve truthful visible connections.
+
+Progress displays equivalent completed direct items: leaf progress / 100 out of
+one; a parent sums its immediate children's authoritative progress / 100 out of
+its child count. Thus a half-complete child plus two untouched siblings displays
+(0.5 / 3). Keep the stored percentage and bar; do not recompute domain rollups,
+change status, or treat filtered/collapsed children as absent. Integers have no
+decimal suffix; fractional values retain up to two meaningful decimal places.
+
+This is a U6 follow-up, not a new phase or unit identity. Red-first checks cover
+nested/sorted/filtered/collapsed branches, continuous metadata guides, all/none/
+partial and single-task progress, complete snapshots despite filters, resize,
+View purity and real-disk refresh after descendant completion. Run canonical
+validation, affected minimum-Go checks, retained CLI/TUI measurements, code
+review and actual owned Kitty checks at 80x24 and 120x40 in color/plain modes.
+Owner visual confirmation and a coherent local follow-up commit close this
+refinement. Earlier acceptance receipts remain unchanged; release proof stays
+with Feature 006. Current refinement status: in progress.
+
+### Darkmatter palette refinement (2026-09-30)
+
+The owner approved the connected branches and fractional progress display, then
+requested the Darkmatter palette at https://tweakcn.com/editor/theme?theme=darkmatter.
+Use the dark preset from jnsahaj/tweakcn commit
+a3b47b37cba97dd637de517aab52c45ec0f83456 (utils/theme-presets.ts): neutral near-black,
+soft gray text, warm orange focus/actions, gray selection and peach warnings.
+Adapt the preset's low-contrast border to its accent gray for terminal strokes;
+use readable muted text for inactive panel titles and full foreground text for
+footer shortcuts. Preserve red destructive warnings using the preset's light
+destructive color, because its dark destructive token is teal. Keep all surfaces
+opaque, existing non-color focus markers and the approved spacing/geometry.
+The owner confirmed “Yes, keep Darkmatter”; the tree/count approval is also
+recorded. Canonical, affected Go 1.25, owned Kitty and all 78 TUI timing cases
+pass. Final CLI timing and the local commit remain pending: the first follow-up
+matrix passed 80/84 cases. All samples are retained; host activity and an
+accepted-baseline comparison are being checked before any final measurement.
+
+### U6 visual follow-up checkpoint (2026-09-30, 17:59 UTC)
+
+The owner approves the connected task guides, fractional progress counts and
+Darkmatter palette. Red/green, canonical validation, affected Go 1.25 checks,
+owned Kitty color/plain inspection at 80×24 and 120×40, scoped code review and
+all 78 TUI timing cases pass. Stored progress semantics remain unchanged.
+
+Final CLI acceptance remains open: the candidate passed 80/84, the accepted
+03c5381 source control passed 81/84, and a subsequent candidate passed 77/84.
+All samples and host observations are retained in the
+[checkpoint](../verification-evidence/005/u6-hierarchy/checkpoint.json).
+After Kilo activity fell, Chrome stayed near two cores across four observations;
+no further identical-condition run is being repeated. The owner is being asked
+for a quieter window or to retain the timing gate explicitly pending.
+
+This is approved implementation with incomplete final acceptance. U6 remains
+the active follow-up; Feature 006 implementation and publication are not started.

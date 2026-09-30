@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace                             f Filters   a New task 
+╭─ > Tasks · 7 tasks ──────────╮╭─ Task details · 1–20 / 38 ───────────────────╮
+│ /  Search tasks              ││                                              │
+│ [1 All]  2 Today  3 Done     ││  Welcome experience                          │
+│──────────────────────────────││  Subtask of 01a0f35b-0f0f-7abe-8eb3-         │
+│  Backlog                     ││  b7bf45a98a50                                │
+│  ▾ ○ Launch the workspace    ││                                              │
+│    │ Todo · High · 16%       ││  Status                Priority              │
+│ >  ├─ ▾ ○ Welcome experience ││  ○ Todo                High                  │
+│    │  │   Todo · High · 50%  ││                                              │
+│    │  ├─ ✓ Design the welcom…││  Due date              Tags                  │
+│    │  │    Done · High · 100%││  Not set               None                  │
+│    │  └─ ○ Review keyboard n…││                                              │
+│    │       Todo · Medium     ││  Progress                           (1 / 2)  │
+│    ├─ ○ Write the guide      ││  ━━━━━━━━━━━━━━━━━━──────────────────  50%   │
+│    │    Todo · Medium        ││                                              │
+│    └─ ○ Prepare the release  ││  Notes                                       │
+│         Todo · Medium        ││  No notes                                    │
+│  ○ Check the release notes   ││                                              │
+│    Todo · Low                ││  ──────────────────────────────────────────  │
+│                              ││  Activity                                    │
+│                              ││                                              │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ a new • e edit • / search • ? help • q quit • f filter • r refresh • Tab focus

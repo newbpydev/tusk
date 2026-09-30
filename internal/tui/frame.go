@@ -72,13 +72,15 @@ func (m *Model) panel(title string, lines []string, w, h int, focus bool) []stri
 		return nil
 	}
 	color := borderColor
+	titleColor := mutedColor
 	if focus {
 		color = accentColor
+		titleColor = accentColor
 		title = "> " + title
 	}
 	edge := func(s string) string { return m.paint(s, color, false) }
 	label := cellSlice(" "+title+" ", 0, max(0, w-3))
-	top := edge("╭─") + m.paint(label, color, true) + edge(strings.Repeat("─", max(0, w-3-ansi.StringWidth(label)))+"╮")
+	top := edge("╭─") + m.paint(label, titleColor, true) + edge(strings.Repeat("─", max(0, w-3-ansi.StringWidth(label)))+"╮")
 	rows := make([]string, 0, h)
 	rows = append(rows, fitCells(top, w))
 	for y := 0; y < h-2; y++ {
@@ -165,16 +167,22 @@ func (m *Model) listLines(w, h int) []string {
 		task := row.node.Task
 		s := ""
 		if entry.part == 1 {
-			indent := 4 + min(row.depth*2, max(0, w-7))
-			if row.depth > 0 {
-				indent += 2
-			}
+			prefix := row.continuation
 			if len(row.node.Children) > 0 {
-				indent += 2
+				if row.depth == 0 {
+					prefix += "  "
+				}
+				if entry.row+1 < len(m.rows) && m.rows[entry.row+1].depth > row.depth {
+					prefix += "│ "
+				} else {
+					prefix += "  "
+				}
 			}
-			indent = min(indent, max(0, w-18))
+			if row.depth > 0 || len(row.node.Children) == 0 {
+				prefix += "  "
+			}
 			_, status := statusText(task.Status)
-			s = strings.Repeat(" ", indent) + status + " · " + priorityLabel(task.Priority)
+			s = "  " + clippedTreeGuide(prefix, max(0, w-20)) + status + " · " + priorityLabel(task.Priority)
 			if task.Progress > 0 {
 				s += fmt.Sprintf(" · %d%%", task.Progress)
 			}
@@ -183,13 +191,7 @@ func (m *Model) listLines(w, h int) []string {
 			if row.context {
 				context = "[context] "
 			}
-			indent := min(row.depth*2, max(0, w-7-len(context)))
-			prefix := "  " + strings.Repeat(" ", indent)
-			if row.depth*2 > indent {
-				prefix = "  … " + strings.Repeat(" ", max(0, indent-2))
-			} else if row.depth > 0 {
-				prefix += "└ "
-			}
+			prefix := "  " + clippedTreeGuide(row.branch, max(2, w-12-len(context)))
 			if len(row.node.Children) > 0 {
 				if m.collapsed[task.ID] && !m.filter.HasPredicates() && m.dueStart == nil {
 					prefix += "▸ "
@@ -216,6 +218,14 @@ func (m *Model) listLines(w, h int) []string {
 		lines = append(lines, s)
 	}
 	return withToolbar(lines)
+}
+
+// Deep paths yield space to the task's title and metadata in narrow panels.
+func clippedTreeGuide(guide string, width int) string {
+	if ansi.StringWidth(guide) <= width {
+		return guide
+	}
+	return cellSlice(guide, 0, max(0, width-2)) + cellSlice("… ", 0, width)
 }
 
 func (m *Model) prepareFrame() {
@@ -326,7 +336,7 @@ func (m *Model) prepareFrame() {
 	if m.stale && !strings.Contains(footer, "Stale") {
 		footer = " Stale ·" + footer
 	}
-	rows = append(rows, m.surface(fitCells(footer, l.width), mutedColor, footerColor))
+	rows = append(rows, m.surface(fitCells(footer, l.width), textColor, footerColor))
 	if m.helpOpen {
 		content := helpLines()
 		area := max(0, l.modal.height-6)

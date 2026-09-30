@@ -10,17 +10,19 @@ import (
 	"github.com/newbpydev/tusk/internal/terminaltext"
 )
 
+// Darkmatter dark preset from tweakcn. Borders use its accent gray for visible
+// terminal strokes; destructive actions retain the preset's red light token.
 const (
-	canvasColor    = "#101820"
-	dialogColor    = "#18232C"
-	footerColor    = "#203039"
-	selectionColor = "#193C42"
-	textColor      = "#DCE7ED"
-	mutedColor     = "#A1B1BE"
-	borderColor    = "#657985"
-	accentColor    = "#80DEC8"
-	warningColor   = "#F7CC8C"
-	dangerColor    = "#F2A99B"
+	canvasColor    = "#121113"
+	dialogColor    = "#121113"
+	footerColor    = "#222222"
+	selectionColor = "#333333"
+	textColor      = "#C1C1C1"
+	mutedColor     = "#888888"
+	borderColor    = "#333333"
+	accentColor    = "#E78A53"
+	warningColor   = "#FBCB97"
+	dangerColor    = "#EF4444"
 )
 
 func (m *Model) checkbox(label string, checked, focused bool) string {

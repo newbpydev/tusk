@@ -6,6 +6,18 @@ activity take the right. Titles and metadata use separate rows. Tasks appear in
 Today, Upcoming, Backlog and Completed groups; overdue tasks belong to Today.
 Focus has a visible `>` marker. Selection and buttons remain usable without color.
 
+The dark palette follows [Darkmatter](https://tweakcn.com/editor/theme?theme=darkmatter):
+near-black surfaces, gray text and warm orange accents. Terminal borders and
+labels retain readable contrast, and destructive actions use red warnings.
+
+Tree guides connect siblings through their metadata rows; only the last visible
+child gets an elbow. Progress shows completed work out of the immediate items:
+a leaf uses `(0 / 1)` through `(1 / 1)`, including manual partial progress.
+A parent sums its children's completion percentages. If one of three children
+is half complete, the parent shows `(0.5 / 3)`. Nested work contributes through
+the service's existing progress rollup. Counts use every child, including those
+hidden by search or collapse; the percentage bar keeps its stored integer value.
+
 The TUI needs terminal input and output. Redirected streams and `TERM=dumb` are
 rejected before opening storage. Use `tusk list --all --json` for pipes. A nonempty
 `NO_COLOR` disables color; an empty/unset `TERM` uses plain presentation when

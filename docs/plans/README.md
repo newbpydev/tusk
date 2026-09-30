@@ -41,6 +41,9 @@ Feature 005 has 28 requirements, eight units ordered U1 → U7 → U2 → U3 →
 U5 → U8 → U6, and 112 verification scenarios. All eight units are separately
 committed. The approved Spacious workspace and due-date calendar pass canonical,
 minimum-Go and real Kitty checks. All 84 CLI and 78 TUI measurement case-runs pass.
+The later U6 hierarchy/Darkmatter refinement is owner-approved, with canonical,
+Kitty and TUI timing checks passing; its fresh CLI timing gate remains open.
+See the [follow-up checkpoint](../verification-evidence/005/u6-hierarchy/checkpoint.json).
 Product U16→U1/U7/U2, U17→U3,
 U18→U4, U19→U5/U8 and U20→U6 preserve the existing handoff IDs. V01–V110 are
 locally complete; V111–V112 are native/hosted release handoffs. Feature 006

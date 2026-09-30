@@ -288,9 +288,9 @@ func TestNavigation_SpaciousMetadataFollowsTreeIndent(t *testing.T) {
 	lines := m.listLines(46, 36)
 	found := false
 	for i, line := range lines {
-		if strings.Contains(line, "└ ○ Child") {
+		if strings.Contains(line, "└─ ○ Child") {
 			found = true
-			if !strings.HasPrefix(lines[i+1], "        Todo") {
+			if !strings.HasPrefix(lines[i+1], "         Todo") {
 				t.Fatalf("child metadata detached from title: %q", lines[i+1])
 			}
 		}

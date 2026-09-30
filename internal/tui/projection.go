@@ -9,10 +9,11 @@ import (
 )
 
 type taskRow struct {
-	node    *core.TaskNode
-	depth   int
-	group   string
-	context bool
+	node                 *core.TaskNode
+	depth                int
+	group                string
+	context              bool
+	branch, continuation string
 }
 
 // project derives visible rows from the complete accepted forest. Filtering
@@ -79,22 +80,37 @@ func project(forest []*core.TaskNode, filter core.TaskFilter, start, end *time.T
 		groups[group] = append(groups[group], n)
 	}
 	var rows []taskRow
-	var visit func(*core.TaskNode, int, string)
-	visit = func(n *core.TaskNode, depth int, group string) {
+	var visit func(*core.TaskNode, int, string, string, bool)
+	visit = func(n *core.TaskNode, depth int, group, ancestors string, last bool) {
 		if filtered && !included[n.Task.ID] {
 			return
 		}
-		rows = append(rows, taskRow{n, depth, group, filtered && !matches[n.Task.ID]})
+		row := taskRow{node: n, depth: depth, group: group, context: filtered && !matches[n.Task.ID]}
+		if depth > 0 {
+			row.branch, row.continuation = ancestors+"├─ ", ancestors+"│  "
+			if last {
+				row.branch, row.continuation = ancestors+"└─ ", ancestors+"   "
+			}
+		}
+		rows = append(rows, row)
 		if !filtered && collapsed[n.Task.ID] {
 			return
 		}
-		for _, child := range sorted(n.Children) {
-			visit(child, depth+1, group)
+		children := sorted(n.Children)
+		if filtered {
+			children = slices.DeleteFunc(children, func(child *core.TaskNode) bool { return !included[child.Task.ID] })
+		}
+		guide := row.continuation
+		if depth == 0 {
+			guide = "  "
+		}
+		for i, child := range children {
+			visit(child, depth+1, group, guide, i == len(children)-1)
 		}
 	}
 	for i, name := range []string{"Today", "Upcoming", "Backlog", "Completed"} {
 		for _, n := range groups[i] {
-			visit(n, 0, name)
+			visit(n, 0, name, "", true)
 		}
 	}
 	return rows

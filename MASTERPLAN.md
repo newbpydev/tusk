@@ -1,8 +1,29 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: 🟢 Feature 005 locally complete
-**Active Phase**: Phase 6 — Feature 006 planning is next, awaiting instruction
-**Active Implementation Target**: None — Feature 005 U6 closes with this local commit; Feature 006 needs its planning triplet and authorization
+**Current Status**: 🟢 Feature 005 owner-requested UX follow-up
+**Active Phase**: Phase 5 — Feature 005 visual refinement authorized 2026-09-30
+**Active Implementation Target**: Feature 005 U6 follow-up — connected tree guides, fractional progress counts and Darkmatter palette
+
+- [x] Connect visible siblings and ancestor paths through title/metadata rows;
+  reserve the last-child elbow for the final visible sibling.
+- [x] Show equivalent completed direct items beside progress, including nested
+  fractional credit, using authoritative service progress without changing rollup.
+- [x] Match the owner-requested Darkmatter dark palette; preserve contrast,
+  opaque surfaces and color-independent focus. Tree/count and palette approved.
+- [ ] Retain red/green, canonical, current-candidate timing, review and owned
+  Kitty evidence; obtain visual confirmation and commit the follow-up locally.
+
+The prior U6 acceptance below remains historical evidence for `03c5381`.
+This authorized follow-up must complete before advancing to Feature 006.
+
+The implementation and visual design are approved. Red/green, canonical,
+affected Go 1.25, owned Kitty and all 78 TUI timing cases pass; scoped review has
+no findings. Final CLI acceptance remains open: candidate runs pass 80/84 and
+77/84, while accepted-source control 03c5381 passes 81/84 on this host. Sustained
+Chrome activity remains after Kilo quieted; a quieter window is pending. See the
+[current checkpoint](docs/verification-evidence/005/u6-hierarchy/checkpoint.json).
+The containing local checkpoint commit saves the approved implementation and
+all evidence; it does not close the remaining CLI acceptance gate.
 
 The approved Spacious TUI, opaque surfaces, due-date calendar and input examples
 are locally accepted. Canonical validation, Go 1.25 checks, five-target builds,

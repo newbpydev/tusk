@@ -1,0 +1,35 @@
+{
+  "agent_surface": false,
+  "changed_files": [
+    "MASTERPLAN.md",
+    "docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md",
+    "docs/tui.md",
+    "docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md",
+    "docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md",
+    "internal/tui/details.go",
+    "internal/tui/frame.go",
+    "internal/tui/hierarchy_presentation_test.go",
+    "internal/tui/navigation_test.go",
+    "internal/tui/projection.go",
+    "internal/tui/styles.go",
+    "internal/tui/surfaces_test.go"
+  ],
+  "changed_lines": 477,
+  "declared_packs": false,
+  "exec_lines": 327,
+  "exec_nontest_lines": 120,
+  "hard_block_classes": [],
+  "hard_block_full": false,
+  "has_learnings_corpus": true,
+  "pack_roots": 0,
+  "reason": null,
+  "signals": [],
+  "silent_pass_classes": [],
+  "size_band": "small",
+  "status": "complete",
+  "test_files_changed": true,
+  "unclassified_lines": {
+    ".md": 150
+  },
+  "uncounted_files": 0
+}

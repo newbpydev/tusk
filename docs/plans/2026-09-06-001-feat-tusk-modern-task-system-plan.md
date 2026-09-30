@@ -884,3 +884,21 @@ the non-Linux portion of TUSK-V66 remains open alongside V111–V112/ISS-025.
 This containing U6 commit closes Phase 5. Feature 006 planning is next, awaiting
 instruction; its native/hosted release checks and publication authority remain
 separate. No push, PR, merge or release was performed by this acceptance.
+
+### U6 visual follow-up checkpoint (2026-09-30, 17:59 UTC)
+
+The owner approves the connected task guides, fractional progress counts and
+Darkmatter palette. Red/green, canonical validation, affected Go 1.25 checks,
+owned Kitty color/plain inspection at 80×24 and 120×40, scoped code review and
+all 78 TUI timing cases pass. Stored progress semantics remain unchanged.
+
+Final CLI acceptance remains open: the candidate passed 80/84, the accepted
+03c5381 source control passed 81/84, and a subsequent candidate passed 77/84.
+All samples and host observations are retained in the
+[checkpoint](../verification-evidence/005/u6-hierarchy/checkpoint.json).
+After Kilo activity fell, Chrome stayed near two cores across four observations;
+no further identical-condition run is being repeated. The owner is being asked
+for a quieter window or to retain the timing gate explicitly pending.
+
+This is approved implementation with incomplete final acceptance. U6 remains
+the active follow-up; Feature 006 implementation and publication are not started.

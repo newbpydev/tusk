@@ -1,0 +1,60 @@
+{
+  "branch": "feat/interactive-tui-application",
+  "completed_at": "2026-09-30T17:50:28.691672+00:00",
+  "cost": {
+    "host": "codex",
+    "scope": {
+      "changed_lines": 477,
+      "depth": "lite",
+      "exec_nontest_lines": 120,
+      "size_band": "small",
+      "unclassified_lines": {
+        ".md": 150
+      }
+    },
+    "stages": [
+      {
+        "elapsed_seconds": 0.206,
+        "ended_at": "2026-09-30T17:38:47.215479+00:00",
+        "facts": {
+          "changed_lines": 477,
+          "depth": "lite",
+          "exec_nontest_lines": 120,
+          "size_band": "small",
+          "unclassified_lines": {
+            ".md": 150
+          }
+        },
+        "stage": "scope",
+        "started_at": "2026-09-30T17:38:47.009677+00:00"
+      },
+      {
+        "candidates": 0,
+        "elapsed_seconds": 701.577,
+        "ended_at": "2026-09-30T17:50:28.792272+00:00",
+        "facts": {
+          "scope_update": "Owner added Darkmatter palette before review completed"
+        },
+        "stage": "review",
+        "started_at": "2026-09-30T17:38:47.215479+00:00"
+      },
+      {
+        "elapsed_seconds": 0.091,
+        "ended_at": "2026-09-30T17:50:28.883165+00:00",
+        "stage": "receipt",
+        "started_at": "2026-09-30T17:50:28.792272+00:00"
+      }
+    ],
+    "status": "complete",
+    "totals": {
+      "artifact_bytes": 23818,
+      "candidates": 0,
+      "elapsed_seconds": 701.874,
+      "reviewers": 0
+    },
+    "truncated_events": 0
+  },
+  "head_sha": "03c5381e82f1452e7a60bb1d094ae009f0c189e0",
+  "run_id": "20260930-142734-94afddf2",
+  "verdict": "Ready to merge"
+}

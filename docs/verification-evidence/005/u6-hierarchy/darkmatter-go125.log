@@ -1,0 +1,38 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '^TestHierarchy_|^TestNavigation_SpaciousMetadata|^TestTerminal_DeepTree|^TestOverlay_UniformSurfaces^TestView_'
+=== RUN   TestHierarchy_ConnectedSpaciousBranches
+--- PASS: TestHierarchy_ConnectedSpaciousBranches (0.00s)
+=== RUN   TestHierarchy_ProgressCountsUseCompleteSnapshot
+=== RUN   TestHierarchy_ProgressCountsUseCompleteSnapshot/empty_leaf
+=== RUN   TestHierarchy_ProgressCountsUseCompleteSnapshot/manual_leaf
+=== RUN   TestHierarchy_ProgressCountsUseCompleteSnapshot/done_leaf
+=== RUN   TestHierarchy_ProgressCountsUseCompleteSnapshot/parent
+=== RUN   TestHierarchy_ProgressCountsUseCompleteSnapshot/grandparent
+=== RUN   TestHierarchy_ProgressCountsUseCompleteSnapshot/complete_open_parent
+=== RUN   TestHierarchy_ProgressCountsUseCompleteSnapshot/hundredths
+--- PASS: TestHierarchy_ProgressCountsUseCompleteSnapshot (0.09s)
+    --- PASS: TestHierarchy_ProgressCountsUseCompleteSnapshot/empty_leaf (0.00s)
+    --- PASS: TestHierarchy_ProgressCountsUseCompleteSnapshot/manual_leaf (0.00s)
+    --- PASS: TestHierarchy_ProgressCountsUseCompleteSnapshot/done_leaf (0.00s)
+    --- PASS: TestHierarchy_ProgressCountsUseCompleteSnapshot/parent (0.00s)
+    --- PASS: TestHierarchy_ProgressCountsUseCompleteSnapshot/grandparent (0.00s)
+    --- PASS: TestHierarchy_ProgressCountsUseCompleteSnapshot/complete_open_parent (0.00s)
+    --- PASS: TestHierarchy_ProgressCountsUseCompleteSnapshot/hundredths (0.00s)
+=== RUN   TestHierarchy_DeepTreeResizeAndScroll
+--- PASS: TestHierarchy_DeepTreeResizeAndScroll (0.01s)
+=== RUN   TestHierarchy_DescendantCompletionRefresh
+--- PASS: TestHierarchy_DescendantCompletionRefresh (0.03s)
+=== RUN   TestTerminal_DeepTreeKeepsTitlesAndRawText
+--- PASS: TestTerminal_DeepTreeKeepsTitlesAndRawText (0.00s)
+=== RUN   TestNavigation_SpaciousMetadataFollowsTreeIndent
+--- PASS: TestNavigation_SpaciousMetadataFollowsTreeIndent (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.149s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.006s [no tests to run]

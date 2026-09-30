@@ -1,0 +1,81 @@
+{
+  "sample_seconds": 3.0142502920061816,
+  "load": "3.95 2.98 2.21 9/1893 2109077",
+  "processes": [
+    {
+      "pid": "2105262",
+      "command": "chrome",
+      "cpu_percent": 118.4
+    },
+    {
+      "pid": "1621032",
+      "command": "chrome",
+      "cpu_percent": 53.1
+    },
+    {
+      "pid": "1620975",
+      "command": "chrome",
+      "cpu_percent": 35.5
+    },
+    {
+      "pid": "1648",
+      "command": "kwin_wayland",
+      "cpu_percent": 21.2
+    },
+    {
+      "pid": "2135",
+      "command": "konsole",
+      "cpu_percent": 12.6
+    },
+    {
+      "pid": "1797",
+      "command": "plasmashell",
+      "cpu_percent": 7.6
+    },
+    {
+      "pid": "1621391",
+      "command": "chrome",
+      "cpu_percent": 4.6
+    },
+    {
+      "pid": "1799513",
+      "command": "codex",
+      "cpu_percent": 4.6
+    },
+    {
+      "pid": "1621209",
+      "command": "chrome",
+      "cpu_percent": 2.3
+    },
+    {
+      "pid": "2184",
+      "command": "kiro-cli-term",
+      "cpu_percent": 1.3
+    },
+    {
+      "pid": "2142",
+      "command": "xdg-desktop-por",
+      "cpu_percent": 1.0
+    },
+    {
+      "pid": "1874906",
+      "command": "kworker/u24:3-gfx",
+      "cpu_percent": 1.0
+    },
+    {
+      "pid": "1875541",
+      "command": "kworker/u25:7-events_unbound",
+      "cpu_percent": 1.0
+    },
+    {
+      "pid": "970034",
+      "command": "codex",
+      "cpu_percent": 0.7
+    },
+    {
+      "pid": "987059",
+      "command": "kiro-cli-term",
+      "cpu_percent": 0.7
+    }
+  ]
+}

@@ -63,15 +63,15 @@ func TestOverlay_UniformSurfaces(t *testing.T) {
 							}
 						}
 						for cell := 0; cell < width; cell++ {
-							want := "16,24,32"
+							want := "18,17,19"
 							if y == l.height-1 {
-								want = "32,48,56"
+								want = "34,34,34"
 							}
 							if modal && x >= b.x && x < b.x+b.width && y >= b.y && y < b.y+b.height {
-								want = "24,35,44"
+								want = "18,17,19"
 							}
 							if !modal && (y == 6 || y == 7) && x >= 1 && x < l.listWidth-1 {
-								want = "25,60,65"
+								want = "51,51,51"
 							}
 							if bg != want {
 								t.Fatalf("cell (%d,%d) background=%s want %s", x, y, bg, want)

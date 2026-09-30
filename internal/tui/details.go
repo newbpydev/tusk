@@ -179,7 +179,8 @@ func (m *Model) detailLines(w int) []string {
 	}
 	pair("Due date", due, "Tags", m.paint(tagText, accentColor, false))
 	add("")
-	add(m.paint("Progress", mutedColor, false))
+	count := progressCount(m.rows[m.selected].node)
+	add(m.paint("Progress", mutedColor, false) + strings.Repeat(" ", max(1, width-8-len(count))) + m.paint(count, textColor, true))
 	barWidth := max(1, width-6)
 	filled := min(barWidth, max(0, int(t.Progress)*barWidth/100))
 	add(m.paint(strings.Repeat("━", filled), accentColor, false) + m.paint(strings.Repeat("─", barWidth-filled), borderColor, false) + fmt.Sprintf(" %3d%%", t.Progress))
@@ -231,4 +232,21 @@ func (m *Model) detailLines(w int) []string {
 	add("Updated   " + date(&t.UpdatedAt))
 	add("Completed " + date(t.CompletedAt))
 	return lines
+}
+
+// Each immediate child contributes its service-owned completion percentage.
+// Use the full snapshot, independent of search or collapsed presentation rows.
+func progressCount(node *core.TaskNode) string {
+	completed, total := node.Task.Progress, 1
+	if len(node.Children) > 0 {
+		completed, total = 0, len(node.Children)
+		for _, child := range node.Children {
+			completed += child.Task.Progress
+		}
+	}
+	amount := fmt.Sprint(completed / 100)
+	if completed%100 != 0 {
+		amount += "." + strings.TrimRight(fmt.Sprintf("%02d", completed%100), "0")
+	}
+	return fmt.Sprintf("(%s / %d)", amount, total)
 }
