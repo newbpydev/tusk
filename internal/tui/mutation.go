@@ -115,6 +115,7 @@ func (m *Model) submitForm() tea.Cmd {
 	if f.conflict || !m.canWrite() {
 		return nil
 	}
+	m.now = m.options.Now()
 	request, field, message := f.draft.command(m.now, m.options.Location, m.options.ParseDue)
 	if message != "" {
 		f.err = message

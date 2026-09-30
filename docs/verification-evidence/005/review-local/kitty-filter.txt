@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace                f Filters · 2026-10-01   a New task 
+╭─ > Tasks · 2 tasks ──────────╮╭─ Task details · 1–20 / 37 ───────────────────╮
+│ /  Search tasks              ││                                              │
+│ 1 All  2 Today  3 Done       ││  Review project                              │
+│──────────────────────────────││  Root task                                   │
+│  Upcoming                    ││                                              │
+│ >▾ ○ Review project          ││  Status                Priority              │
+│    │ Todo · High             ││  ○ Todo                High                  │
+│    └─ ○ Inspect due-date wor…││                                              │
+│         Todo · Medium        ││  Due date              Tags                  │
+│                              ││  Oct 1 · 23:59         None                  │
+│                              ││                                              │
+│                              ││  Progress                           (0 / 1)  │
+│                              ││  ────────────────────────────────────   0%   │
+│                              ││                                              │
+│                              ││  Notes                                       │
+│                              ││  No notes                                    │
+│                              ││                                              │
+│                              ││  ──────────────────────────────────────────  │
+│                              ││  Activity                                    │
+│                              ││                                              │
+│                              ││  #1  create                                  │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ Saved · r refresh · ? help · q quit

@@ -1,16 +1,21 @@
 package tui
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
@@ -26,6 +31,43 @@ func TestTUI_DependencyPatchIntegrity(t *testing.T) {
 	} {
 		t.Run(tc.module, func(t *testing.T) {
 			checkDependencyPatch(t, "../../third_party/"+tc.module, tc.version, tc.files)
+		})
+	}
+}
+
+func TestTUI_DependencyPatchIntegrityRejectsAdditionalSource(t *testing.T) {
+	for _, module := range []string{"bubbletea", "glamour"} {
+		t.Run(module, func(t *testing.T) {
+			root := t.TempDir()
+			cwd := filepath.Join(root, "internal", "tui")
+			if err := os.MkdirAll(cwd, 0700); err != nil {
+				t.Fatal(err)
+			}
+			for _, name := range []string{"bubbletea", "glamour"} {
+				if err := os.CopyFS(filepath.Join(root, "third_party", name), os.DirFS("../../third_party/"+name)); err != nil {
+					t.Fatal(err)
+				}
+			}
+			// A new Go file participates in the replaced module's next build,
+			// even when every file already in the manifest has its pinned hash.
+			path := filepath.Join(root, "third_party", module, "unrecorded.go")
+			if err := os.WriteFile(path, []byte("package "+map[string]string{"bubbletea": "tea", "glamour": "glamour"}[module]+"\nfunc init() {}\n"), 0600); err != nil {
+				t.Fatal(err)
+			}
+			ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
+			defer cancel()
+			cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestTUI_DependencyPatchIntegrity$")
+			cmd.Dir = cwd
+			output, err := cmd.CombinedOutput()
+			if ctx.Err() != nil {
+				t.Fatal("integrity child timed out", ctx.Err())
+			}
+			if err == nil {
+				t.Fatalf("dependency integrity guard passed with added %s source", module)
+			}
+			if !strings.Contains(string(output), "unrecorded dependency source: unrecorded.go") {
+				t.Fatalf("guard failed for another reason: %v\n%s", err, output)
+			}
 		})
 	}
 }
@@ -46,6 +88,30 @@ func checkDependencyPatch(t *testing.T, dir, version string, files []string) {
 	}
 	if manifest.Version != version || len(manifest.Patches) != len(files) {
 		t.Fatal("unexpected dependency patch")
+	}
+	for _, name := range files {
+		if _, ok := manifest.Patches[name]; !ok {
+			t.Fatalf("missing declared dependency patch: %s", name)
+		}
+	}
+	if err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {
+		if err != nil || entry.IsDir() {
+			return err
+		}
+		name, err := filepath.Rel(dir, path)
+		if err != nil {
+			return err
+		}
+		name = filepath.ToSlash(name)
+		if !entry.Type().IsRegular() {
+			return fmt.Errorf("nonregular dependency source: %s", name)
+		}
+		if _, ok := manifest.Upstream[name]; !ok && name != "TUSK-PATCH.json" {
+			return fmt.Errorf("unrecorded dependency source: %s", name)
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
 	}
 	for name, want := range manifest.Upstream {
 		if patched, ok := manifest.Patches[name]; ok {

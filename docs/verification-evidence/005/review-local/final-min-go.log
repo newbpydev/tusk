@@ -1,0 +1,112 @@
+go test -race -count=1 -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestForm_|TestFilter_|TestDraft_|TestCalendar_|TestTUI_DependencyPatchIntegrity'
+=== RUN   TestCalendar_ChooseAndCancelPreserveDraft
+--- PASS: TestCalendar_ChooseAndCancelPreserveDraft (0.07s)
+=== RUN   TestCalendar_CivilNavigation
+=== RUN   TestCalendar_CivilNavigation/2024-01-31/pgdown
+=== RUN   TestCalendar_CivilNavigation/2025-01-31/pgdown
+=== RUN   TestCalendar_CivilNavigation/2026-03-31/pgup
+=== RUN   TestCalendar_CivilNavigation/2026-12-31/right
+=== RUN   TestCalendar_CivilNavigation/2026-01-01/left
+=== RUN   TestCalendar_CivilNavigation/2026-09-29/up_down_down
+=== RUN   TestCalendar_CivilNavigation/2026-10-15/t
+=== RUN   TestCalendar_CivilNavigation/tomorrow/
+=== RUN   TestCalendar_CivilNavigation/invalid/
+=== RUN   TestCalendar_CivilNavigation//
+=== RUN   TestCalendar_CivilNavigation/0001-01-01/left_up_pgup
+=== RUN   TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown
+--- PASS: TestCalendar_CivilNavigation (0.50s)
+    --- PASS: TestCalendar_CivilNavigation/2024-01-31/pgdown (0.04s)
+    --- PASS: TestCalendar_CivilNavigation/2025-01-31/pgdown (0.04s)
+    --- PASS: TestCalendar_CivilNavigation/2026-03-31/pgup (0.04s)
+    --- PASS: TestCalendar_CivilNavigation/2026-12-31/right (0.05s)
+    --- PASS: TestCalendar_CivilNavigation/2026-01-01/left (0.03s)
+    --- PASS: TestCalendar_CivilNavigation/2026-09-29/up_down_down (0.05s)
+    --- PASS: TestCalendar_CivilNavigation/2026-10-15/t (0.04s)
+    --- PASS: TestCalendar_CivilNavigation/tomorrow/ (0.04s)
+    --- PASS: TestCalendar_CivilNavigation/invalid/ (0.04s)
+    --- PASS: TestCalendar_CivilNavigation// (0.04s)
+    --- PASS: TestCalendar_CivilNavigation/0001-01-01/left_up_pgup (0.04s)
+    --- PASS: TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown (0.04s)
+=== RUN   TestCalendar_LocalTodayAndDST
+--- PASS: TestCalendar_LocalTodayAndDST (0.19s)
+=== RUN   TestCalendar_LayoutPurityAndResize
+--- PASS: TestCalendar_LayoutPurityAndResize (0.63s)
+=== RUN   TestCalendar_RealStorageSaveAndUnchangedEdit
+--- PASS: TestCalendar_RealStorageSaveAndUnchangedEdit (0.16s)
+=== RUN   TestTUI_DependencyPatchIntegrity
+=== RUN   TestTUI_DependencyPatchIntegrity/bubbletea
+=== RUN   TestTUI_DependencyPatchIntegrity/glamour
+--- PASS: TestTUI_DependencyPatchIntegrity (0.01s)
+    --- PASS: TestTUI_DependencyPatchIntegrity/bubbletea (0.00s)
+    --- PASS: TestTUI_DependencyPatchIntegrity/glamour (0.01s)
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/bubbletea
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/glamour
+--- PASS: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource (0.07s)
+    --- PASS: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/bubbletea (0.04s)
+    --- PASS: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/glamour (0.03s)
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop/today
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop/tomorrow
+--- PASS: TestForm_RelativeDueEditIsNotStaleNoop (0.04s)
+    --- PASS: TestForm_RelativeDueEditIsNotStaleNoop/today (0.02s)
+    --- PASS: TestForm_RelativeDueEditIsNotStaleNoop/tomorrow (0.02s)
+=== RUN   TestFilter_RelativeDayUsesApplyClock
+--- PASS: TestFilter_RelativeDayUsesApplyClock (0.01s)
+=== RUN   TestForm_DefaultsAndDetachedDirtyPatch
+--- PASS: TestForm_DefaultsAndDetachedDirtyPatch (0.00s)
+=== RUN   TestForm_NoChangesAndExplicitClears
+--- PASS: TestForm_NoChangesAndExplicitClears (0.00s)
+=== RUN   TestForm_ValidationFocusAndProgressContracts
+--- PASS: TestForm_ValidationFocusAndProgressContracts (0.00s)
+=== RUN   TestFilter_ApplyClearAndLiteralRouting
+--- PASS: TestFilter_ApplyClearAndLiteralRouting (0.09s)
+=== RUN   TestFilter_DayIsResolvedOnlyOnApply
+--- PASS: TestFilter_DayIsResolvedOnlyOnApply (0.02s)
+=== RUN   TestFilter_RefreshAndResizePreserveDraft
+--- PASS: TestFilter_RefreshAndResizePreserveDraft (0.03s)
+=== RUN   TestFilter_FieldNavigationErrorsAndWideInput
+--- PASS: TestFilter_FieldNavigationErrorsAndWideInput (0.10s)
+=== RUN   TestFilter_PlainChoiceHasVisibleFocus
+--- PASS: TestFilter_PlainChoiceHasVisibleFocus (0.01s)
+=== RUN   TestForm_ReadonlyPreviewPreparationIsBounded
+--- PASS: TestForm_ReadonlyPreviewPreparationIsBounded (0.57s)
+=== RUN   TestForm_FocusLiteralTextAndDiscard
+--- PASS: TestForm_FocusLiteralTextAndDiscard (0.08s)
+=== RUN   TestForm_AtomicPasteAndReadonlyReplacement
+--- PASS: TestForm_AtomicPasteAndReadonlyReplacement (0.30s)
+=== RUN   TestForm_ParentPickerSnapshotAndPurity
+--- PASS: TestForm_ParentPickerSnapshotAndPurity (0.11s)
+=== RUN   TestForm_SmallTerminalPreservesDraftAndSubmission
+--- PASS: TestForm_SmallTerminalPreservesDraftAndSubmission (0.11s)
+=== RUN   TestForm_ControlsValidationAndParentSearch
+--- PASS: TestForm_ControlsValidationAndParentSearch (0.30s)
+=== RUN   TestForm_VisiblePositionAndTimezone
+--- PASS: TestForm_VisiblePositionAndTimezone (0.02s)
+=== RUN   TestForm_BrowseHelpAndQuitRemainVisible
+--- PASS: TestForm_BrowseHelpAndQuitRemainVisible (0.00s)
+=== RUN   TestForm_ParentSearchAcceptsSpaces
+--- PASS: TestForm_ParentSearchAcceptsSpaces (0.05s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	4.531s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	1.019s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	1.032s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	1.035s [no tests to run]
+go version
+go version go1.25.0 linux/amd64
+Building CLI and tests: linux/amd64 (CGO_ENABLED=0; native execution separate)
+Building CLI and tests: linux/arm64 (CGO_ENABLED=0; native execution separate)
+Building CLI and tests: darwin/amd64 (CGO_ENABLED=0; native execution separate)
+Building CLI and tests: darwin/arm64 (CGO_ENABLED=0; native execution separate)
+Building CLI and tests: windows/amd64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: linux/amd64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: linux/arm64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: darwin/amd64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: darwin/arm64 (CGO_ENABLED=0; native execution separate)
+Compiling TUI tests: windows/amd64 (CGO_ENABLED=0; native execution separate)

@@ -1,0 +1,15 @@
+{
+  "target": "claude",
+  "route": "claude",
+  "model_requested": "claude-opus-5-5",
+  "effort_requested": "high",
+  "model_actual": "unverified",
+  "effort_actual": "unverified",
+  "receipt_supported": false,
+  "independence_verified": false,
+  "outcome": "in-process-fallback",
+  "reason": "Provider-capable dispatch returned HTTP 401: invalid OAuth access token; diagnostic also named unrecognized requested model. Shared deadline expired before collection; no replacement started.",
+  "terminal_state": "done",
+  "artifact": null,
+  "coverage": "adversarial lens: in-process fallback (cross-model peer not run: provider HTTP 401 authentication failure)"
+}

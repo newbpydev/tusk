@@ -1,0 +1,6 @@
+{
+  "outcome": "verdicts",
+  "reason": "AGENTS requires delegation to run sequentially in the main thread; source/test validation completed locally, independent validation coverage unavailable.",
+  "verdicts": "/tmp/compound-engineering-1000/ce-code-review/20260930-160308-70ad9092/validator-verdicts.json",
+  "independent": false
+}

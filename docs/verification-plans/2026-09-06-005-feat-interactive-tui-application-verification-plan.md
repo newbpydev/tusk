@@ -910,3 +910,51 @@ U6 follow-up and restore Phase 5 local acceptance. See the
 [final receipt](../verification-evidence/005/u6-hierarchy/acceptance.json).
 Feature 006 planning awaits instruction. V111/V112, remaining native TUSK-V66
 coverage and hosted release proof remain separate; nothing was published.
+
+### Owner-requested full-branch code review (2026-09-30)
+
+The owner requested systematic P0-P2 remediation and repeated review to a clean
+result. Three sequential main-context review rounds confirmed and corrected two
+P2 defects: relative-date Save/Apply used a stale display clock at midnight, and
+the patched-dependency integrity gate did not reject additional source files.
+A P3 glossary correction aligns model ownership and context-specific keys with
+the implemented UI. Stable review findings #1-#3 and discriminating red/green
+receipts are retained in the [review receipt](../verification-evidence/005/review-local/acceptance.json).
+
+Supplemental checks cover R4/R11/R16/R17/R27/R28 and V01-V03/V47/V69-V71/V105-V110:
+`today`/`tomorrow` edits preserve the detached Base and dispatch the natural
+expression after midnight; due filters select the current 23-hour DST day;
+added source in either patched module fails the actual integrity guard. Final
+`make validate build check-generated`, Go 1.25 focused race tests and five-target
+cross-builds pass. Actual owned Kitty checks confirm calendar, relative due-date
+Save/filter, approved styling and terminal restoration using an isolated DB.
+
+The complete final CLI matrix passes 84/84 case-runs: worst query/help-version
+p90 14.554/3.953 ms, with every tail guard passing. Earlier candidate and unchanged
+control matrices both passed 82/84; both failed reports and all samples remain
+retained. The final TUI matrix passes 78/78 case-runs, with worst preparation p95
+13.798 ms and all 326 recorded source hashes matching the final source. Prior
+date-fix-only measurements remain historical. No limit, sample or
+runtime implementation was changed to obtain the final CLI pass.
+
+The clean repeat review is local evidence, not independent corroboration.
+AGENTS.md requires sequential main-thread review; the requested cross-model
+Claude route failed HTTP 401 authentication and produced no verified peer
+review. An inline adversarial pass completed instead. Native/hosted V111-V112 and
+005-ISS-025 remain Feature 006 obligations. The checkout was already dirty, so
+ce-code-review leaves the verified fixes uncommitted and preserves earlier
+AGENTS.md/solution edits. No new implementation unit, publication or release is
+claimed by this follow-up.
+
+### Owner-authorized local commit closure (2026-09-30)
+
+The owner requested committing the pending changes after the clean review.
+Approved compound guidance is committed separately as dc6cd9f. The containing
+review-fix commit records ISS-026 through ISS-028, their regression tests and
+evidence, and the synchronized planning pack. Fresh `make validate` passes
+before each commit. The original review report and acceptance receipt retain
+their review-return snapshot; the [commit closure](../verification-evidence/005/review-local/commit-closure.json)
+records the later authorization, quality gates and source identity. No runtime
+source changed after review, so accepted timing and Kitty evidence still match.
+Feature 006 native/hosted release obligations remain separate; nothing was
+pushed or published.

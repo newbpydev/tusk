@@ -75,6 +75,7 @@ func (m *Model) updateTodayBounds() {
 
 func (m *Model) applyFilters() {
 	f := m.filters
+	m.now = m.options.Now()
 	next := core.TaskFilter{SearchTerm: m.filter.SearchTerm}
 	for i, s := range filterStatuses() {
 		if f.statuses[i] {

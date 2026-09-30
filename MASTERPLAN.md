@@ -1,8 +1,28 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: 🟢 Feature 005 locally accepted, including approved UX refinement
-**Active Phase**: Phase 6 planning — awaiting instruction
-**Active Implementation Target**: None — Feature 005 and the U6 refinement are locally complete
+**Current Status**: Feature 005 locally accepted; clean review fixes and approved learnings committed locally
+**Active Phase**: Phase 6 planning awaits instruction
+**Active Implementation Target**: None — Feature 005 review complete; no new unit authorized
+
+- [x] Complete systematic full-branch review and reproduce confirmed P0–P2 findings.
+- [x] Fix confirmed findings with red/green evidence and applicable real-app checks.
+- [x] Repeat review to a clean pass, run canonical validation and synchronize evidence.
+
+Three sequential local review rounds fixed two P2 defects (relative-date action
+clock and dependency source inventory) plus one P3 glossary inconsistency. The
+final repeat review is clean. Canonical validation/build/generated checks,
+Go 1.25 focused race tests, five-target cross-builds, owned Kitty checks and the
+complete 84-case CLI/78-case TUI matrices pass. All failed measurements remain
+retained. See the [review receipt](docs/verification-evidence/005/review-local/acceptance.json).
+Independent review is unavailable: repository mapping requires main-thread
+execution and the requested Claude peer failed authentication. At review return,
+the fixes remained uncommitted under ce-code-review's dirty-tree rule. The owner
+subsequently authorized local commits: approved compound guidance is dc6cd9f;
+the containing review-fix commit records these corrections and synchronized
+evidence. Fresh canonical validation passes before each commit. See the
+[commit closure](docs/verification-evidence/005/review-local/commit-closure.json).
+Native/hosted release proof remains Feature 006. No new implementation unit or
+publication has begun.
 
 - [x] Connect visible siblings and ancestor paths through title/metadata rows;
   reserve the last-child elbow for the final visible sibling.

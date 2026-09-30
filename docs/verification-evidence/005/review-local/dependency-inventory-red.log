@@ -1,0 +1,22 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '^TestTUI_DependencyPatchIntegrityRejectsAdditionalSource$'
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/bubbletea
+    compatibility_test.go:64: dependency integrity guard passed with added bubbletea source
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/glamour
+    compatibility_test.go:64: dependency integrity guard passed with added glamour source
+--- FAIL: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource (0.03s)
+    --- FAIL: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/bubbletea (0.01s)
+    --- FAIL: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/glamour (0.01s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.033s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.006s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

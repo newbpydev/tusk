@@ -1,0 +1,24 @@
+bash-5.3$ unset NO_COLOR
+bash-5.3$ export COLORTERM=truecolor
+bash-5.3$ /home/newbpydev/Development/Xoomby/tusk/bin/tusk list --all
+01a0f3d7-e55b-7553-997e-e2517ba3d241
+Status: todo
+Priority: high
+Progress: 0%
+Due: 2026-09-30
+Title: Review project
+
+01a0f3d7-e562-7d14-9355-60fb0cbc78f0
+Status: todo
+Priority: medium
+Progress: 0%
+Due: 2026-10-01
+Title: Inspect due-date workflow
+
+01a0f3d7-e569-7bba-9cae-af2b1c74fe8c
+Status: todo
+Priority: medium
+Progress: 0%
+Due: -
+Title: Review keyboard controls
+bash-5.3$

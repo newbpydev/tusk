@@ -69,6 +69,7 @@ func TestFilter_DayIsResolvedOnlyOnApply(t *testing.T) {
 	}
 	m.options.Location = zone
 	m.now = time.Date(2026, 3, 7, 23, 59, 0, 0, zone)
+	m.options.Now = func() time.Time { return time.Date(2026, 3, 7, 23, 59, 0, 0, zone) }
 	refs := []time.Time{}
 	m.options.DayBounds = func(s string, now time.Time, z *time.Location) (time.Time, time.Time, error) {
 		refs = append(refs, now)
