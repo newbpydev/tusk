@@ -49,9 +49,14 @@ func (m *Model) finish(cmd tea.Cmd) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 	m.rebuildRows()
+	preview := m.dispatchPreview()
+	if preview == nil && m.refreshPending && !m.busy && !m.recoveryNeeded {
+		m.refreshPending = false
+		preview = m.requestRefresh()
+	}
 	details := m.syncDetails()
 	m.prepareFrame()
-	return m, tea.Batch(cmd, details)
+	return m, tea.Batch(cmd, preview, details)
 }
 
 func (m *Model) syncDetails() tea.Cmd {

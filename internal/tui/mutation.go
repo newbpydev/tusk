@@ -14,6 +14,7 @@ type mutationMsg struct {
 	request          mutationRequest
 	task             *core.Task
 	err              error
+	deleted          ports.DeleteResult
 }
 
 func (s *Session) Mutate(ctx context.Context, request mutationRequest) (*core.Task, error) {
@@ -77,11 +78,22 @@ func (m *Model) completeRead(err error) (tea.Cmd, bool) {
 }
 
 func (m *Model) freezeWrites() {
+	m.helpOpen = false
+	m.filters = nil
+	m.searching = false
+	m.cancelSearchTimer()
 	m.recoveryNeeded = true
 	m.stale = true
 	m.refreshPending = false
 	m.history.pending = false
+	m.history.events = nil
+	m.history.state = loading
+	if m.confirmation != nil {
+		m.confirmation.pending = false
+		m.confirmation.preview = nil
+	}
 	m.abandonMutation("Outcome unknown. Draft retained; reload is required.")
+	m.beginRecovery()
 }
 
 func (m *Model) abandonMutation(message string) {
@@ -157,9 +169,14 @@ func (m *Model) dispatchMutation() tea.Cmd {
 	m.operation++
 	m.refreshPending = false
 	owner, operation, ctx, mutate := m.owner, m.operation, m.options.Context, m.options.Mutate
+	remove := m.options.Delete
 	return safeCommand(func() tea.Msg {
+		if request.kind == mutationDelete {
+			result, err := remove(ctx, request.deletion)
+			return mutationMsg{owner: owner, operation: operation, request: request, deleted: result, err: err}
+		}
 		task, err := mutate(ctx, request)
-		return mutationMsg{owner, operation, request, task, err}
+		return mutationMsg{owner: owner, operation: operation, request: request, task: task, err: err}
 	})
 }
 
@@ -189,8 +206,13 @@ func (m *Model) acceptMutation(msg mutationMsg) tea.Cmd {
 	m.busy = false
 	m.saving = false
 	if IsUnknown(msg.err) {
+		request := msg.request
+		m.uncertain = &request
 		m.freezeWrites()
 		return nil
+	}
+	if msg.request.kind == mutationDelete {
+		return m.deleteFinished(msg)
 	}
 	f := m.form
 	if f != nil && f.draft.id == msg.request.formID {
@@ -217,8 +239,16 @@ func (m *Model) acceptMutation(msg mutationMsg) tea.Cmd {
 		m.closeForm()
 	}
 	m.notice = "Saved"
+	m.committedKind = msg.request.kind
 	m.awaitingRead = true
 	return m.requestRefresh()
+}
+
+func (m *Model) writeNotice() string {
+	if m.committedKind == mutationDelete {
+		return "Deleted"
+	}
+	return "Saved"
 }
 
 func (m *Model) reloadForm() {

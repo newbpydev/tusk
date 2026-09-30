@@ -9,13 +9,14 @@ import (
 	"github.com/charmbracelet/x/ansi"
 	"github.com/muesli/termenv"
 	"github.com/newbpydev/tusk/internal/core"
+	"github.com/newbpydev/tusk/internal/ports"
 )
 
 // Terminal-cell background verification guards the shadow artifacts found in
 // the Kitty prototype. A plain string/screenshot golden misses SGR inheritance.
 func TestOverlay_UniformSurfaces(t *testing.T) {
 	for _, size := range [][2]int{{80, 24}, {120, 40}, {200, 60}} {
-		for _, modalKind := range []string{"none", "help", "form"} {
+		for _, modalKind := range []string{"none", "help", "form", "delete", "recovery"} {
 			modal := modalKind != "none"
 			t.Run(fmt.Sprintf("%dx%d/modal=%s", size[0], size[1], modalKind), func(t *testing.T) {
 				o := testOptions()
@@ -27,6 +28,12 @@ func TestOverlay_UniformSurfaces(t *testing.T) {
 				if modalKind == "form" {
 					m.beginForm(false)
 					m.form.err = "Enter a title."
+				}
+				if modalKind == "delete" {
+					m.confirmation = &deleteDialog{target: taskRef{id: "one"}, title: "A task", preview: &ports.DeletePreview{IDs: []string{"one", "child"}}}
+				}
+				if modalKind == "recovery" {
+					m.freezeWrites()
 				}
 				m.Update(tea.WindowSizeMsg{Width: size[0], Height: size[1]})
 				l := measure(size[0], size[1])

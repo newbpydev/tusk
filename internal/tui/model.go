@@ -31,6 +31,9 @@ type Options struct {
 	Render    MarkdownRenderer
 	ParseDue  DueParser
 	Mutate    func(context.Context, mutationRequest) (*core.Task, error)
+	Preview   func(context.Context, string) (ports.DeletePreview, error)
+	Delete    func(context.Context, ports.DeleteTaskCommand) (ports.DeleteResult, error)
+	Recover   func(context.Context, string) (recoverySnapshot, error)
 }
 
 type loadState uint8
@@ -87,6 +90,10 @@ type Model struct {
 	readCancel                context.CancelFunc
 	readInterrupted           bool
 	notice                    string
+	confirmation              *deleteDialog
+	committedKind             mutationKind
+	uncertain                 *mutationRequest
+	recovery                  *recoveryState
 }
 
 func New(options Options) *Model {
@@ -142,6 +149,10 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 		}
 	}()
 	switch msg := msg.(type) {
+	case previewMsg:
+		cmd = m.acceptPreview(msg)
+	case recoveryMsg:
+		cmd = m.acceptRecovery(msg)
 	case mutationMsg:
 		cmd = m.acceptMutation(msg)
 	case notesMsg:
@@ -168,10 +179,16 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 			return m, tea.Quit
 		}
 		if !measure(m.width, m.height).usable() {
-			if m.form == nil && !m.saving && msg.String() == "q" {
+			if (m.recoveryNeeded || (m.form == nil && m.confirmation == nil && !m.saving)) && msg.String() == "q" {
 				return m, tea.Quit
 			}
 			return m, nil
+		}
+		if m.recoveryNeeded {
+			return m.finish(m.recoveryKey(msg))
+		}
+		if m.confirmation != nil {
+			return m.finish(m.confirmKey(msg))
 		}
 		if m.form != nil {
 			return m.finish(m.formKey(msg))
@@ -207,6 +224,8 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 			return m.finish(nil)
 		}
 		switch msg.String() {
+		case "d":
+			m.beginDelete()
 		case "a":
 			m.beginForm(false)
 		case "e":

@@ -2,8 +2,8 @@
 feature-id: "005"
 plan-source: ../plans/2026-09-06-005-feat-interactive-tui-application-plan.md
 surface-profiles: [cli-tui, internal-service-consumer, persistence-lifecycle, documentation]
-status: In progress - U1, U7, U2, U3, U4 and U5 accepted, U8 active
-evidence-scope: Local U1, U7, U2, U3, U4 and U5 execution; U8/U6 pending
+status: In progress - U1, U7, U2, U3, U4, U5 and U8 accepted, U6 active
+evidence-scope: Local U1 through U8 execution; U6 pending
 ---
 
 # Feature 005 Verification Plan
@@ -145,7 +145,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [ ] V29 (R7,R9; Regression): Switch among empty/loading/error/refreshing/saving and 1/1000 tasks at fixed size; borders and help/status geometry stay unchanged.
 
-- [ ] V30 (R9,R12; Overlay): Center overflowing form/help/consent content within bounds, scroll fields while retaining buttons, and trap focus with Tab/Shift+Tab.
+- [x] V30 (R9,R12; Overlay): Center overflowing form/help/consent content within bounds, scroll fields while retaining buttons, and trap focus with Tab/Shift+Tab.
 
 - [x] V31 (R9,R10,R15; Unicode): Render CJK, combining accents, emoji ZWJ clusters, invalid UTF-8 replacement and ten-level indentation at cell boundaries; clip without half-clusters, negative widths or style bleed.
 
@@ -157,7 +157,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [x] V35 (R2,R15; Presentation): NO_COLOR strips all content SGR including Markdown; fixed explicit profile avoids appearance queries. Framework cursor/alternate-screen controls are distinguished from content escapes.
 
-- [ ] V36 (R12,R15; Accessibility): Every action has a textual key hint and visible focus; status, priority, stale/error and disabled-save meaning survives monochrome output.
+- [x] V36 (R12,R15; Accessibility): Every action has a textual key hint and visible focus; status, priority, stale/error and disabled-save meaning survives monochrome output.
 
 - [x] V37 (R5,R9; Purity): After every resize/modal transition, repeated root View calls only return stored frame; no child render, recomposition or I/O occurs.
 
@@ -189,7 +189,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [x] V50 (R8; Refresh): Initial/manual/post-write/2-second triggers call service through commands only; active-read triggers coalesce and cannot starve completion with perpetual generation invalidation.
 
-- [ ] V51 (R8,R19,R24; Concurrency): Reverse stale forest replies across a mutation/owner change; process matching-owner unknown outcomes before stale-payload rejection, release the busy slot, and prioritize recovery over waiting writes. Known deliberate read cancellation permits the waiting write; other read failure aborts it and preserves draft.
+- [x] V51 (R8,R19,R24; Concurrency): Reverse stale forest replies across a mutation/owner change; process matching-owner unknown outcomes before stale-payload rejection, release the busy slot, and prioritize recovery over waiting writes. Known deliberate read cancellation permits the waiting write; other read failure aborts it and preserves draft.
 
 - [x] V52 (R7,R8; Failure): Initial read failure renders retry/quit; refresh failure keeps labeled stale snapshot and disables mutations; successful read clears stale state.
 
@@ -197,7 +197,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [x] V54 (R8,R24; Resources): Rapid r/search/selection/ticks produce at most one service operation, one pending refresh/latest history request and bounded timers; no retry storm or accumulating queues.
 
-- [ ] V55 (R10,R11,R12; Boundary): Empty/filtered-empty list receives all browse/navigation keys; safe no-ops for absent selection and useful add/clear/search/quit controls.
+- [x] V55 (R10,R11,R12; Boundary): Empty/filtered-empty list receives all browse/navigation keys; safe no-ops for absent selection and useful add/clear/search/quit controls.
 
 - [x] V56 (R8,R10,R11,R24,R26; Kitty): Use a second CLI process on isolated DB to edit/reparent/delete during browse and search; inspect live refresh, selection preservation and collapse restoration.
 
@@ -219,7 +219,7 @@ those states, without claiming they exist in the U2 shell.
 
 - [x] V64 (R14,R24; Concurrency): Out-of-order history results for different selections/owner epochs cannot appear under current task; metadata and history freshness are independent.
 
-- [ ] V65 (R14; Failure): Known history error is visible and retryable as a read, missing task refreshes forest, unknown cleanup routes to owner recovery; no fabricated events.
+- [x] V65 (R14; Failure): Known history error is visible and retryable as a read, missing task refreshes forest, unknown cleanup routes to owner recovery; no fabricated events.
 
 - [x] V66 (R13,R14,R19; Integration): After committed edit/status/move, refresh shows actual service metadata events and rollups; history is not claimed atomically consistent with an earlier forest snapshot.
 
@@ -267,33 +267,33 @@ those states, without claiming they exist in the U2 shell.
 
 ### Deletion and reconciliation — U8
 
-- [ ] V87 (R20; Consent): Leaf d obtains preview, displays title/full ID/count/history loss, initially focuses Cancel; d/y/q and initial Enter cannot delete.
+- [x] V87 (R20; Consent): Leaf d obtains preview, displays title/full ID/count/history loss, initially focuses Cancel; d/y/q and initial Enter cannot delete.
 
-- [ ] V88 (R20; Recursive): Parent Delete disabled until explicit subtree checkbox; pass Recursive=true only from checkbox, Expected exact preview and Force=false.
+- [x] V88 (R20; Recursive): Parent Delete disabled until explicit subtree checkbox; pass Recursive=true only from checkbox, Expected exact preview and Force=false.
 
-- [ ] V89 (R20,R24; Concurrency): Delay preview then close/reopen modal or change selection; mismatched target/incarnation/modal reply cannot arm the current confirmation.
+- [x] V89 (R20,R24; Concurrency): Delay preview then close/reopen modal or change selection; mismatched target/incarnation/modal reply cannot arm the current confirmation.
 
-- [ ] V90 (R20; Conflict): External target metadata/subtree membership change after preview produces conflict; new preview resets Cancel and recursive checkbox; prior consent cannot carry forward.
+- [x] V90 (R20; Conflict): External target metadata/subtree membership change after preview produces conflict; new preview resets Cancel and recursive checkbox; prior consent cannot carry forward.
 
-- [ ] V91 (R20; Failure): Preview failure or removed target writes nothing; known delete failure requires fresh preview for retry; no optimistic deletion from list.
+- [x] V91 (R20; Failure): Preview failure or removed target writes nothing; known delete failure requires fresh preview for retry; no optimistic deletion from list.
 
-- [ ] V92 (R18,R20; Integration): Delete leaf and whole subtree on disk; exact IDs/history removed atomically, ancestor rollup updated, remaining selection chooses correct neighbor.
+- [x] V92 (R18,R20; Integration): Delete leaf and whole subtree on disk; exact IDs/history removed atomically, ancestor rollup updated, remaining selection chooses correct neighbor.
 
-- [ ] V93 (R21; Classification): Value/pointer/joined TransactionError matching canceled/conflict/busy still freezes writes; never route by a retryable cause first.
+- [x] V93 (R21; Classification): Value/pointer/joined TransactionError matching canceled/conflict/busy still freezes writes; never route by a retryable cause first.
 
-- [ ] V94 (R21; Recovery): Unknown read/write outcome retires old owner, then opens same path for fresh tree/history; old epoch messages cannot unfreeze or overwrite new state. Recovery holds the exclusive service slot without waiting on its own shutdown-drain registration.
+- [x] V94 (R21; Recovery): Unknown read/write outcome retires old owner, then opens same path for fresh tree/history; old epoch messages cannot unfreeze or overwrite new state. Recovery holds the exclusive service slot without waiting on its own shutdown-drain registration.
 
-- [ ] V95 (R21; Failure): Close failure blocks in-session reopen; open/readback failure remains frozen with only read/reopen retry or quit; no DB/WAL/SHM cleanup.
+- [x] V95 (R21; Failure): Close failure blocks in-session reopen; open/readback failure remains frozen with only read/reopen retry or quit; no DB/WAL/SHM cleanup.
 
-- [ ] V96 (R19,R21; Creation): Unknown create with no returned ID retains read-only draft; identical titles/external creations never trigger guessed identity, automatic replay or Retry create.
+- [x] V96 (R19,R21; Creation): Unknown create with no returned ID retains read-only draft; identical titles/external creations never trigger guessed identity, automatic replay or Retry create.
 
-- [ ] V97 (R21; Readback): For old/new state after uncertain edit/delete, present observed state and possible absence; require acknowledgment/discard of uncertain intent before new writes, without claiming causality.
+- [x] V97 (R21; Readback): For old/new state after uncertain edit/delete, present observed state and possible absence; require acknowledgment/discard of uncertain intent before new writes, without claiming causality.
 
-- [ ] V98 (R21,R22; Cancellation): Ctrl+C during uncertain write/recovery drains work and preserves unknown diagnostic; known committed receipt takes precedence when applicable.
+- [x] V98 (R21,R22; Cancellation): Ctrl+C during uncertain write/recovery drains work and preserves unknown diagnostic; preserve unknown outcome and report earlier acknowledged commits separately.
 
-- [ ] V99 (R20,R21,R24; Resources): Repeated Reload/confirm keys during active recovery do not overlap owners or writes; departed form/render/history messages remain inert.
+- [x] V99 (R20,R21,R24; Resources): Repeated Reload/confirm keys during active recovery do not overlap owners or writes; departed form/render/history messages remain inert.
 
-- [ ] V100 (R20,R21,R26; Kitty): Inspect default Cancel, unchecked recursion, renewed stale consent and quarantined readback in owned Kitty. Label fake-outcome UI injection separately from disk transaction evidence.
+- [x] V100 (R20,R21,R26; Kitty): Inspect default Cancel, unchecked recursion, renewed stale consent and quarantined readback in owned Kitty. Label fake-outcome UI injection separately from disk transaction evidence.
 
 ### Local acceptance — U6
 
@@ -637,3 +637,25 @@ next. Performance/final acceptance stays U6; native/hosted release stays Feature
 Final Kitty readback review caught an obsolete failure notice after successful
 refresh. The red/green correction and fresh capture are retained in u5.json;
 canonical and minimum-Go gates passed again before the unit commit.
+
+
+### U8 local acceptance — 2026-09-29
+
+[U8 evidence](../verification-evidence/005/u8.json) records passing canonical
+validation (96.8% TUI coverage), minimum-Go race/cross-build checks, real disk
+consent/recovery tests and inspected Kitty color/plain screens. Deletion defaults
+to Cancel, pins the exact preview and resets recursion after membership conflict.
+Unknown outcomes freeze writes, retain read-only intent, close the old owner
+before readback, and require acknowledgment before independent new actions.
+No mutation is replayed or uncertain create identity guessed. A later known
+commit does not erase the earlier unknown receipt. Close failure permits only
+quit; old-owner messages cannot publish. All overlay background tests pass.
+
+V30,V36,V51,V55,V65 and V87–V100 close. Cancellation combines the U7 raw-key
+receipt tests and U8 exclusive-owner drain barriers; final child-PTY proof stays
+U6. Controlled service-outcome injection in Kitty is labeled separately from
+real SQLite transaction evidence. Inline reviews resolved the recorded findings;
+no independent review is claimed. U6 now owns final workflow, performance,
+documentation and review, including long browse notices/action-specific toggle
+errors and measured large-preview/projection costs. Native/hosted release proof
+remains Feature 006.

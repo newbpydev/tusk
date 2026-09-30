@@ -97,8 +97,8 @@ func (s *Session) call(ctx context.Context, mutation, reopen bool, work func(con
 			s.closeOwner = nil
 			s.service = nil
 			if err = closeSafely(closeOwner); err != nil {
-				s.closeErr = err
-				return nil, err
+				s.closeErr = errors.Join(errRetireFailed, err)
+				return nil, s.closeErr
 			}
 		}
 	}

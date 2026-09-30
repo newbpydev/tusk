@@ -31,6 +31,8 @@ func TestTUIInteractiveFixture(t *testing.T) {
 		fmt.Fprintln(os.Stderr, "fixture requires an owned temporary directory")
 		os.Exit(2)
 	}
+	mode := os.Getenv("TUSK_TUI_KITTY_MODE")
+	injected := false
 	factory := func(ctx context.Context) (ports.TaskService, func() error, error) {
 		repo, err := storage.Open(ctx, storage.Options{Path: filepath.Join(dir, "fault-app.db")})
 		if err != nil {
@@ -41,9 +43,20 @@ func TestTUIInteractiveFixture(t *testing.T) {
 			repo.Close()
 			return nil, nil, err
 		}
-		return &kittyReadFault{TaskService: svc, marker: filepath.Join(dir, "hold-read-fault")}, repo.Close, nil
+		closeOwner := func() error {
+			err := repo.Close()
+			if mode == "retire-failure" && injected {
+				return ports.ErrStorage
+			}
+			return err
+		}
+		return &kittyReadFault{TaskService: svc, marker: filepath.Join(dir, "hold-read-fault"), mode: mode, injected: &injected}, closeOwner, nil
 	}
-	result, err := Run(context.Background(), RunOptions{Input: os.Stdin, Output: os.Stdout, Open: factory, Location: time.UTC, Profile: termenv.TrueColor, DayBounds: dateparse.DayBounds, ParseDue: dateparse.ParseDue})
+	profile := termenv.TrueColor
+	if os.Getenv("NO_COLOR") != "" {
+		profile = termenv.Ascii
+	}
+	result, err := Run(context.Background(), RunOptions{Input: os.Stdin, Output: os.Stdout, Open: factory, Location: time.UTC, Profile: profile, DayBounds: dateparse.DayBounds, ParseDue: dateparse.ParseDue})
 	fmt.Printf("App closed. Committed changes: %t; uncertain outcome: %t\n", result.HadCommittedChanges, result.OutcomeUnknown)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -54,16 +67,31 @@ func TestTUIInteractiveFixture(t *testing.T) {
 
 type kittyReadFault struct {
 	ports.TaskService
-	marker string
-	saved  bool
+	marker   string
+	saved    bool
+	mode     string
+	injected *bool
 }
 
 func (s *kittyReadFault) CreateTask(ctx context.Context, c ports.CreateTaskCommand) (*core.Task, error) {
 	task, err := s.TaskService.CreateTask(ctx, c)
 	if err == nil {
 		s.saved = true
+		if !*s.injected && (s.mode == "unknown-create" || s.mode == "retire-failure") {
+			*s.injected = true
+			return nil, ports.NewTransactionError("injected-create", ports.ErrBusy)
+		}
 	}
 	return task, err
+}
+
+func (s *kittyReadFault) DeleteTask(ctx context.Context, c ports.DeleteTaskCommand) (ports.DeleteResult, error) {
+	result, err := s.TaskService.DeleteTask(ctx, c)
+	if err == nil && !*s.injected && s.mode == "unknown-delete" {
+		*s.injected = true
+		return ports.DeleteResult{}, ports.NewTransactionError("injected-delete", ports.ErrStorage)
+	}
+	return result, err
 }
 func (s *kittyReadFault) GetTaskTree(ctx context.Context, id string) ([]*core.TaskNode, error) {
 	if s.saved {

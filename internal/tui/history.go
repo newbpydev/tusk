@@ -79,6 +79,9 @@ func (m *Model) acceptHistory(msg historyMsg) tea.Cmd {
 			})
 		}
 	}
+	if cmd := m.dispatchPreview(); cmd != nil {
+		return cmd
+	}
 	if m.refreshPending {
 		m.refreshPending = false
 		return m.requestRefresh()

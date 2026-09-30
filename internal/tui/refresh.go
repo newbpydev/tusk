@@ -54,7 +54,7 @@ func (m *Model) acceptForest(msg forestMsg) tea.Cmd {
 		m.now = msg.now
 		if msg.err != nil {
 			if m.awaitingRead {
-				m.notice = "Saved; refresh failed"
+				m.notice = m.writeNotice() + "; refresh failed"
 			}
 			if m.form != nil && m.form.reloading {
 				m.form.reloading = false
@@ -70,7 +70,7 @@ func (m *Model) acceptForest(msg forestMsg) tea.Cmd {
 			m.stale = false
 			m.forest = msg.forest
 			if m.awaitingRead {
-				m.notice = "Saved"
+				m.notice = m.writeNotice()
 			}
 			m.awaitingRead = false
 			m.reloadForm()
@@ -81,6 +81,9 @@ func (m *Model) acceptForest(msg forestMsg) tea.Cmd {
 				timer = m.nextTick()
 			}
 		}
+	}
+	if cmd := m.dispatchPreview(); cmd != nil {
+		return tea.Batch(timer, cmd)
 	}
 	if m.refreshPending {
 		m.refreshPending = false

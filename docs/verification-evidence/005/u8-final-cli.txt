@@ -1,0 +1,10 @@
+previous storage owner could not be closed
+storage: operation failed
+bash-5.3$ TUSK_DB_PATH=/tmp/tusk-005-retire.VbJcvJ/fault-app.db ./bin/tusk list --all --json
+[{"id":"01a0efa6-1278-7d01-84d0-cccb7b5ca11a","title":"Retirement failure check","description":"","status":"todo","priority":2,"parent_id":null,"progress":0,"tags":[],"due_date":null,"created_at":"2026-09-30T00:10:33.464805998Z","updated_at":"2026-09-30T00:10:33.464805998Z","completed_at":null}]
+bash-5.3$ TUSK_TUI_KITTY_FIXTURE=/tmp/tusk-005-recovery-final.qUMdGW TUSK_TUI_KITTY_MODE=unknown-create ./bin/tusk-tui-fixture -test.run=^TestTUIInteractiveFixture$
+App closed. Committed changes: true; uncertain outcome: true
+interactive session failed
+bash-5.3$ TUSK_DB_PATH=$(cat /tmp/tusk-u8-final-directory)/fault-app.db ./bin/tusk list --json
+[{"id":"01a0efa8-588c-7929-ba46-59902791c421","title":"Review the saved outcome","description":"","status":"todo","priority":2,"parent_id":null,"progress":0,"tags":[],"due_date":null,"created_at":"2026-09-30T00:13:02.476446172Z","updated_at":"2026-09-30T00:13:02.476446172Z","completed_at":null},{"id":"01a0efa9-ca9e-73cd-a0bf-ab7ae8b1a7f9","title":"New action after review","description":"","status":"todo","priority":2,"parent_id":null,"progress":0,"tags":[],"due_date":null,"created_at":"2026-09-30T00:14:37.214299895Z","updated_at":"2026-09-30T00:14:37.214299895Z","completed_at":null}]
+bash-5.3$

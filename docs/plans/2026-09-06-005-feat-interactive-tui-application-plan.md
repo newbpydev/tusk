@@ -31,7 +31,7 @@ drafts when operations fail, and restore the terminal on exit.
   and recovery interactions from U5. Tests accompany every unit; U6 is acceptance,
   not the first opportunity to write tests.
 - **Execution authorization:** the owner invoked ce-work on 2026-09-29 with
-  hands-on owned Kitty verification. U1, U7, U2, U3, U4 and U5 are locally accepted; U8 is active.
+  hands-on owned Kitty verification. U1, U7, U2, U3, U4, U5 and U8 are locally accepted; U6 is active.
   See [U5 receipt](../verification-evidence/005/u5.json). Later unit and release
   acceptance remains pending; planning observations below remain historical.
 - **Completion boundary:** each implemented unit needs red/green evidence,
@@ -903,3 +903,25 @@ next. Performance/final acceptance stays U6; native/hosted release stays Feature
 Final Kitty readback review caught an obsolete failure notice after successful
 refresh. The red/green correction and fresh capture are retained in u5.json;
 canonical and minimum-Go gates passed again before the unit commit.
+
+
+### U8 local acceptance — 2026-09-29
+
+[U8 evidence](../verification-evidence/005/u8.json) records passing canonical
+validation (96.8% TUI coverage), minimum-Go race/cross-build checks, real disk
+consent/recovery tests and inspected Kitty color/plain screens. Deletion defaults
+to Cancel, pins the exact preview and resets recursion after membership conflict.
+Unknown outcomes freeze writes, retain read-only intent, close the old owner
+before readback, and require acknowledgment before independent new actions.
+No mutation is replayed or uncertain create identity guessed. A later known
+commit does not erase the earlier unknown receipt. Close failure permits only
+quit; old-owner messages cannot publish. All overlay background tests pass.
+
+V30,V36,V51,V55,V65 and V87–V100 close. Cancellation combines the U7 raw-key
+receipt tests and U8 exclusive-owner drain barriers; final child-PTY proof stays
+U6. Controlled service-outcome injection in Kitty is labeled separately from
+real SQLite transaction evidence. Inline reviews resolved the recorded findings;
+no independent review is claimed. U6 now owns final workflow, performance,
+documentation and review, including long browse notices/action-specific toggle
+errors and measured large-preview/projection costs. Native/hosted release proof
+remains Feature 006.

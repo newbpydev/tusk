@@ -1,0 +1,113 @@
+{
+  "unit": "U8 / 005-8",
+  "status": "accepted locally",
+  "date_utc": "2026-09-30T00:21:04.512220+00:00",
+  "base_commit": "a724cecb4f3a5cdcbe2c50afd1758b8c2ed7411d",
+  "source_sha256": {
+    "internal/tui/details.go": "792888d910965f699078a0e2b66a127a5ce3d41f50b0dfa9f3d58da7eac659ae",
+    "internal/tui/draft.go": "153618b09e75f1faf033f3170c7de19c6214e63d9c057a9a8529132f333ab7e8",
+    "internal/tui/frame.go": "1cdd5e5ad84ac026ad7b8a9a366cc570d055d17fc6092f368a66803cd9d933dc",
+    "internal/tui/history.go": "e62bb13c2c2abfe60749d6796d78800ba7a87b9eecc341d1037d53b462ea4b16",
+    "internal/tui/kitty_fixture_test.go": "fa20cc2b82342b4dc5e59a84d898c80eb49f74c25b3b2e6e775af9e6bcf910e5",
+    "internal/tui/model.go": "4e31d0dc4d94ab6a29e460f706113eae6307c7e86acf22ea6974efd9ae3f086c",
+    "internal/tui/mutation.go": "573ae540ef05de9e855d34b9a5e7af832de50e7e14e1ee0b272fee0bb9410a31",
+    "internal/tui/refresh.go": "fcac925f70cd0be15f79d8d4f68fb0dd851d9ffa948c0499d57c8da3e5ccbab0",
+    "internal/tui/run.go": "f5a97c1676e1143a67f2fa80a9fea331572b624685525fce366b25037e396043",
+    "internal/tui/session.go": "a3ea43efcfd604d3e33531f27838fc784b9f29373b4d457f699cb664551f05fb",
+    "internal/tui/surfaces_test.go": "ea35583a08cacc3d766a9cee8ecb51c16a29085b2357ec72d07ceaf983972f95",
+    "internal/tui/confirm.go": "08f0165b431843b2a724aabe5bfd4006e3c42126e38df2cc64dbf26cbd0444ae",
+    "internal/tui/confirm_integration_test.go": "8b28361ccf778060064c7eb201e779b79c6896efe63cde2688c3a0e36db942a4",
+    "internal/tui/confirm_test.go": "acf7814a125bbf54cd2452c65d0f7b90049296730f16f7ccad8c178621430556",
+    "internal/tui/recovery.go": "4b8148e1f400af86bd61c185759272e29c2e1d37440f39339dceee00a7e1f164",
+    "internal/tui/recovery_session_test.go": "2fb6871efb6e816c708fcd39ca8d771402755ae7f8ec474822e295795b78e8a5",
+    "internal/tui/recovery_test.go": "19078c665825fb12435013da2cc434e89f14d7fc07b861ac330a7ad6a7d6d2e2"
+  },
+  "binary_sha256": "324a1cf5ba4b9ae5d11b4a653a12b032a717f3a36337d0cfcc85f30eef881565",
+  "fixture_binary_sha256": "06f32e540e1e7d77f1264d5f6ed9aacfab7ae87ab798b7434b42e44686eda82b",
+  "canonical": "u8-accepted-final.log.gz: make validate build check-generated passed",
+  "coverage": {
+    "internal/tui": 96.8,
+    "internal/terminaltext": 100,
+    "internal/cli": 96.6,
+    "cmd/tusk": 96.2
+  },
+  "minimum_go": "u8-final-go125.log.gz: Go 1.25.0 affected race suite and five CGO-free app/CLI/TUI/text test builds passed; final independent-write integration assertion in u8-go125-final-test.log.gz",
+  "scenarios_closed": [
+    "V30",
+    "V36",
+    "V51",
+    "V55",
+    "V65",
+    "V87",
+    "V88",
+    "V89",
+    "V90",
+    "V91",
+    "V92",
+    "V93",
+    "V94",
+    "V95",
+    "V96",
+    "V97",
+    "V98",
+    "V99",
+    "V100"
+  ],
+  "product_closed": [
+    "TUSK-V61",
+    "TUSK-V63"
+  ],
+  "integration": [
+    "Disk leaf/subtree deletion and two-owner changed-membership conflict; exact IDs, missing deleted history, rollup and neighbor selection.",
+    "Fresh-owner close-before-open/tree/history; repeated reload and old epoch replies cannot overlap or publish. Sticky close failure forbids reopen.",
+    "Unknown create with identical external title does not infer identity or replay. Explicit acknowledgment permits an independent new write; session preserves both uncertainty and acknowledged commit receipts.",
+    "Cancellation barrier drains the active recovered owner before closing; U7 raw Ctrl+C/receipt tests supply key handling. Final child-PTY matrix remains U6."
+  ],
+  "kitty": {
+    "socket": "/tmp/tusk-005-kitty.OIGt5C/kitty.sock",
+    "window_id": 3,
+    "sizes": [
+      "80x24",
+      "120x40"
+    ],
+    "observed": [
+      "Default Cancel and unchecked subtree; external CLI child addition invalidates prior consent; fresh preview requires new explicit checkbox/confirmation.",
+      "Uncertain create has one saved task, no retry, read-only raw draft and explicit readback acknowledgment; independent later create succeeds.",
+      "Uncertain delete names action/title/ID and shows target absence; NO_COLOR controls/readback remain legible.",
+      "Injected retirement failure shows blocking error above draft and Quit only. Uniform modal backgrounds have no shadow bands.",
+      "Restored shell and CLI JSON establish saved task count; earlier captures of membership conflict predate copy-only count improvements."
+    ],
+    "injection": "App-only production Run fixture with real SQLite and controlled service outcome/close error; not spontaneous SQLite failure and no test results displayed in Kitty."
+  },
+  "reviews": {
+    "mode": "Inline sequential per AGENTS, not independent review",
+    "lenses": [
+      "correctness",
+      "API contract",
+      "data integrity",
+      "security",
+      "async races",
+      "testing",
+      "agent parity",
+      "maintainability",
+      "reuse",
+      "quality",
+      "efficiency"
+    ],
+    "findings_resolved": [
+      "Preview drain could strand a queued refresh.",
+      "Recovery modal must own focus and display all raw/observed fields.",
+      "Long-draft errors and reload success state need immediate visibility.",
+      "Initial unknown recovery must start exactly one refresh timer.",
+      "Unknown toggle/delete needs action, name and full ID.",
+      "Recovery acknowledgment clipped quit hint; blocked recovery incorrectly offered Reload.",
+      "Counts and consent scrolling needed clearer copy."
+    ],
+    "reuse": "baseTask centralizes uncertain action identity; completeRead retains shared read admission.",
+    "followups_in_U6": [
+      "Bound long browse notices and use action-specific toggle errors.",
+      "Measure large read-only preview/recovery content and duplicate projection before optimization."
+    ]
+  },
+  "pending": "U6 end-to-end/process/performance/documentation/final review; Feature 006 native/hosted release proof"
+}

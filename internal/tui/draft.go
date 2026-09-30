@@ -31,16 +31,33 @@ const (
 	mutationEdit
 	mutationComplete
 	mutationReopen
+	mutationDelete
 )
 
 type mutationRequest struct {
-	kind   mutationKind
-	formID uint64
-	create ports.CreateTaskCommand
-	update ports.UpdateTaskCommand
-	task   ports.TaskCommand
+	kind     mutationKind
+	formID   uint64
+	create   ports.CreateTaskCommand
+	update   ports.UpdateTaskCommand
+	task     ports.TaskCommand
+	deleteID uint64
+	deletion ports.DeleteTaskCommand
 }
 type DueParser func(string, time.Time, *time.Location) (time.Time, error)
+
+func (r mutationRequest) baseTask() *core.Task {
+	switch r.kind {
+	case mutationEdit:
+		return r.update.Base
+	case mutationComplete, mutationReopen:
+		return r.task.Base
+	case mutationDelete:
+		if r.deletion.Expected != nil {
+			return &r.deletion.Expected.Target
+		}
+	}
+	return nil
+}
 
 type taskDraft struct {
 	fields, original [fieldCount]string

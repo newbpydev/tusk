@@ -443,3 +443,12 @@ raw preservation, explicit conflict/discard and one-write/readback barriers.
 and real Kitty checks. TUSK-V62 closes. TUSK-V61/V63 keep their remaining delete
 consent portions open for U8. Product U19 and Feature 005 overall acceptance remain
 open through U8/U6; native/hosted release evidence remains Feature 006.
+
+
+### Feature 005 U8 handoff — 2026-09-29
+
+[U8 evidence](../verification-evidence/005/u8.json) closes product TUSK-V61/V63
+and the U19 forms/consent implementation. Exact preview consent, fresh-owner
+unknown-outcome readback, no replay, explicit acknowledgment and real Kitty
+checks pass. U20 / Feature 005 U6 final workflow, performance, documentation and
+review remain active; native/hosted release evidence remains Feature 006.

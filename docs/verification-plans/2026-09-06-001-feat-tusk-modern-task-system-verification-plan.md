@@ -213,9 +213,9 @@ Each scenario includes its fixture/action and expected outcome. The unit's named
 
 ### U19. Forms and confirmed mutations
 
-- [ ] TUSK-V61 **Interaction / modal focus:** Type q, d, ?, spaces and multiline notes in form; they cannot quit/toggle/delete globally. Tab cycles fields, errors stay visible, Esc restores initiating focus, second d cannot confirm delete.
+- [x] TUSK-V61 **Interaction / modal focus:** Type q, d, ?, spaces and multiline notes in form; they cannot quit/toggle/delete globally. Tab cycles fields, errors stay visible, Esc restores initiating focus, second d cannot confirm delete.
 - [x] TUSK-V62 **Failure / save lifecycle:** Submit twice rapidly; exactly one write runs. Inject validation/storage/conflict failure and retain draft. Commit then fail refresh: display saved/stale state and never resubmit. Small-terminal resize preserves draft during save.
-- [ ] TUSK-V63 **Concurrency / TUI mutations:** External CLI edit/delete/move while TUI form/confirmation is open produces conflict or safe missing-task state. Reload/reapply is explicit; latest committed graph/events remain intact.
+- [x] TUSK-V63 **Concurrency / TUI mutations:** External CLI edit/delete/move while TUI form/confirmation is open produces conflict or safe missing-task state. Reload/reapply is explicit; latest committed graph/events remain intact.
 
 ### U20. TUI workflow and real terminal acceptance
 
@@ -444,3 +444,12 @@ raw preservation, explicit conflict/discard and one-write/readback barriers.
 and real Kitty checks. TUSK-V62 closes. TUSK-V61/V63 keep their remaining delete
 consent portions open for U8. Product U19 and Feature 005 overall acceptance remain
 open through U8/U6; native/hosted release evidence remains Feature 006.
+
+
+### Feature 005 U8 handoff — 2026-09-29
+
+[U8 evidence](../verification-evidence/005/u8.json) closes product TUSK-V61/V63
+and the U19 forms/consent implementation. Exact preview consent, fresh-owner
+unknown-outcome readback, no replay, explicit acknowledgment and real Kitty
+checks pass. U20 / Feature 005 U6 final workflow, performance, documentation and
+review remain active; native/hosted release evidence remains Feature 006.

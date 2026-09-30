@@ -235,7 +235,7 @@ func (m *Model) prepareFrame() {
 	}
 	for y, s := range rows {
 		fg := textColor
-		if m.helpOpen || m.filters != nil || m.form != nil {
+		if m.helpOpen || m.filters != nil || m.form != nil || m.confirmation != nil || m.recoveryNeeded {
 			s = ansi.Strip(s)
 			fg = borderColor
 		}
@@ -250,13 +250,16 @@ func (m *Model) prepareFrame() {
 		footer = " ↑↓ scroll · PgUp/PgDn · Home/End · Tab tasks · ? help · q quit"
 	}
 	if m.recoveryNeeded {
-		footer = "Read outcome unknown · Reload required · q quit"
+		footer = " r reload · Tab / Enter choose · ↑↓ PgUp/PgDn scroll · q quit"
+		if m.recovery != nil && m.recovery.blocked {
+			footer = " Recovery blocked · Enter / q quit · ↑↓ PgUp/PgDn scroll"
+		}
 	} else if m.saving {
 		footer = " Saving… · Ctrl+C exits safely"
 	} else if m.stale {
 		footer = " Stale snapshot · writes paused · r refresh · ? help · q quit"
 		if m.awaitingRead {
-			footer = " Saved; refresh failed · writes paused · r retry · q quit"
+			footer = " " + m.writeNotice() + "; refresh failed · writes paused · r retry · q quit"
 		}
 	} else if m.busy && m.state == loaded {
 		footer = " Refreshing ·" + footer
@@ -273,8 +276,11 @@ func (m *Model) prepareFrame() {
 	if m.filters != nil {
 		footer = " Tab next · ←→ choose · Space toggle · Ctrl+S apply · Esc cancel"
 	}
-	if m.form != nil {
+	if m.form != nil && !m.recoveryNeeded {
 		footer = " Tab / Shift+Tab fields · Ctrl+S save · Esc cancel · Ctrl+C exit"
+	}
+	if m.confirmation != nil && !m.recoveryNeeded {
+		footer = " Tab choose · Space subtree · Enter confirm · Esc cancel · ↑↓ scroll"
 	}
 	if m.stale && !strings.Contains(footer, "Stale") {
 		footer = " Stale ·" + footer
@@ -289,7 +295,7 @@ func (m *Model) prepareFrame() {
 	if m.filters != nil {
 		rows = m.overlay(rows, l, "Filter tasks", m.filterLines(l.modal.width-2), 0, "Ctrl+S apply  ·  Esc cancel")
 	}
-	if m.form != nil {
+	if m.form != nil && !m.recoveryNeeded {
 		title, content, offset, controls := m.formContent(l.modal.width-2, l.modal.height-4)
 		rows = m.overlay(rows, l, title, content, offset, controls)
 		b := l.modal
@@ -297,6 +303,15 @@ func (m *Model) prepareFrame() {
 		left := cellSlice(rows[y], 0, b.x+1)
 		right := cellSlice(rows[y], b.x+b.width-1, l.width)
 		rows[y] = left + m.surface(fitCells(" "+m.form.err, b.width-2), accentColor, dialogColor) + right
+	}
+	if m.confirmation != nil && !m.recoveryNeeded {
+		content, controls := m.confirmContent(l.modal.width - 2)
+		m.confirmation.scroll = max(0, min(m.confirmation.scroll, max(0, len(content)-(l.modal.height-4))))
+		rows = m.overlay(rows, l, "Delete task", content, m.confirmation.scroll, controls)
+	}
+	if m.recoveryNeeded && m.recovery != nil {
+		content, offset, controls := m.recoveryContent(l.modal.width-2, l.modal.height-4)
+		rows = m.overlay(rows, l, "Readback and recovery", content, offset, controls)
 	}
 	m.frame = strings.Join(rows, "\n")
 }
