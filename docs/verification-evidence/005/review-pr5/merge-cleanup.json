@@ -1,0 +1,18 @@
+{
+  "pr": "https://github.com/newbpydev/tusk/pull/5",
+  "state": "MERGED",
+  "source_head": "412b98a269c3077917b26ef7f74b95f2f85702bb",
+  "merge_commit": "42d7c526da0cc3d1ab741a542a80f42f65b99950",
+  "merged_at": "2026-10-01T18:27:16Z",
+  "method": "squash with --match-head-commit",
+  "feature_branch": "feat/interactive-tui-application",
+  "local_feature_ref_absent": true,
+  "remote_feature_ref_absent": true,
+  "post_merge_main_matches_origin": true,
+  "next_phase": "Feature 006 planning awaits owner instruction",
+  "canonical_validation": {
+    "command": "make validate build check-generated",
+    "exit_code": 0,
+    "log": "merge-cleanup-validate.log.gz"
+  }
+}

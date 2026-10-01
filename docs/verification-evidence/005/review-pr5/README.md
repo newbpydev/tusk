@@ -261,3 +261,15 @@ of these measurements after report/options-only changes. Canonical validation
 passes. This closure publishes receipts/documents only; its publication head
 must receive a fresh hosted/base/head/quiet audit in-session before handoff.
 Final merge remains user-owned, and Feature 006 native/release work is pending.
+
+### PR #5 merge and branch cleanup (2026-10-01)
+
+The owner authorized merge and cleanup. A fresh audit of head
+412b98a269c3077917b26ef7f74b95f2f85702bb confirmed MERGEABLE/CLEAN, terminal
+green checks, matching review settlement and no outstanding feedback blockers.
+PR #5 was squash-merged with an exact-head guard at 2026-10-01T18:27:16Z as
+42d7c526da0cc3d1ab741a542a80f42f65b99950. Local and remote
+`feat/interactive-tui-application` refs are absent; main was fast-forwarded to
+the merge commit. The containing documentation cleanup commit synchronizes the
+masterplan and planning triplet after canonical validation. Feature 006
+planning awaits owner instruction; native/release gates remain pending.
