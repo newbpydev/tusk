@@ -174,7 +174,7 @@ func (m *Model) detailLines(w int) []string {
 		tagText = "None"
 	}
 	due := "Not set"
-	if t.DueDate != nil {
+	if t.DueDate != nil && !t.DueDate.IsZero() {
 		due = t.DueDate.In(m.options.Location).Format("Jan 2 · 15:04")
 	}
 	pair("Due date", due, "Tags", m.paint(tagText, accentColor, false))
@@ -195,9 +195,6 @@ func (m *Model) detailLines(w int) []string {
 		for _, line := range m.markdown.lines {
 			lines = append(lines, "  "+line)
 		}
-	}
-	if m.notes.Focused() {
-		lines = append(lines, strings.Split(m.notes.View(), "\n")...)
 	}
 	add("")
 	add(m.paint(strings.Repeat("─", width), borderColor, false))

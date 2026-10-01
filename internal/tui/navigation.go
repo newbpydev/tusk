@@ -36,7 +36,7 @@ func (m *Model) rebuildRows() {
 }
 
 func (m *Model) collapse(id string) {
-	if m.filter.HasPredicates() || m.dueStart != nil {
+	if filteredView(m.filter, m.dueStart, m.dueEnd) {
 		return
 	}
 	for i, row := range m.rows {
@@ -92,18 +92,35 @@ func (m *Model) navigate(k string) {
 	case "G", "end":
 		m.selected = len(m.rows) - 1
 	case "pgdown":
-		m.selected += page
+		m.pageList(1)
 	case "pgup":
-		m.selected -= page
+		m.pageList(-1)
 	case "h", "left":
 		m.collapse(m.rows[m.selected].node.Task.ID)
 	case "l", "right":
-		if !m.filter.HasPredicates() && m.dueStart == nil {
+		if !filteredView(m.filter, m.dueStart, m.dueEnd) {
 			delete(m.collapsed, m.rows[m.selected].node.Task.ID)
 		}
 	}
 	m.selected = max(0, min(m.selected, len(m.rows)-1))
 	if old != m.selected {
 		m.detailsScroll = 0
+	}
+}
+
+// Keep one complete task in common with the previous page. Group headings
+// consume one row plus the inter-group spacer, just as in listLines.
+func (m *Model) pageList(direction int) {
+	remaining := max(2, measure(m.width, m.height).bodyHeight-7)
+	for next := m.selected + direction; next >= 0 && next < len(m.rows); next += direction {
+		cost := 2
+		if m.rows[next].group != m.rows[m.selected].group {
+			cost += 2
+		}
+		if remaining < cost {
+			break
+		}
+		remaining -= cost
+		m.selected = next
 	}
 }

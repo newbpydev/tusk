@@ -16,12 +16,16 @@ type taskRow struct {
 	branch, continuation string
 }
 
+func filteredView(filter core.TaskFilter, start, end *time.Time) bool {
+	return filter.HasPredicates() || start != nil || end != nil
+}
+
 // project derives visible rows from the complete accepted forest. Filtering
 // retains ancestor paths, while collapse is a session preference left intact
 // during search. Detached sibling slices keep service snapshots immutable.
 func project(forest []*core.TaskNode, filter core.TaskFilter, start, end *time.Time, collapsed map[string]bool, now time.Time, location *time.Location) []taskRow {
 	filter.SearchTerm = strings.TrimSpace(filter.SearchTerm)
-	filtered := filter.HasPredicates() || start != nil || end != nil
+	filtered := filteredView(filter, start, end)
 	matches, included := map[string]bool{}, map[string]bool{}
 	if filtered {
 		var tasks []core.Task

@@ -187,8 +187,16 @@ func (m *Model) filterKey(msg tea.KeyMsg) {
 			*value = string(r[:len(r)-1])
 		}
 	case tea.KeySpace:
+		if len(*value) >= editorByteLimit {
+			f.err = "Input is too large."
+			return
+		}
 		*value += " "
 	case tea.KeyRunes:
+		if len(*value)+len(string(msg.Runes)) > editorByteLimit || !editableText(string(msg.Runes), false) {
+			f.err = "Input is too large or contains unsupported controls."
+			return
+		}
 		*value += string(msg.Runes)
 	}
 }

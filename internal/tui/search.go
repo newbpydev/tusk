@@ -3,6 +3,7 @@ package tui
 import (
 	"context"
 	"maps"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -54,7 +55,7 @@ func (m *Model) searchKey(msg tea.KeyMsg) tea.Cmd {
 	case tea.KeyEnter:
 		m.cancelSearchTimer()
 		m.searching = false
-		m.filter.SearchTerm = m.searchDraft
+		m.filter.SearchTerm = strings.TrimSpace(m.searchDraft)
 		return nil
 	case tea.KeyBackspace:
 		r := []rune(m.searchDraft)
@@ -62,8 +63,16 @@ func (m *Model) searchKey(msg tea.KeyMsg) tea.Cmd {
 			m.searchDraft = string(r[:len(r)-1])
 		}
 	case tea.KeySpace:
+		if len(m.searchDraft) >= editorByteLimit {
+			m.notice = "Search input is too large."
+			return nil
+		}
 		m.searchDraft += " "
 	case tea.KeyRunes:
+		if len(m.searchDraft)+len(string(msg.Runes)) > editorByteLimit || !editableText(string(msg.Runes), false) {
+			m.notice = "Search input is too large or contains unsupported controls."
+			return nil
+		}
 		m.searchDraft += string(msg.Runes)
 	default:
 		return nil

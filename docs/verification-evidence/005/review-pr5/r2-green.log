@@ -1,0 +1,212 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestPR5|TestNavigation|TestSearch|TestFilter|TestForm|TestRecovery'
+=== RUN   TestRecovery_DiskUnknownDeletionObservesAbsence
+--- PASS: TestRecovery_DiskUnknownDeletionObservesAbsence (0.02s)
+=== RUN   TestRecovery_DiskUnknownCreateNeverInfersIdentity
+--- PASS: TestRecovery_DiskUnknownCreateNeverInfersIdentity (0.02s)
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop/today
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop/tomorrow
+--- PASS: TestForm_RelativeDueEditIsNotStaleNoop (0.01s)
+    --- PASS: TestForm_RelativeDueEditIsNotStaleNoop/today (0.00s)
+    --- PASS: TestForm_RelativeDueEditIsNotStaleNoop/tomorrow (0.00s)
+=== RUN   TestFilter_RelativeDayUsesApplyClock
+--- PASS: TestFilter_RelativeDayUsesApplyClock (0.00s)
+=== RUN   TestForm_DefaultsAndDetachedDirtyPatch
+--- PASS: TestForm_DefaultsAndDetachedDirtyPatch (0.00s)
+=== RUN   TestForm_NoChangesAndExplicitClears
+--- PASS: TestForm_NoChangesAndExplicitClears (0.00s)
+=== RUN   TestForm_EditDiffPatchesNotesAndPriority
+=== RUN   TestForm_EditDiffPatchesNotesAndPriority/notes_only
+=== RUN   TestForm_EditDiffPatchesNotesAndPriority/priority_only
+=== RUN   TestForm_EditDiffPatchesNotesAndPriority/notes_and_priority
+=== RUN   TestForm_EditDiffPatchesNotesAndPriority/unchanged_edit
+--- PASS: TestForm_EditDiffPatchesNotesAndPriority (0.00s)
+    --- PASS: TestForm_EditDiffPatchesNotesAndPriority/notes_only (0.00s)
+    --- PASS: TestForm_EditDiffPatchesNotesAndPriority/priority_only (0.00s)
+    --- PASS: TestForm_EditDiffPatchesNotesAndPriority/notes_and_priority (0.00s)
+    --- PASS: TestForm_EditDiffPatchesNotesAndPriority/unchanged_edit (0.00s)
+=== RUN   TestForm_DueWithoutParserIsRejected
+--- PASS: TestForm_DueWithoutParserIsRejected (0.00s)
+=== RUN   TestForm_ValidationFocusAndProgressContracts
+--- PASS: TestForm_ValidationFocusAndProgressContracts (0.00s)
+=== RUN   TestFilter_ApplyClearAndLiteralRouting
+--- PASS: TestFilter_ApplyClearAndLiteralRouting (0.02s)
+=== RUN   TestFilter_EmptyApplyKeepsHeaderTruthful
+--- PASS: TestFilter_EmptyApplyKeepsHeaderTruthful (0.01s)
+=== RUN   TestFilter_DayIsResolvedOnlyOnApply
+--- PASS: TestFilter_DayIsResolvedOnlyOnApply (0.01s)
+=== RUN   TestFilter_RefreshAndResizePreserveDraft
+--- PASS: TestFilter_RefreshAndResizePreserveDraft (0.01s)
+=== RUN   TestFilter_FieldNavigationErrorsAndWideInput
+--- PASS: TestFilter_FieldNavigationErrorsAndWideInput (0.02s)
+=== RUN   TestFilter_PlainChoiceHasVisibleFocus
+--- PASS: TestFilter_PlainChoiceHasVisibleFocus (0.00s)
+=== RUN   TestForm_ReadonlyPreviewPreparationIsBounded
+--- PASS: TestForm_ReadonlyPreviewPreparationIsBounded (0.12s)
+=== RUN   TestForm_FocusLiteralTextAndDiscard
+--- PASS: TestForm_FocusLiteralTextAndDiscard (0.01s)
+=== RUN   TestForm_AtomicPasteAndReadonlyReplacement
+--- PASS: TestForm_AtomicPasteAndReadonlyReplacement (0.05s)
+=== RUN   TestForm_ParentPickerSnapshotAndPurity
+--- PASS: TestForm_ParentPickerSnapshotAndPurity (0.02s)
+=== RUN   TestForm_SmallTerminalPreservesDraftAndSubmission
+--- PASS: TestForm_SmallTerminalPreservesDraftAndSubmission (0.02s)
+=== RUN   TestForm_ControlsValidationAndParentSearch
+--- PASS: TestForm_ControlsValidationAndParentSearch (0.05s)
+=== RUN   TestForm_VisiblePositionAndTimezone
+--- PASS: TestForm_VisiblePositionAndTimezone (0.00s)
+=== RUN   TestForm_BrowseHelpAndQuitRemainVisible
+--- PASS: TestForm_BrowseHelpAndQuitRemainVisible (0.00s)
+=== RUN   TestForm_ParentSearchAcceptsSpaces
+--- PASS: TestForm_ParentSearchAcceptsSpaces (0.01s)
+=== RUN   TestForm_ParentPickerWindowsLargeMatchLists
+--- PASS: TestForm_ParentPickerWindowsLargeMatchLists (0.04s)
+=== RUN   TestForm_ParentPickerDeepSelectionBuildsOnlyVisibleWindow
+--- PASS: TestForm_ParentPickerDeepSelectionBuildsOnlyVisibleWindow (0.04s)
+=== RUN   TestNavigation_SelectionCollapseAndPages
+--- PASS: TestNavigation_SelectionCollapseAndPages (0.00s)
+=== RUN   TestSearch_LiteralEntryAndRestore
+--- PASS: TestSearch_LiteralEntryAndRestore (0.00s)
+=== RUN   TestSearch_EscDismissalProjectsOnce
+--- PASS: TestSearch_EscDismissalProjectsOnce (0.01s)
+=== RUN   TestSearch_DebounceOrderAcceptCancelAndLiteralKeys
+--- PASS: TestSearch_DebounceOrderAcceptCancelAndLiteralKeys (0.00s)
+=== RUN   TestNavigation_DiscoverableBrowseActions
+--- PASS: TestNavigation_DiscoverableBrowseActions (0.00s)
+=== RUN   TestNavigation_ViewportAndSearchCollapseIsolation
+--- PASS: TestNavigation_ViewportAndSearchCollapseIsolation (0.02s)
+=== RUN   TestNavigation_SpaciousMetadataFollowsTreeIndent
+--- PASS: TestNavigation_SpaciousMetadataFollowsTreeIndent (0.00s)
+=== RUN   TestPR5_StaleFormSaveExplainsPause
+--- PASS: TestPR5_StaleFormSaveExplainsPause (0.01s)
+=== RUN   TestPR5_DeleteAbandonedReadCanRefresh
+--- PASS: TestPR5_DeleteAbandonedReadCanRefresh (0.03s)
+=== RUN   TestPR5_FailedTogglePausesWritesUntilReadback
+--- PASS: TestPR5_FailedTogglePausesWritesUntilReadback (0.00s)
+=== RUN   TestPR5_PageDownKeepsVisibleTaskOverlap
+--- PASS: TestPR5_PageDownKeepsVisibleTaskOverlap (0.00s)
+=== RUN   TestPR5_SearchWhitespaceAndAtomicLimits
+--- PASS: TestPR5_SearchWhitespaceAndAtomicLimits (0.00s)
+=== RUN   TestPR5_EndOnlyFilterMatchesCollapsePresentation
+--- PASS: TestPR5_EndOnlyFilterMatchesCollapsePresentation (0.00s)
+=== RUN   TestPR5_ParentPickerWindowKeepsPairs
+--- PASS: TestPR5_ParentPickerWindowKeepsPairs (0.00s)
+=== RUN   TestPR5_DetailsDoesNotRenderTemplateEditor
+--- PASS: TestPR5_DetailsDoesNotRenderTemplateEditor (0.00s)
+=== RUN   TestPR5_RecoveryZeroDueMatchesDetails
+--- PASS: TestPR5_RecoveryZeroDueMatchesDetails (0.00s)
+=== RUN   TestSearch_ContextCollapseAndPredicates
+--- PASS: TestSearch_ContextCollapseAndPredicates (0.00s)
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/none
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/close
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/open
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/tree
+=== RUN   TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/history
+--- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/none (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/close (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/open (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/tree (0.00s)
+    --- PASS: TestRecovery_SessionRetiresBeforeFreshTreeAndHistory/history (0.00s)
+=== RUN   TestRecovery_CloseFailureOnlyAllowsQuit
+--- PASS: TestRecovery_CloseFailureOnlyAllowsQuit (0.00s)
+=== RUN   TestRecovery_CancelDrainsBeforeClosingFreshOwner
+--- PASS: TestRecovery_CancelDrainsBeforeClosingFreshOwner (0.00s)
+=== RUN   TestRecovery_UnknownCreateNeverReplays
+--- PASS: TestRecovery_UnknownCreateNeverReplays (0.01s)
+=== RUN   TestRecovery_OldOwnerMessagesIgnored
+--- PASS: TestRecovery_OldOwnerMessagesIgnored (0.00s)
+=== RUN   TestRecovery_FailedReadbackCannotUnfreeze
+--- PASS: TestRecovery_FailedReadbackCannotUnfreeze (0.00s)
+=== RUN   TestRecovery_OwnsFocusAboveEveryModal
+--- PASS: TestRecovery_OwnsFocusAboveEveryModal (0.01s)
+=== RUN   TestRecovery_ComparisonIncludesRawAndObservedFields
+--- PASS: TestRecovery_ComparisonIncludesRawAndObservedFields (0.01s)
+=== RUN   TestRecovery_InitialUnknownStartsRefreshTimerAfterReadback
+--- PASS: TestRecovery_InitialUnknownStartsRefreshTimerAfterReadback (0.00s)
+=== RUN   TestRecovery_ErrorVisibleAboveLongDraft
+--- PASS: TestRecovery_ErrorVisibleAboveLongDraft (0.01s)
+=== RUN   TestRecovery_ReadbackStateIsClearWithoutRuntimeTerms
+--- PASS: TestRecovery_ReadbackStateIsClearWithoutRuntimeTerms (0.00s)
+=== RUN   TestRecovery_OldRenderReleasesLaneWithoutPublishing
+--- PASS: TestRecovery_OldRenderReleasesLaneWithoutPublishing (0.00s)
+=== RUN   TestRecovery_NamesUncertainTaskActionBeforeReload
+--- PASS: TestRecovery_NamesUncertainTaskActionBeforeReload (0.00s)
+=== RUN   TestRecovery_SavedNestedSubtaskDetailRendersParentDueAndCompletion
+--- PASS: TestRecovery_SavedNestedSubtaskDetailRendersParentDueAndCompletion (0.00s)
+=== RUN   TestRecovery_ReplacedIncarnationIsFlagged
+--- PASS: TestRecovery_ReplacedIncarnationIsFlagged (0.00s)
+=== RUN   TestRecovery_KeysScrollMoveFocusAndEnterReloads
+--- PASS: TestRecovery_KeysScrollMoveFocusAndEnterReloads (0.01s)
+=== RUN   TestRecovery_UnavailableReloadFreezesWrites
+--- PASS: TestRecovery_UnavailableReloadFreezesWrites (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.668s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	(cached) [no tests to run]
+=== RUN   TestFormat_Plain
+--- PASS: TestFormat_Plain (0.00s)
+=== RUN   TestFormat_CellWidths
+--- PASS: TestFormat_CellWidths (0.01s)
+=== RUN   TestFormat_OtherValues
+--- PASS: TestFormat_OtherValues (0.00s)
+=== RUN   TestFormat_Parallel
+=== RUN   TestFormat_Parallel/0
+=== PAUSE TestFormat_Parallel/0
+=== RUN   TestFormat_Parallel/1
+=== PAUSE TestFormat_Parallel/1
+=== RUN   TestFormat_Parallel/2
+=== PAUSE TestFormat_Parallel/2
+=== RUN   TestFormat_Parallel/3
+=== PAUSE TestFormat_Parallel/3
+=== RUN   TestFormat_Parallel/4
+=== PAUSE TestFormat_Parallel/4
+=== RUN   TestFormat_Parallel/5
+=== PAUSE TestFormat_Parallel/5
+=== RUN   TestFormat_Parallel/6
+=== PAUSE TestFormat_Parallel/6
+=== RUN   TestFormat_Parallel/7
+=== PAUSE TestFormat_Parallel/7
+=== RUN   TestFormat_Parallel/8
+=== PAUSE TestFormat_Parallel/8
+=== RUN   TestFormat_Parallel/9
+=== PAUSE TestFormat_Parallel/9
+=== CONT  TestFormat_Parallel/0
+=== CONT  TestFormat_Parallel/4
+=== CONT  TestFormat_Parallel/3
+=== CONT  TestFormat_Parallel/2
+=== CONT  TestFormat_Parallel/1
+=== CONT  TestFormat_Parallel/8
+=== CONT  TestFormat_Parallel/5
+=== CONT  TestFormat_Parallel/9
+=== CONT  TestFormat_Parallel/6
+=== CONT  TestFormat_Parallel/7
+--- PASS: TestFormat_Parallel (0.00s)
+    --- PASS: TestFormat_Parallel/0 (0.00s)
+    --- PASS: TestFormat_Parallel/4 (0.00s)
+    --- PASS: TestFormat_Parallel/3 (0.00s)
+    --- PASS: TestFormat_Parallel/2 (0.00s)
+    --- PASS: TestFormat_Parallel/1 (0.00s)
+    --- PASS: TestFormat_Parallel/8 (0.00s)
+    --- PASS: TestFormat_Parallel/9 (0.00s)
+    --- PASS: TestFormat_Parallel/5 (0.00s)
+    --- PASS: TestFormat_Parallel/6 (0.00s)
+    --- PASS: TestFormat_Parallel/7 (0.00s)
+=== RUN   TestFormat_KittyPreview
+    format_test.go:171: explicit visual fixture
+--- SKIP: TestFormat_KittyPreview (0.00s)
+=== RUN   TestFormat_NoTerminalProbe
+--- PASS: TestFormat_NoTerminalProbe (0.00s)
+=== RUN   TestFormat_TreeContinuations
+--- PASS: TestFormat_TreeContinuations (0.00s)
+=== RUN   TestFormat_HeaderAlignment
+--- PASS: TestFormat_HeaderAlignment (0.00s)
+=== RUN   TestFormat_HistoryNarrowRecords
+--- PASS: TestFormat_HistoryNarrowRecords (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	(cached)
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	(cached) [no tests to run]

@@ -193,7 +193,7 @@ func (m *Model) listLines(w, h int) []string {
 			}
 			prefix := "  " + clippedTreeGuide(row.branch, max(2, w-12-len(context)))
 			if len(row.node.Children) > 0 {
-				if m.collapsed[task.ID] && !m.filter.HasPredicates() && m.dueStart == nil {
+				if m.collapsed[task.ID] && !filteredView(m.filter, m.dueStart, m.dueEnd) {
 					prefix += "▸ "
 				} else {
 					prefix += "▾ "

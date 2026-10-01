@@ -1,0 +1,40 @@
+ TUSK  /  Personal workspace                                                                     f Filters   a New task 
+╭─ > Tasks · 1 task ───────────────────────────╮╭─ Task details ───────────────────────────────────────────────────────╮
+│ /  Search tasks                              ││                                                                      │
+│ [1 All tasks]  2 Today  3 Done               ││  Review seed                                                         │
+│──────────────────────────────────────────────││  Root task                                                           │
+│  Backlog                                     ││                                                                      │
+│ >○ Review seed                               ││  Status                            Priority                          │
+│    Todo · Medium      ╭─ > Filter tasks ─────────────────────────────────────────────────────╮                       │
+│                       │                                                                      │                       │
+│                       │  Choose any statuses and priorities; empty means all.                │                       │
+│                       │                                                                      │                       │
+│                       │  > Status                                                            │                       │
+│                       │    >[ ] Todo   [ ] In progress   [ ] Blocked   [ ] Done              │              (0 / 1)  │
+│                       │                                                                      │───────────────   0%   │
+│                       │    Priority                                                          │                       │
+│                       │     [ ] Low   [ ] Medium   [ ] High   [ ] Urgent                     │                       │
+│                       │                                                                      │                       │
+│                       │    Tags · all must match                                             │                       │
+│                       │    │                                                                 │─────────────────────  │
+│                       │                                                                      │                       │
+│                       │    Due day · today, tomorrow or YYYY-MM-DD                           │                       │
+│                       │    │                                                                 │                       │
+│                       │                                                                      │parent_id, priority,   │
+│                       │                                                                      │                       │
+│                       │                                                                      │                       │
+│                       │                                                                      │                       │
+│                       │                                                                      │─────────────────────  │
+│                       │                                                                      │                       │
+│                       │                                                                      │9                      │
+│                       │                                                                      │                       │
+│                       │    [ Apply filters ]    [ Clear all ]                                │                       │
+│                       │                                                                      │                       │
+│                       ╰──────────────────────────────────────────────────────────────────────╯                       │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+╰──────────────────────────────────────────────╯╰──────────────────────────────────────────────────────────────────────╯
+ Tab next · ←→ choose · Space toggle · Ctrl+S apply · Esc cancel

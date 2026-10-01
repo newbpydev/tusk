@@ -409,6 +409,8 @@ func (m *Model) formContent(width, area int) (string, []string, int, string) {
 		// renders identically while allocation follows the modal area rather
 		// than the selection depth.
 		offset := max(0, 2+p.selected*2-area+2)
+		// Start on a title and keep the selected title/ID pair visible.
+		offset += offset % 2
 		limit := min(2+2*len(matches), offset+area)
 		lines := make([]string, max(0, limit-offset))
 		if offset == 0 && limit >= 2 {

@@ -5,6 +5,7 @@ package tui
 import (
 	"context"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/cursor"
@@ -172,7 +173,7 @@ func (m *Model) Update(msg tea.Msg) (next tea.Model, cmd tea.Cmd) {
 		if !m.searching || msg.token != m.searchToken || msg.err != nil {
 			return m, nil
 		}
-		m.filter.SearchTerm = msg.query
+		m.filter.SearchTerm = strings.TrimSpace(msg.query)
 	case fatalMsg:
 		m.exitErr = msg.err
 		return m, tea.Quit

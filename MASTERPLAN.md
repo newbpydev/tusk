@@ -5,7 +5,7 @@
 **Active Implementation Target**: PR #5 hosted-review remediation — assess all 28 threads; validate and commit each bounded fix unit
 
 - [x] PR #5 review unit R1: stale-form save feedback, delete-dialog refresh and failed-toggle write pause.
-- [ ] PR #5 review unit R2: navigation, input and presentation consistency.
+- [x] PR #5 review unit R2: navigation, input and presentation consistency.
 - [ ] PR #5 review unit R3: lifecycle, environment and verification portability.
 - [ ] Settle all observed PR #5 feedback and current-head checks; final merge remains user-owned.
 

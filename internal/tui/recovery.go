@@ -304,7 +304,7 @@ func (m *Model) recoveryContent(width, area int) ([]string, int, string) {
 			}
 			add("Parent: " + parent)
 			due := "Not set"
-			if task.DueDate != nil {
+			if task.DueDate != nil && !task.DueDate.IsZero() {
 				due = task.DueDate.In(m.options.Location).Format(time.RFC3339Nano)
 			}
 			add("Due: " + due)
