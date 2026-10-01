@@ -286,5 +286,14 @@
     "verdict": "fixed",
     "unit": "R4",
     "reason": "Failed-read abandonment now says before retrying in both dialogs, avoiding form-only saving language."
+  },
+  {
+    "comment_id": 4157691136,
+    "path": "internal/terminaltext/text.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157691136",
+    "quote": "**[SUGGESTION]:** A few invisible/spoofing characters still pass the expanded blocklist",
+    "verdict": "fixed",
+    "unit": "R5",
+    "reason": "Visible escaping now covers Mongolian vowel separator, both jamo fillers, full/half-width Hangul fillers and all U+2060\u2013U+206F format/reserved controls. Scalar and multiline regressions reproduce the omissions and pass; ordinary Hangul, ZWJ emoji and ZWNJ script composition remain unchanged. Stored raw values are untouched."
   }
 ]

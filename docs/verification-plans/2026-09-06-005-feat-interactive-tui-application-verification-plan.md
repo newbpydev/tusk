@@ -1058,3 +1058,25 @@ changing child GC/procs does not establish a uniform latency improvement.
 No runtime knob, output contract, threshold or failing sample was changed.
 Current CLI acceptance and hosted settlement remain open; a final candidate
 matrix follows this committed feedback unit. All reports are under review-pr5.
+
+### PR #5 hosted follow-up R5 (2026-10-01)
+
+The additional invisible-text finding is fixed after eight observed regression
+failures: display escaping covers Mongolian vowel separator, both jamo fillers,
+full/half-width Hangul fillers and the complete U+2060–U+206F format/reserved
+range. Stored content is untouched; ordinary Hangul, ZWJ emoji and ZWNJ script
+composition retain their existing display behavior. This bounded display policy
+uses visible representations of default-ignorable characters, as allowed by the
+[Unicode display FAQ](https://www.unicode.org/faq/unsup_char.html); reserved ranges
+are described in [Unicode 16 chapter 5](https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-5/).
+
+Focused Red/Green and `make validate build check-generated` pass. An isolated
+owned Kitty CLI window confirms visible escapes and normal Hangul/emoji; its
+capture was inspected and the window closed. The first combined fixture title
+hit the existing table title limit, so two short titles provide complete visible
+coverage without changing the formatter. Kitty's text dump escapes the joined
+emoji's ZWJ; the native screenshot and raw-string unit test cover that separately.
+
+The R4 candidate CLI matrix remains failed at 82/84, with large JSON-tree p90
+19.475 ms in run 1 and 16.750 ms in run 2. Every sample is retained. CLI latency
+acceptance and hosted settlement remain pending after this committed review fix.

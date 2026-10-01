@@ -87,14 +87,14 @@ func FuzzTerminalText(f *testing.F) {
 }
 
 func TestPR5_InvisibleFormattingIsVisible(t *testing.T) {
-	for _, r := range []rune{0x200b, 0x00ad, 0x2060, 0x2061, 0x2062, 0x2063, 0x2064, 0xfff9, 0xfffa, 0xfffb, 0xe0001, 0xe0020, 0xe007f} {
+	for _, r := range []rune{0x115f, 0x1160, 0x180e, 0x3164, 0xffa0, 0x2065, 0x206a, 0x206f, 0x200b, 0x00ad, 0x2060, 0x2061, 0x2062, 0x2063, 0x2064, 0xfff9, 0xfffa, 0xfffb, 0xe0001, 0xe0020, 0xe007f} {
 		raw := "a" + string(r) + "b"
 		want := fmt.Sprintf(`a\u%04xb`, r)
 		if terminaltext.Scalar(raw) != want || terminaltext.Multiline(raw) != want {
 			t.Errorf("invisible %U not shown", r)
 		}
 	}
-	if terminaltext.Scalar("👩‍💻") != "👩‍💻" {
+	if terminaltext.Scalar("한글 👩‍💻 ا\u200cب") != "한글 👩‍💻 ا\u200cب" {
 		t.Fatal("ZWJ emoji broken")
 	}
 }
