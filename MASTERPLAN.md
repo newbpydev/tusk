@@ -1,13 +1,20 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 005 published as PR #5; Kilo workspace checkout repair passes local validation, hosted startup verification pending
-**Active Phase**: Feature 005 PR #5 reviewer startup repair
-**Active Implementation Target**: Repair vendored Glamour Git LFS checkout failure, validate, publish and verify Kilo workspace startup
+**Current Status**: Feature 005 PR #5 reviewer startup repaired and verified locally and in Kilo; hosted review is running
+**Active Phase**: Feature 005 hosted PR review; Phase 6 planning awaits instruction
+**Active Implementation Target**: None — PR #5 checkout repair complete; full hosted review remains pending
 
 - [x] Replace the eight unavailable Glamour gallery LFS pointers with verified
   upstream image bytes stored in regular Git; retain source provenance.
 - [x] Observe the checkout regression Red/Green and pass `make validate`.
-- [ ] Publish the bounded PR #5 fix and verify Kilo passes workspace setup.
+- [x] Publish the bounded PR #5 fix and verify Kilo passes workspace setup.
+
+Startup repair commit `4236d83` passes canonical validation and a fresh GitHub
+clone with a required failing LFS filter. Kilo's live session loaded the review
+skill and ran PR-reading commands on that commit. See the
+[startup receipt](docs/verification-evidence/005/pr5-reviewer-startup/README.md).
+The full review result and merge readiness remain pending; no release gate is
+closed by reviewer startup.
 
 - [x] Re-review the full feature diff targeting all P0-P2 issues before cloud review.
 - [x] Fix the four validator-confirmed findings (path-resolution duplication,

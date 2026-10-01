@@ -969,6 +969,9 @@ runtime behavior are unchanged. `TestTUI_DependencyCheckoutNeedsNoLFS` checks
 fresh indexed checkouts with a failing required LFS filter and rejects unresolved
 pointers. See the [startup repair evidence](../verification-evidence/005/pr5-reviewer-startup/README.md)
 for local validation and the separate hosted startup result.
+Repair commit `4236d83` passes canonical validation and a fresh remote clone
+with LFS configured to fail. Kilo's new run loaded its review skill and read
+PR #5 on that commit; startup is repaired, while its review result is pending.
 
 The syntax-only correction passed 56/84 CLI case-runs but retained help/version
 and large-query misses (`u6-logs/cli-latency-no-syntax.json`). The second patch

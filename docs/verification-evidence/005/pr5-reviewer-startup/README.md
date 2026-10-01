@@ -33,6 +33,14 @@ race tests, coverage, script tests and module checks. Runtime Go code is
 unchanged; existing performance and Kitty receipts are not relabeled as new
 verification. Native/hosted Feature 006 release scenarios remain separate.
 
-Publication and a fresh remote checkout with LFS unavailable are pending.
-Kilo passing workspace setup must be observed separately on the published head.
-The full review result and PR merge readiness are outside this startup receipt.
+Repair commit `4236d83a91a4da8476238a8986bf9360bc35c816` is published.
+`remote-clone.json` records a fresh GitHub clone of that exact head with both LFS
+process/smudge commands set to fail and the filter required: exit 0, all eight
+asset hashes verified.
+
+Kilo automatically started a new run on the repair commit. Its authenticated
+review page showed `Running`; the live session log showed the review skill
+loading and subsequent `gh pr view` / `gh pr diff` commands, proving workspace
+setup finished. `hosted-startup.json` records those observed events and
+`kilo-restarted.json` records GitHub's matching check. The full review result
+and PR merge readiness remain outside this startup receipt.

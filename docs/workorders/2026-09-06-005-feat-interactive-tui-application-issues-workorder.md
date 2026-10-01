@@ -22,6 +22,8 @@ records the checkout regression Red/Green and all eight verified image hashes.
 Canonical validation is required before commit. Closure requires publication,
 a fresh remote checkout with LFS unavailable and Kilo passing workspace setup;
 the later review result and Feature 006 release gates remain separate.
+ISS-029 is closed by published repair commit `4236d83`, its passing fresh remote
+clone check and Kilo's observed review skill/PR-reading activity on that head.
 
 The [plan](../plans/2026-09-06-005-feat-interactive-tui-application-plan.md) and
 [verification plan](../verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md) are one

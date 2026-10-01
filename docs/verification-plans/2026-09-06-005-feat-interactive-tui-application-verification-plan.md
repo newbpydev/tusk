@@ -22,7 +22,10 @@ The [repair evidence](../verification-evidence/005/pr5-reviewer-startup/README.m
 retains Red/Green, the original Kilo failure and canonical validation. A fresh
 remote checkout and Kilo passing workspace setup are separate post-publication
 checks. Runtime implementation is unchanged, so no new Kitty or latency evidence
-is claimed. Hosted reviewer startup does not close Feature 006 V111–V112.
+is claimed. Repair commit `4236d83` passes the fresh remote clone check, including
+all eight asset hashes. Kilo's live session loaded its review skill and read
+PR #5 on that commit, proving workspace setup completed. The review result
+remains pending. Hosted reviewer startup does not close Feature 006 V111–V112.
 
 ## Verification contract
 
