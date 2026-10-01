@@ -209,3 +209,7 @@ host query p95 guard changes; reference limits/results, help/version, query
 p99/max, sample counts and all outliers stay intact. A fresh complete matrix is
 required against this revised contract. This is explicit owner-authorized host
 calibration, not a measured production speedup or proof of hardware causation.
+
+Host-profile runs require an explicit new `CLI_BENCH_OUTPUT` path. Existing
+files are rejected, and final output stays on the exclusively created descriptor.
+Invalid profile names report both accepted choices on stderr.

@@ -207,3 +207,26 @@ source proof; commit/VCS metadata changes are not a new runtime measurement.
 `make validate build check-generated` passes, with benchmark-package coverage
 95.5% after closing the initially missed reporting path (93.8%). This closes
 local acceptance under the explicit host exception; hosted settlement is next.
+
+### PR #5 hosted follow-up R9 (2026-10-01)
+
+Two calibration-harness suggestions are reproduced Red: a host run could
+replace an existing report, the Makefile selected the retained Feature 004
+default without an explicit destination, and a typo profile returned 2 silently.
+Host runs now require an explicit fresh destination; the Makefile host default
+is empty, and the runner exclusively creates and holds the report descriptor
+through final output. Existing files and path replacements cannot redirect
+writes into retained evidence. Invalid profiles name the rejected value and both
+accepted choices on stderr. Reference-profile behavior stays unchanged.
+
+Red/Green and `make validate build check-generated` pass (benchmark coverage
+95.5%). Replacement-path regression covers final-write ownership. Production
+sources, sampling/output-validation/summary code and host assessment are unchanged;
+r9-measurement-bridge.json verifies the exact delta against the measured source
+hashes. The complete CLI/TUI matrices remain applicable without claiming a new
+measurement. Both suggestions are addressed; hosted settlement follows.
+
+The initial receipt assertion omitted Makefile from the expected source delta;
+the shell sequence nevertheless committed/pushed the validated code as 12f3a8e.
+This follow-up synchronizes the receipt, checklist, plan, verification plan and
+workorder before advancing. No failed measurement or source hash was rewritten.

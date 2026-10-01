@@ -322,5 +322,23 @@
     "verdict": "fixed",
     "unit": "R8",
     "reason": "Notices now track whether their source requires refresh. Matching successful readback clears mutation/read failures, while replacing a notice resets that lifecycle and preserves write receipts. Red/Green tests cover conflict, missing-task and storage-failure toggles, confirmed form reload, failed retry and replacement. Existing committed-save readback tests preserve Saved across refresh failure/recovery. make validate build check-generated passes."
+  },
+  {
+    "comment_id": 4158411085,
+    "path": "Makefile",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4158411085",
+    "quote": "Host-profile runs can silently overwrite retained Feature 004 evidence",
+    "verdict": "fixed-differently",
+    "unit": "R9",
+    "reason": "Host runs require an explicit fresh output destination instead of sharing the reference default. The Makefile leaves host output unset; the runner exclusively creates the report and retains its descriptor through final output, so preexisting reports and replacement paths are protected. Red/Green covers omitted/existing output, Makefile wiring and final-write ownership. make validate build check-generated passes. Sampling and host acceptance calculations are unchanged."
+  },
+  {
+    "comment_id": 4158411094,
+    "path": "scripts/cli-bench/main.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4158411094",
+    "quote": "Invalid --acceptance-profile value exits 2 with no diagnostic",
+    "verdict": "fixed",
+    "unit": "R9",
+    "reason": "Invalid profiles now print the rejected value and both valid profile names to stderr before returning 2. A Red/Green regression pins the diagnostic. make validate build check-generated passes."
   }
 ]
