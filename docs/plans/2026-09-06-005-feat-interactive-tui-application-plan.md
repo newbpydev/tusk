@@ -958,6 +958,18 @@ The source/license copy and SHA-256 manifest live in `third_party/glamour`;
 Green after it. The full unmodified timing policy must still pass before U6
 acceptance. This is a measured startup correction, not a waived latency gate.
 
+PR #5 exposed a separate checkout defect: the upstream gallery PNGs were copied
+as Git LFS pointers together with their `.gitattributes`, but those objects did
+not exist in Tusk's LFS store. Kilo's workspace setup failed with exit 128 before
+review could start. The gallery now contains the upstream v0.9.1 image bytes in
+regular Git, with size and SHA-256 verified against all eight original pointers.
+The manifest retains the original pointer hashes and explicitly declares the
+materialized assets and LFS attribute correction. The two renderer patches and
+runtime behavior are unchanged. `TestTUI_DependencyCheckoutNeedsNoLFS` checks
+fresh indexed checkouts with a failing required LFS filter and rejects unresolved
+pointers. See the [startup repair evidence](../verification-evidence/005/pr5-reviewer-startup/README.md)
+for local validation and the separate hosted startup result.
+
 The syntax-only correction passed 56/84 CLI case-runs but retained help/version
 and large-query misses (`u6-logs/cli-latency-no-syntax.json`). The second patch
 removes the remaining sanitizer registry initialization; HTML text/markup/entity

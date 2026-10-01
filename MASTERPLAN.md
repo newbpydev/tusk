@@ -1,8 +1,13 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 005 locally accepted; review round's confirmed findings fixed and the four P2 coverage gaps closed by tests, committed locally
-**Active Phase**: Phase 6 planning awaits instruction
-**Active Implementation Target**: None — Feature 005 review fixes and coverage commits done; repeat review pass next
+**Current Status**: Feature 005 published as PR #5; Kilo workspace checkout repair passes local validation, hosted startup verification pending
+**Active Phase**: Feature 005 PR #5 reviewer startup repair
+**Active Implementation Target**: Repair vendored Glamour Git LFS checkout failure, validate, publish and verify Kilo workspace startup
+
+- [x] Replace the eight unavailable Glamour gallery LFS pointers with verified
+  upstream image bytes stored in regular Git; retain source provenance.
+- [x] Observe the checkout regression Red/Green and pass `make validate`.
+- [ ] Publish the bounded PR #5 fix and verify Kilo passes workspace setup.
 
 - [x] Re-review the full feature diff targeting all P0-P2 issues before cloud review.
 - [x] Fix the four validator-confirmed findings (path-resolution duplication,

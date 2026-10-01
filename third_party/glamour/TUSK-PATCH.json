@@ -194,7 +194,16 @@
   },
   "patches": {
     "ansi/codeblock.go": "59bd42ff01c277eff54804f52b39094b3ed279c51ed15b436e69d3067eb1aa1a",
-    "ansi/context.go": "37a99bc0830d674ba3a9bd9c311900444e2bc9761d8120d0c64a9592f9020963"
+    "ansi/context.go": "37a99bc0830d674ba3a9bd9c311900444e2bc9761d8120d0c64a9592f9020963",
+    ".gitattributes": "b88b27c9d0acc2e233e8a14d50337e4aece1c9a90bb4873ce77366e3eb49f575",
+    "styles/gallery/ascii.png": "5128c02d5dbac60af23ae4d277ae0f9b2982d8d7075bdbf3b775bc02495b7648",
+    "styles/gallery/auto.png": "25ed3a3576a959efeb1c8e770c4550245a88e8864674ec48eb057f0b0a13eacb",
+    "styles/gallery/dark.png": "f79e4f218b0edfa9112d3a4ce0dea9e850d2eb9e029230e8a66ac087c5d91938",
+    "styles/gallery/dracula.png": "ec587d674b781248779619b13f6500ef5918bd57b37c60d54363f70f61a507cc",
+    "styles/gallery/light.png": "5d06e782f22c9e1028c03b75cc0f1d514637ee20f1d31896326261c984ed4b7a",
+    "styles/gallery/notty.png": "5128c02d5dbac60af23ae4d277ae0f9b2982d8d7075bdbf3b775bc02495b7648",
+    "styles/gallery/pink.png": "d8f719c370008888a245d9c4c788317ae8a50e9628d6170b0b50fdaf2107a2ed",
+    "styles/gallery/tokyo-night.png": "9fa5bf8f1bfb736708bae6eb83959e5612d9ef18da330d9d5ca36356228cc74b"
   },
-  "reason": "Avoid eager syntax and CSS policy registries before CLI routing: use base-styled code blocks and tokenizer-only HTML text extraction. All output still crosses Tusk terminal-control sanitization."
+  "reason": "Avoid eager syntax and CSS policy registries before CLI routing: use base-styled code blocks and tokenizer-only HTML text extraction. All output still crosses Tusk terminal-control sanitization. Store gallery PNGs as ordinary Git blobs with SHA-256 and size verified against upstream v0.9.1 LFS pointers; disable their LFS filters so fresh checkouts do not need an external object service."
 }

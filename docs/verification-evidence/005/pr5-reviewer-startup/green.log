@@ -1,0 +1,30 @@
+go test -count=1 -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '^TestTUI_Dependency'
+=== RUN   TestTUI_DependencyCheckoutNeedsNoLFS
+=== RUN   TestTUI_DependencyCheckoutNeedsNoLFS/bubbletea
+=== RUN   TestTUI_DependencyCheckoutNeedsNoLFS/glamour
+--- PASS: TestTUI_DependencyCheckoutNeedsNoLFS (0.13s)
+    --- PASS: TestTUI_DependencyCheckoutNeedsNoLFS/bubbletea (0.01s)
+    --- PASS: TestTUI_DependencyCheckoutNeedsNoLFS/glamour (0.12s)
+=== RUN   TestTUI_DependencyPatchIntegrity
+=== RUN   TestTUI_DependencyPatchIntegrity/bubbletea
+=== RUN   TestTUI_DependencyPatchIntegrity/glamour
+--- PASS: TestTUI_DependencyPatchIntegrity (0.01s)
+    --- PASS: TestTUI_DependencyPatchIntegrity/bubbletea (0.00s)
+    --- PASS: TestTUI_DependencyPatchIntegrity/glamour (0.01s)
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/bubbletea
+=== RUN   TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/glamour
+--- PASS: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource (0.03s)
+    --- PASS: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/bubbletea (0.02s)
+    --- PASS: TestTUI_DependencyPatchIntegrityRejectsAdditionalSource/glamour (0.01s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.177s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.004s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.006s [no tests to run]

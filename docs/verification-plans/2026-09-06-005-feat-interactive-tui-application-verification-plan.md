@@ -8,6 +8,22 @@ evidence-scope: All eight units locally accepted; native and hosted release proo
 
 # Feature 005 Verification Plan
 
+### PR #5 reviewer workspace checkout repair
+
+`TestTUI_DependencyCheckoutNeedsNoLFS` reproduces the vendored Glamour checkout
+failure with exit 128 and `smudge filter lfs failed`, then passes after all eight
+gallery images are stored as ordinary Git blobs. The test checks both replaced
+modules with a required failing LFS filter and rejects remaining pointer files.
+The source-integrity test pins the original upstream pointer hashes separately
+from the materialized image hashes and changed `.gitattributes`. Every downloaded
+image's SHA-256 and byte count match its upstream v0.9.1 pointer.
+
+The [repair evidence](../verification-evidence/005/pr5-reviewer-startup/README.md)
+retains Red/Green, the original Kilo failure and canonical validation. A fresh
+remote checkout and Kilo passing workspace setup are separate post-publication
+checks. Runtime implementation is unchanged, so no new Kitty or latency evidence
+is claimed. Hosted reviewer startup does not close Feature 006 V111–V112.
+
 ## Verification contract
 
 The [implementation plan](../plans/2026-09-06-005-feat-interactive-tui-application-plan.md) defines behavior and units;

@@ -8,6 +8,21 @@ evidence-scope: Local V01–V110 and unit receipts; V111–V112 remain Feature 0
 
 # Feature 005 Issue Workorder
 
+### PR #5 reviewer startup repair
+
+005-ISS-029 (P2): Kilo could not start reviewing PR #5 because Glamour's copied
+gallery LFS pointers referenced objects absent from Tusk's LFS server. Workspace
+checkout failed with exit 128. Materialize the eight exact upstream v0.9.1 PNGs
+as regular Git blobs and disable their LFS filters; preserve original pointer
+hashes and declare the nine checkout changes in the source manifest. Renderer
+patches and app behavior remain unchanged.
+
+The [startup repair evidence](../verification-evidence/005/pr5-reviewer-startup/README.md)
+records the checkout regression Red/Green and all eight verified image hashes.
+Canonical validation is required before commit. Closure requires publication,
+a fresh remote checkout with LFS unavailable and Kilo passing workspace setup;
+the later review result and Feature 006 release gates remain separate.
+
 The [plan](../plans/2026-09-06-005-feat-interactive-tui-application-plan.md) and
 [verification plan](../verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md) are one
 planning pack. Work only in the sequence authorized by [MASTERPLAN.md](../../MASTERPLAN.md).

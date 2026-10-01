@@ -1,0 +1,58 @@
+[
+  {
+    "path": "styles/gallery/ascii.png",
+    "url": "https://media.githubusercontent.com/media/charmbracelet/glamour/v0.9.1/styles/gallery/ascii.png",
+    "bytes": 284108,
+    "sha256": "5128c02d5dbac60af23ae4d277ae0f9b2982d8d7075bdbf3b775bc02495b7648",
+    "pointer_sha256": "4fe53dbaa43df56fe63f4a8f16820d2c9b982209db5d533bd63b1c538613f948"
+  },
+  {
+    "path": "styles/gallery/auto.png",
+    "url": "https://media.githubusercontent.com/media/charmbracelet/glamour/v0.9.1/styles/gallery/auto.png",
+    "bytes": 754908,
+    "sha256": "25ed3a3576a959efeb1c8e770c4550245a88e8864674ec48eb057f0b0a13eacb",
+    "pointer_sha256": "d9e740b38db8671ac5b0f5f04971b8fdb6a1d79c31cf1eb788c67ae1f7847649"
+  },
+  {
+    "path": "styles/gallery/dark.png",
+    "url": "https://media.githubusercontent.com/media/charmbracelet/glamour/v0.9.1/styles/gallery/dark.png",
+    "bytes": 541064,
+    "sha256": "f79e4f218b0edfa9112d3a4ce0dea9e850d2eb9e029230e8a66ac087c5d91938",
+    "pointer_sha256": "242c2aed5d6e2c9bbbca0b0b5d506de509ad16d74fdb53113365b953b9e842fe"
+  },
+  {
+    "path": "styles/gallery/dracula.png",
+    "url": "https://media.githubusercontent.com/media/charmbracelet/glamour/v0.9.1/styles/gallery/dracula.png",
+    "bytes": 588183,
+    "sha256": "ec587d674b781248779619b13f6500ef5918bd57b37c60d54363f70f61a507cc",
+    "pointer_sha256": "327459da1e9624ac685c32013adc0a8cbe5043bb8aa605e8feac9bb1ac1a1e22"
+  },
+  {
+    "path": "styles/gallery/light.png",
+    "url": "https://media.githubusercontent.com/media/charmbracelet/glamour/v0.9.1/styles/gallery/light.png",
+    "bytes": 567534,
+    "sha256": "5d06e782f22c9e1028c03b75cc0f1d514637ee20f1d31896326261c984ed4b7a",
+    "pointer_sha256": "4ed075deffd4d738aca70d35625dc8c0ea4246861925a19d7046e3480928cbd7"
+  },
+  {
+    "path": "styles/gallery/notty.png",
+    "url": "https://media.githubusercontent.com/media/charmbracelet/glamour/v0.9.1/styles/gallery/notty.png",
+    "bytes": 284108,
+    "sha256": "5128c02d5dbac60af23ae4d277ae0f9b2982d8d7075bdbf3b775bc02495b7648",
+    "pointer_sha256": "4fe53dbaa43df56fe63f4a8f16820d2c9b982209db5d533bd63b1c538613f948"
+  },
+  {
+    "path": "styles/gallery/pink.png",
+    "url": "https://media.githubusercontent.com/media/charmbracelet/glamour/v0.9.1/styles/gallery/pink.png",
+    "bytes": 513371,
+    "sha256": "d8f719c370008888a245d9c4c788317ae8a50e9628d6170b0b50fdaf2107a2ed",
+    "pointer_sha256": "3766090bfd3a3b4465b3d5c5a600982377cadfc02c05ba2ef409a5d7a4d66f2e"
+  },
+  {
+    "path": "styles/gallery/tokyo-night.png",
+    "url": "https://media.githubusercontent.com/media/charmbracelet/glamour/v0.9.1/styles/gallery/tokyo-night.png",
+    "bytes": 557034,
+    "sha256": "9fa5bf8f1bfb736708bae6eb83959e5612d9ef18da330d9d5ca36356228cc74b",
+    "pointer_sha256": "85ad6e6c8229a6556f061936e597899c706456394429e554c7ba311829bb7798"
+  }
+]

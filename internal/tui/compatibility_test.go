@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -21,13 +22,64 @@ import (
 	"github.com/charmbracelet/glamour"
 )
 
+func TestTUI_DependencyCheckoutNeedsNoLFS(t *testing.T) {
+	for _, module := range []string{"bubbletea", "glamour"} {
+		t.Run(module, func(t *testing.T) {
+			dir := t.TempDir()
+			checkout := t.TempDir()
+			if err := os.CopyFS(dir, os.DirFS("../../third_party/"+module)); err != nil {
+				t.Fatal(err)
+			}
+			ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
+			defer cancel()
+			for _, args := range [][]string{
+				{"init", "--quiet"},
+				{"-c", "filter.lfs.process=", "-c", "filter.lfs.clean=cat", "add", "."},
+				// A required failing smudge detects any dependency on the LFS
+				// service without installing Git LFS or contacting a network.
+				{"-c", "filter.lfs.process=", "-c", "filter.lfs.clean=cat", "-c", "filter.lfs.smudge=false", "-c", "filter.lfs.required=true", "checkout-index", "--prefix=" + checkout + string(os.PathSeparator), "--all"},
+			} {
+				cmd := exec.CommandContext(ctx, "git", args...)
+				cmd.Dir = dir
+				if output, err := cmd.CombinedOutput(); err != nil {
+					t.Fatalf("dependency checkout must work without Git LFS (%v): %v\n%s", args, err, output)
+				}
+			}
+			if err := filepath.WalkDir(checkout, func(path string, entry fs.DirEntry, err error) error {
+				if err != nil {
+					return err
+				}
+				if entry.IsDir() {
+					return nil
+				}
+				data, err := os.ReadFile(path)
+				if err != nil {
+					return err
+				}
+				if bytes.HasPrefix(data, []byte("version https://git-lfs.github.com/spec/v1\n")) {
+					return fmt.Errorf("dependency contains an unresolved Git LFS pointer: %s", path)
+				}
+				return nil
+			}); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 func TestTUI_DependencyPatchIntegrity(t *testing.T) {
 	for _, tc := range []struct {
 		module, version string
 		files           []string
 	}{
 		{"bubbletea", "v1.3.10", []string{"tea_init.go"}},
-		{"glamour", "v0.9.1", []string{"ansi/codeblock.go", "ansi/context.go"}},
+		{"glamour", "v0.9.1", []string{
+			"ansi/codeblock.go", "ansi/context.go", ".gitattributes",
+			"styles/gallery/ascii.png", "styles/gallery/auto.png",
+			"styles/gallery/dark.png", "styles/gallery/dracula.png",
+			"styles/gallery/light.png", "styles/gallery/notty.png",
+			"styles/gallery/pink.png", "styles/gallery/tokyo-night.png",
+		}},
 	} {
 		t.Run(tc.module, func(t *testing.T) {
 			checkDependencyPatch(t, "../../third_party/"+tc.module, tc.version, tc.files)
