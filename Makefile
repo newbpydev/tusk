@@ -172,8 +172,8 @@ help:
 	@echo "make clean     - Clean temporary build artifacts"
 
 .PHONY: bench-cli
-CLI_BENCH_OUTPUT ?= docs/verification-evidence/004/latency.json
 CLI_BENCH_PROFILE ?= reference
+CLI_BENCH_OUTPUT ?= $(if $(filter reference,$(CLI_BENCH_PROFILE)),docs/verification-evidence/004/latency.json,)
 
 bench-cli: build
 	go run ./scripts/cli-bench --binary "$(BUILD_OUTPUT)" --output "$(CLI_BENCH_OUTPUT)" --acceptance-profile "$(CLI_BENCH_PROFILE)"

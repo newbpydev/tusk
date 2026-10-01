@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -111,5 +112,89 @@ func TestHostAcceptance_ReportKeepsReferenceAssessment(t *testing.T) {
 	}
 	if runWith([]string{"--acceptance-profile", "unknown"}, io.Discard, io.Discard, fakeProcess, nil) != 2 {
 		t.Fatal("unknown profile accepted")
+	}
+}
+
+func TestHostAcceptance_PreservesExistingReports(t *testing.T) {
+	binary := filepath.Join(t.TempDir(), "binary")
+	if err := os.WriteFile(binary, []byte("test binary"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	for _, destination := range []string{"omitted", "existing"} {
+		t.Run(destination, func(t *testing.T) {
+			output := filepath.Join(t.TempDir(), "report.json")
+			sentinel := []byte("retained evidence")
+			if err := os.WriteFile(output, sentinel, 0600); err != nil {
+				t.Fatal(err)
+			}
+			args := []string{"--binary", binary, "--acceptance-profile", "ryzen-4500u-balanced-v1"}
+			if destination == "existing" {
+				args = append(args, "--output", output)
+			}
+			called := false
+			var stderr bytes.Buffer
+			code := runWith(args, io.Discard, &stderr, func(b string, a, e []string) (int64, []byte, error) { called = true; return fakeProcess(b, a, e) }, nil)
+			after, err := os.ReadFile(output)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if code != 2 || called || !bytes.Equal(after, sentinel) || !strings.Contains(stderr.String(), "output") {
+				t.Fatalf("code=%d called=%v report=%q stderr=%q", code, called, after, stderr.String())
+			}
+		})
+	}
+}
+
+func TestHostAcceptance_InvalidProfileDiagnostic(t *testing.T) {
+	var stderr bytes.Buffer
+	if code := runWith([]string{"--acceptance-profile", "typo"}, io.Discard, &stderr, fakeProcess, nil); code != 2 || !strings.Contains(stderr.String(), "typo") || !strings.Contains(stderr.String(), "reference") || !strings.Contains(stderr.String(), "ryzen-4500u-balanced-v1") {
+		t.Fatalf("code=%d stderr=%q", code, stderr.String())
+	}
+}
+
+func TestHostAcceptance_MakeRequiresExplicitOutput(t *testing.T) {
+	cmd := exec.Command("make", "-n", "bench-cli", "CLI_BENCH_PROFILE=ryzen-4500u-balanced-v1")
+	cmd.Dir = "../.."
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("dry run: %v %s", err, out)
+	}
+	if strings.Contains(string(out), "--output \"docs/verification-evidence/004/latency.json\"") {
+		t.Fatalf("host profile selects retained reference destination: %s", out)
+	}
+}
+
+func TestHostAcceptance_FinalWriteCannotFollowReplacedPath(t *testing.T) {
+	dir := t.TempDir()
+	binary := filepath.Join(dir, "binary")
+	output := filepath.Join(dir, "report.json")
+	owned := filepath.Join(dir, "owned-report.json")
+	if err := os.WriteFile(binary, []byte("test binary"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	sentinel := []byte("retained evidence")
+	moved := false
+	fake := func(b string, a, e []string) (int64, []byte, error) {
+		if !moved {
+			if err := os.Rename(output, owned); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(output, sentinel, 0600); err != nil {
+				t.Fatal(err)
+			}
+			moved = true
+		}
+		return fakeProcess(b, a, e)
+	}
+	if code := runWith([]string{"--binary", binary, "--output", output, "--acceptance-profile", "ryzen-4500u-balanced-v1"}, io.Discard, io.Discard, fake, nil); code != 1 {
+		t.Fatal(code)
+	}
+	data, err := os.ReadFile(output)
+	if err != nil || !bytes.Equal(data, sentinel) {
+		t.Fatalf("replacement changed: %q %v", data, err)
+	}
+	data, err = os.ReadFile(owned)
+	if err != nil || !bytes.Contains(data, []byte("host_acceptance")) {
+		t.Fatalf("owned report incomplete: %v", err)
 	}
 }
