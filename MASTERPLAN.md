@@ -1,8 +1,26 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 005 merged in PR #5 at 42d7c52; review fixes and owner-authorized host latency acceptance verified
-**Active Phase**: Phase 6 planning awaits owner instruction
-**Active Implementation Target**: None; Feature 006 planning and implementation await owner instruction
+**Current Status**: Feature 005 merged in PR #5 at 42d7c52; Feature 006 planning pack complete, implementation and release gates pending
+**Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; planning complete
+**Active Implementation Target**: None authorized; next is Feature 006 U1 / Unit 006-1 after a new implementation instruction
+
+### Feature 006 planning checkpoint (2026-10-01)
+
+The synchronized Feature 006 pack defines 30 requirements, eight units ordered
+U1 → U3 → U4 → U2 → U6 → U5 → U7 → U8 and 102 unexecuted verification scenarios.
+It includes the requested GitHub repository metadata and evidence-backed README,
+verified install/use guides, license/notices, native CI, deterministic completion
+and manual generation, exact-byte candidate acceptance, Homebrew cask delivery
+and explicitly authorized publication. The original U1/U2/U3 identities remain.
+
+Live read-only inspection found no public releases/tags, Actions workflows,
+topics/homepage or detected project license. License/rights selection, native
+terminal access, tap ownership, security contact verification and concrete
+release authority have named workorder gates. Planning closes product G1 for
+Feature 006; native/hosted/publication G4 and inherited Feature 002–005 release
+scenarios remain open. Document checks are planning evidence only. No README
+implementation, GitHub mutation, application test/build/benchmark, commit, push,
+tag or release occurred in this planning pass.
 
 - [x] PR #5 review unit R1: stale-form save feedback, delete-dialog refresh and failed-toggle write pause.
 - [x] PR #5 review unit R2: navigation, input and presentation consistency.
@@ -446,19 +464,38 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
 ---
 
 ### Phase 6: Feature 006 - Automation, Packaging & Release
-- **Status**: ⏳ **AWAITING PLANNING INSTRUCTION** (Phases 4 & 5 locally complete; implementation not authorized)
+- **Status**: ⏳ **PLANNING COMPLETE; IMPLEMENTATION AND RELEASE PENDING** (Phases 4 & 5 locally accepted and merged; implementation not authorized)
 - **Plan**: `docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md`
+- **Verification Plan**: `docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md`
+- **Issue Workorder**: `docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md`
 
-- [ ] **6.1 Ultrathink Planning Pack**
-  - [ ] Deepened Plan, Verification Plan, and Workorder
+- [x] **6.1 Ultrathink Planning Pack**
+  - [x] Deepened Plan, Verification Plan, and Workorder; 30 requirements, eight units, 102 planned scenarios
+  - [x] Synchronize product handoffs, registry and masterplan; review applicable lenses sequentially
 - [ ] **6.2 Implementation Units**
-  - [ ] Unit 006-1: GitHub Actions CI Matrix (Ubuntu, macOS, Windows)
-  - [ ] Unit 006-2: GoReleaser Configuration for CGO-free Static Binaries
-  - [ ] Unit 006-3: Shell Completions (Bash, Zsh, Fish) & Man Pages Generator
+  - [ ] Unit 006-1 / U1: Native CI Matrix and Portable Canonical Tooling
+  - [ ] Unit 006-3 / U3: Storage-Free Completions and Deterministic Manuals
+  - [ ] Unit 006-4 / U4: README, Installation Guides, Community Files and License Readiness
+  - [ ] Unit 006-2 / U2: Reproducible CGO-Free Payloads and Immutable Version Metadata
+  - [ ] Unit 006-6 / U6: Trusted Hosted Candidate Workflow and Artifact Provenance
+  - [ ] Unit 006-5 / U5: Exact-Artifact Native Lifecycle, Terminal and Performance Acceptance
+  - [ ] Unit 006-7 / U7: Homebrew Cask Candidate and Destination Readiness
+  - [ ] Unit 006-8 / U8: Authorized Release, Public Metadata and Final Settlement
 - [ ] **6.3 Quality Gate & Release Sign-off**
-  - [ ] Dry-run GoReleaser snapshot build
-  - [ ] Shell completion script syntax verification
-  - [ ] Final end-to-end `make validate` across all platforms
+  - [ ] Canonical validation/generated/module gates, minimum Go and five native candidate-SHA jobs
+  - [ ] Three real-shell completion checks, deterministic manuals and complete licensed/checksummed payloads
+  - [ ] Trusted candidate/provenance plus exact-asset native CLI/TUI/install/backup/upgrade/remove acceptance
+  - [ ] Owned Kitty/native Windows terminal and retained candidate CLI/TUI performance evidence
+  - [ ] Owner license/rights, tap/security-contact and concrete publication decisions closed
+  - [ ] Authorized complete draft/public release, reviewed Homebrew cask and anonymous install verification
+  - [ ] GitHub About/topics/homepage/social preview and rendered README/badges/links/license readback
+  - [ ] All 102 applicable scenarios and inherited release obligations have matching receipts; product G4 closed
+
+Implementation order is U1 → U3 → U4 → U2 → U6 → U5 → U7 → U8. Each unit needs
+its own red/green, applicable review/evidence, synchronized governance and fresh
+`make validate` before its coherent local commit. A local unit checkpoint never
+closes an unexecuted hosted/native/publication gate. Planning and local commits
+do not authorize pushing, tags, GitHub settings changes or release publication.
 
 ---
 

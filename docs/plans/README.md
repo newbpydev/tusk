@@ -29,7 +29,7 @@ graph TD
 | **003** | Task Service Engine | [Plan 003](2026-09-06-003-feat-task-service-engine-plan.md) | [Verification Plan](../verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md) | [Workorder](../workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md) | `locally accepted; consumer/native gates pending` |
 | **004** | CLI Interface & Scripting | [Plan 004](2026-09-06-004-feat-cli-interface-and-scripting-plan.md) | [Verification Plan](../verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md) | [Workorder](../workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md) | `locally accepted; PR #4 merged; native/hosted release gates pending` |
 | **005** | Interactive TUI Application | [Plan 005](2026-09-06-005-feat-interactive-tui-application-plan.md) | [Verification Plan](../verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md) | [Workorder](../workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md) | `locally accepted; eight units and approved UX refinement complete; native/hosted release proof pending` |
-| **006** | Automation, Packaging & Release | [Plan 006](2026-09-06-006-feat-automation-packaging-and-release-plan.md) | Planned | Planned | `pending` |
+| **006** | Automation, Packaging, Release & Public Repository Readiness | [Plan 006](2026-09-06-006-feat-automation-packaging-and-release-plan.md) | [Verification Plan](../verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md) | [Workorder](../workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md) | `planning complete; eight units and 102 scenarios unexecuted; implementation/release pending` |
 
 The product triplet defines cross-phase contracts and acceptance. Features
 002–005 are locally accepted; native/hosted release proof remains pending.
@@ -47,6 +47,14 @@ review and 78-case TUI evidence remain valid. See the
 [follow-up acceptance](../verification-evidence/005/u6-hierarchy/acceptance.json).
 Product U16→U1/U7/U2, U17→U3,
 U18→U4, U19→U5/U8 and U20→U6 preserve the existing handoff IDs. V01–V110 are
-locally complete; V111–V112 are native/hosted release handoffs. Feature 006
-outline metadata is not readiness. Consult MASTERPLAN.md before implementation;
-no Feature 006 implementation or release is authorized by this checkpoint.
+locally complete; V111–V112 are native/hosted release handoffs.
+
+Feature 006 now has 30 requirements, eight units ordered U1 → U3 → U4 → U2 →
+U6 → U5 → U7 → U8 and 102 unexecuted scenarios. Its original U1/U2/U3 IDs remain.
+Product U21 maps CI to U1; U22 maps packaging/native/provenance/distribution to
+U2/U6/U5/U7/U8; U23 maps completion/public documentation/metadata to U3/U4/U8.
+The pack covers evidence-backed install/use documentation and GitHub landing-page
+metadata with explicit license, native/tap/contact and release-authority gates.
+Product G1 planning is complete; G4 and all inherited native/hosted release
+obligations remain pending. Consult MASTERPLAN.md before implementation; no
+Feature 006 implementation, hosted mutation or release is authorized by planning.

@@ -61,7 +61,7 @@ Give developers a local task manager usable immediately from a terminal, shell s
 - **Surfaces:** CLI/TUI, internal library/service, persistence/migration, packaging/operations, documentation.
 - **Artifact triplet:** This plan, its [verification plan](../verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md), and [issue workorder](../workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md), under `docs/` in this first-party repository.
 - **Readiness:** Deepened product planning baseline with explicit gates. This umbrella remains `requirements-only` as an execution entrypoint. It does not replace the phase-specific triplets or authorize implementation.
-- **Current handoff:** Features 002–005 are locally accepted; local main records PR #4 merged at `e899491`. [Feature 005](2026-09-06-005-feat-interactive-tui-application-plan.md) closes all eight units and V01–V110 in its U6 acceptance commit. Product U16–U20 are locally complete; Feature 006 planning is next, awaiting instruction. Native/hosted release gates, including the remaining platform coverage of TUSK-V66, remain open.
+- **Current handoff:** Features 002–005 are locally accepted; local/remote main records PR #5 merged at `42d7c52` and cleanup at `2f2d3ff`. Product U16–U20 retain their local acceptance. [Feature 006](2026-09-06-006-feat-automation-packaging-and-release-plan.md) now has a synchronized planning pack with 30 feature requirements, eight units and 102 unexecuted scenarios. Product G1 planning is satisfied for Features 002–006; native/hosted/publication G4, including remaining platform coverage of TUSK-V66, remains open. No Feature 006 implementation or hosted action is authorized by this planning checkpoint.
 
 ## Product Contract
 
@@ -131,6 +131,7 @@ Historical product-planning baseline (superseded by the current handoff): `6128d
 - R27. Release CGO-free binaries for Linux amd64/arm64, macOS amd64/arm64, Windows amd64, Bash/Zsh/Fish completion, and man pages. Keep local, hosted, manual, and publication evidence separate. Data survives executable replacement/removal.
 - R28. Preserve reference query p90 below 15 ms and help/version p90 below 5 ms, with the current tail guards. Measure actual subprocess startup through exit, including formatting, using explicit fixtures. Report initialization, lock contention, slow output, and larger datasets separately; no benchmark proves the bound on all hardware or unbounded output.
 - R29. Core stays independent; state is constructor-injected; verification uses Makefile gates. `make validate` currently includes fmt, vet, test, race, and at least 95% per-package coverage for nonexempt packages. Close a phase only after its scenarios, issue gates, and master checklist have execution evidence.
+- R30. GitHub repository metadata and README give users accurate installation/use instructions, verified platform/version support, evidence-backed screenshots/performance claims, and working contributor/security/license links. Publish only available installation routes and inspect actual rendered metadata/README after authorized changes. Owner-requested addition on 2026-10-01; Feature 006 owns execution.
 
 ### Command grammar and data shapes
 
@@ -169,7 +170,7 @@ Planning defaults are R9 opt-in completion, R15 date times, R17 retained-task me
 
 ### Technical decisions
 
-- KTD1. **Phase plans own execution.** Units below are handoffs. Features 002–005 have complete planning packs; Features 002–004 have local execution evidence. Feature 006 outline metadata is not readiness. Gate G1 applies per feature. Follow the masterplan sequence even where the DAG allows concurrency.
+- KTD1. **Phase plans own execution.** Units below are handoffs. Features 002–006 have complete planning packs; Features 002–005 have local execution evidence. Feature 006 has no execution evidence yet and owns remaining native/hosted/publication proof. Gate G1 applies per feature. Follow the masterplan sequence even where the DAG allows concurrency.
 - KTD2. **Retain the accepted modernc SQLite runtime.** Keep `database/sql` in storage. Feature 002 records local proof for the matching engine/driver/libc/Go 1.25 baseline; native/hosted G2/G4 acceptance remains pending. The Feature 003 planning pass changes no dependencies.
 - KTD3. **Migration-owning `db` package.** `db/embed.go` embeds adjacent `migrations/*.sql`; storage imports it. Embedding `../../db` from storage is invalid. Generate queries into `internal/storage/sqlc/`; test generated behavior through the adapter. [Go embed](https://pkg.go.dev/embed), [sqlc configuration](https://docs.sqlc.dev/en/latest/reference/config.html).
 - KTD4. **One writer, bounded readers.** Use one writer connection and up to four reader connections. Begin writes IMMEDIATE before reading graph state; read snapshots use separate deferred transactions. Configure connection-scoped pragmas for every new/replacement connection. No transaction callback may borrow another write connection. Verify cancellation and driver transaction options at G2. Create new application-owned directories as 0700 and database files as 0600 on POSIX; preserve existing parent permissions and use the user's private profile ACL on Windows. Reject symlink/non-regular database targets; encode path characters as literal filename data when constructing an internal DSN. This is a single-user boundary, not protection against a malicious process with the same OS identity. [Driver documentation](https://pkg.go.dev/modernc.org/sqlite).
@@ -280,9 +281,9 @@ pack for exact contracts and local/native evidence boundaries.
 
 | Gate | Owner and closure evidence | Blocking effect |
 | --- | --- | --- |
-| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002–005 packs completed; remains open for Feature 006 |
+| G1 | Each feature owner synchronizes its plan/verification/workorder with this product contract | Feature 002–006 planning packs completed; planning does not authorize implementation |
 | G2 | Feature 002 KTD1 and durable acceptance evidence record Go 1.25.0, modernc v1.58.0, libc v1.75.6 and SQLite 3.53.4 local proof | Local prerequisite satisfied; native/hosted release proof remains Phase 6. Feature 003 retains the installed graph |
-| G3 | Phase 4/5 owners pin CLI/UI dependencies before their first unit; U15/U20 supply measurement | Feature 004 local graph/latency proof recorded. Feature 005 KTD1 selects its graph; U1 build proof and U6 measurements remain unexecuted gates |
+| G3 | Phase 4/5 owners pin CLI/UI dependencies before their first unit; U15/U20 supply measurement | Feature 004/005 local graph, minimum-Go and measured CLI/TUI acceptance recorded; release-candidate/native proof remains G4 |
 | G4 | Phase 6 maintainer proves exact candidate on OS/architectures and terminals, licenses, distribution destination, release metadata | Blocks publication; local green/cross-compilation are insufficient |
 
 G2 planning choice is now owned by [Feature 002 KTD1](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md#key-technical-decisions): raise the build minimum to Go 1.25 with the pinned patched driver/libc. This is a technical planning default, not a claim of explicit user approval or executed compatibility proof. The earlier affected Go 1.24 candidate is not selected. [Affected engine](https://pkg.go.dev/modernc.org/sqlite@v1.46.1), [WAL fix](https://www.sqlite.org/wal.html#walresetbug), [selected module](https://proxy.golang.org/modernc.org/sqlite/@v/v1.58.0.mod).
@@ -319,10 +320,17 @@ These units are handoff contracts, not completed work or activation of future ph
 | U19 | 005-5/005-8 | Forms and confirmed mutations: `internal/tui/forms.go` | U18 |
 | U20 | 005-6 | TUI workflow and real terminal acceptance: `internal/tui/workflow_test.go` | U19 |
 | U21 | 006-1 | Hosted platform quality gates: `.github/workflows/ci.yml` | Phases 4/5 accepted; G1 for Feature 006 |
-| U22 | 006-2 | Release artifacts and installation lifecycle: `.goreleaser.yaml` | U21; G4 distribution decisions |
-| U23 | 006-3 | Completions, documentation and final handoff: `internal/cli/completion.go` | U22 |
+| U22 | 006-2/006-6/006-5/006-7/006-8 | Release payloads, provenance, native lifecycle and authorized distribution: `.goreleaser.yaml` | U21; phase-local completion/license prerequisites; G4 decisions |
+| U23 | 006-3/006-4/006-8 | Storage-free completions, public documentation/metadata and final handoff: `internal/cli/completion.go`, `README.md` | U21 for generation; U22 acceptance for final publication |
 
 Feature 004 refines the CLI handoff order without changing product IDs: U11 → U14 → U12 → U13 → U15. Feature-local mapping is U11→U1, U14→U5/U4, U12→U2/U7, U13→U3, U15→U6. Formatting precedes its command consumers; deletion is separately provable. The Feature 004 triplet owns exact command/fixture/target details.
+
+Feature 006 refines the release handoffs without renumbering product U21–U23:
+its local order is U1 → U3 → U4 → U2 → U6 → U5 → U7 → U8. Product U21→U1,
+U22→U2/U6/U5/U7/U8 and U23→U3/U4/U8. Completion/license/documentation preparation
+precedes packaging; hosted candidate bytes precede native acceptance, which
+precedes public release/tap/metadata activation. These umbrella handoffs do not
+form a separate executable U21→U22→U23 sequence.
 
 ### U24. Pinned storage runtime and compatibility proof
 
@@ -560,7 +568,7 @@ Feature 004 refines the CLI handoff order without changing product IDs: U11 → 
 - **Goal / requirements:** Hosted platform quality gates; R1, R12, R27–R29. Feature unit 006-1.
 - **Dependencies:** Phases 4/5 accepted; G1 for Feature 006.
 - **Ownership:** `.github/workflows/ci.yml`, `scripts/setup.sh`, `scripts/test/test_scripts.sh`, `Makefile`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
-- **Approach:** Pin actions/tools, run canonical validation/native build on Linux/macOS/Windows, document Bash/Make and race compiler availability, catch formatting drift and generated-query drift.
+- **Approach:** Feature 006 U1 pins Actions/tools, executes five native runner targets plus Go 1.25.0 compatibility, declares Windows Bash/Make/native race compiler prerequisites and fails formatting/generated/module drift. Its triplet owns exact pins, commands and candidate-SHA evidence.
 - **Red-first test:** Script fixture with absent compiler/wrong generator must fail the intended prerequisite; workflow validation must reject missing platform/race gates before final configuration.
 - **Verification:** make setup; make validate; hosted matrix on candidate SHA. Scenarios TUSK-V67, TUSK-V68. Record actual red/green evidence during execution; these are expected failures, not observed results.
 - **Failure / recovery:** Missing architecture/runtime proof remains pending, not silently skipped; least-privilege read-only PR jobs do not publish artifacts as a release.
@@ -568,10 +576,10 @@ Feature 004 refines the CLI handoff order without changing product IDs: U11 → 
 
 ### U22. Release artifacts and installation lifecycle
 
-- **Goal / requirements:** Release artifacts and installation lifecycle; R1, R2, R11, R12, R27–R29. Feature unit 006-2.
-- **Dependencies:** U21; G4 distribution decisions.
+- **Goal / requirements:** Release artifacts and installation lifecycle; R1, R2, R11, R12, R27–R30. Feature units 006-2/006-6/006-5/006-7/006-8.
+- **Dependencies:** U21; phase-local completion/license preparation; G4 owner decisions and native/hosted acceptance before publication.
 - **Ownership:** `.goreleaser.yaml`, `Makefile`, `scripts/release_check.sh`, `scripts/test/test_scripts.sh`, `release documentation`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
-- **Approach:** Add release-check/release-snapshot, pinned GoReleaser, CGO-free target matrix, checksums/licenses/version constants, clean-home smoke, upgrade/downgrade/remove preservation. Homebrew destination is a G4 prerequisite.
+- **Approach:** Feature 006 packages immutable version constants via a build overlay, all five CGO-free payloads, source/notice/checksum manifests and trusted provenance. Hosted candidates are tested and promoted as the same bytes. Prove native backup/upgrade/refusal/remove preservation and current macOS Homebrew cask delivery; owner license/destination/version/publication remain explicit G4 gates.
 - **Red-first test:** Release manifest fixture missing architecture/checksum/license must fail; existing-data upgrade fixture must detect recreation or destructive downgrade.
 - **Verification:** make release-check and make release-snapshot (add here); hosted artifact execution; make validate. Scenarios TUSK-V69, TUSK-V70, TUSK-V71. Record actual red/green evidence during execution; these are expected failures, not observed results.
 - **Failure / recovery:** Snapshot never publishes; failed upgrade preserves original DB; no unsigned/unverified artifact is represented as published/accepted.
@@ -579,10 +587,10 @@ Feature 004 refines the CLI handoff order without changing product IDs: U11 → 
 
 ### U23. Completions, documentation and final handoff
 
-- **Goal / requirements:** Completions, documentation and final handoff; R1, R19, R27, R29. Feature unit 006-3.
-- **Dependencies:** U22.
-- **Ownership:** `internal/cli/completion.go`, `internal/cli/completion_test.go`, `scripts/test/test_completions.sh`, `Makefile`, `docs/usage.md`, `phase 006 triplet`. Test paths are planned unless already present; do not overwrite another unit's files without coordination.
-- **Approach:** Add test-completions for Bash/Zsh/Fish; generate man pages without storage; document JSON schema, delete/cancel semantics, data paths, NORMAL durability, backup procedure and real support matrix.
+- **Goal / requirements:** Completions, documentation and final handoff; R1, R19, R27, R29, R30. Feature units 006-3/006-4/006-8.
+- **Dependencies:** U21 for generation; U22 native/release acceptance for final public activation. Follow the phase-local sequence above.
+- **Ownership:** `internal/cli/completion.go`, `internal/cli/completion_test.go`, `scripts/test/test_completions.sh`, `Makefile`, `README.md`, `docs/install.md`, `docs/releasing.md`, community/metadata content and the phase 006 triplet. Planned files remain unimplemented.
+- **Approach:** Static Bash/Zsh/Fish completion and deterministic man pages reuse the fresh Cobra tree without storage. Feature 006 U4/U8 give README/install/use/backup/security/license instructions, sanitized evidence assets and concrete GitHub About/topics/homepage/social preview, then inspect actual rendered/readback state after authorized publication.
 - **Red-first test:** TestCompletion_NoStorageWithBrokenPath and shell parse fixtures fail for eager initialization or malformed output; documentation examples must reproduce declared CLI behavior.
 - **Verification:** make test; make test-completions (add here); make validate; G4 evidence review. Scenarios TUSK-V72, TUSK-V73. Record actual red/green evidence during execution; these are expected failures, not observed results.
 - **Failure / recovery:** Missing shell/host evidence is recorded pending; neither docs nor master checklist claims publication before release actually occurs.

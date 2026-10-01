@@ -2,7 +2,7 @@
 feature-id: TUSK
 plan-source: docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md
 surface-profiles: [cli-tui, library-service, persistence-migration, packaging-operations, documentation]
-status: Features 002–005 locally accepted; Feature 006 planning and release gates pending
+status: Features 002–005 locally accepted; Feature 006 planning complete, execution/release pending
 evidence-scope: Linked local feature receipts; native and hosted release proof separate
 ---
 
@@ -52,9 +52,16 @@ support the method; the thresholds above preserve Tusk's fast interactive purpos
 
 This is the product-level companion to the [plan](../plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md) and [workorder](../workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md). [MASTERPLAN.md](../../MASTERPLAN.md) controls phase activation. Each feature owner must import the applicable scenarios into that feature's synchronized triplet before execution (G1).
 
-Behavior under test: R1–R29, F1–F4 and the CLI wire/key/mutation contracts. Existing core evidence is historical; all scenarios in this document are unexecuted. Public machines consume CLI DTOs, not internal struct tags. Native Linux/macOS/Windows and the five release targets require separate evidence. No browser/device scenarios are needed for a terminal application.
+Behavior under test: R1–R30, F1–F4 and the CLI wire/key/mutation contracts. Existing core evidence is historical; checked local scenarios retain their linked feature receipts. Public machines consume CLI DTOs, not internal struct tags. Native Linux/macOS/Windows and the five release targets require separate evidence. Feature 006 adds GitHub rendered-content readback for the requested repository landing page; it does not introduce a hosted application or device UI.
 
 Local tiers are focused assertions within canonical suites, aggregate quality gates, disk/process integration, and benchmarks. Hosted tiers prove exact-revision OS/architecture behavior. Manual tiers prove actual terminal/lifecycle usability. Module/document inspection cannot close runtime gates. Feature 002 records local acceptance of G2's pins and six units; product U24 / feature U6 supplied its compatibility prerequisite. Native/hosted acceptance remains Phase 6, and Feature 003 planning reran no runtime tests. The product pack now has 24 handoff units and retains all 73 scenario IDs.
+
+Feature 006 planning is complete: its [verification pack](2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md)
+has 30 feature requirements, eight units and 102 unexecuted scenarios. Product
+U21→006-U1, U22→006-U2/U6/U5/U7/U8 and U23→006-U3/U4/U8. TUSK-V66 and V67–V73
+keep their open native/release state. Product R30's public README/metadata scope
+is checked through TUSK-V73 and Feature 006 V31–V44/V99–V102; no runtime gate was
+executed while synchronizing this planning pack.
 
 ## Requirement coverage
 
@@ -89,6 +96,7 @@ Local tiers are focused assertions within canonical suites, aggregate quality ga
 | R27 | U24, U21, U22, U23 | TUSK-V01, TUSK-V67, TUSK-V68, TUSK-V69, TUSK-V70, TUSK-V71, TUSK-V72 | Local cross-build/hosted/manual/release |
 | R28 | U5, U15, U20 | TUSK-V19, TUSK-V51, TUSK-V65 | Benchmark |
 | R29 | All units | TUSK-V01, TUSK-V05, TUSK-V67, TUSK-V73 | Local/hosted/documentation |
+| R30 | U23 | TUSK-V73; Feature 006 V31–V44,V99–V102 | Documentation/API/browser/publication |
 
 ## Scenarios
 
@@ -236,12 +244,12 @@ this cross-platform scenario is intentionally not checked complete locally.
 
 - [ ] TUSK-V69 **Packaging / artifact manifest:** Snapshot includes each required target, checksum, version and license/notice metadata. Binary runs with CGO-free runtime prerequisites. Invalid config/missing architecture fails release-check; snapshot performs no publication.
 - [ ] TUSK-V70 **Recovery / upgrade and downgrade:** Create real fixture data with current binary, replace binary and migrate, then reopen and compare tasks/events. Older binary refuses a newer schema without changing files. Removal of executable leaves data intact; restore backup only using documented consistent procedure.
-- [ ] TUSK-V71 **Manual / release readiness:** Verify destination, ownership, notices, Homebrew formula/source checksum if used, documented install/upgrade/remove and release candidate evidence. Keep publication pending until an authorized release action actually succeeds.
+- [ ] TUSK-V71 **Manual / release readiness:** Verify destination, ownership, notices, current macOS Homebrew cask/release checksums, documented install/upgrade/remove and exact-byte native/provenance candidate evidence. Keep publication pending until an authorized release action actually succeeds; Feature 006 V87–V102 owns final tap/public readback.
 
 ### U23. Completions, documentation and final handoff
 
 - [ ] TUSK-V72 **Compatibility / completions:** Generate Bash/Zsh/Fish completions and man pages with unusable DB config and no data directory. Parse/load in each real shell, exercise representative command/flag completions, and prove generation requires no storage.
-- [ ] TUSK-V73 **Documentation / handoff:** Replay documented CLI/JSON/delete/date/backup examples against candidate artifacts. Cross-link product and feature triplets, require all scenario/issue evidence and exact revision in master checklist, and leave pending hosted/manual/publication claims explicit.
+- [ ] TUSK-V73 **Documentation / handoff:** Replay documented native installation/CLI/JSON/delete/date/backup examples against exact candidate artifacts. Inspect actual GitHub About/topics/homepage/social preview, rendered README/badges/images/links and contributor/security/license routes after authorized changes. Cross-link triplets, bind executable/documentation identities and all scenario/issue evidence in the master checklist, and keep unexecuted hosted/native/publication claims pending. Feature 006 V31–V44/V99–V102 supplies R30 coverage.
 
 ## Commands and environments
 

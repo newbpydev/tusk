@@ -2,7 +2,7 @@
 feature-id: TUSK
 plan-source: docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md
 verification-plan: docs/verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md
-status: Features 002–005 locally accepted; Feature 006 planning and release gates pending
+status: Features 002–005 locally accepted; Feature 006 planning complete, execution/release pending
 evidence-scope: Planning findings plus linked local feature acceptance receipts
 ---
 
@@ -12,7 +12,7 @@ This register accompanies the [product plan](../plans/2026-09-06-001-feat-tusk-m
 
 **Fixed in plan** means the document now decides the behavior; it does not mean implemented or tested. **Open gate/decision** means the named owner must supply the stated evidence before the dependent unit/phase proceeds. Owners are accountable project roles, not claims that a human has accepted an assignment. G1–G4 are the plan's shared gate IDs.
 
-Gate sequencing: Features 002–005 record local acceptance in their own packs; local main records PR #4 merged. G1 is satisfied for Features 002–005 and remains open for Feature 006. Feature 005 U1/U6 close local graph, minimum-Go, CLI/TUI performance and owned Kitty acceptance. G4 native/hosted/distribution proof remains a release gate.
+Gate sequencing: Features 002–005 record local acceptance in their own packs; local/remote main records PR #5 merged. G1 planning is satisfied for Features 002–006. Feature 006 now has 30 feature requirements, eight units and 102 unexecuted scenarios, including the requested public README/metadata under product R30. Feature 005 retains its local graph, minimum-Go, CLI/TUI performance and owned Kitty acceptance. G4 native/hosted/distribution/publication proof remains open; no implementation or hosted mutation was performed during Feature 006 planning.
 
 ### Current latency acceptance policy (owner-delegated judgment)
 
@@ -58,10 +58,10 @@ support the method; the thresholds above preserve Tusk's fast interactive purpos
 
 | ID | Gate | Source / lens | Owner | Severity | Status | Next action and retest |
 | --- | --- | --- | --- | --- | --- | --- |
-| TUSK-ISS-001 | G1 | Architecture/status | Each feature owner | P1 | Open for 006 | Features 002–005 have synchronized, locally accepted packs. Feature 005 completes all eight units and 110 local scenarios; two release scenarios remain with Feature 006, which must complete its own triplet. |
+| TUSK-ISS-001 | G1 | Architecture/status | Each feature owner | P1 | Closed in planning | Features 002–006 now have synchronized planning packs; Feature 006 has eight units and 102 unexecuted scenarios. G1 closure is planning-only and does not close G4 or authorize implementation. |
 | TUSK-ISS-002 | G2 | Dependency/security | Phase 2 / Phase 6 owners | P1 | Local proof recorded; native pending | Retain accepted Go 1.25.0, modernc v1.58.0/libc v1.75.6 graph. Feature 002 durable evidence owns local compatibility; native/hosted runtime remains Phase 6. No runtime tests were rerun during Feature 003 planning. |
 | TUSK-ISS-003 | G3 | Dependency/performance | Phase 4/5 owners | P2 | Closed locally | Feature 005 U1/U6 retain combined graph/minimum-Go proof plus 84/84 CLI and 78/78 TUI case-runs; see u6-acceptance.json. |
-| TUSK-ISS-004 | G4 | Release/operations | Phase 6 release maintainer | P2 | Open gate | Establish release candidate and destination/ownership/license/version policy; run hosted/manual matrix before publication. Evidence: Candidate SHA, job URLs, binary hashes, manual terminal record, checksums/notices and actual authorized publication result when released. |
+| TUSK-ISS-004 | G4 | Release/operations | Phase 6 release maintainer | P2 | Open gate | Execute Feature 006 native/provenance/install/distribution/public-content contracts and close owner license/tap/contact/version/authority gates. Evidence: Accepted exact candidate SHA/asset hashes, hosted/native/terminal records, notices, authorized publication/tap and rendered GitHub readback. |
 | TUSK-ISS-005 | — | Core contract/coherence | Core/service reviewers | P1 | Fixed in plan | Retain shipped core; update product R5/R6 and map integration tests without reopening completed Phase 1 work. Evidence: Planning source comparison completed; runtime regression evidence remains Phase 3 execution. |
 | TUSK-ISS-006 | — | Rollup/product | Service owner | P1 | Fixed in plan | R7–R9 and mutation table define defaults, reopen-before-rollup, explicit reopen precedence and last-child reset. Evidence: Table-driven lifecycle, nested 100%, both policy settings, rollback; not executed. |
 | TUSK-ISS-007 | — | Transactions/data integrity | Storage/service owners | P1 | Fixed in plan | KTD4/KTD5 place every mutation read/write under one IMMEDIATE callback with explicit ownership and no nesting. Evidence: Disk/barrier tests and injected failures prove no lost update/partial graph/event set; not executed. |
@@ -83,12 +83,12 @@ support the method; the thresholds above preserve Tusk's fast interactive purpos
 
 ### TUSK-ISS-001. Architecture/status
 
-- **Found:** Product planning/source review; severity P1. Current G1 remains open for Feature 006.
+- **Found:** Product planning/source review; severity P1. G1 closed in planning for Features 002–006 on 2026-10-01.
 - **Owner / affected contract:** Each feature owner; R29; all units; TUSK-V73.
-- **Evidence / gap:** Features 002–005 have complete, locally accepted triplets. Feature 005 closes eight units and 110 local scenarios; Feature 006 still has an outline and owns the remaining two release scenarios.
-- **Decision / next action:** Keep the umbrella requirements-only. Feature 006 planning is next, awaiting instruction.
-- **Retest / closure:** Feature 005 u6-acceptance.json binds local runtime, review, performance, terminal and documentation evidence.
-- **Blocking boundary:** G1 blocks Feature 006 implementation until its pack exists; G4 native/hosted release proof remains open.
+- **Evidence / gap:** Features 002–005 have complete, locally accepted triplets. Feature 006 now has a repository-grounded synchronized triplet, 30 feature requirements, eight stable units and 102 unchecked execution scenarios.
+- **Decision / next action:** Keep the umbrella requirements-only. Phase-local U1 is next after an implementation instruction; product R30 maps requested README/metadata to the Feature 006 public-content units.
+- **Retest / closure:** Document-only coverage/link/status audit, Feature 006 review dispositions and synchronized registry/masterplan close planning. No application execution gate was rerun.
+- **Blocking boundary:** G1 no longer blocks Feature 006 planning readiness; owner implementation instruction and the named license/native/distribution/publication gates still apply. G4 remains open.
 
 ### TUSK-ISS-002. Dependency/security
 
@@ -113,8 +113,8 @@ support the method; the thresholds above preserve Tusk's fast interactive purpos
 - **Found:** Planning/source review on 2026-09-08; severity P2; Open gate.
 - **Owner / affected contract:** Phase 6 release maintainer; R27, R29; U21–U23; TUSK-V67–TUSK-V73.
 - **Evidence / gap:** No hosted matrix, architecture execution, terminal acceptance or distribution metadata exists.
-- **Decision / next action:** Establish release candidate and destination/ownership/license/version policy; run hosted/manual matrix before publication.
-- **Retest / closure:** Candidate SHA, job URLs, binary hashes, manual terminal record, checksums/notices and actual authorized publication result when released.
+- **Decision / next action:** Feature 006 KTD1–KTD16/U1–U8 now decide the candidate/tool/native/documentation/promotion contracts. Its 006-ISS-001–005/018 own license/rights, native access, tap, concrete release identity/authority, security contact and tool/runtime verification. Execute those gates before publication.
+- **Retest / closure:** Exact candidate/source/documentation identities, job/artifact/provenance/native/terminal records, retained performance, checksums/notices, authorized public release/tap and GitHub metadata/README readback.
 - **Blocking boundary:** G4 remains a Phase 6 release gate. Feature 002 compatibility evidence will not substitute for candidate native/hosted/manual acceptance or publication authority.
 
 ### TUSK-ISS-005. Core contract/coherence
