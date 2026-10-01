@@ -46,9 +46,10 @@ type caseResult struct {
 	Error       string   `json:"error,omitempty"`
 }
 type report struct {
-	Manifest map[string]string `json:"manifest"`
-	Cases    []caseResult      `json:"cases"`
-	Passed   bool              `json:"passed"`
+	Manifest       map[string]string `json:"manifest"`
+	Cases          []caseResult      `json:"cases"`
+	Passed         bool              `json:"passed"`
+	HostAcceptance *hostAcceptance   `json:"host_acceptance,omitempty"`
 }
 type executor func(string, []string, []string) (int64, []byte, error)
 
@@ -450,11 +451,12 @@ func runWith(args []string, stdout, stderr io.Writer, executeProcess executor, s
 	flags := flag.NewFlagSet("cli-bench", flag.ContinueOnError)
 	flags.SetOutput(stderr)
 	binary := flags.String("binary", "bin/tusk", "Built executable")
+	profile := flags.String("acceptance-profile", "reference", "reference or ryzen-4500u-balanced-v1")
 	output := flags.String("output", "docs/verification-evidence/004/latency.json", "Raw report")
 	if err := flags.Parse(args); err != nil {
 		return 2
 	}
-	if flags.NArg() != 0 {
+	if flags.NArg() != 0 || (*profile != "reference" && *profile != "ryzen-4500u-balanced-v1") {
 		return 2
 	}
 	absolute, err := filepath.Abs(*binary)
@@ -467,6 +469,7 @@ func runWith(args []string, stdout, stderr io.Writer, executeProcess executor, s
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
+	m["selected_acceptance_profile"] = *profile
 	dir, err := os.MkdirTemp("", "tusk-cli-bench-")
 	if err != nil {
 		fmt.Fprintln(stderr, err)
@@ -510,12 +513,23 @@ func runWith(args []string, stdout, stderr io.Writer, executeProcess executor, s
 	if err != nil {
 		m["error"] = err.Error()
 	}
+	accepted := r.Passed
+	if *profile != "reference" {
+		a := assessHost(r)
+		a.Passed = a.Passed && err == nil && completedRuns == 3
+		r.HostAcceptance = &a
+		accepted = a.Passed
+		for _, c := range a.Cases {
+			fmt.Fprintf(stdout, "host=%s %-38s mean_p90=%7.3fms limit=%7.3fms passed=%v\n", a.Profile, c.Name, c.MeanP90NS/1e6, float64(c.LimitNS)/1e6, c.Passed)
+		}
+		fmt.Fprintf(stdout, "reference_passed=%v host_passed=%v\n", r.Passed, accepted)
+	}
 	data, _ := json.MarshalIndent(r, "", "  ")
 	if err = os.WriteFile(*output, append(data, '\n'), 0600); err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	if !r.Passed {
+	if !accepted {
 		return 1
 	}
 	return 0

@@ -173,8 +173,10 @@ help:
 
 .PHONY: bench-cli
 CLI_BENCH_OUTPUT ?= docs/verification-evidence/004/latency.json
+CLI_BENCH_PROFILE ?= reference
+
 bench-cli: build
-	go run ./scripts/cli-bench --binary "$(BUILD_OUTPUT)" --output "$(CLI_BENCH_OUTPUT)"
+	go run ./scripts/cli-bench --binary "$(BUILD_OUTPUT)" --output "$(CLI_BENCH_OUTPUT)" --acceptance-profile "$(CLI_BENCH_PROFILE)"
 
 .PHONY: profile-cli
 CLI_PROFILE_OUTPUT ?= /tmp/tusk-cli.cpu
