@@ -129,7 +129,7 @@ func TestSession_ComposedRunner(t *testing.T) {
 	t.Setenv("NO_COLOR", "")
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	_, err := tuiRunner(os.Stdin, io.Discard, io.Discard)(ctx, cli.Config{Location: time.UTC})
+	_, err := tuiRunner(os.Stdin, io.Discard, io.Discard, os.Getenv)(ctx, cli.Config{Location: time.UTC})
 	if err == nil {
 		t.Fatal("canceled runner succeeded")
 	}

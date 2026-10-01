@@ -32,7 +32,7 @@ func assertFrameBounds(t *testing.T, frame string, w, h int) {
 }
 
 func TestResize_CellBoundsAndDraftRetention(t *testing.T) {
-	m := New(testOptions())
+	m := sizedModel(testOptions())
 	m.notes.SetValue("Draft 界 é 👩‍💻\nkeep this")
 	want := m.notes.Value()
 	op := m.operation
@@ -73,7 +73,7 @@ func TestResize_StateAndUnicodeBounds(t *testing.T) {
 		for _, count := range []int{0, 1, 1000} {
 			o := testOptions()
 			o.Profile = profile
-			m := New(o)
+			m := sizedModel(o)
 			for i := range count {
 				m.forest = append(m.forest, &core.TaskNode{Depth: 10, Task: core.Task{ID: fmt.Sprint(i), Title: "界 é 👩‍💻 " + strings.Repeat("長", 100) + "\x1b]52;c;secret\a", Description: "notes\n\ttwo\r\u202e", Status: core.StatusTodo, Priority: core.PriorityHigh, Progress: 25}})
 			}
@@ -104,7 +104,7 @@ func TestResize_StateAndUnicodeBounds(t *testing.T) {
 }
 
 func TestOverlay_FocusAndClip(t *testing.T) {
-	m := New(testOptions())
+	m := sizedModel(testOptions())
 	listFrame := m.View()
 	m.Update(tea.KeyMsg{Type: tea.KeyTab})
 	before := m.View()
@@ -154,7 +154,7 @@ func TestOverlay_GraphemeBoundaries(t *testing.T) {
 			t.Errorf("%q [%d:%d] = %q want %q", tc.s, tc.left, tc.right, got, tc.want)
 		}
 	}
-	m := New(testOptions())
+	m := sizedModel(testOptions())
 	l := measure(80, 24)
 	rows := make([]string, 24)
 	for i := range rows {
@@ -175,7 +175,7 @@ func TestOverlay_GraphemeBoundaries(t *testing.T) {
 }
 
 func TestOverlay_HelpScrollAndPureViews(t *testing.T) {
-	m := New(testOptions())
+	m := sizedModel(testOptions())
 	m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'?'}})
 	for _, k := range []tea.KeyMsg{{Type: tea.KeyDown}, {Type: tea.KeyUp}, {Type: tea.KeyPgDown}, {Type: tea.KeyPgUp}, {Type: tea.KeyEnd}, {Type: tea.KeyHome}, {Type: tea.KeyRunes, Runes: []rune{'j'}}} {
 		m.Update(k)
@@ -198,7 +198,7 @@ func TestOverlay_HelpScrollAndPureViews(t *testing.T) {
 }
 
 func TestTerminal_DeepTreeKeepsTitlesAndRawText(t *testing.T) {
-	m := New(testOptions())
+	m := sizedModel(testOptions())
 	m.state = loaded
 	root := &core.TaskNode{Task: core.Task{Title: "Root", Status: core.StatusTodo, Priority: core.PriorityHigh}}
 	m.forest = []*core.TaskNode{root}

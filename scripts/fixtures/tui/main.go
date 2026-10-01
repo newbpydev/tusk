@@ -1,4 +1,6 @@
-package tui
+//go:build tusk_fixture
+
+package main
 
 import (
 	"context"
@@ -7,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"testing"
 	"time"
 
 	"github.com/muesli/termenv"
@@ -16,15 +17,16 @@ import (
 	"github.com/newbpydev/tusk/internal/service"
 	"github.com/newbpydev/tusk/internal/service/dateparse"
 	"github.com/newbpydev/tusk/internal/storage"
+	"github.com/newbpydev/tusk/internal/tui"
 )
 
-// This entry point runs only the real interactive adapter with a disk-backed
-// service and one controlled read fault. It exits before the testing runner can
-// print results. Build in Bash; use the executable solely as an app in Kitty.
-func TestTUIInteractiveFixture(t *testing.T) {
+// Manual app with a disk-backed service and controlled faults. Build in Bash;
+// operate the executable solely as an app in an owned Kitty window.
+func main() {
 	dir := os.Getenv("TUSK_TUI_KITTY_FIXTURE")
 	if dir == "" {
-		t.Skip("manual application fixture; not automated terminal evidence")
+		fmt.Fprintln(os.Stderr, "manual fixture requires TUSK_TUI_KITTY_FIXTURE")
+		os.Exit(2)
 	}
 	dir = filepath.Clean(dir)
 	if filepath.Dir(dir) != os.TempDir() || !strings.HasPrefix(filepath.Base(dir), "tusk-005-") {
@@ -56,7 +58,7 @@ func TestTUIInteractiveFixture(t *testing.T) {
 	if os.Getenv("NO_COLOR") != "" {
 		profile = termenv.Ascii
 	}
-	result, err := Run(context.Background(), RunOptions{Input: os.Stdin, Output: os.Stdout, Open: factory, Location: time.UTC, Profile: profile, DayBounds: dateparse.DayBounds, ParseDue: dateparse.ParseDue})
+	result, err := tui.Run(context.Background(), tui.RunOptions{Input: os.Stdin, Output: os.Stdout, Open: factory, Location: time.UTC, Profile: profile, DayBounds: dateparse.DayBounds, ParseDue: dateparse.ParseDue})
 	fmt.Printf("App closed. Committed changes: %t; uncertain outcome: %t\n", result.HadCommittedChanges, result.OutcomeUnknown)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

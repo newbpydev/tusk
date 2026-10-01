@@ -87,7 +87,7 @@ func snapshot(v any) string { return deepState(reflect.ValueOf(v), map[uintptr]b
 func TestView_ColdAndRepeatedCallsPreserveDeepState(t *testing.T) {
 	for _, populated := range []bool{false, true} {
 		t.Run(fmt.Sprint(populated), func(t *testing.T) {
-			m := New(testOptions())
+			m := sizedModel(testOptions())
 			if populated {
 				m.notes.SetValue("one\n界 two\nthree")
 				m.notes.Focus()
@@ -96,7 +96,7 @@ func TestView_ColdAndRepeatedCallsPreserveDeepState(t *testing.T) {
 			before := snapshot(m)
 			frame := m.View()
 			if frame == "" {
-				t.Fatal("empty cold frame")
+				t.Fatal("empty sized frame")
 			}
 			for range 100 {
 				if m.View() != frame {
@@ -121,7 +121,7 @@ func TestCommand_NoLiveModelCapture(t *testing.T) {
 	clocks := 0
 	o.Now = func() time.Time { clocks++; return time.Date(2026, 9, 29, 12, 0, 0, 0, time.UTC) }
 	o.Wait = func(context.Context, time.Duration) error { t.Fatal("unexpected wait"); return nil }
-	m := New(o)
+	m := sizedModel(o)
 	cmd := m.Init()
 	if calls != 0 || clocks != 0 {
 		t.Fatal("constructor/Init performed I/O")
@@ -154,7 +154,7 @@ func TestTUI_LoadStates(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			o := testOptions()
 			o.Load = func(context.Context) ([]*core.TaskNode, error) { return tc.nodes, tc.err }
-			m := New(o)
+			m := sizedModel(o)
 			if !strings.Contains(m.View(), "Loading") {
 				t.Fatal(m.View())
 			}
@@ -177,10 +177,10 @@ func TestTUI_LoadStates(t *testing.T) {
 
 func TestTUI_SessionIsolation(t *testing.T) {
 	o := testOptions()
-	a := New(o)
+	a := sizedModel(o)
 	o.Profile = termenv.ANSI
 	o.Location = time.FixedZone("test", 3600)
-	b := New(o)
+	b := sizedModel(o)
 	if a.renderer == b.renderer || a.options.Location == b.options.Location {
 		t.Fatal("shared session state")
 	}
@@ -205,7 +205,7 @@ func TestCommand_CanceledWait(t *testing.T) {
 
 func TestTUI_QuitAndRetry(t *testing.T) {
 	for _, key := range []tea.KeyMsg{{Type: tea.KeyRunes, Runes: []rune{'q'}}, {Type: tea.KeyCtrlC}} {
-		m := New(testOptions())
+		m := sizedModel(testOptions())
 		_, cmd := m.Update(key)
 		if cmd == nil {
 			t.Fatal("quit not dispatched")
@@ -217,7 +217,7 @@ func TestTUI_QuitAndRetry(t *testing.T) {
 			t.Fatal("incorrect exit outcome")
 		}
 	}
-	m := New(testOptions())
+	m := sizedModel(testOptions())
 	m.Update(forestMsg{operation: 1, err: errors.New("private")})
 	_, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'r'}})
 	if cmd == nil || m.state != loading {
@@ -230,7 +230,7 @@ func TestTUI_QuitAndRetry(t *testing.T) {
 }
 
 func TestTUI_ServicePanicTerminatesSession(t *testing.T) {
-	m := New(testOptions())
+	m := sizedModel(testOptions())
 	_, cmd := m.Update(forestMsg{operation: 1, err: errRuntime})
 	if cmd == nil || m.exitErr != errRuntime {
 		t.Fatal("service panic left unsafe session open")

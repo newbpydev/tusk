@@ -28,7 +28,7 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("%v %s", err, out)
 	}
-	for _, mode := range []string{"q", "resize", "ctrlc", "interrupt", "terminate"} {
+	for _, mode := range []string{"q", "resize", "ctrlc", "interrupt", "terminate", "hangup"} {
 		t.Run(mode, func(t *testing.T) {
 			fd, err := unix.Open("/dev/ptmx", unix.O_RDWR|unix.O_NOCTTY|unix.O_NONBLOCK, 0)
 			if err != nil {
@@ -136,6 +136,8 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 				_, err = master.Write([]byte{3})
 			case "interrupt":
 				err = cmd.Process.Signal(syscall.SIGINT)
+			case "hangup":
+				err = cmd.Process.Signal(syscall.SIGHUP)
 			case "terminate":
 				err = cmd.Process.Signal(syscall.SIGTERM)
 			}

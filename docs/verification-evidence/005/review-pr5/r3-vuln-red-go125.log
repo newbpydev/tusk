@@ -1,0 +1,75 @@
+govulncheck ./cmd/tusk
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-6218
+    Avoid quadratic complexity in resolvePath in net/url
+  More info: https://pkg.go.dev/vuln/GO-2026-6218
+  Standard library
+    Found in: net/url@go1.25
+    Fixed in: net/url@go1.25.13
+    Example traces found:
+      #1: internal/tui/markdown.go:33:29: tui.RenderMarkdown calls glamour.TermRenderer.Render, which eventually calls url.URL.ResolveReference
+
+Vulnerability #2: GO-2026-5970
+    Infinite loop on invalid input in golang.org/x/text
+  More info: https://pkg.go.dev/vuln/GO-2026-5970
+  Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.23.0
+    Fixed in: golang.org/x/text@v0.39.0
+    Example traces found:
+      #1: cmd/tusk/tui.go:21:51: tusk.tuiRunner calls io.WriteString, which eventually calls norm.Form.Properties
+
+Vulnerability #3: GO-2026-5320
+    Cross-site Scripting (XSS) in github.com/yuin/goldmark
+  More info: https://pkg.go.dev/vuln/GO-2026-5320
+  Module: github.com/yuin/goldmark
+    Found in: github.com/yuin/goldmark@v1.7.8
+    Fixed in: github.com/yuin/goldmark@v1.7.17
+    Example traces found:
+      #1: internal/tui/markdown.go:33:29: tui.RenderMarkdown calls glamour.TermRenderer.Render, which eventually calls html.Renderer.renderAutoLink
+      #2: internal/tui/markdown.go:33:29: tui.RenderMarkdown calls glamour.TermRenderer.Render, which eventually calls html.Renderer.renderImage
+      #3: internal/tui/markdown.go:33:29: tui.RenderMarkdown calls glamour.TermRenderer.Render, which eventually calls html.Renderer.renderLink
+
+Vulnerability #4: GO-2026-4601
+    Incorrect parsing of IPv6 host literals in net/url
+  More info: https://pkg.go.dev/vuln/GO-2026-4601
+  Standard library
+    Found in: net/url@go1.25
+    Fixed in: net/url@go1.25.8
+    Example traces found:
+      #1: internal/tui/markdown.go:33:29: tui.RenderMarkdown calls glamour.TermRenderer.Render, which eventually calls url.Parse
+
+Vulnerability #5: GO-2026-4341
+    Memory exhaustion in query parameter parsing in net/url
+  More info: https://pkg.go.dev/vuln/GO-2026-4341
+  Standard library
+    Found in: net/url@go1.25
+    Fixed in: net/url@go1.25.6
+    Example traces found:
+      #1: internal/storage/connection.go:50:34: storage.connectorFor calls sqlite.NewConnector, which eventually calls url.ParseQuery
+
+Vulnerability #6: GO-2025-4010
+    Insufficient validation of bracketed IPv6 hostnames in net/url
+  More info: https://pkg.go.dev/vuln/GO-2025-4010
+  Standard library
+    Found in: net/url@go1.25
+    Fixed in: net/url@go1.25.2
+    Example traces found:
+      #1: internal/tui/markdown.go:33:29: tui.RenderMarkdown calls glamour.TermRenderer.Render, which eventually calls url.Parse
+
+Vulnerability #7: GO-2025-3595
+    Incorrect Neutralization of Input During Web Page Generation in x/net in
+    golang.org/x/net
+  More info: https://pkg.go.dev/vuln/GO-2025-3595
+  Module: golang.org/x/net
+    Found in: golang.org/x/net@v0.33.0
+    Fixed in: golang.org/x/net@v0.38.0
+    Example traces found:
+      #1: internal/tui/markdown.go:33:29: tui.RenderMarkdown calls glamour.TermRenderer.Render, which eventually calls html.Tokenizer.Next
+
+Your code is affected by 7 vulnerabilities from 3 modules and the Go standard library.
+This scan also found 12 vulnerabilities in packages you import and 39
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.
+Use '-show verbose' for more details.
+make: *** [Makefile:203: check-vulnerabilities] Error 3

@@ -42,7 +42,7 @@ func TestDetails_MetadataAndIndependentTimeline(t *testing.T) {
 	o.History = func(context.Context, string) ([]ports.TaskEvent, error) {
 		return []ports.TaskEvent{{Sequence: 9007199254740993, Kind: ports.EventMetadata, OccurredAt: n.Task.UpdatedAt, ChangedFields: []string{"priority", "title"}}, {Sequence: 1, Kind: ports.EventCreate, OccurredAt: n.Task.CreatedAt, ChangedFields: []string{"title"}}}, nil
 	}
-	m := New(o)
+	m := sizedModel(o)
 	deliverUI(m, m.Init())
 	all := strings.Join(m.detailLines(44), "\n")
 	for _, want := range []string{n.Task.ID, "Complete title", "42%", "Root task", "design", "work", "Due", "Not set", "Created", "Updated", "Completed", "TEST (-03:00)", "No notes", "Activity", "9007199254740993", "priority, title"} {
@@ -142,7 +142,7 @@ func TestMarkdown_IdentityWidthProfileAndPanicFallback(t *testing.T) {
 	a, b := fixtureNode("a", "A", 2, nil), fixtureNode("b", "B", 1, nil)
 	a.Task.Description = "private A"
 	b.Task.Description = "public B"
-	m := New(testOptions())
+	m := sizedModel(testOptions())
 	m.forest = []*core.TaskNode{a, b}
 	m.state = loaded
 	m.busy = false

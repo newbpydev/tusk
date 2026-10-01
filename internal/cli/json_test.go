@@ -268,12 +268,18 @@ func TestJSON_EncodingParity(t *testing.T) {
 }
 
 func BenchmarkJSON(b *testing.B) {
+	benchmarkJSON(b, strings.Repeat("t", 64), strings.Repeat("n", 128))
+}
+func BenchmarkJSONEscaped(b *testing.B) {
+	benchmarkJSON(b, strings.Repeat("界\"", 16), strings.Repeat("notes\n\t世界", 16))
+}
+func benchmarkJSON(b *testing.B, title, description string) {
 	nodes := make([]core.TaskNode, 1000)
 	roots := make([]*core.TaskNode, len(nodes))
 	for i := range nodes {
 		nodes[i] = core.TaskNode{Task: jsonFixture(), Depth: 1}
-		nodes[i].Task.Title = strings.Repeat("t", 64)
-		nodes[i].Task.Description = strings.Repeat("n", 128)
+		nodes[i].Task.Title = title
+		nodes[i].Task.Description = description
 		roots[i] = &nodes[i]
 	}
 	b.ReportAllocs()

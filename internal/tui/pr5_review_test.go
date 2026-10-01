@@ -2,7 +2,13 @@ package tui
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"io"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -205,5 +211,64 @@ func TestPR5_RecoveryZeroDueMatchesDetails(t *testing.T) {
 	}
 	if strings.Contains(strings.Join(m.detailLines(60), "\n"), "Jan 1") {
 		t.Fatal("zero due shown in summary")
+	}
+}
+
+func TestPR5_UnsizedFrameWaitsForTerminal(t *testing.T) {
+	m := New(testOptions())
+	before := snapshot(m)
+	for range 100 {
+		if m.View() != "" {
+			t.Fatal("painted assumed terminal dimensions")
+		}
+	}
+	if snapshot(m) != before || m.width != 0 || m.height != 0 {
+		t.Fatal("cold frame mutated or assumed size")
+	}
+	m.Update(m.Init()())
+	if m.View() != "" {
+		t.Fatal("load painted before first size")
+	}
+	m.Update(tea.WindowSizeMsg{Width: 40, Height: 10})
+	if !strings.Contains(m.View(), "Resize") {
+		t.Fatal("first actual size not respected")
+	}
+}
+
+func TestPR5_RunRejectsMissingFactoryBeforeProgram(t *testing.T) {
+	_, err := Run(context.Background(), RunOptions{Input: strings.NewReader(""), Output: io.Discard, Program: func(m tea.Model, _ ...tea.ProgramOption) (tea.Model, error) {
+		t.Fatal("invalid session started program")
+		return m, nil
+	}})
+	if !errors.Is(err, ports.ErrInvalidServiceOptions) {
+		t.Fatalf("missing factory: %v", err)
+	}
+}
+
+func TestPR5_TestsCannotExitPastRunner(t *testing.T) {
+	names, err := filepath.Glob("*_test.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range names {
+		file, err := parser.ParseFile(token.NewFileSet(), name, nil, 0)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ast.Inspect(file, func(n ast.Node) bool {
+			call, ok := n.(*ast.CallExpr)
+			if !ok {
+				return true
+			}
+			sel, ok := call.Fun.(*ast.SelectorExpr)
+			if !ok {
+				return true
+			}
+			pkg, ok := sel.X.(*ast.Ident)
+			if ok && pkg.Name == "os" && sel.Sel.Name == "Exit" {
+				t.Errorf("%s bypasses test runner with os.Exit", name)
+			}
+			return true
+		})
 	}
 }

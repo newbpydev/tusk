@@ -51,7 +51,13 @@ func TestResolvePath_Precedence(t *testing.T) {
 func TestResolve_EnvironmentPrecedence(t *testing.T) {
 	base := t.TempDir()
 	t.Chdir(base)
+	var err error
+	base, err = os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
 	t.Setenv("HOME", base)
+	t.Setenv("USERPROFILE", base)
 	t.Setenv("TUSK_DB_PATH", "")
 	t.Setenv("XDG_DATA_HOME", "")
 	for _, tc := range []struct{ name, env, xdg, want string }{

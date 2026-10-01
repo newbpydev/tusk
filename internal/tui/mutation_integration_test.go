@@ -44,7 +44,7 @@ func mutationFixture(t *testing.T, policy bool) (*Model, ports.TaskService, *Ses
 	o.History = session.History
 	o.Mutate = session.Mutate
 	o.ParseDue = dateparse.ParseDue
-	m := New(o)
+	m := sizedModel(o)
 	deliverUI(m, m.Init())
 	return m, external, session
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/newbpydev/tusk/internal/core"
 	"github.com/newbpydev/tusk/internal/service/dateparse"

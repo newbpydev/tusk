@@ -9,7 +9,7 @@ import (
 )
 
 func control(r rune) bool {
-	return r < 32 || r >= 127 && r <= 159 || r == 0x061c || r == 0x200e || r == 0x200f || r == 0xfeff || r == 0x2028 || r == 0x2029 || r >= 0x202a && r <= 0x202e || r >= 0x2066 && r <= 0x2069
+	return r < 32 || r >= 127 && r <= 159 || r == 0x00ad || r == 0x200b || r >= 0x2060 && r <= 0x2064 || r >= 0xfff9 && r <= 0xfffb || r == 0xe0001 || r >= 0xe0020 && r <= 0xe007f || r == 0x061c || r == 0x200e || r == 0x200f || r == 0xfeff || r == 0x2028 || r == 0x2029 || r >= 0x202a && r <= 0x202e || r >= 0x2066 && r <= 0x2069
 }
 
 // Scalar preserves the CLI's visible escaping, including literal \n, \r and \t.

@@ -145,7 +145,7 @@ func TestRecovery_InitialUnknownStartsRefreshTimerAfterReadback(t *testing.T) {
 		return nil, ports.NewTransactionError("initial", ports.ErrBusy)
 	}
 	o.Recover = func(context.Context, string) (recoverySnapshot, error) { return recoverySnapshot{}, nil }
-	m := New(o)
+	m := sizedModel(o)
 	deliverUI(m, m.Init())
 	if m.timerStarted {
 		t.Fatal("initial failure started refresh")

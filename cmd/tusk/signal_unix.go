@@ -12,6 +12,6 @@ import (
 func processContext() (context.Context, func()) {
 	pipe := make(chan os.Signal, 1)
 	signal.Notify(pipe, syscall.SIGPIPE)
-	ctx, stop := interruptContext(os.Interrupt, syscall.SIGTERM)
+	ctx, stop := interruptContext(os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
 	return ctx, func() { stop(); signal.Stop(pipe) }
 }

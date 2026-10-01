@@ -22,10 +22,16 @@ func press(m *Model, k string) tea.Cmd {
 	return cmd
 }
 
+func sizedModel(o Options) *Model {
+	m := New(o)
+	m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
+	return m
+}
+
 func loadedModel(nodes ...*core.TaskNode) *Model {
 	o := testOptions()
 	o.Load = func(context.Context) ([]*core.TaskNode, error) { return nodes, nil }
-	m := New(o)
+	m := sizedModel(o)
 	deliverUI(m, m.Init())
 	return m
 }

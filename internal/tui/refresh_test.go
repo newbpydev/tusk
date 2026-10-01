@@ -19,7 +19,7 @@ func TestRefresh_CoalescesAndKeepsOneTimer(t *testing.T) {
 		calls++
 		return []*core.TaskNode{fixtureNode("one", "One", core.PriorityLow, nil)}, nil
 	}
-	m := New(o)
+	m := sizedModel(o)
 	first := m.Init()
 	for range 50 {
 		if press(m, "r") != nil {

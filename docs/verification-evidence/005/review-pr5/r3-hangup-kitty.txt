@@ -1,0 +1,10 @@
+App closed. Committed changes: true; uncertain outcome: false
+bash-5.3$ /home/newbpydev/Development/Xoomby/tusk/bin/tusk tui
+tusk: context canceled
+bash-5.3$ ^C
+bash-5.3$ TUSK_DB_PATH=/tmp/tusk-005-pr5-82dhj89s/fault-app.db /home/newbpydev/Development/Xoomby/tusk/bin/tusk tui
+bash-5.3$ TUSK_DB_PATH=/tmp/tusk-005-pr5-82dhj89s/fault-app.db /home/newbpydev/Development/Xoomby/tusk/bin/tusk tui
+bash-5.3$ NO_COLOR=1 TUSK_DB_PATH=/tmp/tusk-005-pr5-82dhj89s/fault-app.db /home/newbpydev/Development/Xoomby/tusk/bin/tusk tui
+bash-5.3$ NO_COLOR=1 TUSK_DB_PATH=/tmp/tusk-005-pr5-82dhj89s/fault-app.db /home/newbpydev/Development/Xoomby/tusk/bin/tusk tui
+tusk: context canceled
+bash-5.3$

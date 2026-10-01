@@ -10,6 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/term"
 	"github.com/muesli/termenv"
+	"github.com/newbpydev/tusk/internal/ports"
 )
 
 type RunOptions struct {
@@ -25,6 +26,9 @@ type RunOptions struct {
 }
 
 func Run(ctx context.Context, options RunOptions) (result Result, err error) {
+	if options.Open == nil {
+		return Result{}, ports.ErrInvalidServiceOptions
+	}
 	ctx, cancel := context.WithCancel(ctx)
 	session := NewSession(ctx, options.Open)
 	out := &recordingWriter{writer: options.Output, cancel: cancel}

@@ -111,7 +111,7 @@ bench-tui: build
 # Manual fault-injected app, never test-result verification in Kitty.
 build-tui-fixture:
 	mkdir -p bin
-	CGO_ENABLED=0 go test -c -o bin/tusk-tui-fixture ./internal/tui
+	CGO_ENABLED=0 go build -tags=tusk_fixture -o bin/tusk-tui-fixture ./scripts/fixtures/tui
 
 test-tui:
 	go test $(TUI_TEST_FLAGS) -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '$(TUI_TEST_RUN)'
@@ -183,7 +183,7 @@ profile-cli:
 
 .PHONY: bench-cli-json
 bench-cli-json:
-	go test ./internal/cli -run '^$$' -bench '^BenchmarkJSON$$' -benchmem -count=3
+	go test ./internal/cli -run '^$$' -bench '^BenchmarkJSON(Escaped)?$$' -benchmem -count=3
 
 .PHONY: check-modules
 check-modules:
@@ -197,3 +197,9 @@ test-cli-latency-codec:
 CLI_CONDITIONS_OUTPUT ?= /tmp/tusk-cli-conditions.json
 bench-cli-conditions: build
 	TUSK_CLI_CONDITIONS=1 TUSK_CLI_BINARY="$(abspath $(BUILD_OUTPUT))" TUSK_CLI_CONDITIONS_OUTPUT="$(abspath $(CLI_CONDITIONS_OUTPUT))" go test -v ./scripts/cli-bench -run '^TestCLIConditions$$' -count=1
+
+# Use a toolchain supported by the installed govulncheck source analyzer:
+# GOTOOLCHAIN=go1.25.13 make check-vulnerabilities
+.PHONY: check-vulnerabilities
+check-vulnerabilities:
+	govulncheck ./cmd/tusk

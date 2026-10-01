@@ -46,7 +46,7 @@ func TestRefresh_TwoDiskOwnersPreserveSelectionAndSearch(t *testing.T) {
 	o := testOptions()
 	o.Load = session.Load
 	o.History = session.History
-	m := New(o)
+	m := sizedModel(o)
 	deliverUI(m, m.Init())
 	key := func(k string) { deliverUI(m, press(m, k)) }
 	key("/")

@@ -27,3 +27,9 @@ func TestTerminal_TUIProfile(t *testing.T) {
 		})
 	}
 }
+
+func TestTerminal_NilTUIEnvironmentIsEmpty(t *testing.T) {
+	if got := tuiProfile(nil); got != termenv.Ascii {
+		t.Fatalf("nil environment profile %v", got)
+	}
+}

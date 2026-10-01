@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -12,9 +13,23 @@ func TestCLIStartup_NoSyntaxRegistryInitialization(t *testing.T) {
 	if testing.Short() {
 		t.Skip("actual executable initialization")
 	}
+	if _, err := exec.LookPath("make"); err != nil {
+		t.Skip("startup executable check requires canonical make build")
+	}
+	_, source, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("startup test source location unavailable")
+	}
+	root := filepath.Dir(filepath.Dir(filepath.Dir(source)))
+	if _, err := os.Stat(filepath.Join(root, "Makefile")); err != nil {
+		t.Skip("startup build requires the source checkout")
+	}
 	binary := filepath.Join(t.TempDir(), "tusk")
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
 	build := exec.Command("make", "build", "BUILD_OUTPUT="+binary)
-	build.Dir = "../.."
+	build.Dir = root
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("%v: %s", err, out)
 	}

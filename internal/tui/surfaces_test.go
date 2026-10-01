@@ -21,7 +21,7 @@ func TestOverlay_UniformSurfaces(t *testing.T) {
 			t.Run(fmt.Sprintf("%dx%d/modal=%s", size[0], size[1], modalKind), func(t *testing.T) {
 				o := testOptions()
 				o.Profile = termenv.TrueColor
-				m := New(o)
+				m := sizedModel(o)
 				m.state = loaded
 				m.forest = []*core.TaskNode{{Task: core.Task{Title: "A task", Status: core.StatusTodo, Priority: core.PriorityMedium}}}
 				m.helpOpen = modalKind == "help"

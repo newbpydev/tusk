@@ -1,12 +1,13 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 005 PR #5 reviewer startup repaired and verified locally and in Kilo; hosted review is running
+**Current Status**: Feature 005 PR #5 review fixes R1–R3 verified; current CLI latency acceptance and hosted settlement remain open
 **Active Phase**: Feature 005 hosted PR review; Phase 6 planning awaits instruction
-**Active Implementation Target**: PR #5 hosted-review remediation — assess all 28 threads; validate and commit each bounded fix unit
+**Active Implementation Target**: PR #5 current-candidate CLI latency remediation, followed by remaining thread and hosted settlement
 
 - [x] PR #5 review unit R1: stale-form save feedback, delete-dialog refresh and failed-toggle write pause.
 - [x] PR #5 review unit R2: navigation, input and presentation consistency.
-- [ ] PR #5 review unit R3: lifecycle, environment and verification portability.
+- [x] PR #5 review unit R3: lifecycle, environment and verification portability.
+- [ ] Restore and verify current-candidate CLI latency acceptance; retain failed/control matrices.
 - [ ] Settle all observed PR #5 feedback and current-head checks; final merge remains user-owned.
 
 - [x] Replace the eight unavailable Glamour gallery LFS pointers with verified

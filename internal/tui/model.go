@@ -128,7 +128,7 @@ func New(options Options) *Model {
 	notes.Blur()
 	h := help.New()
 	h.Styles = help.Styles{Ellipsis: plain, ShortKey: plain, ShortDesc: plain, ShortSeparator: plain, FullKey: plain, FullDesc: plain, FullSeparator: plain}
-	m := &Model{options: options, renderer: r, notes: notes, help: h, operation: 1, busy: true, width: 80, height: 24, selected: -1, collapsed: map[string]bool{}}
+	m := &Model{options: options, renderer: r, notes: notes, help: h, operation: 1, busy: true, selected: -1, collapsed: map[string]bool{}}
 	m.startRead()
 	m.rebuildRows()
 	m.prepareFrame()

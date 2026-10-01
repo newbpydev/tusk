@@ -1,0 +1,22 @@
+govulncheck ./cmd/tusk
+govulncheck: Loading packages failed, possibly due to a mismatch between the Go version
+used to build govulncheck and the Go version on PATH. Consider rebuilding
+govulncheck with the current Go version.
+
+
+There are errors with the provided package patterns:
+
+/usr/lib/go/src/internal/poll/splice_linux.go:237:21: unknown field rfd in struct literal of type splicePipe
+/usr/lib/go/src/internal/poll/splice_linux.go:237:34: unknown field wfd in struct literal of type splicePipe
+-: This application uses version go1.26 of the source-processing packages but runs version go1.27 of 'go list'. It may fail to process source files that rely on newer language features. If so, rebuild the application using a newer version of Go.
+/usr/lib/go/src/math/rand/v2/rand.go:213:17: method must have no type parameters
+/usr/lib/go/src/math/rand/v2/rand.go:213:33: Int (function) is not a type
+/usr/lib/go/src/math/rand/v2/rand.go:213:38: Int (function) is not a type
+/usr/lib/go/src/math/rand/v2/rand.go:217:13: too many arguments in call to Int
+	have (uint64)
+	want ()
+-: This application uses version go1.26 of the source-processing packages but runs version go1.27 of 'go list'. It may fail to process source files that rely on newer language features. If so, rebuild the application using a newer version of Go.
+
+For details on package patterns, see https://pkg.go.dev/cmd/go#hdr-Package_lists_and_patterns.
+
+make: *** [Makefile:203: check-vulnerabilities] Error 1

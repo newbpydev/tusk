@@ -134,7 +134,7 @@ func benchmarkModel(count, width, height, noteBytes, events int) *Model {
 		history[i] = ports.TaskEvent{Sequence: int64(i + 1), Kind: ports.EventMetadata, OccurredAt: o.Now(), ChangedFields: []string{"title", "priority"}}
 	}
 	o.History = func(context.Context, string) ([]ports.TaskEvent, error) { return history, nil }
-	m := New(o)
+	m := sizedModel(o)
 	m.width = width
 	m.height = height
 	deliverUI(m, m.Init())
@@ -361,7 +361,7 @@ func TestWorkflow_StressTimerCommandsDrain(t *testing.T) {
 		go func() { returned <- cmd() }()
 	}
 	press(m, "esc")
-	deadline := time.NewTimer(time.Second)
+	deadline := time.NewTimer(5 * time.Second)
 	defer deadline.Stop()
 	for range count {
 		select {

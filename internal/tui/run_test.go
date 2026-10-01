@@ -48,6 +48,7 @@ func TestSession_Run(t *testing.T) {
 					if mode == "startup" {
 						return m, io.ErrClosedPipe
 					}
+					m.Update(tea.WindowSizeMsg{Width: 80, Height: 24})
 					m.Update(m.Init()())
 					if mode == "panic" {
 						panic("PRIVATE")
@@ -156,7 +157,7 @@ func TestSession_TerminalWriterPreservesDescriptorAndErrors(t *testing.T) {
 func TestSession_CommandPanic(t *testing.T) {
 	o := testOptions()
 	o.Load = func(context.Context) ([]*core.TaskNode, error) { panic("PRIVATE") }
-	m := New(o)
+	m := sizedModel(o)
 	msg := m.Init()()
 	m.Update(msg)
 	if !errors.Is(m.exitErr, errRuntime) {
