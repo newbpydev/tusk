@@ -340,5 +340,14 @@
     "verdict": "fixed",
     "unit": "R9",
     "reason": "Invalid profiles now print the rejected value and both valid profile names to stderr before returning 2. A Red/Green regression pins the diagnostic. make validate build check-generated passes."
+  },
+  {
+    "comment_id": 4158567739,
+    "path": "scripts/cli-bench/main.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4158567739",
+    "quote": "Non-EEXIST host-report open failures return usage exit 2 with an EEXIST-shaped message",
+    "verdict": "fixed",
+    "unit": "R10",
+    "reason": "Only errors.Is(err, os.ErrExist) uses the existing-file diagnostic and exit 2. Other open failures print their actual cause and return operational exit 1. A missing-parent Red regression now passes; existing-file preservation and usage tests remain green. make validate build check-generated passes. This pre-sampling diagnostic change leaves production, sampling and host acceptance unchanged."
   }
 ]

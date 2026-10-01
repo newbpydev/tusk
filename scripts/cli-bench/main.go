@@ -487,8 +487,12 @@ func runWith(args []string, stdout, stderr io.Writer, executeProcess executor, s
 	if *profile != "reference" {
 		hostOutput, err = os.OpenFile(*output, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
 		if err != nil {
-			fmt.Fprintf(stderr, "host acceptance requires a new output file: %v\n", err)
-			return 2
+			if errors.Is(err, os.ErrExist) {
+				fmt.Fprintf(stderr, "host acceptance requires a new output file: %v\n", err)
+				return 2
+			}
+			fmt.Fprintln(stderr, err)
+			return 1
 		}
 		defer hostOutput.Close()
 	}

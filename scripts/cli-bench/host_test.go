@@ -198,3 +198,18 @@ func TestHostAcceptance_FinalWriteCannotFollowReplacedPath(t *testing.T) {
 		t.Fatalf("owned report incomplete: %v", err)
 	}
 }
+
+func TestHostAcceptance_MissingOutputDirectoryIsOperational(t *testing.T) {
+	binary := filepath.Join(t.TempDir(), "binary")
+	if err := os.WriteFile(binary, []byte("test binary"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	output := filepath.Join(t.TempDir(), "missing", "report.json")
+	var stderr bytes.Buffer
+	called := false
+	fake := func(b string, a, e []string) (int64, []byte, error) { called = true; return fakeProcess(b, a, e) }
+	code := runWith([]string{"--binary", binary, "--output", output, "--acceptance-profile", "ryzen-4500u-balanced-v1"}, io.Discard, &stderr, fake, nil)
+	if code != 1 || called || !strings.Contains(stderr.String(), output) || strings.Contains(stderr.String(), "requires a new output file") {
+		t.Fatalf("code=%d called=%v stderr=%q", code, called, stderr.String())
+	}
+}

@@ -942,3 +942,14 @@ The initial receipt assertion omitted Makefile from the expected source delta;
 the shell sequence nevertheless committed/pushed the validated code as 12f3a8e.
 This follow-up synchronizes the receipt, checklist, plan, verification plan and
 workorder before advancing. No failed measurement or source hash was rewritten.
+
+### PR #5 hosted follow-up R10 (2026-10-01)
+
+Red reproduces a missing output parent reported as usage exit 2 with the
+existing-file message. Host report-open errors now keep exit 2 only for
+`os.ErrExist`; other failures print their actual cause and return operational
+exit 1. Existing-file preservation remains covered. `make validate build
+check-generated` passes (benchmark-package coverage 95.6%). This change occurs
+before sampling; production, sampling/validation/summary and host assessment
+are byte-for-byte unchanged, verified by r10-measurement-bridge.json. The retained
+complete CLI/TUI matrices still apply. Hosted settlement remains next.
