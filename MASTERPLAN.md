@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 005 PR #5 review fixes R1–R10 verified; owner-authorized host latency acceptance passes; hosted settlement remains open
-**Active Phase**: Feature 005 hosted PR review; Phase 6 planning awaits instruction
-**Active Implementation Target**: PR #5 current-head hosted review settlement
+**Current Status**: Feature 005 PR #5 review fixes R1–R10 verified; owner-authorized host latency acceptance passes; runtime head hosted-settled, owner merge pending
+**Active Phase**: Feature 005 owner merge decision; Phase 6 planning awaits instruction
+**Active Implementation Target**: PR #5 owner merge decision; receipt-only publication must pass its final audit before handoff
 
 - [x] PR #5 review unit R1: stale-form save feedback, delete-dialog refresh and failed-toggle write pause.
 - [x] PR #5 review unit R2: navigation, input and presentation consistency.
@@ -15,7 +15,7 @@
 - [x] Calibrate and verify current-candidate CLI latency acceptance on the declared host; retain failed/control matrices.
 - [x] PR #5 follow-up R9: protect retained reports and explain invalid benchmark profiles.
 - [x] PR #5 follow-up R10: distinguish operational report-open failures from existing-output usage errors.
-- [ ] Settle all observed PR #5 feedback and current-head checks; final merge remains user-owned.
+- [x] Settle all observed PR #5 feedback and current-head checks; final merge remains user-owned.
 
 - [x] Replace the eight unavailable Glamour gallery LFS pointers with verified
   upstream image bytes stored in regular Git; retain source provenance.

@@ -1,0 +1,44 @@
+{
+  "head_sha": "82fa5eb4faa3f4da001dec6cbae96b0d2676d614",
+  "base": {
+    "host": "github.com",
+    "repository": "newbpydev/tusk",
+    "ref": "main",
+    "oid": "4f4873c78c484da12f766e700bb69b92f46335a9",
+    "graphql_oid": "4f4873c78c484da12f766e700bb69b92f46335a9",
+    "historical_oid": "4f4873c78c484da12f766e700bb69b92f46335a9",
+    "merge_commit_oid": "972ee2d64835a0d0b790b72991ba05d1bd76d5c7",
+    "merge_parent_oids": [
+      "4f4873c78c484da12f766e700bb69b92f46335a9",
+      "82fa5eb4faa3f4da001dec6cbae96b0d2676d614"
+    ],
+    "identity": "current"
+  },
+  "mergeability_certain": true,
+  "mergeable": "MERGEABLE",
+  "merge_state_status": "CLEAN",
+  "checks_terminal": true,
+  "all_checks_ok": true,
+  "counts": {
+    "threads": 0,
+    "ci": 0,
+    "comments": 0,
+    "needs_human": 0
+  },
+  "quiet_seconds": 356,
+  "invocation_elapsed_seconds": 9792,
+  "url": "https://github.com/newbpydev/tusk/pull/5",
+  "reviewer_result": "Kilo summary at 82fa5eb: No Issues Found; Recommendation Merge",
+  "thread_outcomes": {
+    "addressed": 34,
+    "declined_or_no_change": 5,
+    "total": 39
+  },
+  "scope": "Target posture; no merge. Receipt-only publication must receive a fresh exact-head audit in-session before final handoff. Runtime/measurement sources remain unchanged.",
+  "local_acceptance": "Host CLI 28/28 groups; default reference 82/84 retained; TUI 78/78 plus three startup runs; canonical validation passes.",
+  "evidence": [
+    "host-acceptance.json",
+    "r9-measurement-bridge.json",
+    "r10-measurement-bridge.json"
+  ]
+}

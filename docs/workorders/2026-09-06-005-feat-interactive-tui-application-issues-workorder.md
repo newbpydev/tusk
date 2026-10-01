@@ -953,3 +953,23 @@ check-generated` passes (benchmark-package coverage 95.6%). This change occurs
 before sampling; production, sampling/validation/summary and host assessment
 are byte-for-byte unchanged, verified by r10-measurement-bridge.json. The retained
 complete CLI/TUI matrices still apply. Hosted settlement remains next.
+
+### PR #5 review settlement and owner handoff (2026-10-01)
+
+Runtime head 82fa5eb is proven MERGEABLE/CLEAN against the current base, with
+terminal green checks, no open feedback/human/currency blockers and 356 quiet
+seconds. Kilo's matching incremental summary reports No Issues Found. All 39
+threads have verified visible replies and resolutions: 34 addressed (six by
+alternative fixes), five declined/no-change decisions documented. The latter
+preserve package-owned result assertions, mandated write drain/final receipts,
+periodic history freshness, complete safe note fallback, and nil-environment
+injection semantics. Shaping/variation marks remain intentional exemptions with
+opaque task IDs as identity; picker windows preserve selected task/title pairs.
+
+Host acceptance is 28/28 CLI groups under the owner-authorized contract, with
+original reference failures (82/84) and all prior samples unchanged. Fresh TUI
+78/78 and three startup runs pass. R9/R10 source bridges preserve applicability
+of these measurements after report/options-only changes. Canonical validation
+passes. This closure publishes receipts/documents only; its publication head
+must receive a fresh hosted/base/head/quiet audit in-session before handoff.
+Final merge remains user-owned, and Feature 006 native/release work is pending.
