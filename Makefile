@@ -5,6 +5,24 @@
 test-ci:
 	bash scripts/test/test_ci.sh
 
+.PHONY: test-docgen
+DOCGEN_TEST_FLAGS ?=
+test-docgen:
+	go test $(DOCGEN_TEST_FLAGS) -v ./scripts/docgen
+
+.PHONY: generate-docs check-docs tidy-modules test-completions
+test-completions: build check-docs
+	bash scripts/test/test_completions.sh
+
+generate-docs:
+	go run ./scripts/docgen --output docs
+
+check-docs:
+	go run ./scripts/docgen --output docs --check
+
+tidy-modules:
+	go mod tidy
+
 .PHONY: setup-ci preflight-ci check-ci check-ci-drift
 setup-ci:
 	bash scripts/ci-check.sh setup
@@ -171,6 +189,7 @@ help:
 	@echo "make setup     - Verify environment and Go toolchain"
 	@echo "make setup-ci preflight-ci check-ci - Pinned workflow tooling and native CI contract"
 	@echo "make test-ci check-ci-drift - Negative CI fixtures and post-gate source drift"
+	@echo "make generate-docs check-docs test-completions - Static completion scripts and deterministic manuals"
 	@echo "make fmt       - Format all Go source files"
 	@echo "make vet       - Run go vet static analysis"
 	@echo "make test      - Run all tests"

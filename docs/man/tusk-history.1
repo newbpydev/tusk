@@ -1,0 +1,41 @@
+.nh
+.TH "TUSK-HISTORY" "1" "Sep 2026" "Tusk" "Tusk Manual"
+
+.SH NAME
+tusk-history - Show oldest-first task metadata history
+
+
+.SH SYNOPSIS
+\fBtusk history <id> [flags]\fP
+
+
+.SH DESCRIPTION
+Show oldest-first task metadata history
+
+
+.SH OPTIONS
+\fB-h\fP, \fB--help\fP[=false]
+	help for history
+
+.PP
+\fB--json\fP[=false]
+	Print complete JSON
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+\fB--auto-complete-parent\fP[=false]
+	Complete parents when all children are done
+
+.PP
+\fB--timezone\fP=""
+	Date timezone (IANA name)
+
+
+.SH EXAMPLE
+.EX
+  tusk history TASK_ID --json
+.EE
+
+
+.SH SEE ALSO
+\fBtusk(1)\fP

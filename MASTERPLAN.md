@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 U1 locally accepted; hosted/native release gates pending
+**Current Status**: Feature 006 U1/U3 locally accepted; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 U3 / Unit 006-3 — Storage-Free Completions and Deterministic Manuals (after the U1 commit)
+**Active Implementation Target**: Feature 006 U4 / Unit 006-4 — README, Installation Guides, Community Files and License Readiness (after the U3 commit)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -474,7 +474,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [x] Synchronize product handoffs, registry and masterplan; review applicable lenses sequentially
 - [ ] **6.2 Implementation Units**
   - [x] Unit 006-1 / U1: Native CI Matrix and Portable Canonical Tooling — local engineering; exact-SHA hosted/native closure pending
-  - [ ] Unit 006-3 / U3: Storage-Free Completions and Deterministic Manuals
+  - [x] Unit 006-3 / U3: Storage-Free Completions and Deterministic Manuals — local acceptance
   - [ ] Unit 006-4 / U4: README, Installation Guides, Community Files and License Readiness
   - [ ] Unit 006-2 / U2: Reproducible CGO-Free Payloads and Immutable Version Metadata
   - [ ] Unit 006-6 / U6: Trusted Hosted Candidate Workflow and Artifact Provenance
@@ -483,7 +483,8 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [ ] Unit 006-8 / U8: Authorized Release, Public Metadata and Final Settlement
 - [ ] **6.3 Quality Gate & Release Sign-off**
   - [ ] Canonical validation/generated/module gates, minimum Go and five native candidate-SHA jobs
-  - [ ] Three real-shell completion checks, deterministic manuals and complete licensed/checksummed payloads
+  - [x] Three real-shell completion checks and deterministic manuals on the applicable Linux host
+  - [ ] Complete licensed/checksummed payloads
   - [ ] Trusted candidate/provenance plus exact-asset native CLI/TUI/install/backup/upgrade/remove acceptance
   - [ ] Owned Kitty/native Windows terminal and retained candidate CLI/TUI performance evidence
   - [ ] Owner license/rights, tap/security-contact and concrete publication decisions closed
@@ -508,7 +509,20 @@ no reachable app vulnerability; its uncalled module finding remains in the log.
 [Receipt](docs/verification-evidence/006/u1.json) retains Red/Green and review.
 Owner selected MIT and confirmed first-party rights; U4 still owns grant/notices.
 The workflow has not been pushed/dispatched. Native job URLs, Windows/macOS
-runtime/terminal proof and release gates remain open; U3 is next after the commit.
+runtime/terminal proof and release gates remain open. U1 is committed as 080426e.
+
+### Feature 006 U3 local checkpoint — 2026-10-01
+
+Storage-free Bash/Zsh/Fish generators, static completion requests and deterministic
+manuals pass their Red/Green contracts and canonical validation. The doc generator
+has 97.2% package coverage without exemptions. An owned Kitty window confirms
+actual Tab completion in all three shells, readable manual argument syntax and
+restoration to the shell; it was closed after inspection. Source hashes, failure
+logs, generated outputs, compiler checks and captures are in the
+[U3 receipt](docs/verification-evidence/006/u3.json). Sequential simplification
+review moved callback registration off ordinary command startup. V17–V30 are
+locally accepted; native Windows ACL execution and hosted target checks remain
+pending. U4 follows the coherent U3 commit; MIT and first-party rights are approved.
 
 ---
 

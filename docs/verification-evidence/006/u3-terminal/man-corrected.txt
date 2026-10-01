@@ -1,0 +1,31 @@
+TUSK-COMPLETION(1)                          Tusk Manual                          TUSK-COMPLETION(1)
+
+NAME
+     tusk-completion - Generate a shell completion script
+
+SYNOPSIS
+     tusk completion <bash|zsh|fish> [flags]
+
+DESCRIPTION
+     Generate a shell completion script
+
+OPTIONS
+     -h, --help[=false]      help for completion
+
+OPTIONS INHERITED FROM PARENT COMMANDS
+     --auto-complete-parent[=false]      Complete parents when all children are done
+
+     --timezone=""      Date timezone (IANA name)
+
+SEE ALSO
+     tusk(1)
+
+Tusk                                          Sep 2026                           TUSK-COMPLETION(1)
+~
+~
+~
+~
+~
+~
+~
+ Manual page tusk-completion.1 line 1/23 (END) (press h for help or q to quit)

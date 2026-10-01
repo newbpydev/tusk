@@ -1,0 +1,61 @@
+.nh
+.TH "TUSK-ADD" "1" "Sep 2026" "Tusk" "Tusk Manual"
+
+.SH NAME
+tusk-add - Create a task
+
+
+.SH SYNOPSIS
+\fBtusk add <title> [flags]\fP
+
+
+.SH DESCRIPTION
+Create a task
+
+
+.SH OPTIONS
+\fB-d\fP, \fB--due\fP=""
+	Due date expression
+
+.PP
+\fB-h\fP, \fB--help\fP[=false]
+	help for add
+
+.PP
+\fB--json\fP[=false]
+	Print complete JSON
+
+.PP
+\fB-n\fP, \fB--notes\fP=""
+	Task notes
+
+.PP
+\fB--parent\fP=""
+	Full parent task ID
+
+.PP
+\fB-p\fP, \fB--priority\fP=""
+	low, medium, high, urgent or 1–4
+
+.PP
+\fB-t\fP, \fB--tags\fP=[]
+	Tags, repeatable and comma-separated
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+\fB--auto-complete-parent\fP[=false]
+	Complete parents when all children are done
+
+.PP
+\fB--timezone\fP=""
+	Date timezone (IANA name)
+
+
+.SH EXAMPLE
+.EX
+  tusk add 'Review release' --due tomorrow --tags work --json
+.EE
+
+
+.SH SEE ALSO
+\fBtusk(1)\fP

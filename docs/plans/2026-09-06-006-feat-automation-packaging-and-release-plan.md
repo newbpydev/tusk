@@ -265,6 +265,13 @@ acceptance. U3 starts after U1's coherent local commit.
 
 **Reviews:** CLI contract, lazy startup/performance, documentation generation, shell portability, testing.
 
+**Local checkpoint (2026-10-01):** V17–V30 pass on the declared Linux host,
+including actual Bash/Zsh/Fish Tab completion and rendered manuals in an owned
+Kitty window. Red/Green, canonical/minimum compiler checks, source hashes and
+sequential review are retained in [the U3 receipt](../verification-evidence/006/u3.json).
+Native Windows ACL fixtures await native CI execution; hosted/native release
+acceptance is separate. U4 begins after the coherent U3 local commit.
+
 ### U4. README, installation guides, community files and license readiness
 
 **Goal / requirements:** R12, R17–R22, R30; public-content draft and redistribution prerequisites.

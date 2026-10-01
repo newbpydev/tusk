@@ -1,0 +1,49 @@
+.nh
+.TH "TUSK-DELETE" "1" "Sep 2026" "Tusk" "Tusk Manual"
+
+.SH NAME
+tusk-delete - Delete a task with explicit consent
+
+
+.SH SYNOPSIS
+\fBtusk delete <id> [flags]\fP
+
+
+.SH DESCRIPTION
+Delete a task with explicit consent
+
+
+.SH OPTIONS
+\fB--force\fP[=false]
+	Skip confirmation (does not imply recursion)
+
+.PP
+\fB-h\fP, \fB--help\fP[=false]
+	help for delete
+
+.PP
+\fB--json\fP[=false]
+	Print complete JSON
+
+.PP
+\fB--recursive\fP[=false]
+	Delete the whole subtree
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+\fB--auto-complete-parent\fP[=false]
+	Complete parents when all children are done
+
+.PP
+\fB--timezone\fP=""
+	Date timezone (IANA name)
+
+
+.SH EXAMPLE
+.EX
+  tusk delete TASK_ID --force --recursive --json
+.EE
+
+
+.SH SEE ALSO
+\fBtusk(1)\fP

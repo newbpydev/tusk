@@ -53,7 +53,9 @@ func newInvocation(options Options) *invocation {
 	root := &cobra.Command{Use: "tusk", Short: "Tusk - Zero-friction terminal task management system", SilenceErrors: true, SilenceUsage: true, DisableSuggestions: true, Args: syntaxArgs(cobra.NoArgs), Version: options.Version}
 	i.root = root
 	root.SetOut(&i.output)
-	root.SetErr(&i.output)
+	// Keep Cobra's completion debug text out of scripts and choice streams.
+	// Run reports errors through the existing safe diagnostic boundary.
+	root.SetErr(io.Discard)
 	root.SetFlagErrorFunc(func(_ *cobra.Command, err error) error { return syntaxError{err} })
 	root.CompletionOptions.DisableDefaultCmd = true
 	root.PersistentFlags().BoolVar(&i.autoComplete, "auto-complete-parent", false, "Complete parents when all children are done")
@@ -73,6 +75,7 @@ func newInvocation(options Options) *invocation {
 	root.AddCommand(i.addCommand(), i.editCommand(), i.doneCommand(), i.deleteCommand())
 	root.AddCommand(i.listCommand(), i.treeCommand(), i.statsCommand(), i.historyCommand())
 	root.AddCommand(i.tuiCommand())
+	root.AddCommand(i.completionCommand())
 	root.SetHelpCommand(&cobra.Command{Use: "help [command]", Short: "Help about any command", RunE: func(c *cobra.Command, args []string) error {
 		target, remaining, err := root.Find(args)
 		if err != nil || len(remaining) != 0 {
@@ -80,6 +83,8 @@ func newInvocation(options Options) *invocation {
 		}
 		return target.Help()
 	}})
+	root.InitDefaultHelpCmd()
+	staticCompletions(root, false)
 	return i
 }
 
@@ -93,6 +98,11 @@ func syntaxArgs(validate cobra.PositionalArgs) cobra.PositionalArgs {
 }
 
 func (i *invocation) execute(ctx context.Context, args []string) int {
+	// Cobra keeps flag callbacks in a package registry. Only actual shell
+	// requests need them; ordinary help, queries and generators remain lazy.
+	if len(args) > 0 && (args[0] == cobra.ShellCompRequestCmd || args[0] == cobra.ShellCompNoDescRequestCmd) {
+		staticCompletions(i.root, true)
+	}
 	_, _, err := i.root.Find(args)
 	if err != nil {
 		err = syntaxError{err}

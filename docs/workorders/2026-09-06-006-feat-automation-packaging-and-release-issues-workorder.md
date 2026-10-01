@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Implementation active - U1 locally accepted; U3 next; release gates open
+status: Implementation active - U1/U3 locally accepted; U4 next; release gates open
 evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
@@ -49,6 +49,11 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-021 | U1 formatting / portability | P1 | Fixed locally | Space/Unicode filenames were split by xargs; replaced with literal find -exec arguments | Observed lstat failures, CRLF/path Green and both compiler canonical gates; U1 receipt |
 | 006-ISS-022 | U1 native identity / correctness | P1 | Fixed locally | Reject target/host mismatch and Windows Go invoked through a Linux/WSL shell | Both impersonation Red fixtures, native preflight Green and fresh canonical gates; U1 receipt |
 
+| 006-ISS-023 | U3 completion protocol / CLI contract | P1 | Fixed locally | Cobra debug stderr was sharing the buffered stdout writer; discard library-only debug and preserve safe invocation diagnostics | Stream/protocol Red/Green, all three widgets and canonical gate; U3 receipt |
+| 006-ISS-024 | U3 stale generated member / correctness | P2 | Fixed locally | Reject extra directories, symlinks and unequal flat output members | Extra-directory Red/Green and atomic repair/recovery fixtures; U3 receipt |
+| 006-ISS-025 | U3 manual syntax / usability | P2 | Fixed locally | Escape angle-bracket arguments in detached documentation tree so md2man retains syntax | Synopsis Red/Green and inspected before/after manual captures; U3 receipt |
+| 006-ISS-026 | U3 ordinary startup / efficiency | P2 | Fixed locally | Limit Cobra global callback registration to hidden shell completion requests | Observed ordinary-tree registration Red, lazy Green and canonical gate; U3 receipt |
+
 ---
 
 ## Open gate details
@@ -57,7 +62,13 @@ U1's [local receipt](../verification-evidence/006/u1.json) binds source/tool has
 Red/Green, sequential review, Go 1.27.1 and Go 1.25.0 canonical gates and five
 minimum-Go cross-builds. Tool/archive/Action pins and release-compiler analyzer
 support are locally verified for 006-ISS-018; five native hosted job URLs and
-candidate-specific acceptance remain pending. U3 follows the U1 local commit.
+candidate-specific acceptance remain pending. U1 is committed as 080426e.
+
+U3's [local receipt](../verification-evidence/006/u3.json) closes V17–V30 on Linux
+with current-source canonical/minimum checks, deterministic generated output and
+owned Kitty inspection. All three sequential simplification lenses were applied;
+ordinary startup callback registration was removed. The owned window was closed.
+Native Windows ACL and hosted runtime proof remain pending. U4 follows the U3 commit.
 
 ### 006-ISS-001: Project license and redistribution rights
 
