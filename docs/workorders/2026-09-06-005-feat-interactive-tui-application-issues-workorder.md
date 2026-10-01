@@ -814,3 +814,21 @@ emoji's ZWJ; the native screenshot and raw-string unit test cover that separatel
 The R4 candidate CLI matrix remains failed at 82/84, with large JSON-tree p90
 19.475 ms in run 1 and 16.750 ms in run 2. Every sample is retained. CLI latency
 acceptance and hosted settlement remain pending after this committed review fix.
+
+### PR #5 hosted follow-up R6 (2026-10-01)
+
+The browse-footer follow-up reproduces for both delete-refresh keys. Successful
+forest readback now clears only the exact failed-read notice, alongside its modal
+counterpart. A separate regression preserves unrelated write-receipt notices.
+Focused Red/Green and `make validate build check-generated` pass. This message
+state change is covered by automated regressions; prior owned Kitty receipts
+cover the actual form-refresh flow, without claiming a new delete-fault run.
+
+The performance-profile candidate also fails (80/84); the temporary hold ended
+and balanced is restored. Failed cases include three large JSON-tree cases and
+one large JSON-list case; a tree case with p90 below 15 ms still fails its p95
+limit. All samples/outliers remain retained. No performance acceptance or merge
+readiness is claimed. Review fixes are committed independently of the remaining
+CLI performance investigation and hosted settlement. The owner has been asked
+whether to continue that investigation or finish review handling and pause with
+latency blocked. Native/hosted release proof remains Feature 006.

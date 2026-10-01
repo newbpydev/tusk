@@ -68,6 +68,9 @@ func (m *Model) acceptForest(msg forestMsg) tea.Cmd {
 		} else {
 			m.state = loaded
 			m.stale = false
+			if m.notice == failedReadMessage {
+				m.notice = ""
+			}
 			if f := m.form; f != nil && (f.err == pausedFormMessage || f.err == failedReadMessage) {
 				f.err = ""
 			}

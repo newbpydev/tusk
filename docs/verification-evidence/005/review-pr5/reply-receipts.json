@@ -222,5 +222,45 @@
     "reply_url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157633894",
     "verdict": "fixed",
     "commit": "c449451"
+  },
+  {
+    "comment_id": 4157352244,
+    "thread_id": "PRRT_kwDOUQoUDc6oBHCU",
+    "reply_id": 4157726260,
+    "reply_url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157726260",
+    "verdict": "fixed",
+    "commit": "0c0043b"
+  },
+  {
+    "comment_id": 4157352254,
+    "thread_id": "PRRT_kwDOUQoUDc6oBHCb",
+    "reply_id": 4157728121,
+    "reply_url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157728121",
+    "verdict": "fixed",
+    "commit": "0c0043b"
+  },
+  {
+    "comment_id": 4157352268,
+    "thread_id": "PRRT_kwDOUQoUDc6oBHCm",
+    "reply_id": 4157729980,
+    "reply_url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157729980",
+    "verdict": "fixed",
+    "commit": "0c0043b"
+  },
+  {
+    "comment_id": 4157352277,
+    "thread_id": "PRRT_kwDOUQoUDc6oBHCt",
+    "reply_id": 4157731433,
+    "reply_url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157731433",
+    "verdict": "fixed",
+    "commit": "0c0043b"
+  },
+  {
+    "comment_id": 4157691136,
+    "thread_id": "PRRT_kwDOUQoUDc6oB8aJ",
+    "reply_id": 4157838975,
+    "reply_url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157838975",
+    "verdict": "fixed",
+    "commit": "116825a"
   }
 ]

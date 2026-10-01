@@ -295,5 +295,14 @@
     "verdict": "fixed",
     "unit": "R5",
     "reason": "Visible escaping now covers Mongolian vowel separator, both jamo fillers, full/half-width Hangul fillers and all U+2060\u2013U+206F format/reserved controls. Scalar and multiline regressions reproduce the omissions and pass; ordinary Hangul, ZWJ emoji and ZWNJ script composition remain unchanged. Stored raw values are untouched."
+  },
+  {
+    "comment_id": 4157780666,
+    "path": "internal/tui/refresh.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157780666",
+    "quote": "**[WARNING]:** Refresh clears the form/dialog pause feedback but not the model-level notice set by the same failure",
+    "verdict": "fixed",
+    "unit": "R6",
+    "reason": "Successful forest refresh now clears the exact matching failedReadMessage from the browse footer as well as the modal error. Red/Green covers both delete retry keys and retains unrelated write-receipt notices."
   }
 ]

@@ -62,6 +62,9 @@ func TestPR5_DeleteAbandonedReadCanRefresh(t *testing.T) {
 			t.Fatal("refresh retained old consent")
 		}
 		deliverUI(m, cmd)
+		if m.notice == failedReadMessage {
+			t.Errorf("successful read retained browse failure: %q", m.notice)
+		}
 		if m.confirmation.err != "" {
 			t.Fatalf("completed preview retained error: %q", m.confirmation.err)
 		}
@@ -316,5 +319,14 @@ func TestPR5_FilterAcceptedEditsClearRejectedInput(t *testing.T) {
 		if m.filters.err != "" {
 			t.Fatalf("accepted edit retained error: %q", m.filters.err)
 		}
+	}
+}
+
+func TestPR5_RefreshRetainsUnrelatedNotice(t *testing.T) {
+	m := loadedModel()
+	m.notice = "Task created"
+	deliverUI(m, m.requestRefresh())
+	if m.notice != "Task created" {
+		t.Fatal("successful refresh erased write receipt")
 	}
 }

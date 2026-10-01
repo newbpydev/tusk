@@ -1,0 +1,20 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestPR5_(DeleteAbandoned|RefreshRetains)'
+=== RUN   TestPR5_DeleteAbandonedReadCanRefresh
+    pr5_review_test.go:66: successful read retained browse failure: "Refresh failed. Ctrl+R refreshes before retrying."
+    pr5_review_test.go:66: successful read retained browse failure: "Refresh failed. Ctrl+R refreshes before retrying."
+--- FAIL: TestPR5_DeleteAbandonedReadCanRefresh (0.01s)
+=== RUN   TestPR5_RefreshRetainsUnrelatedNotice
+--- PASS: TestPR5_RefreshRetainsUnrelatedNotice (0.00s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.022s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.006s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1
