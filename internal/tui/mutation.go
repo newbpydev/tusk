@@ -9,6 +9,9 @@ import (
 	"github.com/newbpydev/tusk/internal/ports"
 )
 
+const pausedFormMessage = "Writes paused. Ctrl+R refreshes before saving."
+const failedReadMessage = "Refresh failed. Ctrl+R refreshes before retrying."
+
 type mutationMsg struct {
 	owner, operation uint64
 	request          mutationRequest
@@ -72,7 +75,7 @@ func (m *Model) completeRead(err error) (tea.Cmd, bool) {
 			return m.dispatchMutation(), true
 		}
 		m.stale = true
-		m.abandonMutation("Refresh failed. Ctrl+R refresh before saving.")
+		m.abandonMutation(failedReadMessage)
 	}
 	return nil, false
 }
@@ -119,7 +122,7 @@ func (m *Model) submitForm() tea.Cmd {
 		return nil
 	}
 	if !m.canWrite() {
-		f.err = "Writes paused. Ctrl+R refreshes before saving."
+		f.err = pausedFormMessage
 		return nil
 	}
 	m.now = m.options.Now()

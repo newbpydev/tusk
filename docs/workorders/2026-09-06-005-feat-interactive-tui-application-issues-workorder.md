@@ -769,3 +769,26 @@ unchanged earlier-commit control 80/84, quiet candidate 79/84. Every failed case
 and raw sample is retained; no historical pass substitutes for current proof.
 A patched-compiler comparison is underway. Hosted settlement and native/release
 proof remain pending. Receipts: `docs/verification-evidence/005/review-pr5/`.
+
+### PR #5 hosted follow-up R4 (2026-10-01)
+
+Four follow-up findings reproduce and are fixed: successful forest refresh clears
+recognized write-pause/read-failure form feedback without clearing validation
+errors or drafts; successful preview clears completed retry feedback and revokes
+old consent; accepted filter edits/navigation clear rejected-input feedback;
+failed-read abandonment uses dialog-neutral before retrying wording.
+Focused Red/Green and `make validate build check-generated build-tui-fixture`
+pass. Owned Kitty confirms the pause disappears after Ctrl+R, retains the raw
+draft and quits cleanly. The screenshot was visually inspected; the initial
+Wayland capture could not be taken by the X11 capture tool, so a fresh owned X11
+window repeated the app check. No automated results were displayed in Kitty.
+
+The Go 1.25.13 CLI comparison also passes only 79/84; a temporary performance
+profile hold for the unchanged control passes 83/84 (tree p90 15.117 ms in run 1).
+The hold ended with that command and balanced is restored. A diagnostic-only
+nine-mode fresh-process sample set retains wall/child CPU times and parent GC
+counts. Ordinary child trace produces no GC line in the inspected sample;
+changing child GC/procs does not establish a uniform latency improvement.
+No runtime knob, output contract, threshold or failing sample was changed.
+Current CLI acceptance and hosted settlement remain open; a final candidate
+matrix follows this committed feedback unit. All reports are under review-pr5.

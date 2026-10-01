@@ -106,6 +106,7 @@ func (m *Model) acceptPreview(msg previewMsg) tea.Cmd {
 	}
 	preview := clonePreview(msg.preview)
 	d.preview = &preview
+	d.err = ""
 	d.title = preview.Target.Title
 	d.field = 0
 	d.scroll = 0

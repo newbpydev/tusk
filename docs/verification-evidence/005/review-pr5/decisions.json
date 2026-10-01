@@ -250,5 +250,41 @@
     "verdict": "fixed",
     "unit": "R3",
     "reason": "Moved the manual fixture into scripts/fixtures/tui/main.go, compiled only with tusk_fixture by make build-tui-fixture. Automated tests cannot invoke its os.Exit path. An AST regression rejects os.Exit calls in TUI tests; the standalone app was operated and quit in the owned Kitty window."
+  },
+  {
+    "comment_id": 4157352244,
+    "path": "internal/tui/mutation.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157352244",
+    "quote": "**[WARNING]:** Pause message is never cleared after the recommended Ctrl+R succeeds",
+    "verdict": "fixed",
+    "unit": "R4",
+    "reason": "Successful forest refresh clears the recognized write-pause/read-failure form message while retaining raw drafts and unrelated validation errors."
+  },
+  {
+    "comment_id": 4157352254,
+    "path": "internal/tui/confirm.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157352254",
+    "quote": "**[SUGGESTION]:** \"Refreshing\u2026\" banner outlives the refresh it announces",
+    "verdict": "fixed",
+    "unit": "R4",
+    "reason": "Successful matching preview clears its completed refresh/retry message and still resets recursive consent, scroll and Cancel focus."
+  },
+  {
+    "comment_id": 4157352268,
+    "path": "internal/tui/filter.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157352268",
+    "quote": "**[SUGGESTION]:** Rejected-input error is sticky and never cleared on valid input",
+    "verdict": "fixed",
+    "unit": "R4",
+    "reason": "Accepted text, spaces, backspace and field navigation clear rejected-input errors. A repeated invalid paste still fails atomically."
+  },
+  {
+    "comment_id": 4157352277,
+    "path": "internal/tui/mutation.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157352277",
+    "quote": "**[SUGGESTION]:** Form-oriented \"saving\" wording now surfaces inside the delete dialog",
+    "verdict": "fixed",
+    "unit": "R4",
+    "reason": "Failed-read abandonment now says before retrying in both dialogs, avoiding form-only saving language."
   }
 ]

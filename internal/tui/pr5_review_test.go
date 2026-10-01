@@ -48,6 +48,9 @@ func TestPR5_DeleteAbandonedReadCanRefresh(t *testing.T) {
 		reply := read().(forestMsg)
 		reply.err = ports.ErrStorage
 		m.Update(reply)
+		if strings.Contains(m.confirmation.err, "saving") {
+			t.Errorf("delete uses form wording: %q", m.confirmation.err)
+		}
 		if !m.stale || m.pendingMutation != nil || m.saving {
 			t.Fatal("failed read did not abandon delete")
 		}
@@ -59,6 +62,9 @@ func TestPR5_DeleteAbandonedReadCanRefresh(t *testing.T) {
 			t.Fatal("refresh retained old consent")
 		}
 		deliverUI(m, cmd)
+		if m.confirmation.err != "" {
+			t.Fatalf("completed preview retained error: %q", m.confirmation.err)
+		}
 		if m.stale || m.confirmation.preview == nil || m.confirmation.recursive {
 			t.Fatal("fresh preview did not renew consent")
 		}
@@ -270,5 +276,45 @@ func TestPR5_TestsCannotExitPastRunner(t *testing.T) {
 			}
 			return true
 		})
+	}
+}
+
+func TestPR5_FormRefreshClearsOnlyWritePause(t *testing.T) {
+	for _, validation := range []bool{false, true} {
+		m := loadedModel()
+		press(m, "a")
+		press(m, "Draft retained")
+		m.stale = true
+		formKey(m, tea.KeyCtrlS)
+		if validation {
+			m.form.err = "Title is required."
+		}
+		deliverUI(m, m.requestRefresh())
+		if !m.canWrite() || m.form.draft.fields[fieldTitle] != "Draft retained" {
+			t.Fatal("refresh lost draft or writable state")
+		}
+		if validation {
+			if m.form.err != "Title is required." {
+				t.Fatal("refresh hid validation error")
+			}
+		} else if m.form.err != "" {
+			t.Fatalf("successful refresh left pause: %q", m.form.err)
+		}
+	}
+}
+
+func TestPR5_FilterAcceptedEditsClearRejectedInput(t *testing.T) {
+	for _, key := range []tea.KeyMsg{{Type: tea.KeyRunes, Runes: []rune("valid")}, {Type: tea.KeyBackspace}, {Type: tea.KeySpace}, {Type: tea.KeyTab}} {
+		m := loadedModel()
+		m.beginFilters()
+		m.filters.field = 2
+		m.filterKey(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune("bad\x1btext"), Paste: true})
+		if m.filters.err == "" {
+			t.Fatal("rejected input lacks error")
+		}
+		m.filterKey(key)
+		if m.filters.err != "" {
+			t.Fatalf("accepted edit retained error: %q", m.filters.err)
+		}
 	}
 }

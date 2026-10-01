@@ -136,10 +136,12 @@ func (m *Model) filterKey(msg tea.KeyMsg) {
 		m.filters = nil
 		return
 	case tea.KeyTab, tea.KeyDown:
+		f.err = ""
 		f.field = (f.field + 1) % 6
 		f.choice = 0
 		return
 	case tea.KeyShiftTab, tea.KeyUp:
+		f.err = ""
 		f.field = (f.field + 5) % 6
 		f.choice = 0
 		return
@@ -153,6 +155,7 @@ func (m *Model) filterKey(msg tea.KeyMsg) {
 			m.clearFilters()
 			m.filters = nil
 		} else {
+			f.err = ""
 			f.field++
 			f.choice = 0
 		}
@@ -182,6 +185,7 @@ func (m *Model) filterKey(msg tea.KeyMsg) {
 	}
 	switch msg.Type {
 	case tea.KeyBackspace:
+		f.err = ""
 		r := []rune(*value)
 		if len(r) > 0 {
 			*value = string(r[:len(r)-1])
@@ -191,12 +195,14 @@ func (m *Model) filterKey(msg tea.KeyMsg) {
 			f.err = "Input is too large."
 			return
 		}
+		f.err = ""
 		*value += " "
 	case tea.KeyRunes:
 		if len(*value)+len(string(msg.Runes)) > editorByteLimit || !editableText(string(msg.Runes), false) {
 			f.err = "Input is too large or contains unsupported controls."
 			return
 		}
+		f.err = ""
 		*value += string(msg.Runes)
 	}
 }
