@@ -154,7 +154,15 @@ func (m *Model) confirmKey(key tea.KeyMsg) tea.Cmd {
 		d.scroll += max(1, measure(m.width, m.height).modal.height-6)
 	case "pgup":
 		d.scroll -= max(1, measure(m.width, m.height).modal.height-6)
-	case "r":
+	case "r", "ctrl+r":
+		if m.stale {
+			d.preview = nil
+			d.pending = true
+			d.field = 0
+			d.recursive = false
+			d.err = "Refreshing; review the new preview before confirming."
+			return m.requestRefresh()
+		}
 		if d.preview == nil {
 			d.pending = true
 			d.field = 0
@@ -168,6 +176,10 @@ func (m *Model) confirmKey(key tea.KeyMsg) tea.Cmd {
 	case "enter":
 		if d.field == 0 {
 			m.confirmation = nil
+			return nil
+		}
+		if !m.canWrite() {
+			d.err = "Writes paused. Ctrl+R refreshes before deleting."
 			return nil
 		}
 		if d.field != count-1 || d.preview == nil || (parent && !d.recursive) || m.options.Delete == nil || !m.canWrite() {

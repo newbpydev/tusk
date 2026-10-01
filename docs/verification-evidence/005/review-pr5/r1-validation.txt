@@ -1,0 +1,12 @@
+PASS: CLI measurement target propagates failed go: generate-schema-catalog
+PASS: CLI measurement target exists: check-schema-catalog
+PASS: CLI measurement target propagates failed go: check-schema-catalog
+PASS: generate bootstraps sqlc before compiling schema catalog
+Script Test Results: 39/39 passed
+========================================
+sqlc script fixtures passed (source archive, drift, partial failure, version, host, digest, traversal, symlink, download failure)
+sqlc direct execution and missing prerequisite fixtures passed
+go mod tidy -diff
+All canonical quality gates passed.
+mkdir -p "bin/"
+CGO_ENABLED=0 go build -o "bin/tusk" ./cmd/tusk

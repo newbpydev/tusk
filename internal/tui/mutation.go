@@ -104,6 +104,9 @@ func (m *Model) abandonMutation(message string) {
 		m.form.saving = false
 		m.form.err = message
 	}
+	if m.confirmation != nil {
+		m.confirmation.err = message
+	}
 }
 
 func (m *Model) canWrite() bool {
@@ -112,7 +115,11 @@ func (m *Model) canWrite() bool {
 
 func (m *Model) submitForm() tea.Cmd {
 	f := m.form
-	if f.conflict || !m.canWrite() {
+	if f.conflict {
+		return nil
+	}
+	if !m.canWrite() {
+		f.err = "Writes paused. Ctrl+R refreshes before saving."
 		return nil
 	}
 	m.now = m.options.Now()
@@ -224,6 +231,7 @@ func (m *Model) acceptMutation(msg mutationMsg) tea.Cmd {
 	if msg.err != nil {
 		m.notice = mutationError(msg.err)
 		if f == nil {
+			m.stale = true
 			m.notice = "Action failed; refresh before retrying"
 			if errors.Is(msg.err, ports.ErrConflict) || errors.Is(msg.err, core.ErrTaskNotFound) {
 				m.notice = "Task changed; refresh before retrying"

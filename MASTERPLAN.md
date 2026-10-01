@@ -2,7 +2,12 @@
 
 **Current Status**: Feature 005 PR #5 reviewer startup repaired and verified locally and in Kilo; hosted review is running
 **Active Phase**: Feature 005 hosted PR review; Phase 6 planning awaits instruction
-**Active Implementation Target**: None — PR #5 checkout repair complete; full hosted review remains pending
+**Active Implementation Target**: PR #5 hosted-review remediation — assess all 28 threads; validate and commit each bounded fix unit
+
+- [x] PR #5 review unit R1: stale-form save feedback, delete-dialog refresh and failed-toggle write pause.
+- [ ] PR #5 review unit R2: navigation, input and presentation consistency.
+- [ ] PR #5 review unit R3: lifecycle, environment and verification portability.
+- [ ] Settle all observed PR #5 feedback and current-head checks; final merge remains user-owned.
 
 - [x] Replace the eight unavailable Glamour gallery LFS pointers with verified
   upstream image bytes stored in regular Git; retain source provenance.

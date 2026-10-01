@@ -109,6 +109,8 @@ func TestWorkflow_ToggleErrorsHaveActionableBrowseHints(t *testing.T) {
 				t.Fatalf("missing %q in %q", hint, footer)
 			}
 		}
+		// Notice clipping is a separate browse state from the write pause.
+		m.stale = false
 		m.notice = strings.Repeat("Long external identity notice ", 6)
 		m.prepareFrame()
 		footer = strings.Split(ansi.Strip(m.View()), "\n")[23]
