@@ -290,6 +290,17 @@ acceptance is separate. U4 begins after the coherent U3 local commit.
 
 **Reviews:** Product/scope, documentation usability, licensing/privacy boundaries, data safety, simplicity.
 
+**Local checkpoint (2026-10-01):** V31–V44 pass as local documentation/readiness
+scenarios. MIT/rights were owner-approved; complete generated notices cover the
+71-module selected graph, replacement trees and assets, Go and embedded timezone
+data. Fresh source installation, actual-process quick start/closed backup and
+local Chrome preview of GitHub-rendered Markdown pass. Private reporting is
+verified disabled; the guide names the verified owner route without promising
+privacy. [The receipt](../verification-evidence/006/u4.json) binds source hashes,
+canonical/minimum gates and sequential review. Draft binary commands are not
+native/public installation acceptance; settings, public URLs, badges and hosted
+rendering remain U5/U8. U2 follows the coherent U4 local commit.
+
 ### U2. Reproducible CGO-free payloads and immutable version metadata
 
 **Goal / requirements:** R5–R11, R21, R30; product U22 packaging boundary.

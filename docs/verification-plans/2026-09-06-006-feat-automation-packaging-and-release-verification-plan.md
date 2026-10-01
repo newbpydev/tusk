@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Implementation active - U1/U3 locally accepted; U4 next
+status: Implementation active - U1/U3/U4 locally accepted; U2 next
 evidence-scope: Five local U1 scenario closures; hosted/native release gates pending
 deepened: 2026-10-01
 ---
@@ -151,20 +151,27 @@ release obligations remain pending. The unit does not claim independent review.
 
 ### U4 — Public documentation, license and community readiness
 
-- [ ] 006-V31 **README information order:** A visitor finds purpose, screenshot, available installation and first-task workflow before developer/planning information; source-only status is explicit before a release exists.
-- [ ] 006-V32 **Source installation:** A fresh checkout keeps replacements, uses documented Go/Make/Bash prerequisites and builds the full command package; no unsupported versioned `go install` path is presented as usable.
-- [ ] 006-V33 **Unix install draft:** Linux/macOS instructions map architecture to exact asset names, verify hashes before extraction, use user-writable paths and show PATH/version recovery for wrong-architecture/permission/download failures; public URLs remain marked pending until release.
-- [ ] 006-V34 **Windows install draft:** Native PowerShell hash/extraction/PATH commands distinguish amd64 and use `tusk.exe`; no WSL or Bash-only command is represented as the Windows user route.
-- [ ] 006-V35 **Quick start replay:** Version, add, list, tree, clean JSON and TUI examples use valid flags and full IDs; no destructive first-run example or hidden prerequisite.
-- [ ] 006-V36 **Dates/status/JSON examples:** `tomorrow`, supported offsets, priority/status enums and JSON schemas match guides/source; invalid `next week` or an undeclared `jq` dependency fails docs review.
-- [ ] 006-V37 **Shared configuration:** Explain actual DB/environment/timezone precedence, relative explicit paths, no invalid-config fallback, Windows home fallback, `NO_COLOR` and terminal requirements.
-- [ ] 006-V38 **Safety/recovery language:** Explain independent force/recursion, no undo, metadata-only history and unknown/committed outcomes; readback precedes retry, and no recovery instruction deletes DB/WAL/SHM.
-- [ ] 006-V39 **Backup rehearsal:** Stop all fixture owners, preserve closed DB plus remaining sidecars, restore to an isolated location, check integrity and compare tasks/events; prohibit live-DB-only copy and state NORMAL durability limits.
-- [ ] 006-V40 **Claims and badges:** Every supported platform/install/performance claim has a matching dated receipt; nonexistent release/CI/license badge and universal latency claim fail review.
-- [ ] 006-V41 **Screenshot/privacy:** Inspect real app image ownership/content, sanitized task data, date/source identity and alt text; social preview is readable and uses an app capture with recorded provenance, not a generated mockup.
-- [ ] 006-V42 **Metadata/community preview:** Exact proposed description/homepage/topics/social preview and issue/PR/contributor/security guidance agree; optional website/funding/contact fields are not fabricated.
-- [ ] 006-V43 **Links/rendering:** Relative guide/image/anchor links resolve; headings/code blocks/tables render legibly, badges have valid targets and the drafted public GitHub layout is inspected before activation.
-- [ ] 006-V44 **U4/license closure:** Owner's selected first-party license/rights confirmation, replacement-aware third-party inventory and verified security contact support all public claims; documentation checks, canonical validation and sequential usability/scope/privacy review pass before the unit commit.
+- [x] 006-V31 **README information order:** A visitor finds purpose, screenshot, available installation and first-task workflow before developer/planning information; source-only status is explicit before a release exists.
+- [x] 006-V32 **Source installation:** A fresh checkout keeps replacements, uses documented Go/Make/Bash prerequisites and builds the full command package; no unsupported versioned `go install` path is presented as usable.
+- [x] 006-V33 **Unix install draft:** Linux/macOS instructions map architecture to exact asset names, verify hashes before extraction, use user-writable paths and show PATH/version recovery for wrong-architecture/permission/download failures; public URLs remain marked pending until release.
+- [x] 006-V34 **Windows install draft:** Native PowerShell hash/extraction/PATH commands distinguish amd64 and use `tusk.exe`; no WSL or Bash-only command is represented as the Windows user route.
+- [x] 006-V35 **Quick start replay:** Version, add, list, tree, clean JSON and TUI examples use valid flags and full IDs; no destructive first-run example or hidden prerequisite.
+- [x] 006-V36 **Dates/status/JSON examples:** `tomorrow`, supported offsets, priority/status enums and JSON schemas match guides/source; invalid `next week` or an undeclared `jq` dependency fails docs review.
+- [x] 006-V37 **Shared configuration:** Explain actual DB/environment/timezone precedence, relative explicit paths, no invalid-config fallback, Windows home fallback, `NO_COLOR` and terminal requirements.
+- [x] 006-V38 **Safety/recovery language:** Explain independent force/recursion, no undo, metadata-only history and unknown/committed outcomes; readback precedes retry, and no recovery instruction deletes DB/WAL/SHM.
+- [x] 006-V39 **Backup rehearsal:** Stop all fixture owners, preserve closed DB plus remaining sidecars, restore to an isolated location, check integrity and compare tasks/events; prohibit live-DB-only copy and state NORMAL durability limits.
+- [x] 006-V40 **Claims and badges:** Every supported platform/install/performance claim has a matching dated receipt; nonexistent release/CI/license badge and universal latency claim fail review.
+- [x] 006-V41 **Screenshot/privacy:** Inspect real app image ownership/content, sanitized task data, date/source identity and alt text; social preview is readable and uses an app capture with recorded provenance, not a generated mockup.
+- [x] 006-V42 **Metadata/community preview:** Exact proposed description/homepage/topics/social preview and issue/PR/contributor/security guidance agree; optional website/funding/contact fields are not fabricated.
+- [x] 006-V43 **Links/rendering:** Relative guide/image/anchor links resolve; headings/code blocks/tables render legibly, badges have valid targets and the drafted public GitHub layout is inspected before activation.
+- [x] 006-V44 **U4/license closure:** Owner's selected first-party license/rights confirmation, replacement-aware third-party inventory and verified security contact support all public claims; documentation checks, canonical validation and sequential usability/scope/privacy review pass before the unit commit.
+
+U4 local acceptance is bound to [the receipt](../verification-evidence/006/u4.json).
+V33/V34 verify explicitly pending installation drafts, not native execution or
+public assets. V35 carries forward the real TUI capture with original provenance;
+CLI/JSON and closed-backup rehearsal use current actual processes. V41/V43 cover
+inspected image and local Chrome rendering of GitHub Markdown API output; hosted
+GitHub metadata/social-preview/license readback remains U8.
 
 ### U2 — Versioned packaging and local lifecycle safety
 

@@ -1,0 +1,20 @@
+name: Feature request
+description: Explain a task-management problem or missing workflow
+body:
+  - type: markdown
+    attributes:
+      value: "Use sample data. Follow SECURITY.md for security reports."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and desired workflow
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Current version, OS/architecture and relevant terminal details
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you have tried

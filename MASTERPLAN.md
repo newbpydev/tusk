@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 U1/U3 locally accepted; hosted/native release gates pending
+**Current Status**: Feature 006 U1/U3/U4 locally accepted; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 U4 / Unit 006-4 — README, Installation Guides, Community Files and License Readiness (after the U3 commit)
+**Active Implementation Target**: Feature 006 U2 / Unit 006-2 — Reproducible CGO-Free Payloads and Immutable Version Metadata (after the U4 commit)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -475,7 +475,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
 - [ ] **6.2 Implementation Units**
   - [x] Unit 006-1 / U1: Native CI Matrix and Portable Canonical Tooling — local engineering; exact-SHA hosted/native closure pending
   - [x] Unit 006-3 / U3: Storage-Free Completions and Deterministic Manuals — local acceptance
-  - [ ] Unit 006-4 / U4: README, Installation Guides, Community Files and License Readiness
+  - [x] Unit 006-4 / U4: README, Installation Guides, Community Files and License Readiness — local acceptance; public activation pending
   - [ ] Unit 006-2 / U2: Reproducible CGO-Free Payloads and Immutable Version Metadata
   - [ ] Unit 006-6 / U6: Trusted Hosted Candidate Workflow and Artifact Provenance
   - [ ] Unit 006-5 / U5: Exact-Artifact Native Lifecycle, Terminal and Performance Acceptance
@@ -523,6 +523,21 @@ logs, generated outputs, compiler checks and captures are in the
 review moved callback registration off ordinary command startup. V17–V30 are
 locally accepted; native Windows ACL execution and hosted target checks remain
 pending. U4 follows the coherent U3 commit; MIT and first-party rights are approved.
+
+### Feature 006 U4 local checkpoint — 2026-10-01
+
+README, install/release guides, contributor/security guidance and issue/PR templates
+are ready locally. The owner-confirmed MIT grant is present. Full upstream grant
+texts cover all 71 selected modules, local replacements, Go/timezone data and
+checked-in images; missing/unclassified/changed grants or assets block generation.
+Current-source canonical checks, minimum-compiler fixtures, fresh source install,
+closed-backup integrity/task/event comparison and local Chrome rendering pass.
+The original sample screenshot retains its date/source and was inspected again.
+[U4 receipt](docs/verification-evidence/006/u4.json) records the sequential review,
+Red/Green and preview. Private GitHub reporting is verified disabled; the public
+owner route does not promise confidentiality. Native binary installation and live
+GitHub metadata/license/rendering remain U5/U8 gates. U3 is committed as e543502;
+U2 starts after the coherent U4 commit.
 
 ---
 

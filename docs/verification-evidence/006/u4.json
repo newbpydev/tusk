@@ -1,0 +1,125 @@
+{
+  "unit": "U4 / 006-4",
+  "status": "locally accepted; public/native installation activation pending",
+  "utc": "2026-10-01T22:30:59.661310+00:00",
+  "base_commit": "e5435024fe7776952ff64057c1c2a36409ded087",
+  "source_sha256": {
+    "Makefile": "aa6b6806fd0b2873d2174fa1192d499b62d3db1682047f2e6134af11149d19ff",
+    "README.md": "78af49eb66fe8619366a427055fb8325dc65ed692a9bd328bc682a6ed744151a",
+    "docs/cli.md": "dccd177143794898dfc8bb34ad1cb35b337b366f99ce9fa2ef04023a55f2f121",
+    "docs/install.md": "b50ed899ee97e2559bc8e03fdacec8b1a22476d524dd842848175bc17ccdafea",
+    "docs/releasing.md": "0fb1421e6f61856fd05b759e7dede1a7ded81c5953f610acd1b10d26b93e57b8",
+    "docs/assets/README.md": "4f1f1d126c9bf2bc27720e0bf1f0489be2dc1e04fcc9739c47e2781aca1531de",
+    "docs/assets/tusk-tui.png": "0a5ad71ac8ba8671f0559fdea62d824504510fa9510574e9dd9059d05542eba7",
+    "CONTRIBUTING.md": "f54d24b3f532b6948c989f06fb1dcb79c39ef14ab71e8a533dd708d82ac5b7b0",
+    "SECURITY.md": "8e10d55d2263e3343039c076c5093e59cb77a2d9b77452e985b65c097f8fa09c",
+    "LICENSE": "e7b8f7ad23179441d30f557ac1f4052def3c6a20c5a8d3217a82f6cbe8163482",
+    "THIRD_PARTY_NOTICES.md": "ba486e7d36dd649f6b9a9a9c1068e014ca2d701f6b78e38eaf61e12c3691b7ed",
+    "scripts/docs-check.sh": "65b8adbce08d465e079a871a14f4584ffdfbcab9bd2cf4e4520166f678b55a43",
+    "scripts/notices.sh": "6af167b8e71fe0d730a98712637b271a8330ea57c3d3cae92f2c64b3bdc95b2a",
+    "scripts/notices.json": "35468d8ef82fda7131f76ff1fbe209837427f34cce4635559215b1d519bda4a1",
+    "scripts/test/test_docs.sh": "e42c0490533b730dab9b4b6b97bad8135030d2bfefc95d0bf5de6649cb80c8c4",
+    "scripts/test/test_notices.sh": "be4d4ab01625208ca5054f8d73b3ba5aba259fcfd144266e5d5d00fd6fe3c49a",
+    "internal/cli/docs_examples_test.go": "775ed2a4d2b3e7ae2156acc93bf0a6ab144214950a5bd6a875478717f979d96c",
+    ".github/pull_request_template.md": "3897bdc4b3d30f09f416a11fdc6664b16fadd1ce70fd75010eac75ada72d5c3a",
+    ".github/ISSUE_TEMPLATE/bug_report.yml": "b263f9a7dae47b585803839f4ed4c82ec8d9d891798a75dcde9578e5d5af9965",
+    ".github/ISSUE_TEMPLATE/feature_request.yml": "c82f4f1b59c7a09c3c81121096eb44476ef004373fcdc25203c4eafa97c1b065"
+  },
+  "license": {
+    "owner": "MIT; rights confirmed in this session on 2026-10-01",
+    "grant": "LICENSE first-party MIT; upstream terms remain separate",
+    "modules": 71,
+    "scope": "Full selected graph including build/test modules; local replacements, nested grants, Go standard library, embedded IANA timezone data and all docs/assets and Glamour gallery images",
+    "specials": [
+      "go-localereader explicitly declares MIT and author in README; original declaration retained rather than inventing an upstream grant",
+      "Unmodified golang-lru MPL-2.0 notice and covered-source archive route retained; source route HTTP 200 verified",
+      "libc bundled third-party and SQLite/SQLite-vec grants retained",
+      "Non-shipped module-cache testdata/logo grant files excluded; no notice exception for shipped code/assets"
+    ]
+  },
+  "red": [
+    "u4-docs-red.log.gz: helper absent",
+    "u4-missing-content-red.log.gz: install guide missing",
+    "u4-notices-red.log.gz: accepted notice output absent",
+    "u4-omitted-notice-red.log.gz: dropping asset/SQLite notice incorrectly succeeded and changed accepted notices",
+    "u4-extra-notice-red.log.gz: dropping Go notice incorrectly succeeded",
+    "u4-notice-mode-red.log.gz: generated notice inaccessible to other readers"
+  ],
+  "green": "u4-acceptance-final.log.gz: current-source GOTOOLCHAIN=go1.27.1 make test-notices validate build check-generated check-docs test-docs check-notices; exit 0",
+  "minimum": "Go 1.25.0 actual-process quick-start/backup plus docs/notices; u4-minimum.log.gz. Final current notice implementation rerun in u4-minimum-current.log.gz; exit 0",
+  "fresh_source": "u4-source-install.log.gz: owned fresh full Git clone at e543502, Go 1.25.0 make setup build check-docs; version output and clean checkout. This is the identical app source preceding documentation-only U4 work; no public clone/readback claim. Owned checkout removed.",
+  "examples_backup": "TestDocsExamples_QuickStartAndClosedBackup builds via Make and runs actual new processes for version/add/list/tree/JSON/history/edit; each exits before copying closed DB and any remaining sidecars to isolated backup/restore. PRAGMA integrity_check=ok; list/tree and both task histories byte-identical; original bytes untouched. This normal-close rehearsal has no live owner at copy; native/crash/durability cases remain U5.",
+  "tui_example": "Original real Feature 005 120x40 Linux app capture and acceptance carried forward with exact original date/source identity; not relabeled as newly executed or packaged app verification.",
+  "preview": {
+    "renderer": "GitHub Markdown API GFM result from final README, inspected in owned Chrome tabs served only at localhost with approximate repository Markdown CSS",
+    "captures": "u4-preview/readme-{top,install,guidance,support}.png, inspected title/status/image, code/table/first-task, data/recovery and support/license areas",
+    "finality": "Top/install/guidance source unchanged by final signed/packaged -> packaged scope correction; support capture retaken against final rendering. Generated HTML retained. No live GitHub README/settings changed.",
+    "cleanup": "Owned tabs closed and temporary localhost server stopped"
+  },
+  "security_readback": {
+    "endpoint": "repos/newbpydev/tusk/private-vulnerability-reporting",
+    "result": {
+      "enabled": false
+    },
+    "owner_profile": {
+      "login": "newbpydev",
+      "html_url": "https://github.com/newbpydev"
+    },
+    "policy": "Owner/public request route; no confidentiality or response-time promise. Recheck settings before public activation."
+  },
+  "review": {
+    "product_scope": "Purpose/image/available install/first task precede contributor governance; platform table and download drafts explicitly limit evidence. Signing is deferred; removed misleading signed acceptance wording.",
+    "usability": "Valid flags/dates/full IDs/JSON, actual configuration precedence including Windows home, source replacements, PATH recovery, native PowerShell draft and separate runtime prerequisites",
+    "data_privacy": "Independent force/recursion, no undo, metadata-only history and read-before-retry; all fixture owners stopped for backup; never delete DB/WAL/SHM; original preserved. Inspected app image contains sanitized sample data.",
+    "licensing": "Full original upstream texts, local patch/image provenance and mandatory complete-set inventories; distributions blocked by missing/unclassified grants.",
+    "simplicity_reuse": "Three ce-simplify-code personas applied sequentially inline. Reuse existing actual-process harness and canonical Make gates. No new Go package/runtime dependency/global introduced. Complete-set checks and readable staging added after Red. Small digest helper remains local like existing shell tools.",
+    "independence": "Repository tool map requires sequential host review; no independent peer agreement claimed"
+  },
+  "local_scenario_closures": [
+    "006-V31",
+    "006-V32",
+    "006-V33",
+    "006-V34",
+    "006-V35",
+    "006-V36",
+    "006-V37",
+    "006-V38",
+    "006-V39",
+    "006-V40",
+    "006-V41",
+    "006-V42",
+    "006-V43",
+    "006-V44"
+  ],
+  "pending": [
+    "Actual five-target binary install/upgrade/remove/backup and native terminals",
+    "Hosted CI, GitHub About/social/license/README readback, release badges and real public assets",
+    "Concrete owner push/dispatch/tap/tag/version/SHA/publication decisions"
+  ],
+  "logs": [
+    "u4-acceptance-final.log.gz",
+    "u4-acceptance.log.gz",
+    "u4-classification-fixtures-green.log.gz",
+    "u4-docs-green.log.gz",
+    "u4-docs-red.log.gz",
+    "u4-extra-notice-red.log.gz",
+    "u4-final-focused.log.gz",
+    "u4-focused.log.gz",
+    "u4-inventory-green.log.gz",
+    "u4-minimum-current.log.gz",
+    "u4-minimum-final.log.gz",
+    "u4-minimum.log.gz",
+    "u4-missing-content-red.log.gz",
+    "u4-module-download.log.gz",
+    "u4-notice-mode-red.log.gz",
+    "u4-notices-red.log.gz",
+    "u4-omitted-notice-red.log.gz",
+    "u4-review-green.log.gz",
+    "u4-source-install.log.gz",
+    "u4-validate-current.log.gz",
+    "u4-validate-final.log.gz",
+    "u4-validate.log.gz"
+  ],
+  "next": "U2 after coherent local commit",
+  "publication": "No push, PR, tag, settings mutation or release authorized/performed"
+}

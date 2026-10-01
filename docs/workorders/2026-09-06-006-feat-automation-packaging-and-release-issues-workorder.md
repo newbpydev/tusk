@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Implementation active - U1/U3 locally accepted; U4 next; release gates open
+status: Implementation active - U1/U3/U4 locally accepted; U2 next; release gates open
 evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
@@ -26,11 +26,11 @@ assignment. No release exception or performance waiver is assumed.
 
 | ID | Source / owner-lens | Severity | Status | Impact / next action | Closure evidence |
 | --- | --- | --- | --- | --- | --- |
-| 006-ISS-001 | R21 / repository owner, licensing | P1 | Owner decision recorded; grant/notices pending | Owner selected MIT and confirmed rights on 2026-10-01; U4 owns the grant and inventory before U2 | Owner decision in this session; V44, V51, V61 remain pending |
+| 006-ISS-001 | R21 / repository owner, licensing | P1 | Resolved locally; payload checks pending | MIT grant and complete replacement-aware notices accepted; U2 verifies payload inclusion | Owner decision and U4 receipt; V44 passes locally; V51/V61 remain pending |
 | 006-ISS-002 | R2,R23,R24 / release maintainer, portability | P1 | Open verification | Arrange all native target/terminal access before U5; absent hosts block release | Exact-asset native runtime and owned terminal records; V73–V84 |
 | 006-ISS-003 | R29 / repository owner, distribution | P1 | Open decision | Establish accessible tap/destination before U7; proposed tap was not found | Owner-controlled repository/path and Intel/ARM local/live cask proof; V87–V98 |
 | 006-ISS-004 | R28 / repository owner, release | P1 | Open decision | Confirm version/SHA and explicit hosted/release authority at concrete U8 candidate | Authorized identity, draft/asset readback and actual public result; V95–V102 |
-| 006-ISS-005 | R22 / maintainer, security/support | P2 | Open verification | Verify contact/private reporting settings before U4 claims and U8 activation | Working documented route and GitHub setting readback; V42,V44,V100 |
+| 006-ISS-005 | R22 / maintainer, security/support | P2 | Verified locally; U8 activation pending | Private reporting disabled; verified owner profile/public request route avoids confidentiality claim | U4 API readback and SECURITY.md; V42/V44 local pass; V100 pending |
 | 006-ISS-006 | Original outline / coherence | P1 | Fixed in plan | Replace unsupported readiness with executable unit and evidence contracts | Eight unit fields, 30 requirements and 102 pending scenarios; full execution still required |
 | 006-ISS-007 | Original Go 1.24 assumption / compatibility | P1 | Fixed in plan | Keep Go 1.25.0 source floor and separate pinned production compiler | Native/minimum jobs and tool lock; V03,V04,V12,V49 |
 | 006-ISS-008 | CI/race/format / portability, testing | P1 | Fixed in plan | Distinguish native Windows Bash/Make/compiler, CGO race and CGO-free release; fail source drift | Negative prerequisites, native jobs and drift fixtures; V05–V11,V16 |
@@ -54,6 +54,9 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-025 | U3 manual syntax / usability | P2 | Fixed locally | Escape angle-bracket arguments in detached documentation tree so md2man retains syntax | Synopsis Red/Green and inspected before/after manual captures; U3 receipt |
 | 006-ISS-026 | U3 ordinary startup / efficiency | P2 | Fixed locally | Limit Cobra global callback registration to hidden shell completion requests | Observed ordinary-tree registration Red, lazy Green and canonical gate; U3 receipt |
 
+| 006-ISS-027 | U4 license inventory / supply chain | P1 | Fixed locally | Block omitted assets, nested SQLite grants and Go/timezone notices in addition to unknown/changed/graph-mismatched entries | Omission Red fixtures, complete-set Green and current canonical gate; U4 receipt |
+| 006-ISS-028 | U4 generated notices / portability | P2 | Fixed locally | Set readable 0644 permissions on staged notice before promotion | Permission Red/Green and minimum/compiler script gates; U4 receipt |
+
 ---
 
 ## Open gate details
@@ -68,7 +71,12 @@ U3's [local receipt](../verification-evidence/006/u3.json) closes V17–V30 on L
 with current-source canonical/minimum checks, deterministic generated output and
 owned Kitty inspection. All three sequential simplification lenses were applied;
 ordinary startup callback registration was removed. The owned window was closed.
-Native Windows ACL and hosted runtime proof remain pending. U4 follows the U3 commit.
+Native Windows ACL and hosted runtime proof remain pending. U3 is committed as e543502.
+
+U4's [local receipt](../verification-evidence/006/u4.json) closes local V31–V44
+with the MIT grant, complete notices, docs negative fixtures, actual-process
+backup/quick-start rehearsal, fresh source install and Chrome preview. Public
+release/metadata/native-install acceptance remains pending. U2 follows the U4 commit.
 
 ### 006-ISS-001: Project license and redistribution rights
 
@@ -78,7 +86,7 @@ Native Windows ACL and hosted runtime proof remain pending. U4 follows the U3 co
 - **Expected:** A selected owner-authorized first-party license plus complete dependency/asset notices accompanies redistributed files.
 - **Decision:** The owner answered “MIT; rights confirmed” on 2026-10-01. U4 may add the MIT grant; retain third-party texts and patch provenance. An incompatible/unclassified obligation requires investigation before packaging distribution.
 - **Closure:** Owner decision recorded without credentials, license detection after publication, complete archive/source notices and replacement-aware inventory checks.
-- **Blocking effect / revisit:** Owner selection is resolved. Grant, inventory and payload verification still gate U4 license closure/U2 distribution. Revisit at U4 intake; no notice or native/publication exception is authorized.
+- **Blocking effect / revisit:** Owner selection is resolved. Grant and reviewed inventory are now accepted in U4. Payload inclusion/native redistribution still gate U2/U5 distribution. No native/publication exception is authorized.
 
 ### 006-ISS-002: Native platforms and real terminal access
 
@@ -114,7 +122,8 @@ Native Windows ACL and hosted runtime proof remain pending. U4 follows the U3 co
 - **Evidence:** No SECURITY.md exists; private vulnerability reporting availability/activation was not verified. An admin role does not establish a contact SLA or security team.
 - **Decision plan:** Verify and document GitHub private reporting if enabled; otherwise give an accurate owner GitHub contact route and state that public issue content is public. Do not fabricate email/private support promises.
 - **Closure:** Tested real contact links, approved concise policy and hosted feature readback.
-- **Blocking effect / revisit:** Blocks inaccurate security-policy publication, not core packaging. Revisit U4 contact drafting and U8 activation.
+- **Current verification:** GitHub API returned `enabled:false` on 2026-10-01; the owner profile returned the expected login/URL. SECURITY.md states disabled private reporting and provides a public request route without confidentiality. V42/V44 pass locally; V100 activation/readback remains pending.
+- **Blocking effect / revisit:** Recheck the setting and documented route before U8 activation.
 
 ### 006-ISS-018: Verified release tools and native runner availability
 
