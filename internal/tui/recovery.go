@@ -209,7 +209,7 @@ func (m *Model) recoveryKey(key tea.KeyMsg) tea.Cmd {
 			m.awaitingRead = false
 			m.refreshPending = false
 			m.historyRefresh = true
-			m.notice = "Readback acknowledged"
+			m.setNotice("Readback acknowledged")
 		}
 	}
 	return nil

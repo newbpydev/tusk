@@ -1124,3 +1124,21 @@ production logic matches that measured R6 runtime. Minimum-Go focused race tests
 also pass. `make validate build check-generated` passes for R7 before commit.
 CLI acceptance and hosted settlement remain pending; native/release proof stays
 with Feature 006.
+
+### PR #5 hosted follow-up R8 (2026-10-01)
+
+Red tests reproduce stale browse-footer notices after conflict, missing-task and
+storage-failure toggle readback, plus a confirmed form reload. Notices now carry
+a refresh-dependent lifecycle set by their source, instead of matching one error
+string. Replacing a notice resets that lifecycle; successful matching readback
+clears refresh-dependent failures while committed-write receipts survive. Failed
+retries retain their notices. Existing tests cover committed-save refresh failure
+and recovery to Saved, alongside unknown outcomes and generation checks.
+
+`make test-unit` Red/Green and `make validate build check-generated` pass.
+No new native terminal fault injection is claimed. The complete balanced CLI
+matrix with all owned fixtures closed remains 82/84 under the original target;
+its slowest case averages 15.041 ms p90 across three runs. All samples remain
+unchanged. The owner authorized continued investigation, then explicitly allowed
+an average-based host calibration. That separate verification-contract unit is
+next; current latency acceptance and hosted settlement remain open.

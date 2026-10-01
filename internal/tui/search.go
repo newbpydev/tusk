@@ -64,13 +64,13 @@ func (m *Model) searchKey(msg tea.KeyMsg) tea.Cmd {
 		}
 	case tea.KeySpace:
 		if len(m.searchDraft) >= editorByteLimit {
-			m.notice = "Search input is too large."
+			m.setNotice("Search input is too large.")
 			return nil
 		}
 		m.searchDraft += " "
 	case tea.KeyRunes:
 		if len(m.searchDraft)+len(string(msg.Runes)) > editorByteLimit || !editableText(string(msg.Runes), false) {
-			m.notice = "Search input is too large or contains unsupported controls."
+			m.setNotice("Search input is too large or contains unsupported controls.")
 			return nil
 		}
 		m.searchDraft += string(msg.Runes)

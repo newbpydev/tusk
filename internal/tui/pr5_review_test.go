@@ -330,3 +330,63 @@ func TestPR5_RefreshRetainsUnrelatedNotice(t *testing.T) {
 		t.Fatal("successful refresh erased write receipt")
 	}
 }
+
+func TestPR5_RefreshClearsMutationFailuresBySource(t *testing.T) {
+	for _, failure := range []error{ports.ErrConflict, ports.ErrStorage, core.ErrTaskNotFound} {
+		t.Run(failure.Error(), func(t *testing.T) {
+			m := loadedModel(fixtureNode("task", "Task", core.PriorityMedium, nil))
+			m.options.Mutate = func(context.Context, mutationRequest) (*core.Task, error) { return nil, failure }
+			deliverUI(m, press(m, "x"))
+			if m.notice == "" {
+				t.Fatal("missing failure notice")
+			}
+			deliverUI(m, press(m, "r"))
+			if m.notice != "" || m.stale {
+				t.Fatalf("readback left notice=%q stale=%v", m.notice, m.stale)
+			}
+		})
+	}
+}
+
+func TestPR5_FormReloadClearsMutationFooter(t *testing.T) {
+	m := loadedModel(fixtureNode("task", "Task", core.PriorityMedium, nil))
+	m.options.Mutate = func(context.Context, mutationRequest) (*core.Task, error) { return nil, ports.ErrConflict }
+	press(m, "e")
+	press(m, "change")
+	deliverUI(m, formKey(m, tea.KeyCtrlS))
+	if m.notice == "" {
+		t.Fatal("missing failure notice")
+	}
+	formKey(m, tea.KeyCtrlR)
+	press(m, "tab")
+	deliverUI(m, press(m, "enter"))
+	if m.notice != "" || m.form.err != "" {
+		t.Fatalf("reload left footer=%q form=%q", m.notice, m.form.err)
+	}
+}
+
+func TestPR5_RefreshNoticeReplacementAndFailedRetry(t *testing.T) {
+	for _, replace := range []bool{false, true} {
+		m := loadedModel(fixtureNode("task", "Task", core.PriorityMedium, nil))
+		m.options.Mutate = func(context.Context, mutationRequest) (*core.Task, error) { return nil, ports.ErrStorage }
+		deliverUI(m, press(m, "x"))
+		read := m.requestRefresh()
+		reply := read().(forestMsg)
+		reply.err = ports.ErrStorage
+		m.Update(reply)
+		if m.notice == "" || !m.stale {
+			t.Fatal("failed retry hid failure")
+		}
+		if replace {
+			m.setNotice("Task created")
+		}
+		deliverUI(m, m.requestRefresh())
+		want := ""
+		if replace {
+			want = "Task created"
+		}
+		if m.notice != want {
+			t.Fatalf("notice=%q want=%q", m.notice, want)
+		}
+	}
+}

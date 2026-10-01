@@ -313,5 +313,14 @@
     "verdict": "fixed-differently",
     "unit": "R7",
     "reason": "Took the suggested explicit-exemption alternative. The sanitizer comment now defines the boundary, and passing-before-change regressions preserve all requested shaping/variation ranges plus composed Mongolian, Khmer, combining-mark, ideographic and emoji strings. Escaping selectors would change legitimate glyph selection. No runtime behavior changed; opaque task IDs, not normalized display text, identify tasks. Unicode guidance: https://www.unicode.org/faq/vs.html and https://www.unicode.org/reports/tr37/."
+  },
+  {
+    "comment_id": 4157943567,
+    "path": "internal/tui/refresh.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157943567",
+    "quote": "Successful refresh still leaves the other refresh-recommending failure notices stale in the browse footer",
+    "verdict": "fixed",
+    "unit": "R8",
+    "reason": "Notices now track whether their source requires refresh. Matching successful readback clears mutation/read failures, while replacing a notice resets that lifecycle and preserves write receipts. Red/Green tests cover conflict, missing-task and storage-failure toggles, confirmed form reload, failed retry and replacement. Existing committed-save readback tests preserve Saved across refresh failure/recovery. make validate build check-generated passes."
   }
 ]

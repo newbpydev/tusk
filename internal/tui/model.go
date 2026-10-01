@@ -93,6 +93,7 @@ type Model struct {
 	readCancel                context.CancelFunc
 	readInterrupted           bool
 	notice                    string
+	noticeNeedsRefresh        bool
 	confirmation              *deleteDialog
 	committedKind             mutationKind
 	uncertain                 *mutationRequest

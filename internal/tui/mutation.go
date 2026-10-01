@@ -76,6 +76,7 @@ func (m *Model) completeRead(err error) (tea.Cmd, bool) {
 		}
 		m.stale = true
 		m.abandonMutation(failedReadMessage)
+		m.noticeNeedsRefresh = true
 	}
 	return nil, false
 }
@@ -102,7 +103,7 @@ func (m *Model) freezeWrites() {
 func (m *Model) abandonMutation(message string) {
 	m.pendingMutation = nil
 	m.saving = false
-	m.notice = message
+	m.setNotice(message)
 	if m.form != nil {
 		m.form.saving = false
 		m.form.err = message
@@ -134,7 +135,7 @@ func (m *Model) submitForm() tea.Cmd {
 	}
 	if request.kind == mutationNone {
 		m.closeForm()
-		m.notice = "No changes"
+		m.setNotice("No changes")
 		return nil
 	}
 	if m.options.Mutate == nil {
@@ -162,7 +163,7 @@ func (m *Model) toggleTask() tea.Cmd {
 func (m *Model) admitMutation(request mutationRequest) tea.Cmd {
 	m.saving = true
 	m.pendingMutation = &request
-	m.notice = "Saving…"
+	m.setNotice("Saving…")
 	if m.busy {
 		m.readInterrupted = true
 		if m.readCancel != nil {
@@ -232,14 +233,15 @@ func (m *Model) acceptMutation(msg mutationMsg) tea.Cmd {
 		f = nil
 	}
 	if msg.err != nil {
-		m.notice = mutationError(msg.err)
+		m.setNotice(mutationError(msg.err))
 		if f == nil {
 			m.stale = true
-			m.notice = "Action failed; refresh before retrying"
+			m.setNotice("Action failed; refresh before retrying")
 			if errors.Is(msg.err, ports.ErrConflict) || errors.Is(msg.err, core.ErrTaskNotFound) {
-				m.notice = "Task changed; refresh before retrying"
+				m.setNotice("Task changed; refresh before retrying")
 			}
 		}
+		m.noticeNeedsRefresh = true
 		if f != nil {
 			f.err = m.notice
 			if errors.Is(msg.err, core.ErrTaskNotFound) && f.draft.base == nil {
@@ -256,7 +258,7 @@ func (m *Model) acceptMutation(msg mutationMsg) tea.Cmd {
 	if f != nil {
 		m.closeForm()
 	}
-	m.notice = "Saved"
+	m.setNotice("Saved")
 	m.committedKind = msg.request.kind
 	m.awaitingRead = true
 	return m.requestRefresh()
@@ -302,4 +304,11 @@ func (m *Model) reloadForm() {
 	f.conflict = false
 	f.err = ""
 	m.focusForm(fieldTitle)
+}
+
+// setNotice replaces a notice and its lifecycle together. Only failures whose
+// source is a read or mutation are retired by successful forest readback.
+func (m *Model) setNotice(message string) {
+	m.notice = message
+	m.noticeNeedsRefresh = false
 }

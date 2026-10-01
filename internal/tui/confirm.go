@@ -92,7 +92,7 @@ func (m *Model) acceptPreview(msg previewMsg) tea.Cmd {
 	}
 	if errors.Is(msg.err, core.ErrTaskNotFound) {
 		m.confirmation = nil
-		m.notice = "Task no longer exists"
+		m.setNotice("Task no longer exists")
 		return m.requestRefresh()
 	}
 	if msg.err != nil {
@@ -101,7 +101,7 @@ func (m *Model) acceptPreview(msg previewMsg) tea.Cmd {
 	}
 	if taskIdentity(&msg.preview.Target) != d.target {
 		m.confirmation = nil
-		m.notice = "Task identity changed. Review it before deleting."
+		m.setNotice("Task identity changed. Review it before deleting.")
 		return m.requestRefresh()
 	}
 	preview := clonePreview(msg.preview)
@@ -200,7 +200,7 @@ func (m *Model) deleteFinished(msg mutationMsg) tea.Cmd {
 	if msg.err != nil {
 		if errors.Is(msg.err, core.ErrTaskNotFound) {
 			m.confirmation = nil
-			m.notice = "Task no longer exists"
+			m.setNotice("Task no longer exists")
 			return m.requestRefresh()
 		}
 		d.preview = nil
@@ -215,7 +215,7 @@ func (m *Model) deleteFinished(msg mutationMsg) tea.Cmd {
 	}
 	m.confirmation = nil
 	m.committedKind = mutationDelete
-	m.notice = "Deleted"
+	m.setNotice("Deleted")
 	m.awaitingRead = true
 	return m.requestRefresh()
 }
