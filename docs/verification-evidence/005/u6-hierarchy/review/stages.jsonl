@@ -1,0 +1,10 @@
+{"phase": "start", "stage": "scope", "ts": "2026-09-30T17:27:34.675398+00:00"}
+{"facts": {"changed_lines": 382, "depth": "lite", "exec_nontest_lines": 92, "size_band": "small", "unclassified_lines": {".md": 91}}, "phase": "end", "stage": "scope", "ts": "2026-09-30T17:27:34.873289+00:00"}
+{"phase": "start", "stage": "review", "ts": "2026-09-30T17:27:34.873289+00:00"}
+{"candidates": 0, "facts": {"scope_update": "Owner added Darkmatter palette before review completed"}, "phase": "end", "stage": "review", "ts": "2026-09-30T17:38:47.009677+00:00"}
+{"phase": "start", "stage": "scope", "ts": "2026-09-30T17:38:47.009677+00:00"}
+{"facts": {"changed_lines": 477, "depth": "lite", "exec_nontest_lines": 120, "size_band": "small", "unclassified_lines": {".md": 150}}, "phase": "end", "stage": "scope", "ts": "2026-09-30T17:38:47.215479+00:00"}
+{"phase": "start", "stage": "review", "ts": "2026-09-30T17:38:47.215479+00:00"}
+{"candidates": 0, "phase": "end", "stage": "review", "ts": "2026-09-30T17:50:28.792272+00:00"}
+{"phase": "start", "stage": "receipt", "ts": "2026-09-30T17:50:28.792272+00:00"}
+{"phase": "end", "stage": "receipt", "ts": "2026-09-30T17:50:28.883165+00:00"}

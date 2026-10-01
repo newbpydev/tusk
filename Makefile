@@ -98,6 +98,32 @@ validate: fmt vet test race coverage test-scripts check-modules
 
 BUILD_OUTPUT ?= bin/tusk
 CLI_TEST_RUN ?= .
+TUI_TEST_RUN ?= .
+TUI_TEST_FLAGS ?=
+.PHONY: bench-tui
+TUI_BENCH_OUTPUT ?= docs/verification-evidence/005/tui-latency.json
+bench-tui: build
+	TUSK_TUI_BENCH_OUTPUT="$(abspath $(TUI_BENCH_OUTPUT))" go test ./internal/tui -run '^TestTUIMeasurements$$' -count=1 -timeout=20m -v
+	TUSK_TUI_STARTUP_OUTPUT="$(abspath $(TUI_BENCH_OUTPUT)).startup.json" go test ./cmd/tusk -run '^TestTUIStartupMeasurements$$' -count=1 -timeout=5m -v
+
+.PHONY: test-tui build-tui build-tui-fixture
+
+# Manual fault-injected app, never test-result verification in Kitty.
+build-tui-fixture:
+	mkdir -p bin
+	CGO_ENABLED=0 go build -tags=tusk_fixture -o bin/tusk-tui-fixture ./scripts/fixtures/tui
+
+test-tui:
+	go test $(TUI_TEST_FLAGS) -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '$(TUI_TEST_RUN)'
+
+build-tui: build-cli
+	@set -e; build_tmp=$$(mktemp -d); trap 'rm -rf "$$build_tmp"' EXIT; \
+	for target in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do \
+		echo "Compiling TUI tests: $$target (CGO_ENABLED=0; native execution separate)"; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/tui-$${target%/*}-$${target#*/}.test" ./internal/tui; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/text-$${target%/*}-$${target#*/}.test" ./internal/terminaltext; \
+	done
+
 .PHONY: test-cli build-cli
 
 test-cli:
@@ -146,14 +172,20 @@ help:
 	@echo "make clean     - Clean temporary build artifacts"
 
 .PHONY: bench-cli
-CLI_BENCH_OUTPUT ?= docs/verification-evidence/004/latency.json
+CLI_BENCH_PROFILE ?= reference
+CLI_BENCH_OUTPUT ?= $(if $(filter reference,$(CLI_BENCH_PROFILE)),docs/verification-evidence/004/latency.json,)
+
 bench-cli: build
-	go run ./scripts/cli-bench --binary "$(BUILD_OUTPUT)" --output "$(CLI_BENCH_OUTPUT)"
+	go run ./scripts/cli-bench --binary "$(BUILD_OUTPUT)" --output "$(CLI_BENCH_OUTPUT)" --acceptance-profile "$(CLI_BENCH_PROFILE)"
 
 .PHONY: profile-cli
 CLI_PROFILE_OUTPUT ?= /tmp/tusk-cli.cpu
 profile-cli:
 	go test ./scripts/cli-bench -run '^$$' -bench '^BenchmarkCLIProfile$$' -benchtime=3s -cpuprofile "$(CLI_PROFILE_OUTPUT)" -o "$(CLI_PROFILE_OUTPUT).test"
+
+.PHONY: bench-cli-json
+bench-cli-json:
+	go test ./internal/cli -run '^$$' -bench '^BenchmarkJSON(Escaped)?$$' -benchmem -count=3
 
 .PHONY: check-modules
 check-modules:
@@ -167,3 +199,9 @@ test-cli-latency-codec:
 CLI_CONDITIONS_OUTPUT ?= /tmp/tusk-cli-conditions.json
 bench-cli-conditions: build
 	TUSK_CLI_CONDITIONS=1 TUSK_CLI_BINARY="$(abspath $(BUILD_OUTPUT))" TUSK_CLI_CONDITIONS_OUTPUT="$(abspath $(CLI_CONDITIONS_OUTPUT))" go test -v ./scripts/cli-bench -run '^TestCLIConditions$$' -count=1
+
+# Use a toolchain supported by the installed govulncheck source analyzer:
+# GOTOOLCHAIN=go1.25.13 make check-vulnerabilities
+.PHONY: check-vulnerabilities
+check-vulnerabilities:
+	govulncheck ./cmd/tusk

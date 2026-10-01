@@ -1,0 +1,17 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestWorkflow_ToggleErrors'
+=== RUN   TestWorkflow_ToggleErrorsHaveActionableBrowseHints
+    workflow_test.go:20: toggle refers to nonexistent form: Task changed elsewhere. Keep this draft or reload the task.
+--- FAIL: TestWorkflow_ToggleErrorsHaveActionableBrowseHints (0.01s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.044s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.008s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.010s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.029s [no tests to run]
+FAIL
+make: *** [Makefile:111: test-tui] Error 1

@@ -1,0 +1,1 @@
+Claude provider-capable launch: 401 invalid OAuth token; no review. Replacement Grok through Cursor completed four observations. Requested cursor-grok-4.6-high; actual serving family/model/effort unverified; independence_verified=false. No independent agreement promotion is permitted.

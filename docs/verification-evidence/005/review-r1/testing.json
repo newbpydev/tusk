@@ -1,0 +1,8 @@
+{
+  "reviewer": "testing",
+  "findings": [],
+  "residual_risks": [],
+  "testing_gaps": [
+    "R25/V106 remains open: current CLI report passes 74 of 84 case-runs. Final binary TUI/startup measurements and synchronized acceptance receipt remain caller work. Native macOS/Windows and hosted release verification are explicitly deferred to Feature 006."
+  ]
+}

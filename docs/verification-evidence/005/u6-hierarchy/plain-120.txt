@@ -1,0 +1,40 @@
+ TUSK  /  Personal workspace                                                                     f Filters   a New task 
+╭─ > Tasks · 7 tasks ──────────────────────────╮╭─ Task details · 1–36 / 39 ───────────────────────────────────────────╮
+│ /  Search tasks                              ││                                                                      │
+│ [1 All tasks]  2 Today  3 Done               ││  Launch the workspace                                                │
+│──────────────────────────────────────────────││  Root task                                                           │
+│  Backlog                                     ││                                                                      │
+│ >▾ ○ Launch the workspace                    ││  Status                            Priority                          │
+│    │ Todo · High · 16%                       ││  ○ Todo                            High                              │
+│    ├─ ▾ ○ Welcome experience                 ││                                                                      │
+│    │  │   Todo · High · 50%                  ││  Due date                          Tags                              │
+│    │  ├─ ✓ Design the welcome screen         ││  Not set                           None                              │
+│    │  │    Done · High · 100%                ││                                                                      │
+│    │  └─ ○ Review keyboard navigation        ││  Progress                                                 (0.5 / 3)  │
+│    │       Todo · Medium                     ││  ━━━━━━━━━───────────────────────────────────────────────────  16%   │
+│    ├─ ○ Write the guide                      ││                                                                      │
+│    │    Todo · Medium                        ││  Notes                                                               │
+│    └─ ○ Prepare the release                  ││                                                                      │
+│         Todo · Medium                        ││  Three workstreams. Nested tasks contribute partial progress to      │
+│  ○ Check the release notes                   ││  their parent.                                                       │
+│    Todo · Low                                ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││  ──────────────────────────────────────────────────────────────────  │
+│                                              ││  Activity                                                            │
+│                                              ││                                                                      │
+│                                              ││  #1  create                                                          │
+│                                              ││  Changed completed_at, description, due_date, parent_id, priority,   │
+│                                              ││  progress, status, tags, title                                       │
+│                                              ││  2026-09-30 14:27:06 -03 (-03:00)                                    │
+│                                              ││                                                                      │
+│                                              ││  #10  rollup                                                         │
+│                                              ││  Changed progress                                                    │
+│                                              ││  2026-09-30 14:27:34 -03 (-03:00)                                    │
+│                                              ││                                                                      │
+│                                              ││  ──────────────────────────────────────────────────────────────────  │
+│                                              ││  Task information                                                    │
+│                                              ││  ID        01a0f35b-0f0f-7abe-8eb3-b7bf45a98a50                      │
+│                                              ││  Due       Not set                                                   │
+╰──────────────────────────────────────────────╯╰──────────────────────────────────────────────────────────────────────╯
+ a new • e edit • / search • ? help • q quit • f filter • r refresh • Tab focus

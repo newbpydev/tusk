@@ -1,0 +1,40 @@
+ TUSK  /  Personal workspace                                                                     f Filters   a New task 
+╭─ > Tasks · 5 tasks ──────────────────────────╮╭─ Task details · 1–36 / 44 ───────────────────────────────────────────╮
+│ /  Search tasks                              ││                                                                      │
+│ [1 All tasks]  2 Today  3 Done               ││  Launch customer workspace                                           │
+│──────────────────────────────────────────────││  Root task                                                           │
+│  Today                                       ││                                                                      │
+│ >▾ ○ Launch customer workspace               ││  Status                            Priority                          │
+│      Todo · Urgent    ╭─ > Create task · 1/6 ────────────────────────────────────────────────╮                       │
+│    └ ○ Design welcome │                                                                      │                       │
+│        Todo · High    │  > Title                                                             │                       │
+│                       │    │ Confirmed resize draft                                          │nch                    │
+│  Upcoming             │                                                                      │                       │
+│  ○ Prepare onboarding │    Notes · Enter adds a line                                         │                       │
+│    Todo · High        │    │                                                                 │───────────────   0%   │
+│                       │    │                                                                 │                       │
+│  Backlog              │    │                                                                 │                       │
+│  ○ Customer interviews│                                                                      │                       │
+│    Todo · Medium      │    Priority · ←→ choose                                              │                       │
+│  ○ Explore dashboard i│    │ ‹ Medium ›                                                      │                       │
+│    Todo · Low         │                                                                      │                       │
+│                       │    Due date · America/Sao_Paulo                                      │                       │
+│                       │    │                                                                 │                       │
+│                       │                                                                      │                       │
+│                       │    Tags · comma-separated                                            │                       │
+│                       │    │                                                                 │                       │
+│                       │                                                                      │t.                     │
+│                       │    Parent · Ctrl+P choose · Ctrl+U root                              │                       │
+│                       │    │                                                                 │                       │
+│                       │                                                                      │                       │
+│                       │                                                                      │                       │
+│                       │    [ Save task  Ctrl+S ]    [ Cancel  Esc ]                          │                       │
+│                       │                                                                      │─────────────────────  │
+│                       ╰──────────────────────────────────────────────────────────────────────╯                       │
+│                                              ││                                                                      │
+│                                              ││  #1  create                                                          │
+│                                              ││  Changed completed_at, description, due_date, parent_id, priority,   │
+│                                              ││  progress, status, tags, title                                       │
+│                                              ││  2026-09-29 21:36:16 -03 (-03:00)                                    │
+╰──────────────────────────────────────────────╯╰──────────────────────────────────────────────────────────────────────╯
+ Tab / Shift+Tab fields · Ctrl+S save · Esc cancel · Ctrl+C exit

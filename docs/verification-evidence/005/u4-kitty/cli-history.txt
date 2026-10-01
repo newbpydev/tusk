@@ -1,0 +1,24 @@
+Changed fields: progress
+bash-5.3$ NO_COLOR=1 ./bin/tusk tui
+bash-5.3$ ./bin/tusk history "$TUSK_U4_PARENT"
+Sequence: 1
+Occurred at: 2026-09-29T22:52:19.92529913Z
+Kind: create
+Changed fields: completed_at,description,due_date,parent_id,priority,progress,st
+atus,tags,title
+
+Sequence: 2
+Occurred at: 2026-09-29T22:52:20.029143903Z
+Kind: metadata
+Changed fields: title
+
+Sequence: 3
+Occurred at: 2026-09-29T22:52:20.052375352Z
+Kind: status
+Changed fields: status
+
+Sequence: 4
+Occurred at: 2026-09-29T22:52:20.076660935Z
+Kind: progress
+Changed fields: progress
+bash-5.3$

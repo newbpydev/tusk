@@ -1,0 +1,29 @@
+File: cli-bench.test
+Build ID: 315f260745c6019cf05c7661874f70a5eecb84fa
+Type: cpu
+Time: 2026-10-01 12:50:53 -03
+Duration: 10.19s, Total samples = 12.41s (121.81%)
+Showing nodes accounting for 5.40s, 43.51% of 12.41s total
+Dropped 703 nodes (cum <= 0.06s)
+Showing top 20 nodes out of 312
+      flat  flat%   sum%        cum   cum%
+     0.65s  5.24%  5.24%      1.33s 10.72%  modernc.org/sqlite/lib._sqlite3VdbeExec
+     0.56s  4.51%  9.75%      0.81s  6.53%  modernc.org/libc.Xpthread_mutex_lock
+     0.53s  4.27% 14.02%      0.58s  4.67%  github.com/newbpydev/tusk/internal/cli.appendJSONString
+     0.43s  3.46% 17.49%      0.43s  3.46%  internal/runtime/syscall/linux.Syscall6
+     0.39s  3.14% 20.63%      0.39s  3.14%  internal/sync.(*Mutex).Unlock (inline)
+     0.30s  2.42% 23.05%      0.30s  2.42%  runtime.nanotime
+     0.27s  2.18% 25.22%      0.27s  2.18%  modernc.org/libc.Xmemcpy
+     0.24s  1.93% 27.16%      0.29s  2.34%  sync.(*Mutex).Lock (inline)
+     0.22s  1.77% 28.93%      0.61s  4.92%  sync.(*Mutex).Unlock (inline)
+     0.21s  1.69% 30.62%      0.79s  6.37%  modernc.org/libc.Xpthread_mutex_unlock
+     0.21s  1.69% 32.31%      0.21s  1.69%  runtime.futex
+     0.18s  1.45% 33.76%      0.29s  2.34%  runtime.tryDeferToSpanScan
+     0.18s  1.45% 35.21%      0.18s  1.45%  runtime.usleep
+     0.17s  1.37% 36.58%      3.75s 30.22%  modernc.org/sqlite.(*rows).Next
+     0.17s  1.37% 37.95%      0.26s  2.10%  runtime.mallocgcSmallScanNoHeaderSC2
+     0.16s  1.29% 39.24%      0.18s  1.45%  runtime.typePointers.next
+     0.15s  1.21% 40.45%      0.28s  2.26%  database/sql.convertAssignRows
+     0.15s  1.21% 41.66%      0.15s  1.21%  runtime.memmove
+     0.12s  0.97% 42.63%      0.12s  0.97%  unicode/utf8.ValidString
+     0.11s  0.89% 43.51%      1.06s  8.54%  github.com/newbpydev/tusk/internal/cli.appendTaskJSON

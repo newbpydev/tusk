@@ -1,0 +1,74 @@
+[
+  {
+    "reviewer": "correctness",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": [],
+    "review_method": "sequential parent context",
+    "independent_reviewers": [],
+    "checked": [
+      "All 128 ASCII table entries checked by the existing independent standard-library parity oracle over bytes 0..255. The >=128 short circuit bounds the lookup.",
+      "UTC AppendText preserves RFC3339Nano and rejects years outside 0..9999; caller discards partial output on error. Nil and optional fields retain their existing paths."
+    ]
+  },
+  {
+    "reviewer": "project-standards",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": [],
+    "review_method": "sequential parent context",
+    "independent_reviewers": [],
+    "checked": [
+      "Existing make bench-cli failed before implementation: calendar report 82/84, tree JSON p90 15.028957 and 15.174335ms. Existing parity tests characterized bytes before editing; no redundant test added.",
+      "Immutable local constant, CLI-only source change, no services, global mutable state, or storage safety changes. Canonical validation passes in Bash; Kitty remains reserved for real app usage."
+    ]
+  },
+  {
+    "reviewer": "testing",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": [],
+    "review_method": "sequential parent context",
+    "independent_reviewers": [],
+    "checked": [
+      "TestJSON_EncodingParity compares public output with encoding/json through task/list/nested-tree paths for every byte, Unicode, HTML-sensitive characters and all four date fields at years -1,0,1,9999,10000.",
+      "Benchmarks keep fixture creation outside measured loops and report allocations. Fresh-process acceptance harness is unchanged. Go 1.25 focused JSON/output tests pass."
+    ]
+  },
+  {
+    "reviewer": "performance",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": [],
+    "review_method": "sequential parent context",
+    "independent_reviewers": [],
+    "checked": [
+      "Profile locates appendJSONString at 4.58% flat CPU. Median isolated 1000-task JSON encoding improves from 1.080933ms to 0.877308ms, with one allocation in all six measurements.",
+      "ASCII lookup removes repeated branches without adding allocations; AppendText avoids duplicate calendar conversions. Full reference latency acceptance remains pending."
+    ]
+  },
+  {
+    "reviewer": "api-contract",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": [],
+    "review_method": "sequential parent context",
+    "independent_reviewers": [],
+    "checked": [
+      "Explicit field names/order, null/empty arrays, exact escaping, terminal newline, UTC normalization and ports.ErrInvalidRecord are unchanged.",
+      "Existing byte-for-byte standard-library oracle and process/output regressions pass under make validate."
+    ]
+  },
+  {
+    "reviewer": "security",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": [],
+    "review_method": "sequential parent context",
+    "independent_reviewers": [],
+    "checked": [
+      "Control bytes, quotes, backslash, ampersand and angle brackets take the unchanged encoding/json fallback. Non-ASCII and malformed UTF-8 also retain the standard encoder.",
+      "No new filesystem, subprocess, network, permission or persistence path. Benchmark strings and command arguments are fixed fixtures."
+    ]
+  }
+]

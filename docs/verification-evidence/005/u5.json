@@ -1,0 +1,119 @@
+{
+  "unit": "U5 / 005-5",
+  "status": "accepted locally",
+  "date_utc": "2026-09-29T23:37:33.943151+00:00",
+  "base_commit": "5d35855fa2d091b32ed2dbfb0e9d5f11eff4622d",
+  "source_sha256": {
+    "Makefile": "d0606e863a60bb656965400a1a5e9efd877b849598c60aa6f52a61f84a3aff66",
+    "cmd/tusk/tui.go": "10dd1db2932d92faae18cf6ad0b3238da915658b70adc4303a04d7f18e0f7605",
+    "internal/tui/draft.go": "35d83b93252e8620348e23ab47e2f67bfadc3dfaf987a78070ea5f9dda49f6e2",
+    "internal/tui/draft_test.go": "0d980a343609dc574266f71d04cb13388ccb6554a0b379bf83cf47a79a0b8b77",
+    "internal/tui/form.go": "742526c707d9c8eeee0e624cf2fc64d4a6f198f3c7dcdd751def57f7683fc9a1",
+    "internal/tui/form_test.go": "5d52a2ea17a9a4f24196f7f8b737bb4f3f663c5201830b34dd298848cd50179e",
+    "internal/tui/frame.go": "1340addbb1d198f6620e458200232922e49b98da7a784abc14c2f8ac6b698427",
+    "internal/tui/history.go": "2a593afd240257bfc01cc12aa07655d5fa3eac090446d64967a4a1439f5aad2b",
+    "internal/tui/keymap.go": "623b05bd6bac5df05f702467123c0599128d0a8e2022de54af6f0dfd3b569c19",
+    "internal/tui/kitty_fixture_test.go": "e293f4668fda3178190c11717c05a8363f77f3e6206f7dd13f57f912a45ac6e0",
+    "internal/tui/model.go": "6b5545ab92ff3fe99639904cb68085f926ffc5c190f9a24a7563ff3b8d74a6fd",
+    "internal/tui/mutation.go": "d45c85cca3fd00206d6a3736044f37685436b528556615b8850b89e738b6ec5e",
+    "internal/tui/mutation_integration_test.go": "42842bc5b12bfa201785dd6dd5291219bf0636bd5a8335444d9584c47e661f9e",
+    "internal/tui/mutation_test.go": "6e5e7e2c26b0fc4a229e7b4c10b4e57930a238916c7277ed6c53f88e2e7bcde8",
+    "internal/tui/refresh.go": "527cb9979d64daeba1dd40c95cd09507b5df61f78ceef54f83bef5c4921a5d2e",
+    "internal/tui/run.go": "39fa58752a33bf8cf159c703d232ff92ee5cd7d6f7d925034d37c17a38104575",
+    "internal/tui/surfaces_test.go": "acc82749a41d6f0559b78f522e7a34dcaaafd35e607b9a0e79413e13cb6b33e6"
+  },
+  "binary_sha256": "d6734d165508848efb559226a5a2137799f725ab8aff66b22814eb28e41651f5",
+  "fixture_binary_sha256": "70a7e6549cc059faf00f6ff979e31cd952586d173b83ee953ccc08079284244a",
+  "canonical": "u5-accepted-final.log.gz: make validate build check-generated passed",
+  "coverage": {
+    "internal/tui": 98.4,
+    "internal/terminaltext": 100.0,
+    "internal/cli": 96.6,
+    "cmd/tusk": 96.2
+  },
+  "minimum_go": "u5-final-go125.log.gz: Go 1.25.0 affected race suite and five CGO-free app/CLI/TUI/text test builds passed; final resize assertion separately rechecked in u5-go125-resize.log.gz",
+  "red_observations": [
+    "Missing forms and mutation capability (compile Red).",
+    "Hidden small-terminal form accepted input.",
+    "Missing create parent was misclassified as a disappeared edit target.",
+    "Field position and due timezone were not displayed.",
+    "Saving was labeled Refreshing; paused writes lacked explanation.",
+    "Saved notice clipped the quit hint at 80 columns.",
+    "Parent picker swallowed literal spaces.",
+    "Fresh readback unlocked writes but retained the obsolete refresh-failed notice; corrected before commit."
+  ],
+  "scenarios_closed": [
+    "V38",
+    "V50",
+    "V52",
+    "V53",
+    "V68",
+    "V69",
+    "V70",
+    "V71",
+    "V72",
+    "V73",
+    "V74",
+    "V75",
+    "V76",
+    "V77",
+    "V78",
+    "V79",
+    "V80",
+    "V81",
+    "V82",
+    "V83",
+    "V84",
+    "V85",
+    "V86"
+  ],
+  "product_closed": [
+    "TUSK-V62"
+  ],
+  "integration": [
+    "Real SQLite two-owner Base conflict, explicit reload, target disappearance, raw tab-note preservation.",
+    "Create defaults and optional fields; leaf progress; explicit clear/move; cycle/depth rejection with unchanged graph/history; parent policy false/true; complete subtree/reopen target; restored editable equality.",
+    "Existing service incarnation tests plus detached Base preservation cover reused IDs.",
+    "Read cancellation/drain, duplicate admission, unknown classification, post-commit readback barrier and late owner replies."
+  ],
+  "kitty": {
+    "socket": "/tmp/tusk-005-kitty.OIGt5C/kitty.sock",
+    "window_id": 3,
+    "database": "/tmp/tusk-005-kitty.OIGt5C/u5-tasks.db",
+    "sizes": [
+      "80x24",
+      "120x40",
+      "200x60",
+      "79x23 and restore"
+    ],
+    "observed": [
+      "Spacious rows; uniform modal backgrounds, no shadow bands; visible focus and fixed controls.",
+      "Create and multiline bracketed paste, priority/due/tags, parent picker, edit/move/toggle, default keep/discard, external CLI conflict and explicit reload.",
+      "Atomic tab-paste rejection; hidden input ignored and exact draft restored; NO_COLOR form usable.",
+      "CLI JSON after quit confirms raw notes, exact IDs, due/tags and moved parent; terminal restored.",
+      "Fault-injected production Run with real SQLite: Saved; refresh failed, writes paused, duplicates ignored, one committed task, explicit refresh recovers."
+    ],
+    "fault_scope": "App-only test-source launcher; no test results run/displayed in Kitty; marker-controlled service read failure, not a spontaneous storage failure."
+  },
+  "reviews": {
+    "mode": "Inline sequential per AGENTS; not independent peer review",
+    "lenses": [
+      "correctness",
+      "API contract",
+      "data integrity",
+      "security",
+      "async races",
+      "testing",
+      "agent parity",
+      "maintainability",
+      "reuse",
+      "quality",
+      "efficiency"
+    ],
+    "applied_reuse": 1,
+    "applied_quality": 0,
+    "applied_efficiency": 0,
+    "disposition": "Reused canWrite for form admission; shared completeRead owns both read lanes. Retained raw/widget separation and form/global saving state for explicit ownership. New regressions above resolved. U6 still measures projection/preparation and large read-only previews."
+  },
+  "pending": "U8 deletion/fresh-owner recovery; V30/V36/V51/V55 and product V61/V63 retain their remaining consent/recovery portions; U6 acceptance/performance and Feature 006 native/hosted proof."
+}

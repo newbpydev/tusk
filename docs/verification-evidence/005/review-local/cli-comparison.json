@@ -1,0 +1,14 @@
+{
+  "candidate_report": "cli-latency.json",
+  "control_report": "cli-control.json",
+  "control_revision": "a39af7af8cf9a4253fdbd8876e64003644a9ab90",
+  "runtime_sources_unchanged": [
+    "internal/cli",
+    "internal/service",
+    "internal/storage"
+  ],
+  "candidate_passed": 82,
+  "control_passed": 82,
+  "total_cases_each": 84,
+  "conclusion": "Both builds miss the same JSON-tree p90 runs while all tails pass. This does not establish a regression from the two UI clock assignments. The failed reports remain retained and do not satisfy the CLI gate."
+}

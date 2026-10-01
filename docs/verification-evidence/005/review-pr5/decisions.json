@@ -1,0 +1,353 @@
+[
+  {
+    "comment_id": 4150751930,
+    "path": "internal/tui/mutation.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751930",
+    "quote": "**WARNING:** Ctrl+S silently does nothing when writes are paused",
+    "verdict": "fixed",
+    "unit": "R1",
+    "reason": "Paused saves now show a Ctrl+R refresh hint inside the form. The raw draft stays intact. Regression TestPR5_StaleFormSaveExplainsPause passed, and the message was inspected in the owned Kitty window."
+  },
+  {
+    "comment_id": 4150751936,
+    "path": "internal/tui/confirm.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751936",
+    "quote": "**WARNING:** Advertised recovery keys are dead inside the delete dialog after an abandoned delete",
+    "verdict": "fixed",
+    "unit": "R1",
+    "reason": "The paused delete dialog accepts r and Ctrl+R. Refresh revokes the previous preview and recursive consent, loads a fresh preview and defaults to Cancel. The abandoned-read regression verifies no delete is replayed."
+  },
+  {
+    "comment_id": 4150751940,
+    "path": "internal/tui/navigation.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751940",
+    "quote": "**SUGGESTION:** Page size overshoots the visible list area",
+    "verdict": "fixed",
+    "unit": "R2",
+    "reason": "List paging now counts two task rows and inter-group headings/spacers, keeping a complete task in common with the previous page. The page-overlap regression covers group transitions."
+  },
+  {
+    "comment_id": 4150751945,
+    "path": "internal/tui/session.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751945",
+    "quote": "**SUGGESTION:** Unchecked type assertions on `Session.Call` results",
+    "verdict": "declined",
+    "unit": null,
+    "reason": "Each boxed value is produced by its adjacent package-owned closure with the exact concrete type asserted, including typed nil slices. Session.Call callers cannot supply those closures to these adapters. Adding seven defensive assertions would add unreachable error branches without changing a failure the API can produce. The service panic boundary remains covered by session and Run tests."
+  },
+  {
+    "comment_id": 4150751950,
+    "path": "internal/tui/session.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751950",
+    "quote": "**SUGGESTION:** Close can block forever after the progress notice",
+    "verdict": "declined",
+    "unit": null,
+    "reason": "The approved Feature 005 plan explicitly requires draining admitted work before closing the owner and retaining its final outcome receipt (plan lines 335-344; V25). Returning while a callback still runs would lose that receipt and permit teardown under active work. The existing cleanup-progress and subsequent-signal escalation policy stays in place; Session tests exercise the supported drain path."
+  },
+  {
+    "comment_id": 4150751957,
+    "path": "internal/tui/run.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751957",
+    "quote": "**SUGGESTION:** SIGHUP bypasses the deferred session close",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "The Unix process signal owner now registers SIGHUP alongside SIGINT/SIGTERM. A real child PTY regression now verifies cancellation, exit 1 and restored terminal modes; an owned Kitty SIGHUP check also returned to the shell."
+  },
+  {
+    "comment_id": 4150751963,
+    "path": "internal/tui/run.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751963",
+    "quote": "**SUGGESTION:** Only some required seams are defaulted or validated",
+    "verdict": "fixed-differently",
+    "unit": "R3",
+    "reason": "Run rejects a missing Open factory with ErrInvalidServiceOptions before starting the program. DayBounds already reports Due date is unavailable in applyFilters; taskDraft.command already checks a nil ParseDue and reports Due-date parsing is unavailable. Those optional model seams stay usable for read-only/minimal test models."
+  },
+  {
+    "comment_id": 4150751966,
+    "path": "internal/tui/model.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751966",
+    "quote": "**SUGGESTION:** First frame assumes 80x24 before the real size is known",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "The model starts at 0x0 with an empty immutable frame and paints only after WindowSizeMsg. The regression covers load-before-size and repeated cold View purity; the owned Kitty small-screen check showed only the resize banner."
+  },
+  {
+    "comment_id": 4150751970,
+    "path": "internal/tui/search.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751970",
+    "quote": "**SUGGESTION:** Accepted search term is stored untrimmed",
+    "verdict": "fixed",
+    "unit": "R2",
+    "reason": "Both Enter acceptance and debounce acceptance trim the search term. Whitespace-only search no longer activates predicates; regressions cover both paths."
+  },
+  {
+    "comment_id": 4150751974,
+    "path": "internal/tui/navigation.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751974",
+    "quote": "**SUGGESTION:** Collapse gate duplicates the projection predicate and omits `dueEnd`",
+    "verdict": "fixed",
+    "unit": "R2",
+    "reason": "Projection, collapse/expand and the tree marker now use one filteredView predicate including both due bounds. An end-only filter regression pins the marker and collapse behavior."
+  },
+  {
+    "comment_id": 4150751977,
+    "path": "internal/tui/mutation.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751977",
+    "quote": "**SUGGESTION:** The `refresh before retrying` notice is not enforced by state",
+    "verdict": "fixed",
+    "unit": "R1",
+    "reason": "A rejected non-form mutation marks the snapshot stale, so another toggle is blocked until a successful refresh. The regression verifies one service call before readback and writes resuming afterward."
+  },
+  {
+    "comment_id": 4150751981,
+    "path": "internal/tui/filter.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751981",
+    "quote": "**SUGGESTION:** Tag/due fields accept unbounded input",
+    "verdict": "fixed",
+    "unit": "R2",
+    "reason": "Search and tag/due filter input now reject oversized or unsupported paste atomically using the editor byte limit and control validation. Existing drafts stay intact; oversized/control regressions cover all three inputs."
+  },
+  {
+    "comment_id": 4150751989,
+    "path": "internal/tui/form.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751989",
+    "quote": "**SUGGESTION:** Picker window can open on an orphaned ID line",
+    "verdict": "fixed-differently",
+    "unit": "R2",
+    "reason": "The picker offset rounds up to the next title row. Rounding down avoids the orphan but clips the selected ID at odd heights; rounding up keeps the first row a title and both selected lines visible. Regressions cover areas 13, 15 and 17."
+  },
+  {
+    "comment_id": 4150751995,
+    "path": "internal/tui/details.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150751995",
+    "quote": "**SUGGESTION:** Dead branch: the details-panel notes editor can never render",
+    "verdict": "fixed",
+    "unit": "R2",
+    "reason": "Removed the unreachable details-panel editor branch. The model notes widget remains the styled form template, copied into the actual focused form editor; a regression verifies the template never appears in details."
+  },
+  {
+    "comment_id": 4150752000,
+    "path": "internal/tui/refresh.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752000",
+    "quote": "**SUGGESTION:** History is re-fetched on every 2-second tick",
+    "verdict": "declined",
+    "unit": null,
+    "reason": "The selected task can have new history with unchanged task data: external changes can be made and reverted between snapshots, while their events remain. A task-reference/key short-circuit would miss those events and violate periodic history freshness. The current serialized/coalesced history read remains; TestHistory_RefreshTakesPriorityAndCoalesces pins the bounded queue."
+  },
+  {
+    "comment_id": 4150752006,
+    "path": "internal/tui/markdown.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752006",
+    "quote": "**SUGGESTION:** Plain-text fallback renders unbounded source",
+    "verdict": "declined",
+    "unit": null,
+    "reason": "Complete safe plain-text fallback is an explicit accepted contract, including the retained 1.0625 MiB note case (Feature 005 plan and V62/V108). Truncating it would hide stored content. The 32 KiB limit bounds Markdown formatting, while full fallback rendering is asynchronous and separately measured; no persistence or display truncation is introduced."
+  },
+  {
+    "comment_id": 4150752010,
+    "path": "internal/tui/recovery.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752010",
+    "quote": "**SUGGESTION:** Zero-time due renders differently from the details panel",
+    "verdict": "fixed",
+    "unit": "R2",
+    "reason": "Recovery and the compact due summary now treat nil and zero due times as Not set, matching the details audit date. A zero-time regression covers recovery and details."
+  },
+  {
+    "comment_id": 4150752013,
+    "path": "internal/terminaltext/text.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752013",
+    "quote": "**SUGGESTION:** Invisible/spoofing characters outside the blocklist pass through",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "The shared display boundary now visibly escapes ZWSP, soft hyphen, U+2060-2064, interlinear annotation controls and tag characters. ZWJ emoji remain intact. Regression coverage checks each range; persisted/raw draft data is unchanged."
+  },
+  {
+    "comment_id": 4150752015,
+    "path": "cmd/tusk/tui.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752015",
+    "quote": "**SUGGESTION:** `tuiProfile(os.Getenv)` bypasses the `Options.Getenv` seam",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "tuiRunner now accepts the environment accessor and passes it to tuiProfile. Both composition sites supply the same os.Getenv as cli.Options; injected callers can provide their own accessor, and nil consistently selects the empty-environment ASCII profile."
+  },
+  {
+    "comment_id": 4150752021,
+    "path": "internal/cli/tui.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752021",
+    "quote": "**SUGGESTION:** The TERM=dumb admission check is silently skipped when `Getenv` is nil",
+    "verdict": "not-addressing",
+    "unit": null,
+    "reason": "A nil Options.Getenv intentionally means an empty environment, as config already defines; it does not read process TERM. The existing guard has identical behavior to checking that empty stub: neither can observe TERM=dumb. A provided accessor returning dumb is rejected and is covered by TestTUI_Diagnostics. Falling back to os.Getenv would break environment injection and make callers depend on ambient process state."
+  },
+  {
+    "comment_id": 4150752023,
+    "path": "go.mod",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752023",
+    "quote": "**SUGGESTION:** Version-pinned replaces silently stop matching on any version bump",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "Added the exact-version replacement maintenance requirement beside the replaces: rebase local patches and rerun compatibility, integrity and startup checks on an upgrade. The pinned Bubble Tea/Glamour sources and manifests are unchanged."
+  },
+  {
+    "comment_id": 4150752029,
+    "path": "go.mod",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752029",
+    "quote": "**SUGGESTION:** x/net v0.33.0 carries post-release advisories",
+    "verdict": "fixed-differently",
+    "unit": "R3",
+    "reason": "The live symbol scan found reachable HTML tokenizer, x/text and Goldmark advisories beyond the cited proxy issue. Updated x/net to v0.55.0, x/text to v0.39.0 and Goldmark to v1.7.17 (x/term follows at v0.43.0). make check-vulnerabilities on Go 1.25.13 reports zero reachable/imported-package vulnerabilities; one uncalled module advisory remains. The go directive stays 1.25.0; minimum-Go race and five-target builds pass. Security scans require a patched build toolchain; the baseline Go 1.25.0 scan also retained standard-library advisories."
+  },
+  {
+    "comment_id": 4150752033,
+    "path": "cmd/tusk/startup_test.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752033",
+    "quote": "**SUGGESTION:** Test requires `make` and a `cmd/tusk` CWD, with no unix guard",
+    "verdict": "fixed-differently",
+    "unit": "R3",
+    "reason": "The startup test locates the checkout from its source path instead of CWD, uses .exe on Windows, and skips with an explicit reason when make or the source checkout is unavailable. The actual build still uses canonical make build."
+  },
+  {
+    "comment_id": 4150752036,
+    "path": "internal/cli/json_test.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752036",
+    "quote": "**SUGGESTION:** Benchmark only exercises the ASCII fast path",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "Added BenchmarkJSONEscaped with Unicode, quotes, newlines and tabs. The existing BenchmarkJSON keeps its ASCII fixture for comparison, while both use the same fixture/measurement helper."
+  },
+  {
+    "comment_id": 4150752042,
+    "path": "internal/storage/path_test.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752042",
+    "quote": "**SUGGESTION:** New environment-precedence test is not portable to macOS/Windows",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "The environment-precedence test resolves the physical working directory after t.Chdir and sets USERPROFILE as well as HOME. Expectations now agree with macOS symlink canonicalization and Windows home lookup. Cross-compilation passes; native execution remains Feature 006."
+  },
+  {
+    "comment_id": 4150752047,
+    "path": "internal/tui/date_reference_test.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752047",
+    "quote": "**SUGGESTION:** Hard tzdata dependency fails rather than skips on minimal images",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "Embedded time/tzdata in the TUI test binary, supplying every timezone test in the package without depending on host zoneinfo. The production binary is unaffected."
+  },
+  {
+    "comment_id": 4150752050,
+    "path": "internal/tui/bench_test.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752050",
+    "quote": "**SUGGESTION:** 1s drain deadline for 64 real 150ms timers is a mild flake vector",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "The timer-drain test keeps its assertion that all 64 workers finish but allows five seconds on a loaded/race runner. It still verifies no retained search timer or active search state."
+  },
+  {
+    "comment_id": 4150752052,
+    "path": "internal/tui/kitty_fixture_test.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4150752052",
+    "quote": "**SUGGESTION:** `os.Exit(0)` inside a test can mask the whole package's results",
+    "verdict": "fixed",
+    "unit": "R3",
+    "reason": "Moved the manual fixture into scripts/fixtures/tui/main.go, compiled only with tusk_fixture by make build-tui-fixture. Automated tests cannot invoke its os.Exit path. An AST regression rejects os.Exit calls in TUI tests; the standalone app was operated and quit in the owned Kitty window."
+  },
+  {
+    "comment_id": 4157352244,
+    "path": "internal/tui/mutation.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157352244",
+    "quote": "**[WARNING]:** Pause message is never cleared after the recommended Ctrl+R succeeds",
+    "verdict": "fixed",
+    "unit": "R4",
+    "reason": "Successful forest refresh clears the recognized write-pause/read-failure form message while retaining raw drafts and unrelated validation errors."
+  },
+  {
+    "comment_id": 4157352254,
+    "path": "internal/tui/confirm.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157352254",
+    "quote": "**[SUGGESTION]:** \"Refreshing\u2026\" banner outlives the refresh it announces",
+    "verdict": "fixed",
+    "unit": "R4",
+    "reason": "Successful matching preview clears its completed refresh/retry message and still resets recursive consent, scroll and Cancel focus."
+  },
+  {
+    "comment_id": 4157352268,
+    "path": "internal/tui/filter.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157352268",
+    "quote": "**[SUGGESTION]:** Rejected-input error is sticky and never cleared on valid input",
+    "verdict": "fixed",
+    "unit": "R4",
+    "reason": "Accepted text, spaces, backspace and field navigation clear rejected-input errors. A repeated invalid paste still fails atomically."
+  },
+  {
+    "comment_id": 4157352277,
+    "path": "internal/tui/mutation.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157352277",
+    "quote": "**[SUGGESTION]:** Form-oriented \"saving\" wording now surfaces inside the delete dialog",
+    "verdict": "fixed",
+    "unit": "R4",
+    "reason": "Failed-read abandonment now says before retrying in both dialogs, avoiding form-only saving language."
+  },
+  {
+    "comment_id": 4157691136,
+    "path": "internal/terminaltext/text.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157691136",
+    "quote": "**[SUGGESTION]:** A few invisible/spoofing characters still pass the expanded blocklist",
+    "verdict": "fixed",
+    "unit": "R5",
+    "reason": "Visible escaping now covers Mongolian vowel separator, both jamo fillers, full/half-width Hangul fillers and all U+2060\u2013U+206F format/reserved controls. Scalar and multiline regressions reproduce the omissions and pass; ordinary Hangul, ZWJ emoji and ZWNJ script composition remain unchanged. Stored raw values are untouched."
+  },
+  {
+    "comment_id": 4157780666,
+    "path": "internal/tui/refresh.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157780666",
+    "quote": "**[WARNING]:** Refresh clears the form/dialog pause feedback but not the model-level notice set by the same failure",
+    "verdict": "fixed",
+    "unit": "R6",
+    "reason": "Successful forest refresh now clears the exact matching failedReadMessage from the browse footer as well as the modal error. Red/Green covers both delete retry keys and retains unrelated write-receipt notices."
+  },
+  {
+    "comment_id": 4157880196,
+    "path": "internal/terminaltext/text.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157880196",
+    "quote": "**SUGGESTION:** Default-ignorable characters beyond the newly expanded set still render blank",
+    "verdict": "fixed-differently",
+    "unit": "R7",
+    "reason": "Took the suggested explicit-exemption alternative. The sanitizer comment now defines the boundary, and passing-before-change regressions preserve all requested shaping/variation ranges plus composed Mongolian, Khmer, combining-mark, ideographic and emoji strings. Escaping selectors would change legitimate glyph selection. No runtime behavior changed; opaque task IDs, not normalized display text, identify tasks. Unicode guidance: https://www.unicode.org/faq/vs.html and https://www.unicode.org/reports/tr37/."
+  },
+  {
+    "comment_id": 4157943567,
+    "path": "internal/tui/refresh.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157943567",
+    "quote": "Successful refresh still leaves the other refresh-recommending failure notices stale in the browse footer",
+    "verdict": "fixed",
+    "unit": "R8",
+    "reason": "Notices now track whether their source requires refresh. Matching successful readback clears mutation/read failures, while replacing a notice resets that lifecycle and preserves write receipts. Red/Green tests cover conflict, missing-task and storage-failure toggles, confirmed form reload, failed retry and replacement. Existing committed-save readback tests preserve Saved across refresh failure/recovery. make validate build check-generated passes."
+  },
+  {
+    "comment_id": 4158411085,
+    "path": "Makefile",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4158411085",
+    "quote": "Host-profile runs can silently overwrite retained Feature 004 evidence",
+    "verdict": "fixed-differently",
+    "unit": "R9",
+    "reason": "Host runs require an explicit fresh output destination instead of sharing the reference default. The Makefile leaves host output unset; the runner exclusively creates the report and retains its descriptor through final output, so preexisting reports and replacement paths are protected. Red/Green covers omitted/existing output, Makefile wiring and final-write ownership. make validate build check-generated passes. Sampling and host acceptance calculations are unchanged."
+  },
+  {
+    "comment_id": 4158411094,
+    "path": "scripts/cli-bench/main.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4158411094",
+    "quote": "Invalid --acceptance-profile value exits 2 with no diagnostic",
+    "verdict": "fixed",
+    "unit": "R9",
+    "reason": "Invalid profiles now print the rejected value and both valid profile names to stderr before returning 2. A Red/Green regression pins the diagnostic. make validate build check-generated passes."
+  },
+  {
+    "comment_id": 4158567739,
+    "path": "scripts/cli-bench/main.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4158567739",
+    "quote": "Non-EEXIST host-report open failures return usage exit 2 with an EEXIST-shaped message",
+    "verdict": "fixed",
+    "unit": "R10",
+    "reason": "Only errors.Is(err, os.ErrExist) uses the existing-file diagnostic and exit 2. Other open failures print their actual cause and return operational exit 1. A missing-parent Red regression now passes; existing-file preservation and usage tests remain green. make validate build check-generated passes. This pre-sampling diagnostic change leaves production, sampling and host acceptance unchanged."
+  }
+]

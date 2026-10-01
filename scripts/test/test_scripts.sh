@@ -161,7 +161,7 @@ result=1
 if [[ "$recipe" == *"-o \"${profile_output}.test\""* ]]; then result=0; fi
 assert_eq 0 "$result" "profile test binary follows the selected output path"
 
-for target in bench-cli bench-cli-conditions profile-cli test-cli-latency-codec generate-schema-catalog check-schema-catalog; do
+for target in bench-tui bench-cli bench-cli-conditions profile-cli test-cli-latency-codec generate-schema-catalog check-schema-catalog; do
     recipe=$(make --no-print-directory -n -C "${ROOT_DIR}" "$target")
     result=1
     if [[ "$recipe" == *"go "* ]]; then result=0; fi

@@ -1,0 +1,25 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestWorkspace_Persistent|TestPresentation'
+=== RUN   TestWorkspace_PersistentControlsAndQuickViews
+    presentation_test.go:17: missing persistent control "Search tasks"
+    presentation_test.go:17: missing persistent control "1 All"
+    presentation_test.go:17: missing persistent control "2 Today"
+    presentation_test.go:17: missing persistent control "3 Done"
+    presentation_test.go:17: missing persistent control "a New task"
+    presentation_test.go:18: Today must show due/overdue open tasks 4
+--- FAIL: TestWorkspace_PersistentControlsAndQuickViews (0.00s)
+=== RUN   TestPresentation_ModalInsetsAndFieldAlignment
+    presentation_test.go:28: modal needs top padding
+--- FAIL: TestPresentation_ModalInsetsAndFieldAlignment (0.01s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.039s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.007s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.011s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.034s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

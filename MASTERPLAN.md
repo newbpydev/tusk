@@ -1,9 +1,114 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: 🟢 Active Development
-**Active Phase**: Phase 4 locally complete and merged; Feature 005 planning complete, implementation pending
-**Active Implementation Target**: Feature 005 U1 / 005-1 is next only after implementation authorization; planning pack complete, no Phase 5 code authorized
-**Overall Completion**: 71% (5 of 7 Phases Locally Complete)
+**Current Status**: Feature 005 PR #5 review fixes R1–R10 verified; owner-authorized host latency acceptance passes; runtime head hosted-settled, owner merge pending
+**Active Phase**: Feature 005 owner merge decision; Phase 6 planning awaits instruction
+**Active Implementation Target**: PR #5 owner merge decision; receipt-only publication must pass its final audit before handoff
+
+- [x] PR #5 review unit R1: stale-form save feedback, delete-dialog refresh and failed-toggle write pause.
+- [x] PR #5 review unit R2: navigation, input and presentation consistency.
+- [x] PR #5 review unit R3: lifecycle, environment and verification portability.
+- [x] PR #5 follow-up R4: clear completed recovery/input messages and use dialog-neutral retry wording.
+- [x] PR #5 follow-up R5: expose remaining blank filler/format characters while preserving script composition.
+- [x] PR #5 follow-up R6: clear the matching failed-read browse notice after successful refresh.
+- [x] PR #5 follow-up R7: document and test intentional script-shaping/variation exemptions.
+- [x] PR #5 follow-up R8: clear refresh-dependent notices by source, preserving write receipts.
+- [x] Calibrate and verify current-candidate CLI latency acceptance on the declared host; retain failed/control matrices.
+- [x] PR #5 follow-up R9: protect retained reports and explain invalid benchmark profiles.
+- [x] PR #5 follow-up R10: distinguish operational report-open failures from existing-output usage errors.
+- [x] Settle all observed PR #5 feedback and current-head checks; final merge remains user-owned.
+
+- [x] Replace the eight unavailable Glamour gallery LFS pointers with verified
+  upstream image bytes stored in regular Git; retain source provenance.
+- [x] Observe the checkout regression Red/Green and pass `make validate`.
+- [x] Publish the bounded PR #5 fix and verify Kilo passes workspace setup.
+
+Startup repair commit `4236d83` passes canonical validation and a fresh GitHub
+clone with a required failing LFS filter. Kilo's live session loaded the review
+skill and ran PR-reading commands on that commit. See the
+[startup receipt](docs/verification-evidence/005/pr5-reviewer-startup/README.md).
+The full review result and merge readiness remain pending; no release gate is
+closed by reviewer startup.
+
+- [x] Re-review the full feature diff targeting all P0-P2 issues before cloud review.
+- [x] Fix the four validator-confirmed findings (path-resolution duplication,
+      double per-Update projection, parent-picker rescans, empty-filter header)
+      with red/green evidence and canonical validation.
+- [x] Cover the four review-flagged P2 coverage gaps with tests only (no
+      production change): delete-consent retry/scroll/tab-wrap, recovery
+      saved-state detail and keymap, Model.Update panic containment, and
+      edit-diff notes/priority patches. TUI confirmKey/draft command/recovery
+      content now 100%, model.go recover body exercised; package coverage
+      97.2% -> 98.9%. make validate passes.
+- [ ] Repeat the review to a clean pass before handing off to cloud reviewers.
+
+A second full-branch ce-code-review round (11 reviewers, depth:full) confirmed
+four findings; all four are fixed in one isolated review-fix commit. Storage now
+exports the canonical DB-path resolver and the TUI factory delegates to it
+(parity pinned by test); prepareFrame no longer re-projects the forest so each
+Update projects once (keystroke benchmark 1000 tasks: ~3.4 ms -> ~2.8 ms,
+allocations -27%); the parent picker precomputes search keys, matches once per
+keystroke and windows the modal (10000-task typing: ~28 ms -> ~9 ms, allocations
+-58%); applying an empty filter keeps the header truthful. make validate
+(fmt+vet+test+race) passes; the two new Go benchmarks retain the deltas.
+Owned-Kitty interactive re-verification was not re-run for this set: the changes
+are behavior-preserving refactors plus the unit-asserted filter-label
+truthfulness fix. Report-only items (P3 #14 modal keys below 80x24, demoted
+testing gaps and residual risks) await the next pass. No new implementation
+unit or publication has begun.
+
+- [x] Complete systematic full-branch review and reproduce confirmed P0–P2 findings.
+- [x] Fix confirmed findings with red/green evidence and applicable real-app checks.
+- [x] Repeat review to a clean pass, run canonical validation and synchronize evidence.
+
+Three sequential local review rounds fixed two P2 defects (relative-date action
+clock and dependency source inventory) plus one P3 glossary inconsistency. The
+final repeat review is clean. Canonical validation/build/generated checks,
+Go 1.25 focused race tests, five-target cross-builds, owned Kitty checks and the
+complete 84-case CLI/78-case TUI matrices pass. All failed measurements remain
+retained. See the [review receipt](docs/verification-evidence/005/review-local/acceptance.json).
+Independent review is unavailable: repository mapping requires main-thread
+execution and the requested Claude peer failed authentication. At review return,
+the fixes remained uncommitted under ce-code-review's dirty-tree rule. The owner
+subsequently authorized local commits: approved compound guidance is dc6cd9f;
+the containing review-fix commit records these corrections and synchronized
+evidence. Fresh canonical validation passes before each commit. See the
+[commit closure](docs/verification-evidence/005/review-local/commit-closure.json).
+Native/hosted release proof remains Feature 006. No new implementation unit or
+publication has begun.
+
+- [x] Connect visible siblings and ancestor paths through title/metadata rows;
+  reserve the last-child elbow for the final visible sibling.
+- [x] Show equivalent completed direct items beside progress, including nested
+  fractional credit, using authoritative service progress without changing rollup.
+- [x] Match the owner-requested Darkmatter dark palette; preserve contrast,
+  opaque surfaces and color-independent focus. Tree/count and palette approved.
+- [x] Retain red/green, canonical, current-candidate timing, review and owned
+  Kitty evidence; obtain visual confirmation and commit the follow-up locally.
+
+The owner approved the final app checks. After the owner reported Cline CLI
+shut down, the unchanged source passed all 84 CLI timing cases: worst query/help
+p90 14.291/4.112 ms, with all tail guards passing. Fresh canonical validation
+passes. The existing minimum-Go, owned Kitty, review and 78-case TUI evidence
+matches the current source. Prior failed reports and every sample are retained.
+See the [follow-up acceptance](docs/verification-evidence/005/u6-hierarchy/acceptance.json).
+Implementation commit 246db8c and the containing acceptance commit close U6.
+Feature 006 planning awaits instruction; no implementation or publication began.
+
+The original U6 acceptance at 03c5381 remains historical evidence below.
+
+The approved Spacious TUI, opaque surfaces, due-date calendar and input examples
+are locally accepted. Canonical validation, Go 1.25 checks, five-target builds,
+owned Kitty inspection and all 78 TUI measurement case-runs pass.
+After the owner closed Zed and moved the session to Konsole, the unchanged
+candidate passed all 84 CLI cases across three complete runs: worst query p90
+13.873 ms and help/version p90 4.592 ms. All tail guards pass; all samples and
+earlier failed reports remain retained. The limits were not changed or deferred.
+V01–V110 and U1 → U7 → U2 → U3 → U4 → U5 → U8 → U6 are locally complete.
+See the [acceptance receipt](docs/verification-evidence/005/u6-acceptance.json).
+Feature 006 retains V111–V112 native/hosted release proof. No push, PR or release
+has been performed or authorized by this acceptance.
+
+**Overall Completion**: 86% (6 of 7 Phases Locally Complete)
 **Quality Gate**: `make validate` (Strict Format, Vet, Test, Race Detector, Coverage)
 
 ### Historical Feature 004 PR #4 review remediation
@@ -110,7 +215,7 @@ graph TD
     P1 --> P2[Phase 2: SQLite Storage & Repo<br/>✅ COMPLETE]
     P2 --> P3[Phase 3: Task Service Engine<br/>✅ LOCALLY COMPLETE]
     P3 --> P4[Phase 4: CLI & Scripting<br/>✅ LOCALLY COMPLETE]
-    P3 --> P5[Phase 5: Interactive TUI<br/>⏳ PLANNED]
+    P3 --> P5[Phase 5: Interactive TUI<br/>✅ LOCALLY COMPLETE]
     P4 --> P6[Phase 6: Packaging & Release<br/>⏳ PLANNED]
     P5 --> P6
 ```
@@ -303,44 +408,44 @@ No Phase 5 implementation, push, PR or publication occurred.
 ---
 
 ### Phase 5: Feature 005 - Interactive TUI Application
-- **Status**: 📋 **PLANNING COMPLETE — IMPLEMENTATION NOT STARTED** (2026-09-29)
+- **Status**: ✅ **LOCALLY COMPLETE** (accepted 2026-09-30; native/hosted release proof remains Feature 006)
 - **Plan**: [Feature 005 plan](docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md)
 - **Verification Plan**: [Feature 005 verification](docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md)
 - **Issue Workorder**: [Feature 005 workorder](docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md)
 
 - [x] **5.1 Ultrathink Planning Pack**
   - [x] Deepened Plan, Verification Plan, and Workorder: 28 requirements, eight units, 112 planned scenarios
-- [ ] **5.2 Implementation Units**
-  - [ ] Unit 005-1 / U1: Pure Root, v1 Dependency Graph and Deterministic Test Seams
-  - [ ] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
-  - [ ] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
-  - [ ] Unit 005-3 / U3: Forest Navigation, Filters, Search and Refresh Generations
-  - [ ] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
-  - [ ] Unit 005-5 / U5: Forms, Base-Checked Edits, Moves and Lifecycle Toggles
-  - [ ] Unit 005-8 / U8: Previewed Deletion and Unknown-Outcome Reconciliation
-  - [ ] Unit 005-6 / U6: Workflow, Performance, Owned Kitty Acceptance and Handoff
-- [ ] **5.3 Quality Gate & Release Sign-off**
-  - [ ] Cold and populated View purity: 100 calls without nested/cache mutation
-  - [ ] Resize/focus/plain presentation and every required owned Kitty scenario
-  - [ ] Real disk concurrency, draft/consent conflicts, fresh-owner recovery and terminal cleanup
-  - [ ] Minimum Go 1.25, five CGO-free cross-builds and unchanged CLI contracts
-  - [ ] CLI distribution gate and retained TUI frame-preparation measurements
-  - [ ] V01–V110 local scenarios, current-candidate reviews and synchronized per-unit commits
-  - [ ] `make validate build check-generated` passes
+- [x] **5.2 Implementation Units**
+  - [x] Unit 005-1 / U1: Pure Root, v1 Dependency Graph and Deterministic Test Seams
+  - [x] Unit 005-7 / U7: CLI Registration, Session Ownership and Terminal Lifecycle
+  - [x] Unit 005-2 / U2: Bounded Multi-Panel Layout and Safe Terminal Text
+  - [x] Unit 005-3 / U3: Forest Navigation, Filters, Search and Refresh Generations
+  - [x] Unit 005-4 / U4: Details, Safe Markdown and Metadata Timeline
+  - [x] Unit 005-5 / U5: Forms, Base-Checked Edits, Moves and Lifecycle Toggles
+  - [x] Unit 005-8 / U8: Previewed Deletion and Unknown-Outcome Reconciliation
+  - [x] Unit 005-6 / U6: Workflow, Performance, Owned Kitty Acceptance and Handoff
+    - [x] Due-date calendar and input examples: owner approved; canonical/Go 1.25, owned Kitty and 78 TUI measurements pass ([receipt](docs/verification-evidence/005/u6-calendar.md)).
+- [x] **5.3 Local Quality Gate & Release Handoff**
+  - [x] Cold and populated View purity: 100 calls without nested/cache mutation
+  - [x] Resize/focus/plain presentation and every required owned Kitty scenario
+  - [x] Real disk concurrency, draft/consent conflicts, fresh-owner recovery and terminal cleanup
+  - [x] Minimum Go 1.25, five CGO-free cross-builds and unchanged CLI contracts
+  - [x] CLI distribution gate (84/84) and retained TUI frame-preparation measurements (78/78)
+  - [x] V01–V110 local scenarios, current-candidate reviews and synchronized per-unit commits
+  - [x] `make validate build check-generated` passes
 
 Execution order is U1 → U7 → U2 → U3 → U4 → U5 → U8 → U6. U1–U6 keep their
 original IDs; U7/U8 split lifecycle and destructive-action responsibilities.
-All implementation and release checks remain pending. V111–V112 belong to
-Feature 006 native/hosted release proof. The planning pass inspected clean main
-at `e899491` (PR #4 merge) and versioned framework source, then audited the docs;
-it ran no application tests, dependency builds, make validate, latency or Kitty
-checks. Only planning completion is checked above. Await a new implementation
-instruction before U1; no commit, push, PR or release is implied.
+All eight units have separate local commit boundaries. U6 workflow, terminal,
+canonical, minimum-Go, performance and review acceptance pass on the recorded
+candidate. Its [acceptance receipt](docs/verification-evidence/005/u6-acceptance.json)
+binds source hashes, unit commits and distinct verification tiers. V111–V112
+belong to Feature 006 native/hosted release proof. No push, PR or release is implied.
 
 ---
 
 ### Phase 6: Feature 006 - Automation, Packaging & Release
-- **Status**: ⏳ **PLANNED** (Pending Phases 4 & 5 Completion)
+- **Status**: ⏳ **AWAITING PLANNING INSTRUCTION** (Phases 4 & 5 locally complete; implementation not authorized)
 - **Plan**: `docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md`
 
 - [ ] **6.1 Ultrathink Planning Pack**
@@ -410,3 +515,68 @@ U6 acceptance: make validate passed (service coverage 95.5%); see docs/verificat
 U7 acceptance: make validate passed (service coverage 95.2%); real per-statement/event fault matrix proves rollback of five public mutation flows. See docs/verification-evidence/003/u7.json.
 
 U4 acceptance: make validate passed; the concrete service now satisfies the entire inbound port. See docs/verification-evidence/003/u4.json.
+
+### Feature 005 U1 acceptance — 2026-09-29
+
+Pure prepared-frame root, dependency pins and deterministic test seams pass
+`make validate build check-generated`; Go 1.25 short suite and all five
+CGO-free application/test cross-builds pass. [Receipt](docs/verification-evidence/005/u1.json).
+No visible session exists yet; U7 owns the first actual Kitty interactions.
+
+### Feature 005 U7 acceptance — 2026-09-29
+
+`tusk tui` lifecycle passes canonical, minimum-Go and five-target checks plus
+real Kitty launch/quit/relaunch/Ctrl+C inspection. A source-pinned Bubble Tea
+patch removes eager global terminal discovery. [Receipt](docs/verification-evidence/005/u7.json).
+AGENTS.md explicitly keeps tests/builds/benchmarks in Bash and Kitty for real app
+use only. The active next unit is U2.
+
+### Feature 005 U2 acceptance — 2026-09-29
+
+Bounded 40/60 layout, spacious rows, safe shared text, pure frames and modal
+surfaces pass `make validate build check-generated`; minimum-Go race tests and
+all five CGO-free builds pass. [Receipt](docs/verification-evidence/005/u2.json).
+Actual Kitty use caught and fixed a hidden terminal descriptor that prevented
+resize events; a real child PTY regression now covers shrink/restore. Color,
+NO_COLOR, Unicode, 80x24/120x40/200x60 and modal shrink/restore were inspected.
+Later selection, saving, form/consent and Markdown scenarios remain explicitly
+open for their owning units. U3 is next; no navigation or form delivery is claimed.
+
+### Feature 005 U3 acceptance — 2026-09-29
+
+Navigation, search, filters and the bounded refresh scheduler pass canonical
+validation (TUI coverage 99.0%), minimum-Go race checks and five CGO-free builds.
+Actual Kitty external rename/reparent/delete, collapse restoration, filter
+resize and monochrome checks pass. [Receipt](docs/verification-evidence/005/u3.json).
+Later mutation/history/form/recovery portions of V50–V55 remain explicitly open
+for U4/U5/U8; no write UI is claimed. U4 details/Markdown/history is next.
+
+### Feature 005 U4 acceptance — 2026-09-29
+
+Details, safe Markdown and actual metadata history pass canonical validation
+(98.6% TUI coverage), minimum-Go/race and five CGO-free builds. Kitty confirms
+all target sizes, monochrome output, long-note scrolling and selection changes.
+[Receipt](docs/verification-evidence/005/u4.json). A large-word renderer stall now
+uses bounded-formatting plain fallback without dropping text; End intent survives
+pending render/resize. U5 forms/mutations is next; recovery UI remains U8.
+
+
+### Feature 005 U5 acceptance (2026-09-29)
+
+Forms, raw drafts, Base-checked edits, moves and lifecycle toggles pass canonical
+validation, minimum-Go race/cross-build checks and real-app Kitty interaction.
+Coverage is 98.4%; [receipt](docs/verification-evidence/005/u5.json) retains source,
+logs and captures. Spacious rows and uniform modal surfaces remain intact. The
+save admission/readback barrier prevents replay after an acknowledged commit;
+conflict reload and dirty discard require explicit choices. U8 deletion and
+fresh-owner recovery is next, followed by U6 acceptance/performance.
+
+
+### Feature 005 U8 acceptance (2026-09-29)
+
+Canonical validation, minimum-Go affected race/cross-build checks and real Kitty
+consent/recovery checks pass. Preview-bound deletion renews consent after
+conflicts. Unknown results keep intent read-only until fresh-owner readback and
+explicit acknowledgment; no replay or inferred create identity. Uniform modal
+backgrounds remain verified. [U8 receipt](docs/verification-evidence/005/u8.json).
+U6 final workflow, performance, documentation and review is next.

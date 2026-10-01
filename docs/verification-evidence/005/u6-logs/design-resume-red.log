@@ -1,0 +1,25 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestPresentation|TestWorkspace'
+=== RUN   TestWorkspace_PersistentControlsAndQuickViews
+--- PASS: TestWorkspace_PersistentControlsAndQuickViews (0.00s)
+=== RUN   TestPresentation_ModalInsetsAndFieldAlignment
+    presentation_test.go:28: modal needs top padding
+--- FAIL: TestPresentation_ModalInsetsAndFieldAlignment (0.01s)
+=== RUN   TestWorkspace_TodayRollsOverAtLocalMidnight
+    presentation_test.go:43: Today did not advance at local midnight
+--- FAIL: TestWorkspace_TodayRollsOverAtLocalMidnight (0.00s)
+=== RUN   TestPresentation_DetailsPrioritizeTaskContent
+    presentation_test.go:49: technical metadata precedes task content
+--- FAIL: TestPresentation_DetailsPrioritizeTaskContent (0.00s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.034s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.021s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

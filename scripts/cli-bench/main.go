@@ -46,9 +46,10 @@ type caseResult struct {
 	Error       string   `json:"error,omitempty"`
 }
 type report struct {
-	Manifest map[string]string `json:"manifest"`
-	Cases    []caseResult      `json:"cases"`
-	Passed   bool              `json:"passed"`
+	Manifest       map[string]string `json:"manifest"`
+	Cases          []caseResult      `json:"cases"`
+	Passed         bool              `json:"passed"`
+	HostAcceptance *hostAcceptance   `json:"host_acceptance,omitempty"`
 }
 type executor func(string, []string, []string) (int64, []byte, error)
 
@@ -450,11 +451,26 @@ func runWith(args []string, stdout, stderr io.Writer, executeProcess executor, s
 	flags := flag.NewFlagSet("cli-bench", flag.ContinueOnError)
 	flags.SetOutput(stderr)
 	binary := flags.String("binary", "bin/tusk", "Built executable")
+	profile := flags.String("acceptance-profile", "reference", "reference or ryzen-4500u-balanced-v1")
 	output := flags.String("output", "docs/verification-evidence/004/latency.json", "Raw report")
 	if err := flags.Parse(args); err != nil {
 		return 2
 	}
 	if flags.NArg() != 0 {
+		return 2
+	}
+	if *profile != "reference" && *profile != "ryzen-4500u-balanced-v1" {
+		fmt.Fprintf(stderr, "invalid acceptance profile %q; choose reference or ryzen-4500u-balanced-v1\n", *profile)
+		return 2
+	}
+	explicitOutput := false
+	flags.Visit(func(f *flag.Flag) {
+		if f.Name == "output" {
+			explicitOutput = true
+		}
+	})
+	if *profile != "reference" && (!explicitOutput || *output == "") {
+		fmt.Fprintln(stderr, "host acceptance requires --output pointing to a new report file")
 		return 2
 	}
 	absolute, err := filepath.Abs(*binary)
@@ -467,6 +483,20 @@ func runWith(args []string, stdout, stderr io.Writer, executeProcess executor, s
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
+	var hostOutput *os.File
+	if *profile != "reference" {
+		hostOutput, err = os.OpenFile(*output, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+		if err != nil {
+			if errors.Is(err, os.ErrExist) {
+				fmt.Fprintf(stderr, "host acceptance requires a new output file: %v\n", err)
+				return 2
+			}
+			fmt.Fprintln(stderr, err)
+			return 1
+		}
+		defer hostOutput.Close()
+	}
+	m["selected_acceptance_profile"] = *profile
 	dir, err := os.MkdirTemp("", "tusk-cli-bench-")
 	if err != nil {
 		fmt.Fprintln(stderr, err)
@@ -481,7 +511,7 @@ func runWith(args []string, stdout, stderr io.Writer, executeProcess executor, s
 	}
 	r := report{Manifest: m, Passed: false}
 	initial, _ := json.MarshalIndent(r, "", "  ")
-	if err = os.WriteFile(*output, append(initial, '\n'), 0600); err != nil {
+	if err = writeReport(*output, hostOutput, append(initial, '\n')); err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
@@ -510,14 +540,37 @@ func runWith(args []string, stdout, stderr io.Writer, executeProcess executor, s
 	if err != nil {
 		m["error"] = err.Error()
 	}
+	accepted := r.Passed
+	if *profile != "reference" {
+		a := assessHost(r)
+		a.Passed = a.Passed && err == nil && completedRuns == 3
+		r.HostAcceptance = &a
+		accepted = a.Passed
+		for _, c := range a.Cases {
+			fmt.Fprintf(stdout, "host=%s %-38s mean_p90=%7.3fms limit=%7.3fms passed=%v\n", a.Profile, c.Name, c.MeanP90NS/1e6, float64(c.LimitNS)/1e6, c.Passed)
+		}
+		fmt.Fprintf(stdout, "reference_passed=%v host_passed=%v\n", r.Passed, accepted)
+	}
 	data, _ := json.MarshalIndent(r, "", "  ")
-	if err = os.WriteFile(*output, append(data, '\n'), 0600); err != nil {
+	if err = writeReport(*output, hostOutput, append(data, '\n')); err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	if !r.Passed {
+	if !accepted {
 		return 1
 	}
 	return 0
+}
+
+// Host reports retain the exclusively created descriptor through completion,
+// so replacing the path cannot redirect final output into retained evidence.
+func writeReport(path string, file *os.File, data []byte) error {
+	if file == nil {
+		return os.WriteFile(path, data, 0600)
+	}
+	if _, err := file.WriteAt(data, 0); err != nil {
+		return err
+	}
+	return file.Truncate(int64(len(data)))
 }
 func main() { os.Exit(run(os.Args[1:], os.Stdout, os.Stderr)) }

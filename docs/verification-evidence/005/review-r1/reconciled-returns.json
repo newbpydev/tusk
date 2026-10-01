@@ -1,0 +1,10 @@
+[
+  {
+    "reviewer": "synthesis",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": [
+      "Add production-binary committed-write then SIGINT coverage, alongside deterministic injected in-flight cancellation tests."
+    ]
+  }
+]

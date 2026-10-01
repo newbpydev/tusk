@@ -1,0 +1,31 @@
+{
+  "owned_socket": "unix:/tmp/tusk-review-kitty-bts1i8i7/kitty-x11.sock",
+  "owned_window_id": 1,
+  "platform_window_id": 18874382,
+  "terminal_dimensions": [
+    80,
+    24
+  ],
+  "isolated_database": "/tmp/tusk-review-kitty-bts1i8i7/tasks.db",
+  "surface": "real production CLI/TUI in owned Kitty, not tests",
+  "checks": [
+    "CLI list --all visible",
+    "Edit due date field, open/cancel calendar",
+    "Clear due field, bracketed-paste tomorrow, Ctrl+S; persisted Oct 1 shown",
+    "Filter tomorrow, Ctrl+S; resolved 2026-10-01 and two expected rows visible",
+    "Darkmatter colors, tree connector, modal padding and opaque background inspected",
+    "Clean quit to shell; stty shows isig icanon echo"
+  ],
+  "valid_captures": [
+    "kitty-calendar-valid.png",
+    "kitty-filter-valid.png"
+  ],
+  "capture_backend": "KDE Spectacle with exact owned X11 ID/title verified and unchanged active window before/after; images inspected",
+  "discarded_captures": "XGetImage/import returned stale initial GPU backing pixels; not acceptance evidence",
+  "status": "passed",
+  "owned_window_closed": true,
+  "user_sessions_untouched": true,
+  "limits": [
+    "Live app uses normal clock; deterministic tests exercise the before-tick midnight/DST trigger."
+  ]
+}

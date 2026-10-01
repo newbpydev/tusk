@@ -1,0 +1,9 @@
+bash-5.3$ export TUSK_DB_PATH=/tmp/tusk-005-kitty.OIGt5C/u3-tasks.db TUSK_TIMEZONE=America/Sao_Paulo; unset NO_COLOR; TUSK_DEMO_CHILD=$(python3 -c 'import json;print(json.load(open("/tmp/tusk-005-kitty.OIGt5C/u3-child.json"))["id"])'); export TUSK_DEMO_CHILD
+bash-5.3$ ./bin/tusk edit "$TUSK_DEMO_CHILD" --title "Welcome screens updated externally" --priority urgent
+01a0ef4a-cc05-709f-92c8-d5df8016f2e5
+Status: todo
+Priority: urgent
+Progress: 0%
+Due: -
+Title: Welcome screens updated externally
+bash-5.3$

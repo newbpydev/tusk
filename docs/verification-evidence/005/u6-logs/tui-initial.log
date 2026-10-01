@@ -1,0 +1,24 @@
+mkdir -p "bin/"
+CGO_ENABLED=0 go build -o "bin/tusk" ./cmd/tusk
+TUSK_TUI_BENCH_OUTPUT="/tmp/tusk-u6-tui-initial.json" go test ./internal/tui -run '^TestTUIMeasurements$' -count=1 -timeout=20m -v
+=== RUN   TestTUIMeasurements
+--- FAIL: TestTUIMeasurements (0.10s)
+panic: runtime error: invalid memory address or nil pointer dereference [recovered, repanicked]
+[signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0xd71355]
+
+goroutine 50 [running]:
+testing.tRunner.func1.2({0x18a6c78, 0x1a0a750})
+	/usr/lib/go/src/testing/testing.go:2123 +0x232
+testing.tRunner.func1()
+	/usr/lib/go/src/testing/testing.go:2126 +0x329
+panic({0x18a6c78?, 0x1a0a750?})
+	/usr/lib/go/src/runtime/panic.go:859 +0x125
+github.com/newbpydev/tusk/internal/tui.TestTUIMeasurements(0x271e2b734d88)
+	/home/newbpydev/Development/Xoomby/tusk/internal/tui/bench_test.go:182 +0xf95
+testing.tRunner(0x271e2b734d88, 0x19340a8)
+	/usr/lib/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/usr/lib/go/src/testing/testing.go:2258 +0x4d4
+FAIL	github.com/newbpydev/tusk/internal/tui	0.119s
+FAIL
+make: *** [Makefile:106: bench-tui] Error 1

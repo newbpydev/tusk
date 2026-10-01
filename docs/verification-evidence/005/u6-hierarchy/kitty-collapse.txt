@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace                             f Filters   a New task 
+╭─ > Tasks · 2 tasks ──────────╮╭─ Task details · 1–20 / 41 ───────────────────╮
+│ /  Search tasks              ││                                              │
+│ [1 All]  2 Today  3 Done     ││  Launch the workspace                        │
+│──────────────────────────────││  Root task                                   │
+│  Backlog                     ││                                              │
+│ >▸ ○ Launch the workspace    ││  Status                Priority              │
+│      Todo · High · 16%       ││  ○ Todo                High                  │
+│  ○ Check the release notes   ││                                              │
+│    Todo · Low                ││  Due date              Tags                  │
+│                              ││  Not set               None                  │
+│                              ││                                              │
+│                              ││  Progress                         (0.5 / 3)  │
+│                              ││  ━━━━━───────────────────────────────  16%   │
+│                              ││                                              │
+│                              ││  Notes                                       │
+│                              ││                                              │
+│                              ││  Three workstreams. Nested tasks contribute  │
+│                              ││  partial progress to their parent.           │
+│                              ││                                              │
+│                              ││                                              │
+│                              ││                                              │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ a new • e edit • / search • ? help • q quit • f filter • r refresh • Tab focus

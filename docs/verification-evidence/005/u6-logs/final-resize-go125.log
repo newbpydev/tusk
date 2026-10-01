@@ -1,0 +1,18 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '^TestResize_|^TestForm_SmallTerminalPreservesDraftAndSubmission$'
+=== RUN   TestForm_SmallTerminalPreservesDraftAndSubmission
+--- PASS: TestForm_SmallTerminalPreservesDraftAndSubmission (0.02s)
+=== RUN   TestResize_CellBoundsAndDraftRetention
+--- PASS: TestResize_CellBoundsAndDraftRetention (0.01s)
+=== RUN   TestResize_StateAndUnicodeBounds
+--- PASS: TestResize_StateAndUnicodeBounds (0.33s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.362s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.007s [no tests to run]

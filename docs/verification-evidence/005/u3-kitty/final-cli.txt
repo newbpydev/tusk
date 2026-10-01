@@ -1,0 +1,19 @@
+01a0ef4a-cc05-709f-92c8-d5df8016f2e5
+Status: todo
+Priority: urgent
+Progress: 0%
+Due: -
+Title: Welcome screens updated externally
+bash-5.3$ ./bin/tusk delete "$TUSK_DEMO_CHILD" --force
+Deleted 1 task(s): 01a0ef4a-cc05-709f-92c8-d5df8016f2e5
+bash-5.3$ ./bin/tusk add "Welcome screens final check" --parent "$(python3 -c 'import json;print(json.load(open("/tmp/tusk-005-kitty.OIGt5C/u3-parent.json"))["id"])')" --tags design --json > /tmp/tusk-005-kitty.OIGt5C/u3-final-child.json; TUSK_DEMO_CHILD=$(python3 -c 'import json;print(json.load(open("/tmp/tusk-005-kitty.OIGt5C/u3-final-child.json"))["id"])'); export TUSK_DEMO_CHILD
+bash-5.3$ ./bin/tusk edit "$TUSK_DEMO_CHILD" --title "Welcome screens final refreshed" --priority urgent --root
+01a0ef4f-e098-7133-9b84-77ec3bf29d01
+Status: todo
+Priority: urgent
+Progress: 0%
+Due: -
+Title: Welcome screens final refreshed
+bash-5.3$ ./bin/tusk delete "$TUSK_DEMO_CHILD" --force
+Deleted 1 task(s): 01a0ef4f-e098-7133-9b84-77ec3bf29d01
+bash-5.3$

@@ -1,0 +1,8 @@
+Tusk exit: 0
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0efbd-9d28-724a-970f-8190949e890a  todo         urgent  0%        2026-09-29  Launch customer workspace
+01a0efbd-9d67-7612-b498-df9904a0a167  todo         high    0%        2026-09-30  Prepare onboarding
+01a0efbd-9d54-7da5-982b-306cd811f460  todo         high    0%        -           Design welcome screens
+01a0efbe-e215-76f5-97be-fef35805deed  todo         medium  0%        -           Customer interviews changed externally
+01a0efbd-9d81-7b81-9a21-5f6c9a342e80  todo         low     0%        -           Explore dashboard ideas
+bash-5.3$

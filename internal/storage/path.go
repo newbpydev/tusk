@@ -15,6 +15,16 @@ type pathInputs struct {
 	cwd    func() (string, error)
 }
 
+// Resolve returns the absolute database path for an explicit path selection,
+// applying the documented TUSK_DB_PATH -> absolute XDG_DATA_HOME -> home
+// fallback precedence when explicit is empty. It reads the environment and
+// working directory but performs no filesystem access and opens nothing;
+// composition roots use it to pin one path up front instead of duplicating
+// the precedence rules.
+func Resolve(explicit string) (string, error) {
+	return resolvePath(explicit, pathInputs{lookup: os.Getenv, home: os.UserHomeDir, cwd: os.Getwd})
+}
+
 func resolvePath(explicit string, in pathInputs) (string, error) {
 	path := explicit
 	if path == "" {

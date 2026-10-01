@@ -1,0 +1,34 @@
+{
+  "status": "local acceptance complete",
+  "reviews": [
+    {
+      "status": "complete",
+      "receipt": "review-r1/review.json",
+      "run_id": "20260929-223225-255d126a"
+    },
+    {
+      "status": "complete",
+      "receipt": "calendar-review/review.json",
+      "run_id": "20260930-113059-c533acd1"
+    },
+    {
+      "status": "complete",
+      "receipt": "json-formatter-review/review.json",
+      "run_id": "20260930-120408-00afa24d"
+    }
+  ],
+  "historical_verdicts_preserved": true,
+  "prior_blocker": "CLI latency distributions",
+  "resolution": "Unchanged reviewed candidate passes 84/84 cases after owner closed Zed; all original limits and samples retained.",
+  "source_hashes_match_canonical_and_reviewed_candidate": true,
+  "test_only_follow_up": "json-formatter-review/follow-up.json records reviewed V28/V29 additions and exact hashes",
+  "canonical": "u6-logs/final-checklist-validate.log: make validate build check-generated passed after final V28/V29 test additions",
+  "minimum_go": "u6-logs/json-formatter-go125-full.log: full tests and five-target app/CLI/TUI builds passed; final-resize-go125.log covers final test-only additions",
+  "acceptance": "u6-acceptance.json",
+  "unresolved_local_findings": [],
+  "deferred_release_proof": [
+    "V111 native targets",
+    "V112 hosted packaging/publication"
+  ],
+  "independence_claimed": false
+}

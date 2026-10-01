@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace                                                    
+╭─ Tasks ──────────────────────╮╭─ > Task details · 21–40 / 73 ────────────────╮
+│ 2 tasks                      ││  Guide people to one useful action, with     │
+│                              ││  clear progress and predictable navigation.  │
+│ Upcoming                     ││                                              │
+│> Review the customer onboard…││  Experience checklist                        │
+│  in-progress · urgent · 37%  ││                                              │
+│ Backlog                      ││  [✓] Spacious titles and metadata            │
+│  Long research notes         ││  [✓] Stable panels and visible keyboard      │
+│  todo · medium · 0%          ││  focus                                       │
+│                              ││  [ ] A helpful empty state                   │
+│                              ││  [ ] Clear save feedback                     │
+│                              ││                                              │
+│                              ││   Area        │ Next step                    │
+│                              ││  ─────────────┼──────────────────────────    │
+│                              ││   Welcome     │ Explain the first action     │
+│                              ││   Team        │ Invite a teammate            │
+│                              ││   Review      │ Verify keyboard access       │
+│                              ││                                              │
+│                              ││    // Small, explicit steps.                 │
+│                              ││    func nextAction() string { return         │
+│                              ││  "Create your first task" }                  │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ ↑↓ scroll · PgUp/PgDn · Home/End · Tab tasks · ? help · q quit

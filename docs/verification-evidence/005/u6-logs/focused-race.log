@@ -1,0 +1,130 @@
+==> Formatting Go files with gofmt -s...
+==> Successfully formatted Go files.
+go test -race -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestForm|TestWorkflow|TestTUIMeasurement_Summary|TestTUIProcess'
+=== RUN   TestWorkflow_StressCommandsStayBounded
+--- PASS: TestWorkflow_StressCommandsStayBounded (9.84s)
+=== RUN   TestForm_DefaultsAndDetachedDirtyPatch
+--- PASS: TestForm_DefaultsAndDetachedDirtyPatch (0.00s)
+=== RUN   TestForm_NoChangesAndExplicitClears
+--- PASS: TestForm_NoChangesAndExplicitClears (0.00s)
+=== RUN   TestForm_ValidationFocusAndProgressContracts
+--- PASS: TestForm_ValidationFocusAndProgressContracts (0.00s)
+=== RUN   TestForm_ReadonlyPreviewPreparationIsBounded
+--- PASS: TestForm_ReadonlyPreviewPreparationIsBounded (0.53s)
+=== RUN   TestForm_FocusLiteralTextAndDiscard
+--- PASS: TestForm_FocusLiteralTextAndDiscard (0.08s)
+=== RUN   TestForm_AtomicPasteAndReadonlyReplacement
+--- PASS: TestForm_AtomicPasteAndReadonlyReplacement (0.33s)
+=== RUN   TestForm_ParentPickerSnapshotAndPurity
+--- PASS: TestForm_ParentPickerSnapshotAndPurity (0.16s)
+=== RUN   TestForm_SmallTerminalPreservesDraftAndSubmission
+--- PASS: TestForm_SmallTerminalPreservesDraftAndSubmission (0.03s)
+=== RUN   TestForm_ControlsValidationAndParentSearch
+--- PASS: TestForm_ControlsValidationAndParentSearch (0.25s)
+=== RUN   TestForm_VisiblePositionAndTimezone
+--- PASS: TestForm_VisiblePositionAndTimezone (0.02s)
+=== RUN   TestForm_BrowseHelpAndQuitRemainVisible
+--- PASS: TestForm_BrowseHelpAndQuitRemainVisible (0.01s)
+=== RUN   TestForm_ParentSearchAcceptsSpaces
+--- PASS: TestForm_ParentSearchAcceptsSpaces (0.06s)
+=== RUN   TestTUIMeasurement_SummaryRetainsSamplesAndRejectsMisses
+--- PASS: TestTUIMeasurement_SummaryRetainsSamplesAndRejectsMisses (0.01s)
+=== RUN   TestWorkflow_EditConflictReadbackAndQuit
+--- PASS: TestWorkflow_EditConflictReadbackAndQuit (0.53s)
+=== RUN   TestWorkflow_ToggleErrorsHaveActionableBrowseHints
+--- PASS: TestWorkflow_ToggleErrorsHaveActionableBrowseHints (0.39s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	13.441s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	1.022s [no tests to run]
+=== RUN   TestFormat_Plain
+--- PASS: TestFormat_Plain (0.00s)
+=== RUN   TestFormat_CellWidths
+--- PASS: TestFormat_CellWidths (0.03s)
+=== RUN   TestFormat_OtherValues
+--- PASS: TestFormat_OtherValues (0.00s)
+=== RUN   TestFormat_Parallel
+=== RUN   TestFormat_Parallel/0
+=== PAUSE TestFormat_Parallel/0
+=== RUN   TestFormat_Parallel/1
+=== PAUSE TestFormat_Parallel/1
+=== RUN   TestFormat_Parallel/2
+=== PAUSE TestFormat_Parallel/2
+=== RUN   TestFormat_Parallel/3
+=== PAUSE TestFormat_Parallel/3
+=== RUN   TestFormat_Parallel/4
+=== PAUSE TestFormat_Parallel/4
+=== RUN   TestFormat_Parallel/5
+=== PAUSE TestFormat_Parallel/5
+=== RUN   TestFormat_Parallel/6
+=== PAUSE TestFormat_Parallel/6
+=== RUN   TestFormat_Parallel/7
+=== PAUSE TestFormat_Parallel/7
+=== RUN   TestFormat_Parallel/8
+=== PAUSE TestFormat_Parallel/8
+=== RUN   TestFormat_Parallel/9
+=== PAUSE TestFormat_Parallel/9
+=== CONT  TestFormat_Parallel/0
+=== CONT  TestFormat_Parallel/6
+=== CONT  TestFormat_Parallel/8
+=== CONT  TestFormat_Parallel/7
+=== CONT  TestFormat_Parallel/9
+=== CONT  TestFormat_Parallel/5
+=== CONT  TestFormat_Parallel/3
+=== CONT  TestFormat_Parallel/4
+=== CONT  TestFormat_Parallel/1
+=== CONT  TestFormat_Parallel/2
+--- PASS: TestFormat_Parallel (0.00s)
+    --- PASS: TestFormat_Parallel/6 (0.00s)
+    --- PASS: TestFormat_Parallel/8 (0.00s)
+    --- PASS: TestFormat_Parallel/7 (0.00s)
+    --- PASS: TestFormat_Parallel/5 (0.00s)
+    --- PASS: TestFormat_Parallel/3 (0.00s)
+    --- PASS: TestFormat_Parallel/9 (0.00s)
+    --- PASS: TestFormat_Parallel/4 (0.00s)
+    --- PASS: TestFormat_Parallel/1 (0.00s)
+    --- PASS: TestFormat_Parallel/0 (0.00s)
+    --- PASS: TestFormat_Parallel/2 (0.00s)
+=== RUN   TestFormat_KittyPreview
+    format_test.go:171: explicit visual fixture
+--- SKIP: TestFormat_KittyPreview (0.00s)
+=== RUN   TestFormat_NoTerminalProbe
+--- PASS: TestFormat_NoTerminalProbe (0.00s)
+=== RUN   TestFormat_TreeContinuations
+--- PASS: TestFormat_TreeContinuations (0.00s)
+=== RUN   TestFormat_HeaderAlignment
+--- PASS: TestFormat_HeaderAlignment (0.00s)
+=== RUN   TestFormat_HistoryNarrowRecords
+--- PASS: TestFormat_HistoryNarrowRecords (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	1.097s
+=== RUN   TestTUIProcess_FaultChild
+    tui_acceptance_linux_test.go:231: child-only fault launcher
+--- SKIP: TestTUIProcess_FaultChild (0.00s)
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/startup
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/output
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/committed-cancel
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/unknown-cancel
+=== RUN   TestTUIProcess_TerminalRestoredOnFailure/recover-cancel
+--- PASS: TestTUIProcess_TerminalRestoredOnFailure (1.32s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/startup (0.17s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/output (0.22s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/committed-cancel (0.30s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/unknown-cancel (0.30s)
+    --- PASS: TestTUIProcess_TerminalRestoredOnFailure/recover-cancel (0.33s)
+=== RUN   TestTUIProcess_TerminalLifecycle
+=== RUN   TestTUIProcess_TerminalLifecycle/q
+=== RUN   TestTUIProcess_TerminalLifecycle/resize
+=== RUN   TestTUIProcess_TerminalLifecycle/ctrlc
+=== RUN   TestTUIProcess_TerminalLifecycle/interrupt
+=== RUN   TestTUIProcess_TerminalLifecycle/terminate
+--- PASS: TestTUIProcess_TerminalLifecycle (3.73s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/q (0.08s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/resize (0.13s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/ctrlc (0.10s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/interrupt (0.08s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/terminate (0.09s)
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	6.216s

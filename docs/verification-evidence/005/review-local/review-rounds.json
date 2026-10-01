@@ -1,0 +1,41 @@
+{
+  "base": "4f4873c78c484da12f766e700bb69b92f46335a9",
+  "dispatch_head": "a39af7a",
+  "rounds": [
+    {
+      "number": 1,
+      "scope": "full Feature005 branch and applicable contracts",
+      "confirmed": {
+        "P0": 0,
+        "P1": 0,
+        "P2": 1,
+        "P3": 1
+      },
+      "outcome": "date reference and glossary corrected"
+    },
+    {
+      "number": 2,
+      "scope": "full-branch repeat with adversarial guard-fidelity and applied-diff review",
+      "confirmed": {
+        "P0": 0,
+        "P1": 0,
+        "P2": 1,
+        "P3": 0
+      },
+      "outcome": "dependency inventory guard reproduced and corrected"
+    },
+    {
+      "number": 3,
+      "scope": "repeat across risk divisions, final fix diff and every confirmed scenario",
+      "confirmed": {
+        "P0": 0,
+        "P1": 0,
+        "P2": 0,
+        "P3": 0
+      },
+      "outcome": "clean local pass; final canonical, minimum-Go, owned Kitty and complete CLI/TUI matrices pass"
+    }
+  ],
+  "independent_local_agents": false,
+  "independent_cross_model_review": false
+}

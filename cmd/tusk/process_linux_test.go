@@ -172,10 +172,13 @@ func TestProcess_RealTerminalSignals(t *testing.T) {
 				}
 				fds := []unix.PollFd{{Fd: int32(fd), Events: unix.POLLIN}}
 				if _, err = unix.Poll(fds, 50); err != nil {
+					if errors.Is(err, unix.EINTR) {
+						continue
+					}
 					t.Fatal(err)
 				}
 				n, e := unix.Read(fd, chunk[:])
-				if errors.Is(e, unix.EAGAIN) {
+				if errors.Is(e, unix.EAGAIN) || errors.Is(e, unix.EINTR) {
 					continue
 				}
 				if e != nil {

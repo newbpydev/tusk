@@ -1,0 +1,32 @@
+{
+  "utc": "2026-09-30T01:56:48.605730+00:00",
+  "elapsed_seconds": 5.024352995002118,
+  "cpu_busy_percent_all_cores": 15.97,
+  "load_average": "1.20 1.72 1.87 3/1360 1438345",
+  "processes": [
+    {
+      "name": "zed-editor",
+      "cpu_percent_one_core": 66.87
+    },
+    {
+      "name": "codex",
+      "cpu_percent_one_core": 7.76
+    },
+    {
+      "name": "kwin_wayland",
+      "cpu_percent_one_core": 7.36
+    },
+    {
+      "name": "plasmashell",
+      "cpu_percent_one_core": 2.99
+    },
+    {
+      "name": "opencode",
+      "cpu_percent_one_core": 1.59
+    },
+    {
+      "name": "codex",
+      "cpu_percent_one_core": 1.19
+    }
+  ]
+}

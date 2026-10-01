@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace                                                    
+╭─ > Tasks ────────────────────╮╭─ Task details · 1–20 / 28 ───────────────────╮
+│ 1 task                       ││                                              │
+│                              ││  Final readback verification                 │
+│ Backlog                      ││  Root task                                   │
+│> Final readback verification ││                                              │
+│  todo · medium · 0%          ││  Status    todo                              │
+│                              ││  Priority  medium                            │
+│                              ││  Progress  0%                                │
+│                              ││  Due       Not set                           │
+│                              ││  Tags      None                              │
+│                              ││                                              │
+│                              ││  ID        01a0ef8a-2471-71fe-b76d-          │
+│                              ││  5213f110a479                                │
+│                              ││  Created   2026-09-29 23:40:03 UTC (+00:00)  │
+│                              ││  Updated   2026-09-29 23:40:03 UTC (+00:00)  │
+│                              ││  Completed Not set                           │
+│                              ││                                              │
+│                              ││  Notes                                       │
+│                              ││  No notes                                    │
+│                              ││                                              │
+│                              ││  ──────────────────────────────────────────  │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ Saved · a new • e edit • / search • ? help • q quit • f filter • r refresh • Ta

@@ -1,0 +1,3 @@
+Tusk exposes machine-readable CLI primitives over the same TaskService and SQLite database as the TUI. CRUD: add/edit/done/reopen/delete. Context: list/tree/history/stats --json. Search/status/priority/tag/due predicates are supported by list; CLI external writes are observed by TUI refresh. Calendar chooses a date value that add/edit already accept; collapse and focus are cosmetic presentation. No new domain capability is orphaned. No LLM integration is promised by this feature.
+
+Core data capabilities: 10/10 accessible through CLI (create, read/filter, edit, move, progress, complete, reopen, preview/consented delete, hierarchy and history). No high-priority agent-native gaps found. Per-UI runtime context injection is inapplicable to a CLI with no model host.

@@ -1,0 +1,12 @@
+{
+  "reviewer": "security",
+  "findings": [],
+  "residual_risks": [],
+  "testing_gaps": [],
+  "review_method": "sequential parent context",
+  "independent_reviewers": [],
+  "checked": [
+    "Control bytes, quotes, backslash, ampersand and angle brackets take the unchanged encoding/json fallback. Non-ASCII and malformed UTF-8 also retain the standard encoder.",
+    "No new filesystem, subprocess, network, permission or persistence path. Benchmark strings and command arguments are fixed fixtures."
+  ]
+}

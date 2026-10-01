@@ -1,0 +1,72 @@
+{
+  "utc": "2026-09-30T14:49:57Z",
+  "sample_seconds": 5.02820805599913,
+  "cores": 6,
+  "load_average": [
+    0.64501953125,
+    0.7783203125,
+    1.17041015625
+  ],
+  "top_processes": [
+    {
+      "pid": 43223,
+      "name": "zed-editor",
+      "one_core_cpu_percent": 68.61
+    },
+    {
+      "pid": 1621342,
+      "name": "chrome",
+      "one_core_cpu_percent": 10.34
+    },
+    {
+      "pid": 1648,
+      "name": "kwin_wayland",
+      "one_core_cpu_percent": 7.36
+    },
+    {
+      "pid": 974581,
+      "name": "codex",
+      "one_core_cpu_percent": 6.96
+    },
+    {
+      "pid": 1621032,
+      "name": "chrome",
+      "one_core_cpu_percent": 3.58
+    },
+    {
+      "pid": 970034,
+      "name": "codex",
+      "one_core_cpu_percent": 3.38
+    },
+    {
+      "pid": 1797,
+      "name": "plasmashell",
+      "one_core_cpu_percent": 2.98
+    },
+    {
+      "pid": 1621209,
+      "name": "chrome",
+      "one_core_cpu_percent": 2.39
+    },
+    {
+      "pid": 1635254,
+      "name": "tusk",
+      "one_core_cpu_percent": 2.19
+    },
+    {
+      "pid": 2184,
+      "name": "kiro-cli-term",
+      "one_core_cpu_percent": 0.8
+    },
+    {
+      "pid": 67604,
+      "name": "kiro-cli-term",
+      "one_core_cpu_percent": 0.8
+    },
+    {
+      "pid": 987059,
+      "name": "kiro-cli-term",
+      "one_core_cpu_percent": 0.8
+    }
+  ]
+}

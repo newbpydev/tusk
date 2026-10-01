@@ -1,0 +1,31 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestForm_RelativeDueUsesSubmissionClock|TestFilter_RelativeDayUsesApplyClock'
+=== RUN   TestForm_RelativeDueUsesSubmissionClock
+=== RUN   TestForm_RelativeDueUsesSubmissionClock/create/today
+    date_reference_test.go:60: saved due=2026-09-30 23:59:59.999999999 +0000 UTC want 2026-10-02 02:59:59.999999999 +0000 UTC at submission 2026-10-01 00:00:00.1 -0300 -03
+=== RUN   TestForm_RelativeDueUsesSubmissionClock/create/tomorrow
+    date_reference_test.go:60: saved due=2026-10-01 23:59:59.999999999 +0000 UTC want 2026-10-03 02:59:59.999999999 +0000 UTC at submission 2026-10-01 00:00:00.1 -0300 -03
+=== RUN   TestForm_RelativeDueUsesSubmissionClock/edit/today
+    date_reference_test.go:60: saved due=2026-09-30 23:59:59.999999999 +0000 UTC want 2026-10-02 02:59:59.999999999 +0000 UTC at submission 2026-10-01 00:00:00.1 -0300 -03
+=== RUN   TestForm_RelativeDueUsesSubmissionClock/edit/tomorrow
+    date_reference_test.go:60: saved due=2026-10-01 23:59:59.999999999 +0000 UTC want 2026-10-03 02:59:59.999999999 +0000 UTC at submission 2026-10-01 00:00:00.1 -0300 -03
+--- FAIL: TestForm_RelativeDueUsesSubmissionClock (0.03s)
+    --- FAIL: TestForm_RelativeDueUsesSubmissionClock/create/today (0.01s)
+    --- FAIL: TestForm_RelativeDueUsesSubmissionClock/create/tomorrow (0.01s)
+    --- FAIL: TestForm_RelativeDueUsesSubmissionClock/edit/today (0.01s)
+    --- FAIL: TestForm_RelativeDueUsesSubmissionClock/edit/tomorrow (0.01s)
+=== RUN   TestFilter_RelativeDayUsesApplyClock
+    date_reference_test.go:92: applied bounds=2026-03-07 05:00:00 +0000 UTC..2026-03-08 05:00:00 +0000 UTC want 2026-03-08 05:00:00 +0000 UTC..2026-03-09 04:00:00 +0000 UTC
+--- FAIL: TestFilter_RelativeDayUsesApplyClock (0.00s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.044s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.004s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.008s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

@@ -1,0 +1,35 @@
+[
+  {
+    "title": "Second SIGINT kills Close before session receipt",
+    "disposition": "rejected: explicit escalation policy, unchanged implementation",
+    "evidence": [
+      "cmd/tusk/signal.go:9-11 explicitly permits forced exit during cleanup.",
+      "Feature 005 plan:340-344 requires keeping this limitation.",
+      "git log at base attributes signal.go to b450752, Feature 004. Existing TestProcess_SecondSignalEndsStalledConfirmation verifies escalation."
+    ]
+  },
+  {
+    "title": "TUI budget passes while note render is ungated",
+    "disposition": "rejected: contradicts explicit measurement contract",
+    "evidence": [
+      "Feature 005 verification plan:367-386 separates synchronous preparation budgets from async Markdown, service and startup observations.",
+      "bench_test.go records every async sample and labels the exclusion; no full-render 16.7ms claim is made."
+    ]
+  },
+  {
+    "title": "After-commit PTY restore runs the test binary",
+    "disposition": "retained as testing gap",
+    "evidence": [
+      "Production TestTUIProcess_TerminalLifecycle covers idle/resize/signals; the commit-before-cancel barrier is deliberately in a test executable.",
+      "Useful additional coverage: production executable creates a real task, receives SIGINT after saved state, restores terminal and reports acknowledged commit. Deterministic in-flight cancellation remains fault-fixture evidence."
+    ]
+  },
+  {
+    "title": "validate greens while CLI latency matrix is incomplete",
+    "disposition": "rejected as new defect; existing acceptance blocker retained",
+    "evidence": [
+      "MASTERPLAN.md:7-16 explicitly leaves U6 open for the failed CLI distribution gate.",
+      "Feature 005 U6 explicitly requires separate bench-cli and bench-tui receipts. No source claims validate alone closes U6."
+    ]
+  }
+]

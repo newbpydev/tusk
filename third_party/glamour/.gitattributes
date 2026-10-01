@@ -1,0 +1,3 @@
+*.golden linguist-generated
+# Store the pinned gallery images in regular Git; checkout must not need Git LFS.
+styles/gallery/*.png -filter -diff -merge -text

@@ -29,10 +29,14 @@ func BenchmarkCLIProfile(b *testing.B) {
 			return s, r.Close, err
 		},
 	}
-	b.ResetTimer()
-	for range b.N {
-		if code := cli.Run(context.Background(), []string{"list", "--all", "--json"}, opts); code != 0 {
-			b.Fatal(code)
-		}
+	for _, args := range [][]string{{"list", "--all", "--json"}, {"tree", "--json"}} {
+		b.Run(args[0], func(b *testing.B) {
+			b.ReportAllocs()
+			for range b.N {
+				if code := cli.Run(context.Background(), args, opts); code != 0 {
+					b.Fatal(code)
+				}
+			}
+		})
 	}
 }

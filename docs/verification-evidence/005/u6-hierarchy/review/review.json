@@ -1,0 +1,81 @@
+{
+  "status": "complete",
+  "verdict": "Ready to merge",
+  "scope": {
+    "base": "03c5381e82f1452e7a60bb1d094ae009f0c189e0",
+    "branch": "feat/interactive-tui-application",
+    "head_sha": "03c5381e82f1452e7a60bb1d094ae009f0c189e0",
+    "pr_url": null,
+    "files_changed": 12,
+    "tree": "current working diff, including staged and unstaged changes"
+  },
+  "intent": "Improve the approved Spacious TUI with connected sibling and ancestor guides, equivalent completed direct-task counts, and the owner-requested Darkmatter palette. Preserve complete service snapshots, progress semantics, geometry, pure View and terminal safety.",
+  "intent_confidence": "explicit",
+  "reviewers": [
+    "correctness"
+  ],
+  "findings": [],
+  "actionable_findings": [],
+  "triage_groups": [],
+  "pre_existing_findings": [],
+  "requirements_completeness": {
+    "plan_source": "explicit",
+    "plan": "docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md",
+    "scope": "U6 owner-requested hierarchy/progress/Darkmatter follow-up to locally accepted 03c5381",
+    "satisfied": [
+      "R9 bounded layout and preserved approved geometry",
+      "R10 stable sorted filtered connected forest",
+      "R11 matching descendants retain accurate ancestor paths",
+      "R12 keyboard focus and collapse remain truthful",
+      "R13 direct-item counts plus authoritative percentage",
+      "R18 service-owned progress and subtree semantics unchanged",
+      "R25 TUI timing passes; CLI acceptance remains a separate caller gate before commit",
+      "R26 owned Kitty distinct from automated and PTY evidence",
+      "R27 red-first tests, canonical validation and coverage pass",
+      "R28 user documentation and synchronized feature contracts"
+    ],
+    "intentionally_deferred": [
+      "V111/V112 native and hosted release proof remains Feature 006",
+      "Final caller acceptance receipt and product/masterplan closure are written after CLI matrix completes"
+    ],
+    "unaddressed": [],
+    "unrequested_behavior_rules": []
+  },
+  "learnings": [],
+  "agent_native_gaps": [],
+  "deployment_notes": [],
+  "residual_risks": [],
+  "testing_gaps": [],
+  "coverage": {
+    "depth": "lite",
+    "reason": "120 substantive executable non-test changed lines; visible presentation only, no silent-consequence or mandatory-full class",
+    "reviewer_agents_dispatched": false,
+    "independence_verified": false,
+    "criteria_files": [
+      "AGENTS.md"
+    ],
+    "criteria_source": "Instruction-file fallback; no dedicated criteria files found",
+    "compound_packs": "not applied in lite path",
+    "not_assessed": [
+      "learnings corpus",
+      "agent-native gaps",
+      "deployment notes",
+      "pre-existing findings",
+      "triage grouping"
+    ],
+    "checked": [
+      "Detached sorting/filtering before last-sibling assignment",
+      "Continuous metadata and ancestor paths through collapse/filter",
+      "Full snapshot direct progress arithmetic and integer formatting",
+      "Deep narrow clipping and Unicode bounds",
+      "Pure prepared View and no new I/O, globals or core/storage imports",
+      "Darkmatter token consistency, readable inactive panel labels/footer, opaque cells",
+      "New regression tests and real SQLite descendant completion/reopen",
+      "Final canonical and affected Go 1.25 logs",
+      "78-case TUI timing and owner-approved visible Kitty evidence"
+    ],
+    "publication": "Verdict applies only to the scoped local delta and does not authorize publication or waive caller acceptance gates"
+  },
+  "artifact_path": "/tmp/compound-engineering-1000/ce-code-review/20260930-142734-94afddf2/review.json",
+  "run_id": "20260930-142734-94afddf2"
+}

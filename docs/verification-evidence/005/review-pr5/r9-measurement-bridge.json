@@ -1,0 +1,14 @@
+{
+  "measured_commit": "7f3d496",
+  "guard_commit": "12f3a8e",
+  "changed_measured_sources": [
+    "Makefile",
+    "scripts/cli-bench/host_test.go",
+    "scripts/cli-bench/main.go"
+  ],
+  "sampling_validation_summary_prefix_sha256": "ab835b6eec5756f39168c00d90744d68df27b23fbf1cb195016090ea9687b879",
+  "sampling_validation_summary_prefix_unchanged": true,
+  "host_assessment_unchanged": true,
+  "production_runtime_unchanged": true,
+  "scope": "R9 report-destination guards, exclusive report descriptor, invalid-profile diagnostics and tests only; existing complete CLI/TUI matrices apply. No new latency measurement claimed."
+}

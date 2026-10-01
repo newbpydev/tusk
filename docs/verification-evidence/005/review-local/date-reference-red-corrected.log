@@ -1,0 +1,25 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestForm_RelativeDueEditIsNotStaleNoop|TestFilter_RelativeDayUsesApplyClock'
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop/today
+    date_reference_test.go:43: relative edit discarded as stale no-op: requests=[] notice="No changes"
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop/tomorrow
+    date_reference_test.go:43: relative edit discarded as stale no-op: requests=[] notice="No changes"
+--- FAIL: TestForm_RelativeDueEditIsNotStaleNoop (0.01s)
+    --- FAIL: TestForm_RelativeDueEditIsNotStaleNoop/today (0.00s)
+    --- FAIL: TestForm_RelativeDueEditIsNotStaleNoop/tomorrow (0.00s)
+=== RUN   TestFilter_RelativeDayUsesApplyClock
+    date_reference_test.go:74: applied bounds=2026-03-07 05:00:00 +0000 UTC..2026-03-08 05:00:00 +0000 UTC want 2026-03-08 05:00:00 +0000 UTC..2026-03-09 04:00:00 +0000 UTC
+--- FAIL: TestFilter_RelativeDayUsesApplyClock (0.00s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.019s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.004s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.008s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

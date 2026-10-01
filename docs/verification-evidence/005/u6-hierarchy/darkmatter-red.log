@@ -1,0 +1,61 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '^TestOverlay_UniformSurfaces$'
+=== RUN   TestOverlay_UniformSurfaces
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=none
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=help
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=form
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=delete
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/80x24/modal=recovery
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=none
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=help
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=form
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=delete
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/120x40/modal=recovery
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=none
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=help
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=form
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=delete
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+=== RUN   TestOverlay_UniformSurfaces/200x60/modal=recovery
+    surfaces_test.go:77: cell (0,0) background=16,24,32 want 18,17,19
+--- FAIL: TestOverlay_UniformSurfaces (0.05s)
+    --- FAIL: TestOverlay_UniformSurfaces/80x24/modal=none (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/80x24/modal=help (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/80x24/modal=form (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/80x24/modal=delete (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/80x24/modal=recovery (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/120x40/modal=none (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/120x40/modal=help (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/120x40/modal=form (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/120x40/modal=delete (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/120x40/modal=recovery (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/200x60/modal=none (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/200x60/modal=help (0.00s)
+    --- FAIL: TestOverlay_UniformSurfaces/200x60/modal=form (0.01s)
+    --- FAIL: TestOverlay_UniformSurfaces/200x60/modal=delete (0.01s)
+    --- FAIL: TestOverlay_UniformSurfaces/200x60/modal=recovery (0.01s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.058s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.008s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

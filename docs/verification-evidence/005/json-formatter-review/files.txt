@@ -1,0 +1,17 @@
+MASTERPLAN.md
+Makefile
+docs/plans/2026-09-06-001-feat-tusk-modern-task-system-plan.md
+docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md
+docs/verification-evidence/005/cli-latency.json
+docs/verification-evidence/005/u6-calendar.md
+docs/verification-evidence/005/u6-checkpoint.json
+docs/verification-evidence/005/u6-kitty/README.md
+docs/verification-evidence/005/u6-logs/final-go125.log
+docs/verification-evidence/005/u6-performance.md
+docs/verification-plans/2026-09-06-001-feat-tusk-modern-task-system-verification-plan.md
+docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md
+docs/workorders/2026-09-06-001-feat-tusk-modern-task-system-issues-workorder.md
+docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md
+internal/cli/json_tasks.go
+internal/cli/json_test.go
+scripts/cli-bench/profile_test.go

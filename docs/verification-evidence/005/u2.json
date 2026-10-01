@@ -1,0 +1,141 @@
+{
+  "unit": "U2 / 005-2",
+  "status": "accepted locally",
+  "date_utc": "2026-09-29T22:10:54.168961+00:00",
+  "base_commit": "7702a020b7747168e21aaa7b178197243d08acd1",
+  "source_sha256": {
+    "Makefile": "32b1053cea61f60b008e2cf43ef44d955d5f2c71e015404b7da61bdb7ad2ad12",
+    "cmd/tusk/tui.go": "7638b51200622d0da4cff69d405f3d0b7f7c63f0fba0a5c333d8d5abd0f74bd6",
+    "cmd/tusk/tui_process_linux_test.go": "cd6c7a4f49d8738419b8ffed85647e780d0b05f7ce17bff33b35e8619d36f931",
+    "cmd/tusk/tui_profile_test.go": "da1944493c5247b4e4ee839454a801ba0ddb48a6066298b3f69d6fff6bcb0c73",
+    "internal/cli/sanitize.go": "a19fab3c3a88f1e4096233292df43233ed1b5d63e298e72d2a4d25c7875f9f4b",
+    "internal/cli/sanitize_compatibility_test.go": "8db2d3a8c99484218e42617c4d6340645a04e507a060a4a827b38de519ff5d07",
+    "internal/terminaltext/text.go": "5f4a45e54539e0dc3b81e870c865345999e039eaf999b821d44d53ee54554c0c",
+    "internal/terminaltext/text_test.go": "d34206f0ae2006bff4358bf7efd9e0a00fc3c6838c61d20c48734bafc0a27e60",
+    "internal/tui/frame.go": "c825375fa1c954fd1c583e8b95d71f419dfc09ce349b5afe78b380f711cc9635",
+    "internal/tui/keymap.go": "1138d3f833e5e681641330fbd6f91be48a9dcb8ec8158a00f2501a66654e239f",
+    "internal/tui/layout.go": "4da954392f474a25807d62c3dba58886c54321f545ddd5962ffb59ff93056208",
+    "internal/tui/layout_test.go": "19a03e29115fb924cf647a794f5492890a73ab3ce042651012555cc2c3bb6fe0",
+    "internal/tui/model.go": "be3189a064741cc39999fa9b8b2dd893e7868111095458d26fb5278a8c6a65c9",
+    "internal/tui/run.go": "ecb111e3d3ef4b1b650e29af6aef783e53ea5c8cfe573ec5ca47316aabe172dc",
+    "internal/tui/run_test.go": "6c6084c73015346cde27c469ad46940384d57ff0b70ab134ffcfeb5eb3715d4d",
+    "internal/tui/styles.go": "4b84976d09616f1c9c998d44b01e4a2c0dc666868763d82ba5ae13b17749a3bf",
+    "internal/tui/surfaces_test.go": "99652cb818fb4a637a4b26eba53991e08e0f76d58f5777ace822636533150601"
+  },
+  "binary_sha256": "9a2de6b61bf596213da62f0fe3855289ac0e44e25a866799e4f3e845f20c4773",
+  "canonical": "u2-acceptance.log.gz: make validate build check-generated passed",
+  "coverage": {
+    "internal/terminaltext": 100.0,
+    "internal/tui": 97.6,
+    "internal/cli": 96.6,
+    "cmd/tusk": 96.2
+  },
+  "minimum_go": "Go 1.25.0 affected -race suite; five CGO-free application/CLI/TUI/terminaltext test builds",
+  "logs": [
+    "u2-terminaltext-red.log.gz",
+    "u2-layout-red.log.gz",
+    "u2-focus-red.log.gz",
+    "u2-profile-red.log.gz",
+    "u2-resize-pty-red.log.gz",
+    "u2-resize-pty-green.log.gz",
+    "u2-focused.log.gz",
+    "u2-cli.log.gz",
+    "u2-acceptance.log.gz",
+    "u2-minimum-go.log.gz",
+    "u2-cross-build.log.gz"
+  ],
+  "red_observations": [
+    "No shared terminaltext implementation; existing CLI comparison proved identical output before extraction.",
+    "Frame returned 3 rows instead of 24; help absent.",
+    "Monochrome panel focus invisible; clipping e plus combining accent lost the accent.",
+    "No declared TUI capability selector; panel title touched border.",
+    "Real child PTY received no 79x23 resize frame because the writer wrapper hid term.File.",
+    "Prototype cell color test saw terminal-default background at cell (5,0) instead of canvas background."
+  ],
+  "scenarios_closed": [
+    "V27",
+    "V31",
+    "V32",
+    "V33",
+    "V34",
+    "V37",
+    "V39"
+  ],
+  "partial_scenarios": {
+    "V28": "Dimensions and widget draft retained; selection and real form repetition remain U3/U5.",
+    "V29": "Current loading/empty/error and 1/1000 task geometry; refreshing/saving remain U3/U5.",
+    "V30": "Generic overflow overlay, fixed controls, help scroll/focus trap; real forms/consent remain U5/U8.",
+    "V35": "Current content/profile/NO_COLOR pass; Markdown remains U4.",
+    "V36": "Plain focus and help hints pass; complete action/disabled-save meaning remains U3/U5/U8.",
+    "V38": "Widget draft and operation token retained through resize; actual save and literal q in form remain U5."
+  },
+  "kitty": {
+    "implementation": "Linux Kitty 0.49.1, X11, owned verification OS window; isolated /tmp/tusk-005-kitty.OIGt5C/u2-tasks.db",
+    "commands": [
+      "tusk add (three sample tasks, including Unicode and inert OSC payload)",
+      "env -u NO_COLOR ./bin/tusk tui",
+      "NO_COLOR=1 ./bin/tusk tui"
+    ],
+    "actual_sizes": [
+      [
+        80,
+        24
+      ],
+      [
+        120,
+        40
+      ],
+      [
+        200,
+        60
+      ],
+      [
+        79,
+        23
+      ]
+    ],
+    "observations": [
+      "Stable panel/footer bounds at all three supported sizes.",
+      "Spacious title/metadata rows; long titles show ellipsis; combining and emoji clusters remain whole.",
+      "Stored OSC payload displays as literal escapes; tabs expand in notes.",
+      "Tab changes visible focus; help traps Tab/browse commands, scrolls to final hints, q closes help and retains prior panel focus.",
+      "Shrink an open help dialog to 79x23, inspect resize hint, restore to 80x24 and inspect retained dialog.",
+      "No backdrop bands or offset shadow at dialog/list/bottom boundaries.",
+      "NO_COLOR=1 has visible textual focus and status/priority/progress without color.",
+      "q returns to shell normally; Ctrl+C reports cancellation and restores prompt/cursor/echo."
+    ],
+    "font_note": "Desktop height capped the original 200x60 request at 51/53 rows; reduced only the owned verification window to 8 pt, confirmed actual 200x60 via Kitty, captured it, then restored its default font. Incorrect-size captures were excluded.",
+    "captures": [
+      "120x40-help.png",
+      "120x40.png",
+      "200x60.png",
+      "79x23.png",
+      "80x24-help-restored.png",
+      "80x24-no-color.png",
+      "80x24.png"
+    ],
+    "failing_capture": "u2-kitty/resize-regression-before.png is retained failing evidence, not acceptance.",
+    "automated_checks_in_kitty": false
+  },
+  "prototype": {
+    "scope": "Standalone design preview with sample data, not production persistence proof.",
+    "decision": "User chose Spacious title/metadata rows and requested shadow correction.",
+    "artifact": "/tmp/compound-engineering-1000/ce-prototype/2026-09-29-tui-workspace/01-workspace",
+    "retained_design_captures": "u2-prototype/"
+  },
+  "review": {
+    "method": "Sequential inline reuse, quality and efficiency passes per AGENTS tool mapping; ce-simplify-code rubrics.",
+    "applied": {
+      "reuse": 0,
+      "quality": 0,
+      "efficiency": 0
+    },
+    "skipped": 2,
+    "notes": [
+      "Kept cell clipping rather than ansi.Cut because the combining-accent regression requires complete graphemes.",
+      "Deferred style caching: no measured need and extra session state would complicate purity.",
+      "Confirmed sanitizer extraction, prepared View, modal focus, term.File forwarding and writer-failure preservation."
+    ]
+  },
+  "next": "U3; no full Feature 005, final latency, native or hosted acceptance claimed."
+}

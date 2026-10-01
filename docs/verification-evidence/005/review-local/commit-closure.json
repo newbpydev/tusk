@@ -1,0 +1,54 @@
+{
+  "feature": "005",
+  "status": "owner-authorized local commit closure",
+  "recorded_utc": "2026-09-30T21:10:03.262904+00:00",
+  "authorization": "User: please commit the changes",
+  "branch": "feat/interactive-tui-application",
+  "workflow_commit": "dc6cd9fee85d7e8b15408fdca9985786492d3f62",
+  "review_commit": "containing Git commit",
+  "review_commit_lookup": "git log -1 --format=%H -- docs/verification-evidence/005/review-local/commit-closure.json",
+  "review_findings_closed": [
+    1,
+    2,
+    3
+  ],
+  "workorder_issues_closed": [
+    "005-ISS-026",
+    "005-ISS-027",
+    "005-ISS-028"
+  ],
+  "gates": [
+    {
+      "command": "make validate",
+      "purpose": "before workflow guidance commit",
+      "passed": true,
+      "log": "commit-validate-workflow.log",
+      "log_sha256": "669a106e5d78aad68bdf0820a07a020610820a895e0e469891e744c837c48541"
+    },
+    {
+      "command": "make validate",
+      "purpose": "before review-fix commit",
+      "passed": true,
+      "log": "commit-validate-review.log",
+      "log_sha256": "cec80595116354d5a0f5b701907f68e432d93f784b34e09600f4c04fe1b01850"
+    }
+  ],
+  "source_hashes_matched": 326,
+  "source_hashes": "source-sha256.json",
+  "original_review_snapshot_preserved": "acceptance.json and review.md retain the earlier uncommitted review-return state",
+  "accepted_timing_and_kitty_source_unchanged": true,
+  "review_owned_file_sha256": {
+    "CONCEPTS.md": "95ae5f38e107efaf6dafd3335cb4c00412d6fb07e7aebf6d363d3244d7d03064",
+    "MASTERPLAN.md": "ddc339ef4fcc1720d2444a6053982480bf6448c8ae7a29aa120de1f4ce9fac62",
+    "docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md": "88926df41871726791c9efc02113a85e7d92f8c78259aa01693b84d1563cce6b",
+    "docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md": "ac87578e6abafc4f6d3a104cfc31dbd18ec62369f46e7f5cc04b83af42cc13b9",
+    "docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md": "873f3665b713f70e31dbcb39557cedb35d7f94f206bb90179dca51e68745d7ed",
+    "internal/tui/compatibility_test.go": "6402fc2db9f40dfbfb627d64c1c3732793ecefe166fad68d84815d40c6ff3b1c",
+    "internal/tui/date_reference_test.go": "00fc0b56356de23fd546f4b365fbee56316a78baba4ae7d7af5fe32de0c36c36",
+    "internal/tui/filter.go": "41dbef66d6d2dd93e51cab9d7049da2eeeb485527fce4dddb49ec63a997294e2",
+    "internal/tui/filter_test.go": "379a646ca3658b53bc3b2f96bffd50cf35609fbfefd280a1de35e892381cb127",
+    "internal/tui/mutation.go": "1ec73bd9fb47ee7d99a497613f80f22e7670cd2a817ad2de0e044f2660516738"
+  },
+  "native_hosted_release_proof": "Feature 006; unchanged",
+  "pushed_or_published": false
+}

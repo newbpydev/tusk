@@ -1,0 +1,104 @@
+package tui
+
+import (
+	"context"
+	"errors"
+	"io"
+	"sync"
+	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/x/term"
+	"github.com/muesli/termenv"
+	"github.com/newbpydev/tusk/internal/ports"
+)
+
+type RunOptions struct {
+	Input           io.Reader
+	Output          io.Writer
+	Open            Factory
+	Location        *time.Location
+	Profile         termenv.Profile
+	DayBounds       func(string, time.Time, *time.Location) (time.Time, time.Time, error)
+	ParseDue        DueParser
+	Program         func(tea.Model, ...tea.ProgramOption) (tea.Model, error)
+	CleanupProgress func()
+}
+
+func Run(ctx context.Context, options RunOptions) (result Result, err error) {
+	if options.Open == nil {
+		return Result{}, ports.ErrInvalidServiceOptions
+	}
+	ctx, cancel := context.WithCancel(ctx)
+	session := NewSession(ctx, options.Open)
+	out := &recordingWriter{writer: options.Output, cancel: cancel}
+	var programOutput io.Writer = out
+	if file, ok := options.Output.(term.File); ok {
+		programOutput = recordingTerminalWriter{File: file, recorder: out}
+	}
+	defer func() {
+		if recover() != nil {
+			err = errRuntime
+		}
+		cancel()
+		var closeErr error
+		result, closeErr = session.Close(options.CleanupProgress)
+		err = errors.Join(err, out.failure(), closeErr)
+		if result.OutcomeUnknown && err == nil {
+			err = errRuntime
+		}
+	}()
+	m := New(Options{Context: ctx, Load: session.Load, History: session.History, Mutate: session.Mutate, Preview: session.Preview, Delete: session.Delete, Recover: session.Recover, ParseDue: options.ParseDue, Now: time.Now, Wait: Wait, Location: options.Location, Profile: options.Profile, DayBounds: options.DayBounds})
+	program := options.Program
+	if program == nil {
+		program = func(m tea.Model, opts ...tea.ProgramOption) (tea.Model, error) {
+			return tea.NewProgram(m, opts...).Run()
+		}
+	}
+	_, err = program(m, tea.WithInput(options.Input), tea.WithOutput(programOutput), tea.WithContext(ctx), tea.WithAltScreen(), tea.WithoutSignalHandler())
+	return result, errors.Join(err, m.exitErr)
+}
+
+// Bubble Tea detects resize support through term.File, not Fd alone. Preserve
+// that capability while sending every output write through the error recorder.
+type recordingTerminalWriter struct {
+	term.File
+	recorder *recordingWriter
+}
+
+func (w recordingTerminalWriter) Write(p []byte) (int, error) { return w.recorder.Write(p) }
+
+type recordingWriter struct {
+	writer io.Writer
+	cancel context.CancelFunc
+	mu     sync.Mutex
+	err    error
+}
+
+func (w *recordingWriter) Write(p []byte) (int, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	n, err := w.writer.Write(p)
+	if err == nil && n != len(p) {
+		err = io.ErrShortWrite
+	}
+	if err != nil && w.err == nil {
+		w.err = err
+		w.cancel()
+	}
+	return n, err
+}
+func (w *recordingWriter) failure() error { w.mu.Lock(); defer w.mu.Unlock(); return w.err }
+
+type fatalMsg struct{ err error }
+
+func safeCommand(cmd tea.Cmd) tea.Cmd {
+	return func() (msg tea.Msg) {
+		defer func() {
+			if recover() != nil {
+				msg = fatalMsg{errRuntime}
+			}
+		}()
+		return cmd()
+	}
+}

@@ -1,0 +1,40 @@
+ TUSK  /  Personal workspace                                                                     f Filters   a New task 
+╭─ > Tasks · 1 task ───────────────────────────╮╭─ Task details ───────────────────────────────────────────────────────╮
+│ /  Search tasks                              ││                                                                      │
+│ [1 All tasks]  2 Today  3 Done               ││  Review seed                                                         │
+│──────────────────────────────────────────────││  Root task                                                           │
+│  Backlog                                     ││                                                                      │
+│ >○ Review seed                               ││  Status                            Priority                          │
+│    Todo · Medium      ╭─ > Create task · 1/6 ────────────────────────────────────────────────╮                       │
+│                       │                                                                      │                       │
+│                       │  > Title                                                             │                       │
+│                       │    │ Retained draft                                                  │                       │
+│                       │                                                                      │                       │
+│                       │    Notes · Enter adds a line                                         │              (0 / 1)  │
+│                       │    │                                                                 │───────────────   0%   │
+│                       │    │                                                                 │                       │
+│                       │    │                                                                 │                       │
+│                       │                                                                      │                       │
+│                       │    Priority · ←→ choose                                              │                       │
+│                       │    │ ‹ Medium ›                                                      │─────────────────────  │
+│                       │                                                                      │                       │
+│                       │    Due date · e.g. 2026-10-15 or tomorrow                            │                       │
+│                       │    │                                                                 │                       │
+│                       │    Ctrl+P calendar · Ctrl+U clear · UTC                              │parent_id, priority,   │
+│                       │                                                                      │                       │
+│                       │    Tags · comma-separated                                            │                       │
+│                       │    │                                                                 │                       │
+│                       │                                                                      │─────────────────────  │
+│                       │    Parent · Ctrl+P choose · Ctrl+U root                              │                       │
+│                       │    │                                                                 │9                      │
+│                       │  Writes paused. Ctrl+R refreshes before saving.                      │                       │
+│                       │    [ Save task  Ctrl+S ]    [ Cancel  Esc ]                          │                       │
+│                       │                                                                      │                       │
+│                       ╰──────────────────────────────────────────────────────────────────────╯                       │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+│                                              ││                                                                      │
+╰──────────────────────────────────────────────╯╰──────────────────────────────────────────────────────────────────────╯
+ Stale · Tab / Shift+Tab fields · Ctrl+S save · Esc cancel · Ctrl+C exit

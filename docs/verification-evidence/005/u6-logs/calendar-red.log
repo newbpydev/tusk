@@ -1,0 +1,64 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestCalendar_'
+=== RUN   TestCalendar_ChooseAndCancelPreserveDraft
+    calendar_test.go:34: due field did not open a calendar
+--- FAIL: TestCalendar_ChooseAndCancelPreserveDraft (0.01s)
+=== RUN   TestCalendar_CivilNavigation
+=== RUN   TestCalendar_CivilNavigation/2024-01-31/pgdown
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/2025-01-31/pgdown
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/2026-03-31/pgup
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/2026-12-31/right
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/2026-01-01/left
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/2026-09-29/up_down_down
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/2026-10-15/t
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/tomorrow/
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/invalid/
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation//
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/0001-01-01/left_up_pgup
+    calendar_test.go:81: due field did not open a calendar
+=== RUN   TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown
+    calendar_test.go:81: due field did not open a calendar
+--- FAIL: TestCalendar_CivilNavigation (0.08s)
+    --- FAIL: TestCalendar_CivilNavigation/2024-01-31/pgdown (0.01s)
+    --- FAIL: TestCalendar_CivilNavigation/2025-01-31/pgdown (0.00s)
+    --- FAIL: TestCalendar_CivilNavigation/2026-03-31/pgup (0.00s)
+    --- FAIL: TestCalendar_CivilNavigation/2026-12-31/right (0.00s)
+    --- FAIL: TestCalendar_CivilNavigation/2026-01-01/left (0.01s)
+    --- FAIL: TestCalendar_CivilNavigation/2026-09-29/up_down_down (0.01s)
+    --- FAIL: TestCalendar_CivilNavigation/2026-10-15/t (0.01s)
+    --- FAIL: TestCalendar_CivilNavigation/tomorrow/ (0.01s)
+    --- FAIL: TestCalendar_CivilNavigation/invalid/ (0.01s)
+    --- FAIL: TestCalendar_CivilNavigation// (0.00s)
+    --- FAIL: TestCalendar_CivilNavigation/0001-01-01/left_up_pgup (0.00s)
+    --- FAIL: TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown (0.00s)
+=== RUN   TestCalendar_LocalTodayAndDST
+    calendar_test.go:107: due field did not open a calendar
+--- FAIL: TestCalendar_LocalTodayAndDST (0.00s)
+=== RUN   TestCalendar_LayoutPurityAndResize
+    calendar_test.go:124: due field did not open a calendar
+--- FAIL: TestCalendar_LayoutPurityAndResize (0.00s)
+=== RUN   TestCalendar_RealStorageSaveAndUnchangedEdit
+    calendar_test.go:169: due field did not open a calendar
+--- FAIL: TestCalendar_RealStorageSaveAndUnchangedEdit (0.01s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.111s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.002s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.004s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.006s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1

@@ -1,0 +1,43 @@
+{
+  "adversarial-grok|cmd/tusk/signal.go|24|second sigint kills close before session receipt": {
+    "why_it_matters": "After the first interrupt, default SIGINT is restored while session.Close still waits on in-flight work, so a second interrupt can abort closeOwner and skip publishing HadCommittedChanges/OutcomeUnknown after a committed or unknown write.",
+    "evidence": [
+      "signal.Stop(incoming)",
+      "cancel()",
+      "cmd/tusk/signal.go:24-25 restores default SIGINT immediately after the first signal, before any waiter.",
+      "internal/tui/run.go:54 uses tea.WithoutSignalHandler(), so Bubble Tea will not catch the second SIGINT.",
+      "internal/tui/session.go:153-161 waits cleanupDelay then blocks unbounded on done before closeOwner and result return.",
+      "Trigger: start a TUI mutation; send SIGINT; send a second SIGINT during Close. Outcome: process dies; CLI never prints the independent session receipt; closeOwner may not run. tui_process_linux_test.go only sends one signal."
+    ]
+  },
+  "adversarial-grok|internal/tui/bench_test.go|160|tui budget passes while note render is ungated": {
+    "why_it_matters": "The gated prepare cases measure finish() on an already-rendered model and mark markdown/disk-refresh as budget=false, so make bench-tui can pass while selecting a large note or loading history is the path users actually wait on.",
+    "evidence": [
+      "\"policy\": \"3 runs; 5 retained warmups + 100 samples per case; no trimming; preparation p95/p99/max <16.7/33.3/50 ms\", \"fixture\": \"depth 10; mixed groups/Unicode; 32 KiB note; 100 history events; TrueColor; service and Markdown excluded from synchronous preparation\"",
+      "internal/tui/bench_test.go:160 states Markdown is excluded from the synchronous budget.",
+      "internal/tui/bench_test.go:207-218: measureTUI(\"prepare/\"..., budget true) only calls m.finish(nil); markdown/%d-bytes and disk-refresh use budget false, so p95 misses cannot fail the test.",
+      "internal/tui/details.go:96-104 starts RenderMarkdown as a command, not inside finish(); the harness therefore budgets compositor work, not the render that fills Notes.",
+      "Trigger: bench-tui green; user selects a 32KiB+ note. Outcome: prepare SLA holds while the details pane stays on Rendering notes\u2026 well past 16.7ms."
+    ]
+  },
+  "adversarial-grok|cmd/tusk/tui_acceptance_linux_test.go|269|after-commit pty restore runs the test binary": {
+    "why_it_matters": "Committed-cancel, unknown-cancel, and recover-cancel restoration/receipt checks launch os.Args[0] TestTUIProcess_FaultChild with an injected CreateTask, so a green PTY suite can hide production bin/tusk failing the same cancel-after-write restore or receipt path.",
+    "evidence": [
+      "p := startAcceptancePTY(t, os.Args[0], []string{\"-test.run=^TestTUIProcess_FaultChild$\"}, []string{\"TUSK_TEST_TUI_CHILD=\" + mode, \"TUSK_DB_PATH=\" + db, \"TUSK_TEST_TUI_BARRIER=\" + barrier})",
+      "cmd/tusk/tui_acceptance_linux_test.go:269 starts the test executable, not bin/tusk.",
+      "cmd/tusk/tui_acceptance_linux_test.go:188-202: CreateTask writes the barrier then waits on ctx.Done() and may return TransactionError; that is not production service/storage.",
+      "cmd/tusk/tui_process_linux_test.go:25-31 builds bin/tusk but only exercises idle q/resize/ctrlc/interrupt/terminate with no in-flight write.",
+      "Trigger: FaultChild PTY green; production tusk tui commit then SIGINT/output failure. Outcome: restoration sequences and receipts are proven only under the test hook. startAcceptancePTY also sets TERM=xterm-kitty on a Linux PTY, which is not owned Kitty."
+    ]
+  },
+  "adversarial-grok|Makefile|96|validate greens while cli latency matrix is incomplete": {
+    "why_it_matters": "The canonical release gate can pass while U6's CLI distribution target remains 74/84, so merge/validate success does not mean the latency blocker is gone.",
+    "evidence": [
+      "validate: fmt vet test race coverage test-scripts check-modules",
+      "Makefile:96 \u2014 validate does not run bench-cli or bench-tui.",
+      "Makefile:174-177: bench-cli is a separate target writing latency JSON.",
+      "MASTERPLAN.md:8-9: latest retained CLI matrix passes 74/84 cases under unchanged timing limits.",
+      "Trigger: make validate passes on this branch. Outcome: U6 still has an open CLI latency miss; accepting validate as the U6 gate is green-while-red."
+    ]
+  }
+}

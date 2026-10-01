@@ -1,0 +1,54 @@
+==> Formatting Go files with gofmt -s...
+==> Successfully formatted Go files.
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run '^TestOverlay_UniformSurfaces^TestHierarchy_|^TestPresentation_|^TestCalendar_|^TestControls_'
+=== RUN   TestCalendar_ChooseAndCancelPreserveDraft
+--- PASS: TestCalendar_ChooseAndCancelPreserveDraft (0.01s)
+=== RUN   TestCalendar_CivilNavigation
+=== RUN   TestCalendar_CivilNavigation/2024-01-31/pgdown
+=== RUN   TestCalendar_CivilNavigation/2025-01-31/pgdown
+=== RUN   TestCalendar_CivilNavigation/2026-03-31/pgup
+=== RUN   TestCalendar_CivilNavigation/2026-12-31/right
+=== RUN   TestCalendar_CivilNavigation/2026-01-01/left
+=== RUN   TestCalendar_CivilNavigation/2026-09-29/up_down_down
+=== RUN   TestCalendar_CivilNavigation/2026-10-15/t
+=== RUN   TestCalendar_CivilNavigation/tomorrow/
+=== RUN   TestCalendar_CivilNavigation/invalid/
+=== RUN   TestCalendar_CivilNavigation//
+=== RUN   TestCalendar_CivilNavigation/0001-01-01/left_up_pgup
+=== RUN   TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown
+--- PASS: TestCalendar_CivilNavigation (0.08s)
+    --- PASS: TestCalendar_CivilNavigation/2024-01-31/pgdown (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2025-01-31/pgdown (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-03-31/pgup (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-12-31/right (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-01-01/left (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-09-29/up_down_down (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-10-15/t (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/tomorrow/ (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/invalid/ (0.01s)
+    --- PASS: TestCalendar_CivilNavigation// (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/0001-01-01/left_up_pgup (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown (0.01s)
+=== RUN   TestCalendar_LocalTodayAndDST
+--- PASS: TestCalendar_LocalTodayAndDST (0.02s)
+=== RUN   TestCalendar_LayoutPurityAndResize
+--- PASS: TestCalendar_LayoutPurityAndResize (0.08s)
+=== RUN   TestCalendar_RealStorageSaveAndUnchangedEdit
+--- PASS: TestCalendar_RealStorageSaveAndUnchangedEdit (0.02s)
+=== RUN   TestPresentation_ModalInsetsAndFieldAlignment
+--- PASS: TestPresentation_ModalInsetsAndFieldAlignment (0.01s)
+=== RUN   TestPresentation_DetailsPrioritizeTaskContent
+--- PASS: TestPresentation_DetailsPrioritizeTaskContent (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.238s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.012s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.008s [no tests to run]
+mkdir -p "bin/"
+CGO_ENABLED=0 go build -o "bin/tusk" ./cmd/tusk

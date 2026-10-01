@@ -1,0 +1,17 @@
+bash-5.3$ source /tmp/tusk-005-kitty.OIGt5C/u8-demo.sh
+01a0ef98-afa5-7443-98f0-75e111e4bf8b
+Status: todo
+Priority: medium
+Progress: 0%
+Due: -
+Title: Interview participants
+ID                                    STATUS       PRIO    PROGRESS  DUE         TITLE
+01a0ef98-afbd-74fa-b75a-32ccdcb5281d  todo         medium  0%        -           Keep the project notes
+bash-5.3$ ./bin/tusk list --all --json
+[]
+bash-5.3$ TUSK_TUI_KITTY_FIXTURE=/tmp/tusk-005-unknown.pye5VB TUSK_TUI_KITTY_MODE=unknown-create ./bin/tusk-tui-fixture -test.run=^TestTUIInteractiveFixture$
+App closed. Committed changes: false; uncertain outcome: true
+interactive session failed
+bash-5.3$ TUSK_DB_PATH=/tmp/tusk-005-unknown.pye5VB/fault-app.db ./bin/tusk list --all --json
+[{"id":"01a0ef9d-2f8c-760f-a4c2-0459cb185fba","title":"Uncertain customer call","description":"","status":"todo","priority":2,"parent_id":null,"progress":0,"tags":[],"due_date":null,"created_at":"2026-09-30T00:00:51.084748413Z","updated_at":"2026-09-30T00:00:51.084748413Z","completed_at":null}]
+bash-5.3$

@@ -1,0 +1,24 @@
+ TUSK  /  Personal workspace                                                    
+╭─ Tasks ──────────────────────╮╭─ > Task details · 1413–1432 / 1432 ──────────╮
+│ 2 tasks                      ││  0696 · Customer observation 界 é 👩‍💻 — keep  │
+│                              ││   the next step clear.                       │
+│ Upcoming                     ││  0697 · Customer observation 界 é 👩‍💻 — keep  │
+│  Review the customer onboard…││   the next step clear.                       │
+│  in-progress · urgent · 37%  ││  0698 · Customer observation 界 é 👩‍💻 — keep  │
+│ Backlog                      ││   the next step clear.                       │
+│> Long research notes         ││  0699 · Customer observation 界 é 👩‍💻 — keep  │
+│  todo · medium · 0%          ││   the next step clear.                       │
+│                              ││                                              │
+│                              ││  END OF RESEARCH NOTES                       │
+│                              ││                                              │
+│                              ││  ──────────────────────────────────────────  │
+│                              ││  Activity                                    │
+│                              ││  History is refreshed separately             │
+│                              ││                                              │
+│                              ││  #5  create                                  │
+│                              ││  Changed completed_at, description,          │
+│                              ││  due_date, parent_id, priority, progress,    │
+│                              ││  status, tags, title                         │
+│                              ││  2026-09-29 19:52:20 -03 (-03:00)            │
+╰──────────────────────────────╯╰──────────────────────────────────────────────╯
+ ↑↓ scroll · PgUp/PgDn · Home/End · Tab tasks · ? help · q quit

@@ -28,18 +28,25 @@ graph TD
 | **002** | SQLite Storage & Repository | [Plan 002](2026-09-06-002-feat-sqlite-storage-and-repository-plan.md) | [Verification Plan](../verification-plans/2026-09-06-002-feat-sqlite-storage-and-repository-verification-plan.md) | [Workorder](../workorders/2026-09-06-002-feat-sqlite-storage-and-repository-issues-workorder.md) | `locally accepted; native/hosted release proof pending` |
 | **003** | Task Service Engine | [Plan 003](2026-09-06-003-feat-task-service-engine-plan.md) | [Verification Plan](../verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md) | [Workorder](../workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md) | `locally accepted; consumer/native gates pending` |
 | **004** | CLI Interface & Scripting | [Plan 004](2026-09-06-004-feat-cli-interface-and-scripting-plan.md) | [Verification Plan](../verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md) | [Workorder](../workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md) | `locally accepted; PR #4 merged; native/hosted release gates pending` |
-| **005** | Interactive TUI Application | [Plan 005](2026-09-06-005-feat-interactive-tui-application-plan.md) | [Verification Plan](../verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md) | [Workorder](../workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md) | `planning complete; implementation not started` |
+| **005** | Interactive TUI Application | [Plan 005](2026-09-06-005-feat-interactive-tui-application-plan.md) | [Verification Plan](../verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md) | [Workorder](../workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md) | `locally accepted; eight units and approved UX refinement complete; native/hosted release proof pending` |
 | **006** | Automation, Packaging & Release | [Plan 006](2026-09-06-006-feat-automation-packaging-and-release-plan.md) | Planned | Planned | `pending` |
 
 The product triplet defines cross-phase contracts and acceptance. Features
-002–004 are locally accepted; native/hosted release proof remains pending.
+002–005 are locally accepted; native/hosted release proof remains pending.
 Product U24 maps Feature 002's runtime prerequisite; U6–U10 map Feature 003 and
 U11–U15 map Feature 004. Feature 004 has seven completed local units and 89 local
 scenarios, with V90–V91 handed to Feature 006. Local main records PR #4 merged.
 
 Feature 005 has 28 requirements, eight units ordered U1 → U7 → U2 → U3 → U4 →
-U5 → U8 → U6, and 112 unexecuted scenarios. Product U16→U1/U7/U2, U17→U3,
+U5 → U8 → U6, and 112 verification scenarios. All eight units are separately
+committed. The approved Spacious workspace and due-date calendar pass canonical,
+minimum-Go and real Kitty checks. All 84 CLI and 78 TUI measurement case-runs pass.
+The later U6 hierarchy/Darkmatter refinement and final app checks are owner-approved.
+Fresh canonical and all 84 CLI cases pass; unchanged-source Go 1.25, Kitty,
+review and 78-case TUI evidence remain valid. See the
+[follow-up acceptance](../verification-evidence/005/u6-hierarchy/acceptance.json).
+Product U16→U1/U7/U2, U17→U3,
 U18→U4, U19→U5/U8 and U20→U6 preserve the existing handoff IDs. V01–V110 are
-local obligations; V111–V112 are native/hosted release handoffs. Feature 006
+locally complete; V111–V112 are native/hosted release handoffs. Feature 006
 outline metadata is not readiness. Consult MASTERPLAN.md before implementation;
-planning completion does not authorize Feature 005 code or claim runtime proof.
+no Feature 006 implementation or release is authorized by this checkpoint.

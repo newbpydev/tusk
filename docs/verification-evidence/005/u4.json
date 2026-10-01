@@ -1,0 +1,95 @@
+{
+  "unit": "U4 / 005-4",
+  "status": "accepted locally",
+  "date_utc": "2026-09-29T23:01:37.358899+00:00",
+  "base_commit": "77e0ce541d4820ffa99ef82bfa0505dc7473d46a",
+  "source_sha256": {
+    "internal/tui/details.go": "81af02ededdcfb5665d30cab27b365c888e92dde1009b87255bdc1422de87a07",
+    "internal/tui/details_test.go": "5a0fce2dd6fe84b65323e6511675f2302f0bcbbfb08618c065fa3653788ffbb4",
+    "internal/tui/frame.go": "a8f7dbf477cbc0f3c0b0dfbb5915cc9fbdab49f282e373cbcf28caf7cf78d6c3",
+    "internal/tui/history.go": "2aaf7c5fa96cba268a92ab807f87c151a2a0eab16b1d13eac4038cc2b1654fab",
+    "internal/tui/history_test.go": "5bd64f3a7ff38199445e6a8ca5653967eeccbce3f9eb4fb697c3776dfcf5e82e",
+    "internal/tui/markdown.go": "29cfafea5a0774f0f326041199647f5b037af0e45bdc1c02c58175ecd6727e8e",
+    "internal/tui/markdown_test.go": "e2b2ab8da2be1570697e09027c9fb77cc2366f97484b311bbf4de1b5a5413a44",
+    "internal/tui/model.go": "e51ff9ceac3d474e76b554ace63b7dbd24c551234b79b44064e39108aea380a4",
+    "internal/tui/navigation.go": "981d55bfae22387cf058c5a817ef855658c5244b44e31312597b2929ef534373",
+    "internal/tui/navigation_test.go": "9eba7c8d3973920a00d4b27ebe8f0d65eb9313c471a014193f63f925795417c3",
+    "internal/tui/refresh.go": "61f389eb76ea1b6ac55f0196c791db23ed4fbf68141f2926e6239a8ff508c718",
+    "internal/tui/refresh_integration_test.go": "3fb9fdc78de9f32dcd7e866f501e8fc8f7005f994224c592439f0c82f38769b1",
+    "internal/tui/run.go": "c038a94bcc10c17cc58bd6d725da0584ff6ce7271435b99b98a7100890cfbbc6"
+  },
+  "binary_sha256": "d986b9ef5dca3c3b64cc8dfaaaa89cfbc7e653c3ce5164092a53deb84e625fdb",
+  "canonical": "u4-accepted-final.log.gz: make validate build check-generated passed",
+  "coverage": {
+    "internal/tui": 98.6,
+    "internal/terminaltext": 100.0,
+    "internal/cli": 96.6,
+    "cmd/tusk": 96.2
+  },
+  "minimum_go": "u4-go125-final.log.gz: Go 1.25.0 affected race checks and five CGO-free application/CLI/TUI/terminaltext test builds passed",
+  "red_observations": [
+    "Missing safe renderer/details/history capability (compile Red).",
+    "1.0625 MiB unbroken Unicode note spent 146 seconds in Glamour reflow word wrapping before owned test received SIGQUIT; stack retained.",
+    "Fatal read could queue another history read before Quit.",
+    "Details footer omitted scrolling controls and panel lacked position.",
+    "End intent was lost while notes rendered, also observed after real Kitty resize."
+  ],
+  "formatting_budget": {
+    "sanitized_source_bytes": 32768,
+    "maximum_token_bytes": 2048,
+    "fallback": "Full sanitized plain text in the same async lane; no storage or editable-field limit and no truncation."
+  },
+  "scenarios_closed": [
+    "V35",
+    "V54",
+    "V57",
+    "V58",
+    "V59",
+    "V60",
+    "V61",
+    "V62",
+    "V63",
+    "V64",
+    "V66",
+    "V67"
+  ],
+  "partial_scenarios": {
+    "V65": "Known history failure/retry, missing-task refresh, stale unknown outcome freeze and old-owner rejection pass; user-facing fresh-owner Reload/readback remains U8."
+  },
+  "kitty": {
+    "owned_window": 3,
+    "isolated_database": "/tmp/tusk-005-kitty.OIGt5C/u4-tasks.db",
+    "evidence": "u4-kitty/",
+    "checks": [
+      "Real metadata/history compared with CLI create/edit/status/progress events.",
+      "Markdown headings/lists/tables/code/links/images and Unicode inspected at 120x40.",
+      "Actual 200x60 verified after reducing only the owned window font; restored normal font afterward.",
+      "80x24 long notes show final sentinel and actual history after End plus resize.",
+      "Monochrome Markdown has visible focus, no style dependency, and contextual page/scroll hints.",
+      "q restored shell and CLI history ran successfully."
+    ],
+    "tests_in_kitty": false
+  },
+  "review": "Sequential inline correctness, security, concurrency, keyboard and purity review passed. No independent subagent review claimed.",
+  "simplification": "Inline reuse/quality/efficiency review of U3-U4: no further production changes. Retain both standalone renderer and command-seam output filtering; defer larger scheduler consolidation until mutation consumer exists. U6 owns measured frame-preparation optimization.",
+  "limits": [
+    "U5/U8 mutation and recovery UI remain pending.",
+    "V50-V53/V55 and edit/consent presentation portions retain later consumer coverage.",
+    "Native macOS/Windows and hosted release proof remain Feature 006; U6 final linked-candidate measurements remain open."
+  ],
+  "logs": [
+    "u4-accepted-final.log.gz",
+    "u4-details-green2.log.gz",
+    "u4-details-red.log.gz",
+    "u4-end-intent-green.log.gz",
+    "u4-end-intent-red.log.gz",
+    "u4-fatal-read-red.log.gz",
+    "u4-focused-coverage.log.gz",
+    "u4-go125-final.log.gz",
+    "u4-large-render-red.log.gz",
+    "u4-markdown-red.log.gz",
+    "u4-polish-green.log.gz",
+    "u4-scroll-red.log.gz",
+    "u4-scroll-style-red.log.gz"
+  ]
+}

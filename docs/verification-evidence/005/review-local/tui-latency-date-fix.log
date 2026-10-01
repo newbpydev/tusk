@@ -1,0 +1,12 @@
+mkdir -p "bin/"
+CGO_ENABLED=0 go build -o "bin/tusk" ./cmd/tusk
+TUSK_TUI_BENCH_OUTPUT="/tmp/compound-engineering-1000/ce-code-review/20260930-160308-70ad9092/tui-latency.json" go test ./internal/tui -run '^TestTUIMeasurements$' -count=1 -timeout=20m -v
+=== RUN   TestTUIMeasurements
+--- PASS: TestTUIMeasurements (217.58s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	217.592s
+TUSK_TUI_STARTUP_OUTPUT="/tmp/compound-engineering-1000/ce-code-review/20260930-160308-70ad9092/tui-latency.json.startup.json" go test ./cmd/tusk -run '^TestTUIStartupMeasurements$' -count=1 -timeout=5m -v
+=== RUN   TestTUIStartupMeasurements
+--- PASS: TestTUIStartupMeasurements (15.31s)
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	15.322s

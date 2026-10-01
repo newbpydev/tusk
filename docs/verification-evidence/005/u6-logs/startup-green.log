@@ -1,0 +1,33 @@
+==> Formatting Go files with gofmt -s...
+==> Successfully formatted Go files.
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestCLIStartup|TestMarkdown|TestWorkflow_StressTimerCommandsDrain'
+=== RUN   TestWorkflow_StressTimerCommandsDrain
+--- PASS: TestWorkflow_StressTimerCommandsDrain (0.02s)
+=== RUN   TestMarkdown_LatestPendingRenderAndFallback
+--- PASS: TestMarkdown_LatestPendingRenderAndFallback (0.00s)
+=== RUN   TestMarkdown_IdentityWidthProfileAndPanicFallback
+--- PASS: TestMarkdown_IdentityWidthProfileAndPanicFallback (0.02s)
+=== RUN   TestMarkdown_ControlsAndNoExternalEffects
+--- PASS: TestMarkdown_ControlsAndNoExternalEffects (0.01s)
+=== RUN   TestMarkdown_GeneratedOutputAllowsOnlySGR
+--- PASS: TestMarkdown_GeneratedOutputAllowsOnlySGR (0.00s)
+=== RUN   TestMarkdown_LongUnicodeAndCancellation
+--- PASS: TestMarkdown_LongUnicodeAndCancellation (0.05s)
+=== RUN   TestMarkdown_BudgetBoundariesAndGeneratedSGRGrammar
+--- PASS: TestMarkdown_BudgetBoundariesAndGeneratedSGRGrammar (0.00s)
+=== RUN   TestMarkdown_StyleMatchesWorkspaceWithoutSharedMutation
+--- PASS: TestMarkdown_StyleMatchesWorkspaceWithoutSharedMutation (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.122s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.007s [no tests to run]
+=== RUN   TestCLIStartup_NoSyntaxRegistryInitialization
+--- PASS: TestCLIStartup_NoSyntaxRegistryInitialization (1.24s)
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	1.248s
+mkdir -p "bin/"
+CGO_ENABLED=0 go build -o "bin/tusk" ./cmd/tusk

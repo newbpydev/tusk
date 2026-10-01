@@ -1,0 +1,11 @@
+bash-5.3$ export TUSK_DB_PATH=/tmp/tusk-005-kitty.OIGt5C/tasks.db TUSK_TIMEZONE=UTC; stty -g > /tmp/tusk-005-kitty.OIGt5C/before.stty; ./bin/tusk tui; app_exit=$?; stty -g > /tmp/tusk-005-kitty.OIGt5C/after.stty; printf '
+> TUI exit=%s
+> ' "$app_exit"
+
+TUI exit=0
+bash-5.3$ ./bin/tusk tui
+tusk: context canceled
+bash-5.3$ printf "exit=%s\n" "$?"; stty -g
+exit=1
+4500:5:f00bf:8a3b:3:1c:7f:15:4:0:1:0:11:13:1a:0:12:f:17:16:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0
+bash-5.3$

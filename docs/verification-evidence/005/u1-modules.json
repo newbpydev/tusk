@@ -1,0 +1,800 @@
+[
+  {
+    "path": "github.com/newbpydev/tusk",
+    "version": "main",
+    "go": "1.25.0",
+    "licenses": []
+  },
+  {
+    "path": "github.com/MakeNowJust/heredoc",
+    "version": "v1.0.0",
+    "go": "1.12",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "3cf06d7751ecd37a2822b9fa6ca09510436c0abbfdf3c6261f59c0f0a7f92fe3"
+      }
+    ]
+  },
+  {
+    "path": "github.com/alecthomas/assert/v2",
+    "version": "v2.7.0",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "COPYING",
+        "sha256": "ec31560a57df05e92e10a288879ac52ddebc21c1861dd79bd25b5c33aaa1252a"
+      }
+    ]
+  },
+  {
+    "path": "github.com/alecthomas/chroma/v2",
+    "version": "v2.14.0",
+    "go": "1.19",
+    "licenses": [
+      {
+        "file": "COPYING",
+        "sha256": "e7bf754e7153012a3a8ff697d21acd6c12e590d6a55f2aef8ee83616aa9a795f"
+      }
+    ]
+  },
+  {
+    "path": "github.com/alecthomas/repr",
+    "version": "v0.4.0",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "COPYING",
+        "sha256": "094d3bf4f6aca4f593f642100c7fd3b64b45fa8757ecb28a1395143e04046391"
+      }
+    ]
+  },
+  {
+    "path": "github.com/atotto/clipboard",
+    "version": "v0.1.4",
+    "go": null,
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "2c4bac8e2a97180d6e7758c37de85d1cda1859aaf85b56da15d935d2d9a5564f"
+      }
+    ]
+  },
+  {
+    "path": "github.com/aymanbagabas/go-osc52/v2",
+    "version": "v2.0.1",
+    "go": "1.16",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "11319e34d9dac2f45392f14f4f62e28b24173cfa13d39b32e7b7b66c2f3bdccd"
+      }
+    ]
+  },
+  {
+    "path": "github.com/aymanbagabas/go-udiff",
+    "version": "v0.2.0",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE-BSD",
+        "sha256": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067"
+      },
+      {
+        "file": "LICENSE-MIT",
+        "sha256": "aa3df2110cf0f39305936b72071c4e894ffb6849970b8e6e2c9c583bd9be9adb"
+      }
+    ]
+  },
+  {
+    "path": "github.com/aymerick/douceur",
+    "version": "v0.2.0",
+    "go": null,
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "a91ec19456c4efb3d9fc22dc9c1ec60ec3701a9e8f4be511ebcf908c04288ffb"
+      }
+    ]
+  },
+  {
+    "path": "github.com/bits-and-blooms/bitset",
+    "version": "v1.22.0",
+    "go": null,
+    "licenses": []
+  },
+  {
+    "path": "github.com/charmbracelet/bubbles",
+    "version": "v0.21.0",
+    "go": "1.23.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "9ca49aaf6748976a8f0a9d7448f34a5f5edf1f363385f1a789e09e328c3d3f84"
+      }
+    ]
+  },
+  {
+    "path": "github.com/charmbracelet/bubbletea",
+    "version": "v1.3.10",
+    "go": "1.24.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "69793670485e4ae8bf28fcbe5639141f604256d5bb6c1862571f3a32823fa221"
+      }
+    ]
+  },
+  {
+    "path": "github.com/charmbracelet/colorprofile",
+    "version": "v0.2.3-0.20250311203215-f60798e515dc",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "57d6eeeb336030b89c0e0d12cf869f84b97a481cd00b350ef21fca995da5a39a"
+      }
+    ]
+  },
+  {
+    "path": "github.com/charmbracelet/glamour",
+    "version": "v0.9.1",
+    "go": "1.21",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "30bf812ed0c30e86192cb609b74cf5f2a7303553f7e10ddbfc926172af115b89"
+      }
+    ]
+  },
+  {
+    "path": "github.com/charmbracelet/harmonica",
+    "version": "v0.2.0",
+    "go": null,
+    "licenses": []
+  },
+  {
+    "path": "github.com/charmbracelet/lipgloss",
+    "version": "v1.1.0",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "699cffa88b62691ea09706d356e5ee0982e87ca2b1c58ca682f27d6ae87f9efc"
+      }
+    ]
+  },
+  {
+    "path": "github.com/charmbracelet/x/ansi",
+    "version": "v0.10.1",
+    "go": "1.23.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "0baa4a5942a801d93f4050d2bc0039d8c037105fcd335230d118eec99a11782b"
+      }
+    ]
+  },
+  {
+    "path": "github.com/charmbracelet/x/cellbuf",
+    "version": "v0.0.13-0.20250311204145-2c3ea96c31dd",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "0baa4a5942a801d93f4050d2bc0039d8c037105fcd335230d118eec99a11782b"
+      }
+    ]
+  },
+  {
+    "path": "github.com/charmbracelet/x/exp/golden",
+    "version": "v0.0.0-20241011142426-46044092ad91",
+    "go": "1.19",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "0baa4a5942a801d93f4050d2bc0039d8c037105fcd335230d118eec99a11782b"
+      }
+    ]
+  },
+  {
+    "path": "github.com/charmbracelet/x/term",
+    "version": "v0.2.1",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "0baa4a5942a801d93f4050d2bc0039d8c037105fcd335230d118eec99a11782b"
+      }
+    ]
+  },
+  {
+    "path": "github.com/cpuguy83/go-md2man/v2",
+    "version": "v2.0.6",
+    "go": "1.12",
+    "licenses": []
+  },
+  {
+    "path": "github.com/dlclark/regexp2",
+    "version": "v1.11.0",
+    "go": "1.13",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "9be5d04bb4d706914d5bf943710da4afeb42048f7c529902fb57c82762a991a9"
+      }
+    ]
+  },
+  {
+    "path": "github.com/dustin/go-humanize",
+    "version": "v1.0.1",
+    "go": "1.16",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "a973b4498c13eb74baa2a8e5c351426a6826f2fcdd909916dbe53ee2e755fd71"
+      }
+    ]
+  },
+  {
+    "path": "github.com/erikgeiser/coninput",
+    "version": "v0.0.0-20211004153227-1c3628e74d0f",
+    "go": "1.16",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "0a00deeeb36bb7b8ccbb9003100b665e584d9384e66c8c26f29b5929ecaa745b"
+      }
+    ]
+  },
+  {
+    "path": "github.com/google/pprof",
+    "version": "v0.0.0-20260802141513-ef3492d7dac3",
+    "go": "1.25.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      }
+    ]
+  },
+  {
+    "path": "github.com/google/uuid",
+    "version": "v1.6.0",
+    "go": null,
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "0a8d61ed3cbfd5312326e8126c31ce9c627a283adc99131b56896d29ada04b2d"
+      }
+    ]
+  },
+  {
+    "path": "github.com/gorilla/css",
+    "version": "v1.0.1",
+    "go": "1.20",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "af11d643d903cb178a641d7512879285287844f7a6c0611e2d0c6b131e50188b"
+      }
+    ]
+  },
+  {
+    "path": "github.com/hashicorp/golang-lru/v2",
+    "version": "v2.0.7",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "6c7088eb877b5d7e6e0e9d27e822ea25fcda2e83f9eba59bb5f1418a656796e0"
+      }
+    ]
+  },
+  {
+    "path": "github.com/hexops/gotextdiff",
+    "version": "v1.0.3",
+    "go": "1.16",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067"
+      }
+    ]
+  },
+  {
+    "path": "github.com/inconshreveable/mousetrap",
+    "version": "v1.1.0",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "4819582701f150b28a563a6cd8ed0bf5a754e3c67b90ad38d78ba4131bf77795"
+      }
+    ]
+  },
+  {
+    "path": "github.com/kylelemons/godebug",
+    "version": "v1.1.0",
+    "go": null,
+    "licenses": []
+  },
+  {
+    "path": "github.com/lucasb-eyer/go-colorful",
+    "version": "v1.2.0",
+    "go": "1.12",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "1e4cf2a117516ec1b54041d68ed4f5d331878b04de3386f4790e7b5b9c04e1ec"
+      }
+    ]
+  },
+  {
+    "path": "github.com/mattn/go-isatty",
+    "version": "v0.0.24",
+    "go": "1.20",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "08eab1118c80885fa1fa6a6dd7303f65a379fcb3733e063d20d1bbc2c76e6fa1"
+      }
+    ]
+  },
+  {
+    "path": "github.com/mattn/go-localereader",
+    "version": "v0.0.1",
+    "go": null,
+    "licenses": []
+  },
+  {
+    "path": "github.com/mattn/go-runewidth",
+    "version": "v0.0.16",
+    "go": "1.9",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "88a2379b3ca34bf5c57127aff9dcb802bbb60ece0805cdbda65b3bd115f971d9"
+      }
+    ]
+  },
+  {
+    "path": "github.com/microcosm-cc/bluemonday",
+    "version": "v1.0.27",
+    "go": "1.19",
+    "licenses": [
+      {
+        "file": "LICENSE.md",
+        "sha256": "a8e8489f1168b5f3e0ebb43d7fe1c78a2fd7db9939c1a6cb555940a4b631f8d2"
+      }
+    ]
+  },
+  {
+    "path": "github.com/muesli/ansi",
+    "version": "v0.0.0-20230316100256-276c6243b2f6",
+    "go": "1.17",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "43f65e00e8919fa43c5f45bb2ae578b6d3ee823eb99aa14c85c9ecd06e0350b5"
+      }
+    ]
+  },
+  {
+    "path": "github.com/muesli/cancelreader",
+    "version": "v0.2.2",
+    "go": "1.17",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "8c139dbbc83b4fb055b4100b6b9402f7de3dd6bbca05015bdfcc4b392c8cfd5f"
+      }
+    ]
+  },
+  {
+    "path": "github.com/muesli/reflow",
+    "version": "v0.3.0",
+    "go": "1.13",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "233e8cf9a812999ccee4d3edb270b0f11ab3539658e680bcb873604915ca5038"
+      }
+    ]
+  },
+  {
+    "path": "github.com/muesli/termenv",
+    "version": "v0.16.0",
+    "go": "1.17",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "233e8cf9a812999ccee4d3edb270b0f11ab3539658e680bcb873604915ca5038"
+      }
+    ]
+  },
+  {
+    "path": "github.com/ncruces/go-strftime",
+    "version": "v1.0.0",
+    "go": "1.17",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "38ae43959daf953a393a585b2988672cb65a5a541aca0d0be5e72595a0a16883"
+      }
+    ]
+  },
+  {
+    "path": "github.com/remyoudompheng/bigfft",
+    "version": "v0.0.0-20230129092748-24d4a6f8daec",
+    "go": "1.12",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "dd26a7abddd02e2d0aba97805b31f248ef7835d9e10da289b22e3b8ab78b324d"
+      }
+    ]
+  },
+  {
+    "path": "github.com/rivo/uniseg",
+    "version": "v0.4.7",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE.txt",
+        "sha256": "a59885f5f0f3b3c07cf9444db5fe399b6f0791eac82055f7b85cc65500551039"
+      }
+    ]
+  },
+  {
+    "path": "github.com/russross/blackfriday/v2",
+    "version": "v2.1.0",
+    "go": null,
+    "licenses": []
+  },
+  {
+    "path": "github.com/sahilm/fuzzy",
+    "version": "v0.1.1",
+    "go": null,
+    "licenses": []
+  },
+  {
+    "path": "github.com/spf13/cobra",
+    "version": "v1.10.2",
+    "go": "1.15",
+    "licenses": [
+      {
+        "file": "LICENSE.txt",
+        "sha256": "5e3400b93bbb099e83e52bab885e7441750673c21f97988ca3f1240639b63283"
+      }
+    ]
+  },
+  {
+    "path": "github.com/spf13/pflag",
+    "version": "v1.0.9",
+    "go": "1.12",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "b8514c577c1c4b46cee454d5a882b15fa411e72c5bd7f801f241591789fce61a"
+      }
+    ]
+  },
+  {
+    "path": "github.com/xo/terminfo",
+    "version": "v0.0.0-20220910002029-abceb7e1c41e",
+    "go": "1.19",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "1f5f51151ba96f0492ce288bd007242f924fdad9f04002e175e951644340a891"
+      }
+    ]
+  },
+  {
+    "path": "github.com/yuin/goldmark",
+    "version": "v1.7.8",
+    "go": "1.19",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "c1d6f653c38c80294dc7994647ba0dcc508ce64a86996303c804efa2f7982bff"
+      }
+    ]
+  },
+  {
+    "path": "github.com/yuin/goldmark-emoji",
+    "version": "v1.0.5",
+    "go": "1.15",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "64ce0d485c3558737f049b960abc5dde745f4122daaae1869ebc066566cc35f1"
+      }
+    ]
+  },
+  {
+    "path": "go.yaml.in/yaml/v3",
+    "version": "v3.0.4",
+    "go": "1.16",
+    "licenses": []
+  },
+  {
+    "path": "golang.org/x/crypto",
+    "version": "v0.31.0",
+    "go": null,
+    "licenses": []
+  },
+  {
+    "path": "golang.org/x/exp",
+    "version": "v0.0.0-20220909182711-5c715a9e8561",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067"
+      }
+    ]
+  },
+  {
+    "path": "golang.org/x/mod",
+    "version": "v0.38.0",
+    "go": "1.25.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+      }
+    ]
+  },
+  {
+    "path": "golang.org/x/net",
+    "version": "v0.33.0",
+    "go": "1.18",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+      }
+    ]
+  },
+  {
+    "path": "golang.org/x/sync",
+    "version": "v0.22.0",
+    "go": "1.25.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+      }
+    ]
+  },
+  {
+    "path": "golang.org/x/sys",
+    "version": "v0.47.0",
+    "go": "1.25.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+      }
+    ]
+  },
+  {
+    "path": "golang.org/x/term",
+    "version": "v0.30.0",
+    "go": "1.23.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+      }
+    ]
+  },
+  {
+    "path": "golang.org/x/text",
+    "version": "v0.23.0",
+    "go": "1.23.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+      }
+    ]
+  },
+  {
+    "path": "golang.org/x/tools",
+    "version": "v0.48.0",
+    "go": "1.25.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+      }
+    ]
+  },
+  {
+    "path": "gopkg.in/check.v1",
+    "version": "v0.0.0-20161208181325-20d25e280405",
+    "go": null,
+    "licenses": []
+  },
+  {
+    "path": "modernc.org/cc/v4",
+    "version": "v4.29.2",
+    "go": "1.25",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "1c77905db36f407e0fdb513f97f1f2a3f2282049ca273637841face982d5d003"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/ccgo/v4",
+    "version": "v4.35.0",
+    "go": "1.25.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "343748b20da2ceb739c1ab7b85fe16f6fe4b67fad88fea40c5835a08383d8ffe"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/fileutil",
+    "version": "v1.4.0",
+    "go": "1.24",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "7dc07397727fc500d5ce768d724e4d555eee8fb7687f421fd40d72249868b0ca"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/gc/v2",
+    "version": "v2.6.5",
+    "go": "1.21",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "4719790df5e9d33b1cef3a67df8264fb1e3e7f54f3ca900c562e84a951de62d9"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/gc/v3",
+    "version": "v3.1.5",
+    "go": "1.23.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "4719790df5e9d33b1cef3a67df8264fb1e3e7f54f3ca900c562e84a951de62d9"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/goabi0",
+    "version": "v0.2.0",
+    "go": "1.23.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "6d33428c98f9d7113dfc86e17fca00f81aeaac33e02f79c8a5afafb0a5fd33c6"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/libc",
+    "version": "v1.75.6",
+    "go": "1.25.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "95ff867eb55a56935fa7492406cfa953fb7c13ca73f4c0a86ae05756b4605600"
+      },
+      {
+        "file": "LICENSE-3RD-PARTY.md",
+        "sha256": "f597097efe3d97021f89170746bd3a0fb9a8b6fb26b82043ed68a4e0283bee6c"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/mathutil",
+    "version": "v1.7.1",
+    "go": "1.21",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "bfa9bf72a72ca009fd62a8f84fca3dca67e51d93af96352723646599898b6cf5"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/memory",
+    "version": "v1.12.1",
+    "go": "1.23.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "59895e669f48f168b6b858358f6005779cdf40a265f7828813061b56af67b496"
+      },
+      {
+        "file": "LICENSE-GO",
+        "sha256": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067"
+      },
+      {
+        "file": "LICENSE-LOGO",
+        "sha256": "5ae5bee3072a841376451b48d8cfcec7188e10543926d5870828d36c8a750dc5"
+      },
+      {
+        "file": "LICENSE-MMAP-GO",
+        "sha256": "c2eba69f20d05414538c3a5df7694dde392e065ff70882e1625e90f5d6659fff"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/opt",
+    "version": "v0.2.0",
+    "go": "1.21",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "7a0dd90f1d1c8fa80d03c1806bdd8e4dca7285fae9b4a34f2c4a8a2552fdd77c"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/sortutil",
+    "version": "v1.2.1",
+    "go": "1.21",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "7bc9df688c16dd8e64463ec0ad66728730a0e1a70a1dbda3dcbcd8a9b45bfaab"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/sqlite",
+    "version": "v1.58.0",
+    "go": "1.25.0",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "c6fe05491a60ae13bcd223088d2705e36dede24e5587226231d2459ada5c4822"
+      },
+      {
+        "file": "LICENSE-SQLITE",
+        "sha256": "8438c9c89b849131ead81d5435cb97fcf052df5b0b286dda8a2d4c29e6cb3fd0"
+      },
+      {
+        "file": "LICENSE-SQLITE_VEC",
+        "sha256": "6ce72bbe12d975bd5286e5ab0a064c069693300c47bccbc57bec18485f1621ea"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/strutil",
+    "version": "v1.2.1",
+    "go": "1.21",
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "0f594b710bedb0335b15155204150cb1aac98e76144b52b852b43ce6a65eaaad"
+      }
+    ]
+  },
+  {
+    "path": "modernc.org/token",
+    "version": "v1.1.0",
+    "go": null,
+    "licenses": [
+      {
+        "file": "LICENSE",
+        "sha256": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067"
+      }
+    ]
+  }
+]

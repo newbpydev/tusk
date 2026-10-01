@@ -1,0 +1,36 @@
+[
+  {
+    "#": 1,
+    "verdict": "confirmed",
+    "protected_subject": null,
+    "reason": "Exact before/after test failure confirms the defect; source and final patch inspected. Main-context validation, not independent model corroboration.",
+    "evidence": [
+      "internal/tui/compatibility_test.go:49 at intake -- for name, want := range manifest.Upstream {",
+      "The regression copies both actual dependency modules into a temporary root, adds valid Go source without changing any listed byte, and invokes the real integrity guard in a bounded child process. Both bubbletea and glamour incorrectly pass before the fix.",
+      "The same test passes afterward because the guard rejects unrecorded.go; it also verifies the child failed for the intended inventory diagnostic. No shared checkout or dependency was modified by the fault fixture."
+    ]
+  },
+  {
+    "#": 2,
+    "verdict": "confirmed",
+    "protected_subject": null,
+    "reason": "Exact before/after test failure confirms the defect; source and final patch inspected. Main-context validation, not independent model corroboration.",
+    "evidence": [
+      "internal/tui/mutation.go:116 at intake -- request, field, message := f.draft.command(m.now, m.options.Location, m.options.ParseDue)",
+      "internal/tui/filter.go:105 at intake -- start, end, err := m.options.DayBounds(f.due, m.now, m.options.Location)",
+      "Before-tick midnight edit regression returned requests=[] notice=\"No changes\" for today and tomorrow. The filter regression selected March 7 bounds instead of the 23-hour March 8 DST day. See date-reference-red-corrected.log.",
+      "Targeted green includes date, filter, draft and calendar tests; Base remains unchanged, natural expression still reaches the synchronous service."
+    ]
+  },
+  {
+    "#": 3,
+    "verdict": "confirmed",
+    "protected_subject": null,
+    "reason": "Quoted glossary is contradicted by actual Update, formKey and helpLines; text correction inspected.",
+    "evidence": [
+      "CONCEPTS.md:45 at intake -- - **Model**: Immutable representation of application state.",
+      "CONCEPTS.md:57 at intake -- - **Global Keymap**: Active across all views (`Ctrl+C` quit, `?` help, `Tab` switch panel).",
+      "Model.Update, formKey and helpLines confirm single UI state ownership, prepared View, literal form input and field-specific Enter."
+    ]
+  }
+]

@@ -1,0 +1,252 @@
+diff --git a/CONCEPTS.md b/CONCEPTS.md
+index 3b84691..d6df8bb 100644
+--- a/CONCEPTS.md
++++ b/CONCEPTS.md
+@@ -42,21 +42,21 @@ A timeline entry recording the kind, changed field names, sequence, and time of
+ 
+ ### Elm Architecture
+ The unidirectional data flow pattern governing the Bubble Tea interface:
+-- **Model**: Immutable representation of application state.
+-- **Update**: Pure state transition function handling incoming messages (`tea.Msg`) and emitting an updated model along with asynchronous commands (`tea.Cmd`).
+-- **View**: Pure string renderer projecting the model state into terminal output. `View()` is completely side-effect free.
++- **Model**: Application state owned by the UI message loop. Commands receive copied inputs rather than accessing the model asynchronously.
++- **Update**: Handles incoming messages (`tea.Msg`), changes model state and prepares the next frame, returning the model and asynchronous commands (`tea.Cmd`).
++- **View**: Returns the prepared frame without changing state, querying time, performing I/O or invoking child components.
+ 
+ ### Active Panel
+-The currently focused interactive quadrant in the multi-panel TUI:
++The currently focused area in the two-panel TUI:
+ - **TaskList Panel**: The left panel displaying the hierarchical tree of tasks.
+ - **TaskDetails Panel**: The right panel displaying metadata, notes, and progress of the selected task.
+ - **Modal View**: A centered modal overlay intercepting input for forms (creation, editing, deletion confirmation).
+ 
+ ### Keymap Scope
+ The context-aware mapping of physical keystrokes to domain actions:
+-- **Global Keymap**: Active across all views (`Ctrl+C` quit, `?` help, `Tab` switch panel).
+-- **Navigation Keymap**: Active when browsing task lists (`j/k` move, `x` toggle done, `a` create).
+-- **Form Keymap**: Active when typing in text inputs (`Esc` cancel, `Enter` submit).
++- **Global Keymap**: `Ctrl+C` cancels and exits from every context.
++- **Browse Keymap**: `?` opens help and `Tab` switches list/details focus. In the task list, `j/k` moves selection; `x` completes a subtree or reopens the selected task; `a` creates a root task.
++- **Form Keymap**: `Tab` moves between fields and buttons. `Enter` advances single-line fields, inserts a newline in notes or activates a focused button. `Ctrl+S` saves; `Esc` cancels, asking before discarding a dirty draft. Text such as `q`, `d` and `?` never invokes browse actions.
+ 
+ ---
+ 
+diff --git a/internal/tui/compatibility_test.go b/internal/tui/compatibility_test.go
+index df10cf1..63ad522 100644
+--- a/internal/tui/compatibility_test.go
++++ b/internal/tui/compatibility_test.go
+@@ -1,16 +1,21 @@
+ package tui
+ 
+ import (
++	"context"
+ 	"crypto/sha256"
+ 	"encoding/hex"
+ 	"encoding/json"
++	"fmt"
+ 	"go/ast"
+ 	"go/parser"
+ 	"go/token"
++	"io/fs"
+ 	"os"
++	"os/exec"
+ 	"path/filepath"
+ 	"strings"
+ 	"testing"
++	"time"
+ 
+ 	tea "github.com/charmbracelet/bubbletea"
+ 	"github.com/charmbracelet/glamour"
+@@ -30,6 +35,43 @@ func TestTUI_DependencyPatchIntegrity(t *testing.T) {
+ 	}
+ }
+ 
++func TestTUI_DependencyPatchIntegrityRejectsAdditionalSource(t *testing.T) {
++	for _, module := range []string{"bubbletea", "glamour"} {
++		t.Run(module, func(t *testing.T) {
++			root := t.TempDir()
++			cwd := filepath.Join(root, "internal", "tui")
++			if err := os.MkdirAll(cwd, 0700); err != nil {
++				t.Fatal(err)
++			}
++			for _, name := range []string{"bubbletea", "glamour"} {
++				if err := os.CopyFS(filepath.Join(root, "third_party", name), os.DirFS("../../third_party/"+name)); err != nil {
++					t.Fatal(err)
++				}
++			}
++			// A new Go file participates in the replaced module's next build,
++			// even when every file already in the manifest has its pinned hash.
++			path := filepath.Join(root, "third_party", module, "unrecorded.go")
++			if err := os.WriteFile(path, []byte("package "+map[string]string{"bubbletea": "tea", "glamour": "glamour"}[module]+"\nfunc init() {}\n"), 0600); err != nil {
++				t.Fatal(err)
++			}
++			ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
++			defer cancel()
++			cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestTUI_DependencyPatchIntegrity$")
++			cmd.Dir = cwd
++			output, err := cmd.CombinedOutput()
++			if ctx.Err() != nil {
++				t.Fatal("integrity child timed out", ctx.Err())
++			}
++			if err == nil {
++				t.Fatalf("dependency integrity guard passed with added %s source", module)
++			}
++			if !strings.Contains(string(output), "unrecorded dependency source: unrecorded.go") {
++				t.Fatalf("guard failed for another reason: %v\n%s", err, output)
++			}
++		})
++	}
++}
++
+ func checkDependencyPatch(t *testing.T, dir, version string, files []string) {
+ 	t.Helper()
+ 	data, err := os.ReadFile(dir + "/TUSK-PATCH.json")
+@@ -47,6 +89,30 @@ func checkDependencyPatch(t *testing.T, dir, version string, files []string) {
+ 	if manifest.Version != version || len(manifest.Patches) != len(files) {
+ 		t.Fatal("unexpected dependency patch")
+ 	}
++	for _, name := range files {
++		if _, ok := manifest.Patches[name]; !ok {
++			t.Fatalf("missing declared dependency patch: %s", name)
++		}
++	}
++	if err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {
++		if err != nil || entry.IsDir() {
++			return err
++		}
++		name, err := filepath.Rel(dir, path)
++		if err != nil {
++			return err
++		}
++		name = filepath.ToSlash(name)
++		if !entry.Type().IsRegular() {
++			return fmt.Errorf("nonregular dependency source: %s", name)
++		}
++		if _, ok := manifest.Upstream[name]; !ok && name != "TUSK-PATCH.json" {
++			return fmt.Errorf("unrecorded dependency source: %s", name)
++		}
++		return nil
++	}); err != nil {
++		t.Fatal(err)
++	}
+ 	for name, want := range manifest.Upstream {
+ 		if patched, ok := manifest.Patches[name]; ok {
+ 			allowed := false
+diff --git a/internal/tui/filter.go b/internal/tui/filter.go
+index 07a5f38..5420365 100644
+--- a/internal/tui/filter.go
++++ b/internal/tui/filter.go
+@@ -75,6 +75,7 @@ func (m *Model) updateTodayBounds() {
+ 
+ func (m *Model) applyFilters() {
+ 	f := m.filters
++	m.now = m.options.Now()
+ 	next := core.TaskFilter{SearchTerm: m.filter.SearchTerm}
+ 	for i, s := range filterStatuses() {
+ 		if f.statuses[i] {
+diff --git a/internal/tui/filter_test.go b/internal/tui/filter_test.go
+index f123663..b1a1234 100644
+--- a/internal/tui/filter_test.go
++++ b/internal/tui/filter_test.go
+@@ -69,6 +69,7 @@ func TestFilter_DayIsResolvedOnlyOnApply(t *testing.T) {
+ 	}
+ 	m.options.Location = zone
+ 	m.now = time.Date(2026, 3, 7, 23, 59, 0, 0, zone)
++	m.options.Now = func() time.Time { return time.Date(2026, 3, 7, 23, 59, 0, 0, zone) }
+ 	refs := []time.Time{}
+ 	m.options.DayBounds = func(s string, now time.Time, z *time.Location) (time.Time, time.Time, error) {
+ 		refs = append(refs, now)
+diff --git a/internal/tui/mutation.go b/internal/tui/mutation.go
+index 7db82da..4d69542 100644
+--- a/internal/tui/mutation.go
++++ b/internal/tui/mutation.go
+@@ -115,6 +115,7 @@ func (m *Model) submitForm() tea.Cmd {
+ 	if f.conflict || !m.canWrite() {
+ 		return nil
+ 	}
++	m.now = m.options.Now()
+ 	request, field, message := f.draft.command(m.now, m.options.Location, m.options.ParseDue)
+ 	if message != "" {
+ 		f.err = message
+--- /dev/null
++++ internal/tui/date_reference_test.go
+@@ -0,0 +1,79 @@
++package tui
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/newbpydev/tusk/internal/core"
++	"github.com/newbpydev/tusk/internal/service/dateparse"
++)
++
++func TestForm_RelativeDueEditIsNotStaleNoop(t *testing.T) {
++	zone, err := time.LoadLocation("America/Sao_Paulo")
++	if err != nil {
++		t.Fatal(err)
++	}
++	before := time.Date(2026, 9, 30, 23, 59, 59, 900000000, zone)
++	current := before.Add(200 * time.Millisecond)
++	for _, expression := range []string{"today", "tomorrow"} {
++		t.Run(expression, func(t *testing.T) {
++			oldDue, err := dateparse.ParseDue(expression, before, zone)
++			if err != nil {
++				t.Fatal(err)
++			}
++			node := fixtureNode("existing", "Existing task", core.PriorityMedium, &oldDue)
++			m := loadedModel(node)
++			// The cached display clock still precedes midnight; no timer or
++			// forest response has arrived before the user's explicit Save.
++			m.now = before
++			m.options.Location = zone
++			m.options.Now = func() time.Time { return current }
++			m.options.ParseDue = dateparse.ParseDue
++			var requests []mutationRequest
++			m.options.Mutate = func(_ context.Context, request mutationRequest) (*core.Task, error) {
++				requests = append(requests, request)
++				task := node.Task.Clone()
++				return &task, nil
++			}
++			press(m, "e")
++			setFormField(m, fieldDue, expression)
++			deliverUI(m, press(m, "ctrl+s"))
++			if len(requests) != 1 || requests[0].update.Due == nil || *requests[0].update.Due != expression {
++				t.Fatalf("relative edit discarded as stale no-op: requests=%+v notice=%q", requests, m.notice)
++			}
++			if !requests[0].update.Base.DueDate.Equal(oldDue) {
++				t.Fatal("submission clock changed detached Base")
++			}
++		})
++	}
++}
++
++func TestFilter_RelativeDayUsesApplyClock(t *testing.T) {
++	zone, err := time.LoadLocation("America/New_York")
++	if err != nil {
++		t.Fatal(err)
++	}
++	// Cross into the DST transition day between the last display tick and Apply.
++	before := time.Date(2026, 3, 7, 23, 59, 59, 900000000, zone)
++	current := before.Add(200 * time.Millisecond)
++	start, end, err := dateparse.DayBounds("today", current, zone)
++	if err != nil {
++		t.Fatal(err)
++	}
++	oldDue, newDue := before, current
++	m := loadedModel(fixtureNode("old", "Previous day", core.PriorityMedium, &oldDue), fixtureNode("new", "Current day", core.PriorityMedium, &newDue))
++	m.now = before
++	m.options.Location = zone
++	m.options.Now = func() time.Time { return current }
++	m.options.DayBounds = dateparse.DayBounds
++	press(m, "f")
++	m.filters.due = "today"
++	press(m, "ctrl+s")
++	if m.dueStart == nil || m.dueEnd == nil || !m.dueStart.Equal(start) || !m.dueEnd.Equal(end) {
++		t.Fatalf("applied bounds=%v..%v want %v..%v", m.dueStart, m.dueEnd, start, end)
++	}
++	if len(m.rows) != 1 || m.selectedTask().ID != "new" || m.rows[0].group != "Today" {
++		t.Fatalf("current-day projection uses stale display clock: %+v", m.rows)
++	}
++}

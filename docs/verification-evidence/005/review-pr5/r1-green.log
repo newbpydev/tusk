@@ -1,0 +1,121 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestPR5|TestDelete|TestMutation'
+=== RUN   TestDelete_DiskLeafSubtreeConflictAndNeighbor
+--- PASS: TestDelete_DiskLeafSubtreeConflictAndNeighbor (0.03s)
+=== RUN   TestDelete_DefaultCancelAndSeparateRecursiveIntent
+--- PASS: TestDelete_DefaultCancelAndSeparateRecursiveIntent (0.02s)
+=== RUN   TestDelete_ChangedMembershipRequiresNewConsent
+--- PASS: TestDelete_ChangedMembershipRequiresNewConsent (0.01s)
+=== RUN   TestDelete_DepartedPreviewCannotArmNewDialog
+--- PASS: TestDelete_DepartedPreviewCannotArmNewDialog (0.00s)
+=== RUN   TestDelete_LongConsentScrollAndCanceledReadRefresh
+--- PASS: TestDelete_LongConsentScrollAndCanceledReadRefresh (0.00s)
+=== RUN   TestDelete_PreviewFailureOrMissingNeverWrites
+--- PASS: TestDelete_PreviewFailureOrMissingNeverWrites (0.01s)
+=== RUN   TestDelete_UnknownAndWrongIncarnationNeverArmConsent
+--- PASS: TestDelete_UnknownAndWrongIncarnationNeverArmConsent (0.01s)
+=== RUN   TestDelete_KnownFailureRefreshesPreviewBeforeRetry
+--- PASS: TestDelete_KnownFailureRefreshesPreviewBeforeRetry (0.02s)
+=== RUN   TestDelete_RetryKeyRedispatchesPreview
+--- PASS: TestDelete_RetryKeyRedispatchesPreview (0.00s)
+=== RUN   TestDelete_ScrollKeysAndTabWrapResetConsent
+--- PASS: TestDelete_ScrollKeysAndTabWrapResetConsent (0.02s)
+=== RUN   TestDelete_ReadableCountsAndScrollHint
+--- PASS: TestDelete_ReadableCountsAndScrollHint (0.01s)
+=== RUN   TestMutation_DiskFormsLifecycleAndRollup
+=== RUN   TestMutation_DiskFormsLifecycleAndRollup/default
+=== RUN   TestMutation_DiskFormsLifecycleAndRollup/autocomplete
+--- PASS: TestMutation_DiskFormsLifecycleAndRollup (0.10s)
+    --- PASS: TestMutation_DiskFormsLifecycleAndRollup/default (0.05s)
+    --- PASS: TestMutation_DiskFormsLifecycleAndRollup/autocomplete (0.05s)
+=== RUN   TestMutation_DiskConflictReloadAndMissing
+--- PASS: TestMutation_DiskConflictReloadAndMissing (0.02s)
+=== RUN   TestMutation_DiskDepthAndFailedMoveAreAtomic
+--- PASS: TestMutation_DiskDepthAndFailedMoveAreAtomic (0.04s)
+=== RUN   TestMutation_DrainDuplicateAndReadbackBarrier
+--- PASS: TestMutation_DrainDuplicateAndReadbackBarrier (0.01s)
+=== RUN   TestMutation_KnownConflictAndUnknownRetainDraft
+--- PASS: TestMutation_KnownConflictAndUnknownRetainDraft (0.02s)
+=== RUN   TestMutation_ReadFailureCannotAdmitQueuedWrite
+--- PASS: TestMutation_ReadFailureCannotAdmitQueuedWrite (0.01s)
+=== RUN   TestMutation_NoOpAndToggle
+--- PASS: TestMutation_NoOpAndToggle (0.00s)
+=== RUN   TestMutation_MissingCreateParentRetainsRetryableDraft
+--- PASS: TestMutation_MissingCreateParentRetainsRetryableDraft (0.00s)
+=== RUN   TestMutation_ConflictReloadFailureAndStaleReplies
+--- PASS: TestMutation_ConflictReloadFailureAndStaleReplies (0.01s)
+=== RUN   TestMutation_HistoryDrainBeforeWrite
+--- PASS: TestMutation_HistoryDrainBeforeWrite (0.00s)
+=== RUN   TestMutation_DisabledWriteHints
+--- PASS: TestMutation_DisabledWriteHints (0.00s)
+=== RUN   TestPR5_StaleFormSaveExplainsPause
+--- PASS: TestPR5_StaleFormSaveExplainsPause (0.01s)
+=== RUN   TestPR5_DeleteAbandonedReadCanRefresh
+--- PASS: TestPR5_DeleteAbandonedReadCanRefresh (0.02s)
+=== RUN   TestPR5_FailedTogglePausesWritesUntilReadback
+--- PASS: TestPR5_FailedTogglePausesWritesUntilReadback (0.01s)
+=== RUN   TestDelete_InvalidSuccessCannotLookCommitted
+--- PASS: TestDelete_InvalidSuccessCannotLookCommitted (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.385s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+=== RUN   TestDelete_ForceNeverImpliesRecursive
+--- PASS: TestDelete_ForceNeverImpliesRecursive (0.00s)
+=== RUN   TestDelete_NonTTYNeverReads
+--- PASS: TestDelete_NonTTYNeverReads (0.00s)
+=== RUN   TestDelete_Confirmation
+=== RUN   TestDelete_Confirmation/yes
+=== RUN   TestDelete_Confirmation/decline
+=== RUN   TestDelete_Confirmation/read_error
+=== RUN   TestDelete_Confirmation/cancel
+=== RUN   TestDelete_Confirmation/preview_error
+=== RUN   TestDelete_Confirmation/children
+=== RUN   TestDelete_Confirmation/recursive
+=== RUN   TestDelete_Confirmation/stale
+=== RUN   TestDelete_Confirmation/unknown
+=== RUN   TestDelete_Confirmation/prompt_write
+--- PASS: TestDelete_Confirmation (0.00s)
+    --- PASS: TestDelete_Confirmation/yes (0.00s)
+    --- PASS: TestDelete_Confirmation/decline (0.00s)
+    --- PASS: TestDelete_Confirmation/read_error (0.00s)
+    --- PASS: TestDelete_Confirmation/cancel (0.00s)
+    --- PASS: TestDelete_Confirmation/preview_error (0.00s)
+    --- PASS: TestDelete_Confirmation/children (0.00s)
+    --- PASS: TestDelete_Confirmation/recursive (0.00s)
+    --- PASS: TestDelete_Confirmation/stale (0.00s)
+    --- PASS: TestDelete_Confirmation/unknown (0.00s)
+    --- PASS: TestDelete_Confirmation/prompt_write (0.00s)
+=== RUN   TestDelete_StalePreview
+=== RUN   TestDelete_StalePreview/membership
+=== RUN   TestDelete_StalePreview/target
+--- PASS: TestDelete_StalePreview (0.01s)
+    --- PASS: TestDelete_StalePreview/membership (0.00s)
+    --- PASS: TestDelete_StalePreview/target (0.00s)
+=== RUN   TestDelete_CommittedOutputFailure
+--- PASS: TestDelete_CommittedOutputFailure (0.00s)
+=== RUN   TestDelete_SecondOwnerBarrier
+=== RUN   TestDelete_SecondOwnerBarrier/add
+=== RUN   TestDelete_SecondOwnerBarrier/remove
+=== RUN   TestDelete_SecondOwnerBarrier/move
+=== RUN   TestDelete_SecondOwnerBarrier/metadata
+--- PASS: TestDelete_SecondOwnerBarrier (0.02s)
+    --- PASS: TestDelete_SecondOwnerBarrier/add (0.00s)
+    --- PASS: TestDelete_SecondOwnerBarrier/remove (0.00s)
+    --- PASS: TestDelete_SecondOwnerBarrier/move (0.00s)
+    --- PASS: TestDelete_SecondOwnerBarrier/metadata (0.00s)
+=== RUN   TestMutation_SyntaxAndDomains
+--- PASS: TestMutation_SyntaxAndDomains (0.00s)
+=== RUN   TestMutation_Failures
+--- PASS: TestMutation_Failures (0.00s)
+=== RUN   TestMutation_PolicyAndDates
+=== RUN   TestMutation_PolicyAndDates/true
+=== RUN   TestMutation_PolicyAndDates/false
+--- PASS: TestMutation_PolicyAndDates (0.01s)
+    --- PASS: TestMutation_PolicyAndDates/true (0.01s)
+    --- PASS: TestMutation_PolicyAndDates/false (0.01s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.053s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.005s [no tests to run]

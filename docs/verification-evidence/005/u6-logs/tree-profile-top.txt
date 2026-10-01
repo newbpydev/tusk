@@ -1,0 +1,34 @@
+File: cli-bench.test
+Build ID: 5986a4dcd3042b00bba0aa91efa2149f45bf6ed1
+Type: cpu
+Time: 2026-09-30 11:59:55 -03
+Duration: 9.36s, Total samples = 11.36s (121.34%)
+Showing nodes accounting for 5.56s, 48.94% of 11.36s total
+Dropped 609 nodes (cum <= 0.06s)
+Showing top 25 nodes out of 335
+      flat  flat%   sum%        cum   cum%
+     0.62s  5.46%  5.46%      1.26s 11.09%  modernc.org/sqlite/lib._sqlite3VdbeExec
+     0.56s  4.93% 10.39%      0.56s  4.93%  internal/runtime/syscall/linux.Syscall6
+     0.52s  4.58% 14.96%      0.56s  4.93%  github.com/newbpydev/tusk/internal/cli.appendJSONString
+     0.43s  3.79% 18.75%      0.64s  5.63%  modernc.org/libc.Xpthread_mutex_lock
+     0.33s  2.90% 21.65%      0.33s  2.90%  runtime.nanotime
+     0.29s  2.55% 24.21%      0.29s  2.55%  internal/sync.(*Mutex).Unlock (inline)
+     0.26s  2.29% 26.50%      0.26s  2.29%  runtime.futex
+     0.24s  2.11% 28.61%      0.35s  3.08%  runtime.tryDeferToSpanScan
+     0.24s  2.11% 30.72%      0.53s  4.67%  sync.(*Mutex).Unlock (inline)
+     0.22s  1.94% 32.66%      0.22s  1.94%  modernc.org/libc.Xmemcpy
+     0.21s  1.85% 34.51%      0.72s  6.34%  modernc.org/libc.Xpthread_mutex_unlock
+     0.20s  1.76% 36.27%      0.20s  1.76%  sync.(*Mutex).Lock (inline)
+     0.18s  1.58% 37.85%      0.22s  1.94%  runtime.typePointers.next
+     0.16s  1.41% 39.26%      0.22s  1.94%  runtime.mallocgcSmallScanNoHeaderSC2
+     0.13s  1.14% 40.40%      0.26s  2.29%  runtime.scanObjectsSmall
+     0.12s  1.06% 41.46%      0.22s  1.94%  database/sql.convertAssignRows
+     0.12s  1.06% 42.52%      0.12s  1.06%  runtime.memmove
+     0.12s  1.06% 43.57%      0.15s  1.32%  time.absDays.split (inline)
+     0.11s  0.97% 44.54%      3.37s 29.67%  modernc.org/sqlite.(*rows).Next
+     0.11s  0.97% 45.51%      0.28s  2.46%  regexp.(*Regexp).tryBacktrack
+     0.11s  0.97% 46.48%      0.11s  0.97%  time.parseRFC3339[go.shape.string].func1
+     0.07s  0.62% 47.10%      0.97s  8.54%  github.com/newbpydev/tusk/internal/cli.appendTaskJSON
+     0.07s  0.62% 47.71%      0.98s  8.63%  modernc.org/sqlite/lib._yy_reduce
+     0.07s  0.62% 48.33%      0.16s  1.41%  runtime.scanblock
+     0.07s  0.62% 48.94%      0.07s  0.62%  runtime.typePointers.nextFast (inline)

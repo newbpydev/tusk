@@ -1,0 +1,16 @@
+mkdir -p "bin/"
+CGO_ENABLED=0 go build -o "bin/tusk" ./cmd/tusk
+TUSK_CLI_CONDITIONS=1 TUSK_CLI_BINARY="/home/newbpydev/Development/Xoomby/tusk/bin/tusk" TUSK_CLI_CONDITIONS_OUTPUT="/tmp/tusk-u6-timing-diagnostic.json" go test -v ./scripts/cli-bench -run '^TestCLIConditions$' -count=1
+=== RUN   TestCLIConditions
+    conditions_test.go:54: baseline: max wall 24.572ms; max child CPU 25.436ms; violations 16/100
+    conditions_test.go:54: parent-gc: max wall 21.570ms; max child CPU 23.457ms; violations 9/100
+    conditions_test.go:54: preallocated-pipe: max wall 22.633ms; max child CPU 23.898ms; violations 8/100
+    conditions_test.go:54: parent-gc-and-preallocated-pipe: max wall 22.650ms; max child CPU 23.182ms; violations 8/100
+    conditions_test.go:54: child-gc-200: max wall 21.959ms; max child CPU 22.971ms; violations 14/100
+    conditions_test.go:54: child-gc-400: max wall 20.483ms; max child CPU 21.938ms; violations 7/100
+    conditions_test.go:54: child-trace: max wall 24.045ms; max child CPU 24.979ms; violations 17/100
+    conditions_test.go:54: child-procs-2: max wall 23.712ms; max child CPU 24.319ms; violations 8/100
+    conditions_test.go:54: child-procs-6: max wall 22.548ms; max child CPU 23.619ms; violations 8/100
+--- PASS: TestCLIConditions (31.96s)
+PASS
+ok  	github.com/newbpydev/tusk/scripts/cli-bench	31.966s

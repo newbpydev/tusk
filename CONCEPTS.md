@@ -42,21 +42,21 @@ A timeline entry recording the kind, changed field names, sequence, and time of 
 
 ### Elm Architecture
 The unidirectional data flow pattern governing the Bubble Tea interface:
-- **Model**: Immutable representation of application state.
-- **Update**: Pure state transition function handling incoming messages (`tea.Msg`) and emitting an updated model along with asynchronous commands (`tea.Cmd`).
-- **View**: Pure string renderer projecting the model state into terminal output. `View()` is completely side-effect free.
+- **Model**: Application state owned by the UI message loop. Commands receive copied inputs rather than accessing the model asynchronously.
+- **Update**: Handles incoming messages (`tea.Msg`), changes model state and prepares the next frame, returning the model and asynchronous commands (`tea.Cmd`).
+- **View**: Returns the prepared frame without changing state, querying time, performing I/O or invoking child components.
 
 ### Active Panel
-The currently focused interactive quadrant in the multi-panel TUI:
+The currently focused area in the two-panel TUI:
 - **TaskList Panel**: The left panel displaying the hierarchical tree of tasks.
 - **TaskDetails Panel**: The right panel displaying metadata, notes, and progress of the selected task.
 - **Modal View**: A centered modal overlay intercepting input for forms (creation, editing, deletion confirmation).
 
 ### Keymap Scope
 The context-aware mapping of physical keystrokes to domain actions:
-- **Global Keymap**: Active across all views (`Ctrl+C` quit, `?` help, `Tab` switch panel).
-- **Navigation Keymap**: Active when browsing task lists (`j/k` move, `x` toggle done, `a` create).
-- **Form Keymap**: Active when typing in text inputs (`Esc` cancel, `Enter` submit).
+- **Global Keymap**: `Ctrl+C` cancels and exits from every context.
+- **Browse Keymap**: `?` opens help and `Tab` switches list/details focus. In the task list, `j/k` moves selection; `x` completes a subtree or reopens the selected task; `a` creates a root task.
+- **Form Keymap**: `Tab` moves between fields and buttons. `Enter` advances single-line fields, inserts a newline in notes or activates a focused button. `Ctrl+S` saves; `Esc` cancels, asking before discarding a dirty draft. Text such as `q`, `d` and `?` never invokes browse actions.
 
 ---
 

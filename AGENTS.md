@@ -16,7 +16,7 @@ Every claim, optimization, or bugfix must be grounded in observable, automated v
 
 <first_principles_engineering_protocol>
 1. **Zero External Dependencies by Default**: Tusk must function as a self-contained single binary with zero external service or daemon requirements. Default storage is embedded SQLite located at `~/.local/share/tusk/tusk.db`.
-2. **Sub-15ms CLI Latency**: The reference fresh-process p90 target is under 15ms for queries and under 5ms for help/version; help/version perform zero database initialization. Follow the product verification protocol: three complete retained-sample runs, query p95/p99/max below 20/30/50ms, help/version p95/p99/max below 7.5/10/15ms. Every case in every run must pass; retain all outliers and target-miss counts. This is a distribution target on a declared host, not a hard real-time guarantee.
+2. **Sub-15ms CLI Latency**: The reference fresh-process p90 target is under 15ms for queries and under 5ms for help/version; help/version perform zero database initialization. Follow the product verification protocol: three complete retained-sample runs, query p95/p99/max below 20/30/50ms, help/version p95/p99/max below 7.5/10/15ms. Every case in every run must pass; retain all outliers and target-miss counts. This is a distribution target on a declared host, not a hard real-time guarantee. Owner-authorized Feature 005 PR #5 acceptance on the Linux amd64 Ryzen 5 4500U balanced host also permits `CLI_BENCH_PROFILE=ryzen-4500u-balanced-v1`: each case's three-run mean p90 below 18ms for queries and 5ms for help/version, with query p95 below 22ms, query p99/max below 30/50ms and original help/version tail guards. Reference results remain separately visible; see the synchronized Feature 005 verification plan.
 3. **Strict Separation of Concerns**:
    - `internal/core`: Pure domain business logic, entities, and error definitions. No database imports, no CLI imports, no TUI imports.
    - `internal/ports`: Inbound and outbound contracts (interfaces).
@@ -62,7 +62,10 @@ All verification and build operations must use the canonical Makefile:
 
 <kitty_verification>
 Use Codex's default Bash for canonical Makefile checks, automated tests and
-latency measurements. Use an owned Kitty window for the terminal verification
+latency measurements. Do not run or display test, build, or benchmark results in
+Kitty for verification. Kitty is only for operating and inspecting the real app:
+CLI commands, TUI interactions, visible output, and terminal restoration.
+Use an owned Kitty window for the terminal verification
 required by the active verification plan: exercise CLI/TUI behavior and inspect
 visible output and interactions. Keep those terminal results with the unit's
 verification receipts. Automated checks, latency measurements and visible
@@ -79,6 +82,11 @@ verification in Bash. Keep `make validate` mandatory.
 ---
 
 <architecture_boundaries>
+`docs/solutions/` contains searchable lessons from solved problems, organized by
+category with YAML frontmatter (`module`, `tags`, `problem_type`), relevant when
+implementing or debugging in documented areas. `CONCEPTS.md` defines shared
+domain vocabulary for codebase orientation.
+
 ### Bubble Tea TUI Invariants
 1. **Pure `View()`**: `func (m Model) View() string` (or pointer receiver if non-mutating) MUST NEVER mutate any field, map, slice, or pointer in the model. Any state mutation in `View()` is a catastrophic defect.
 2. **Deterministic Layout**: Dynamic calculations must account for terminal dimensions from `tea.WindowSizeMsg`. Panels must never cause terminal jitter or layout shifts.

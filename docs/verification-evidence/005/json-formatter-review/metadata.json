@@ -1,0 +1,71 @@
+{
+  "branch": "feat/interactive-tui-application",
+  "completed_at": "2026-09-30T15:07:17.709269+00:00",
+  "cost": {
+    "host": "codex",
+    "scope": {
+      "changed_lines": 19099,
+      "depth": "full",
+      "exec_nontest_lines": 21,
+      "size_band": "small"
+    },
+    "stages": [
+      {
+        "elapsed_seconds": 188.076,
+        "ended_at": "2026-09-30T15:07:17.006750+00:00",
+        "facts": {
+          "changed_lines": 19099,
+          "depth": "full",
+          "exec_nontest_lines": 21,
+          "size_band": "small"
+        },
+        "stage": "scope",
+        "started_at": "2026-09-30T15:04:08.930366+00:00"
+      },
+      {
+        "elapsed_seconds": 0.075,
+        "ended_at": "2026-09-30T15:07:17.081481+00:00",
+        "reviewers": 6,
+        "stage": "select",
+        "started_at": "2026-09-30T15:07:17.006750+00:00"
+      },
+      {
+        "candidates": 0,
+        "elapsed_seconds": 0.088,
+        "ended_at": "2026-09-30T15:07:17.169342+00:00",
+        "stage": "dispatch",
+        "started_at": "2026-09-30T15:07:17.081481+00:00"
+      },
+      {
+        "candidates": 0,
+        "elapsed_seconds": 0.15,
+        "ended_at": "2026-09-30T15:07:17.433137+00:00",
+        "stage": "merge",
+        "started_at": "2026-09-30T15:07:17.283612+00:00"
+      },
+      {
+        "elapsed_seconds": 0.078,
+        "ended_at": "2026-09-30T15:07:17.619788+00:00",
+        "stage": "validate",
+        "started_at": "2026-09-30T15:07:17.541822+00:00"
+      },
+      {
+        "elapsed_seconds": 0.081,
+        "ended_at": "2026-09-30T15:07:17.773997+00:00",
+        "stage": "report",
+        "started_at": "2026-09-30T15:07:17.692858+00:00"
+      }
+    ],
+    "status": "complete",
+    "totals": {
+      "artifact_bytes": 480848,
+      "candidates": 0,
+      "elapsed_seconds": 188.548,
+      "reviewers": 6
+    },
+    "truncated_events": 0
+  },
+  "head_sha": "3a65e8a336d73334e99cfed992b71e894955f566",
+  "run_id": "20260930-120408-00afa24d",
+  "verdict": "Not ready"
+}

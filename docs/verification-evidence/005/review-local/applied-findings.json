@@ -1,0 +1,86 @@
+[
+  {
+    "#": 1,
+    "autofix_class": "gated_auto",
+    "confidence": 100,
+    "evidence": [
+      "internal/tui/compatibility_test.go:49 at intake -- for name, want := range manifest.Upstream {",
+      "The regression copies both actual dependency modules into a temporary root, adds valid Go source without changing any listed byte, and invokes the real integrity guard in a bounded child process. Both bubbletea and glamour incorrectly pass before the fix.",
+      "The same test passes afterward because the guard rejects unrecorded.go; it also verifies the child failed for the intended inventory diagnostic. No shared checkout or dependency was modified by the fault fixture."
+    ],
+    "file": "internal/tui/compatibility_test.go",
+    "first_evidence": "internal/tui/compatibility_test.go:49 at intake -- for name, want := range manifest.Upstream {",
+    "independent_reviewers": [],
+    "line": 49,
+    "owner": "downstream-resolver",
+    "pre_existing": false,
+    "protected_subject": null,
+    "requires_verification": true,
+    "reviewers": [
+      "adversarial"
+    ],
+    "severity": "P2",
+    "suggested_fix": "Walk the actual replaced module tree and reject unlisted or nonregular files, exempting only the local manifest; verify declared patch names before applying their hashes.",
+    "title": "Reject added source in patched dependency integrity checks",
+    "why_it_matters": "The mandatory source-pin guard only visits names in upstream_sha256. Adding a Go file to either replaced module leaves all listed hashes unchanged and passes the guard, although that file participates in the next application build. It permits undetected dependency drift through the source-integrity gate.",
+    "validation_status": "confirmed",
+    "validation_reason": "Main-context reproduction/source validation; independent review unavailable under repository mapping.",
+    "applied": true
+  },
+  {
+    "#": 2,
+    "autofix_class": "gated_auto",
+    "confidence": 100,
+    "evidence": [
+      "internal/tui/mutation.go:116 at intake -- request, field, message := f.draft.command(m.now, m.options.Location, m.options.ParseDue)",
+      "internal/tui/filter.go:105 at intake -- start, end, err := m.options.DayBounds(f.due, m.now, m.options.Location)",
+      "Before-tick midnight edit regression returned requests=[] notice=\"No changes\" for today and tomorrow. The filter regression selected March 7 bounds instead of the 23-hour March 8 DST day. See date-reference-red-corrected.log.",
+      "Targeted green includes date, filter, draft and calendar tests; Base remains unchanged, natural expression still reaches the synchronous service."
+    ],
+    "file": "internal/tui/mutation.go",
+    "first_evidence": "internal/tui/mutation.go:116 at intake -- request, field, message := f.draft.command(m.now, m.options.Location, m.options.ParseDue)",
+    "independent_reviewers": [],
+    "line": 116,
+    "owner": "downstream-resolver",
+    "pre_existing": false,
+    "protected_subject": null,
+    "requires_verification": true,
+    "reviewers": [
+      "adversarial"
+    ],
+    "severity": "P2",
+    "suggested_fix": "Sample options.Now once on admitted Save and on Apply before date preflight/resolution; use that sample for the immediate display projection too.",
+    "title": "Refresh the clock before resolving relative date intent",
+    "why_it_matters": "Between local midnight and the next display tick, changing an existing due date to today or tomorrow can compare equal to the old date and close as No changes without dispatching an update. Filter Apply similarly resolves today to the previous day, including the wrong DST interval. The preflight and filter projection need a current action-time clock, not the display snapshot.",
+    "validation_status": "confirmed",
+    "validation_reason": "Main-context reproduction/source validation; independent review unavailable under repository mapping.",
+    "applied": true
+  },
+  {
+    "#": 3,
+    "autofix_class": "gated_auto",
+    "confidence": 100,
+    "evidence": [
+      "CONCEPTS.md:45 at intake -- - **Model**: Immutable representation of application state.",
+      "CONCEPTS.md:57 at intake -- - **Global Keymap**: Active across all views (`Ctrl+C` quit, `?` help, `Tab` switch panel).",
+      "Model.Update, formKey and helpLines confirm single UI state ownership, prepared View, literal form input and field-specific Enter."
+    ],
+    "file": "CONCEPTS.md",
+    "first_evidence": "CONCEPTS.md:45 at intake -- - **Model**: Immutable representation of application state.",
+    "independent_reviewers": [],
+    "line": 45,
+    "owner": "downstream-resolver",
+    "pre_existing": false,
+    "requires_verification": false,
+    "reviewers": [
+      "project-standards"
+    ],
+    "severity": "P3",
+    "suggested_fix": "Describe UI-owned mutable state, prepared read-only View and the actual global/browse/form key scopes.",
+    "title": "Align the TUI glossary with implemented routing",
+    "why_it_matters": "The shared glossary described the model as immutable and Update as pure, and promised global help/panel keys plus Enter submission inside text fields. The pointer-owned, prepared-frame TUI has context-trapped keys and Enter advances or inserts a newline. Keeping the descriptions accurate prevents misleading future implementation guidance.",
+    "validation_status": "confirmed",
+    "validation_reason": "Main-context reproduction/source validation; independent review unavailable under repository mapping.",
+    "applied": true
+  }
+]

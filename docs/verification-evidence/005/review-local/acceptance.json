@@ -1,0 +1,178 @@
+{
+  "feature": "005",
+  "review_run_id": "20260930-160308-70ad9092",
+  "recorded_utc": "2026-09-30T20:34:36.347191+00:00",
+  "status": "clean local review; verified fixes applied and uncommitted",
+  "base": "4f4873c78c484da12f766e700bb69b92f46335a9",
+  "dispatch_head": "a39af7af8cf9a4253fdbd8876e64003644a9ab90",
+  "branch": "feat/interactive-tui-application",
+  "review_rounds": 3,
+  "confirmed_and_fixed": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 2,
+    "P3": 1
+  },
+  "remaining_primary_findings": [],
+  "actionable_findings": [],
+  "review_execution": "sequential main-context risk lenses and validator roles, per root AGENTS tool mapping",
+  "independent_review": false,
+  "peer_outcome": {
+    "target": "claude",
+    "route": "claude",
+    "model_requested": "claude-opus-5-5",
+    "effort_requested": "high",
+    "model_actual": "unverified",
+    "effort_actual": "unverified",
+    "receipt_supported": false,
+    "independence_verified": false,
+    "outcome": "in-process-fallback",
+    "reason": "Provider-capable dispatch returned HTTP 401: invalid OAuth access token; diagnostic also named unrecognized requested model. Shared deadline expired before collection; no replacement started.",
+    "terminal_state": "done",
+    "artifact": null,
+    "coverage": "adversarial lens: in-process fallback (cross-model peer not run: provider HTTP 401 authentication failure)"
+  },
+  "gates": [
+    {
+      "command": "make validate build check-generated",
+      "status": "passed",
+      "log": "final-validate.log",
+      "coverage_tui_percent": 97.2
+    },
+    {
+      "command": "GOTOOLCHAIN=go1.25.0 make test-tui build-tui TUI_TEST_FLAGS='-race -count=1' TUI_TEST_RUN='TestForm_|TestFilter_|TestDraft_|TestCalendar_|TestTUI_DependencyPatchIntegrity'",
+      "status": "passed",
+      "log": "final-min-go.log",
+      "build_targets": [
+        "linux/amd64",
+        "linux/arm64",
+        "darwin/amd64",
+        "darwin/arm64",
+        "windows/amd64"
+      ],
+      "non_linux_native_execution": false
+    },
+    {
+      "command": "make bench-cli CLI_BENCH_OUTPUT=<run>/cli-latency-repeat.json",
+      "status": "passed",
+      "case_runs": 84,
+      "report": "cli-latency-repeat.json",
+      "worst_query_p90_ms": 14.554243,
+      "worst_help_version_p90_ms": 3.952939,
+      "all_tail_guards_pass": true,
+      "earlier_failed_reports": [
+        "cli-latency.json",
+        "cli-control.json"
+      ],
+      "limits_unchanged": true,
+      "all_samples_retained": true
+    },
+    {
+      "command": "make bench-tui TUI_BENCH_OUTPUT=<run>/tui-latency.json",
+      "status": "passed",
+      "case_runs": 78,
+      "report": "tui-latency.json",
+      "worst_preparation_p95_ms": 13.798207,
+      "source_hashes_matched": 326,
+      "startup_observations": "tui-latency.json.startup.json",
+      "all_samples_retained": true
+    },
+    {
+      "surface": "owned Kitty actual CLI/TUI",
+      "status": "passed",
+      "receipt": "kitty-receipt.json",
+      "valid_captures": [
+        "kitty-calendar-valid.png",
+        "kitty-filter-valid.png"
+      ],
+      "normal_clock_only": "midnight/DST triggers are deterministic regression tests, not live-clock evidence"
+    }
+  ],
+  "binary_sha256": "5d544c716e7e05a4f33ec864374ca72593a2e842b3c8a6c9c2d1b37ac59dfcd9",
+  "source_sha256": "source-sha256.json",
+  "review_only_patch_sha256": "3f247ebfbc5914eebbb6d9e6835f2a7466a3ef35e10f04a24e605227d51dda97",
+  "review_owned_file_sha256": {
+    "CONCEPTS.md": "95ae5f38e107efaf6dafd3335cb4c00412d6fb07e7aebf6d363d3244d7d03064",
+    "MASTERPLAN.md": "a71310375e3d5e90f03b865bb5b335f49a33f4b9da21ab0a73921cd573a895e9",
+    "internal/tui/compatibility_test.go": "6402fc2db9f40dfbfb627d64c1c3732793ecefe166fad68d84815d40c6ff3b1c",
+    "internal/tui/date_reference_test.go": "00fc0b56356de23fd546f4b365fbee56316a78baba4ae7d7af5fe32de0c36c36",
+    "internal/tui/filter.go": "41dbef66d6d2dd93e51cab9d7049da2eeeb485527fce4dddb49ec63a997294e2",
+    "internal/tui/filter_test.go": "379a646ca3658b53bc3b2f96bffd50cf35609fbfefd280a1de35e892381cb127",
+    "internal/tui/mutation.go": "1ec73bd9fb47ee7d99a497613f80f22e7670cd2a817ad2de0e044f2660516738",
+    "docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md": "01470d5fca0778ae60a4f1dd1b02fb46fb7dd9ca8fda1e33b27f96cdf2d528c1",
+    "docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md": "1593dd9051d256d72f668d2420bc66379ef3b463546a96d2cddb6d4d003374fb",
+    "docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md": "862c6f1399d8fd0e1db808d22c6060377ffa4d6b211d7dec5dc7c086b1219724"
+  },
+  "artifact_sha256": {
+    "date-reference-red-corrected.log": "c288dea2e427d3947370349654d3d62331e720e84b467c838511c04850a34ebf",
+    "date-reference-red.log": "ea17b6c3c0a47714ceed35dfc5e8f067d95e028fa8043c6eda3c2a20e7a1e38f",
+    "date-reference-green.log": "e506d221298c72056146b1714c5e26e086e3e5a53eced705684ce1c6acda530a",
+    "dependency-inventory-red.log": "efeb2f968defc718ede9b79bcc3373e0e364354898515e03dd8f062f87cb47f4",
+    "dependency-inventory-green.log": "f8cca934a07ba430969c3570f2dfa08538874e04a1351fefd45a401e6ad0bd33",
+    "final-validate.log": "54cd60fd2e5a94ce9c243d09c551c75d7e59b608a83039a91cdc60b9ba0e1dbd",
+    "final-min-go.log": "be38b168ca3cebff3523aa8efad62728f53d23a472e47e176dd1e06127d99c95",
+    "cli-latency.json": "3deed820cdbdf4f18bdf647dcb78a819b1031bf09604397b92dd1e32d15db260",
+    "cli-latency.log": "0643a50c4c0a9e2095c0d2b9c5a8b9050e257bd8b9bd4d1c1fae9b977e65266b",
+    "cli-control.json": "f8ee31f819c629fa1e82efdb39a2ada5123e049de31857b929fa2b583839b7a2",
+    "cli-control.log": "7cf1d3c76b7a1b21913c77120e2baa690400226ce8baaea479d7b3b3c866e2af",
+    "cli-latency-repeat.json": "cf127cf00907739b8d61be6f21943ae07b800458090757f0797ea8f50e69a804",
+    "cli-latency-repeat.log": "c4bb570542297f9ded94c9060b8ae0fd0b48c2f33f2d512a6b19f44cbd3c8c24",
+    "cli-comparison.json": "4a96f399c87354871ed8beb5ec1b044b57bd4246a53ed25d41c2fbe8baecd6b1",
+    "tui-latency-date-fix.json": "ae1d7837183140428b1d02c0623c9f03929a6c94c5ae113d38379030cf3f3571",
+    "tui-latency-date-fix.json.startup.json": "73feb7a5735e73721f397df82a2821fb0de4a2ad6b203ec263966409d5a3c285",
+    "tui-latency-date-fix.log": "3b9ce3ad86eb966825eb5ada9b4772157a393d1bb41f9ea487fb5d0e840a1b74",
+    "kitty-receipt.json": "3f560db87c999be18734a8961464113dfd70bc355fe13577959aa2270b650adc",
+    "kitty-calendar-valid.png": "da975ba9eb4a512de1119390bb9cbadb6be192b6271e9d36e55497bac81c662d",
+    "kitty-filter-valid.png": "5dcfc8f35268fbaf5be2113e5e4e6e1db90c3d1ab3360509c519694307832120",
+    "kitty-calendar-valid.txt": "5305c6a40bfd12ebccb43c8451338c0d4b789b63b23910661883f5b2c06e50d9",
+    "kitty-filter.txt": "fca68265ef33d744f8ea94052e0ff9d038f696a5b91352838953390bc55a2499",
+    "kitty-save.txt": "4d2cac1c4b0c032b9792d546c94af1dc6de28d6c8247ee4317bf8bb5563dc332",
+    "kitty-cli.txt": "30fca28b029d397408b1781531a8c4eadcf0667581524567c29426394e130ffb",
+    "kitty-restored.txt": "95d48a96ee71458557a2cd346b66dbfd120a87f5d3e19d482ee03b20817eb002",
+    "kitty-terminal.txt": "41add72a0bd6adcf1c93c8082a066c615a05cbbab4019f834330f2c6e0bed0e6",
+    "peer-outcome.json": "e028387c3d059285c6b3bd4d3618a014fc945494e84c2cb25bc17f49467bd4ae",
+    "review-rounds.json": "2179235d51fcc42f476e0d9696091833c5b7d1ecba2389803fba9df5e70e7617",
+    "local-coverage.md": "4869d881602c1bd5582c41fe65ee624274a468b75acd423816ad0f37103a5a50",
+    "adversarial-scenarios.md": "053cda9f7784430b30f5426802580509c32f03036530e0c7f12da3484a30568c",
+    "learnings-researcher.md": "08f09aa8c3e1256160dbbef1a4f8559fa92ff8d7ed4395c080389354d4b944ae",
+    "agent-native-reviewer.md": "581ac66a74f4e64bf2513e14fc62675dcc6db0e166ed0761da8155fa15bd4c0c",
+    "applied-findings.json": "f1ec640556a228fd4930c39fd56417a3179149d77ede6de1be4c07e23b794885",
+    "validator-verdicts.json": "923e804e97f1e28ff18ead3097ce7b1f6135ba5a168b284f6c8138c975af8a8f",
+    "validator-outcome.json": "44c4c0c6a26e7a7d2a27320d714222dbcf41a7981264b99f68b74499c525fa98",
+    "tui-latency.json": "79c406f4405b66bafd133a2332a98d3aa0827dc9328ea2c00840eed20bc90223",
+    "tui-latency.json.startup.json": "c0a7e4418e8a48834c13349370238ec3816ad9fa930b7578749b8120be198432",
+    "tui-latency.log": "f4c208dca5fd3a6de29ffdb3f747dd7561011a0fc8d2012da0d1bd7c1562a701",
+    "control-state.json": "fef6e9fc3f732f940793fef57fd597ade7a54f86ad03c49117dd184d38cf2951",
+    "review-fixes.patch": "3f247ebfbc5914eebbb6d9e6835f2a7466a3ef35e10f04a24e605227d51dda97",
+    "source-sha256.json": "109a216fcf31a15d0f7332dbd23a4314bf23c21e431dc444e58c1004dc9a6cf2",
+    "README.md": "a81a6545ac5bcfb232acda17e4f4fd959dbd74d056e0e4222c3e5c8c76118450",
+    "review.md": "8660e51b6f472b84dd4468262f810db5bb04cf8f8069543c840fc779dab6d454"
+  },
+  "cleanup": {
+    "owned_kitty_closed": true,
+    "owned_control_worktree_removed": true,
+    "cross_model_job_removed": true,
+    "user_sessions_untouched": true
+  },
+  "discarded_probes": {
+    "date-reference-red.log": "fixture clock/location mismatch; excluded from finding reproduction",
+    "XGetImage screenshots": "stale backing pixels; excluded, not copied as acceptance evidence"
+  },
+  "synchronization": [
+    "MASTERPLAN.md",
+    "docs/plans/2026-09-06-005-feat-interactive-tui-application-plan.md",
+    "docs/verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md",
+    "docs/workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md"
+  ],
+  "commit_status": "uncommitted: pre-review dirty checkout, per ce-code-review",
+  "pre_existing_edits_preserved": [
+    "AGENTS.md",
+    "docs/solutions/workflow-issues/verify-owned-kitty-window-without-focus-or-environment-leaks.md"
+  ],
+  "native_hosted_release_obligations": [
+    "V111",
+    "V112",
+    "005-ISS-025"
+  ],
+  "publication_performed": false
+}

@@ -1,0 +1,17 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestForm_ReadonlyPreviewPreparationIsBounded'
+=== RUN   TestForm_ReadonlyPreviewPreparationIsBounded
+    form_test.go:28: one-line read-only preview allocated 2495032 bytes
+--- FAIL: TestForm_ReadonlyPreviewPreparationIsBounded (0.15s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.168s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.020s [no tests to run]
+FAIL
+make: *** [Makefile:116: test-tui] Error 1

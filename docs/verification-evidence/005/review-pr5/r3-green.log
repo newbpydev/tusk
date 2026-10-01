@@ -1,0 +1,90 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestPR5|TestView|TestSession_Run|TestTUIProcess_TerminalLifecycle|TestTerminal_'
+=== RUN   TestTerminal_DeepTreeKeepsTitlesAndRawText
+--- PASS: TestTerminal_DeepTreeKeepsTitlesAndRawText (0.00s)
+=== RUN   TestView_ColdAndRepeatedCallsPreserveDeepState
+=== RUN   TestView_ColdAndRepeatedCallsPreserveDeepState/false
+=== RUN   TestView_ColdAndRepeatedCallsPreserveDeepState/true
+--- PASS: TestView_ColdAndRepeatedCallsPreserveDeepState (0.00s)
+    --- PASS: TestView_ColdAndRepeatedCallsPreserveDeepState/false (0.00s)
+    --- PASS: TestView_ColdAndRepeatedCallsPreserveDeepState/true (0.00s)
+=== RUN   TestView_NewBrowseModesArePure
+--- PASS: TestView_NewBrowseModesArePure (0.01s)
+=== RUN   TestPR5_StaleFormSaveExplainsPause
+--- PASS: TestPR5_StaleFormSaveExplainsPause (0.00s)
+=== RUN   TestPR5_DeleteAbandonedReadCanRefresh
+--- PASS: TestPR5_DeleteAbandonedReadCanRefresh (0.01s)
+=== RUN   TestPR5_FailedTogglePausesWritesUntilReadback
+--- PASS: TestPR5_FailedTogglePausesWritesUntilReadback (0.00s)
+=== RUN   TestPR5_PageDownKeepsVisibleTaskOverlap
+--- PASS: TestPR5_PageDownKeepsVisibleTaskOverlap (0.00s)
+=== RUN   TestPR5_SearchWhitespaceAndAtomicLimits
+--- PASS: TestPR5_SearchWhitespaceAndAtomicLimits (0.00s)
+=== RUN   TestPR5_EndOnlyFilterMatchesCollapsePresentation
+--- PASS: TestPR5_EndOnlyFilterMatchesCollapsePresentation (0.00s)
+=== RUN   TestPR5_ParentPickerWindowKeepsPairs
+--- PASS: TestPR5_ParentPickerWindowKeepsPairs (0.00s)
+=== RUN   TestPR5_DetailsDoesNotRenderTemplateEditor
+--- PASS: TestPR5_DetailsDoesNotRenderTemplateEditor (0.00s)
+=== RUN   TestPR5_RecoveryZeroDueMatchesDetails
+--- PASS: TestPR5_RecoveryZeroDueMatchesDetails (0.00s)
+=== RUN   TestPR5_UnsizedFrameWaitsForTerminal
+--- PASS: TestPR5_UnsizedFrameWaitsForTerminal (0.00s)
+=== RUN   TestPR5_RunRejectsMissingFactoryBeforeProgram
+--- PASS: TestPR5_RunRejectsMissingFactoryBeforeProgram (0.00s)
+=== RUN   TestPR5_TestsCannotExitPastRunner
+--- PASS: TestPR5_TestsCannotExitPastRunner (0.01s)
+=== RUN   TestSession_Run
+=== RUN   TestSession_Run/quit
+=== RUN   TestSession_Run/startup
+=== RUN   TestSession_Run/ctrlc
+=== RUN   TestSession_Run/panic
+=== RUN   TestSession_Run/update_panic
+--- PASS: TestSession_Run (0.00s)
+    --- PASS: TestSession_Run/quit (0.00s)
+    --- PASS: TestSession_Run/startup (0.00s)
+    --- PASS: TestSession_Run/ctrlc (0.00s)
+    --- PASS: TestSession_Run/panic (0.00s)
+    --- PASS: TestSession_Run/update_panic (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.074s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.005s [no tests to run]
+=== RUN   TestTerminal_Capabilities
+--- PASS: TestTerminal_Capabilities (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.007s
+=== RUN   TestTUIProcess_TerminalLifecycle
+=== RUN   TestTUIProcess_TerminalLifecycle/q
+=== RUN   TestTUIProcess_TerminalLifecycle/resize
+=== RUN   TestTUIProcess_TerminalLifecycle/ctrlc
+=== RUN   TestTUIProcess_TerminalLifecycle/interrupt
+=== RUN   TestTUIProcess_TerminalLifecycle/terminate
+=== RUN   TestTUIProcess_TerminalLifecycle/hangup
+--- PASS: TestTUIProcess_TerminalLifecycle (1.10s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/q (0.03s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/resize (0.07s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/ctrlc (0.04s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/interrupt (0.03s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/terminate (0.04s)
+    --- PASS: TestTUIProcess_TerminalLifecycle/hangup (0.03s)
+=== RUN   TestTerminal_TUIProfile
+=== RUN   TestTerminal_TUIProfile/truecolor
+=== RUN   TestTerminal_TUIProfile/24bit
+=== RUN   TestTerminal_TUIProfile/256
+=== RUN   TestTerminal_TUIProfile/basic
+=== RUN   TestTerminal_TUIProfile/no_color
+=== RUN   TestTerminal_TUIProfile/dumb
+=== RUN   TestTerminal_TUIProfile/missing
+--- PASS: TestTerminal_TUIProfile (0.00s)
+    --- PASS: TestTerminal_TUIProfile/truecolor (0.00s)
+    --- PASS: TestTerminal_TUIProfile/24bit (0.00s)
+    --- PASS: TestTerminal_TUIProfile/256 (0.00s)
+    --- PASS: TestTerminal_TUIProfile/basic (0.00s)
+    --- PASS: TestTerminal_TUIProfile/no_color (0.00s)
+    --- PASS: TestTerminal_TUIProfile/dumb (0.00s)
+    --- PASS: TestTerminal_TUIProfile/missing (0.00s)
+=== RUN   TestTerminal_NilTUIEnvironmentIsEmpty
+--- PASS: TestTerminal_NilTUIEnvironmentIsEmpty (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	1.106s

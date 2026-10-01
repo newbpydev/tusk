@@ -1,0 +1,21 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestTUIMeasurement'
+# github.com/newbpydev/tusk/internal/tui [github.com/newbpydev/tusk/internal/tui.test]
+internal/tui/measurement_test.go:10:7: undefined: tuiMeasurement
+internal/tui/measurement_test.go:13:2: undefined: summarizeTUI
+internal/tui/measurement_test.go:16:2: undefined: summarizeTUI
+internal/tui/measurement_test.go:19:2: undefined: summarizeTUI
+internal/tui/measurement_test.go:22:2: undefined: summarizeTUI
+internal/tui/measurement_test.go:25:2: undefined: summarizeTUI
+internal/tui/measurement_test.go:29:14: undefined: tuiMeasurement
+FAIL	github.com/newbpydev/tusk/internal/tui [build failed]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.016s [no tests to run]
+FAIL
+make: *** [Makefile:111: test-tui] Error 1

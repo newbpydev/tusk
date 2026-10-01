@@ -1,0 +1,5 @@
+tusk: context canceled
+/usr/bin/env failed with error: exit status 1
+
+A new version of kiro-cli is available: 2.26.0
+Run kiro-cli update to update to the new version

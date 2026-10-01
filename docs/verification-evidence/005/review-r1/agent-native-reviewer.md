@@ -1,0 +1,1 @@
+No agent-native parity gap found. Existing CLI JSON commands expose task creation, editing, lifecycle, hierarchy, filtering, history and consent-aware deletion through the same services/storage. Human-only presentation controls do not require a second interface. No new external service or model integration is warranted.

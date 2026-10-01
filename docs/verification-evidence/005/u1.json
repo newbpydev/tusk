@@ -1,0 +1,53 @@
+{
+  "unit": "U1 / 005-1",
+  "status": "accepted locally",
+  "base_commit": "4f4873c78c484da12f766e700bb69b92f46335a9",
+  "source_sha256": {
+    "Makefile": "07178f11bee578b5e74ebb73ad410c522bf5a6e32f2123794abb8cabd21f9ff1",
+    "go.mod": "4a7edbcffbb047142babe66b191683b31665f60347c23fefcef2d4f7cf8791f0",
+    "go.sum": "4fe808f8bc4061352f6c5ff5c8e7ed63241b77f07018baa3f0cc3235d8bfc23f",
+    "internal/tui/model_test.go": "2588b1e16ca9389279692c98a0a6ae7254b9b764309df896a8a199c63c66e9b8",
+    "internal/tui/compatibility_test.go": "5f6d82a0ba35aac529d85eaf757971f565850f634b0610098e7576fe39fc9485",
+    "internal/tui/model.go": "263a91729b7556a0f056a99b4b0b4dfefad452b2cef91cb538549614393aa3be",
+    "internal/tui/messages.go": "86f4b712824d807a864edb5737f67dadf279cf0b477d992c939db3dd19550142"
+  },
+  "red": [
+    "u1-red-compile.log.gz: missing Bubble Tea dependency",
+    "u1-red-behavior.log.gz: empty cold frame and uninitialized textarea",
+    "u1-red-states.log.gz: missing state frames and canceled wait ignored"
+  ],
+  "green": [
+    "u1-green.log.gz",
+    "u1-minimum-focused.log.gz"
+  ],
+  "canonical": "u1-validate-final.log.gz: make validate build check-generated passed; no coverage exemption",
+  "compatibility": "u1-minimum-go.log.gz: Go 1.25.0 short suite and all five CGO-free application/CLI/TUI test cross-builds passed; foreign binaries not executed",
+  "dependencies": "u1-modules.json records resolved versions and available license file hashes; versioned upstream sources linked in plan",
+  "review": {
+    "mode": "sequential host review per AGENTS tool mapping",
+    "architecture": "View only returns its prepared frame; AST import/global/goroutine guards pass",
+    "purity": "cold and populated textarea deep-state snapshots before 100 View calls; mutation detection checked",
+    "test_harness_fix": "first aggregate run exposed nondeterministic alias traversal in snapshot maps; sorted keys before recursion, retained original failure in u1-validate.log.gz"
+  },
+  "scenarios": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "scope_limits": [
+    "No TUI command or visible application session exists in U1. Owned Kitty desktop preflight succeeded; visible session acceptance begins in U7.",
+    "V06 covers constructor/widget cache purity and structural View guarantee; actual forms/history/modal states must be rechecked when introduced.",
+    "V10 proves cancellable wait primitive; timer/debounce chains belong to U3.",
+    "Navigation, session ownership, Markdown/render seam and forms are not prematurely implemented.",
+    "No native/hosted release proof or performance acceptance claimed."
+  ]
+}

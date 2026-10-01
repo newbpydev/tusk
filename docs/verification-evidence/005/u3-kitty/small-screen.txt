@@ -1,0 +1,1 @@
+Resize to 80×24; Ctrl+C quits

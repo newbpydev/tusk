@@ -1,0 +1,66 @@
+==> Formatting Go files with gofmt -s...
+==> Successfully formatted Go files.
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestForm_RelativeDueEditIsNotStaleNoop|TestFilter_|TestDraft_|TestCalendar_'
+=== RUN   TestCalendar_ChooseAndCancelPreserveDraft
+--- PASS: TestCalendar_ChooseAndCancelPreserveDraft (0.01s)
+=== RUN   TestCalendar_CivilNavigation
+=== RUN   TestCalendar_CivilNavigation/2024-01-31/pgdown
+=== RUN   TestCalendar_CivilNavigation/2025-01-31/pgdown
+=== RUN   TestCalendar_CivilNavigation/2026-03-31/pgup
+=== RUN   TestCalendar_CivilNavigation/2026-12-31/right
+=== RUN   TestCalendar_CivilNavigation/2026-01-01/left
+=== RUN   TestCalendar_CivilNavigation/2026-09-29/up_down_down
+=== RUN   TestCalendar_CivilNavigation/2026-10-15/t
+=== RUN   TestCalendar_CivilNavigation/tomorrow/
+=== RUN   TestCalendar_CivilNavigation/invalid/
+=== RUN   TestCalendar_CivilNavigation//
+=== RUN   TestCalendar_CivilNavigation/0001-01-01/left_up_pgup
+=== RUN   TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown
+--- PASS: TestCalendar_CivilNavigation (0.10s)
+    --- PASS: TestCalendar_CivilNavigation/2024-01-31/pgdown (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2025-01-31/pgdown (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-03-31/pgup (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-12-31/right (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-01-01/left (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-09-29/up_down_down (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/2026-10-15/t (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/tomorrow/ (0.00s)
+    --- PASS: TestCalendar_CivilNavigation/invalid/ (0.00s)
+    --- PASS: TestCalendar_CivilNavigation// (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/0001-01-01/left_up_pgup (0.01s)
+    --- PASS: TestCalendar_CivilNavigation/9999-12-31/right_down_pgdown (0.01s)
+=== RUN   TestCalendar_LocalTodayAndDST
+--- PASS: TestCalendar_LocalTodayAndDST (0.04s)
+=== RUN   TestCalendar_LayoutPurityAndResize
+--- PASS: TestCalendar_LayoutPurityAndResize (0.09s)
+=== RUN   TestCalendar_RealStorageSaveAndUnchangedEdit
+--- PASS: TestCalendar_RealStorageSaveAndUnchangedEdit (0.02s)
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop/today
+=== RUN   TestForm_RelativeDueEditIsNotStaleNoop/tomorrow
+--- PASS: TestForm_RelativeDueEditIsNotStaleNoop (0.01s)
+    --- PASS: TestForm_RelativeDueEditIsNotStaleNoop/today (0.00s)
+    --- PASS: TestForm_RelativeDueEditIsNotStaleNoop/tomorrow (0.00s)
+=== RUN   TestFilter_RelativeDayUsesApplyClock
+--- PASS: TestFilter_RelativeDayUsesApplyClock (0.00s)
+=== RUN   TestFilter_ApplyClearAndLiteralRouting
+--- PASS: TestFilter_ApplyClearAndLiteralRouting (0.02s)
+=== RUN   TestFilter_DayIsResolvedOnlyOnApply
+--- PASS: TestFilter_DayIsResolvedOnlyOnApply (0.00s)
+=== RUN   TestFilter_RefreshAndResizePreserveDraft
+--- PASS: TestFilter_RefreshAndResizePreserveDraft (0.01s)
+=== RUN   TestFilter_FieldNavigationErrorsAndWideInput
+--- PASS: TestFilter_FieldNavigationErrorsAndWideInput (0.04s)
+=== RUN   TestFilter_PlainChoiceHasVisibleFocus
+--- PASS: TestFilter_PlainChoiceHasVisibleFocus (0.00s)
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.346s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.006s [no tests to run]

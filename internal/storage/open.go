@@ -6,7 +6,6 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"os"
 	"sync"
 
 	assets "github.com/newbpydev/tusk/db"
@@ -38,7 +37,7 @@ func Open(ctx context.Context, options Options) (_ *Repository, err error) {
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
-	path, err := resolvePath(options.Path, pathInputs{lookup: os.Getenv, home: os.UserHomeDir, cwd: os.Getwd})
+	path, err := Resolve(options.Path)
 	if err != nil {
 		return nil, err
 	}

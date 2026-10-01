@@ -1,0 +1,128 @@
+diff --git a/Makefile b/Makefile
+index 5e19adb..007a463 100644
+--- a/Makefile
++++ b/Makefile
+@@ -179,10 +179,14 @@ bench-cli: build
+ .PHONY: profile-cli
+ CLI_PROFILE_OUTPUT ?= /tmp/tusk-cli.cpu
+ profile-cli:
+ 	go test ./scripts/cli-bench -run '^$$' -bench '^BenchmarkCLIProfile$$' -benchtime=3s -cpuprofile "$(CLI_PROFILE_OUTPUT)" -o "$(CLI_PROFILE_OUTPUT).test"
+ 
++.PHONY: bench-cli-json
++bench-cli-json:
++	go test ./internal/cli -run '^$$' -bench '^BenchmarkJSON$$' -benchmem -count=3
++
+ .PHONY: check-modules
+ check-modules:
+ 	go mod tidy -diff
+ 
+ .PHONY: test-cli-latency-codec
+diff --git a/internal/cli/json_tasks.go b/internal/cli/json_tasks.go
+index 9991803..c7c96c8 100644
+--- a/internal/cli/json_tasks.go
++++ b/internal/cli/json_tasks.go
+@@ -11,29 +11,40 @@ import (
+ 
+ // Append the explicit task wire schema directly to the invocation's buffer.
+ // A large snapshot need not also allocate a full slice of intermediate DTOs.
+ // Non-ASCII and escaped strings use the standard encoder's exact semantics.
+ func appendJSONString(dst []byte, s string) []byte {
++	// One immutable lookup per byte for the common ASCII path. A '1' means
++	// JSON can copy the byte unchanged, including HTML-safe escaping rules.
++	const safeASCII = "0000000000000000" + // 00–0f: controls
++		"0000000000000000" + // 10–1f: controls
++		"1101110111111111" + // 20–2f: quote, ampersand
++		"1111111111110101" + // 30–3f: angle brackets
++		"1111111111111111" + // 40–4f
++		"1111111111110111" + // 50–5f: backslash
++		"1111111111111111" + // 60–6f
++		"1111111111111111" // 70–7f
+ 	for i := range len(s) {
+ 		c := s[i]
+-		if c < 0x20 || c >= 0x80 || c == '"' || c == '\\' || c == '<' || c == '>' || c == '&' {
++		if c >= 0x80 || safeASCII[c] == '0' {
+ 			encoded, _ := json.Marshal(s) // A string cannot fail JSON encoding.
+ 			return append(dst, encoded...)
+ 		}
+ 	}
+ 	dst = append(dst, '"')
+ 	dst = append(dst, s...)
+ 	return append(dst, '"')
+ }
+ 
+ func appendJSONTime(dst []byte, t time.Time) ([]byte, error) {
+-	t = t.UTC()
+-	if t.Year() < 0 || t.Year() > 9999 {
++	// AppendText validates the RFC3339 year while formatting it, avoiding
++	// separate calendar conversions for the range check and output.
++	var err error
++	dst, err = t.UTC().AppendText(append(dst, '"'))
++	if err != nil {
+ 		return nil, ports.ErrInvalidRecord
+ 	}
+-	dst = append(dst, '"')
+-	dst = t.AppendFormat(dst, time.RFC3339Nano)
+ 	return append(dst, '"'), nil
+ }
+ 
+ func appendOptionalTime(dst []byte, t *time.Time) ([]byte, error) {
+ 	if t == nil {
+diff --git a/internal/cli/json_test.go b/internal/cli/json_test.go
+index c90b4ab..fe7d387 100644
+--- a/internal/cli/json_test.go
++++ b/internal/cli/json_test.go
+@@ -265,10 +265,28 @@ func TestJSON_EncodingParity(t *testing.T) {
+ 			check([]*core.TaskNode{{Task: jsonFixture(), Depth: 1, Children: []*core.TaskNode{{Task: task, Depth: 2}}}})
+ 		}
+ 	}
+ }
+ 
++func BenchmarkJSON(b *testing.B) {
++	nodes := make([]core.TaskNode, 1000)
++	roots := make([]*core.TaskNode, len(nodes))
++	for i := range nodes {
++		nodes[i] = core.TaskNode{Task: jsonFixture(), Depth: 1}
++		nodes[i].Task.Title = strings.Repeat("t", 64)
++		nodes[i].Task.Description = strings.Repeat("n", 128)
++		roots[i] = &nodes[i]
++	}
++	b.ReportAllocs()
++	b.ResetTimer()
++	for range b.N {
++		if _, err := encodeJSON(roots); err != nil {
++			b.Fatal(err)
++		}
++	}
++}
++
+ // Standard-library oracle for the explicit task schema, independent of the
+ // production append encoder. Batch DTO construction is only needed in tests.
+ type nodeJSON struct {
+ 	Task     taskJSON   `json:"task"`
+ 	Children []nodeJSON `json:"children"`
+diff --git a/scripts/cli-bench/profile_test.go b/scripts/cli-bench/profile_test.go
+index 9d54dce..fa3f4b1 100644
+--- a/scripts/cli-bench/profile_test.go
++++ b/scripts/cli-bench/profile_test.go
+@@ -27,12 +27,16 @@ func BenchmarkCLIProfile(b *testing.B) {
+ 			}
+ 			s, err := service.NewTaskService(r, service.Options{Clock: time.Now, NewID: func(time.Time) (string, error) { return "unused", nil }, Location: time.UTC})
+ 			return s, r.Close, err
+ 		},
+ 	}
+-	b.ResetTimer()
+-	for range b.N {
+-		if code := cli.Run(context.Background(), []string{"list", "--all", "--json"}, opts); code != 0 {
+-			b.Fatal(code)
+-		}
++	for _, args := range [][]string{{"list", "--all", "--json"}, {"tree", "--json"}} {
++		b.Run(args[0], func(b *testing.B) {
++			b.ReportAllocs()
++			for range b.N {
++				if code := cli.Run(context.Background(), args, opts); code != 0 {
++					b.Fatal(code)
++				}
++			}
++		})
+ 	}
+ }

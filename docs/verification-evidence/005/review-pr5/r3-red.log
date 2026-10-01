@@ -1,0 +1,85 @@
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestPR5_(Unsized|RunRejects|TestsCannot)|TestTUIProcess_TerminalLifecycle/hangup'
+=== RUN   TestPR5_UnsizedFrameWaitsForTerminal
+    pr5_review_test.go:220: painted assumed terminal dimensions
+--- FAIL: TestPR5_UnsizedFrameWaitsForTerminal (0.00s)
+=== RUN   TestPR5_RunRejectsMissingFactoryBeforeProgram
+    pr5_review_test.go:229: invalid session started program
+--- FAIL: TestPR5_RunRejectsMissingFactoryBeforeProgram (0.00s)
+=== RUN   TestPR5_TestsCannotExitPastRunner
+    pr5_review_test.go:239: kitty_fixture_test.go bypasses test runner with os.Exit
+    pr5_review_test.go:239: kitty_fixture_test.go bypasses test runner with os.Exit
+    pr5_review_test.go:239: kitty_fixture_test.go bypasses test runner with os.Exit
+--- FAIL: TestPR5_TestsCannotExitPastRunner (0.01s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/tui	0.025s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/terminaltext	0.003s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.006s [no tests to run]
+=== RUN   TestTUIProcess_TerminalLifecycle
+=== RUN   TestTUIProcess_TerminalLifecycle/hangup
+    tui_process_linux_test.go:153: exit=-1 want=1 err=signal: hangup
+--- FAIL: TestTUIProcess_TerminalLifecycle (0.62s)
+    --- FAIL: TestTUIProcess_TerminalLifecycle/hangup (0.03s)
+FAIL
+FAIL	github.com/newbpydev/tusk/cmd/tusk	0.625s
+FAIL
+make: *** [Makefile:117: test-tui] Error 1
+go test -v ./internal/cli ./cmd/tusk -run 'TestTerminal_NilTUIEnvironmentIsEmpty'
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.004s [no tests to run]
+=== RUN   TestTerminal_NilTUIEnvironmentIsEmpty
+--- FAIL: TestTerminal_NilTUIEnvironmentIsEmpty (0.00s)
+panic: runtime error: invalid memory address or nil pointer dereference [recovered, repanicked]
+[signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0xb223b7]
+
+goroutine 8 [running]:
+testing.tRunner.func1.2({0x11c0fa0, 0x12bd5b0})
+	/usr/lib/go/src/testing/testing.go:2123 +0x232
+testing.tRunner.func1()
+	/usr/lib/go/src/testing/testing.go:2126 +0x329
+panic({0x11c0fa0?, 0x12bd5b0?})
+	/usr/lib/go/src/runtime/panic.go:859 +0x125
+github.com/newbpydev/tusk/cmd/tusk.tuiProfile(0x0)
+	/home/newbpydev/Development/Xoomby/tusk/cmd/tusk/tui.go:29 +0x17
+github.com/newbpydev/tusk/cmd/tusk.TestTerminal_NilTUIEnvironmentIsEmpty(0x1066d1b22488)
+	/home/newbpydev/Development/Xoomby/tusk/cmd/tusk/tui_profile_test.go:32 +0x1a
+testing.tRunner(0x1066d1b22488, 0x121e650)
+	/usr/lib/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/usr/lib/go/src/testing/testing.go:2258 +0x4d4
+FAIL	github.com/newbpydev/tusk/cmd/tusk	0.007s
+FAIL
+make: *** [Makefile:130: test-cli] Error 1
+go test  -v ./internal/tui ./internal/terminaltext ./internal/cli ./cmd/tusk -run 'TestPR5_InvisibleFormattingIsVisible'
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/tui	0.007s [no tests to run]
+=== RUN   TestPR5_InvisibleFormattingIsVisible
+    text_test.go:92: invisible U+200B not shown
+    text_test.go:92: invisible U+00AD not shown
+    text_test.go:92: invisible U+2060 not shown
+    text_test.go:92: invisible U+2061 not shown
+    text_test.go:92: invisible U+2062 not shown
+    text_test.go:92: invisible U+2063 not shown
+    text_test.go:92: invisible U+2064 not shown
+    text_test.go:92: invisible U+FFF9 not shown
+    text_test.go:92: invisible U+FFFA not shown
+    text_test.go:92: invisible U+FFFB not shown
+    text_test.go:92: invisible U+E0001 not shown
+    text_test.go:92: invisible U+E0020 not shown
+    text_test.go:92: invisible U+E007F not shown
+--- FAIL: TestPR5_InvisibleFormattingIsVisible (0.00s)
+FAIL
+FAIL	github.com/newbpydev/tusk/internal/terminaltext	0.003s
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/internal/cli	0.005s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	github.com/newbpydev/tusk/cmd/tusk	0.006s [no tests to run]
+FAIL
+make: *** [Makefile:117: test-tui] Error 1
