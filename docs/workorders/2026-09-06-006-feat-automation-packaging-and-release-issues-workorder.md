@@ -2,8 +2,8 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Planning complete - implementation and release gates open
-evidence-scope: Planning findings only; no execution scenario passed
+status: Implementation active - U1 locally accepted; U3 next; release gates open
+evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
 
@@ -26,7 +26,7 @@ assignment. No release exception or performance waiver is assumed.
 
 | ID | Source / owner-lens | Severity | Status | Impact / next action | Closure evidence |
 | --- | --- | --- | --- | --- | --- |
-| 006-ISS-001 | R21 / repository owner, licensing | P1 | Open decision | Select first-party license and confirm redistribution rights before U4 license closure/U2 distribution | Owner decision, selected grant and complete replacement-aware notices; V44, V51, V61 |
+| 006-ISS-001 | R21 / repository owner, licensing | P1 | Owner decision recorded; grant/notices pending | Owner selected MIT and confirmed rights on 2026-10-01; U4 owns the grant and inventory before U2 | Owner decision in this session; V44, V51, V61 remain pending |
 | 006-ISS-002 | R2,R23,R24 / release maintainer, portability | P1 | Open verification | Arrange all native target/terminal access before U5; absent hosts block release | Exact-asset native runtime and owned terminal records; V73–V84 |
 | 006-ISS-003 | R29 / repository owner, distribution | P1 | Open decision | Establish accessible tap/destination before U7; proposed tap was not found | Owner-controlled repository/path and Intel/ARM local/live cask proof; V87–V98 |
 | 006-ISS-004 | R28 / repository owner, release | P1 | Open decision | Confirm version/SHA and explicit hosted/release authority at concrete U8 candidate | Authorized identity, draft/asset readback and actual public result; V95–V102 |
@@ -46,10 +46,18 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-018 | Tool/analyzer/runner availability / operations | P1 | Open verification | Freeze verified pins in U1 and prove analyzer compatibility before release; a missing native job stays pending | Verified tool/action digests, exact compiler and successful analysis/native URLs; V03,V12,V13,V60,V65 |
 | 006-ISS-019 | Partial publication/retries / reliability | P1 | Fixed in plan | Reconcile lost responses; preserve published bytes and use a new version for repairs | API failure fixtures and complete draft/public readback; V70,V95–V98,V102 |
 | 006-ISS-020 | Review host mapping / evidence quality | P2 | Recorded constraint | Execute applicable lenses sequentially in main thread; do not claim independent agreement | Review-lens coverage below and explicit independence limitation |
+| 006-ISS-021 | U1 formatting / portability | P1 | Fixed locally | Space/Unicode filenames were split by xargs; replaced with literal find -exec arguments | Observed lstat failures, CRLF/path Green and both compiler canonical gates; U1 receipt |
+| 006-ISS-022 | U1 native identity / correctness | P1 | Fixed locally | Reject target/host mismatch and Windows Go invoked through a Linux/WSL shell | Both impersonation Red fixtures, native preflight Green and fresh canonical gates; U1 receipt |
 
 ---
 
 ## Open gate details
+
+U1's [local receipt](../verification-evidence/006/u1.json) binds source/tool hashes,
+Red/Green, sequential review, Go 1.27.1 and Go 1.25.0 canonical gates and five
+minimum-Go cross-builds. Tool/archive/Action pins and release-compiler analyzer
+support are locally verified for 006-ISS-018; five native hosted job URLs and
+candidate-specific acceptance remain pending. U3 follows the U1 local commit.
 
 ### 006-ISS-001: Project license and redistribution rights
 
@@ -57,9 +65,9 @@ assignment. No release exception or performance waiver is assumed.
 - **Affected:** R21, U4/U2/U7/U8; V44,V51,V61,V93,V95.
 - **Evidence:** No first-party LICENSE exists and live GitHub `licenseInfo` is null. Vendored patches/assets retain separate upstream grants.
 - **Expected:** A selected owner-authorized first-party license plus complete dependency/asset notices accompanies redistributed files.
-- **Decision plan:** MIT is recommended, not applied. Obtain owner's selection and rights confirmation at U4 before adding the grant; retain third-party texts and patch provenance. An incompatible/unclassified obligation requires investigation before packaging distribution.
+- **Decision:** The owner answered “MIT; rights confirmed” on 2026-10-01. U4 may add the MIT grant; retain third-party texts and patch provenance. An incompatible/unclassified obligation requires investigation before packaging distribution.
 - **Closure:** Owner decision recorded without credentials, license detection after publication, complete archive/source notices and replacement-aware inventory checks.
-- **Blocking effect / revisit:** Blocks U4 license closure and U2 distributable closure, not U1/U3 or preparatory documentation. Revisit at U4 intake; no external exception/user acceptance is recorded.
+- **Blocking effect / revisit:** Owner selection is resolved. Grant, inventory and payload verification still gate U4 license closure/U2 distribution. Revisit at U4 intake; no notice or native/publication exception is authorized.
 
 ### 006-ISS-002: Native platforms and real terminal access
 

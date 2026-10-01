@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 005 merged in PR #5 at 42d7c52; Feature 006 planning pack complete, implementation and release gates pending
-**Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; planning complete
-**Active Implementation Target**: None authorized; next is Feature 006 U1 / Unit 006-1 after a new implementation instruction
+**Current Status**: Feature 006 U1 locally accepted; hosted/native release gates pending
+**Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
+**Active Implementation Target**: Feature 006 U3 / Unit 006-3 — Storage-Free Completions and Deterministic Manuals (after the U1 commit)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -464,7 +464,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
 ---
 
 ### Phase 6: Feature 006 - Automation, Packaging & Release
-- **Status**: ⏳ **PLANNING COMPLETE; IMPLEMENTATION AND RELEASE PENDING** (Phases 4 & 5 locally accepted and merged; implementation not authorized)
+- **Status**: ⏳ **IMPLEMENTATION ACTIVE; RELEASE PENDING** (Phases 4 & 5 locally accepted and merged; U1 authorized on 2026-10-01)
 - **Plan**: `docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md`
@@ -473,7 +473,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [x] Deepened Plan, Verification Plan, and Workorder; 30 requirements, eight units, 102 planned scenarios
   - [x] Synchronize product handoffs, registry and masterplan; review applicable lenses sequentially
 - [ ] **6.2 Implementation Units**
-  - [ ] Unit 006-1 / U1: Native CI Matrix and Portable Canonical Tooling
+  - [x] Unit 006-1 / U1: Native CI Matrix and Portable Canonical Tooling — local engineering; exact-SHA hosted/native closure pending
   - [ ] Unit 006-3 / U3: Storage-Free Completions and Deterministic Manuals
   - [ ] Unit 006-4 / U4: README, Installation Guides, Community Files and License Readiness
   - [ ] Unit 006-2 / U2: Reproducible CGO-Free Payloads and Immutable Version Metadata
@@ -496,6 +496,19 @@ its own red/green, applicable review/evidence, synchronized governance and fresh
 `make validate` before its coherent local commit. A local unit checkpoint never
 closes an unexecuted hosted/native/publication gate. Planning and local commits
 do not authorize pushing, tags, GitHub settings changes or release publication.
+
+### Feature 006 U1 local checkpoint — 2026-10-01
+
+Five native runner definitions, a separate Go 1.25.0 job, verified tool/Action
+pins, portable formatting, read-only workflow contracts and native prerequisite
+checks pass the observed negative fixtures. Go 1.27.1 and Go 1.25.0 canonical
+validation/build/generated checks pass, as do all five minimum-Go application
+and test cross-builds. govulncheck v1.4.0 supports the release compiler and finds
+no reachable app vulnerability; its uncalled module finding remains in the log.
+[Receipt](docs/verification-evidence/006/u1.json) retains Red/Green and review.
+Owner selected MIT and confirmed first-party rights; U4 still owns grant/notices.
+The workflow has not been pushed/dispatched. Native job URLs, Windows/macOS
+runtime/terminal proof and release gates remain open; U3 is next after the commit.
 
 ---
 

@@ -6,15 +6,9 @@ cd "${ROOT_DIR}"
 
 echo "==> Formatting Go files with gofmt -s..."
 
-# Find all go files excluding docs/research/legacy-audit/snapshots and vendor
-GO_FILES=$(find . -name "*.go" -not -path "./docs/research/legacy-audit/snapshots/*" -not -path "./vendor/*" || true)
-
-if [ -n "${GO_FILES}" ]; then
-    # Run gofmt -s -w
-    echo "${GO_FILES}" | xargs gofmt -s -w
-    echo "==> Successfully formatted Go files."
-else
-    echo "==> No active Go files found to format."
-fi
+# find -exec preserves filenames on GNU, BSD and MSYS without word splitting.
+find . -name '*.go' -not -path './docs/research/legacy-audit/snapshots/*' \
+    -not -path './vendor/*' -exec gofmt -s -w {} +
+echo "==> Successfully formatted Go files."
 
 exit 0

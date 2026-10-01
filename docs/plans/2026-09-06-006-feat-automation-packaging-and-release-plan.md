@@ -27,8 +27,10 @@ task and find the data/recovery instructions without reading planning artifacts.
 - **Readiness:** Decisions and test contracts are ready for implementation. Execution, native acceptance, hosted checks and publication are unexecuted. U1 can start after an implementation instruction; license and distribution gates apply at their named boundaries.
 - **Sequence:** U1 → U3 → U4 → U2 → U6 → U5 → U7 → U8. U1/U2/U3 preserve the original CI/packaging/completion identities.
 
-This request authorizes planning. GitHub metadata changes, README implementation,
-workflow dispatch, commits, pushes, tags and release publication are future work.
+The original request authorized planning. The 2026-10-01 `ce-work` invocation
+authorizes local implementation and validated per-unit commits in the declared
+order. GitHub metadata changes, workflow dispatch, pushes, tags and release
+publication retain their separate concrete-candidate authorization gates.
 
 ---
 
@@ -239,6 +241,12 @@ target names below are defined in the verification plan; none is runnable yet.
 
 **Reviews:** Architecture, portability, correctness, supply-chain security, testing, simplicity.
 
+**Local checkpoint (2026-10-01):** [U1 receipt](../verification-evidence/006/u1.json)
+records the observed failing fixtures, both compiler canonical gates, five
+minimum-Go cross-builds and digest-pinned govulncheck v1.4.0 compatibility.
+Hosted native execution remains pending; this checkpoint does not close release
+acceptance. U3 starts after U1's coherent local commit.
+
 ### U3. Storage-free completions and deterministic manuals
 
 **Goal / requirements:** R13–R16, R30; product U23 completion boundary.
@@ -407,7 +415,7 @@ essential unknown becomes a workorder gate, not an invented field value.
 
 ## Open Decisions, Dependencies and Risks
 
-- **License/rights:** Owner chooses license and confirms redistribution authority before U4 license closure/U2 distribution. MIT is a proposal, not an applied grant; 006-ISS-001.
+- **License/rights:** Owner selected MIT and confirmed first-party redistribution authority on 2026-10-01. U4 still owns the grant and complete replacement-aware notices before U2 distribution; 006-ISS-001.
 - **Native access:** Release maintainer arranges all five native targets and required terminal sessions before U5; blocked/absent results remain pending; 006-ISS-002.
 - **Tap ownership:** Owner establishes or supplies the accessible tap before U7. Proposed destination was not found during inspection; 006-ISS-003.
 - **Release identity/authority:** Owner confirms actual version, SHA and hosted actions against U8's completed candidate. Proposed v0.3.0 is not a pushed tag; 006-ISS-004.

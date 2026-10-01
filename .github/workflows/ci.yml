@@ -1,0 +1,147 @@
+{
+  "name": "Native CI",
+  "on": {
+    "pull_request": {
+      "branches": [
+        "main"
+      ]
+    },
+    "push": {
+      "branches": [
+        "main"
+      ]
+    },
+    "workflow_dispatch": {}
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "concurrency": {
+    "group": "native-ci-${{ github.workflow }}-${{ github.ref }}",
+    "cancel-in-progress": true
+  },
+  "jobs": {
+    "native": {
+      "timeout-minutes": 30,
+      "defaults": {
+        "run": {
+          "shell": "bash"
+        }
+      },
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOTOOLCHAIN": "local",
+        "TUSK_CI_OS": "${{ matrix.os }}",
+        "TUSK_CI_ARCH": "${{ matrix.arch }}",
+        "TUSK_CI_GO": "1.27.1"
+      },
+      "name": "${{ matrix.os }}/${{ matrix.arch }} — release compiler",
+      "runs-on": "${{ matrix.runner }}",
+      "strategy": {
+        "fail-fast": false,
+        "matrix": {
+          "include": [
+            {
+              "runner": "ubuntu-24.04",
+              "os": "linux",
+              "arch": "amd64"
+            },
+            {
+              "runner": "ubuntu-24.04-arm",
+              "os": "linux",
+              "arch": "arm64"
+            },
+            {
+              "runner": "macos-15-intel",
+              "os": "darwin",
+              "arch": "amd64"
+            },
+            {
+              "runner": "macos-15",
+              "os": "darwin",
+              "arch": "arm64"
+            },
+            {
+              "runner": "windows-2025",
+              "os": "windows",
+              "arch": "amd64"
+            }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "name": "Checkout",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Windows native tooling",
+          "if": "runner.os == 'Windows'",
+          "run": "test -x /c/msys64/usr/bin/make.exe\ntest -x /c/msys64/mingw64/bin/gcc.exe\nprintf '%s\\n' \"C:/msys64/mingw64/bin\" \"C:/msys64/usr/bin\" >> \"$GITHUB_PATH\""
+        },
+        {
+          "name": "Release compiler",
+          "uses": "actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "with": {
+            "go-version": "1.27.1",
+            "cache": true
+          }
+        },
+        {
+          "name": "Workflow tooling",
+          "run": "make setup-ci"
+        },
+        {
+          "name": "Canonical gates",
+          "run": "make setup preflight-ci setup-sqlc validate build check-generated check-ci\nmake check-ci-drift"
+        },
+        {
+          "name": "Release-compiler vulnerability analysis",
+          "if": "matrix.os == 'linux' && matrix.arch == 'amd64'",
+          "run": "make setup-vulnerabilities check-vulnerabilities\nmake check-ci-drift"
+        }
+      ]
+    },
+    "minimum": {
+      "timeout-minutes": 30,
+      "defaults": {
+        "run": {
+          "shell": "bash"
+        }
+      },
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOTOOLCHAIN": "local",
+        "TUSK_CI_OS": "linux",
+        "TUSK_CI_ARCH": "amd64",
+        "TUSK_CI_GO": "1.25.0"
+      },
+      "name": "Linux — minimum compiler and five-target cross-builds",
+      "runs-on": "ubuntu-24.04",
+      "steps": [
+        {
+          "name": "Checkout",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Minimum compiler",
+          "uses": "actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "with": {
+            "go-version": "1.25.0",
+            "cache": true
+          }
+        },
+        {
+          "name": "Canonical gates",
+          "run": "make setup preflight-ci setup-sqlc validate build check-generated build-tui\nmake check-ci-drift"
+        }
+      ]
+    }
+  }
+}

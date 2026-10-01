@@ -2,8 +2,8 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Planned - not executed
-evidence-scope: Planning inspection only; all 102 execution scenarios pending
+status: Implementation active - U1 locally accepted; U3 next
+evidence-scope: Five local U1 scenario closures; hosted/native release gates pending
 deepened: 2026-10-01
 ---
 
@@ -19,7 +19,7 @@ behavior; the [workorder](../workorders/2026-09-06-006-feat-automation-packaging
 records defects and external gates. [MASTERPLAN.md](../../MASTERPLAN.md) alone
 activates units and records completion.
 
-All scenarios below are unexecuted. Planning inspected source, local/remote SHA,
+At implementation intake all scenarios below are unexecuted. Planning inspected source, local/remote SHA,
 GitHub settings/workflows/releases and official tool documentation. No build,
 application test, canonical validation, benchmark, native/Kitty check or hosted
 mutation occurred. Historical Feature 002–005 receipts remain labeled with their
@@ -111,19 +111,21 @@ without checking the umbrella item.
 - [ ] 006-V01 **Triggers:** PR to main, main push and explicit dispatch select CI; unrelated tag/branch events do not publish anything.
 - [ ] 006-V02 **Fork/permissions:** Read-only fork PR executes quality checks with no release/tap secrets or write permission; no privileged PR-code checkout.
 - [ ] 006-V03 **Five native jobs:** Each pinned runner reports the expected OS/arch and release compiler, runs setup/validate/generated check/build, and emits current-SHA job URLs; a missing job fails acceptance.
-- [ ] 006-V04 **Minimum compiler:** Go 1.25.0 full canonical checks run on Linux and existing `build-tui` compiles application/tests for all five targets; release builds use the separate pinned compiler.
+- [x] 006-V04 **Minimum compiler:** Go 1.25.0 full canonical checks run on Linux and existing `build-tui` compiles application/tests for all five targets; release builds use the separate pinned compiler.
 - [ ] 006-V05 **Windows prerequisite normal/negative:** Git Bash, GNU Make and native GCC match the Windows Go environment; missing compiler/Make or wrong native architecture fails with actionable diagnostics before a false green race job.
 - [ ] 006-V06 **Checkout portability:** Space/Unicode paths and LF/CRLF fixtures preserve Go sources and script behavior on GNU/BSD/MSYS tooling; reproduce any incompatibility before changing scripts.
-- [ ] 006-V07 **Formatting drift:** A deliberately unformatted tracked fixture fails the post-format source-diff gate; CI cannot quietly repair and pass.
+- [x] 006-V07 **Formatting drift:** A deliberately unformatted tracked fixture fails the post-format source-diff gate; CI cannot quietly repair and pass.
 - [ ] 006-V08 **Generator drift:** Wrong sqlc pin, changed queries/schema, missing/extra generated file and fake generator failure fail their appropriate canonical checks without replacing accepted generated code.
 - [ ] 006-V09 **Module drift:** Dependency metadata changes fail `check-modules`; local replace trees are present and third-party source remains unchanged after checks.
 - [ ] 006-V10 **Coverage/race:** Missing tests, nonexempt coverage below 95% and a race-fixture failure propagate; no new coverage exemption masks a release helper/package.
-- [ ] 006-V11 **Gate propagation:** Failed fmt/vet/test/race/coverage/script child commands cannot yield a successful aggregate workflow result; logs name the failed gate.
-- [ ] 006-V12 **Immutable action/tool pins:** Missing/full-SHA mismatch/floating action ref and missing version/digest fail configuration checks; pins are verified against the upstream repository/release asset.
-- [ ] 006-V13 **Tool setup recovery:** Network failure, truncated archive, wrong hash or missing tool cannot execute unverified bytes or overwrite the last accepted tool; retry uses an owned cache path.
+- [x] 006-V11 **Gate propagation:** Failed fmt/vet/test/race/coverage/script child commands cannot yield a successful aggregate workflow result; logs name the failed gate.
+- [x] 006-V12 **Immutable action/tool pins:** Missing/full-SHA mismatch/floating action ref and missing version/digest fail configuration checks; pins are verified against the upstream repository/release asset.
+- [x] 006-V13 **Tool setup recovery:** Network failure, truncated archive, wrong hash or missing tool cannot execute unverified bytes or overwrite the last accepted tool; retry uses an owned cache path.
 - [ ] 006-V14 **Fresh source:** Fresh checkout and tagged-source fixtures retain Bubble Tea/Glamour replacement trees and gallery bytes without requiring unavailable LFS hydration; build input inventory detects absent patch files.
 - [ ] 006-V15 **Cancellation/cache/log hygiene:** Superseded PR runs can cancel; the matrix still reports independent failures. No executable promotion cache, secret/environment dump, stale job or skipped platform is treated as current evidence.
 - [ ] 006-V16 **U1 closure:** Fresh canonical/generator/native/minimum checks and sequential portability/security review bind the unit SHA and tool lock; synchronize governance before the U1 commit while missing hosted execution remains pending.
+
+U1 [local receipt](../verification-evidence/006/u1.json) closes the five focused/aggregate scenarios checked above. Other U1 scenarios retain their local partial evidence there while required hosted/native portions remain pending. No native Windows/macOS execution or workflow dispatch is claimed.
 
 ### U3 — Static shell completions and manuals
 

@@ -1,6 +1,22 @@
 .DEFAULT_GOAL := all
 .PHONY: all setup fmt vet test test-unit test-compat build-storage race validate coverage bench bench-tree bench-build build clean help
 .PHONY: setup-sqlc generate check-generated test-scripts bench-storage
+.PHONY: test-ci
+test-ci:
+	bash scripts/test/test_ci.sh
+
+.PHONY: setup-ci preflight-ci check-ci check-ci-drift
+setup-ci:
+	bash scripts/ci-check.sh setup
+
+preflight-ci:
+	bash scripts/ci-check.sh preflight
+
+check-ci:
+	bash scripts/ci-check.sh check
+
+check-ci-drift:
+	bash scripts/ci-check.sh drift
 .PHONY: build-service bench-service
 
 build-service:
@@ -37,6 +53,7 @@ check-schema-catalog:
 test-scripts:
 	@./scripts/test/test_scripts.sh
 	@bash scripts/test/test_sqlc.sh
+	@bash scripts/test/test_ci.sh
 
 all: validate build
 
@@ -152,6 +169,8 @@ help:
 	@echo "Tusk Canonical Build & Quality Gates"
 	@echo "===================================="
 	@echo "make setup     - Verify environment and Go toolchain"
+	@echo "make setup-ci preflight-ci check-ci - Pinned workflow tooling and native CI contract"
+	@echo "make test-ci check-ci-drift - Negative CI fixtures and post-gate source drift"
 	@echo "make fmt       - Format all Go source files"
 	@echo "make vet       - Run go vet static analysis"
 	@echo "make test      - Run all tests"
@@ -200,8 +219,11 @@ CLI_CONDITIONS_OUTPUT ?= /tmp/tusk-cli-conditions.json
 bench-cli-conditions: build
 	TUSK_CLI_CONDITIONS=1 TUSK_CLI_BINARY="$(abspath $(BUILD_OUTPUT))" TUSK_CLI_CONDITIONS_OUTPUT="$(abspath $(CLI_CONDITIONS_OUTPUT))" go test -v ./scripts/cli-bench -run '^TestCLIConditions$$' -count=1
 
-# Use a toolchain supported by the installed govulncheck source analyzer:
-# GOTOOLCHAIN=go1.25.13 make check-vulnerabilities
-.PHONY: check-vulnerabilities
+# The pinned analyzer must support the actual release compiler.
+.PHONY: setup-vulnerabilities check-vulnerabilities
+setup-vulnerabilities:
+	bash scripts/ci-check.sh setup-vulnerabilities
+
+VULNCHECK_BIN ?= bin/tools/govulncheck
 check-vulnerabilities:
-	govulncheck ./cmd/tusk
+	"$(VULNCHECK_BIN)" ./cmd/tusk
