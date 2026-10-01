@@ -120,3 +120,29 @@ readiness is claimed. Review fixes are committed independently of the remaining
 CLI performance investigation and hosted settlement. The owner has been asked
 whether to continue that investigation or finish review handling and pause with
 latency blocked. Native/hosted release proof remains Feature 006.
+
+### PR #5 hosted follow-up R7 and receipt correction (2026-10-01)
+
+The reviewer's explicit-exemption alternative is adopted for shaping marks and
+variation selectors. Passing-before-change regressions pin all cited ranges and
+composed Mongolian, Khmer, combining-mark, ideographic and emoji strings. The
+sanitizer comment documents their retention and the use of opaque task IDs for
+identity. This is a policy/test clarification with no runtime behavior change,
+so no failing runtime defect is claimed. Glyph-selection rationale is grounded
+in the [Unicode variation FAQ](https://www.unicode.org/faq/vs.html) and
+[UTS #37](https://www.unicode.org/reports/tr37/).
+
+Receipt correction: both R4 fixture quit attempts stopped at the dirty-draft
+Discard prompt. Their raw draft/pause-refresh captures remain valid, but the
+original clean-quit statement was premature. Both owned fixtures were later
+explicitly discarded (Tab, Enter) and quit (q); process exit was verified and is
+retained in r4-kitty-quit-correction.json. They ran during the later CLI matrices;
+the initial R3 failures predate them. All failed matrices remain unchanged. The
+next balanced-profile CLI matrix will run with these owned fixtures closed.
+
+The fresh R6 TUI matrix passes 78/78 cases plus startup, with its full source
+manifest and samples retained. R7 changes only a comment and test coverage;
+production logic matches that measured R6 runtime. Minimum-Go focused race tests
+also pass. `make validate build check-generated` passes for R7 before commit.
+CLI acceptance and hosted settlement remain pending; native/release proof stays
+with Feature 006.

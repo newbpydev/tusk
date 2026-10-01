@@ -2,7 +2,7 @@
 
 **Current Status**: Feature 005 PR #5 review fixes R1–R3 verified; current CLI latency acceptance and hosted settlement remain open
 **Active Phase**: Feature 005 hosted PR review; Phase 6 planning awaits instruction
-**Active Implementation Target**: PR #5 CLI performance investigation and hosted settlement; owner pause preference pending
+**Active Implementation Target**: PR #5 latency verification with owned fixtures closed and hosted settlement; owner pause preference pending
 
 - [x] PR #5 review unit R1: stale-form save feedback, delete-dialog refresh and failed-toggle write pause.
 - [x] PR #5 review unit R2: navigation, input and presentation consistency.
@@ -10,6 +10,7 @@
 - [x] PR #5 follow-up R4: clear completed recovery/input messages and use dialog-neutral retry wording.
 - [x] PR #5 follow-up R5: expose remaining blank filler/format characters while preserving script composition.
 - [x] PR #5 follow-up R6: clear the matching failed-read browse notice after successful refresh.
+- [x] PR #5 follow-up R7: document and test intentional script-shaping/variation exemptions.
 - [ ] Restore and verify current-candidate CLI latency acceptance; retain failed/control matrices.
 - [ ] Settle all observed PR #5 feedback and current-head checks; final merge remains user-owned.
 

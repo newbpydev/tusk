@@ -1,0 +1,14 @@
+[
+  {
+    "socket": "unix:/tmp/tusk-005-pr5-r4-0nz638vr/kitty.sock",
+    "pid": 412663,
+    "action": "Tab selects Discard, Enter discards unsaved fixture draft, q quits browse",
+    "process_exited": true
+  },
+  {
+    "socket": "unix:/tmp/tusk-005-pr5-r4-x8r9bzm4/kitty.sock",
+    "pid": 420373,
+    "action": "Tab selects Discard, Enter discards unsaved fixture draft, q quits browse",
+    "process_exited": true
+  }
+]

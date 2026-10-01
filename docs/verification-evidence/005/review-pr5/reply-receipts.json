@@ -262,5 +262,13 @@
     "reply_url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157838975",
     "verdict": "fixed",
     "commit": "116825a"
+  },
+  {
+    "comment_id": 4157780666,
+    "thread_id": "PRRT_kwDOUQoUDc6oCKcR",
+    "reply_id": 4157908493,
+    "reply_url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157908493",
+    "verdict": "fixed",
+    "commit": "24b0962"
   }
 ]

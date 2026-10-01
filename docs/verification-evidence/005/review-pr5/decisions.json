@@ -304,5 +304,14 @@
     "verdict": "fixed",
     "unit": "R6",
     "reason": "Successful forest refresh now clears the exact matching failedReadMessage from the browse footer as well as the modal error. Red/Green covers both delete retry keys and retains unrelated write-receipt notices."
+  },
+  {
+    "comment_id": 4157880196,
+    "path": "internal/terminaltext/text.go",
+    "url": "https://github.com/newbpydev/tusk/pull/5#discussion_r4157880196",
+    "quote": "**SUGGESTION:** Default-ignorable characters beyond the newly expanded set still render blank",
+    "verdict": "fixed-differently",
+    "unit": "R7",
+    "reason": "Took the suggested explicit-exemption alternative. The sanitizer comment now defines the boundary, and passing-before-change regressions preserve all requested shaping/variation ranges plus composed Mongolian, Khmer, combining-mark, ideographic and emoji strings. Escaping selectors would change legitimate glyph selection. No runtime behavior changed; opaque task IDs, not normalized display text, identify tasks. Unicode guidance: https://www.unicode.org/faq/vs.html and https://www.unicode.org/reports/tr37/."
   }
 ]

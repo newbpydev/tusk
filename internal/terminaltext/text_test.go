@@ -98,3 +98,17 @@ func TestPR5_InvisibleFormattingIsVisible(t *testing.T) {
 		t.Fatal("ZWJ emoji broken")
 	}
 }
+
+func TestPR5_ShapingAndVariationExemptions(t *testing.T) {
+	for _, r := range []rune{0x034f, 0x17b4, 0x17b5, 0x180b, 0x180c, 0x180d, 0x180f, 0xfe00, 0xfe0f, 0xe0100, 0xe01ef, 0x200c, 0x200d} {
+		raw := "a" + string(r) + "b"
+		if terminaltext.Scalar(raw) != raw || terminaltext.Multiline(raw) != raw {
+			t.Errorf("shaping exemption %U altered", r)
+		}
+	}
+	for _, raw := range []string{"☑️", "👩‍💻", "葛\U000e0100", "ᠠ\u180b", "a\u034f\u0301", "ក\u17b4", "ا\u200cب"} {
+		if terminaltext.Scalar(raw) != raw || terminaltext.Multiline(raw) != raw {
+			t.Errorf("composed text altered: %q", raw)
+		}
+	}
+}

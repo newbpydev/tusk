@@ -8,6 +8,10 @@ import (
 	"unicode/utf8"
 )
 
+// Escape terminal controls, directional overrides and the explicit blank fillers
+// below. Shaping marks (CGJ, Khmer vowels, Mongolian selectors), variation
+// selectors and ZWJ/ZWNJ stay intact: they can select meaningful glyphs. This
+// display boundary does not canonicalize text identity; task IDs identify tasks.
 func control(r rune) bool {
 	return r < 32 || r >= 127 && r <= 159 || r == 0x00ad || r == 0x115f || r == 0x1160 || r == 0x180e || r == 0x3164 || r == 0xffa0 || r == 0x200b || r >= 0x2060 && r <= 0x206f || r >= 0xfff9 && r <= 0xfffb || r == 0xe0001 || r >= 0xe0020 && r <= 0xe007f || r == 0x061c || r == 0x200e || r == 0x200f || r == 0xfeff || r == 0x2028 || r == 0x2029 || r >= 0x202a && r <= 0x202e
 }
