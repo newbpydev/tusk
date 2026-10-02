@@ -15,7 +15,7 @@ control. The sanctioned `r10-jq-crlf-model.sh` replay recipe selects the PATH jq
 before prepending the wrapper directory and passes that selector to its children.
 Use the recipe with `TUSK_CHECKOUT` set to the owned checkout root; invoking the
 wrapper directly also requires the exported selector shown above.
-This capability is a prerequisite of this historical control,
+The `--binary` capability is a prerequisite of this historical control,
 not of Tusk's Unix maintainer scripts, which omit the Windows-only flag.
 
 The separate retained legacy Unix control rejects that option and checks the

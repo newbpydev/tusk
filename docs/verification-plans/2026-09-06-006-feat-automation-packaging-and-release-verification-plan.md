@@ -2,8 +2,8 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: PR 6 published; twelfth complete report batch locally validated; fresh hosted/native/release gates open
-evidence-scope: 51 local scenario closures; twelve complete PR 6 report batches locally remediated; final canonical pass; fresh hosted/native/release proof pending
+status: PR 6 published; thirteenth complete report batch locally validated; fresh hosted/native/release gates open
+evidence-scope: 51 local scenario closures; thirteen complete PR 6 report batches locally remediated; final canonical pass; fresh hosted/native/release proof pending
 deepened: 2026-10-01
 ---
 
@@ -932,3 +932,20 @@ logs remain unchanged. Product behavior and acceptance thresholds remain unchang
 
 The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
 gates remain unchanged. See [the R12 receipt](../verification-evidence/006/pr6-r12/acceptance.json).
+
+### PR #6 thirteenth complete report-batch correction (2026-10-02)
+
+All seven reports on `83c8635b198ac8e84e5083483269a49064ced694` completed and
+passed before this combined assessment. Kilo confirms the five preceding fixes
+and identifies one P3 wording issue in the historical jq model README. Naming
+the `--binary` capability directly removes an ambiguous referent. The selected
+tool, capability contract, original wrapper bytes and measured logs are unchanged.
+The trajectory assessment distinguishes this prose correction from the satisfied
+model-tool identity invariant; it requires no third runtime repair.
+
+- [x] Wait for the complete seven-report set before changes or replies.
+- [x] Correct the capability referent and pass canonical validation/document checks.
+- [ ] Settle fresh hosted reports after publication.
+
+The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
+gates remain unchanged. See [the R13 receipt](../verification-evidence/006/pr6-r13/acceptance.json).

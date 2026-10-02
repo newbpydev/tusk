@@ -1104,3 +1104,20 @@ logs remain unchanged. Product behavior and acceptance thresholds remain unchang
 
 The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
 gates remain unchanged. See [the R12 receipt](../verification-evidence/006/pr6-r12/acceptance.json).
+
+### PR #6 thirteenth complete report-batch correction (2026-10-02)
+
+All seven reports on `83c8635b198ac8e84e5083483269a49064ced694` completed and
+passed before this combined assessment. Kilo confirms the five preceding fixes
+and identifies one P3 wording issue in the historical jq model README. Naming
+the `--binary` capability directly removes an ambiguous referent. The selected
+tool, capability contract, original wrapper bytes and measured logs are unchanged.
+The trajectory assessment distinguishes this prose correction from the satisfied
+model-tool identity invariant; it requires no third runtime repair.
+
+- [x] Wait for the complete seven-report set before changes or replies.
+- [x] Correct the capability referent and pass canonical validation/document checks.
+- [ ] Settle fresh hosted reports after publication.
+
+The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
+gates remain unchanged. See [the R13 receipt](../verification-evidence/006/pr6-r13/acceptance.json).

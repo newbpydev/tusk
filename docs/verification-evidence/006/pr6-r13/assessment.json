@@ -1,0 +1,193 @@
+{
+  "source_thread": "PRRT_kwDOUQoUDc6ohWNU",
+  "root_comment_id": 4170615076,
+  "verdict": "fixed",
+  "severity": "P3",
+  "invariant_key": "retained-evidence-explicit-referent",
+  "trajectory": {
+    "recurring_checks": [
+      {
+        "key": "Native CI/linux/amd64 \u2014 release compiler",
+        "recur": 1
+      },
+      {
+        "key": "Native CI/linux/arm64 \u2014 release compiler",
+        "recur": 1
+      },
+      {
+        "key": "Native CI/darwin/amd64 \u2014 release compiler",
+        "recur": 1
+      },
+      {
+        "key": "Native CI/Linux \u2014 minimum compiler and five-target cross-builds",
+        "recur": 1
+      }
+    ],
+    "check_recur_max": 1,
+    "unresolved_threads": 1,
+    "unresolved_series": [
+      0,
+      3,
+      0,
+      5,
+      0,
+      1
+    ],
+    "unresolved_trend": "rising",
+    "new_threads_this_tick": 1,
+    "stream_alternations": 4,
+    "heads_since_progress": 0,
+    "invariant_rounds": [
+      {
+        "key": "aggregate-propagation-fixture",
+        "rounds": 1
+      },
+      {
+        "key": "cached-tool-staging",
+        "rounds": 1
+      },
+      {
+        "key": "candidate-output-ownership",
+        "rounds": 1
+      },
+      {
+        "key": "candidate-verifier-rejection",
+        "rounds": 1
+      },
+      {
+        "key": "cask-executable-member",
+        "rounds": 1
+      },
+      {
+        "key": "cask-terminator-fixture",
+        "rounds": 1
+      },
+      {
+        "key": "copied-release-inventory",
+        "rounds": 1
+      },
+      {
+        "key": "cross-build-evidence-identity",
+        "rounds": 1
+      },
+      {
+        "key": "docs-prerequisite-mutation",
+        "rounds": 1
+      },
+      {
+        "key": "due-claim-portability",
+        "rounds": 1
+      },
+      {
+        "key": "fixture-compiler-pin",
+        "rounds": 1
+      },
+      {
+        "key": "homebrew-hostile-environment-coverage",
+        "rounds": 1
+      },
+      {
+        "key": "interrupted-audit-status",
+        "rounds": 1
+      },
+      {
+        "key": "measurement-no-rebuild",
+        "rounds": 1
+      },
+      {
+        "key": "native-ci-docs-scope",
+        "rounds": 1
+      },
+      {
+        "key": "native-fixture-diagnostics",
+        "rounds": 1
+      },
+      {
+        "key": "native-fixture-lint-coverage",
+        "rounds": 1
+      },
+      {
+        "key": "native-fixture-portability",
+        "rounds": 1
+      },
+      {
+        "key": "native-fixture-stall-contract",
+        "rounds": 1
+      },
+      {
+        "key": "native-github-fixture-status",
+        "rounds": 1
+      },
+      {
+        "key": "native-identity-negative-coverage",
+        "rounds": 1
+      },
+      {
+        "key": "native-json-output-portability",
+        "rounds": 1
+      },
+      {
+        "key": "notices-stage-cleanup",
+        "rounds": 1
+      },
+      {
+        "key": "planning-current-status",
+        "rounds": 1
+      },
+      {
+        "key": "planning-evidence-scope",
+        "rounds": 1
+      },
+      {
+        "key": "populated-timezone-data",
+        "rounds": 1
+      },
+      {
+        "key": "powershell-optional-string",
+        "rounds": 1
+      },
+      {
+        "key": "provenance-compiler",
+        "rounds": 1
+      },
+      {
+        "key": "release-executable-selection",
+        "rounds": 1
+      },
+      {
+        "key": "release-overlay-digest",
+        "rounds": 1
+      },
+      {
+        "key": "release-system-libraries",
+        "rounds": 2
+      },
+      {
+        "key": "release-version-binding",
+        "rounds": 2
+      },
+      {
+        "key": "retained-model-tool-identity",
+        "rounds": 2
+      },
+      {
+        "key": "root-flag-completion",
+        "rounds": 1
+      },
+      {
+        "key": "screenshot-provenance",
+        "rounds": 1
+      },
+      {
+        "key": "shipped-governance-links",
+        "rounds": 1
+      },
+      {
+        "key": "tool-download-rejection",
+        "rounds": 1
+      }
+    ]
+  },
+  "assessment": "Current Kilo report explicitly confirms the MODEL_REAL_JQ selector/probe contract is satisfied. This wording-only dangling referent is a separate prose clarity defect; it does not continue the two-round retained-model-tool-identity root. No tool behavior, prerequisite or measured byte changes. Full report set is complete and green; no oscillating failure or unsatisfied runtime invariant remains. Bounded class: this single capability-reference sentence in the changed historical model README.",
+  "red_test": "Not applicable: prose-only correction; no implementation change."
+}
