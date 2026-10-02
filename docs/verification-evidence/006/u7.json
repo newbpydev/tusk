@@ -1,0 +1,89 @@
+{
+  "unit": "U7 / 006-7",
+  "status": "local engineering accepted; native macOS/tap unit pending",
+  "utc": "2026-10-02T02:03:58.219016+00:00",
+  "base_commit": "ec2d4f80ee60412131e31102ed16afbfb463d173",
+  "source_sha256": {
+    ".goreleaser.yaml": "f7089ba61b1186f855247bb30c513e95005a0325c9fc868d217cf3a045bb7c74",
+    ".github/workflows/release.yml": "af62b38b73dd56d662a436b2b3ef065dfb1ea404c33782657ae589dbf6f8e955",
+    "scripts/release.sh": "cd8a2dceeeed4ecea94298436614b4fffb6f736305033ef181abe8332b29c8a6",
+    "scripts/releasecheck/main.go": "7b32c031ab164cb0042e8ab5fe2a92b1f4325eedd18bde60a5c48e07f444d98b",
+    "scripts/releasecheck/cask.go": "8226980f19cf5c7c8b3a99b15e07b9357713e00674ddeca64d059c64a2dc2b20",
+    "scripts/releasecheck/cask_test.go": "b72af18d99d7e7b509aefd7e2f6b0a12c3e3f1314349a81ca3459b1251ed75f1",
+    "scripts/candidate.sh": "06bda159ed88f2359db7539bf2fc01b08c9233cda07ccf07d93e9d0636b924dd",
+    "scripts/test/test_candidate.sh": "ea815f4c722780140feab2d8cf457ff8745385f4f0446e4601320b63e21401c1",
+    "scripts/homebrew.sh": "4fb9d0618d477346a9ad6725d8f5061775095056c8255b0284313f3c9e393d4a",
+    "scripts/test/test_homebrew.sh": "b6fb5dd6df17b3536b634a64ddc7f931a4f1cfec8dad025f7dd0b815e986103a",
+    "Makefile": "ae39e2c9e87b7ae8ca6382cbf706094b82fb7a7c9fa7e5fff2971dee0c9b11f1",
+    "docs/releasing.md": "d51eccb5e35fd20f18fa68820061c418b26a0c5b53bd3be539cb49d036052221",
+    "docs/install.md": "d921d537a379f554cae3967b9b8bfd880711da029118751b1fc84f3bd1c5e834"
+  },
+  "observed_red": [
+    "cask helper undefined; Make target absent",
+    "missing/unattested cask was accepted by U6 verifier",
+    "real packager ARM-before-Intel ordering differed from first auditor",
+    "pinned no-zap comment required exact allowance; failed generated cask retained before audit"
+  ],
+  "green": "Go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow exit0; Go1.25 current cask/workflow component checks exit0; real pinned GoReleaser packaging C passed all five archives, complete source, nine assets and cask audit",
+  "preliminary_package": {
+    "private_source_sha": "ef7d45aa02c4b132ac52dab8845675ed41c49ab2",
+    "manifest_sha256": "1fe2e00b9ea531bec5c8039f3c08bebaaf5e91a5b1197ac4f01eb254260f6add",
+    "cask_sha256": "a90d275866e159cd268846735d6d3e43bc5fb478e2a357bb884610eb8d0eb3f4",
+    "location": "/tmp/tusk-006-u7-candidate-c",
+    "trusted_hosted": false,
+    "failed_packages": "A/B remain failed; superseded validation logs terminated143 before current complete gate"
+  },
+  "candidate_extension": "Separate macOS build/archive IDs; public inventory still exactly9 files. Cask added beside assets, run-bound SHA256 and same-workflow attestation required. Earlier U6 receipts are historical policy evidence. New hosted candidate mandatory.",
+  "tap": "Read-only current API HTTP404: missing/inaccessible; 006-ISS-003 remains open; no tap writes",
+  "review": {
+    "distribution": "exact five payloads; cask macOS-only, architecture URLs/hashes audited against full inspected manifest; native Ruby/Brew not installed/executed",
+    "data_integrity": "binary/manual/static completion installation only; no hooks/uninstall/zap/security bypass; wrong architecture/hash/extra Ruby and missing payload refuse",
+    "security": "nonblank statement audit keeps line/comment boundaries; exact config pins skip_upload and no tokens; cask included in upload/attestation subjects and verifier digest checks",
+    "reliability": "new render output outside source/candidate, immutable output files, generated failures retained before audit, tap failure named and separate",
+    "simplicity": "existing inspector/manifest reused; build/archive separation requires explicit duplicated payload config; no runtime dependencies or app changes",
+    "independence": "Sequential main-thread review; no independent peer claimed"
+  },
+  "local_scenario_closures": [],
+  "pending": [
+    "006-V87",
+    "006-V88",
+    "006-V89",
+    "006-V90",
+    "006-V91",
+    "006-V92",
+    "006-V93",
+    "006-V94"
+  ],
+  "logs": [
+    "u7-cask-order-green.log.gz",
+    "u7-cask-order-red.log.gz",
+    "u7-cask-provenance-green.log.gz",
+    "u7-cask-provenance-red.log.gz",
+    "u7-config-check.log.gz",
+    "u7-destination.log.gz",
+    "u7-existing-output.log.gz",
+    "u7-green-1.log.gz",
+    "u7-green-2.log.gz",
+    "u7-make-red.log.gz",
+    "u7-minimum-final.log.gz",
+    "u7-minimum.log.gz",
+    "u7-package-a-build.log.gz",
+    "u7-package-b-build.log.gz",
+    "u7-package-b.log.gz",
+    "u7-package-c-build.log.gz",
+    "u7-package-c.log.gz",
+    "u7-package.log.gz",
+    "u7-real-cask-green.log.gz",
+    "u7-red.log.gz",
+    "u7-render-c.log.gz",
+    "u7-render.log.gz",
+    "u7-validate-complete.log.gz",
+    "u7-validate-final.log.gz",
+    "u7-validate.log.gz"
+  ],
+  "primary_sources": [
+    "https://goreleaser.com/customization/publish/homebrew_casks/",
+    "https://docs.brew.sh/Cask-Cookbook",
+    "https://github.com/goreleaser/goreleaser/tree/v2.18.2/internal/pipe/cask"
+  ]
+}

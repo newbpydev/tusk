@@ -132,6 +132,7 @@ test-scripts:
 	@bash scripts/test/test_release.sh
 	@bash scripts/test/test_candidate.sh
 	@bash scripts/test/test_release_smoke.sh
+	@bash scripts/test/test_homebrew.sh
 
 all: validate build
 
@@ -341,3 +342,16 @@ bench-cli-release:
 	RELEASE_BENCH_OUTPUT="$$RELEASE_CLI_BENCH_OUTPUT" bash scripts/release_smoke.sh bench-cli
 bench-tui-release:
 	RELEASE_BENCH_OUTPUT="$$RELEASE_TUI_BENCH_OUTPUT" bash scripts/release_smoke.sh bench-tui
+
+.PHONY: test-homebrew check-homebrew homebrew-candidate homebrew-destination
+$(foreach parameter,HOMEBREW_CASK,$(eval override $(parameter) := $$(value $(parameter))))
+export HOMEBREW_CASK
+test-homebrew:
+	go test -v ./scripts/releasecheck -run '^TestCask_'
+	bash scripts/test/test_homebrew.sh
+check-homebrew:
+	bash scripts/homebrew.sh check
+homebrew-candidate:
+	bash scripts/homebrew.sh render
+homebrew-destination:
+	bash scripts/homebrew.sh destination

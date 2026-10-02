@@ -19,6 +19,7 @@ for override in GITHUB_REPOSITORY=evil/tusk GITHUB_EVENT_NAME=pull_request GITHU
 done
 expect 0 'ID-selected artifact extracts at the reviewed root' jq -e '.jobs.provenance.steps[1].with["merge-multiple"] == true' "$root/.github/workflows/release.yml"
 expect 0 'candidate workflow contract' bash "$root/scripts/candidate.sh" contract
+expect 0 'reviewed cask uploaded and attested' jq -e '.jobs.build.steps[5].with.path|endswith("/candidate/homebrew/Casks/tusk.rb")' "$root/.github/workflows/release.yml"
 mkdir -p "$scratch/workflow/scripts" "$scratch/workflow/.github/workflows"
 if [[ -f "$root/scripts/candidate.sh" && -f "$root/.github/workflows/release.yml" ]]; then
     cp "$root/scripts/candidate.sh" "$scratch/workflow/scripts/"
@@ -70,6 +71,12 @@ esac
 GH
 chmod +x "$scratch/bin/gh"
 verify=(env PATH="$scratch/bin:$PATH" FIXTURE_ROOT="$scratch" CANDIDATE_DIR="$scratch/candidate" CANDIDATE_MANIFEST_SHA256="$manifest_hash" CANDIDATE_RUN_ID=123 RELEASE_SHA="$sha" RELEASE_VERSION=v0.3.0)
+expect 1 'missing cask must refuse complete candidate acceptance' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/missing-cask" bash "$scratch/fixture/scripts/candidate.sh" verify
+mkdir -p "$scratch/candidate/homebrew/Casks"
+printf 'fixture cask' >"$scratch/candidate/homebrew/Casks/tusk.rb"
+cask_hash=$(sha256sum "$scratch/candidate/homebrew/Casks/tusk.rb" | cut -d' ' -f1)
+jq --arg hash "$cask_hash" '.cask_sha256=$hash' "$scratch/candidate/candidate-run.json" >"$scratch/new-receipt"
+mv "$scratch/new-receipt" "$scratch/candidate/candidate-run.json"
 expect 0 'trusted API and certificate identity accepted' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/accepted" bash "$scratch/fixture/scripts/candidate.sh" verify
 expect 47 'lost read response retains failure without acceptance' "${verify[@]}" FIXTURE_API_FAIL=1 CANDIDATE_VERIFICATION_DIR="$scratch/lost" bash "$scratch/fixture/scripts/candidate.sh" verify
 if [[ -e "$scratch/lost/receipt.json" ]]; then echo 'FAIL: lost response accepted candidate' >&2; failed=1; fi
@@ -77,6 +84,9 @@ expect 0 'fresh readback retry succeeds' "${verify[@]}" CANDIDATE_VERIFICATION_D
 printf tampered >"$scratch/candidate/assets/payload.tar.gz"
 expect 1 'changed payload cannot use original attestation' "${verify[@]}" FIXTURE_PAYLOAD_HASH="$file_hash" CANDIDATE_VERIFICATION_DIR="$scratch/tampered" bash "$scratch/fixture/scripts/candidate.sh" verify
 printf payload >"$scratch/candidate/assets/payload.tar.gz"
+printf tampered >"$scratch/candidate/homebrew/Casks/tusk.rb"
+expect 1 'changed cask cannot use original run receipt' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/tampered-cask" bash "$scratch/fixture/scripts/candidate.sh" verify
+printf 'fixture cask' >"$scratch/candidate/homebrew/Casks/tusk.rb"
 expect 1 'wrong accepted manifest digest refused' "${verify[@]}" CANDIDATE_MANIFEST_SHA256="$(printf 'd%.0s' {1..64})" CANDIDATE_VERIFICATION_DIR="$scratch/wrong-manifest" bash "$scratch/fixture/scripts/candidate.sh" verify
 expect 1 'verification cannot write inside payloads' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/candidate/assets/inside" bash "$scratch/fixture/scripts/candidate.sh" verify
 if [[ -e "$scratch/candidate/assets/inside" ]]; then echo 'FAIL: verifier modified candidate storage' >&2; failed=1; fi

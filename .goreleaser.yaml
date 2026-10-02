@@ -12,7 +12,6 @@
       ],
       "goos": [
         "linux",
-        "darwin",
         "windows"
       ],
       "goarch": [
@@ -24,6 +23,29 @@
           "goos": "windows",
           "goarch": "arm64"
         }
+      ],
+      "flags": [
+        "-trimpath",
+        "-overlay={{ .Env.TUSK_RELEASE_OVERLAY }}"
+      ],
+      "ldflags": [
+        "-s -w"
+      ],
+      "mod_timestamp": "{{ .CommitTimestamp }}"
+    },
+    {
+      "id": "tusk-macos",
+      "main": "./cmd/tusk",
+      "binary": "tusk",
+      "env": [
+        "CGO_ENABLED=0"
+      ],
+      "goos": [
+        "darwin"
+      ],
+      "goarch": [
+        "amd64",
+        "arm64"
       ],
       "flags": [
         "-trimpath",
@@ -192,6 +214,155 @@
           }
         }
       ]
+    },
+    {
+      "id": "tusk-macos",
+      "ids": [
+        "tusk-macos"
+      ],
+      "name_template": "tusk_{{ .Version }}_{{ .Os }}_{{ .Arch }}",
+      "formats": [
+        "tar.gz"
+      ],
+      "builds_info": {
+        "owner": "root",
+        "group": "root",
+        "mtime": "{{ .CommitDate }}"
+      },
+      "files": [
+        {
+          "src": "README.md",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "LICENSE",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "THIRD_PARTY_NOTICES.md",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "CONTRIBUTING.md",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "SECURITY.md",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/completions/*",
+          "dst": "completions",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/man/*.1",
+          "dst": "man",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/cli.md",
+          "dst": "docs",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/tui.md",
+          "dst": "docs",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/install.md",
+          "dst": "docs",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/service.md",
+          "dst": "docs",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/assets/*",
+          "dst": "docs/assets",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        }
+      ]
     }
   ],
   "source": {
@@ -215,5 +386,47 @@
       "owner": "newbpydev",
       "name": "tusk"
     }
-  }
+  },
+  "homebrew_casks": [
+    {
+      "name": "tusk",
+      "ids": [
+        "tusk-macos"
+      ],
+      "binaries": [
+        "tusk"
+      ],
+      "manpages": [
+        "man/tusk-add.1",
+        "man/tusk-completion.1",
+        "man/tusk-delete.1",
+        "man/tusk-done.1",
+        "man/tusk-edit.1",
+        "man/tusk-history.1",
+        "man/tusk-list.1",
+        "man/tusk-stats.1",
+        "man/tusk-tree.1",
+        "man/tusk-tui.1",
+        "man/tusk-version.1",
+        "man/tusk.1"
+      ],
+      "completions": {
+        "bash": "completions/tusk.bash",
+        "zsh": "completions/tusk.zsh",
+        "fish": "completions/tusk.fish"
+      },
+      "homepage": "https://github.com/newbpydev/tusk",
+      "description": "Local task management in your terminal",
+      "custom_block": "depends_on :macos",
+      "skip_upload": true,
+      "repository": {
+        "owner": "newbpydev",
+        "name": "homebrew-tap"
+      },
+      "directory": "Casks",
+      "url": {
+        "template": "https://github.com/newbpydev/tusk/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+      }
+    }
+  ]
 }

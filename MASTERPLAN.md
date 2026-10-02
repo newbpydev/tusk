@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 U1/U3/U4/U2 locally accepted; U6/U5 engineering accepted; hosted/native release gates pending
+**Current Status**: Feature 006 U1/U3/U4/U2 locally accepted; U6/U5/U7 engineering accepted; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 U7 / Unit 006-7 — Local Homebrew Cask Configuration (after the U5 engineering commit; native/tap acceptance pending)
+**Active Implementation Target**: Feature 006 U8 / Unit 006-8 — Local Promotion, Readback and Metadata Preparation (after the U7 engineering commit; external release gates pending)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -482,6 +482,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [ ] Unit 006-5 / U5: Exact-Artifact Native Lifecycle, Terminal and Performance Acceptance
     - [x] Local drivers/selectors engineering checkpoint; canonical/minimum/five-target checks and preliminary Linux artifact passed
   - [ ] Unit 006-7 / U7: Homebrew Cask Candidate and Destination Readiness
+    - [x] Local config/cask/provenance engineering checkpoint; real packager audit and canonical/minimum checks passed
   - [ ] Unit 006-8 / U8: Authorized Release, Public Metadata and Final Settlement
 - [ ] **6.3 Quality Gate & Release Sign-off**
   - [ ] Canonical validation/generated/module gates, minimum Go and five native candidate-SHA jobs
@@ -705,3 +706,15 @@ Red/Green and the corrected SQLite metadata assertion. No production app change,
 trusted candidate timing or other-platform native acceptance is claimed. All
 V73–V86 and the parent U5 checkbox remain open. The coherent local engineering
 commit enables U7 configuration; final source freeze requires a fresh hosted run.
+
+### U7 local engineering checkpoint — 2026-10-01
+
+Pinned GoReleaser creates a macOS-only Intel/ARM cask with the exact archive hashes,
+12 manuals and three completions; upload is disabled. Real fresh local packaging
+and strict declarative audit pass after retained ordering/comment failures. The
+candidate workflow now uploads/attests the separate run-bound cask. Canonical and
+minimum-compiler component checks pass; inspector coverage remains above 95%.
+[Receipt](docs/verification-evidence/006/u7.json) retains source/hash/config and review.
+Native Ruby/Homebrew/Intel/ARM security/runtime checks are unexecuted; current tap
+readback is HTTP404. Parent U7 and V87–V94 remain open. The coherent local commit
+enables U8 promotion/readback engineering, with final hosted candidate required.

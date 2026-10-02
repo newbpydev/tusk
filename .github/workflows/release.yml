@@ -113,7 +113,7 @@
           "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
           "with": {
             "name": "tusk-candidate-${{ github.run_id }}-${{ github.run_attempt }}",
-            "path": "${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json",
+            "path": "${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json\n${{ runner.temp }}/candidate/homebrew/Casks/tusk.rb",
             "if-no-files-found": "error",
             "retention-days": 90,
             "compression-level": 0,
@@ -159,7 +159,7 @@
         },
         {
           "name": "Check downloaded payload set",
-          "run": "make verify-release RELEASE_ASSETS=\"$RUNNER_TEMP/candidate/assets\"",
+          "run": "make verify-release RELEASE_ASSETS=\"$RUNNER_TEMP/candidate/assets\"\nmake check-homebrew RELEASE_MANIFEST=\"$RUNNER_TEMP/candidate/assets/release-manifest.json\" HOMEBREW_CASK=\"$RUNNER_TEMP/candidate/homebrew/Casks/tusk.rb\"",
           "env": {
             "GOTOOLCHAIN": "go1.27.1"
           }
@@ -168,7 +168,7 @@
           "name": "Attest payloads and run identity",
           "uses": "actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a",
           "with": {
-            "subject-path": "${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json",
+            "subject-path": "${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json\n${{ runner.temp }}/candidate/homebrew/Casks/tusk.rb",
             "push-to-registry": false
           }
         }

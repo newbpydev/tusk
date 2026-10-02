@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Implementation active - U1/U3/U4/U2 locally accepted; U6/U5 engineering accepted; U7 local configuration next
+status: Implementation active - U1/U3/U4/U2 locally accepted; U6/U5/U7 engineering accepted; U8 local promotion next
 evidence-scope: 51 local scenario closures; hosted/native release gates pending
 deepened: 2026-10-01
 ---
@@ -423,3 +423,34 @@ Red/Green and the corrected SQLite metadata assertion. No production app change,
 trusted candidate timing or other-platform native acceptance is claimed. All
 V73–V86 and the parent U5 checkbox remain open. The coherent local engineering
 commit enables U7 configuration; final source freeze requires a fresh hosted run.
+
+### U7 local cask engineering contract — 2026-10-01
+
+Separate macOS build/archive IDs preserve five targets and nine public assets,
+while current `homebrew_casks` selects only the two macOS archives. Upload is
+disabled; the cask declares macOS, installs the binary, three static completions
+and all 12 manuals, and has no hooks/zap/security bypass. The strict Go audit
+compares complete nonblank statements with manifest architecture/hash/member
+identity without evaluating downloaded Ruby. Only indentation and blank lines
+are ignored; comment/statement boundaries and a pinned no-zap comment are retained.
+
+The candidate bundle now also includes `homebrew/Casks/tusk.rb`, digest-bound in
+`candidate-run.json` and separately attested by the same trusted workflow. It
+stays outside the nine-file public-asset inventory. Missing/tampered casks refuse
+complete candidate acceptance. These workflow/run-schema changes require a fresh
+hosted candidate; earlier U6 component receipts remain historical. Failed local
+packaging retains the generated cask before auditing. Native Ruby/Homebrew and
+Intel/ARM macOS install/removal/security behavior remain unexecuted. The current
+read-only tap lookup is HTTP 404; 006-ISS-003 and V87–V94 stay open.
+
+### U7 local engineering checkpoint — 2026-10-01
+
+Pinned GoReleaser creates a macOS-only Intel/ARM cask with the exact archive hashes,
+12 manuals and three completions; upload is disabled. Real fresh local packaging
+and strict declarative audit pass after retained ordering/comment failures. The
+candidate workflow now uploads/attests the separate run-bound cask. Canonical and
+minimum-compiler component checks pass; inspector coverage remains above 95%.
+[Receipt](../verification-evidence/006/u7.json) retains source/hash/config and review.
+Native Ruby/Homebrew/Intel/ARM security/runtime checks are unexecuted; current tap
+readback is HTTP404. Parent U7 and V87–V94 remain open. The coherent local commit
+enables U8 promotion/readback engineering, with final hosted candidate required.

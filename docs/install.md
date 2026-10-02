@@ -125,7 +125,9 @@ tusk --version
 These drafts do not disable Gatekeeper, quarantine or Windows security controls.
 Unsigned binaries may trigger warnings. If normal installation is blocked, stop
 and report the route; use the verified source route rather than bypassing controls.
-Homebrew cask delivery is planned for macOS after direct-download acceptance.
+Homebrew cask configuration is prepared locally for macOS Intel and ARM. Delivery
+remains pending native Homebrew checks, direct-download acceptance and an
+owner-controlled tap. See [the release procedure](releasing.md#local-macos-cask-preparation).
 
 ## Completion and manuals
 

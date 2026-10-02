@@ -18,6 +18,8 @@ func run(args []string, stderr io.Writer) int {
 		}
 	case len(args) == 8 && args[0] == "finalize":
 		err = finalize(args[1], args[2], args[3], args[4], args[5], args[6], args[7])
+	case len(args) == 3 && (args[0] == "render-cask" || args[0] == "check-cask"):
+		err = cask(args[1], args[2], args[0] == "render-cask")
 	case len(args) == 2 && args[0] == "verify":
 		err = verifyInventory(args[1])
 	default:

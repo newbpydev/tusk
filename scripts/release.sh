@@ -36,13 +36,13 @@ setup_tool() (
 contract() {
     [[ -f "$root/.goreleaser.yaml" ]] || die 'packager configuration missing'
     jq -e '
-        keys == (["version","project_name","dist","builds","archives","source","checksum","changelog","snapshot","release"]|sort) and
+        keys == (["version","project_name","dist","builds","archives","source","checksum","changelog","snapshot","release","homebrew_casks"]|sort) and
         .version == 2 and .project_name == "tusk" and .dist == "dist" and
-        .builds == [{id:"tusk",main:"./cmd/tusk",binary:"tusk",env:["CGO_ENABLED=0"],
+        .builds == ([{id:"tusk",main:"./cmd/tusk",binary:"tusk",env:["CGO_ENABLED=0"],
           ldflags:["-s -w"],flags:["-trimpath", "-overlay={{ .Env.TUSK_RELEASE_OVERLAY }}"],
-          goos:["linux","darwin","windows"],goarch:["amd64","arm64"],
-          ignore:[{goos:"windows",goarch:"arm64"}],mod_timestamp:"{{ .CommitTimestamp }}"}] and
-        .archives == [{id:"tusk",ids:["tusk"],name_template:"tusk_{{ .Version }}_{{ .Os }}_{{ .Arch }}",
+          goos:["linux","windows"],goarch:["amd64","arm64"],
+          ignore:[{goos:"windows",goarch:"arm64"}],mod_timestamp:"{{ .CommitTimestamp }}"}] | . + [ (.[0] | .id="tusk-macos" | .goos=["darwin"] | del(.ignore)) ]) and
+        .archives == ([{id:"tusk",ids:["tusk"],name_template:"tusk_{{ .Version }}_{{ .Os }}_{{ .Arch }}",
           formats:["tar.gz"],format_overrides:[{goos:"windows",formats:["zip"]}],
           builds_info:{owner:"root",group:"root",mtime:"{{ .CommitDate }}"},
           files:([{src:"README.md",dst:"."},{src:"LICENSE",dst:"."},{src:"THIRD_PARTY_NOTICES.md",dst:"."},
@@ -51,7 +51,8 @@ contract() {
             {src:"docs/cli.md",dst:"docs"},{src:"docs/tui.md",dst:"docs"},
             {src:"docs/install.md",dst:"docs"},{src:"docs/service.md",dst:"docs"},
             {src:"docs/assets/*",dst:"docs/assets"}] |
-            map(.+{strip_parent:true,info:{owner:"root",group:"root",mode:420,mtime:"{{ .CommitDate }}"}}))}] and
+            map(.+{strip_parent:true,info:{owner:"root",group:"root",mode:420,mtime:"{{ .CommitDate }}"}}))}] | . + [(.[0] | .id="tusk-macos" | .ids=["tusk-macos"] | del(.format_overrides))]) and
+        .homebrew_casks == [{"name":"tusk","ids":["tusk-macos"],"binaries":["tusk"],"manpages":["man/tusk-add.1","man/tusk-completion.1","man/tusk-delete.1","man/tusk-done.1","man/tusk-edit.1","man/tusk-history.1","man/tusk-list.1","man/tusk-stats.1","man/tusk-tree.1","man/tusk-tui.1","man/tusk-version.1","man/tusk.1"],"completions":{"bash":"completions/tusk.bash","zsh":"completions/tusk.zsh","fish":"completions/tusk.fish"},"homepage":"https://github.com/newbpydev/tusk","description":"Local task management in your terminal","custom_block":"depends_on :macos","skip_upload":true,"repository":{"owner":"newbpydev","name":"homebrew-tap"},"directory":"Casks","url":{"template":"https://github.com/newbpydev/tusk/releases/download/{{ .Tag }}/{{ .ArtifactName }}"}}] and
         .source == {enabled:true,format:"tar.gz",name_template:"tusk_{{ .Version }}_source",prefix_template:"tusk-{{ .Version }}/"} and
         .checksum == {disable:true} and .changelog == {disable:true} and
         .snapshot == {version_template:"{{ .Version }}-dev"} and
@@ -133,6 +134,11 @@ package() (
         "$tool" "${args[@]}") >>"$output/build.log" 2>&1
     (cd "$stage/source" && GOTOOLCHAIN="go$compiler" bash scripts/release_check.sh finalize "$stage/source" "$stage/dist" "$output/assets" "$stage/overlay/input.json" "$sha" "$compiler" "$mode") >>"$output/build.log" 2>&1
     (cd "$stage/source" && GOTOOLCHAIN="go$compiler" bash scripts/release_check.sh verify "$output/assets") >>"$output/build.log" 2>&1
+    if [[ "$mode" == candidate ]]; then
+        mkdir -p "$output/homebrew/Casks"
+        cp "$stage/dist/homebrew/Casks/tusk.rb" "$output/homebrew/Casks/tusk.rb"
+        (cd "$stage/source" && GOTOOLCHAIN="go$compiler" bash scripts/release_check.sh check-cask "$output/assets/release-manifest.json" "$output/homebrew/Casks/tusk.rb") >>"$output/build.log" 2>&1
+    fi
     [[ -z "$(git -C "$stage/source" status --porcelain)" ]] || die 'packaging mutated source checkout'
     status=0
     printf 'Verified local %s: %s\n' "$mode" "$output/assets"

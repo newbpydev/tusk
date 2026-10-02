@@ -62,10 +62,10 @@ contract() {
       .jobs.build.steps[3].run == "make release-candidate RELEASE_OUTPUT=\"$RUNNER_TEMP/candidate\"" and
       .jobs.build.steps[4].run == "make record-candidate CANDIDATE_DIR=\"$RUNNER_TEMP/candidate\"" and
       .jobs.build.steps[5].id == "upload" and
-      .jobs.build.steps[5].with == {name:"tusk-candidate-${{ github.run_id }}-${{ github.run_attempt }}",path:"${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json","if-no-files-found":"error","retention-days":90,"compression-level":0,overwrite:false} and
+      .jobs.build.steps[5].with == {name:"tusk-candidate-${{ github.run_id }}-${{ github.run_attempt }}",path:"${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json\n${{ runner.temp }}/candidate/homebrew/Casks/tusk.rb","if-no-files-found":"error","retention-days":90,"compression-level":0,overwrite:false} and
       .jobs.provenance.steps[1].with == {"artifact-ids":"${{ needs.build.outputs.artifact_id }}",path:"${{ runner.temp }}/candidate","merge-multiple":true} and
-      .jobs.provenance.steps[2].run == "make verify-release RELEASE_ASSETS=\"$RUNNER_TEMP/candidate/assets\"" and
-      .jobs.provenance.steps[3].with == {"subject-path":"${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json","push-to-registry":false} and
+      .jobs.provenance.steps[2].run == "make verify-release RELEASE_ASSETS=\"$RUNNER_TEMP/candidate/assets\"\nmake check-homebrew RELEASE_MANIFEST=\"$RUNNER_TEMP/candidate/assets/release-manifest.json\" HOMEBREW_CASK=\"$RUNNER_TEMP/candidate/homebrew/Casks/tusk.rb\"" and
+      .jobs.provenance.steps[3].with == {"subject-path":"${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json\n${{ runner.temp }}/candidate/homebrew/Casks/tusk.rb","push-to-registry":false} and
       (.jobs.build|has("env")|not) and (.jobs.identity|has("env")|not) and (.jobs.provenance|has("env")|not) and
       all(.jobs.build.steps[] | .env? // {}; has("GH_TOKEN")|not)
     ' "$root/.github/workflows/release.yml" >/dev/null || die 'workflow violates isolated trusted-candidate contract'
@@ -76,8 +76,11 @@ record() {
     manifest="$directory/assets/release-manifest.json"
     [[ -f "$manifest" && ! -L "$manifest" && ! -e "$directory/candidate-run.json" && ! -L "$directory/candidate-run.json" ]] || die 'manifest absent or run receipt collision'
     jq -e --arg sha "$RELEASE_SHA" --arg version "${RELEASE_VERSION#v}" '.mode=="candidate" and .source_sha==$sha and .version==$version' "$manifest" >/dev/null || die 'manifest does not match dispatch'
+    bash "$root/scripts/release_check.sh" check-cask "$manifest" "$directory/homebrew/Casks/tusk.rb"
+    local cask_hash
+    cask_hash=$(digest "$directory/homebrew/Casks/tusk.rb")
     hash=$(digest "$manifest")
-    jq -n --arg repo "$repo" --arg workflow "$workflow" --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$hash" --argjson run "$GITHUB_RUN_ID" --argjson attempt "$GITHUB_RUN_ATTEMPT" '{schema:1,repository:$repo,workflow:$workflow,ref:"refs/heads/main",source_sha:$sha,version:$version,run_id:$run,run_attempt:$attempt,manifest_sha256:$hash}' >"$directory/candidate-run.json"
+    jq -n --arg repo "$repo" --arg workflow "$workflow" --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$hash" --arg cask "$cask_hash" --argjson run "$GITHUB_RUN_ID" --argjson attempt "$GITHUB_RUN_ATTEMPT" '{schema:1,repository:$repo,workflow:$workflow,ref:"refs/heads/main",source_sha:$sha,version:$version,run_id:$run,run_attempt:$attempt,manifest_sha256:$hash,cask_sha256:$cask}' >"$directory/candidate-run.json"
     printf 'Candidate manifest SHA256: %s\n' "$hash"
 }
 verify() (
@@ -86,8 +89,10 @@ verify() (
     [[ "${CANDIDATE_MANIFEST_SHA256:-}" =~ ^[0-9a-f]{64}$ ]] || die 'accepted manifest digest required'
     [[ -f "$manifest" && ! -L "$manifest" && "$(digest "$manifest")" == "$CANDIDATE_MANIFEST_SHA256" ]] || die 'manifest digest mismatch'
     [[ -f "$directory/candidate-run.json" && ! -L "$directory/candidate-run.json" ]] || die 'run receipt missing or unsafe'
-    jq -e --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --argjson run "$CANDIDATE_RUN_ID" 'keys==(["schema","repository","workflow","ref","source_sha","version","run_id","run_attempt","manifest_sha256"]|sort) and .schema==1 and .repository=="newbpydev/tusk" and .workflow==".github/workflows/release.yml" and .ref=="refs/heads/main" and .source_sha==$sha and .version==$version and .run_id==$run and .manifest_sha256==$hash and (.run_attempt|type=="number" and .>0 and floor==.)' "$directory/candidate-run.json" >/dev/null || die 'untrusted run receipt'
+    jq -e --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --argjson run "$CANDIDATE_RUN_ID" 'keys==(["schema","repository","workflow","ref","source_sha","version","run_id","run_attempt","manifest_sha256","cask_sha256"]|sort) and .schema==1 and .repository=="newbpydev/tusk" and .workflow==".github/workflows/release.yml" and .ref=="refs/heads/main" and .source_sha==$sha and .version==$version and .run_id==$run and .manifest_sha256==$hash and (.run_attempt|type=="number" and .>0 and floor==.)' "$directory/candidate-run.json" >/dev/null || die 'untrusted run receipt'
     jq -e --arg sha "$RELEASE_SHA" --arg version "${RELEASE_VERSION#v}" '.mode=="candidate" and .source_sha==$sha and .version==$version' "$manifest" >/dev/null || die 'manifest identity mismatch'
+    [[ -f "$directory/homebrew/Casks/tusk.rb" && ! -L "$directory/homebrew/Casks/tusk.rb" ]] || die 'reviewed cask missing or unsafe'
+    [[ "$(digest "$directory/homebrew/Casks/tusk.rb")" == "$(jq -r '.cask_sha256' "$directory/candidate-run.json")" ]] || die 'cask differs from run receipt'
     attempt=$(jq -r '.run_attempt' "$directory/candidate-run.json")
     directory=$(cd "$directory" && pwd -P) || die 'candidate directory missing'
     output="$(cd "$(dirname "$output")" && pwd -P)/$(basename "$output")" || die 'verification output parent missing'
@@ -108,7 +113,8 @@ verify() (
     artifact_digest=$(jq -r --arg name "tusk-candidate-$CANDIDATE_RUN_ID-$attempt" '.artifacts[]|select(.name==$name)|.digest' "$output/artifacts.json")
     # Inspect names/types before using an inventory name as a path.
     bash "$root/scripts/release_check.sh" verify "$directory/assets" >"$output/inventory.log" 2>&1
-    local subjects=("$directory/candidate-run.json" "$manifest" "$directory/assets/checksums.txt")
+    bash "$root/scripts/release_check.sh" check-cask "$manifest" "$directory/homebrew/Casks/tusk.rb" >"$output/cask.log" 2>&1
+    local subjects=("$directory/homebrew/Casks/tusk.rb" "$directory/candidate-run.json" "$manifest" "$directory/assets/checksums.txt")
     while IFS= read -r file; do subjects+=("$directory/assets/$file"); done < <(jq -r '.files_sha256|keys[]' "$manifest")
     local index=0
     for file in "${subjects[@]}"; do
@@ -117,7 +123,7 @@ verify() (
         jq -e --arg sha "$RELEASE_SHA" --arg hash "$hash" --arg uri "https://github.com/$repo/actions/runs/$CANDIDATE_RUN_ID/attempts/$attempt" 'any(.[]; .verificationResult as $v | $v.signature.certificate as $c | $c.issuer=="https://token.actions.githubusercontent.com" and $c.buildSignerURI=="https://github.com/newbpydev/tusk/.github/workflows/release.yml@refs/heads/main" and $c.buildSignerDigest==$sha and $c.sourceRepositoryURI=="https://github.com/newbpydev/tusk" and $c.sourceRepositoryDigest==$sha and $c.sourceRepositoryRef=="refs/heads/main" and $c.runnerEnvironment=="github-hosted" and $c.buildTrigger=="workflow_dispatch" and $c.runInvocationURI==$uri and any($v.statement.subject[];.digest.sha256==$hash))' "$output/attestation-$index.json" >/dev/null || die 'verified certificate/subject belongs to a different run/source'
         index=$((index+1))
     done
-    jq -n --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --arg digest "$artifact_digest" --argjson run "$CANDIDATE_RUN_ID" --argjson attempt "$attempt" --argjson id "$artifact_id" '{schema:1,status:"verified",repository:"newbpydev/tusk",workflow:".github/workflows/release.yml",source_sha:$sha,version:$version,run_id:$run,run_attempt:$attempt,artifact_id:$id,artifact_api_digest:$digest,manifest_sha256:$hash,transport:"API artifact digest retained; every payload and run receipt verified cryptographically, no claim of independently hashing the transport ZIP"}' >"$output/receipt.json"
+    jq -n --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --arg cask "$(digest "$directory/homebrew/Casks/tusk.rb")" --arg digest "$artifact_digest" --argjson run "$CANDIDATE_RUN_ID" --argjson attempt "$attempt" --argjson id "$artifact_id" '{schema:1,status:"verified",repository:"newbpydev/tusk",workflow:".github/workflows/release.yml",source_sha:$sha,version:$version,run_id:$run,run_attempt:$attempt,artifact_id:$id,artifact_api_digest:$digest,manifest_sha256:$hash,cask_sha256:$cask,transport:"API artifact digest retained; every payload and run receipt verified cryptographically, no claim of independently hashing the transport ZIP"}' >"$output/receipt.json"
     printf 'Verified trusted candidate: run %s attempt %s artifact %s\n' "$CANDIDATE_RUN_ID" "$attempt" "$artifact_id"
 )
 case "${1:-contract}" in

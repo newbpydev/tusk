@@ -78,7 +78,7 @@ Canceled/failed upload or attestation leaves the entire run unaccepted.
 
 After authorized workflow publication/dispatch completes successfully, download
 `tusk-candidate-RUN_ID-ATTEMPT` from that run into a new owned directory. It contains
-`assets/` and `candidate-run.json`. Record the maintainer-selected manifest SHA256
+`assets/`, `candidate-run.json` and the reviewed `homebrew/Casks/tusk.rb`. Record the maintainer-selected manifest SHA256
 before verification; the digest cannot be inferred as accepted from downloaded
 text alone. Use GitHub CLI with attestation support (tested 2.102.0), authenticated
 read access, pinned Go/Bash/Make and a fresh verification output directory:
@@ -90,7 +90,8 @@ make verify-candidate CANDIDATE_DIR=/tmp/downloaded-candidate CANDIDATE_VERIFICA
 Run/attempt/repository/default-branch/artifact readbacks must match. Every payload,
 manifest, checksums file and run receipt must have a verified signature from this
 repository's main release workflow, the exact source/builder SHA and the same run
-invocation. This uses signed certificate fields rather than self-reported predicate
+invocation. The generated cask is also digest-bound in the run receipt and attested;
+it stays separate from the nine public release assets. This uses signed certificate fields rather than self-reported predicate
 metadata; see the [GitHub CLI verification contract](https://cli.github.com/manual/gh_attestation_verify).
 Receipts retain API artifact ID/digest and complete cryptographic verification.
 The API transport ZIP digest is not represented as an independently computed hash.
@@ -131,6 +132,37 @@ runtime dependencies. The PowerShell entry point has not been executed on Window
 Automated Linux child PTY restoration checks remain separate from actual owned
 Kitty interactions; Windows console/visual checks and macOS/Linux ARM native
 records must be supplied on their native hosts. Missing hosts leave gates open.
+
+## Local macOS cask preparation
+
+The pinned [GoReleaser cask configuration](https://goreleaser.com/customization/publish/homebrew_casks/)
+uses separate macOS build/archive IDs, `skip_upload: true`, both architectures,
+static shell completions and all manuals. The generated cask declares macOS only.
+A strict statement-by-statement audit compares URLs, archive hashes and installed
+files with the verified manifest, without evaluating downloaded Ruby. It rejects
+hooks, zap/uninstall actions, arbitrary code and security-control bypasses.
+
+```bash
+make test-homebrew
+make check-homebrew RELEASE_MANIFEST=/tmp/downloaded-candidate/assets/release-manifest.json HOMEBREW_CASK=/tmp/downloaded-candidate/homebrew/Casks/tusk.rb
+make homebrew-candidate RELEASE_MANIFEST=/tmp/downloaded-candidate/assets/release-manifest.json HOMEBREW_CASK=/tmp/new-owned-directory/tusk.rb
+make homebrew-destination
+```
+
+The render target refuses existing outputs and candidate/source storage. It can
+reproduce the cask for review; trusted acceptance uses the attested cask and run
+receipt. The destination target only reads the proposed tap and refuses missing,
+private, archived or inaccessible ownership/write access. No target pushes a tap.
+Failed cask audit retains the actual generated file beside failed packaging logs.
+
+On native Intel and ARM macOS, separately run Ruby syntax checking, Homebrew
+style/audit/install/version, shell completion/man inspection, replacement/removal
+and database preservation, with owned fixture data. Follow the
+[Homebrew cask artifact contract](https://docs.brew.sh/Cask-Cookbook).
+Linux has no native macOS/Homebrew evidence, and this host has neither Ruby nor
+Homebrew installed. The tap lookup remains missing/inaccessible. These checks,
+public URLs and signed-download behavior stay pending; no Linuxbrew route or
+quarantine-removal instructions are advertised.
 
 ## Publication and failure recovery
 
