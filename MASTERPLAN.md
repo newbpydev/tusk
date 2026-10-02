@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 U1/U3/U4/U2 locally accepted; U6 engineering accepted; hosted/native release gates pending
+**Current Status**: Feature 006 U1/U3/U4/U2 locally accepted; U6/U5 engineering accepted; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 U5 / Unit 006-5 — Local Native-Artifact Drivers and Measurement Selectors (after the U6 engineering commit; trusted hosted acceptance pending)
+**Active Implementation Target**: Feature 006 U7 / Unit 006-7 — Local Homebrew Cask Configuration (after the U5 engineering commit; native/tap acceptance pending)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -480,6 +480,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [ ] Unit 006-6 / U6: Trusted Hosted Candidate Workflow and Artifact Provenance — actual hosted acceptance pending
     - [x] Local workflow/provenance engineering checkpoint; canonical/minimum/security fixtures accepted
   - [ ] Unit 006-5 / U5: Exact-Artifact Native Lifecycle, Terminal and Performance Acceptance
+    - [x] Local drivers/selectors engineering checkpoint; canonical/minimum/five-target checks and preliminary Linux artifact passed
   - [ ] Unit 006-7 / U7: Homebrew Cask Candidate and Destination Readiness
   - [ ] Unit 006-8 / U8: Authorized Release, Public Metadata and Final Settlement
 - [ ] **6.3 Quality Gate & Release Sign-off**
@@ -692,3 +693,15 @@ conflicts. Unknown results keep intent read-only until fresh-owner readback and
 explicit acknowledgment; no replay or inferred create identity. Uniform modal
 backgrounds remain verified. [U8 receipt](docs/verification-evidence/005/u8.json).
 U6 final workflow, performance, documentation and review is next.
+
+### U5 local engineering checkpoint — 2026-10-01
+
+Supplied-artifact selectors, native smoke drivers, retained owned fixtures and
+reference measurement entry points pass canonical validation, Go 1.25 checks
+and all five application/test cross-builds. The preliminary Linux payload passes
+real CLI/docs/backup/replacement/newer-schema and child PTY checks with its hash
+unchanged. [Receipt](docs/verification-evidence/006/u5.json) retains unsafe-output
+Red/Green and the corrected SQLite metadata assertion. No production app change,
+trusted candidate timing or other-platform native acceptance is claimed. All
+V73–V86 and the parent U5 checkbox remain open. The coherent local engineering
+commit enables U7 configuration; final source freeze requires a fresh hosted run.

@@ -5,9 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"runtime"
 	"testing"
 )
 
@@ -17,16 +15,8 @@ func TestDocsExamples_QuickStartAndClosedBackup(t *testing.T) {
 	if testing.Short() {
 		t.Skip("actual executable and closed backup")
 	}
-	root := t.TempDir()
-	binary := filepath.Join(root, "tusk")
-	if runtime.GOOS == "windows" {
-		binary += ".exe"
-	}
-	build := exec.Command("make", "build", "BUILD_OUTPUT="+binary)
-	build.Dir = "../.."
-	if output, err := build.CombinedOutput(); err != nil {
-		t.Fatalf("build: %v: %s", err, output)
-	}
+	root := processDirectory(t)
+	binary := processBinary(t)
 	path := filepath.Join(root, "original", "tusk.db")
 	run := func(args ...string) []byte {
 		t.Helper()

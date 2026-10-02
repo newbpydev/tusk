@@ -151,22 +151,9 @@ func TestProcess_Workflow(t *testing.T) {
 	if testing.Short() {
 		t.Skip("actual executable")
 	}
-	repoRoot, err := filepath.Abs("../..")
-	if err != nil {
-		t.Fatal(err)
-	}
-	dir := t.TempDir()
-	binary := filepath.Join(dir, "tusk")
-	if runtime.GOOS == "windows" {
-		binary += ".exe"
-	}
-	build := exec.Command("make", "build", "BUILD_OUTPUT="+binary)
-	build.Dir = repoRoot
-	if out, err := build.CombinedOutput(); err != nil {
-		t.Fatalf("build %v: %s", err, out)
-	}
+	binary := processBinary(t)
 	t.Run("isolation", func(t *testing.T) {
-		home := t.TempDir()
+		home := processDirectory(t)
 		p := processFixture{binary, home, filepath.Join(home, "missing", "db")}
 		for _, args := range [][]string{{"--help"}, {"--version"}, {"unknown"}, {"add"}, {"edit", "id", "--progress=bad"}} {
 			code, out, errout := p.run(args...)
@@ -183,7 +170,7 @@ func TestProcess_Workflow(t *testing.T) {
 		}
 	})
 	t.Run("durable workflow", func(t *testing.T) {
-		home := t.TempDir()
+		home := processDirectory(t)
 		p := processFixture{binary, home, filepath.Join(home, "literal ?#% ' 界.db")}
 		run := func(args ...string) any {
 			t.Helper()
@@ -215,7 +202,7 @@ func TestProcess_Workflow(t *testing.T) {
 			t.Skip("Unix SIGPIPE contract")
 		}
 		for _, brokenStderr := range []bool{false, true} {
-			home := t.TempDir()
+			home := processDirectory(t)
 			p := processFixture{binary, home, filepath.Join(home, "tasks.db")}
 			r, w, err := os.Pipe()
 			if err != nil {
@@ -249,7 +236,7 @@ func TestProcess_Workflow(t *testing.T) {
 		}
 	})
 	t.Run("concurrent writers", func(t *testing.T) {
-		home := t.TempDir()
+		home := processDirectory(t)
 		p := processFixture{binary, home, filepath.Join(home, "tasks.db")}
 		create := func(args ...string) string {
 			t.Helper()
@@ -295,7 +282,7 @@ func TestProcess_Workflow(t *testing.T) {
 	})
 	t.Run("unsafe paths", func(t *testing.T) {
 		for _, kind := range []string{"directory", "corrupt", "symlink", "readonly", "newer"} {
-			home := t.TempDir()
+			home := processDirectory(t)
 			path := filepath.Join(home, "PRIVATE.db")
 			switch kind {
 			case "directory":

@@ -177,7 +177,11 @@ func TestTUIMeasurements(t *testing.T) {
 			manifest[key] = strings.TrimSpace(string(data))
 		}
 	}
-	data, err := os.ReadFile("../../bin/tusk")
+	binary := os.Getenv("TUSK_RELEASE_BINARY")
+	if binary == "" {
+		binary = "../../bin/tusk"
+	}
+	data, err := os.ReadFile(binary)
 	if err != nil {
 		t.Fatal(err)
 	}

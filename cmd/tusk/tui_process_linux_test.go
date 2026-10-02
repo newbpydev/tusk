@@ -22,11 +22,14 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 	if testing.Short() {
 		t.Skip("real Linux child PTY")
 	}
-	binary := filepath.Join(t.TempDir(), "tusk")
-	build := exec.Command("make", "build", "BUILD_OUTPUT="+binary)
-	build.Dir = "../.."
-	if out, err := build.CombinedOutput(); err != nil {
-		t.Fatalf("%v %s", err, out)
+	binary := os.Getenv("TUSK_RELEASE_BINARY")
+	if binary == "" {
+		binary = filepath.Join(releaseDirectory(t), "tusk")
+		build := exec.Command("make", "build", "BUILD_OUTPUT="+binary)
+		build.Dir = "../.."
+		if out, err := build.CombinedOutput(); err != nil {
+			t.Fatalf("%v %s", err, out)
+		}
 	}
 	for _, mode := range []string{"q", "resize", "ctrlc", "interrupt", "terminate", "hangup"} {
 		t.Run(mode, func(t *testing.T) {
@@ -58,7 +61,7 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 			defer cancel()
 			cmd := exec.CommandContext(ctx, binary, "tui")
-			cmd.Env = []string{"PATH=" + os.Getenv("PATH"), "TERM=xterm-kitty", "TUSK_TIMEZONE=UTC", "TUSK_DB_PATH=" + filepath.Join(t.TempDir(), "tasks.db")}
+			cmd.Env = []string{"PATH=" + os.Getenv("PATH"), "TERM=xterm-kitty", "TUSK_TIMEZONE=UTC", "TUSK_DB_PATH=" + filepath.Join(releaseDirectory(t), "tasks.db")}
 			cmd.Stdin, cmd.Stdout, cmd.Stderr = slave, slave, slave
 			cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true, Setctty: true, Ctty: 0}
 			if err = cmd.Start(); err != nil {

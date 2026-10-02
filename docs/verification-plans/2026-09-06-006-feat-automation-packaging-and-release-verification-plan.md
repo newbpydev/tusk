@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Implementation active - U1/U3/U4/U2 locally accepted; U6 engineering accepted; U5 local drivers next
+status: Implementation active - U1/U3/U4/U2 locally accepted; U6/U5 engineering accepted; U7 local configuration next
 evidence-scope: 51 local scenario closures; hosted/native release gates pending
 deepened: 2026-10-01
 ---
@@ -393,3 +393,33 @@ no workflow has been pushed/dispatched and fake signatures are component evidenc
 The committed local checkpoint enables U5's local driver/selector implementation
 under the source-freeze contract; exact hosted artifact acceptance still depends
 on an authorized trusted run after all release build inputs are committed.
+
+### U5 local engineering contract — 2026-10-01
+
+Supplied-binary selectors feed existing real CLI/docs/backup and Linux child PTY
+tests without rebuilding the candidate. Drivers require pinned manifest/executable
+identity and a trusted verification receipt; `local-fixture` is explicitly
+preliminary. Fresh evidence lives outside candidate storage and source checkout.
+Owned process fixtures are retained on success/failure. Replacement/removal checks
+protect task/event identity and data files; newer-schema refusal protects all
+pre-existing DB/sidecar bytes and forbids writes into any newly created WAL.
+SQLite may create an empty WAL and read-cache SHM on read-only inspection; absence
+of these metadata files is not the data-preservation contract. Observed overly
+strict presence assertion and failed run are retained, not relabeled as passes.
+
+CLI release measurements use the reference profile. TUI model measurements require
+a clean exact-source checkout; packaged startup and binary/measurement compiler
+identities remain separate. PowerShell native execution, actual trusted five-target
+runtime/terminal proof and candidate timing remain pending. V73–V86 stay open.
+
+### U5 local engineering checkpoint — 2026-10-01
+
+Supplied-artifact selectors, native smoke drivers, retained owned fixtures and
+reference measurement entry points pass canonical validation, Go 1.25 checks
+and all five application/test cross-builds. The preliminary Linux payload passes
+real CLI/docs/backup/replacement/newer-schema and child PTY checks with its hash
+unchanged. [Receipt](../verification-evidence/006/u5.json) retains unsafe-output
+Red/Green and the corrected SQLite metadata assertion. No production app change,
+trusted candidate timing or other-platform native acceptance is claimed. All
+V73–V86 and the parent U5 checkbox remain open. The coherent local engineering
+commit enables U7 configuration; final source freeze requires a fresh hosted run.

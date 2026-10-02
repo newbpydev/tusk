@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Implementation active - U1/U3/U4/U2 locally accepted; U6 engineering accepted; U5 local drivers next; release gates open
+status: Implementation active - U1/U3/U4/U2 locally accepted; U6/U5 engineering accepted; U7 local configuration next; release gates open
 evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
@@ -38,7 +38,7 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-010 | Constant version / architecture | P1 | Fixed in plan | Use generated constant overlay, explicit linker settings and actual binary version assertions | Injection/determinism/checkout-isolation fixtures; V45–V47,V58,V59 |
 | 006-ISS-011 | Deprecated binary formula / distribution | P2 | Fixed in plan | Generate current macOS cask with upload disabled; separate tap publication | Cask config/native/local/live install and removal; V87–V94,V98 |
 | 006-ISS-012 | Candidate/rebuild/provenance / security, evidence | P1 | Fixed in plan | Build once, attest, test exact downloaded bytes and promote existing accepted files | Trusted-run/hash/provenance/tamper/readback matrix; V63–V72,V95–V98 |
-| 006-ISS-013 | Existing benchmark build prerequisites / performance | P1 | Fixed in plan | Add supplied-binary mode before release measurements; do not overwrite accepted artifacts | Hash-preservation Red/Green and retained candidate CLI/TUI matrices; V85,V86 |
+| 006-ISS-013 | Existing benchmark build prerequisites / performance | P1 | Resolved locally; candidate matrices pending | Add supplied-binary mode before release measurements; do not overwrite accepted artifacts | Hash-preservation Red/Green and retained candidate CLI/TUI matrices; V85,V86 |
 | 006-ISS-014 | Inherited native/release handoffs / coherence | P1 | Fixed in plan | Map product V66–V73 and Feature 002–005 release obligations without closing them in planning | Whole inherited contracts mapped to actual receipts; verification handoff table |
 | 006-ISS-015 | Install/backup/uninstall / data integrity | P1 | Fixed in plan | Preserve DB/WAL/SHM and compare domain data around replacement/restore | Native current/newer-schema/backup/remove fixtures; V39,V79–V81,V91 |
 | 006-ISS-016 | Missing repository metadata / documentation | P2 | Fixed in plan | Use concrete About/homepage/topics/social preview and inspect actual rendered GitHub | Preview plus before/after API/browser evidence; V42,V43,V100,V101 |
@@ -64,6 +64,7 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-035 | U6 ID download layout / correctness | P1 | Resolved locally; hosted proof pending | Explicit merge-multiple extracts the unique selected artifact at its reviewed root | Official pinned Action source and observed layout contract Red/Green; hosted execution pending |
 | 006-ISS-036 | U6 verifier output / data integrity | P1 | Resolved locally; hosted proof pending | Require new retained output outside candidate and Git storage | Observed verifier accepted and modified candidate storage; boundary regression Green |
 | 006-ISS-037 | U6 workflow skip/input controls / security | P1 | Resolved locally; hosted proof pending | Reject error-skipping/conditional steps, changed source env and unexpected job/step fields | Three accepted unsafe workflow mutations observed Red; exact structured contract Green |
+| 006-ISS-039 | U5 evidence output ownership / integrity | P2 | Resolved locally | Reject smoke/measurement outputs inside candidate/source storage; normalize physical absolute output paths | Observed boundary Red/Green, canonical validation; u5.json |
 | 006-ISS-038 | U6 minimal API repository / contract | P2 | Resolved locally; hosted proof pending | Fetch current repository/default branch separately from minimal Actions run repository | Official REST schema and minimal-run fixture Red/Green; real trusted candidate pending |
 | 006-ISS-034 | U2 special archive modes / security | P2 | Resolved locally | Reject setuid/setgid/sticky bits for every file/directory before payload acceptance | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
 | 006-ISS-033 | U2 literal distribution path / correctness | P1 | Resolved locally | Generate external runtime config changing only literal dist to owned storage; retain canonical hash and actual override separately | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
@@ -267,3 +268,33 @@ no workflow has been pushed/dispatched and fake signatures are component evidenc
 The committed local checkpoint enables U5's local driver/selector implementation
 under the source-freeze contract; exact hosted artifact acceptance still depends
 on an authorized trusted run after all release build inputs are committed.
+
+### U5 local engineering contract — 2026-10-01
+
+Supplied-binary selectors feed existing real CLI/docs/backup and Linux child PTY
+tests without rebuilding the candidate. Drivers require pinned manifest/executable
+identity and a trusted verification receipt; `local-fixture` is explicitly
+preliminary. Fresh evidence lives outside candidate storage and source checkout.
+Owned process fixtures are retained on success/failure. Replacement/removal checks
+protect task/event identity and data files; newer-schema refusal protects all
+pre-existing DB/sidecar bytes and forbids writes into any newly created WAL.
+SQLite may create an empty WAL and read-cache SHM on read-only inspection; absence
+of these metadata files is not the data-preservation contract. Observed overly
+strict presence assertion and failed run are retained, not relabeled as passes.
+
+CLI release measurements use the reference profile. TUI model measurements require
+a clean exact-source checkout; packaged startup and binary/measurement compiler
+identities remain separate. PowerShell native execution, actual trusted five-target
+runtime/terminal proof and candidate timing remain pending. V73–V86 stay open.
+
+### U5 local engineering checkpoint — 2026-10-01
+
+Supplied-artifact selectors, native smoke drivers, retained owned fixtures and
+reference measurement entry points pass canonical validation, Go 1.25 checks
+and all five application/test cross-builds. The preliminary Linux payload passes
+real CLI/docs/backup/replacement/newer-schema and child PTY checks with its hash
+unchanged. [Receipt](../verification-evidence/006/u5.json) retains unsafe-output
+Red/Green and the corrected SQLite metadata assertion. No production app change,
+trusted candidate timing or other-platform native acceptance is claimed. All
+V73–V86 and the parent U5 checkbox remain open. The coherent local engineering
+commit enables U7 configuration; final source freeze requires a fresh hosted run.

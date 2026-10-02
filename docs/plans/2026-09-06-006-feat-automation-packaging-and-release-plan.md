@@ -385,7 +385,7 @@ replaced. ID-based Action downloads explicitly merge at the reviewed root.
 
 **Dependencies:** U6 hosted candidate and exact artifact download/verification.
 
-**Files / ownership:** `scripts/release_smoke.sh`, `scripts/release_smoke.ps1`, `scripts/test/test_release.sh`, `scripts/cli-bench/main.go` and tests only if needed for supplied-binary verification, candidate startup selectors/tests in `cmd/tusk/`, `Makefile`, `docs/install.md`, `docs/releasing.md`, execution receipts under `docs/verification-evidence/006/`. Any production fix requires a new candidate and affected prior gates.
+**Files / ownership:** `scripts/release_smoke.sh`, `scripts/release_smoke.ps1`, `scripts/test/test_release_smoke.sh`, process/docs/lifecycle selectors in `internal/cli/`, measurement identity in `internal/tui/bench_test.go`, `scripts/cli-bench/main.go` and tests only if needed for supplied-binary verification, candidate startup selectors/tests in `cmd/tusk/`, `Makefile`, `docs/install.md`, `docs/releasing.md`, execution receipts under `docs/verification-evidence/006/`. Any production fix requires a new candidate and affected prior gates.
 
 **Approach:** Execute packaged bytes on all KTD2 targets; Linux/macOS owned Kitty and Windows native console checks satisfy their separate tiers. Test untouched/space/Unicode homes, explicit paths, embedded zones, first data creation, JSON/pipe/signals, WAL ownership and TUI lifecycle. Compare normalized tasks/events around binary replacement and removal; newer-schema refusal uses a fixture and file hashes. Replay consistent backup/restore. Run measured CLI/TUI gates sequentially on the declared reference host with actual candidate binaries.
 
@@ -550,3 +550,33 @@ no workflow has been pushed/dispatched and fake signatures are component evidenc
 The committed local checkpoint enables U5's local driver/selector implementation
 under the source-freeze contract; exact hosted artifact acceptance still depends
 on an authorized trusted run after all release build inputs are committed.
+
+### U5 local engineering contract — 2026-10-01
+
+Supplied-binary selectors feed existing real CLI/docs/backup and Linux child PTY
+tests without rebuilding the candidate. Drivers require pinned manifest/executable
+identity and a trusted verification receipt; `local-fixture` is explicitly
+preliminary. Fresh evidence lives outside candidate storage and source checkout.
+Owned process fixtures are retained on success/failure. Replacement/removal checks
+protect task/event identity and data files; newer-schema refusal protects all
+pre-existing DB/sidecar bytes and forbids writes into any newly created WAL.
+SQLite may create an empty WAL and read-cache SHM on read-only inspection; absence
+of these metadata files is not the data-preservation contract. Observed overly
+strict presence assertion and failed run are retained, not relabeled as passes.
+
+CLI release measurements use the reference profile. TUI model measurements require
+a clean exact-source checkout; packaged startup and binary/measurement compiler
+identities remain separate. PowerShell native execution, actual trusted five-target
+runtime/terminal proof and candidate timing remain pending. V73–V86 stay open.
+
+### U5 local engineering checkpoint — 2026-10-01
+
+Supplied-artifact selectors, native smoke drivers, retained owned fixtures and
+reference measurement entry points pass canonical validation, Go 1.25 checks
+and all five application/test cross-builds. The preliminary Linux payload passes
+real CLI/docs/backup/replacement/newer-schema and child PTY checks with its hash
+unchanged. [Receipt](../verification-evidence/006/u5.json) retains unsafe-output
+Red/Green and the corrected SQLite metadata assertion. No production app change,
+trusted candidate timing or other-platform native acceptance is claimed. All
+V73–V86 and the parent U5 checkbox remain open. The coherent local engineering
+commit enables U7 configuration; final source freeze requires a fresh hosted run.

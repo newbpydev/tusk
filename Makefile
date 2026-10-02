@@ -131,6 +131,7 @@ test-scripts:
 	@bash scripts/test/test_notices.sh
 	@bash scripts/test/test_release.sh
 	@bash scripts/test/test_candidate.sh
+	@bash scripts/test/test_release_smoke.sh
 
 all: validate build
 
@@ -319,3 +320,24 @@ verify-candidate:
 	bash scripts/candidate.sh verify
 check-candidate-workflow:
 	bash scripts/candidate.sh contract
+
+.PHONY: test-release-smoke
+test-release-smoke:
+	go test -v ./internal/cli ./cmd/tusk -run '^TestReleaseSelection_'
+	bash scripts/test/test_release_smoke.sh
+
+.PHONY: release-smoke release-smoke-processes bench-cli-release bench-tui-release
+$(foreach parameter,RELEASE_BINARY RELEASE_MANIFEST RELEASE_EVIDENCE_SCOPE CANDIDATE_VERIFICATION_RECEIPT RELEASE_SMOKE_OUTPUT,$(eval override $(parameter) := $$(value $(parameter))))
+export RELEASE_BINARY RELEASE_MANIFEST RELEASE_EVIDENCE_SCOPE CANDIDATE_VERIFICATION_RECEIPT RELEASE_SMOKE_OUTPUT
+override RELEASE_CLI_BENCH_OUTPUT := $(value CLI_BENCH_OUTPUT)
+override RELEASE_TUI_BENCH_OUTPUT := $(value TUI_BENCH_OUTPUT)
+export RELEASE_CLI_BENCH_OUTPUT RELEASE_TUI_BENCH_OUTPUT
+release-smoke:
+	bash scripts/release_smoke.sh smoke
+release-smoke-processes:
+	go test -v ./internal/cli -run '^(TestProcess_Workflow|TestDocsExamples_QuickStartAndClosedBackup|TestReleaseLifecycle_)' -count=1
+	go test -v ./cmd/tusk -run '^TestTUIProcess_TerminalLifecycle$$' -count=1
+bench-cli-release:
+	RELEASE_BENCH_OUTPUT="$$RELEASE_CLI_BENCH_OUTPUT" bash scripts/release_smoke.sh bench-cli
+bench-tui-release:
+	RELEASE_BENCH_OUTPUT="$$RELEASE_TUI_BENCH_OUTPUT" bash scripts/release_smoke.sh bench-tui

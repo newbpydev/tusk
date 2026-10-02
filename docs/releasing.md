@@ -103,6 +103,35 @@ CLI/TUI, backup, upgrade, uninstall and retained performance checks. A cross-bui
 hosts are Linux amd64/arm64, macOS Intel/ARM and native Windows amd64, including
 an owned Windows 11 terminal. Missing access leaves the gate pending.
 
+## Native smoke and retained measurements
+
+After trusted verification, extract the native archive into an owned directory.
+Keep evidence in a new directory outside both candidate storage and the source
+checkout. The drivers verify manifest and executable identities, consume the
+selected executable without building it, and retain owned DB/WAL/SHM fixtures:
+
+```bash
+make release-smoke RELEASE_BINARY=/tmp/extracted/tusk RELEASE_MANIFEST=/tmp/downloaded-candidate/assets/release-manifest.json CANDIDATE_MANIFEST_SHA256=ACCEPTED_SHA256 CANDIDATE_VERIFICATION_RECEIPT=/tmp/candidate-verification-unique/receipt.json RELEASE_SMOKE_OUTPUT=/tmp/native-smoke-unique
+make bench-cli-release RELEASE_BINARY=/tmp/extracted/tusk RELEASE_MANIFEST=/tmp/downloaded-candidate/assets/release-manifest.json CANDIDATE_MANIFEST_SHA256=ACCEPTED_SHA256 CANDIDATE_VERIFICATION_RECEIPT=/tmp/candidate-verification-unique/receipt.json CLI_BENCH_OUTPUT=/tmp/release-cli-unique.json
+make bench-tui-release RELEASE_BINARY=/tmp/extracted/tusk RELEASE_MANIFEST=/tmp/downloaded-candidate/assets/release-manifest.json CANDIDATE_MANIFEST_SHA256=ACCEPTED_SHA256 CANDIDATE_VERIFICATION_RECEIPT=/tmp/candidate-verification-unique/receipt.json TUI_BENCH_OUTPUT=/tmp/release-tui-unique.json
+```
+
+Run timings sequentially without concurrent test/build load. CLI measurements use
+the reference profile. TUI model measurements require a clean checkout at the
+candidate SHA on native Linux amd64; startup runs the packaged executable.
+Binary compiler and measurement compiler identities are recorded separately.
+All three targets refuse existing outputs and preserve the supplied binary hash.
+`RELEASE_EVIDENCE_SCOPE=local-fixture` permits preliminary local engineering checks;
+that explicit label cannot close any trusted/native release scenario.
+
+On native Windows amd64, invoke `scripts/release_smoke.ps1` with `-Binary`,
+`-Manifest`, `-ManifestSHA256`, `-VerificationReceipt` and a new `-OutputDirectory`.
+GNU Make/Git Bash and the maintainer toolchain are QA prerequisites, not application
+runtime dependencies. The PowerShell entry point has not been executed on Windows.
+Automated Linux child PTY restoration checks remain separate from actual owned
+Kitty interactions; Windows console/visual checks and macOS/Linux ARM native
+records must be supplied on their native hosts. Missing hosts leave gates open.
+
 ## Publication and failure recovery
 
 Owner authorization must name version/SHA and accepted manifest/run before
