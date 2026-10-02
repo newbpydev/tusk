@@ -5,6 +5,8 @@ import (
 	"archive/zip"
 	"bytes"
 	"compress/gzip"
+	"debug/macho"
+	"debug/pe"
 	"encoding/binary"
 	"encoding/json"
 	"io"
@@ -160,6 +162,15 @@ func TestManifest_ActualFiveTargetRoundTripAndTamper(t *testing.T) {
 		t.Skip("full cross-built archive integration; make test/test-release/race/validate covers it")
 	}
 	root, dist, input, sha := releaseFixture(t)
+	t.Run("reject altered overlay receipt digest", func(t *testing.T) {
+		badInput := filepath.Join(t.TempDir(), "input.json")
+		if err := writeJSON(badInput, overlayInfo{Version: "0.3.0", InputSHA256: strings.Repeat("b", 64)}); err != nil {
+			t.Fatal(err)
+		}
+		if err := finalize(root, dist, filepath.Join(t.TempDir(), "assets"), badInput, sha, "1.27.1", "candidate"); err == nil || !strings.Contains(err.Error(), "generated input") {
+			t.Fatalf("altered input was not refused at its entry boundary: %v", err)
+		}
+	})
 	assets := filepath.Join(t.TempDir(), "assets")
 	if run([]string{"finalize", root, dist, assets, input, sha, "1.27.1", "candidate"}, os.Stderr) != 0 {
 		t.Fatal("finalize")
@@ -167,12 +178,128 @@ func TestManifest_ActualFiveTargetRoundTripAndTamper(t *testing.T) {
 	if run([]string{"verify", assets}, os.Stderr) != 0 {
 		t.Fatal("verify")
 	}
+	t.Run("standalone notices remain bound to source", func(t *testing.T) {
+		for _, name := range []string{"THIRD_PARTY_NOTICES.md", "checksums.txt", "release-manifest.json"} {
+			filename := filepath.Join(assets, name)
+			original, err := os.ReadFile(filename)
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Cleanup(func() {
+				if err := os.WriteFile(filename, original, 0644); err != nil {
+					t.Error(err)
+				}
+			})
+		}
+		var m manifest
+		if err := readJSON(filepath.Join(assets, "release-manifest.json"), &m); err != nil {
+			t.Fatal(err)
+		}
+		changed := []byte("standalone notice differs from accepted source and archives")
+		if err := os.WriteFile(filepath.Join(assets, "THIRD_PARTY_NOTICES.md"), changed, 0644); err != nil {
+			t.Fatal(err)
+		}
+		m.Files["THIRD_PARTY_NOTICES.md"] = digest(changed)
+		checksums := checksumText(m.Files)
+		m.ChecksumsSHA256 = digest(checksums)
+		if err := os.WriteFile(filepath.Join(assets, "checksums.txt"), checksums, 0644); err != nil {
+			t.Fatal(err)
+		}
+		if err := writeJSON(filepath.Join(assets, "release-manifest.json"), m); err != nil {
+			t.Fatal(err)
+		}
+		if err := verifyInventory(assets); err == nil || !strings.Contains(err.Error(), "standalone notice") {
+			t.Fatalf("self-consistent foreign notice accepted: %v", err)
+		}
+	})
+	t.Run("reject dist replacement after inspection", func(t *testing.T) {
+		if runtime.GOOS == "windows" {
+			t.Skip("owned Bash git wrapper is a Unix fault-injection fixture")
+		}
+		realGit, err := exec.LookPath("git")
+		if err != nil {
+			t.Fatal(err)
+		}
+		archive := filepath.Join(dist, archiveName("0.3.0", "linux/amd64"))
+		original, err := os.ReadFile(archive)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			if err := os.WriteFile(archive, original, 0644); err != nil {
+				t.Error(err)
+			}
+		})
+		bin := t.TempDir()
+		replacement := filepath.Join(bin, "replacement")
+		if err := os.WriteFile(replacement, []byte("changed after member inspection"), 0600); err != nil {
+			t.Fatal(err)
+		}
+		// sourceFiles runs after all binary archives have been inspected and
+		// before their later copy. Change only the owned dist at that boundary.
+		wrapper := "#!/usr/bin/env bash\nset -eu\nmv \"$FIXTURE_REPLACEMENT\" \"$FIXTURE_ARCHIVE\"\nexec \"$FIXTURE_REAL_GIT\" \"$@\"\n"
+		if err := os.WriteFile(filepath.Join(bin, "git"), []byte(wrapper), 0755); err != nil {
+			t.Fatal(err)
+		}
+		t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
+		t.Setenv("FIXTURE_REPLACEMENT", replacement)
+		t.Setenv("FIXTURE_ARCHIVE", archive)
+		t.Setenv("FIXTURE_REAL_GIT", realGit)
+		out := filepath.Join(t.TempDir(), "assets")
+		if err := finalize(root, dist, out, input, sha, "1.27.1", "candidate"); err == nil || !strings.Contains(err.Error(), "gzip") {
+			t.Fatalf("copied replacement was not rejected: %v", err)
+		}
+		copied, err := os.ReadFile(filepath.Join(out, filepath.Base(archive)))
+		if err != nil || bytes.Equal(copied, original) {
+			t.Fatalf("copy replacement fault was not exercised: %v", err)
+		}
+	})
 	for _, target := range targets() {
 		files, err := readArchive(filepath.Join(dist, archiveName("0.3.0", target)))
 		if err != nil {
 			t.Fatal(err)
 		}
 		data := append([]byte(nil), files[executableName(target)].Data...)
+		if strings.HasPrefix(target, "darwin/") || strings.HasPrefix(target, "windows/") {
+			t.Run("reject foreign library "+target, func(t *testing.T) {
+				var libraries []string
+				if strings.HasPrefix(target, "darwin/") {
+					file, err := macho.NewFile(bytes.NewReader(data))
+					if err != nil {
+						t.Fatal(err)
+					}
+					defer file.Close()
+					libraries, err = file.ImportedLibraries()
+					if err != nil {
+						t.Fatal(err)
+					}
+				} else {
+					file, err := pe.NewFile(bytes.NewReader(data))
+					if err != nil {
+						t.Fatal(err)
+					}
+					defer file.Close()
+					symbols, err := file.ImportedSymbols()
+					if err != nil {
+						t.Fatal(err)
+					}
+					for _, symbol := range symbols {
+						_, library, ok := strings.Cut(symbol, ":")
+						if !ok {
+							t.Fatal("invalid import fixture")
+						}
+						libraries = append(libraries, library)
+					}
+				}
+				if len(libraries) == 0 {
+					t.Fatal("fixture contains no OS imports to mutate")
+				}
+				bad := bytes.ReplaceAll(data, []byte(libraries[0]), []byte(strings.Repeat("x", len(libraries[0]))))
+				if inspectFormat(bad, target) == nil {
+					t.Fatal("foreign library accepted")
+				}
+			})
+		}
 		switch target {
 		case "darwin/amd64":
 			binary.LittleEndian.PutUint32(data[4:], 0x100000c)
@@ -194,6 +321,12 @@ func TestManifest_ActualFiveTargetRoundTripAndTamper(t *testing.T) {
 	if inspectBinary(bytes.ReplaceAll(files["tusk"].Data, []byte("time/tzdata.loadFromEmbeddedTZData"), []byte("time/tzdata.fakeFromEmbeddedTZData")), "linux/amd64", "1.27.1", sha) == nil {
 		t.Fatal("missing tzdata accepted")
 	}
+	t.Run("reject corrupt embedded timezone payload", func(t *testing.T) {
+		bad := bytes.ReplaceAll(files["tusk"].Data, []byte("TZif"), []byte("xxxx"))
+		if inspectBinary(bad, "linux/amd64", "1.27.1", sha) == nil {
+			t.Fatal("corrupt embedded timezone payload accepted")
+		}
+	})
 	for _, change := range []func(map[string]member){
 		func(m map[string]member) { delete(m, "tusk") },
 		func(m map[string]member) { v := m["tusk"]; v.Mode = 0644; m["tusk"] = v },

@@ -23,7 +23,13 @@ func TestTUIProcess_TerminalLifecycle(t *testing.T) {
 		t.Skip("real Linux child PTY")
 	}
 	binary := os.Getenv("TUSK_RELEASE_BINARY")
-	if binary == "" {
+	if binary != "" {
+		var err error
+		binary, err = measurementBinaryPath()
+		if err != nil {
+			t.Fatal(err)
+		}
+	} else {
 		binary = filepath.Join(releaseDirectory(t), "tusk")
 		build := exec.Command("make", "build", "BUILD_OUTPUT="+binary)
 		build.Dir = "../.."

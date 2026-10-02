@@ -21,7 +21,7 @@ for mutation in '.homebrew_casks[0].skip_upload=false' '.homebrew_casks[0].hooks
 done
 printf '#!/usr/bin/env bash\nexit 44\n' >"$scratch/bin/gh";chmod +x "$scratch/bin/gh"
 expect 1 'missing tap remains named prerequisite' env PATH="$scratch/bin:$PATH" bash "$scratch/fixture/scripts/homebrew.sh" destination
-if ! rg -q '006-ISS-003' "$scratch/output";then failed=1;fi
+if ! grep -Eq '006-ISS-003' "$scratch/output";then failed=1;fi
 cat >"$scratch/bin/gh" <<'GH'
 #!/usr/bin/env bash
 [[ "${GH_HOST:-}" == github.com && -z "${GH_DEBUG:-}" && -z "${DEBUG:-}" ]] || exit 78
@@ -31,6 +31,6 @@ GH
 expect 0 'tap check pins public GitHub host and disables HTTP debug logging' env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 bash "$scratch/fixture/scripts/homebrew.sh" destination
 printf '#!/usr/bin/env bash\nexec sleep 60\n' >"$scratch/bin/gh"
 expect 1 'stalled owned GitHub child has a deadline' env PATH="$scratch/bin:$PATH" GH_REQUEST_TIMEOUT=100ms bash "$scratch/fixture/scripts/homebrew.sh" destination
-if ! rg -q 'GitHub deadline: context deadline exceeded' "$scratch/output";then failed=1;cat "$scratch/output" >&2;fi
+if ! grep -Eq 'GitHub deadline: context deadline exceeded' "$scratch/output";then failed=1;cat "$scratch/output" >&2;fi
 expect 0 'cask Make target available' make -n -C "$root" check-homebrew
 exit "$failed"

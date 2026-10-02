@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -70,12 +71,17 @@ func TestOpenService_PathPrecedence(t *testing.T) {
 			base := t.TempDir()
 			t.Chdir(base)
 			t.Setenv("HOME", base)
+			t.Setenv("USERPROFILE", base)
 			t.Setenv("TUSK_DB_PATH", "")
 			t.Setenv("XDG_DATA_HOME", "")
 			want := filepath.Join(base, ".local", "share", "tusk", "tusk.db")
 			switch name {
 			case "explicit":
-				want = filepath.Join(base, "literal ?#%.db")
+				name := "literal ?#%.db"
+				if runtime.GOOS == "windows" {
+					name = "literal #%.db"
+				}
+				want = filepath.Join(base, name)
 				t.Setenv("TUSK_DB_PATH", want)
 			case "relative explicit":
 				want = filepath.Join(base, "relative.db")
@@ -103,6 +109,7 @@ func TestOpenService_PathPrecedence(t *testing.T) {
 func TestOpenService_NoFallback(t *testing.T) {
 	base := t.TempDir()
 	t.Setenv("HOME", base)
+	t.Setenv("USERPROFILE", base)
 	t.Setenv("XDG_DATA_HOME", filepath.Join(base, "fallback"))
 	t.Setenv("TUSK_DB_PATH", base)
 	if _, _, err := openService(context.Background(), cli.Config{Location: time.UTC}); err == nil {

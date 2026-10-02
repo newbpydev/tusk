@@ -10,7 +10,7 @@ done
 required README.md 'source installation' 'available installation route'
 required README.md 'no public release' 'unreleased status'
 required docs/install.md 'Go 1\.25' 'minimum Go'
-required docs/install.md 'Bash' 'source Bash prerequisite'
+required docs/install.md '^Install Git,.*Bash' 'source Bash prerequisite'
 required docs/install.md 'GNU Make' 'source Make prerequisite'
 required docs/install.md 'third_party' 'local replacement explanation'
 required docs/install.md 'PowerShell' 'native Windows route'
@@ -24,8 +24,9 @@ required SECURITY.md 'disabled|not enabled' 'actual private-reporting state'
 required LICENSE 'Permission is hereby granted' 'selected MIT grant'
 required THIRD_PARTY_NOTICES.md 'third_party/bubbletea' 'replacement notice'
 required THIRD_PARTY_NOTICES.md 'third_party/glamour' 'replacement notice'
+unsupported_claims="go install github.com/newbpydev/tusk[^[:space:]]*@|--due[ =]+[\"']*next week|Guaranteed sub-15ms|guaranteed.*latency"
 for file in "${files[@]}"; do
-    if grep -Eq -- 'go install github.com/newbpydev/tusk[^[:space:]]*@|--due[ =]+["\x27]*next week|Guaranteed sub-15ms|guaranteed.*latency' "$root/$file"; then
+    if grep -Eq -- "$unsupported_claims" "$root/$file"; then
         fail "unsupported install/date/performance claim in $file"
     fi
     # Public badges and release URLs are activated only after U8 readback.

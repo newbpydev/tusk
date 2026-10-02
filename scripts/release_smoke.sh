@@ -12,6 +12,7 @@ native_path() {
 }
 preflight() {
  [[ -f "${RELEASE_BINARY:-}" && ! -L "$RELEASE_BINARY" && -f "${RELEASE_MANIFEST:-}" && ! -L "$RELEASE_MANIFEST" ]] || die 'regular extracted binary and manifest required'
+ RELEASE_BINARY="$(cd "$(dirname "$RELEASE_BINARY")" && pwd -P)/$(basename "$RELEASE_BINARY")"
  [[ "${CANDIDATE_MANIFEST_SHA256:-}" =~ ^[0-9a-f]{64}$ && "$(digest "$RELEASE_MANIFEST")" == "$CANDIDATE_MANIFEST_SHA256" ]] || die 'manifest differs from selected digest'
  local host=() line target
  while IFS= read -r line;do host+=("$line");done < <(go env GOHOSTOS GOHOSTARCH)
@@ -28,7 +29,9 @@ preflight() {
    jq -e --arg hash "$CANDIDATE_MANIFEST_SHA256" --slurpfile m "$RELEASE_MANIFEST" '.status=="verified" and .repository=="newbpydev/tusk" and .workflow==".github/workflows/release.yml" and .manifest_sha256==$hash and .source_sha==$m[0].source_sha and .version==("v"+$m[0].version)' "$CANDIDATE_VERIFICATION_RECEIPT" >/dev/null || die 'verification receipt does not match candidate' ;;
   *) die 'invalid evidence scope';;
  esac
- RELEASE_BINARY="$(cd "$(dirname "$RELEASE_BINARY")" && pwd -P)/$(basename "$RELEASE_BINARY")"
+ observed_version=$(jq -er '.version | strings' "$RELEASE_MANIFEST") || die 'candidate version missing'
+ version_output=$("$RELEASE_BINARY" --version) || die 'supplied executable version command failed'
+ [[ "$version_output" == "tusk version $observed_version" ]] || die 'executed binary version differs from candidate manifest'
  TUSK_RELEASE_BINARY=$(native_path "$RELEASE_BINARY") || die 'supplied binary native path conversion failed'
  export RELEASE_BINARY TUSK_RELEASE_BINARY
 }
@@ -61,7 +64,7 @@ case "${1:-preflight}" in
   export TUSK_RELEASE_FIXTURE_DIR
   status=0
   make -C "$root" release-smoke-processes >"$RELEASE_SMOKE_OUTPUT/processes.log" 2>&1 || status=$?
-  jq -n --arg hash "$binary_hash" --arg manifest "$CANDIDATE_MANIFEST_SHA256" --arg scope "${RELEASE_EVIDENCE_SCOPE:-trusted-candidate}" --arg host "$(uname -s)" --argjson status "$status" '{schema:1,binary_sha256:$hash,manifest_sha256:$manifest,scope:$scope,host:$host,process_status:$status,manual_terminal:"pending; automated child PTY is separate",fixtures:"owned fixtures retained including DB/WAL/SHM on failure"}' >"$RELEASE_SMOKE_OUTPUT/receipt.json"
+  jq -n --arg hash "$binary_hash" --arg version "$observed_version" --arg manifest "$CANDIDATE_MANIFEST_SHA256" --arg scope "${RELEASE_EVIDENCE_SCOPE:-trusted-candidate}" --arg host "$(uname -s)" --argjson status "$status" '{schema:1,binary_sha256:$hash,observed_version:$version,manifest_sha256:$manifest,scope:$scope,host:$host,process_status:$status,manual_terminal:"pending; automated child PTY is separate",fixtures:"owned fixtures retained including DB/WAL/SHM on failure"}' >"$RELEASE_SMOKE_OUTPUT/receipt.json"
   [[ "$(digest "$RELEASE_BINARY")" == "$binary_hash" ]] || die 'supplied executable changed during smoke'
   exit "$status" ;;
  bench-cli)

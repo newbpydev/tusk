@@ -63,7 +63,7 @@ coverage-release:
 
 # Test-owned checkout and output; called by the inspector integration tests.
 build-release-fixture:
-	CGO_ENABLED=0 GOTOOLCHAIN=go1.27.1 go build -trimpath -overlay="$$TUSK_RELEASE_OVERLAY" -ldflags='-s -w' -o "$$TUSK_RELEASE_FIXTURE_BINARY" ./cmd/tusk
+	@release_go=$$(jq -er '.go.release' scripts/tool-versions.json) && CGO_ENABLED=0 GOTOOLCHAIN="go$$release_go" go build -trimpath -overlay="$$TUSK_RELEASE_OVERLAY" -ldflags='-s -w' -o "$$TUSK_RELEASE_FIXTURE_BINARY" ./cmd/tusk
 
 .PHONY: build-gh-deadline
 build-gh-deadline:
@@ -387,7 +387,7 @@ release-readback:
 
 .PHONY: lint-release-promotion
 lint-release-promotion:
-	shellcheck scripts/promote.sh scripts/test/test_promotion.sh scripts/repository_metadata.sh scripts/test/test_metadata.sh scripts/candidate.sh scripts/test/test_candidate.sh scripts/homebrew.sh scripts/test/test_homebrew.sh
+	shellcheck -x scripts/promote.sh scripts/test/test_promotion.sh scripts/repository_metadata.sh scripts/test/test_metadata.sh scripts/candidate.sh scripts/test/test_candidate.sh scripts/homebrew.sh scripts/test/test_homebrew.sh
 
 .PHONY: test-repository-metadata prepare-repository-metadata apply-repository-metadata
 $(foreach parameter,METADATA_OUTPUT METADATA_AUTHORIZATION METADATA_RELEASE_RECEIPT,$(eval override $(parameter) := $$(value $(parameter))))

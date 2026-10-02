@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -23,12 +24,34 @@ func TestReleaseSelection_MeasurementUsesSuppliedBinary(t *testing.T) {
 	}
 }
 
+func TestReleaseSelection_RejectMissingOrDirectory(t *testing.T) {
+	base := t.TempDir()
+	t.Chdir(base)
+	for _, selected := range []string{"missing-tusk", base} {
+		t.Setenv("TUSK_RELEASE_BINARY", selected)
+		if _, err := measurementBinaryPath(); err == nil {
+			t.Fatalf("non-file supplied executable accepted: %q", selected)
+		}
+	}
+}
+
 func measurementBinaryPath() (string, error) {
 	binary := os.Getenv("TUSK_RELEASE_BINARY")
 	if binary == "" {
 		binary = "../../bin/tusk"
 	}
-	return filepath.Abs(binary)
+	binary, err := filepath.Abs(binary)
+	if err != nil {
+		return "", err
+	}
+	info, err := os.Stat(binary)
+	if err != nil {
+		return "", err
+	}
+	if !info.Mode().IsRegular() {
+		return "", fmt.Errorf("supplied executable must be a regular file: %s", binary)
+	}
+	return binary, nil
 }
 
 func releaseDirectory(t *testing.T) string {

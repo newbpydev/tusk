@@ -12,10 +12,10 @@ func caskFixture() manifest {
 	m := manifest{Version: "0.3.0", Mode: "candidate", SourceSHA: strings.Repeat("a", 40), Files: map[string]string{}}
 	for _, arch := range []string{"amd64", "arm64"} {
 		target := "darwin/" + arch
-		members := map[string]string{"completions/tusk.bash": "hash", "completions/tusk.fish": "hash", "completions/tusk.zsh": "hash", "man/tusk.1": "hash"}
+		members := map[string]string{"tusk": strings.Repeat("a", 64), "completions/tusk.bash": "hash", "completions/tusk.fish": "hash", "completions/tusk.zsh": "hash", "man/tusk.1": "hash"}
 		name := archiveName(m.Version, target)
 		m.Files[name] = strings.Repeat("a", 64)
-		m.Targets = append(m.Targets, targetRecord{Target: target, Archive: name, Members: members})
+		m.Targets = append(m.Targets, targetRecord{Target: target, Archive: name, Members: members, ExecutableSHA256: members["tusk"]})
 	}
 	return m
 }
@@ -43,6 +43,8 @@ func TestCask_IdentityAndDeclarativeBoundary(t *testing.T) {
 		func(m *manifest) { delete(m.Targets[0].Members, "completions/tusk.bash") },
 		func(m *manifest) { m.Targets[1].Members["man/evil\".1"] = "hash" },
 		func(m *manifest) { delete(m.Targets[1].Members, "man/tusk.1") },
+		func(m *manifest) { delete(m.Targets[0].Members, "tusk") },
+		func(m *manifest) { m.Targets[0].ExecutableSHA256 = strings.Repeat("b", 64) },
 	} {
 		m := caskFixture()
 		mutate(&m)
@@ -65,7 +67,7 @@ func TestCask_IdentityAndDeclarativeBoundary(t *testing.T) {
 	if run([]string{"check-cask", mf, file}, os.Stderr) != 0 {
 		t.Fatal("check")
 	}
-	for _, change := range []string{string(text) + "zap trash: '~/.local/share/tusk'\n", strings.Replace(string(text), "on_intel do", "on_arm do", 1), strings.Replace(string(text), strings.Repeat("a", 64), strings.Repeat("b", 64), 1), strings.Replace(string(text), "end", "oops", 1), string(text) + "postflight do; system_command '/usr/bin/xattr'; end\n"} {
+	for _, change := range []string{string(text) + "zap trash: '~/.local/share/tusk'\n", strings.Replace(string(text), "on_intel do", "on_arm do", 1), strings.Replace(string(text), strings.Repeat("a", 64), strings.Repeat("b", 64), 1), strings.Replace(string(text), "\n    end\n", "\n    oops\n", 1), string(text) + "postflight do; system_command '/usr/bin/xattr'; end\n"} {
 		if err := os.WriteFile(file, []byte(change), 0644); err != nil {
 			t.Fatal(err)
 		}

@@ -37,21 +37,23 @@ func staticCompletions(c *cobra.Command, registerFlags bool) {
 	if len(c.ValidArgs) == 0 {
 		c.ValidArgsFunction = cobra.NoFileCompletions
 	}
+	// Persistent flag callbacks belong to their owner and are inherited by its
+	// children. Ordinary startup never enters this registration path.
+	if registerFlags {
+		register := func(flag *pflag.Flag) {
+			complete := cobra.NoFileCompletions
+			switch flag.Name {
+			case "status":
+				complete = cobra.FixedCompletions([]string{"todo", "in-progress", "blocked", "done"}, cobra.ShellCompDirectiveNoFileComp)
+			case "priority":
+				complete = cobra.FixedCompletions([]string{"low", "medium", "high", "urgent", "1", "2", "3", "4"}, cobra.ShellCompDirectiveNoFileComp)
+			}
+			_ = c.RegisterFlagCompletionFunc(flag.Name, complete)
+		}
+		c.Flags().VisitAll(register)
+		c.PersistentFlags().VisitAll(register)
+	}
 	for _, child := range c.Commands() {
-		if registerFlags && child.Flags().Lookup("status") != nil {
-			_ = child.RegisterFlagCompletionFunc("status", cobra.FixedCompletions([]string{"todo", "in-progress", "blocked", "done"}, cobra.ShellCompDirectiveNoFileComp))
-		}
-		if registerFlags && child.Flags().Lookup("priority") != nil {
-			_ = child.RegisterFlagCompletionFunc("priority", cobra.FixedCompletions([]string{"low", "medium", "high", "urgent", "1", "2", "3", "4"}, cobra.ShellCompDirectiveNoFileComp))
-		}
-		// Non-enum flag values must not ask storage or propose task data.
-		if registerFlags {
-			child.Flags().VisitAll(func(flag *pflag.Flag) {
-				if flag.Name != "status" && flag.Name != "priority" {
-					_ = child.RegisterFlagCompletionFunc(flag.Name, cobra.NoFileCompletions)
-				}
-			})
-		}
 		staticCompletions(child, registerFlags)
 	}
 }

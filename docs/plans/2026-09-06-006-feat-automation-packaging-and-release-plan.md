@@ -755,3 +755,45 @@ trusted-main candidate provenance, exact-byte cask/performance acceptance, tap
 availability and release/settings/tap writes remain pending. Parent U6/U5/U7/U8,
 Phase 6/G4 and the 51 local scenario count are unchanged. No merge, release tag,
 workflow dispatch, repository settings or tap write is authorized by this request.
+
+### PR #6 complete hosted report batch — 2026-10-02 UTC
+
+[PR #6](https://github.com/newbpydev/tusk/pull/6) is open at
+`ced4417a648c3dcd21d4e48a215788ca2cce3112`. The owner requested all reports
+before one combined remediation pass. All six CI jobs and Kilo's review completed
+on that unchanged commit. The 30 review threads were assessed together: 27
+change items and three evidence-based replies. Six failing CI jobs reduce to
+Windows tool provisioning, macOS fixture assumptions and undeclared ripgrep
+in the shell policy fixtures. Additional instances of those portability
+assumptions are included in the same bounded unit.
+
+- [x] Apply the valid review/CI changes with causal Red/Green evidence.
+- [x] Pass fresh current-state canonical validation and review the combined diff;
+  prepare the complete batch as one coherent commit/push unit.
+- [ ] Settle the complete post-push hosted report set before release acceptance.
+
+These reports do not close the pending actual native terminal, exact-byte
+performance, trusted-main candidate, cask/tap or release-publication gates.
+The 51 local scenario closures and open parent units remain as recorded above.
+
+Native preflight now checks the selected executable’s actual `--version` output.
+Every native promotion receipt requires `observed_version` equal to the candidate
+manifest version. Copied inventories are rechecked before finalize succeeds.
+The complete batch is retained in [the R1 receipt](../verification-evidence/006/pr6-r1/acceptance.json).
+
+The first combined canonical gate passed functional/race tests but rejected
+release-inspector coverage at 92.6%. Malformed PE tables, ordinal imports and
+bounded/corrupt timezone ZIPs now raise focused coverage to 95.5%; final
+canonical validation is pending. The failed gate remains retained.
+
+A follow-up inventory regression rejects a standalone notice that differs from
+the accepted source even when its bundle hashes/checksums are repaired. The
+minimal source-digest binding passed focused Red/Green; final current-state
+canonical validation follows the already-passing intermediate gate.
+
+The final current-state canonical gate passed: `make validate build
+check-generated check-docs check-notices check-ci check-candidate-workflow
+lint-release-promotion`, using official `GOTOOLCHAIN=go1.27.1`. Release-inspector
+coverage is 95.2%. The containing commit is the coherent local remediation unit;
+publication, visible thread replies/resolution and fresh hosted reports are
+verified separately on PR #6. Pending native/release gates remain unchanged.

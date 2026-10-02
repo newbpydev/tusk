@@ -30,7 +30,10 @@ setup_tool() (
     cp "$stage/$binary" "$install_stage"
     chmod +x "$install_stage"
     mv -f "$install_stage" "$directory/$binary"
-    cp "$stage/archive" "$directory/goreleaser.archive"
+    install_stage=$(mktemp "$directory/.goreleaser-archive.XXXXXX")
+    cp "$stage/archive" "$install_stage"
+    chmod 644 "$install_stage"
+    mv -f "$install_stage" "$directory/goreleaser.archive"
     jq -n --arg archive "$expected" --arg binary "$(digest "$directory/$binary")" '{archive_sha256:$archive,binary_sha256:$binary}' >"$directory/goreleaser-pin.json"
 )
 contract() {

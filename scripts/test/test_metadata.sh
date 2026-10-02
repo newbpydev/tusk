@@ -61,6 +61,12 @@ esac
 GH
 chmod +x "$scratch/bin/"*
 invoke=(env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 FIXTURE_ROOT="$scratch" METADATA_AUTHORIZATION="$scratch/approval.json" METADATA_RELEASE_RECEIPT="$scratch/release-receipt.json")
+cat >"$scratch/interrupt-env" <<'INTERRUPT'
+trap 'if [[ "$BASH_COMMAND" == gh_deadline_setup* ]]; then trap - DEBUG; kill -TERM "$$"; fi' DEBUG
+INTERRUPT
+expect 143 'interrupted mutation retains its signal status' "${invoke[@]}" BASH_ENV="$scratch/interrupt-env" METADATA_OUTPUT="$scratch/interrupted" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
+expect 0 'interrupted audit receipt records exit 143' jq -e '.exit_status==143' "$scratch/interrupted/result.json"
+
 expect 0 'metadata prepare performs no API request' "${invoke[@]}" METADATA_OUTPUT="$scratch/prepared" bash "$scratch/fixture/scripts/repository_metadata.sh" prepare
 [[ ! -e "$scratch/calls" ]] || failed=1
 expect 1 'missing owner authorization refuses metadata writes' "${invoke[@]}" METADATA_AUTHORIZATION= METADATA_OUTPUT="$scratch/missing-approval" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
@@ -77,8 +83,8 @@ rm -f "$scratch/calls"
 expect 1 'changed main refuses approved stale metadata' "${invoke[@]}" FIXTURE_MAIN_CHANGED=1 METADATA_OUTPUT="$scratch/changed-main" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
 expect 1 'partial topic failure preserves acknowledged About state' "${invoke[@]}" FIXTURE_TOPICS_FAIL=1 METADATA_OUTPUT="$scratch/partial" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
 expect 0 'lost topic response reconciles without repeating About patch' "${invoke[@]}" FIXTURE_LOST=1 METADATA_OUTPUT="$scratch/retry" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
-[[ "$(rg -c -- '--method PATCH' "$scratch/calls" || true)" == 1 ]] || failed=1
+[[ "$(grep -Ec -- '--method PATCH' "$scratch/calls" || true)" == 1 ]] || failed=1
 expect 0 'matching metadata causes no writes' "${invoke[@]}" METADATA_OUTPUT="$scratch/matching" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
-[[ "$(rg -c -- '--method PATCH' "$scratch/calls" || true)" == 1 && "$(rg -c -- '--method PUT' "$scratch/calls" || true)" == 2 ]] || failed=1
+[[ "$(grep -Ec -- '--method PATCH' "$scratch/calls" || true)" == 1 && "$(grep -Ec -- '--method PUT' "$scratch/calls" || true)" == 2 ]] || failed=1
 expect 1 'retained metadata result not overwritten' "${invoke[@]}" METADATA_OUTPUT="$scratch/matching" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
 exit "$failed"

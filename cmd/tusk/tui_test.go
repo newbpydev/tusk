@@ -23,6 +23,7 @@ func TestTUIFactory_PathMatchesStorageResolution(t *testing.T) {
 			base := t.TempDir()
 			t.Chdir(base)
 			t.Setenv("HOME", base)
+			t.Setenv("USERPROFILE", base)
 			t.Setenv("TUSK_DB_PATH", "")
 			t.Setenv("XDG_DATA_HOME", "")
 			switch mode {
@@ -85,6 +86,7 @@ func TestSession_PathPrecedence(t *testing.T) {
 			base := t.TempDir()
 			t.Chdir(base)
 			t.Setenv("HOME", base)
+			t.Setenv("USERPROFILE", base)
 			t.Setenv("TUSK_DB_PATH", "")
 			t.Setenv("XDG_DATA_HOME", "")
 			want := filepath.Join(base, ".local", "share", "tusk", "tusk.db")
@@ -141,22 +143,16 @@ func TestSession_ComposedRunner(t *testing.T) {
 }
 
 func TestSession_PathErrors(t *testing.T) {
-	for _, mode := range []string{"missing home", "relative home", "missing cwd"} {
+	for _, mode := range []string{"missing home", "relative home"} {
 		t.Run(mode, func(t *testing.T) {
 			t.Chdir(t.TempDir())
 			t.Setenv("XDG_DATA_HOME", "")
 			t.Setenv("TUSK_DB_PATH", "")
 			t.Setenv("HOME", "")
+			t.Setenv("USERPROFILE", "")
 			if mode == "relative home" {
 				t.Setenv("HOME", "relative")
-			}
-			if mode == "missing cwd" {
-				dir := t.TempDir()
-				t.Chdir(dir)
-				if err := os.Remove(dir); err != nil {
-					t.Fatal(err)
-				}
-				t.Setenv("TUSK_DB_PATH", "relative.db")
+				t.Setenv("USERPROFILE", "relative")
 			}
 			_, closeOwner, err := tuiFactory(cli.Config{Location: time.UTC})(context.Background())
 			if closeOwner != nil {

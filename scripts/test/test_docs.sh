@@ -20,9 +20,10 @@ expect 0 'public documentation contract' bash "$root/scripts/docs-check.sh" "$ro
 fixture="$scratch/checkout ü"
 mkdir -p "$fixture"
 cp -R "$root/docs" "$fixture/docs"
-for file in README.md CONTRIBUTING.md SECURITY.md LICENSE THIRD_PARTY_NOTICES.md; do
+for file in README.md CONTRIBUTING.md SECURITY.md LICENSE THIRD_PARTY_NOTICES.md AGENTS.md MASTERPLAN.md; do
     if [[ -f "$root/$file" ]]; then cp "$root/$file" "$fixture/"; fi
 done
+expect 0 'complete documentation fixture is a passing control' bash "$root/scripts/docs-check.sh" "$fixture"
 for missing in docs/install.md LICENSE docs/assets/tusk-tui.png; do
     if [[ -f "$fixture/$missing" ]]; then
         mv "$fixture/$missing" "$scratch/saved"
@@ -36,8 +37,16 @@ for bad in '[Broken](docs/absent.md)' '[Bad anchor](docs/cli.md#absent-heading)'
     expect 1 "reject unsupported public content: $bad" bash "$root/scripts/docs-check.sh" "$fixture"
 done
 cp "$root/README.md" "$fixture/README.md"
+printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
+expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"
+cp "$root/README.md" "$fixture/README.md"
 if [[ -f "$fixture/docs/install.md" ]]; then
-    sed '/Bash/d' "$root/docs/install.md" >"$fixture/docs/install.md"
+    sed '/^Install Git,/s/\*\*Bash\*\*/a POSIX shell/' "$root/docs/install.md" >"$fixture/docs/install.md"
     expect 1 'source route declares Bash prerequisite' bash "$root/scripts/docs-check.sh" "$fixture"
+    if ! grep -Fq 'lacks source Bash prerequisite' "$scratch/result"; then
+        echo 'FAIL: missing Bash did not reach its prerequisite boundary' >&2
+        cat "$scratch/result" >&2
+        failed=1
+    fi
 fi
 exit "$failed"

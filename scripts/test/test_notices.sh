@@ -51,4 +51,14 @@ expect 1 'notice drift fails' bash "$root/scripts/notices.sh" check "$fixture"
 expect 0 'regenerate repairs owned notices' bash "$root/scripts/notices.sh" generate "$fixture"
 expect 0 'repaired notices match' cmp "$root/THIRD_PARTY_NOTICES.md" "$fixture/THIRD_PARTY_NOTICES.md"
 expect 0 'generated notices have portable readable permissions' readable_notice "$fixture/THIRD_PARTY_NOTICES.md"
+mkdir -p "$scratch/fail-bin"
+cat >"$scratch/fail-bin/chmod" <<'CHMOD'
+#!/usr/bin/env bash
+case "$2" in */.notices.*) exit 55;;esac
+exec "$FIXTURE_REAL_CHMOD" "$@"
+CHMOD
+chmod +x "$scratch/fail-bin/chmod"
+expect 55 'failed notices stage preserves the previous notice' env PATH="$scratch/fail-bin:$PATH" FIXTURE_REAL_CHMOD="$(command -v chmod)" bash "$root/scripts/notices.sh" generate "$fixture"
+expect 0 'failed stage leaves accepted bytes intact' cmp "$root/THIRD_PARTY_NOTICES.md" "$fixture/THIRD_PARTY_NOTICES.md"
+if [[ -n "$(find "$fixture" -maxdepth 1 -name '.notices.*' -print)" ]]; then echo 'FAIL: incomplete notices stage leaked' >&2; failed=1; fi
 exit "$failed"

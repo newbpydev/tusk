@@ -33,6 +33,9 @@ func caskText(m manifest) ([]byte, error) {
 			return nil, fmt.Errorf("exact macOS architecture required: %s", arch)
 		}
 		r := records[0]
+		if !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(r.ExecutableSHA256) || r.Members["tusk"] != r.ExecutableSHA256 {
+			return nil, fmt.Errorf("missing or mismatched macOS executable")
+		}
 		if r.Archive != archiveName(m.Version, r.Target) || !regexp.MustCompile(`^[0-9a-f]{64}$`).MatchString(m.Files[r.Archive]) {
 			return nil, fmt.Errorf("invalid macOS archive/hash")
 		}

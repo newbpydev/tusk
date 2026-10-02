@@ -29,6 +29,16 @@ for injection in 'v0.3.0`touch '"$scratch"'/injected`' 'v0.3.0$(shell touch '"$s
     fi
 done
 expect 0 'local release configuration contract' bash "$root/scripts/release.sh" contract
+mkdir -p "$scratch/compiler/scripts" "$scratch/compiler-bin"
+cp "$root/Makefile" "$scratch/compiler/"
+jq '.go.release="1.27.2"' "$root/scripts/tool-versions.json" >"$scratch/compiler/scripts/tool-versions.json"
+cat >"$scratch/compiler-bin/go" <<'GO'
+#!/usr/bin/env bash
+[[ "$GOTOOLCHAIN" == go1.27.2 && "$CGO_ENABLED" == 0 ]] || exit 62
+[[ "$1" == build ]] || exit 63
+GO
+chmod +x "$scratch/compiler-bin/go"
+expect 0 'fixture compiler follows the release catalog' env PATH="$scratch/compiler-bin:$PATH" TUSK_RELEASE_OVERLAY=fixture.json TUSK_RELEASE_FIXTURE_BINARY=fixture-binary make -C "$scratch/compiler" build-release-fixture
 mkdir -p "$scratch/config/scripts"
 cp "$root/scripts/release.sh" "$scratch/config/scripts/"
 for mutation in '.builds[0].hooks = {pre:["touch outside"]}' '.archives[0].files += [{src:".env"}]' '.announce = {slack:{enabled:true}}' '.builds += [.builds[0]]' '.checksum.disable = false'; do
@@ -56,6 +66,35 @@ if [[ "$(cat "$scratch/tools/goreleaser")" != accepted-tool ]]; then
     echo 'FAIL: failed download replaced accepted packager' >&2
     failed=1
 fi
+# A partial archive copy must never overwrite the last accepted archive.
+mkdir -p "$scratch/atomic/scripts" "$scratch/atomic-bin" "$scratch/atomic-tools" "$scratch/packager"
+cp "$root/scripts/release.sh" "$scratch/atomic/scripts/"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$scratch/packager/goreleaser"
+tar -czf "$scratch/packager.tar.gz" -C "$scratch/packager" goreleaser
+archive_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/packager.tar.gz")
+jq --arg hash "$archive_hash" '.tools.goreleaser.assets.linux_amd64.sha256=$hash' "$root/scripts/tool-versions.json" >"$scratch/atomic/scripts/tool-versions.json"
+printf 'accepted archive\n' >"$scratch/atomic-tools/goreleaser.archive"
+cat >"$scratch/atomic-bin/go" <<'GO'
+#!/usr/bin/env bash
+case "$*" in 'env GOHOSTOS') echo linux;;'env GOHOSTARCH') echo amd64;;*) exit 77;;esac
+GO
+cat >"$scratch/atomic-bin/curl" <<'CURL'
+#!/usr/bin/env bash
+while [[ $# -gt 0 ]]; do
+ if [[ "$1" == --output ]]; then exec "$FIXTURE_REAL_CP" "$FIXTURE_ARCHIVE" "$2"; fi
+ shift
+done
+exit 77
+CURL
+cat >"$scratch/atomic-bin/cp" <<'COPY'
+#!/usr/bin/env bash
+case "${*: -1}" in */goreleaser.archive|*/.goreleaser-archive.*) printf partial >"${*: -1}"; exit 55;;esac
+exec "$FIXTURE_REAL_CP" "$@"
+COPY
+chmod +x "$scratch/atomic-bin/"*
+expect 55 'partial archive staging copy propagates' env PATH="$scratch/atomic-bin:$PATH" FIXTURE_REAL_CP="$(command -v cp)" FIXTURE_ARCHIVE="$scratch/packager.tar.gz" TUSK_RELEASE_TOOL_DIR="$scratch/atomic-tools" bash "$scratch/atomic/scripts/release.sh" setup
+if [[ "$(cat "$scratch/atomic-tools/goreleaser.archive")" != 'accepted archive' ]]; then echo 'FAIL: partial copy overwrote accepted archive' >&2; failed=1; fi
+if [[ -n "$(find "$scratch/atomic-tools" -name '.goreleaser*' -print)" ]]; then echo 'FAIL: incomplete packager stage leaked' >&2; failed=1; fi
 # Failure injection uses a separate repository and preserves dirty/data files.
 mkdir -p "$scratch/checkout/scripts" "$scratch/fail-bin"
 cp "$root/scripts/release.sh" "$scratch/checkout/scripts/"

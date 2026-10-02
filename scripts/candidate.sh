@@ -41,14 +41,14 @@ contract() {
       .jobs.build.outputs=={artifact_id:"${{ steps.upload.outputs.artifact-id }}",artifact_digest:"${{ steps.upload.outputs.artifact-digest }}"} and
       .jobs.identity.steps[1].env=={RELEASE_VERSION:"${{ inputs.version }}",RELEASE_SHA:"${{ inputs.source_sha }}"} and
       .jobs.build.steps[3].env==.jobs.identity.steps[1].env and .jobs.build.steps[4].env==.jobs.identity.steps[1].env and
-      .jobs.provenance.steps[2].env=={GOTOOLCHAIN:("go"+$pins[0].go.release)} and
+      .jobs.provenance.steps[3].env=={GOTOOLCHAIN:"local"} and
       .jobs.build.needs == ["identity","ci"] and .jobs.provenance.needs == ["build"] and
       .jobs.provenance.permissions == {contents:"read",actions:"read","id-token":"write",attestations:"write"} and
       all(.jobs | to_entries[] | select(.key != "ci");
         .value["runs-on"] == "ubuntu-24.04" and .value["timeout-minutes"] == 30 and
         .value.defaults.run.shell == "bash" and (.value|has("if")|not) and
         (.key == "provenance" or (.value|has("permissions")|not))) and
-      (.jobs.identity.steps|length) == 2 and (.jobs.build.steps|length) == 6 and (.jobs.provenance.steps|length) == 4 and
+      (.jobs.identity.steps|length) == 2 and (.jobs.build.steps|length) == 6 and (.jobs.provenance.steps|length) == 5 and
       all(.jobs[] | tostring; test("secrets\\.|--clobber|release create|git push";"i")|not) and
       all(.jobs[].steps[]? | select(has("uses"));
         .uses == ("actions/checkout@"+$pins[0].actions.checkout.sha) or
@@ -65,9 +65,10 @@ contract() {
       .jobs.build.steps[4].run == "make record-candidate CANDIDATE_DIR=\"$RUNNER_TEMP/candidate\"" and
       .jobs.build.steps[5].id == "upload" and
       .jobs.build.steps[5].with == {name:"tusk-candidate-${{ github.run_id }}-${{ github.run_attempt }}",path:"${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json\n${{ runner.temp }}/candidate/homebrew/Casks/tusk.rb","if-no-files-found":"error","retention-days":90,"compression-level":0,overwrite:false} and
-      .jobs.provenance.steps[1].with == {"artifact-ids":"${{ needs.build.outputs.artifact_id }}",path:"${{ runner.temp }}/candidate","merge-multiple":true} and
-      .jobs.provenance.steps[2].run == "make verify-release RELEASE_ASSETS=\"$RUNNER_TEMP/candidate/assets\"\nmake check-homebrew RELEASE_MANIFEST=\"$RUNNER_TEMP/candidate/assets/release-manifest.json\" HOMEBREW_CASK=\"$RUNNER_TEMP/candidate/homebrew/Casks/tusk.rb\"" and
-      .jobs.provenance.steps[3].with == {"subject-path":"${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json\n${{ runner.temp }}/candidate/homebrew/Casks/tusk.rb","push-to-registry":false} and
+      .jobs.provenance.steps[1].with == {"go-version":$pins[0].go.release,cache:true} and
+      .jobs.provenance.steps[2].with == {"artifact-ids":"${{ needs.build.outputs.artifact_id }}",path:"${{ runner.temp }}/candidate","merge-multiple":true} and
+      .jobs.provenance.steps[3].run == "make verify-release RELEASE_ASSETS=\"$RUNNER_TEMP/candidate/assets\"\nmake check-homebrew RELEASE_MANIFEST=\"$RUNNER_TEMP/candidate/assets/release-manifest.json\" HOMEBREW_CASK=\"$RUNNER_TEMP/candidate/homebrew/Casks/tusk.rb\"" and
+      .jobs.provenance.steps[4].with == {"subject-path":"${{ runner.temp }}/candidate/assets/*\n${{ runner.temp }}/candidate/candidate-run.json\n${{ runner.temp }}/candidate/homebrew/Casks/tusk.rb","push-to-registry":false} and
       (.jobs.build|has("env")|not) and (.jobs.identity|has("env")|not) and (.jobs.provenance|has("env")|not) and
       all(.jobs.build.steps[] | .env? // {}; has("GH_TOKEN")|not)
     ' "$root/.github/workflows/release.yml" >/dev/null || die 'workflow violates isolated trusted-candidate contract'
@@ -100,7 +101,7 @@ verify() (
     attempt=$(jq -r '.run_attempt' "$directory/candidate-run.json")
     directory=$(cd "$directory" && pwd -P) || die 'candidate directory missing'
     output="$(cd "$(dirname "$output")" && pwd -P)/$(basename "$output")" || die 'verification output parent missing'
-    [[ "$output" != "$directory" && "$output" != "$directory/"* && "$output" != "$root/.git" && "$output" != "$root/.git/"* ]] || die 'verification must not mutate candidate or Git storage'
+    [[ "$output" != "$directory" && "$output" != "$directory/"* && "$output" != "$root" && "$output" != "$root/"* ]] || die 'verification must not mutate candidate or source storage'
     # Receipt directories are new, never replaced; failed boundaries stay inspectable.
     mkdir "$output" || die 'verification output collision/parent missing'
     # shellcheck source=scripts/gh_deadline.sh

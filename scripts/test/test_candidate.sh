@@ -17,14 +17,17 @@ expect 0 'manual main candidate identity' "${identity[@]}" bash "$root/scripts/c
 for override in GITHUB_REPOSITORY=evil/tusk GITHUB_EVENT_NAME=pull_request GITHUB_REF=refs/heads/topic GITHUB_SHA=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb GITHUB_WORKFLOW_SHA=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb GITHUB_WORKFLOW_REF=evil/tusk/.github/workflows/release.yml@refs/heads/main GITHUB_RUN_ID=0 RELEASE_VERSION='v0.3.0;exit'; do
     expect 1 "reject identity $override" "${identity[@]}" "$override" bash "$root/scripts/candidate.sh" identity
 done
-expect 0 'ID-selected artifact extracts at the reviewed root' jq -e '.jobs.provenance.steps[1].with["merge-multiple"] == true' "$root/.github/workflows/release.yml"
+expect 0 'ID-selected artifact extracts at the reviewed root' jq -e '.jobs.provenance.steps[2].with["merge-multiple"] == true' "$root/.github/workflows/release.yml"
 expect 0 'candidate workflow contract' bash "$root/scripts/candidate.sh" contract
+# The dollar references are jq variables.
+# shellcheck disable=SC2016
+expect 0 'provenance owns its pinned Go compiler' jq -e --slurpfile pins "$root/scripts/tool-versions.json" '[.jobs.provenance.steps[] | select((.uses // "") | startswith("actions/setup-go@"))] | length==1 and .[0].uses==("actions/setup-go@"+$pins[0].actions.setup_go.sha) and .[0].with["go-version"]==$pins[0].go.release' "$root/.github/workflows/release.yml"
 expect 0 'reviewed cask uploaded and attested' jq -e '.jobs.build.steps[5].with.path|endswith("/candidate/homebrew/Casks/tusk.rb")' "$root/.github/workflows/release.yml"
 mkdir -p "$scratch/workflow/scripts" "$scratch/workflow/.github/workflows"
 if [[ -f "$root/scripts/candidate.sh" && -f "$root/.github/workflows/release.yml" ]]; then
     cp "$root/scripts/candidate.sh" "$scratch/workflow/scripts/"
     cp "$root/scripts/tool-versions.json" "$scratch/workflow/scripts/"
-    for mutation in '.jobs.provenance.steps[3]["continue-on-error"]=true' '.jobs.provenance.steps[3]["if"]="always()"' '.jobs.build.steps[3].env.RELEASE_SHA=("b"*40)' '.on.push={}' '.permissions.contents="write"' '.jobs.build.permissions={"id-token":"write"}' '.jobs.build.needs=["identity"]' '.jobs.ci.secrets="inherit"' '.jobs.provenance.steps[0].with["persist-credentials"]=true' '.jobs.build.steps[4].env.GH_TOKEN="secret"' '.jobs.build.steps[5].with["retention-days"]=1' '.jobs.provenance.steps[1].uses="actions/download-artifact@main"'; do
+    for mutation in '.jobs.provenance.steps[4]["continue-on-error"]=true' '.jobs.provenance.steps[4]["if"]="always()"' '.jobs.build.steps[3].env.RELEASE_SHA=("b"*40)' '.on.push={}' '.permissions.contents="write"' '.jobs.build.permissions={"id-token":"write"}' '.jobs.build.needs=["identity"]' '.jobs.ci.secrets="inherit"' '.jobs.provenance.steps[0].with["persist-credentials"]=true' '.jobs.build.steps[4].env.GH_TOKEN="secret"' '.jobs.build.steps[5].with["retention-days"]=1' '.jobs.provenance.steps[2].uses="actions/download-artifact@main"'; do
         jq "$mutation" "$root/.github/workflows/release.yml" >"$scratch/workflow/.github/workflows/release.yml"
         expect 1 "reject workflow $mutation" bash "$scratch/workflow/scripts/candidate.sh" contract
     done
@@ -37,7 +40,12 @@ cp "$root/scripts/candidate.sh" "$scratch/fixture/scripts/"
 cp "$root/Makefile" "$scratch/fixture/"
 cp "$root/scripts/gh_deadline.sh" "$scratch/fixture/scripts/"
 cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
-printf '#!/usr/bin/env bash\nprintf "inventory inspected\\n"\n' >"$scratch/fixture/scripts/release_check.sh"
+cat >"$scratch/fixture/scripts/release_check.sh" <<'CHECK'
+#!/usr/bin/env bash
+printf '%s\n' "$1" >>"$FIXTURE_ROOT/verifier-calls"
+case "$1:${FIXTURE_VERIFIER_FAIL:-none}" in verify:inventory|check-cask:cask) exit 61;; esac
+printf 'inventory inspected\n'
+CHECK
 cp "$root/scripts/test/sha256.sh" "$scratch/sha256.sh"
 printf payload >"$scratch/candidate/assets/payload.tar.gz"
 file_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/payload.tar.gz")
@@ -86,6 +94,14 @@ cask_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/homebrew/Cas
 jq --arg hash "$cask_hash" '.cask_sha256=$hash' "$scratch/candidate/candidate-run.json" >"$scratch/new-receipt"
 mv "$scratch/new-receipt" "$scratch/candidate/candidate-run.json"
 expect 0 'trusted API and certificate identity accepted' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/accepted" bash "$scratch/fixture/scripts/candidate.sh" verify
+for boundary in inventory cask; do
+ : >"$scratch/gh-calls"
+ expect 61 "candidate refuses failed $boundary verification" "${verify[@]}" FIXTURE_VERIFIER_FAIL="$boundary" CANDIDATE_VERIFICATION_DIR="$scratch/failed-$boundary" bash "$scratch/fixture/scripts/candidate.sh" verify
+ [[ ! -e "$scratch/failed-$boundary/receipt.json" ]] || failed=1
+ if grep -q '^attestation ' "$scratch/gh-calls"; then echo 'FAIL: failed verifier reached attestation' >&2; failed=1; fi
+done
+expect 1 'verification output cannot mutate source checkout' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/fixture/unwanted-verification" bash "$scratch/fixture/scripts/candidate.sh" verify
+[[ ! -e "$scratch/fixture/unwanted-verification" ]] || failed=1
 expect 47 'lost read response retains failure without acceptance' "${verify[@]}" FIXTURE_API_FAIL=1 CANDIDATE_VERIFICATION_DIR="$scratch/lost" bash "$scratch/fixture/scripts/candidate.sh" verify
 if [[ -e "$scratch/lost/receipt.json" ]]; then echo 'FAIL: lost response accepted candidate' >&2; failed=1; fi
 expect 0 'fresh readback retry succeeds' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/retry" bash "$scratch/fixture/scripts/candidate.sh" verify

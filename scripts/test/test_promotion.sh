@@ -44,7 +44,7 @@ for id in native/linux/amd64 native/linux/arm64 native/darwin/amd64 native/darwi
  path="$scratch/gates/${id//\//-}.json"
  jq -n --arg id "$id" --arg sha "$sha" --arg hash "$manifest_hash" '{status:"accepted",scope:"trusted-candidate",gate:$id,source_sha:$sha,version:"v0.3.0",manifest_sha256:$hash,run_id:123,fixture:true}' >"$path"
  if [[ "$id" == native/* ]];then
-  jq --arg target "${id#native/}" --slurpfile m "$scratch/candidate/assets/release-manifest.json" '. + ($m[0].targets[]|select(.target==$target)|{target:.target,executable_sha256:.executable_sha256,archive_sha256:$m[0].files_sha256[.archive]})' "$path" >"$scratch/new";mv "$scratch/new" "$path"
+  jq --arg target "${id#native/}" --slurpfile m "$scratch/candidate/assets/release-manifest.json" '. + ($m[0].targets[]|select(.target==$target)|{target:.target,observed_version:$m[0].version,executable_sha256:.executable_sha256,archive_sha256:$m[0].files_sha256[.archive]})' "$path" >"$scratch/new";mv "$scratch/new" "$path"
  fi
  hash=$(bash "$root/scripts/test/sha256.sh" "$path")
  jq --arg id "$id" --arg path "$path" --arg hash "$hash" '.gates += [{id:$id,passed:true,receipt:{path:$path,sha256:$hash}}]' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
@@ -127,6 +127,12 @@ chmod +x "$scratch/bin/"*
 reset() { rm -f -- "$scratch/remote/"*;printf '[]' >"$scratch/remote/releases.json";printf '[]' >"$scratch/remote/assets.json";: >"$scratch/remote/tag.json";: >"$scratch/gh-calls"; }
 reset
 invoke=(env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 FIXTURE_REAL_MAKE="$(command -v make)" FIXTURE_ROOT="$scratch" FIXTURE_CASK="$cask_hash" CANDIDATE_DIR="$scratch/candidate" CANDIDATE_RUN_ID=123 CANDIDATE_MANIFEST_SHA256="$manifest_hash" RELEASE_SHA="$sha" RELEASE_VERSION=v0.3.0 RELEASE_ACCEPTANCE="$scratch/acceptance.json" RELEASE_NOTES="$scratch/notes.md" RELEASE_AUTHORIZATION="$scratch/draft-approval.json")
+cat >"$scratch/interrupt-env" <<'INTERRUPT'
+trap 'if [[ "$BASH_COMMAND" == gh_deadline_setup* ]]; then trap - DEBUG; kill -TERM "$$"; fi' DEBUG
+INTERRUPT
+expect 143 'interrupted mutation retains its signal status' "${invoke[@]}" BASH_ENV="$scratch/interrupt-env" RELEASE_PROMOTION_OUTPUT="$scratch/interrupted" bash "$scratch/fixture/scripts/promote.sh" draft
+expect 0 'interrupted audit receipt records exit 143' jq -e '.exit_status==143' "$scratch/interrupted/result.json"
+
 expect 0 'prepare stays unaccepted and read-only' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/prepared" bash "$scratch/fixture/scripts/promote.sh" prepare
 [[ ! -s "$scratch/gh-calls" ]] || failed=1
 expect 1 'missing owner action authorization refused' "${invoke[@]}" RELEASE_AUTHORIZATION= RELEASE_PROMOTION_OUTPUT="$scratch/no-approval" bash "$scratch/fixture/scripts/promote.sh" draft
@@ -140,7 +146,7 @@ expect 47 'expired candidate refuses every remote write' "${invoke[@]}" FIXTURE_
 expect 1 'fresh main code change invalidates acceptance' "${invoke[@]}" FIXTURE_MAIN_CHANGED=1 RELEASE_PROMOTION_OUTPUT="$scratch/main-changed" bash "$scratch/fixture/scripts/promote.sh" draft
 reset
 index=0
-for mutation in 'del(.executable_sha256)' '.executable_sha256=("c"*64)' '.archive_sha256=("c"*64)' '.target="linux/arm64"';do
+for mutation in 'del(.executable_sha256)' '.executable_sha256=("c"*64)' '.archive_sha256=("c"*64)' '.target="linux/arm64"' 'del(.observed_version)' '.observed_version="dev"';do
  index=$((index+1))
  path="$scratch/gates/native-linux-amd64.json"
  cp "$path" "$scratch/original-gate.json";cp "$scratch/acceptance.json" "$scratch/original-acceptance.json";cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
@@ -217,14 +223,14 @@ reset
 expect 0 'lost create/upload responses reconcile exact accepted bytes' "${invoke[@]}" FIXTURE_LOST_CREATE=1 FIXTURE_LOST_UPLOAD=1 RELEASE_PROMOTION_OUTPUT="$scratch/draft" bash "$scratch/fixture/scripts/promote.sh" draft
 [[ "$(jq -r '.status' "$scratch/draft/receipt.json" 2>/dev/null || true)" == draft-complete ]] || failed=1
 if [[ ! -s "$scratch/remote/tag.json" ]];then printf 'FAIL: complete draft lacks accepted tag\n' >&2;failed=1;fi
-[[ "$(rg -c '^api https://uploads.github.com/.* --method POST' "$scratch/gh-calls" || true)" == 9 ]] || failed=1
+[[ "$(grep -Ec '^api https://uploads.github.com/.* --method POST' "$scratch/gh-calls" || true)" == 9 ]] || failed=1
 [[ ! -e "$scratch/candidate/assets/marker" ]] || failed=1
 expect 0 'matching complete draft resumes without uploads' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/draft-retry" bash "$scratch/fixture/scripts/promote.sh" draft
-[[ "$(rg -c '^api https://uploads.github.com/.* --method POST' "$scratch/gh-calls" || true)" == 9 ]] || failed=1
+[[ "$(grep -Ec '^api https://uploads.github.com/.* --method POST' "$scratch/gh-calls" || true)" == 9 ]] || failed=1
 expect 1 'remote tampering refuses publication' "${invoke[@]}" FIXTURE_BAD_READBACK=1 RELEASE_AUTHORIZATION="$scratch/publish-approval.json" RELEASE_PROMOTION_OUTPUT="$scratch/tampered" bash "$scratch/fixture/scripts/promote.sh" publish
 expect 0 'lost publication response readback confirms publication' "${invoke[@]}" FIXTURE_LOST_PUBLISH=1 RELEASE_AUTHORIZATION="$scratch/publish-approval.json" RELEASE_PROMOTION_OUTPUT="$scratch/published" bash "$scratch/fixture/scripts/promote.sh" publish
 expect 1 'published release refuses all draft writes' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/public-draft" bash "$scratch/fixture/scripts/promote.sh" draft
 expect 0 'read-only public readback verifies nine exact assets' "${invoke[@]}" RELEASE_AUTHORIZATION= RELEASE_PROMOTION_OUTPUT="$scratch/readback" bash "$scratch/fixture/scripts/promote.sh" readback
 expect 1 'retained output is not overwritten' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/readback" bash "$scratch/fixture/scripts/promote.sh" readback
-if rg -q -- '--clobber|--method DELETE|git push' "$scratch/gh-calls";then failed=1;fi
+if grep -Eq -- '--clobber|--method DELETE|git push' "$scratch/gh-calls";then failed=1;fi
 exit "$failed"

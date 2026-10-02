@@ -24,6 +24,10 @@ func TestOverlay_ImmutableAndIsolated(t *testing.T) {
 	if err := os.WriteFile(versionFile, original, 0600); err != nil {
 		t.Fatal(err)
 	}
+	versionFile, err := filepath.EvalSymlinks(versionFile)
+	if err != nil {
+		t.Fatal(err)
+	}
 	for _, snapshot := range []bool{false, true} {
 		destination := filepath.Join(t.TempDir(), "overlay ü")
 		info, err := createOverlay(root, destination, "v0.3.0", snapshot)

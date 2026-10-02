@@ -18,8 +18,8 @@ make validate build check-generated check-docs test-docs check-notices
 `make validate` runs formatting, vet, tests, race, coverage, script fixtures and
 module checks. It is required before commits. Use Red → Green → Refactor:
 write a failing behavior test, observe it, then implement the smallest fix.
-[AGENTS.md](AGENTS.md) defines boundaries, coverage and active-unit governance;
-[MASTERPLAN.md](MASTERPLAN.md) defines current implementation order. Keep the
+[AGENTS.md](https://github.com/newbpydev/tusk/blob/main/AGENTS.md) defines boundaries, coverage and active-unit governance;
+[MASTERPLAN.md](https://github.com/newbpydev/tusk/blob/main/MASTERPLAN.md) defines current implementation order. Keep the
 feature plan, verification plan and workorder synchronized when they change.
 
 Generate static docs with `make generate-docs`; check drift with `make check-docs`.

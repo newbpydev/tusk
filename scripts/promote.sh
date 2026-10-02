@@ -27,6 +27,8 @@ case "$output" in "$candidate"|"$candidate"/*|"$root"|"$root"/*) die 'output mus
 mkdir "$output" || die 'output exists; use a fresh readback directory'
 # Failures keep their diagnostics; no deletion or automatic HTTP write retry.
 trap 'printf "{\"action\":\"%s\",\"exit_status\":%s}\n" "$action" "$?" >"$output/result.json"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 jq --arg manifest "$CANDIDATE_MANIFEST_SHA256" '.files_sha256 + {"checksums.txt":.checksums_sha256,"release-manifest.json":$manifest}' "$manifest" >"$output/files.json"
 [[ "$(jq 'length' "$output/files.json")" == 9 ]] || die 'exact nine public assets required'
 if [[ "$action" == prepare ]];then
@@ -50,7 +52,7 @@ while IFS= read -r gate;do
   jq -e --arg target "${id#native/}" --slurpfile m "$manifest" '
    . as $r | [$m[0].targets[]|select(.target==$target)] as $t |
    ($t|length)==1 and $r.target==$target and $r.executable_sha256==$t[0].executable_sha256 and
-   $r.archive_sha256==$m[0].files_sha256[$t[0].archive]
+   $r.archive_sha256==$m[0].files_sha256[$t[0].archive] and $r.observed_version==$m[0].version
   ' "$path" >/dev/null || die 'native receipt executable/archive differs from candidate target'
  fi
 done < <(jq -c '.gates[]' "$RELEASE_ACCEPTANCE")

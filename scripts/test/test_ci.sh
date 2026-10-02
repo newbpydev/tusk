@@ -56,6 +56,31 @@ for filter in '.tools.actionlint.assets.linux_amd64.sha256 = "bad"' '.actions.ch
     expect 1 "CI refuses invalid tool pin: $filter" bash "$root/scripts/ci-check.sh" contract "$scratch/config"
 done
 
+# Execute the workflow bootstrap against the native tools actually supplied by
+# windows-2025. Translate drive paths only in this owned filesystem fixture.
+mkdir -p "$scratch/runner/c/mingw64/bin"
+touch "$scratch/runner/c/mingw64/bin/make.exe" "$scratch/runner/c/mingw64/bin/gcc.exe"
+chmod +x "$scratch/runner/c/mingw64/bin/"*.exe
+jq -er '.jobs.native.steps[] | select(.name=="Windows native tooling").run' "$root/.github/workflows/ci.yml" >"$scratch/windows-step"
+cat >"$scratch/drive-paths" <<'EOF'
+test() {
+    if [[ $# == 2 && "$1" == -x && "$2" == /c/* ]]; then
+        builtin test -x "$FIXTURE_RUNNER_ROOT$2"
+    else
+        builtin test "$@"
+    fi
+}
+EOF
+expect 0 'Windows workflow reaches image-provisioned GNU tools' env FIXTURE_RUNNER_ROOT="$scratch/runner" BASH_ENV="$scratch/drive-paths" GITHUB_PATH="$scratch/github-path" bash -e "$scratch/windows-step"
+expect 0 'Windows bootstrap exposes native GNU tool directory' grep -Fxq 'C:/mingw64/bin' "$scratch/github-path"
+for tool in make gcc; do
+    mv "$scratch/runner/c/mingw64/bin/$tool.exe" "$scratch/$tool.exe"
+    : >"$scratch/github-path"
+    expect 1 "Windows bootstrap refuses missing $tool" env FIXTURE_RUNNER_ROOT="$scratch/runner" BASH_ENV="$scratch/drive-paths" GITHUB_PATH="$scratch/github-path" bash -e "$scratch/windows-step"
+    [[ ! -s "$scratch/github-path" ]] || failed=1
+    mv "$scratch/$tool.exe" "$scratch/runner/c/mingw64/bin/$tool.exe"
+done
+
 # Prerequisite proof uses a fake native identity, never claims native execution.
 mkdir -p "$scratch/bin"
 cat >"$scratch/bin/go" <<'EOF'
@@ -63,8 +88,17 @@ cat >"$scratch/bin/go" <<'EOF'
 case "$1" in
     version) echo 'go version go1.27.1 windows/amd64' ;;
     env)
-        printf '%s\n' windows amd64 go1.27.1 1
-        if [[ "$*" == *GOHOSTOS* ]]; then printf '%s\n' "${FIXTURE_GO_HOST:-windows}" amd64; fi
+        shift
+        for key in "$@"; do
+            case "$key" in
+                GOOS) printf 'windows\n' ;;
+                GOHOSTOS) printf '%s\n' "${FIXTURE_GO_HOST:-windows}" ;;
+                GOARCH|GOHOSTARCH) printf 'amd64\n' ;;
+                GOVERSION) printf 'go1.27.1\n' ;;
+                CGO_ENABLED) printf '1\n' ;;
+                *) exit 77 ;;
+            esac
+        done
         ;;
 esac
 EOF
@@ -89,6 +123,7 @@ mkdir -p "$scratch/install/bin/tools"
 printf 'accepted-tool\n' >"$scratch/install/bin/tools/actionlint"
 cat >"$scratch/bin/curl" <<'EOF'
 #!/usr/bin/env bash
+printf 'curl reached\n' >>"$FIXTURE_CURL_CALLS"
 while [[ $# -gt 0 ]]; do
     if [[ "$1" == --output ]]; then printf 'truncated\n' >"$2"; exit 0; fi
     shift
@@ -96,10 +131,12 @@ done
 exit 19
 EOF
 chmod +x "$scratch/bin/curl"
-expect 1 'corrupt tool download is rejected' env PATH="$scratch/bin:$PATH" TUSK_CI_TOOL_DIR="$scratch/install/bin/tools" bash "$root/scripts/ci-check.sh" setup
+expect 1 'corrupt tool download is rejected' env PATH="$scratch/bin:$PATH" FIXTURE_CURL_CALLS="$scratch/curl-calls" TUSK_CI_TOOL_DIR="$scratch/install/bin/tools" bash "$root/scripts/ci-check.sh" setup
+expect 0 'digest failure reaches the actual download boundary' grep -Fxq 'curl reached' "$scratch/curl-calls"
 expect 0 'corrupt download preserves accepted executable' is_accepted_tool "$scratch/install/bin/tools/actionlint"
-printf '#!/usr/bin/env bash\nexit 19\n' >"$scratch/bin/curl"
-expect 1 'failed tool download propagates' env PATH="$scratch/bin:$PATH" TUSK_CI_TOOL_DIR="$scratch/install/bin/tools" bash "$root/scripts/ci-check.sh" setup
+printf '#!/usr/bin/env bash\nprintf "failed curl reached\\n" >>"$FIXTURE_CURL_CALLS"\nexit 19\n' >"$scratch/bin/curl"
+expect 1 'failed tool download propagates' env PATH="$scratch/bin:$PATH" FIXTURE_CURL_CALLS="$scratch/curl-calls" TUSK_CI_TOOL_DIR="$scratch/install/bin/tools" bash "$root/scripts/ci-check.sh" setup
+expect 0 'failed download reaches the actual request boundary' grep -Fxq 'failed curl reached' "$scratch/curl-calls"
 
 mkdir -p "$scratch/drift"
 git -C "$scratch/drift" init -q
@@ -116,13 +153,8 @@ printf 'unexpected\n' >"$scratch/drift/unexpected.go"
 expect 1 'source gate refuses extra untracked generated output' bash "$root/scripts/ci-check.sh" drift "$scratch/drift"
 
 for gate in fmt vet test race coverage test-scripts check-modules; do
-    mkdir -p "$scratch/gates/bin"
-    cat >"$scratch/gates/bin/go" <<'EOF'
-#!/usr/bin/env bash
-exit 19
-EOF
-    chmod +x "$scratch/gates/bin/go"
-    # Existing targets already propagate failures; a dry run also checks presence.
+    mkdir -p "$scratch/gates"
+    # Dry runs prove registration; owned recipes isolate aggregate propagation.
     expect 0 "canonical gate remains registered: $gate" make --no-print-directory -n -C "$root" "$gate"
     cp "$root/Makefile" "$scratch/gates/Makefile"
     for other in fmt vet test race coverage test-scripts check-modules; do

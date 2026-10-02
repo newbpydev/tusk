@@ -89,7 +89,7 @@
         {
           "name": "Windows native tooling",
           "if": "runner.os == 'Windows'",
-          "run": "test -x /c/msys64/usr/bin/make.exe\ntest -x /c/msys64/mingw64/bin/gcc.exe\nprintf '%s\\n' \"C:/msys64/mingw64/bin\" \"C:/msys64/usr/bin\" >> \"$GITHUB_PATH\""
+          "run": "test -x /c/mingw64/bin/make.exe\ntest -x /c/mingw64/bin/gcc.exe\nprintf '%s\\n' \"C:/mingw64/bin\" >> \"$GITHUB_PATH\""
         },
         {
           "name": "Release compiler",

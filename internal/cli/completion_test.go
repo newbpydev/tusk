@@ -74,6 +74,8 @@ func TestCompletion_StaticRequests(t *testing.T) {
 		{[]string{"__completeNoDesc", "edit", "id", "--priority", ""}, "medium"},
 		{[]string{"__complete", "delete", ""}, ":4"},
 		{[]string{"__complete", "add", "--tags", ""}, ":4"},
+		{[]string{"__complete", "--timezone", ""}, ":4"},
+		{[]string{"__complete", "list", "--timezone", ""}, ":4"},
 	} {
 		var out, errout bytes.Buffer
 		if code := Run(t.Context(), tc.args, staticOptions(t, &out, &errout)); code != 0 || !strings.Contains(out.String(), tc.want) || strings.Contains(out.String(), "Completion ended") || errout.Len() != 0 {

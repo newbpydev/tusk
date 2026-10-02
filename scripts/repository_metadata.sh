@@ -21,6 +21,8 @@ output="$parent/$(basename "$METADATA_OUTPUT")"
 case "$output" in "$root"|"$root"/*) die 'output must be outside source checkout';; esac
 mkdir "$output" || die 'output exists; use fresh readback directory'
 trap 'printf "{\"mode\":\"%s\",\"exit_status\":%s}\n" "$mode" "$?" >"$output/result.json"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 jq '.about' "$payload" >"$output/about-request.json"
 jq '.topics' "$payload" >"$output/topics-request.json"
 payload_hash=$(digest "$payload")

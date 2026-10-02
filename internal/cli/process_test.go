@@ -171,7 +171,11 @@ func TestProcess_Workflow(t *testing.T) {
 	})
 	t.Run("durable workflow", func(t *testing.T) {
 		home := processDirectory(t)
-		p := processFixture{binary, home, filepath.Join(home, "literal ?#% ' 界.db")}
+		name := "literal ?#% ' 界.db"
+		if runtime.GOOS == "windows" {
+			name = "literal #% ' 界.db"
+		}
+		p := processFixture{binary, home, filepath.Join(home, name)}
 		run := func(args ...string) any {
 			t.Helper()
 			code, data, errout := p.run(append(args, "--json")...)

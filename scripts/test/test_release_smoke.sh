@@ -9,7 +9,16 @@ expect() {
  "$@" >"$scratch/output" 2>&1 || actual=$?
  if [[ "$actual" == "$want" ]];then printf 'PASS: %s\n' "$label";else printf 'FAIL: %s (%s vs %s)\n' "$label" "$actual" "$want" >&2;cat "$scratch/output" >&2;failed=1;fi
 }
-expect 0 'CLI release measurement has no build prerequisite' make -n -C "$root" bench-cli-release RELEASE_BINARY="$scratch/accepted" CLI_BENCH_OUTPUT="$scratch/cli.json"
+# shellcheck disable=SC2329
+no_build_prerequisite() {
+ make -n -C "$1" bench-cli-release RELEASE_BINARY="$scratch/accepted" CLI_BENCH_OUTPUT="$scratch/cli.json" >"$scratch/dry-run" || return
+ ! grep -Eq '(^|[[:space:]])go build|scripts/build[.]sh' "$scratch/dry-run"
+}
+expect 0 'CLI release measurement has no build prerequisite' no_build_prerequisite "$root"
+mkdir -p "$scratch/build-dependent"
+cp "$root/Makefile" "$scratch/build-dependent/"
+printf '\nbench-cli-release: build\n' >>"$scratch/build-dependent/Makefile"
+expect 1 'measurement assertion detects a deliberately added build' no_build_prerequisite "$scratch/build-dependent"
 # Keep Make syntax literal until the driver's data validation.
 # Literal Make expression is the injection-test input.
 # shellcheck disable=SC2016
@@ -20,8 +29,10 @@ if [[ -f "$root/scripts/release_smoke.sh" ]];then
  mkdir -p "$scratch/fixture/scripts" "$scratch/candidate/assets" "$scratch/bin"
  cp "$root/scripts/release_smoke.sh" "$scratch/fixture/scripts/"
  cp "$root/scripts/json_check.sh" "$scratch/fixture/scripts/"
- printf '#!/usr/bin/env bash\nexit 0\n' >"$scratch/fixture/scripts/release_check.sh"
- printf 'accepted bytes' >"$scratch/accepted"
+ printf '#!/usr/bin/env bash\n[[ "${FIXTURE_VERIFY_FAIL:-0}" == 0 ]] || exit 61\n' >"$scratch/fixture/scripts/release_check.sh"
+ printf '#!/usr/bin/env bash\nif [[ -n ${FIXTURE_BINARY_CALLS:-} ]]; then printf "version executed\\n" >>"$FIXTURE_BINARY_CALLS"; fi\nprintf "tusk version %%s\\n" "${FIXTURE_VERSION:-0.3.0}"\n' >"$scratch/accepted"
+ chmod +x "$scratch/accepted"
+ cp "$scratch/accepted" "$scratch/original-accepted"
  fixture_os=$(go env GOHOSTOS);fixture_arch=$(go env GOHOSTARCH)
  hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/accepted")
  jq -n --arg hash "$hash" --arg target "$fixture_os/$fixture_arch" '{schema:1,mode:"candidate",version:"0.3.0",source_sha:("a"*40),compiler:"1.27.1",targets:[{target:$target,archive:"payload.tar.gz",executable_sha256:$hash}]}' >"$scratch/candidate/assets/release-manifest.json"
@@ -38,6 +49,10 @@ GO
  chmod +x "$scratch/bin/go"
  preflight=(env PATH="$scratch/bin:$PATH" FIXTURE_ROOT="$scratch" FIXTURE_OS="$fixture_os" FIXTURE_ARCH="$fixture_arch" RELEASE_BINARY="$scratch/accepted" RELEASE_MANIFEST="$scratch/candidate/assets/release-manifest.json" CANDIDATE_MANIFEST_SHA256="$manifest" RELEASE_EVIDENCE_SCOPE=local-fixture)
  expect 0 'exact native binary identity fixture' "${preflight[@]}" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
+ expect 0 'relative selected binary is executed from its own absolute path' "${preflight[@]}" bash -c 'cd "$FIXTURE_ROOT" && RELEASE_BINARY=accepted bash "$FIXTURE_ROOT/fixture/scripts/release_smoke.sh" preflight'
+ expect 61 'inventory failure precedes selected executable version call' "${preflight[@]}" FIXTURE_VERIFY_FAIL=1 FIXTURE_BINARY_CALLS="$scratch/binary-calls" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
+ if [[ -e "$scratch/binary-calls" ]];then echo 'FAIL: unverified inventory executed its binary' >&2;failed=1;fi
+ expect 1 'manifest version must match the executed binary version' "${preflight[@]}" FIXTURE_VERSION=dev bash "$scratch/fixture/scripts/release_smoke.sh" preflight
  expect 1 'wrong binary digest refused' "${preflight[@]}" RELEASE_BINARY="$scratch/bin/go" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
  cat >"$scratch/bin/uname" <<'UNAME'
 #!/usr/bin/env bash
@@ -68,7 +83,7 @@ CYGPATH
  expect 1 'measurement output cannot modify candidate assets' "${preflight[@]}" RELEASE_BENCH_OUTPUT="$scratch/candidate/assets/new-bench.json" bash "$scratch/fixture/scripts/release_smoke.sh" bench-cli
  expect 0 'measurement consumes supplied bytes' "${preflight[@]}" RELEASE_BENCH_OUTPUT="$scratch/new-report.json" bash "$scratch/fixture/scripts/release_smoke.sh" bench-cli
  expect 1 'retained measurement identity collision refused' "${preflight[@]}" RELEASE_BENCH_OUTPUT="$scratch/new-report.json" bash "$scratch/fixture/scripts/release_smoke.sh" bench-cli
- [[ "$(cat "$scratch/accepted")" == 'accepted bytes' ]] || failed=1
+ cmp -s "$scratch/accepted" "$scratch/original-accepted" || failed=1
  grep -F -- "--binary $scratch/accepted" "$scratch/calls" >/dev/null || failed=1
 fi
 exit "$failed"

@@ -27,7 +27,8 @@ func TestResolvePath_Precedence(t *testing.T) {
 			t.Fatalf("path=%s want=%s err=%v", got, tc.want, err)
 		}
 	}
-	bad := func() (string, error) { return "", errors.New("lookup failed") }
+	lookupErr := errors.New("lookup failed")
+	bad := func() (string, error) { return "", lookupErr }
 	inputs := pathInputs{lookup: func(string) string { return "" }, home: bad, cwd: bad}
 	abs := filepath.Join(base, "absolute.db")
 	if got, err := resolvePath(abs, inputs); err != nil || got != abs {
@@ -37,6 +38,9 @@ func TestResolvePath_Precedence(t *testing.T) {
 		if _, err := resolvePath(p, inputs); err == nil {
 			t.Fatalf("accepted %q", p)
 		}
+	}
+	if _, err := resolvePath("relative.db", inputs); !errors.Is(err, lookupErr) {
+		t.Fatalf("current-directory failure was not preserved: %v", err)
 	}
 	inputs.home = func() (string, error) { return "relative-home", nil }
 	if _, err := resolvePath("", inputs); err == nil {

@@ -6,10 +6,12 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/binary"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -156,12 +158,38 @@ func TestFilesystem_ReadFailures(t *testing.T) {
 		t.Skip("native ACL counterpart covers Windows read refusal")
 	}
 	root := t.TempDir()
-	file := filepath.Join(root, "README.md")
-	if err := os.WriteFile(file, []byte("x"), 0000); err != nil {
+	payload, err := payloadFiles("../..")
+	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := payloadFiles(root); err == nil {
-		t.Fatal("unreadable payload")
+	for name, input := range payload {
+		if strings.HasPrefix(name, "completions/") || strings.HasPrefix(name, "man/") {
+			name = "docs/" + name
+		}
+		filename := filepath.Join(root, filepath.FromSlash(name))
+		if err := os.MkdirAll(filepath.Dir(filename), 0700); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filename, input.Data, 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := payloadFiles(root); err != nil {
+		t.Fatalf("complete readable payload control: %v", err)
+	}
+	file := filepath.Join(root, "README.md")
+	if err := os.Chmod(file, 0000); err != nil {
+		t.Fatal(err)
+	}
+	_, readErr := os.ReadFile(file)
+	if errors.Is(readErr, os.ErrPermission) {
+		if _, err := payloadFiles(root); !errors.Is(err, os.ErrPermission) {
+			t.Fatalf("unreadable payload boundary: %v", err)
+		}
+	} else if readErr == nil {
+		t.Log("host can read mode-000 files; permission refusal probe unavailable")
+	} else {
+		t.Fatal(readErr)
 	}
 	if err := os.Remove(file); err != nil {
 		t.Fatal(err)
@@ -183,8 +211,10 @@ func TestFilesystem_ReadFailures(t *testing.T) {
 	if err := os.Chmod(file, 0000); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := sourceFiles(root, "p/"); err == nil {
-		t.Fatal("unreadable source")
+	if errors.Is(readErr, os.ErrPermission) {
+		if _, err := sourceFiles(root, "p/"); !errors.Is(err, os.ErrPermission) {
+			t.Fatalf("unreadable source boundary: %v", err)
+		}
 	}
 	if err := os.Remove(file); err != nil {
 		t.Fatal(err)

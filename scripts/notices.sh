@@ -5,7 +5,8 @@ root=${2:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 case "$mode" in check|generate) ;; *) echo 'Expected check or generate' >&2; exit 2 ;; esac
 cd "$root"
 scratch=$(mktemp -d)
-trap 'rm -rf "$scratch"' EXIT
+stage=''
+trap 'rm -rf "$scratch"; if [[ -n "$stage" ]]; then rm -f "$stage"; fi' EXIT
 fail() { printf 'Notices: %s\n' "$*" >&2; exit 1; }
 digest() {
     if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | awk '{print $1}'

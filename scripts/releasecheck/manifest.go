@@ -199,6 +199,9 @@ func finalize(root, dist, assets, input, sha, compiler, mode string) error {
 	if (mode == "snapshot") != strings.HasSuffix(version.Version, "-dev") {
 		return fmt.Errorf("version/mode mismatch")
 	}
+	if version.InputSHA256 != digest([]byte(fmt.Sprintf("package main\n\nconst Version = %q\n", version.Version))) {
+		return fmt.Errorf("incorrect generated input")
+	}
 	m := manifest{Schema: 1, Version: version.Version, Mode: mode, SourceSHA: sha, Compiler: compiler, VersionInputSHA256: version.InputSHA256, Inputs: make(map[string]string), Files: make(map[string]string)}
 	if err := validateIdentity(m); err != nil {
 		return err
@@ -275,7 +278,12 @@ func finalize(root, dist, assets, input, sha, compiler, mode string) error {
 	if err := os.WriteFile(filepath.Join(assets, "checksums.txt"), checksums, 0644); err != nil {
 		return err
 	}
-	return writeJSON(filepath.Join(assets, "release-manifest.json"), m)
+	if err := writeJSON(filepath.Join(assets, "release-manifest.json"), m); err != nil {
+		return err
+	}
+	// Revalidate the copied bytes before success: dist may have changed after
+	// its first read, while the manifest still binds the inspected members.
+	return verifyInventory(assets)
 }
 
 func verifyInventory(assets string) error {
@@ -288,6 +296,9 @@ func verifyInventory(assets string) error {
 	}
 	if err := validateIdentity(m); err != nil {
 		return err
+	}
+	if m.Files["THIRD_PARTY_NOTICES.md"] != m.Inputs["THIRD_PARTY_NOTICES.md"] {
+		return fmt.Errorf("standalone notice differs from source/build input")
 	}
 	input := []byte(fmt.Sprintf("package main\n\nconst Version = %q\n", m.Version))
 	if digest(input) != m.VersionInputSHA256 {

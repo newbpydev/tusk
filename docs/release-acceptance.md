@@ -66,7 +66,10 @@ The maintainer reviews those records; hashes bind their bytes and do not prove
 physical host execution by themselves. An absent host leaves its gate pending.
 
 Native gate receipts also require `target` (for example `linux/amd64`),
-`executable_sha256` and `archive_sha256`. Promotion compares all three with the
+`executable_sha256`, `archive_sha256` and `observed_version`. Run that exact
+executable with `--version` and retain its output; `observed_version` must equal
+the manifest version without a leading `v`. The release smoke command checks
+this output before proceeding. Promotion compares these fields with the
 matching target and archive in the cryptographically verified manifest. These
 fields record the bytes actually inspected on that host; they do not substitute
 for the retained terminal observations or the maintainer's acceptance.
