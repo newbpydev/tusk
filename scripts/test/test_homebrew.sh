@@ -22,18 +22,27 @@ for mutation in '.homebrew_casks[0].skip_upload=false' '.homebrew_casks[0].hooks
  jq ${jq_binary_option:+"--binary"} "$mutation" "$root/.goreleaser.yaml" >"$scratch/fixture/.goreleaser.yaml"
  expect 1 "reject cask mutation: $mutation" bash "$scratch/fixture/scripts/release.sh" contract
 done
-printf '#!/usr/bin/env bash\nexit 44\n' >"$scratch/bin/gh";chmod +x "$scratch/bin/gh"
-expect 1 'missing tap remains named prerequisite' env PATH="$scratch/bin:$PATH" bash "$scratch/fixture/scripts/homebrew.sh" destination
+fixture_gh_shell=$(command -v bash)
+fixture_gh_script="$scratch/bin/gh-script"
+fixture_gh_binary="$scratch/bin/gh"
+if command -v cygpath >/dev/null 2>&1; then
+    fixture_gh_shell=$(cygpath -m "$fixture_gh_shell")
+    fixture_gh_script=$(cygpath -m "$fixture_gh_script")
+    fixture_gh_binary="$scratch/bin/gh.exe"
+fi
+GH_FIXTURE_OUTPUT="$fixture_gh_binary" make --no-print-directory -C "$root" build-gh-fixture
+invoke=(env FIXTURE_GH_BASH="$fixture_gh_shell" FIXTURE_GH_SCRIPT="$fixture_gh_script" PATH="$scratch/bin:$PATH")
+printf '#!/usr/bin/env bash\nexit 44\n' >"$scratch/bin/gh-script";chmod +x "$scratch/bin/gh-script"
+expect 1 'missing tap remains named prerequisite' "${invoke[@]}" bash "$scratch/fixture/scripts/homebrew.sh" destination
 if ! grep -Eq '006-ISS-003' "$scratch/output";then failed=1;fi
-cat >"$scratch/bin/gh" <<'GH'
+cat >"$scratch/bin/gh-script" <<'GH'
 #!/usr/bin/env bash
 [[ "${GH_HOST:-}" == github.com && -z "${GH_DEBUG:-}" && -z "${DEBUG:-}" ]] || exit 78
 [[ "$2" == https://api.github.com/repos/newbpydev/homebrew-tap ]] || exit 79
 printf 'true\n'
 GH
-expect 0 'tap check pins public GitHub host and disables HTTP debug logging' env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 bash "$scratch/fixture/scripts/homebrew.sh" destination
-printf '#!/usr/bin/env bash\nexec sleep 60\n' >"$scratch/bin/gh"
-expect 1 'stalled owned GitHub child has a deadline' env PATH="$scratch/bin:$PATH" GH_REQUEST_TIMEOUT=100ms bash "$scratch/fixture/scripts/homebrew.sh" destination
+expect 0 'tap check pins public GitHub host and disables HTTP debug logging' "${invoke[@]}" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 bash "$scratch/fixture/scripts/homebrew.sh" destination
+expect 1 'stalled owned GitHub child has a deadline' "${invoke[@]}" FIXTURE_GH_STALL=1 GH_REQUEST_TIMEOUT=100ms bash "$scratch/fixture/scripts/homebrew.sh" destination
 if ! grep -Eq 'GitHub deadline: context deadline exceeded' "$scratch/output";then failed=1;cat "$scratch/output" >&2;fi
 expect 0 'cask Make target available' make -n -C "$root" check-homebrew
 exit "$failed"

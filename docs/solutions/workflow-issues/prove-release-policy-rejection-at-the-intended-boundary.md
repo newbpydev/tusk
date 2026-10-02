@@ -200,8 +200,12 @@ required to confirm the native line-ending hypothesis. See the
 lookup can select installed `gh.exe` ahead of an extensionless Bash fake. Build
 an owned native `gh.exe` that dispatches the owned Bash script with literal argv,
 forwarded streams and the original exit status. Use the same launcher for
-candidate, promotion and metadata tests so native API and mutation fixtures
+candidate, Homebrew, promotion and metadata tests so native API and mutation fixtures
 cannot reach the installed client. A missing launcher configuration fails closed.
+Require named assertions for argv/streams/status, map a Unix signaled child to
+128 plus its signal number, and use a native fixture stall for deadline controls
+so cancellation does not leave a Bash grandchild. Record the host jq identity
+when retaining a CRLF model that depends on the host binary-output capability.
 The test launcher is excluded from product builds; the production deadline and
 GitHub client remain unchanged. Retain actual Windows evidence separately from
 local launcher controls. See the
@@ -211,6 +215,16 @@ local launcher controls. See the
 can be correct while top-level status still names an older review batch. Update
 the master status, active pointer and paired plan/workorder evidence headers in
 the same unit, keeping local closures separate from pending native/release gates.
+
+**Cancellation is retried until the reader joins.** A successful cancellation
+request is not proof the reader has returned. The confirmation test's fake
+canceller must tolerate another retry after unblocking its channel. Hold the
+fake reader until a third request, close each synchronization channel only once,
+and continue requiring cancellation plus completed thread release. This
+reproduces the prior double-close panic deterministically without changing the
+production retry/join behavior. The
+[eleventh complete-batch receipt](../../verification-evidence/006/pr6-r11/acceptance.json)
+retains the native macOS failure and local Red/Green control.
 
 ## Related
 

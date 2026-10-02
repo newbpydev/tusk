@@ -25,11 +25,31 @@ args=('argument with spaces' 'literal$(touch injected)`touch injected`' 'ü')
 printf '%s\n' "${args[@]}" 'owned stdin' >"$scratch/want"
 status=0
 printf 'owned stdin\n' | FIXTURE_GH_BASH="$shell" FIXTURE_GH_SCRIPT="$script" "$binary" "${args[@]}" >"$scratch/stdout" 2>"$scratch/stderr" || status=$?
-[[ "$status" == 47 ]]
-cmp "$scratch/want" "$scratch/stdout"
-grep -Fxq 'owned stderr' "$scratch/stderr"
+failed=0
+check() {
+    local label=$1
+    shift
+    if "$@"; then printf 'PASS: %s\n' "$label"
+    else
+        printf 'FAIL: %s\n' "$label" >&2
+        cat "$scratch/stdout" "$scratch/stderr" >&2
+        failed=1
+    fi
+}
+check 'native fixture preserves exit 47' test "$status" -eq 47
+check 'native fixture preserves exact stdout and stdin bytes' cmp "$scratch/want" "$scratch/stdout"
+check 'native fixture preserves stderr' grep -Fxq 'owned stderr' "$scratch/stderr"
+case "${OSTYPE:-}" in
+    msys*|cygwin*) ;;
+    *)
+        printf '#!/usr/bin/env bash\nkill -TERM "$$"\n' >"$script"
+        status=0
+        FIXTURE_GH_BASH="$shell" FIXTURE_GH_SCRIPT="$script" "$binary" >"$scratch/stdout" 2>"$scratch/stderr" || status=$?
+        check "native fixture maps SIGTERM to 143 (observed $status)" test "$status" -eq 143
+        ;;
+esac
 status=0
 FIXTURE_GH_BASH='' FIXTURE_GH_SCRIPT='' "$binary" >"$scratch/stdout" 2>"$scratch/stderr" || status=$?
-[[ "$status" == 127 ]]
-grep -Fq 'owned gh fixture requires FIXTURE_GH_BASH and FIXTURE_GH_SCRIPT' "$scratch/stderr"
-printf 'PASS: native gh fixture preserves literal arguments, streams and exit status; missing ownership fails closed\n'
+check 'native fixture refuses missing ownership with exit 127' test "$status" -eq 127
+check 'native fixture explains missing ownership' grep -Fq 'owned gh fixture requires FIXTURE_GH_BASH and FIXTURE_GH_SCRIPT' "$scratch/stderr"
+exit "$failed"

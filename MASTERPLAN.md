@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 PR #6 published; tenth complete report batch locally validated; fresh hosted/native/release gates open
+**Current Status**: Feature 006 PR #6 published; eleventh complete report batch locally validated; fresh hosted/native/release gates open
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Publish the validated tenth combined PR #6 report-batch repair, then settle all fresh reports; native/release acceptance remains pending
+**Active Implementation Target**: Feature 006 — Publish the validated eleventh combined PR #6 report-batch repair, then settle all fresh reports; native/release acceptance remains pending
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -1147,3 +1147,28 @@ behavior changes. Current authority headers are synchronized with this unit.
 The 51 local closures remain unchanged. Physical terminals, trusted-main candidate
 provenance, exact-byte performance/cask/release acceptance and tap/settings/release
 authority remain pending. See [the R10 receipt](docs/verification-evidence/006/pr6-r10/acceptance.json).
+
+### PR #6 eleventh complete report-batch repair (2026-10-02)
+
+All seven reports on `d28d44bb1349173a429fa5b90409e847c88d2622` completed before
+this combined assessment. All Linux jobs and macOS arm64 passed. macOS amd64's
+cancellation fixture panicked when a valid retry closed its unblock channel again.
+Windows passed the candidate controls, then exposed installed-client selection in
+the separate Homebrew fixture. Kilo identified signal-status fidelity, unnamed
+launcher assertions and an unstated retained-model jq prerequisite.
+
+The cancellation test now deliberately delays reader completion through a third
+request and closes each synchronization channel once. Homebrew uses the same
+owned native launcher as the other three API fixture families; its native stall
+control avoids a Bash grandchild during deadline cancellation. Unix signal status
+maps to 128 plus the signal, assertions name their contracts, and the retained R10
+model records its observed jq 1.8.2 capability without rewriting measured bytes.
+Production cancellation/deadline behavior and all acceptance thresholds are unchanged.
+
+- [x] Wait for all seven reports before changes or replies.
+- [x] Observe deterministic Red for the cancellation double-close and SIGTERM reported as 255.
+- [x] Pass focused controls, cross-build the test launcher and pass the frozen canonical gate.
+- [ ] Settle every fresh hosted report after combined repair publication.
+
+The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
+gates remain unchanged. See [the R11 receipt](docs/verification-evidence/006/pr6-r11/acceptance.json).

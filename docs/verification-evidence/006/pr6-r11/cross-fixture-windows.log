@@ -1,0 +1,1 @@
+CGO_ENABLED=0 go build -trimpath -buildvcs=false -o "$GH_FIXTURE_OUTPUT" scripts/test/fixtures/gh-launcher.go
