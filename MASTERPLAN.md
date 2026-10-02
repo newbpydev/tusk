@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 PR #6 published; fifth complete report batch locally validated; fresh hosted set pending; native/release gates pending
+**Current Status**: Feature 006 PR #6 published; sixth complete report batch locally validated; fresh hosted set pending; native/release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Publish the validated fifth PR #6 report-batch repair, then settle the complete fresh hosted set; native/release acceptance remains pending
+**Active Implementation Target**: Feature 006 — Publish the validated sixth PR #6 report-batch repair, then settle the complete fresh hosted set; native/release acceptance remains pending
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -1007,3 +1007,28 @@ trusted-main candidate/provenance, exact-byte performance/cask and authorized
 release/tap publication remain pending. See [the R5 receipt](docs/verification-evidence/006/pr6-r5/acceptance.json).
 The frozen official-Go canonical gate and the full shell suite pass. The containing
 commit records one coherent fixture repair; its fresh hosted set remains required.
+
+### PR #6 sixth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `ffe87310c0b5970fec73ff32973ab4ff057accb9`
+before repair edits. Both macOS jobs, all three Linux jobs and Kilo pass with
+zero open review threads. Windows confirms both repaired negative CLI compiler
+traces, then fails the next profile-output lexical assertion. MSYS converts the
+POSIX path passed to native Make; the fixture still expects its original spelling.
+The repair explicitly selects `cygpath -m` on MINGW/MSYS, preserves the spaced
+absolute path, and checks both the dry recipe and actual fake-compiler arguments.
+
+- [x] Collect the complete sixth hosted set before repair edits.
+- [x] Reproduce the exact path-conversion assertion in an owned model, then pass
+      the same minimum-Go model with both profile compiler arguments checked.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+The native failing test and controlled Red/Green remain distinct. This is
+progressive failure migration, not recurrence of the compiler lookup defect.
+No canonical recipe, tool pin, coverage/latency threshold or test expectation
+changes. The 51 local scenario closures and all physical native/release gates
+remain unchanged. Fresh native Windows and complete hosted verification remain
+required; see [the R6 receipt](docs/verification-evidence/006/pr6-r6/acceptance.json).
+The frozen official-Go canonical gate passes. The containing commit records one
+coherent fixture repair; its fresh hosted reports remain required.

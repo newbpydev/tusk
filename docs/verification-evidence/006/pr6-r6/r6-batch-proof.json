@@ -1,0 +1,53 @@
+{
+  "utc": "2026-10-02T19:40:56.178748+00:00",
+  "reviewed_head": "ffe87310c0b5970fec73ff32973ab4ff057accb9",
+  "all_reports_complete_before_changes": true,
+  "checks": [
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37053276373/job/110991645093",
+      "name": "darwin/arm64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37053276373/job/110991645251",
+      "name": "linux/arm64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37053276373/job/110991645069",
+      "name": "darwin/amd64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37053276373/job/110991645182",
+      "name": "linux/amd64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "fail",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37053276373/job/110991645314",
+      "name": "windows/amd64 \u2014 release compiler",
+      "state": "FAILURE"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37053276373/job/110991644497",
+      "name": "Linux \u2014 minimum compiler and five-target cross-builds",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://app.kilo.ai/code-reviews/e347b2a8-bfdf-4f1e-a685-87525216774e",
+      "name": "Kilo Code Review",
+      "state": "SUCCESS"
+    }
+  ],
+  "new_unresolved_threads": 0,
+  "ci_repair": "profile fixture path crosses MSYS native-Make argument conversion",
+  "trajectory": "progressive failure migration; real native negative CLI compiler traces now pass; no oscillation",
+  "code_review": "Kilo current-head No Issues Found"
+}

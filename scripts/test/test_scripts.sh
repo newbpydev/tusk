@@ -205,10 +205,30 @@ for target in test-cli build-cli; do
 done
 
 profile_output="${TMP_DIR}/profile with spaces.cpu"
+case "$(uname -s)" in
+    MINGW*|MSYS*) profile_output=$(cygpath -m "$profile_output") ;;
+esac
 recipe=$(make --no-print-directory -n -C "${ROOT_DIR}" profile-cli CLI_PROFILE_OUTPUT="$profile_output")
 result=1
 if [[ "$recipe" == *"-o \"${profile_output}.test\""* ]]; then result=0; fi
+if [[ "$result" != 0 ]]; then printf '%s\n' "$recipe" >&2; fi
 assert_eq 0 "$result" "profile test binary follows the selected output path"
+
+# Observe argv as well as Make's printed recipe, preserving the spaced path.
+mkdir -p "${TMP_DIR}/profile-bin"
+cat >"${TMP_DIR}/profile-bin/go" <<'GO'
+#!/usr/bin/env bash
+printf '%s\n' "$@" >"$FIXTURE_PROFILE_CALLS"
+[[ $# == 11 && "$1" == test && "$2" == ./scripts/cli-bench && "$8" == -cpuprofile && "$9" == "$FIXTURE_PROFILE_OUTPUT" && "${10}" == -o && "${11}" == "$FIXTURE_PROFILE_OUTPUT.test" ]] || exit 71
+GO
+chmod +x "${TMP_DIR}/profile-bin/go"
+result=0
+env PATH="${TMP_DIR}/profile-bin:$PATH" FIXTURE_PROFILE_OUTPUT="$profile_output" FIXTURE_PROFILE_CALLS="${TMP_DIR}/profile-calls" "${fixture_make[@]}" --no-print-directory -C "${TMP_DIR}/build-fixture" profile-cli CLI_PROFILE_OUTPUT="$profile_output" >"${TMP_DIR}/profile-argv-output" 2>&1 || result=$?
+if [[ "$result" != 0 ]]; then cat "${TMP_DIR}/profile-argv-output" >&2; fi
+assert_eq 0 "$result" "profile compiler receives both selected output paths"
+result=1
+if [[ -s "${TMP_DIR}/profile-calls" ]]; then result=0; fi
+assert_eq 0 "$result" "profile output assertion reaches the fixture compiler"
 
 for target in bench-tui bench-cli bench-cli-conditions profile-cli test-cli-latency-codec generate-schema-catalog check-schema-catalog; do
     recipe=$(make --no-print-directory -n -C "${ROOT_DIR}" "$target")

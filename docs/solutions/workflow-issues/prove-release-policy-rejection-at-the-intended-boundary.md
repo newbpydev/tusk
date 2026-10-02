@@ -140,6 +140,16 @@ same check, because its `bash` and `go` fixtures share this lookup boundary.
 The [fifth complete-batch receipt](../../verification-evidence/006/pr6-r5/acceptance.json)
 keeps the native failure separate from local confirmation and fresh hosted proof.
 
+**Compare paths after the native argument boundary.** [MSYS converts POSIX-looking
+arguments and environment values when launching native Windows tools](https://www.msys2.org/docs/filesystem-paths/).
+A Make dry run can correctly print `C:/...` although Bash's input was `/tmp/...`.
+Use `cygpath -m` for the profile fixture's selected path on MINGW/MSYS, then assert
+both the printed recipe and the actual compiler's `-cpuprofile`/`-o` arguments.
+Keep the path with spaces and a fresh call trace. A controlled conversion model
+reproduces the old lexical comparison failure and passes after explicit conversion;
+it does not replace the subsequent native Windows run. See the
+[sixth complete-batch receipt](../../verification-evidence/006/pr6-r6/acceptance.json).
+
 ## Related
 
 - [Release acceptance and publication procedure](../../releasing.md)

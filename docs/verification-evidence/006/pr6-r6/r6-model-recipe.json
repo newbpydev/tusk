@@ -1,0 +1,15 @@
+{
+  "scope": "Owned Linux argv-conversion model, no native Windows acceptance claim",
+  "command": "PATH=<owned model bin>:$PATH GOTOOLCHAIN=go1.25.0 make test-compat",
+  "model_source": {
+    "cygpath": "#!/bin/bash\n[[ \"$1\" == -m && \"$2\" == /* ]] || exit 23\nprintf \"C:/modeled%s\\n\" \"$2\"\n",
+    "make": "#!/usr/bin/python3\nimport os,sys,json\na=sys.argv[1:]\nfor i,x in enumerate(a):\n if x.startswith(\"CLI_PROFILE_OUTPUT=/\"):\n  a[i]=x.replace(\"CLI_PROFILE_OUTPUT=\", \"CLI_PROFILE_OUTPUT=C:/modeled\",1)\n  with open('/tmp/compound-engineering-1000/ce-compound/20261002-release-rejection-9e2wqkga/r6-msys-model/conversions.jsonl',\"a\") as f: f.write(json.dumps({\"before\":x,\"after\":a[i]})+\"\\n\")\nos.execv('/usr/bin/make', ['/usr/bin/make',*a])\n",
+    "uname": "#!/bin/bash\nif [[ \"$1\" == -s ]]; then printf \"MINGW64_NT-10.0\\n\"; else exec /usr/bin/uname \"$@\"; fi\n"
+  },
+  "modeled_boundary": "MSYS rewrites POSIX-looking CLI_PROFILE_OUTPUT before the native Make process. Explicit mixed-path spelling is left unchanged. The actual root Makefile and shell fixture run in both cases.",
+  "control": "Canonical Linux execution has no argument-rewriting wrapper; actual Windows failing assertion retained independently.",
+  "red_exit": 2,
+  "red_diagnostic": "profile test binary follows the selected output path (expected 0, got 1)",
+  "green_exit": 0,
+  "green_assertions": "57/57"
+}
