@@ -1,0 +1,18 @@
+{
+  "scope": "Sequential main-thread correctness, regression, security/API, reliability and simplicity audit of the actual combined repair",
+  "confirmed_p0_p2": 0,
+  "independent_review": false,
+  "checks": [
+    "Native OS and architecture are independently falsified against the same known passing control; exact diagnostic is required.",
+    "The OS predicate mutation escapes before repair and is detected afterward.",
+    "The permanent notices model reproduces the exact native inventory refusal and preserves jq status.",
+    "Full shell suite passes under the broader CRLF-output model.",
+    "All existing JSON filters, authorization/receipt guards and argv are retained; only jq output mode changes.",
+    "Build-only jq 1.7 prerequisite is documented; no Go/runtime dependency changes."
+  ],
+  "source": "https://jqlang.org/manual/v1.7/#invoking-jq",
+  "limits": [
+    "Original native inventory byte lists were not captured; precise CRLF attribution remains a supported hypothesis.",
+    "Linux controlled models do not replace native Windows or physical terminal/release proof."
+  ]
+}

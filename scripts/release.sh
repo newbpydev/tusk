@@ -13,8 +13,8 @@ setup_tool() (
     binary=goreleaser
     [[ "$target" != windows_amd64 ]] || binary+=.exe
     directory=${TUSK_RELEASE_TOOL_DIR:-$root/bin/tools}
-    expected=$(jq -er --arg target "$target" '.tools.goreleaser.assets[$target].sha256' "$root/scripts/tool-versions.json")
-    url=$(jq -er --arg target "$target" '.tools.goreleaser.assets[$target].url' "$root/scripts/tool-versions.json")
+    expected=$(jq --binary -er --arg target "$target" '.tools.goreleaser.assets[$target].sha256' "$root/scripts/tool-versions.json")
+    url=$(jq --binary -er --arg target "$target" '.tools.goreleaser.assets[$target].url' "$root/scripts/tool-versions.json")
     stage=$(mktemp -d)
     trap 'rm -rf "$stage"; if [[ -n "$install_stage" ]]; then rm -f "$install_stage"; fi' EXIT
     curl --fail --location --proto '=https' --tlsv1.2 --output "$stage/archive" "$url" || die 'packager download failed'
@@ -34,11 +34,11 @@ setup_tool() (
     cp "$stage/archive" "$install_stage"
     chmod 644 "$install_stage"
     mv -f "$install_stage" "$directory/goreleaser.archive"
-    jq -n --arg archive "$expected" --arg binary "$(digest "$directory/$binary")" '{archive_sha256:$archive,binary_sha256:$binary}' >"$directory/goreleaser-pin.json"
+    jq --binary -n --arg archive "$expected" --arg binary "$(digest "$directory/$binary")" '{archive_sha256:$archive,binary_sha256:$binary}' >"$directory/goreleaser-pin.json"
 )
 contract() {
     [[ -f "$root/.goreleaser.yaml" ]] || die 'packager configuration missing'
-    jq -e '
+    jq --binary -e '
         keys == (["version","project_name","dist","builds","archives","source","checksum","changelog","snapshot","release","homebrew_casks"]|sort) and
         .version == 2 and .project_name == "tusk" and .dist == "dist" and
         .builds == ([{id:"tusk",main:"./cmd/tusk",binary:"tusk",env:["CGO_ENABLED=0"],
@@ -68,7 +68,7 @@ verified_tool() (
     binary=goreleaser
     [[ "$target" != windows_amd64 ]] || binary+=.exe
     directory=${TUSK_RELEASE_TOOL_DIR:-$root/bin/tools}
-    expected=$(jq -er --arg target "$target" '.tools.goreleaser.assets[$target].sha256' "$root/scripts/tool-versions.json")
+    expected=$(jq --binary -er --arg target "$target" '.tools.goreleaser.assets[$target].sha256' "$root/scripts/tool-versions.json")
     [[ -f "$directory/goreleaser.archive" && -x "$directory/$binary" ]] || die 'run make setup-release first'
     [[ "$(digest "$directory/goreleaser.archive")" == "$expected" ]] || die 'cached packager archive digest mismatch'
     stage=$(mktemp -d)
@@ -81,7 +81,7 @@ verified_tool() (
 preflight() {
     local tool compiler
     contract
-    compiler=$(jq -er '.go.release' "$root/scripts/tool-versions.json")
+    compiler=$(jq --binary -er '.go.release' "$root/scripts/tool-versions.json")
     [[ "$(GOTOOLCHAIN="go$compiler" go env GOVERSION)" == "go$compiler" ]] || die 'pinned release compiler unavailable'
     tool=$(verified_tool)
     env -i PATH="$PATH" "$tool" check --config "$root/.goreleaser.yaml"
@@ -116,14 +116,14 @@ package() (
     fi
     # Only the owned clone has an intended local tag and release repository URL.
     git -C "$stage/source" remote set-url origin https://github.com/newbpydev/tusk.git
-    compiler=$(jq -er '.go.release' "$stage/source/scripts/tool-versions.json")
+    compiler=$(jq --binary -er '.go.release' "$stage/source/scripts/tool-versions.json")
     tool_directory=${TUSK_RELEASE_TOOL_DIR:-$root/bin/tools}
     env -u TUSK_SQLC_BIN -u TUSK_SQLC_HOST GOTOOLCHAIN="go$compiler" TUSK_RELEASE_TOOL_DIR="$tool_directory" make -C "$stage/source" setup-sqlc release-check >>"$output/build.log" 2>&1
     tool=$(verified_tool)
     (cd "$stage/source" && GOTOOLCHAIN="go$compiler" bash scripts/release_check.sh overlay "$stage/source" "$stage/overlay" "$RELEASE_VERSION" "$mode") >>"$output/build.log" 2>&1
     cp "$stage/overlay/input.json" "$output/version-input.json"
     # GoReleaser does not template dist. Only this owned absolute field changes.
-    jq --arg dist "$stage/dist" '.dist=$dist' "$stage/source/.goreleaser.yaml" >"$stage/config.json"
+    jq --binary --arg dist "$stage/dist" '.dist=$dist' "$stage/source/.goreleaser.yaml" >"$stage/config.json"
     cp "$stage/config.json" "$output/config-input.json"
     mkdir "$stage/home" "$stage/tmp"
     local args=(release --skip=publish --clean --config "$stage/config.json")

@@ -6,7 +6,7 @@ Do not attach personal task databases or unredacted notes. For security reports,
 follow [SECURITY.md](SECURITY.md).
 
 Clone the complete repository. Install Go 1.25+, Bash, GNU Make and a native C
-compiler for race verification; install jq for the automation fixtures. Windows
+compiler for race verification; install jq 1.7+ for the automation fixtures. Windows
 uses native Go with Git Bash and GNU Make/GCC (not WSL native acceptance).
 See [installation](docs/install.md#source-installation).
 

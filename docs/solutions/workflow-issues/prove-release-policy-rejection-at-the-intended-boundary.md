@@ -173,6 +173,27 @@ Windows-identity shell suite reproduces the old false failure and confirms the
 repair; subsequent native CI still supplies the actual host proof. See the
 [eighth complete-batch receipt](../../verification-evidence/006/pr6-r8/acceptance.json).
 
+**Exercise both operands of native identity guards.** The owned windows/amd64
+control can reject a requested linux/amd64 OS independently of the existing
+windows/arm64 architecture negative. Both cases require the exact job-identity
+diagnostic. An owned mutation that removes only the OS comparison escaped the
+old suite and is rejected after adding the dedicated negative. The production
+identity predicate itself does not change; no extra fake-platform knob is needed.
+
+**Select LF at the JSON producer.** [Native Windows jq translates output LF to
+CRLF unless binary output is selected](https://jqlang.org/manual/v1.7/#invoking-jq).
+A notices control then compares LF filesystem paths with CRLF JSON-derived paths
+and reports an incomplete inventory despite identical asset names. Select
+`jq --binary` for the maintainer helpers, their fixtures and the Make compiler-pin
+lookup. This keeps paths, TSV fields and newly generated records consistent;
+it does not remove carriage returns from source license text or JSON values.
+Document jq 1.7+ as a build/maintainer prerequisite. A permanent notices fixture
+models this translation and preserves jq exit codes; an owned full-shell model
+checks the other callers. Its Linux bootstrap failure is a broader model result,
+separate from the actual Windows notices failure. Fresh native execution remains
+required to confirm the native line-ending hypothesis. See the
+[ninth complete-batch receipt](../../verification-evidence/006/pr6-r9/acceptance.json).
+
 ## Related
 
 - [Release acceptance and publication procedure](../../releasing.md)

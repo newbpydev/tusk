@@ -47,12 +47,12 @@ for mutation in floating write missing-race missing-native wrong-go credentials 
         credentials) filter='.jobs.native.steps[0].with["persist-credentials"] = true' ;;
         privileged) filter='.on.pull_request_target = {}' ;;
     esac
-    jq "$filter" "$root/.github/workflows/ci.yml" >"$scratch/config/.github/workflows/ci.yml"
+    jq --binary "$filter" "$root/.github/workflows/ci.yml" >"$scratch/config/.github/workflows/ci.yml"
     expect 1 "CI refuses $mutation" bash "$root/scripts/ci-check.sh" contract "$scratch/config"
 done
 cp "$root/.github/workflows/ci.yml" "$scratch/config/.github/workflows/ci.yml"
 for filter in '.tools.actionlint.assets.linux_amd64.sha256 = "bad"' '.actions.checkout.sha = "main"' 'del(.go.release)' '.tools.goreleaser.version = "latest"'; do
-    jq "$filter" "$root/scripts/tool-versions.json" >"$scratch/config/scripts/tool-versions.json"
+    jq --binary "$filter" "$root/scripts/tool-versions.json" >"$scratch/config/scripts/tool-versions.json"
     expect 1 "CI refuses invalid tool pin: $filter" bash "$root/scripts/ci-check.sh" contract "$scratch/config"
 done
 
@@ -61,7 +61,7 @@ done
 mkdir -p "$scratch/runner/c/mingw64/bin"
 touch "$scratch/runner/c/mingw64/bin/make.exe" "$scratch/runner/c/mingw64/bin/gcc.exe"
 chmod +x "$scratch/runner/c/mingw64/bin/"*.exe
-jq -er '.jobs.native.steps[] | select(.name=="Windows native tooling").run' "$root/.github/workflows/ci.yml" >"$scratch/windows-step"
+jq --binary -er '.jobs.native.steps[] | select(.name=="Windows native tooling").run' "$root/.github/workflows/ci.yml" >"$scratch/windows-step"
 cat >"$scratch/drive-paths" <<'EOF'
 test() {
     if [[ $# == 2 && "$1" == -x && "$2" == /c/* ]]; then
@@ -120,6 +120,9 @@ expect 1 'missing native compiler is actionable' env TUSK_CI_CC=missing-tusk-cc 
 expect 1 'wrong native architecture refuses cross-build substitution' env PATH="$scratch/bin:$PATH" TUSK_CI_OS=windows TUSK_CI_ARCH=arm64 bash "$root/scripts/ci-check.sh" preflight
 cp "$scratch/output" "$scratch/architecture-refusal"
 expect 0 'native architecture refusal reaches the intended guard' grep -Fxq 'CI: Go OS/architecture differs from native job; cross-build is not acceptance' "$scratch/architecture-refusal"
+expect 1 'wrong native OS refuses cross-build substitution' env PATH="$scratch/bin:$PATH" TUSK_CI_OS=linux TUSK_CI_ARCH=amd64 bash "$root/scripts/ci-check.sh" preflight
+cp "$scratch/output" "$scratch/os-refusal"
+expect 0 'native OS refusal reaches the intended guard' grep -Fxq 'CI: Go OS/architecture differs from native job; cross-build is not acceptance' "$scratch/os-refusal"
 
 # A digest failure or failed download must preserve the previously accepted tool.
 mkdir -p "$scratch/install/bin/tools"

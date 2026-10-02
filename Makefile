@@ -63,7 +63,7 @@ coverage-release:
 
 # Test-owned checkout and output; called by the inspector integration tests.
 build-release-fixture:
-	@release_go=$$(jq -er '.go.release' scripts/tool-versions.json) && CGO_ENABLED=0 GOTOOLCHAIN="go$$release_go" go build -trimpath -overlay="$$TUSK_RELEASE_OVERLAY" -ldflags='-s -w' -o "$$TUSK_RELEASE_FIXTURE_BINARY" ./cmd/tusk
+	@release_go=$$(jq --binary -er '.go.release' scripts/tool-versions.json) && CGO_ENABLED=0 GOTOOLCHAIN="go$$release_go" go build -trimpath -overlay="$$TUSK_RELEASE_OVERLAY" -ldflags='-s -w' -o "$$TUSK_RELEASE_FIXTURE_BINARY" ./cmd/tusk
 
 .PHONY: build-gh-deadline
 build-gh-deadline:

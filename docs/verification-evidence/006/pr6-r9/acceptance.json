@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "reviewed_head": "fbde2f8929377ef47c68214389580e28ed87f1c6",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37062580503,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 1,
+  "inline_review_threads": 1,
+  "needs_human": 0,
+  "canonical": {
+    "status": "passed",
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "exit": 0,
+    "log": "r9-canonical-frozen.log.gz",
+    "scope": "22 fixture/helper/docs/lesson inputs stable throughout; completed authority status and receipts recorded afterward."
+  },
+  "implementation_sha256": {
+    "Makefile": "fe897a4a049fefcb314fe0d76bb356a9386304df1384f1ec4afb6f7d028ff58a",
+    "scripts/candidate.sh": "2a09616156fc06be9fa9a4badf2f5208c880ecea45bf63a7f281b38e7f70b770",
+    "scripts/ci-check.sh": "177aaca56c314933bd65b7e97ce844b394f180b5a26a7fd8a98fcad946f75aa9",
+    "scripts/homebrew.sh": "ded1d8b1f374a04bd68312feeada7799b165780fc7c000ef6759d2d771afbffc",
+    "scripts/json_check.sh": "50f0fcf2af8b126b0641a01adca73da436b9a2bda43b666f8c5dba8dfb43c32a",
+    "scripts/notices.sh": "dda963e030c4db774ce8440794ba57ddf419be2c75d7537a05231faaef3dc7fe",
+    "scripts/promote.sh": "de610a19fac0fb8260130cf2837a08465dca0babcb1083d0895143480523b100",
+    "scripts/release.sh": "9a210f470d5333837d3666796099187e6070232a84bff5a5bcca601f0ae85793",
+    "scripts/release_smoke.sh": "7b3498676e785490d839826585c5d89fbd44e79cc9bef23f5ba31e86f16965d5",
+    "scripts/repository_metadata.sh": "04bc10a4b2d2993a005d3cd53bb4a83191fb7b945ebb3b741a9338a566f811bd",
+    "scripts/test/test_candidate.sh": "be34c1d5e80f8b40220fbdeddb7165dc89d5f3e026f46fd089670ee4432a9569",
+    "scripts/test/test_ci.sh": "d083b912fec31e2d57acf6f65f8aa556f2a7746377a79e740c0e2ecc88f9e83c",
+    "scripts/test/test_homebrew.sh": "6b3750e1e1148f4fc2b9c677201b845bbd9de12d95b503cfbe323a0329b85a11",
+    "scripts/test/test_metadata.sh": "893babab77cd94ed110f489144542d35cae878b378b6d67e89136bb99d67bf1d",
+    "scripts/test/test_notices.sh": "8b21fe4866bfc19b79a44392a74992cd97102bc11a9b6091d7079bf71d6336f4",
+    "scripts/test/test_promotion.sh": "6da2cfd1c664fa30cd513815c820826b8cf8f655cd48f6505d20b22675476805",
+    "scripts/test/test_release.sh": "b4acafc01a09d645958dee32267e85493faff90964401ab1fa6016e2f575ca0b",
+    "scripts/test/test_release_smoke.sh": "c6bbcd81d3804760d94e3fafce21b7d1839718db0c274d058366d999323e251a",
+    "docs/install.md": "c3c85f1dbbf1ae1451f7443b18ee843a4ded07b878494413f9ae7dd3131aa117",
+    "CONTRIBUTING.md": "ea3300b33005419eea6f7fed39f93cb36366d1ac08da3bcf46d08f59c8ee970a",
+    "docs/releasing.md": "057e48aad843258665bb1bd79c1096e055c75f9d7af877f21bc9d4b516f7ff9d",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "b54da66c545fecdd875d540654b478d95f14dbd9e82a8b58a36639760b6a35fb"
+  },
+  "remediation_commit": "containing commit",
+  "utc": "2026-10-02T21:24:00.414495+00:00",
+  "items": [
+    {
+      "id": "R9-01",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ofMH1",
+      "root_comment_id": 4169718853,
+      "verdict": "addressing",
+      "issue": "OS-operand negative coverage was lost.",
+      "red": {
+        "control_exit": 1,
+        "underlying_make_exit": 0,
+        "result": "An owned dropped-OS predicate escapes the original shell suite."
+      },
+      "green": {
+        "control_exit": 0,
+        "underlying_make_exit": 2,
+        "required_diagnostics": [
+          "wrong native OS refuses cross-build substitution (expected 1, got 0)",
+          "native OS refusal reaches the intended guard (expected 0, got 1)"
+        ],
+        "result": "New independent OS negative detects exactly the owned regression."
+      },
+      "repair": "Reuse the passing owned windows/amd64 identity; request linux/amd64 and require the exact guard diagnostic."
+    },
+    {
+      "id": "R9-02",
+      "severity": "P1",
+      "source_check": "windows/amd64 \u2014 release compiler",
+      "issue": "Notices positive/regeneration controls fail with incomplete asset inventory.",
+      "red": {
+        "exit": 2,
+        "diagnostic": "Windows JSON output preserves the full notice inventory (expected 0, got 1): Notices: checked-in asset inventory is incomplete",
+        "scope": "Permanent notices CRLF-output control with real jq filters and unchanged assets."
+      },
+      "green": {
+        "full_crlf_model_exit": 0,
+        "scope": "Canonical full shell suite with modeled default CRLF and explicit binary-mode LF output."
+      },
+      "broader_model_red": {
+        "exit": 2,
+        "diagnostic": "Linux Bash bootstrap rejects CRLF script output; separate from the actual native notices refusal."
+      },
+      "repair": "Explicit binary output for all maintainer/fixture jq callers and Make compiler-pin lookup; documented build-only jq 1.7+ prerequisite."
+    }
+  ],
+  "native_reexecution": "pending",
+  "limits": [
+    "Original native inventory byte lists were not logged; precise CRLF attribution remains a supported hypothesis.",
+    "Linux model controls do not replace native Windows, physical terminals or exact-byte release acceptance.",
+    "Existing JSON filters, authorization predicates and argv are byte-identical after removing the new output-mode options; no Go runtime source changes.",
+    "Sequential main-thread audit does not claim independent model agreement.",
+    "The 51 local closures and physical/trusted-main/performance/cask/release/tap gates remain open."
+  ],
+  "retained_logs_sha256": {
+    "r9-canonical-frozen.log.gz": "ba0373e903ca52953941cb17af84ad94d059a8d225240b26fbd0b46fe41ef73f",
+    "r9-jq-global-green.log.gz": "a3f1691690011c68d5b3a2e88c4114c115ccc9385d0a126b406100dd80f063f3",
+    "r9-jq-global-red.log.gz": "4f87a2a08a1dabc1ab1c4e4e57f57422f462f9c14de75c003d7bb7c24e20da0d",
+    "r9-notice-crlf-red.log.gz": "0a9db06a54b60b4b64d4cbf54cac6733c227e43bef1f220f8dc21206fe506780",
+    "r9-os-guard-green-final.log.gz": "841b2785fb1861486e3d57f0403dcb21e401200ecfd1a35211fd40b9fec951c4",
+    "r9-os-guard-red.log.gz": "2c08bf6a1fff0b8043851c766f314db75ea110cea0471fab65adbff58bdca388",
+    "windows-failure-excerpt.log.gz": "c51e52f5fbbec4add6a755e65332c1d048cade087bf2df2fd40a5f14ee3a93bf"
+  }
+}

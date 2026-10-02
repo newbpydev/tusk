@@ -26,6 +26,6 @@ case "${1:-check}" in
   gh_deadline_setup "$root" "$driver" || die 'could not prepare bounded GitHub driver'
   # Read-only; a missing/inaccessible tap is a named prerequisite failure.
   if ! gh api https://api.github.com/repos/newbpydev/homebrew-tap > /dev/null;then die '006-ISS-003: owner-controlled newbpydev/homebrew-tap missing or inaccessible';fi
-  gh api https://api.github.com/repos/newbpydev/homebrew-tap --jq '.full_name=="newbpydev/homebrew-tap" and .owner.login=="newbpydev" and .private==false and .archived==false and .disabled==false and .permissions.push==true' | jq -e '.==true' >/dev/null || die '006-ISS-003: public owned writable tap required' ;;
+  gh api https://api.github.com/repos/newbpydev/homebrew-tap --jq '.full_name=="newbpydev/homebrew-tap" and .owner.login=="newbpydev" and .private==false and .archived==false and .disabled==false and .permissions.push==true' | jq --binary -e '.==true' >/dev/null || die '006-ISS-003: public owned writable tap required' ;;
  *) die 'expected check, render or destination';;
 esac

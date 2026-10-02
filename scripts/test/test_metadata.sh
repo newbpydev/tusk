@@ -22,9 +22,9 @@ cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
 cp "$root/.github/repository-metadata.json" "$scratch/fixture/.github/"
 printf preview-fixture >"$scratch/fixture/docs/assets/tusk-tui.png"
 payload_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/fixture/.github/repository-metadata.json")
-jq -n '{schema:1,status:"published",repository:"newbpydev/tusk",release_id:8,version:"v0.3.0",source_sha:("a"*40),assets_verified:9,fixture:true}' >"$scratch/release-receipt.json"
+jq --binary -n '{schema:1,status:"published",repository:"newbpydev/tusk",release_id:8,version:"v0.3.0",source_sha:("a"*40),assets_verified:9,fixture:true}' >"$scratch/release-receipt.json"
 release_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/release-receipt.json")
-jq -n --arg payload "$payload_hash" --arg release "$release_hash" '{schema:1,status:"owner-approved",action:"metadata",repository:"newbpydev/tusk",documentation_sha:("a"*40),payload_sha256:$payload,release_receipt_sha256:$release,approval_reference:"fixture only; not actual owner consent"}' >"$scratch/approval.json"
+jq --binary -n --arg payload "$payload_hash" --arg release "$release_hash" '{schema:1,status:"owner-approved",action:"metadata",repository:"newbpydev/tusk",documentation_sha:("a"*40),payload_sha256:$payload,release_receipt_sha256:$release,approval_reference:"fixture only; not actual owner consent"}' >"$scratch/approval.json"
 printf '{"full_name":"newbpydev/tusk","description":"","homepage":""}' >"$scratch/repository.json"
 printf '{"names":[]}' >"$scratch/topics.json"
 cat >"$scratch/bin/git" <<'GIT'
@@ -44,13 +44,13 @@ while [[ $# -gt 0 ]];do
  case "$1" in --method) method=$2;shift 2;;--input) input=$2;shift 2;;*) shift;;esac
 done
 case "$endpoint:$method" in
- repos/newbpydev/tusk/releases/8:GET) jq -n '{id:8,draft:false,tag_name:"v0.3.0",target_commitish:("a"*40)}' ;;
- repos/newbpydev/tusk/git/ref/heads/main:GET) jq -n --arg changed "${FIXTURE_MAIN_CHANGED:-0}" '{object:{type:"commit",sha:((if $changed=="1" then "b" else "a" end)*40)}}' ;;
+ repos/newbpydev/tusk/releases/8:GET) jq --binary -n '{id:8,draft:false,tag_name:"v0.3.0",target_commitish:("a"*40)}' ;;
+ repos/newbpydev/tusk/git/ref/heads/main:GET) jq --binary -n --arg changed "${FIXTURE_MAIN_CHANGED:-0}" '{object:{type:"commit",sha:((if $changed=="1" then "b" else "a" end)*40)}}' ;;
  repos/newbpydev/tusk:GET) cat "$FIXTURE_ROOT/repository.json" ;;
  repos/newbpydev/tusk/topics:GET) cat "$FIXTURE_ROOT/topics.json" ;;
  repos/newbpydev/tusk:PATCH)
-  jq -e 'keys==["description","homepage"]' "$input" >/dev/null || exit 77
-  jq '.+{full_name:"newbpydev/tusk"}' "$input" >"$FIXTURE_ROOT/repository.json"
+  jq --binary -e 'keys==["description","homepage"]' "$input" >/dev/null || exit 77
+  jq --binary '.+{full_name:"newbpydev/tusk"}' "$input" >"$FIXTURE_ROOT/repository.json"
   [[ "${FIXTURE_LOST:-0}" != 1 ]] || exit 49 ;;
  repos/newbpydev/tusk/topics:PUT)
   [[ "${FIXTURE_TOPICS_FAIL:-0}" != 1 ]] || exit 47
@@ -65,7 +65,7 @@ cat >"$scratch/interrupt-env" <<'INTERRUPT'
 trap 'if [[ "$BASH_COMMAND" == gh_deadline_setup* ]]; then trap - DEBUG; kill -TERM "$$"; fi' DEBUG
 INTERRUPT
 expect 143 'interrupted mutation retains its signal status' "${invoke[@]}" BASH_ENV="$scratch/interrupt-env" METADATA_OUTPUT="$scratch/interrupted" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
-expect 0 'interrupted audit receipt records exit 143' jq -e '.exit_status==143' "$scratch/interrupted/result.json"
+expect 0 'interrupted audit receipt records exit 143' jq --binary -e '.exit_status==143' "$scratch/interrupted/result.json"
 
 expect 0 'metadata prepare performs no API request' "${invoke[@]}" METADATA_OUTPUT="$scratch/prepared" bash "$scratch/fixture/scripts/repository_metadata.sh" prepare
 [[ ! -e "$scratch/calls" ]] || failed=1
@@ -73,7 +73,7 @@ expect 1 'missing owner authorization refuses metadata writes' "${invoke[@]}" ME
 [[ ! -e "$scratch/calls" ]] || failed=1
 cp "$scratch/approval.json" "$scratch/original-approval.json"
 cp "$scratch/repository.json" "$scratch/original-repository.json";cp "$scratch/topics.json" "$scratch/original-topics.json"
-jq '.status="not-approved"' "$scratch/original-approval.json" >"$scratch/approval.json"
+jq --binary '.status="not-approved"' "$scratch/original-approval.json" >"$scratch/approval.json"
 cat "$scratch/original-approval.json" >>"$scratch/approval.json"
 expect 1 'concatenated metadata approval refuses all API calls' "${invoke[@]}" METADATA_OUTPUT="$scratch/concatenated-approval" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
 [[ ! -e "$scratch/calls" ]] || failed=1

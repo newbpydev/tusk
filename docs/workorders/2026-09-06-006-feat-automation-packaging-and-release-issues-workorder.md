@@ -710,3 +710,35 @@ See [the R8 receipt](../verification-evidence/006/pr6-r8/acceptance.json).
 The frozen official-Go canonical gate and controlled full shell suite pass.
 The containing commit records one coherent fixture repair; all fresh hosted
 reports remain required before declaring the PR settled.
+
+### PR #6 ninth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `fbde2f8929377ef47c68214389580e28ed87f1c6`
+before edits or replies. Five CI jobs pass; Windows confirms the architecture
+negative and documentation gate, then its notices positive control fails with
+an incomplete asset inventory. Kilo identifies missing negative coverage for the
+OS operand of the native-job predicate. One combined pass handles both items.
+
+The same owned windows/amd64 control now separately requests linux/amd64 and
+requires the exact OS/architecture refusal diagnostic. An owned predicate
+mutation escaped the old suite and is detected after repair; production identity
+logic stays intact. A CRLF JSON-output notices control reproduces the exact
+native refusal. Maintainer helpers, fixture producers and the Make compiler-pin
+lookup explicitly use jq binary output, preserving LF paths/records without
+changing JSON filters or source license bytes. jq 1.7+ is an explicit build-only
+prerequisite. The full controlled JSON-output shell suite passes after repair.
+
+- [x] Wait for the complete ninth report set before changes or replies.
+- [x] Reproduce both gaps and pass the same bounded identity/line-ending controls.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent combined repair, reply with proof and settle every
+      fresh hosted report.
+
+Original native inventory lists were not retained by that job; precise CRLF
+attribution remains a hypothesis supported by jq documentation and the matching
+controlled refusal. Linux model checks do not replace fresh native execution.
+The 51 local closures and physical native/trusted-main/exact-byte release gates
+remain unchanged; see [the R9 receipt](../verification-evidence/006/pr6-r9/acceptance.json).
+The frozen official-Go canonical gate, complete CRLF-output shell model and
+precise OS-predicate mutation control pass. The containing commit records one
+combined repair; fresh hosted/native reports remain required for settlement.
