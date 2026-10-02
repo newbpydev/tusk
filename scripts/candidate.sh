@@ -101,6 +101,9 @@ verify() (
     [[ "$output" != "$directory" && "$output" != "$directory/"* && "$output" != "$root/.git" && "$output" != "$root/.git/"* ]] || die 'verification must not mutate candidate or Git storage'
     # Receipt directories are new, never replaced; failed boundaries stay inspectable.
     mkdir "$output" || die 'verification output collision/parent missing'
+    # shellcheck source=scripts/gh_deadline.sh
+    source "$root/scripts/gh_deadline.sh"
+    gh_deadline_setup "$root" "$output" || die 'could not prepare bounded GitHub driver'
     gh --version >"$output/verifier-version.txt"
     gh api "https://api.github.com/repos/$repo/actions/runs/$CANDIDATE_RUN_ID/attempts/$attempt" >"$output/run.json"
     jq -e --arg sha "$RELEASE_SHA" --argjson run "$CANDIDATE_RUN_ID" --argjson attempt "$attempt" '.id==$run and .run_attempt==$attempt and .path==".github/workflows/release.yml" and .event=="workflow_dispatch" and .head_branch=="main" and .head_sha==$sha and .status=="completed" and .conclusion=="success" and .repository.full_name=="newbpydev/tusk" and .head_repository.full_name=="newbpydev/tusk" and .head_repository.id==.repository.id' "$output/run.json" >/dev/null || die 'run is incomplete or untrusted'

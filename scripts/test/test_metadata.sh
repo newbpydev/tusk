@@ -15,6 +15,9 @@ expect() {
 # API/approval boundary fixtures, not actual publication or owner approval.
 mkdir -p "$scratch/fixture/scripts" "$scratch/fixture/.github" "$scratch/fixture/docs/assets" "$scratch/bin"
 cp "$root/scripts/repository_metadata.sh" "$scratch/fixture/scripts/"
+cp "$root/Makefile" "$scratch/fixture/"
+cp "$root/scripts/gh_deadline.sh" "$scratch/fixture/scripts/"
+cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
 cp "$root/.github/repository-metadata.json" "$scratch/fixture/.github/"
 printf preview-fixture >"$scratch/fixture/docs/assets/tusk-tui.png"
 payload_hash=$(sha256sum "$scratch/fixture/.github/repository-metadata.json"|cut -d' ' -f1)

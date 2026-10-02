@@ -33,6 +33,9 @@ fi
 mkdir -p "$scratch/fixture/scripts" "$scratch/candidate/assets" "$scratch/bin"
 if [[ ! -f "$root/scripts/candidate.sh" ]]; then exit 1; fi
 cp "$root/scripts/candidate.sh" "$scratch/fixture/scripts/"
+cp "$root/Makefile" "$scratch/fixture/"
+cp "$root/scripts/gh_deadline.sh" "$scratch/fixture/scripts/"
+cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
 printf '#!/usr/bin/env bash\nprintf "inventory inspected\\n"\n' >"$scratch/fixture/scripts/release_check.sh"
 printf payload >"$scratch/candidate/assets/payload.tar.gz"
 file_hash=$(sha256sum "$scratch/candidate/assets/payload.tar.gz" | cut -d' ' -f1)

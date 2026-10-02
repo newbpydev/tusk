@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -77,7 +78,13 @@ func readJSON(filename string, value any) error {
 	}
 	d := json.NewDecoder(bytes.NewReader(data))
 	d.DisallowUnknownFields()
-	return d.Decode(value)
+	if err := d.Decode(value); err != nil {
+		return err
+	}
+	if err := d.Decode(new(any)); err != io.EOF {
+		return fmt.Errorf("expected exactly one JSON value: %v", err)
+	}
+	return nil
 }
 func fileHash(filename string) (string, error) {
 	data, err := os.ReadFile(filename)

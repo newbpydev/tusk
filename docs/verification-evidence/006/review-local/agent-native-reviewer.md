@@ -1,0 +1,1 @@
+No new action-parity gap. Completion, documentation, candidate acceptance and release operations expose scriptable interfaces. Tusk is a self-contained task CLI/TUI; adding an LLM service would contradict its settled architecture. Local inline review, not an independent peer.

@@ -43,6 +43,14 @@ while IFS= read -r gate;do
  path=$(jq -r '.receipt.path' <<<"$gate");hash=$(jq -r '.receipt.sha256' <<<"$gate")
  regular "$path" && [[ "$(digest "$path")" == "$hash" ]] || die 'gate receipt changed or absent'
  jq -e --arg id "$(jq -r '.id' <<<"$gate")" --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --argjson run "$CANDIDATE_RUN_ID" '.status=="accepted" and .scope=="trusted-candidate" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' "$path" >/dev/null || die 'gate receipt does not describe this trusted candidate'
+ id=$(jq -r '.id' <<<"$gate")
+ if [[ "$id" == native/* ]];then
+  jq -e --arg target "${id#native/}" --slurpfile m "$manifest" '
+   . as $r | [$m[0].targets[]|select(.target==$target)] as $t |
+   ($t|length)==1 and $r.target==$target and $r.executable_sha256==$t[0].executable_sha256 and
+   $r.archive_sha256==$m[0].files_sha256[$t[0].archive]
+  ' "$path" >/dev/null || die 'native receipt executable/archive differs from candidate target'
+ fi
 done < <(jq -c '.gates[]' "$RELEASE_ACCEPTANCE")
 if [[ "$action" != readback ]];then
  regular "${RELEASE_AUTHORIZATION:-}" || die 'record of explicit owner authorization required'
@@ -88,6 +96,9 @@ for kind in cli tui startup;do
  esac
 done
 # Reconcile current remote main as well as the local frozen tools.
+# shellcheck source=scripts/gh_deadline.sh
+source "$root/scripts/gh_deadline.sh"
+gh_deadline_setup "$root" "$output" || die 'could not prepare bounded GitHub driver'
 gh api "https://api.github.com/repos/$repo/git/ref/heads/main" >"$output/main.json" || die 'main readback unavailable'
 main_sha=$(jq -er '.object|select(.type=="commit")|.sha|select(test("^[0-9a-f]{40}$"))' "$output/main.json") || die 'invalid main identity'
 gh api "https://api.github.com/repos/$repo/compare/$RELEASE_SHA...$main_sha" >"$output/main-history.json" || die 'main history readback unavailable'

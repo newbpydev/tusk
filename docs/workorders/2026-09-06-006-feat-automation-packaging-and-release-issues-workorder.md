@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Local engineering complete - final local review next; actual hosted/native/release gates open
+status: Local engineering and final review complete - local source freeze; actual hosted/native/release gates open
 evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
@@ -26,7 +26,7 @@ assignment. No release exception or performance waiver is assumed.
 
 | ID | Source / owner-lens | Severity | Status | Impact / next action | Closure evidence |
 | --- | --- | --- | --- | --- | --- |
-| 006-ISS-001 | R21 / repository owner, licensing | P1 | Resolved locally; payload checks pending | MIT grant and complete replacement-aware notices accepted; U2 verifies payload inclusion | Owner decision and U4 receipt; V44 passes locally; V51/V61 locally pass; hosted distribution pending |
+| 006-ISS-001 | R21 / repository owner, licensing | P1 | Resolved locally; hosted redistribution pending | MIT grant and complete replacement-aware notices accepted; U2 verifies payload inclusion | Owner decision and U4 receipt; V44 passes locally; V51/V61 locally pass; hosted distribution pending |
 | 006-ISS-002 | R2,R23,R24 / release maintainer, portability | P1 | Open verification | Arrange all native target/terminal access before U5; absent hosts block release | Exact-asset native runtime and owned terminal records; V73–V84 |
 | 006-ISS-003 | R29 / repository owner, distribution | P1 | Open decision | Establish accessible tap/destination before U7; proposed tap was not found | Owner-controlled repository/path and Intel/ARM local/live cask proof; V87–V98 |
 | 006-ISS-004 | R28 / repository owner, release | P1 | Open decision | Confirm version/SHA and explicit hosted/release authority at concrete U8 candidate | Authorized identity, draft/asset readback and actual public result; V95–V102 |
@@ -69,7 +69,9 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-042 | U8 retained measurement completeness / evidence | P1 | Resolved locally | Unique full three-run case matrices, recomputed reference tail guards and numeric nonnegative memory samples | Duplicate-case and malformed sample Red/Green; u8.json |
 | 006-ISS-043 | U8 tag/tap preflight / release integrity | P1 | Resolved locally; actual tap open | Require live tap readiness and exact accepted source tag in a completed authorized draft | Missing-tap/tag fixtures; actual tap404 remains 006-ISS-003; u8.json |
 | 006-ISS-044 | U8 GitHub host/log boundary / security | P1 | Resolved locally | Pin public host, literal API/upload endpoints and remove inherited HTTP debug flags; no filename-label or clobber parser | API-host/host/debug Red/Green, structured binary upload and final canonical gate; u8.json |
-| 006-ISS-045 | Final release-tool reliability / bounded processes | P2 | Open final local review | GitHub CLI's default HTTP client has no request timeout; bound maintainer invocations before hosted operation | Required ce-code-review and deadline Red/Green; not waived by local API-loss fixtures |
+| 006-ISS-045 | Final release-tool reliability / bounded processes | P2 | Resolved locally | Shared portable driver bounds every maintainer gh child; streams/exit codes and write readback remain intact | Actual review #2, owned child tests, canonical/minimum/lint; review-local/acceptance.json |
+| 006-ISS-046 | Final native receipt / exact executable and archive identity | P2 | Resolved locally; actual native acceptance pending | Require native target/executable/archive fields to match the verified manifest | Actual review #1, four malformed-binding Red/Green, current promotion fixtures; review-local/acceptance.json |
+| 006-ISS-047 | Candidate strict JSON / parser agreement | P2 | Resolved locally | Require EOF after one decoded candidate/overlay value, retaining whitespace and unknown-field checks | Actual verify-release appended-object reproduction, four trailing-data Red/Green, canonical race/coverage; review-local/acceptance.json |
 | 006-ISS-039 | U5 evidence output ownership / integrity | P2 | Resolved locally | Reject smoke/measurement outputs inside candidate/source storage; normalize physical absolute output paths | Observed boundary Red/Green, canonical validation; u5.json |
 | 006-ISS-038 | U6 minimal API repository / contract | P2 | Resolved locally; hosted proof pending | Fetch current repository/default branch separately from minimal Actions run repository | Official REST schema and minimal-run fixture Red/Green; real trusted candidate pending |
 | 006-ISS-034 | U2 special archive modes / security | P2 | Resolved locally | Reject setuid/setgid/sticky bits for every file/directory before payload acceptance | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
@@ -110,7 +112,7 @@ release/metadata/native-install acceptance remains pending. U2 follows the U4 co
 - **Expected:** A selected owner-authorized first-party license plus complete dependency/asset notices accompanies redistributed files.
 - **Decision:** The owner answered “MIT; rights confirmed” on 2026-10-01. U4 may add the MIT grant; retain third-party texts and patch provenance. An incompatible/unclassified obligation requires investigation before packaging distribution.
 - **Closure:** Owner decision recorded without credentials, license detection after publication, complete archive/source notices and replacement-aware inventory checks.
-- **Blocking effect / revisit:** Owner selection is resolved. Grant and reviewed inventory are now accepted in U4. Payload inclusion/native redistribution still gate U2/U5 distribution. No native/publication exception is authorized.
+- **Blocking effect / revisit:** Owner selection is resolved. Grant and reviewed inventory are now accepted in U4. U2 payload inclusion is locally verified; actual hosted/native redistribution remains U5/U8. No native/publication exception is authorized.
 
 ### 006-ISS-002: Native platforms and real terminal access
 
@@ -356,3 +358,31 @@ simplification/code review and source freeze follow the coherent engineering
 commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
 has occurred. Hosted/native/publication acceptance requires its separate actual
 evidence and concrete owner authorization.
+
+### Final local review-fix and source-freeze checkpoint — 2026-10-02 UTC
+
+All eight local checkpoints are committed. The actual ce-code-review receipt
+(`status: complete`, run `20261002-000427-b58e9f8f`, reviewed c027114) retained three
+validated findings. Caller-owned Red/Green fixes now require native gate target,
+executable and archive digests to match the verified manifest; bound all four
+GitHub helpers with a portable stdlib process driver; and require exactly one
+candidate/overlay JSON value. The driver preserves streams/arguments/exit codes,
+limits every operation to five minutes and joins the owned child/pipes. A shorter
+positive `GH_REQUEST_TIMEOUT` is allowed; unbounded/longer values fail. Canonical
+Go 1.27.1, Go 1.25 fast/script checks and strict ShellCheck pass; helper coverage
+is 97.2%. The real bounded tap readback still returns HTTP404.
+
+[Final local receipt](../verification-evidence/006/review-local/acceptance.json)
+retains the completed report, peer admission decisions, all Red/Green/failure
+logs and focused fix review. Local lenses/finish roles ran sequentially under the
+Task mapping; Claude returned an authentication failure, and the alternate
+Composer receipt did not verify its actual model/effort or serving family. No
+independent model agreement is claimed. No justified review finding remains open.
+
+The containing coherent review-fix commit is the local source freeze. Next is
+separate owner authorization to push this branch and open its reviewable PR;
+merge, main candidate dispatch, tags/releases, settings and tap writes remain
+separate. Select the final main SHA only after authorized integration, generate
+a fresh hosted candidate and rerun affected exact-byte native/cask/reference
+gates. Earlier private local candidates are preliminary. Parent U6/U5/U7/U8,
+Phase 6/G4 and unexecuted scenarios stay open; local scenario closures remain 51.

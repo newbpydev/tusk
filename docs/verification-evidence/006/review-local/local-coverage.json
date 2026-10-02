@@ -1,0 +1,22 @@
+{
+  "execution": "Sequential inline per user AGENTS Task mapping; no independent local personas or finish leaves",
+  "reviewers": [
+    "correctness",
+    "project-standards",
+    "testing",
+    "maintainability",
+    "security",
+    "performance",
+    "api-contract",
+    "reliability"
+  ],
+  "inspected": [
+    "CI and candidate workflows",
+    "packaging and bounded archive/ELF/PE/Mach-O inspector",
+    "native drivers and measurement acceptance",
+    "promotion/tag/upload/readback and metadata",
+    "completion and deterministic docs",
+    "licenses and governance"
+  ],
+  "findings": 2
+}

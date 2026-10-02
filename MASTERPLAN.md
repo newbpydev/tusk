@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 all eight local engineering checkpoints accepted; final local review next; hosted/native release gates pending
+**Current Status**: Feature 006 local engineering and final review accepted; local source freeze; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Final Local Simplification, Code Review and Source-Freeze Preparation (after the U8 engineering commit; external release gates pending)
+**Active Implementation Target**: Feature 006 — Branch Push/PR Authorization and Hosted/Main Candidate Preparation (local code frozen in the containing review-fix commit; external release gates pending)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -485,6 +485,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
     - [x] Local config/cask/provenance engineering checkpoint; real packager audit and canonical/minimum checks passed
   - [ ] Unit 006-8 / U8: Authorized Release, Public Metadata and Final Settlement
     - [x] Local promotion/readback/metadata engineering checkpoint; canonical/minimum/policy fixtures and real read-only previews passed
+- [x] Final local simplification, completed code-review receipt, three Red/Green review fixes and coherent source-freeze checkpoint
 - [ ] **6.3 Quality Gate & Release Sign-off**
   - [ ] Canonical validation/generated/module gates, minimum Go and five native candidate-SHA jobs
   - [x] Three real-shell completion checks and deterministic manuals on the applicable Linux host
@@ -741,3 +742,31 @@ simplification/code review and source freeze follow the coherent engineering
 commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
 has occurred. Hosted/native/publication acceptance requires its separate actual
 evidence and concrete owner authorization.
+
+### Final local review-fix and source-freeze checkpoint — 2026-10-02 UTC
+
+All eight local checkpoints are committed. The actual ce-code-review receipt
+(`status: complete`, run `20261002-000427-b58e9f8f`, reviewed c027114) retained three
+validated findings. Caller-owned Red/Green fixes now require native gate target,
+executable and archive digests to match the verified manifest; bound all four
+GitHub helpers with a portable stdlib process driver; and require exactly one
+candidate/overlay JSON value. The driver preserves streams/arguments/exit codes,
+limits every operation to five minutes and joins the owned child/pipes. A shorter
+positive `GH_REQUEST_TIMEOUT` is allowed; unbounded/longer values fail. Canonical
+Go 1.27.1, Go 1.25 fast/script checks and strict ShellCheck pass; helper coverage
+is 97.2%. The real bounded tap readback still returns HTTP404.
+
+[Final local receipt](docs/verification-evidence/006/review-local/acceptance.json)
+retains the completed report, peer admission decisions, all Red/Green/failure
+logs and focused fix review. Local lenses/finish roles ran sequentially under the
+Task mapping; Claude returned an authentication failure, and the alternate
+Composer receipt did not verify its actual model/effort or serving family. No
+independent model agreement is claimed. No justified review finding remains open.
+
+The containing coherent review-fix commit is the local source freeze. Next is
+separate owner authorization to push this branch and open its reviewable PR;
+merge, main candidate dispatch, tags/releases, settings and tap writes remain
+separate. Select the final main SHA only after authorized integration, generate
+a fresh hosted candidate and rerun affected exact-byte native/cask/reference
+gates. Earlier private local candidates are preliminary. Parent U6/U5/U7/U8,
+Phase 6/G4 and unexecuted scenarios stay open; local scenario closures remain 51.

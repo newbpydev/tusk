@@ -61,6 +61,21 @@ replacement/removal and unsigned-download scenarios in the verification plan.
 The maintainer reviews those records; hashes bind their bytes and do not prove
 physical host execution by themselves. An absent host leaves its gate pending.
 
+Native gate receipts also require `target` (for example `linux/amd64`),
+`executable_sha256` and `archive_sha256`. Promotion compares all three with the
+matching target and archive in the cryptographically verified manifest. These
+fields record the bytes actually inspected on that host; they do not substitute
+for the retained terminal observations or the maintainer's acceptance.
+
+Every GitHub subprocess is bounded to five minutes, plus at most one second to
+join inherited pipes. `GH_REQUEST_TIMEOUT` can select a shorter positive Go
+duration (for example `30s`), never a longer or unlimited duration. The owned
+driver preserves streams, literal arguments and GitHub exit codes. A deadline
+returns 124 and interruption returns 130 at the driver boundary; calling helpers
+may turn a failed prerequisite into exit 1. Failed responses still require fresh
+readback before another write. Retained output directories include the compiled
+driver; the read-only tap check removes its own temporary driver directory.
+
 CLI reports retain all 28 cases in each of three runs, five warmups and 100 samples
 per case, the packaged executable/compiler identities and the reference profile.
 Promotion recomputes the p90/p95/p99/max guards from the samples. The Feature 005

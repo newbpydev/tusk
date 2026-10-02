@@ -1,0 +1,24 @@
+{
+  "reviewer": "reliability",
+  "findings": [
+    {
+      "title": "Release helpers leave GitHub subprocesses unbounded",
+      "severity": "P2",
+      "file": "scripts/promote.sh",
+      "line": 91,
+      "confidence": 100,
+      "autofix_class": "gated_auto",
+      "owner": "downstream-resolver",
+      "requires_verification": true,
+      "pre_existing": false,
+      "suggested_fix": "Bound every maintainer gh invocation with a portable process deadline, preserve exit codes and readback reconciliation, and test a stalled owned child.",
+      "why_it_matters": "A stalled GitHub connection can leave candidate verification or authorized promotion waiting indefinitely; workflow job timeouts do not bound local maintainer operations.",
+      "evidence": [
+        "scripts/promote.sh:91 -- gh api \"https://api.github.com/repos/$repo/git/ref/heads/main\" >\"$output/main.json\" || die 'main readback unavailable'",
+        "006-ISS-045 records the required bounded-process contract. cli/cli v2.102.0 uses go-gh v2.16.1; api ClientOptions defaults to no timeout. All four GitHub helper scripts currently invoke gh without a watchdog."
+      ]
+    }
+  ],
+  "residual_risks": [],
+  "testing_gaps": []
+}

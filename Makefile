@@ -65,6 +65,11 @@ coverage-release:
 build-release-fixture:
 	CGO_ENABLED=0 GOTOOLCHAIN=go1.27.1 go build -trimpath -overlay="$$TUSK_RELEASE_OVERLAY" -ldflags='-s -w' -o "$$TUSK_RELEASE_FIXTURE_BINARY" ./cmd/tusk
 
+.PHONY: build-gh-deadline
+build-gh-deadline:
+	@test -n "$$GH_DEADLINE_OUTPUT"
+	go build -trimpath -buildvcs=false -o "$$GH_DEADLINE_OUTPUT" scripts/ghdeadline/main.go
+
 .PHONY: generate-docs check-docs tidy-modules test-completions
 test-completions: build check-docs
 	bash scripts/test/test_completions.sh

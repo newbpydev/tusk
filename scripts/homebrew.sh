@@ -19,6 +19,11 @@ case "${1:-check}" in
   bash "$root/scripts/release_check.sh" render-cask "$RELEASE_MANIFEST" "$output"
   printf 'Local declarative cask generated; native brew audit/install and tap readiness remain separate.\n' ;;
  destination)
+  driver=$(mktemp -d)
+  trap 'rm -rf "$driver"' EXIT
+  # shellcheck source=scripts/gh_deadline.sh
+  source "$root/scripts/gh_deadline.sh"
+  gh_deadline_setup "$root" "$driver" || die 'could not prepare bounded GitHub driver'
   # Read-only; a missing/inaccessible tap is a named prerequisite failure.
   if ! gh api https://api.github.com/repos/newbpydev/homebrew-tap > /dev/null;then die '006-ISS-003: owner-controlled newbpydev/homebrew-tap missing or inaccessible';fi
   gh api https://api.github.com/repos/newbpydev/homebrew-tap --jq '.full_name=="newbpydev/homebrew-tap" and .owner.login=="newbpydev" and .private==false and .archived==false and .disabled==false and .permissions.push==true' | jq -e '.==true' >/dev/null || die '006-ISS-003: public owned writable tap required' ;;

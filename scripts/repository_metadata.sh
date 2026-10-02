@@ -34,6 +34,9 @@ jq -e --arg sha "$documentation_sha" --arg payload "$payload_hash" --arg release
  ' "$METADATA_AUTHORIZATION" >/dev/null || die 'approval does not match exact payload/documentation/release readback'
 jq -e '.schema==1 and .status=="published" and .repository=="newbpydev/tusk" and .assets_verified==9 and (.release_id|type=="number" and .>0 and floor==.) and (.source_sha|test("^[0-9a-f]{40}$")) and (.version|test("^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"))' "$METADATA_RELEASE_RECEIPT" >/dev/null || die 'verified public release required'
 id=$(jq -r '.release_id' "$METADATA_RELEASE_RECEIPT")
+# shellcheck source=scripts/gh_deadline.sh
+source "$root/scripts/gh_deadline.sh"
+gh_deadline_setup "$root" "$output" || die 'could not prepare bounded GitHub driver'
 gh api "https://api.github.com/repos/$repo/releases/$id" >"$output/release.json"
 jq -e --slurpfile r "$METADATA_RELEASE_RECEIPT" '.id==$r[0].release_id and .draft==false and .tag_name==$r[0].version and .target_commitish==$r[0].source_sha' "$output/release.json" >/dev/null || die 'public release identity changed'
 gh api "https://api.github.com/repos/$repo/git/ref/heads/main" >"$output/main.json"

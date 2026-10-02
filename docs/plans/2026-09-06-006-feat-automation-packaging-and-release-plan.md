@@ -152,7 +152,7 @@ new schema, task semantics and application feature work are outside this scope.
 - KTD12. **Honest installation routes.** Before the first release, document source checkout plus `make setup build` and the current native support limits. After verified publication, lead with binary downloads for all five targets and macOS cask installation; Windows examples use PowerShell, Unix examples use POSIX shell. Versioned `go install github.com/newbpydev/tusk/cmd/tusk@...` is unsupported while local replacements exist. Show hash verification before extraction/install, PATH checks, upgrade/uninstall and recovery from wrong architecture, permission errors, download failure or checksum mismatch. No user must install Go, Make, Kitty or `jq` to run a prebuilt binary.
 - KTD13. **README and About are the repository landing page.** Interpret the requested GitHub page as the existing repository home. Homepage points to `https://github.com/newbpydev/tusk#readme`. Proposed description: `Local task management in your terminal: a keyboard-driven TUI and scriptable CLI, backed by SQLite.` Proposed topics: `go`, `golang`, `cli`, `tui`, `task-manager`, `terminal`, `sqlite`, `bubbletea`, `productivity`, `offline`, `command-line`. Social preview uses a sanitized real TUI capture with readable title; manually upload only if the API cannot support that field. Leave absent funding/website links empty and preserve existing settings unless a reviewed change has a concrete purpose.
 - KTD14. **Evidence serves users.** README order: purpose/status, real screenshot with alt text, install options/platform table, quick start, core features, CLI/JSON and TUI pointers, storage/config/backup, verification/support limits, contributing/security/license. Show only a few working badges: CI, released version and selected license after each exists. Reuse inspected Feature 005 screenshot evidence only with its original date/source label; fresh packaged-app capture is preferred for release. Link raw benchmark/acceptance receipts and contextualize finite-sample measurements. Do not turn internal workorders or implementation IDs into the user's installation workflow.
-- KTD15. **License is an owner decision.** Recommend MIT for first-party code, pending owner selection and rights confirmation. Existing third-party licenses remain intact. Generate a dependency/license inventory that includes local replaced trees and embedded images; unclassified obligations block distribution. `SECURITY.md` uses GitHub private vulnerability reporting only after verified enabled; otherwise name the repository owner's GitHub contact route without claiming confidentiality for public issues. Issues/PR templates request OS/arch/version/reproduction, redact personal task data and distinguish security reports.
+- KTD15. **License is an owner decision.** The owner selected MIT and confirmed first-party redistribution rights in U4. Existing third-party licenses remain intact. Generate a dependency/license inventory that includes local replaced trees and embedded images; unclassified obligations block distribution. `SECURITY.md` uses GitHub private vulnerability reporting only after verified enabled; otherwise name the repository owner's GitHub contact route without claiming confidentiality for public issues. Issues/PR templates request OS/arch/version/reproduction, redact personal task data and distinguish security reports.
 - KTD16. **Keep terminal and measurement evidence distinct.** Bash runs all Make/tests/latency; owned Kitty windows on Linux/macOS operate only the actual app with isolated data. Windows uses an owned native Windows Terminal/PowerShell session for separate native-console evidence. Retain identity/dimensions/observations, sanitized captures and cleanup. Existing benchmark targets rebuild their binary; U5 adds `bench-cli-release` and `bench-tui-release` to consume `RELEASE_BINARY` unchanged, with hash-preservation failure fixtures. Source-model TUI measurements remain separate from packaged startup. The accepted Feature 005 Ryzen profile was scoped to PR #5; do not silently extend it to release acceptance. U5 applies the reference CLI criteria, retains any separate calibrated result and seeks an explicit release decision if the unchanged reference gate fails.
 
 ### High-level technical design
@@ -649,3 +649,31 @@ simplification/code review and source freeze follow the coherent engineering
 commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
 has occurred. Hosted/native/publication acceptance requires its separate actual
 evidence and concrete owner authorization.
+
+### Final local review-fix and source-freeze checkpoint — 2026-10-02 UTC
+
+All eight local checkpoints are committed. The actual ce-code-review receipt
+(`status: complete`, run `20261002-000427-b58e9f8f`, reviewed c027114) retained three
+validated findings. Caller-owned Red/Green fixes now require native gate target,
+executable and archive digests to match the verified manifest; bound all four
+GitHub helpers with a portable stdlib process driver; and require exactly one
+candidate/overlay JSON value. The driver preserves streams/arguments/exit codes,
+limits every operation to five minutes and joins the owned child/pipes. A shorter
+positive `GH_REQUEST_TIMEOUT` is allowed; unbounded/longer values fail. Canonical
+Go 1.27.1, Go 1.25 fast/script checks and strict ShellCheck pass; helper coverage
+is 97.2%. The real bounded tap readback still returns HTTP404.
+
+[Final local receipt](../verification-evidence/006/review-local/acceptance.json)
+retains the completed report, peer admission decisions, all Red/Green/failure
+logs and focused fix review. Local lenses/finish roles ran sequentially under the
+Task mapping; Claude returned an authentication failure, and the alternate
+Composer receipt did not verify its actual model/effort or serving family. No
+independent model agreement is claimed. No justified review finding remains open.
+
+The containing coherent review-fix commit is the local source freeze. Next is
+separate owner authorization to push this branch and open its reviewable PR;
+merge, main candidate dispatch, tags/releases, settings and tap writes remain
+separate. Select the final main SHA only after authorized integration, generate
+a fresh hosted candidate and rerun affected exact-byte native/cask/reference
+gates. Earlier private local candidates are preliminary. Parent U6/U5/U7/U8,
+Phase 6/G4 and unexecuted scenarios stay open; local scenario closures remain 51.

@@ -1,0 +1,23 @@
+{
+  "verdicts": [
+    {
+      "#": 1,
+      "status": "confirmed",
+      "protected_subject": null,
+      "reason": "c027114 promote.sh:45 checks run/manifest/gate only, while docs/release-acceptance.md requires binary/archive digests; current fixture reaches successful publication without those fields. Human acceptance incidence was not measured."
+    },
+    {
+      "#": 2,
+      "status": "confirmed",
+      "protected_subject": null,
+      "reason": "c027114 four helper scripts call gh without process deadlines; pinned cli/cli v2.102.0 and go-gh v2.16.1 document zero default timeout. Stalled network incidence was not measured."
+    },
+    {
+      "#": 3,
+      "status": "confirmed",
+      "protected_subject": null,
+      "reason": "At c027114 with Go 1.27.1, actual make verify-release returns zero for the owned valid candidate manifest followed by {} (json-reproduction.json); readJSON never checks EOF."
+    }
+  ],
+  "execution": "Inline factual validation; independent validator unavailable under user mapping"
+}

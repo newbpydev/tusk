@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Local engineering complete - final local review next; actual hosted/native/release gates open
+status: Local engineering and final review complete - local source freeze; actual hosted/native/release gates open
 evidence-scope: 51 local scenario closures; hosted/native release gates pending
 deepened: 2026-10-01
 ---
@@ -477,3 +477,31 @@ simplification/code review and source freeze follow the coherent engineering
 commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
 has occurred. Hosted/native/publication acceptance requires its separate actual
 evidence and concrete owner authorization.
+
+### Final local review-fix and source-freeze checkpoint — 2026-10-02 UTC
+
+All eight local checkpoints are committed. The actual ce-code-review receipt
+(`status: complete`, run `20261002-000427-b58e9f8f`, reviewed c027114) retained three
+validated findings. Caller-owned Red/Green fixes now require native gate target,
+executable and archive digests to match the verified manifest; bound all four
+GitHub helpers with a portable stdlib process driver; and require exactly one
+candidate/overlay JSON value. The driver preserves streams/arguments/exit codes,
+limits every operation to five minutes and joins the owned child/pipes. A shorter
+positive `GH_REQUEST_TIMEOUT` is allowed; unbounded/longer values fail. Canonical
+Go 1.27.1, Go 1.25 fast/script checks and strict ShellCheck pass; helper coverage
+is 97.2%. The real bounded tap readback still returns HTTP404.
+
+[Final local receipt](../verification-evidence/006/review-local/acceptance.json)
+retains the completed report, peer admission decisions, all Red/Green/failure
+logs and focused fix review. Local lenses/finish roles ran sequentially under the
+Task mapping; Claude returned an authentication failure, and the alternate
+Composer receipt did not verify its actual model/effort or serving family. No
+independent model agreement is claimed. No justified review finding remains open.
+
+The containing coherent review-fix commit is the local source freeze. Next is
+separate owner authorization to push this branch and open its reviewable PR;
+merge, main candidate dispatch, tags/releases, settings and tap writes remain
+separate. Select the final main SHA only after authorized integration, generate
+a fresh hosted candidate and rerun affected exact-byte native/cask/reference
+gates. Earlier private local candidates are preliminary. Parent U6/U5/U7/U8,
+Phase 6/G4 and unexecuted scenarios stay open; local scenario closures remain 51.

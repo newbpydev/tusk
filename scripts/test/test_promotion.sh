@@ -17,6 +17,9 @@ expect() {
 # Only policy/API boundary fixtures. No signatures, native execution or timing proof.
 mkdir -p "$scratch/fixture/scripts" "$scratch/candidate/assets" "$scratch/candidate/homebrew/Casks" "$scratch/bin" "$scratch/remote" "$scratch/gates"
 cp "$root/scripts/promote.sh" "$scratch/fixture/scripts/"
+cp "$root/Makefile" "$scratch/fixture/"
+cp "$root/scripts/gh_deadline.sh" "$scratch/fixture/scripts/"
+cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$scratch/fixture/scripts/release_check.sh"
 sha=$(printf 'a%.0s' {1..40})
 for name in tusk_0.3.0_linux_amd64.tar.gz tusk_0.3.0_linux_arm64.tar.gz tusk_0.3.0_darwin_amd64.tar.gz tusk_0.3.0_darwin_arm64.tar.gz tusk_0.3.0_windows_amd64.zip tusk_0.3.0_source.tar.gz THIRD_PARTY_NOTICES.md checksums.txt;do printf 'fixture %s' "$name" >"$scratch/candidate/assets/$name";done
@@ -27,6 +30,7 @@ for file in "$scratch/candidate/assets/"*;do
  hash=$(sha256sum "$file"|cut -d' ' -f1)
  jq --arg file "$(basename "$file")" --arg hash "$hash" '.files_sha256[$file]=$hash' "$scratch/manifest" >"$scratch/new";mv "$scratch/new" "$scratch/manifest"
 done
+jq '. as $m | .targets=[ ["linux/amd64","linux/arm64","darwin/amd64","darwin/arm64","windows/amd64"][] as $t | {target:$t,executable_sha256:("b"*64),archive:("tusk_0.3.0_"+($t|gsub("/";"_"))+(if $t|startswith("windows/") then ".zip" else ".tar.gz" end))}]' "$scratch/manifest" >"$scratch/new";mv "$scratch/new" "$scratch/manifest"
 mv "$scratch/manifest" "$scratch/candidate/assets/release-manifest.json"
 manifest_hash=$(sha256sum "$scratch/candidate/assets/release-manifest.json"|cut -d' ' -f1)
 printf 'fixture cask' >"$scratch/candidate/homebrew/Casks/tusk.rb"
@@ -38,6 +42,9 @@ jq -n --arg sha "$sha" --arg hash "$manifest_hash" --arg cask "$cask_hash" '{sch
 for id in native/linux/amd64 native/linux/arm64 native/darwin/amd64 native/darwin/arm64 native/windows/amd64 cli-reference tui-reference cask/darwin/amd64 cask/darwin/arm64;do
  path="$scratch/gates/${id//\//-}.json"
  jq -n --arg id "$id" --arg sha "$sha" --arg hash "$manifest_hash" '{status:"accepted",scope:"trusted-candidate",gate:$id,source_sha:$sha,version:"v0.3.0",manifest_sha256:$hash,run_id:123,fixture:true}' >"$path"
+ if [[ "$id" == native/* ]];then
+  jq --arg target "${id#native/}" --slurpfile m "$scratch/candidate/assets/release-manifest.json" '. + ($m[0].targets[]|select(.target==$target)|{target:.target,executable_sha256:.executable_sha256,archive_sha256:$m[0].files_sha256[.archive]})' "$path" >"$scratch/new";mv "$scratch/new" "$path"
+ fi
  hash=$(sha256sum "$path"|cut -d' ' -f1)
  jq --arg id "$id" --arg path "$path" --arg hash "$hash" '.gates += [{id:$id,passed:true,receipt:{path:$path,sha256:$hash}}]' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
 done
@@ -66,6 +73,7 @@ cat >"$scratch/bin/make" <<'MAKE'
 #!/usr/bin/env bash
 set -euo pipefail
 printf '%s\n' "$*" >>"$FIXTURE_ROOT/make-calls"
+if [[ "$*" == *build-gh-deadline* ]];then exec "$FIXTURE_REAL_MAKE" "$@";fi
 if [[ "$*" == *homebrew-destination* ]];then [[ "${FIXTURE_TAP_MISSING:-0}" != 1 ]] || exit 48;exit 0;fi
 [[ "$*" == *verify-candidate* && "${FIXTURE_EXPIRED:-0}" != 1 ]] || exit 47
 mkdir "$CANDIDATE_VERIFICATION_DIR"
@@ -117,7 +125,7 @@ GH
 chmod +x "$scratch/bin/"*
 reset() { rm -f -- "$scratch/remote/"*;printf '[]' >"$scratch/remote/releases.json";printf '[]' >"$scratch/remote/assets.json";: >"$scratch/remote/tag.json";: >"$scratch/gh-calls"; }
 reset
-invoke=(env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 FIXTURE_ROOT="$scratch" FIXTURE_CASK="$cask_hash" CANDIDATE_DIR="$scratch/candidate" CANDIDATE_RUN_ID=123 CANDIDATE_MANIFEST_SHA256="$manifest_hash" RELEASE_SHA="$sha" RELEASE_VERSION=v0.3.0 RELEASE_ACCEPTANCE="$scratch/acceptance.json" RELEASE_NOTES="$scratch/notes.md" RELEASE_AUTHORIZATION="$scratch/draft-approval.json")
+invoke=(env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 FIXTURE_REAL_MAKE="$(command -v make)" FIXTURE_ROOT="$scratch" FIXTURE_CASK="$cask_hash" CANDIDATE_DIR="$scratch/candidate" CANDIDATE_RUN_ID=123 CANDIDATE_MANIFEST_SHA256="$manifest_hash" RELEASE_SHA="$sha" RELEASE_VERSION=v0.3.0 RELEASE_ACCEPTANCE="$scratch/acceptance.json" RELEASE_NOTES="$scratch/notes.md" RELEASE_AUTHORIZATION="$scratch/draft-approval.json")
 expect 0 'prepare stays unaccepted and read-only' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/prepared" bash "$scratch/fixture/scripts/promote.sh" prepare
 [[ ! -s "$scratch/gh-calls" ]] || failed=1
 expect 1 'missing owner action authorization refused' "${invoke[@]}" RELEASE_AUTHORIZATION= RELEASE_PROMOTION_OUTPUT="$scratch/no-approval" bash "$scratch/fixture/scripts/promote.sh" draft
@@ -130,6 +138,20 @@ expect 47 'expired candidate refuses every remote write' "${invoke[@]}" FIXTURE_
 [[ ! -s "$scratch/gh-calls" ]] || failed=1
 expect 1 'fresh main code change invalidates acceptance' "${invoke[@]}" FIXTURE_MAIN_CHANGED=1 RELEASE_PROMOTION_OUTPUT="$scratch/main-changed" bash "$scratch/fixture/scripts/promote.sh" draft
 reset
+index=0
+for mutation in 'del(.executable_sha256)' '.executable_sha256=("c"*64)' '.archive_sha256=("c"*64)' '.target="linux/arm64"';do
+ index=$((index+1))
+ path="$scratch/gates/native-linux-amd64.json"
+ cp "$path" "$scratch/original-gate.json";cp "$scratch/acceptance.json" "$scratch/original-acceptance.json";cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
+ jq "$mutation" "$path" >"$scratch/new";mv "$scratch/new" "$path"
+ hash=$(sha256sum "$path"|cut -d' ' -f1)
+ jq --arg hash "$hash" '(.gates[]|select(.id=="native/linux/amd64")|.receipt.sha256)=$hash' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
+ hash=$(sha256sum "$scratch/acceptance.json"|cut -d' ' -f1)
+ jq --arg hash "$hash" '.acceptance_sha256=$hash' "$scratch/draft-approval.json" >"$scratch/new";mv "$scratch/new" "$scratch/draft-approval.json"
+ expect 1 "reject native candidate binding: $mutation" "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/native-binding-$index" bash "$scratch/fixture/scripts/promote.sh" draft
+ mv "$scratch/original-gate.json" "$path";mv "$scratch/original-acceptance.json" "$scratch/acceptance.json";mv "$scratch/original-approval.json" "$scratch/draft-approval.json"
+ reset
+done
 cp "$scratch/cli.json" "$scratch/original-cli.json"
 jq '.cases[1]=.cases[0]' "$scratch/cli.json" >"$scratch/new";mv "$scratch/new" "$scratch/cli.json"
 report_hash=$(sha256sum "$scratch/cli.json"|cut -d' ' -f1)

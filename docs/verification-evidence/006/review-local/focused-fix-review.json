@@ -1,0 +1,16 @@
+{
+  "scope": "Three caller-owned findings at c027114, including new deadline runner and four callers",
+  "execution": "Sequential main-thread focused correctness/security/reliability/standards/simplicity review; no independent or second ce-code-review claim",
+  "checks": [
+    "Manifest EOF guard rejects second values and trailing garbage; retains whitespace and unknown-field checks",
+    "Native receipt target/executable/archive match verified manifest; human evidence acceptance remains separate",
+    "Literal gh process and argument arrays; inherited streams, preserved exit codes; timeout positive at most 5m",
+    "CommandContext kills and joins owned direct child, WaitDelay bounds inherited pipes, cancellation returned explicitly",
+    "Shared bootstrap receives explicit source/output paths and refuses existing driver; all four callers use canonical Make build",
+    "Prepared metadata/promotion never starts GitHub; readback reconciliation and no-overwrite/retag behavior retained",
+    "New helper is stdlib maintainer tooling, no runtime app/service/storage/TUI changes or mutable Go globals",
+    "Windows-specific helper suffix and owned portable child tests retained; actual native console execution pending"
+  ],
+  "remaining_findings": [],
+  "validation": "Final synchronized Go1.27.1 canonical/build/generated/docs/notices/workflow gate, minimum Go fast/script/five-target helper compile and strict ShellCheck all exit0; no code hashes changed."
+}
