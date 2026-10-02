@@ -23,6 +23,47 @@ check-notices:
 generate-notices:
 	bash scripts/notices.sh generate
 
+.PHONY: test-release setup-release release-check release-snapshot release-candidate verify-release build-release-fixture
+RELEASE_VERSION ?=
+RELEASE_SHA ?= HEAD
+RELEASE_OUTPUT ?=
+# Freeze raw values and pass them as environment data, never recipe shell code.
+override RELEASE_VERSION := $(value RELEASE_VERSION)
+override RELEASE_SHA := $(value RELEASE_SHA)
+override RELEASE_OUTPUT := $(value RELEASE_OUTPUT)
+export RELEASE_VERSION RELEASE_SHA RELEASE_OUTPUT
+override RELEASE_ASSETS := $(value RELEASE_ASSETS)
+export RELEASE_ASSETS
+test-release:
+	go test -v ./cmd/tusk -run '^TestVersion_'
+	go test -v ./scripts/releasecheck $(TUSK_RELEASE_TEST_ARGS)
+	bash scripts/test/test_release.sh
+
+setup-release:
+	bash scripts/release.sh setup
+
+release-check:
+	bash scripts/release.sh check
+
+release-snapshot:
+	bash scripts/release.sh snapshot
+
+release-candidate:
+	bash scripts/release.sh candidate
+
+verify-release:
+	bash scripts/release_check.sh verify "$$RELEASE_ASSETS"
+
+.PHONY: coverage-release
+override TUSK_RELEASE_COVERAGE_FILE := $(value TUSK_RELEASE_COVERAGE_FILE)
+export TUSK_RELEASE_COVERAGE_FILE
+coverage-release:
+	go test -coverprofile="$$TUSK_RELEASE_COVERAGE_FILE" ./scripts/releasecheck
+
+# Test-owned checkout and output; called by the inspector integration tests.
+build-release-fixture:
+	CGO_ENABLED=0 GOTOOLCHAIN=go1.27.1 go build -trimpath -overlay="$$TUSK_RELEASE_OVERLAY" -ldflags='-s -w' -o "$$TUSK_RELEASE_FIXTURE_BINARY" ./cmd/tusk
+
 .PHONY: generate-docs check-docs tidy-modules test-completions
 test-completions: build check-docs
 	bash scripts/test/test_completions.sh
@@ -87,6 +128,7 @@ test-scripts:
 	@bash scripts/test/test_ci.sh
 	@bash scripts/test/test_docs.sh
 	@bash scripts/test/test_notices.sh
+	@bash scripts/test/test_release.sh
 
 all: validate build
 

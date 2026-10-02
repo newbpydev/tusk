@@ -3,12 +3,40 @@ package main
 import (
 	"bytes"
 	"context"
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"os"
 	"os/exec"
 	"strings"
 	"testing"
 	"time"
 )
+
+func TestVersion_ImmutableDevelopmentFile(t *testing.T) {
+	if Version != "dev" {
+		t.Fatalf("ordinary source version must be clearly unreleased: %q", Version)
+	}
+	file, err := parser.ParseFile(token.NewFileSet(), "version.go", nil, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(file.Decls) != 1 {
+		t.Fatal("version file must contain only the immutable version constant")
+	}
+	decl, ok := file.Decls[0].(*ast.GenDecl)
+	if !ok || decl.Tok != token.CONST || len(decl.Specs) != 1 {
+		t.Fatal("mutable or unrelated release metadata")
+	}
+	value, ok := decl.Specs[0].(*ast.ValueSpec)
+	if !ok || len(value.Names) != 1 || value.Names[0].Name != "Version" || len(value.Values) != 1 {
+		t.Fatal("expected exactly const Version")
+	}
+	literal, ok := value.Values[0].(*ast.BasicLit)
+	if !ok || literal.Kind != token.STRING || literal.Value != `"dev"` {
+		t.Fatal("version is not an immutable development literal")
+	}
+}
 
 func TestRunVersion(t *testing.T) {
 	var buf bytes.Buffer

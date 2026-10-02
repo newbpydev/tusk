@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 U1/U3/U4 locally accepted; hosted/native release gates pending
+**Current Status**: Feature 006 U1/U3/U4/U2 locally accepted; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 U2 / Unit 006-2 — Reproducible CGO-Free Payloads and Immutable Version Metadata (after the U4 commit)
+**Active Implementation Target**: Feature 006 U6 / Unit 006-6 — Trusted Hosted Candidate Workflow and Artifact Provenance (after the U2 commit)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -385,7 +385,7 @@ graph TD
   - [x] Merge PR #3 as `859d6b12c9fd093dba93e7a491f40fdbdffb16e5`, preserving all individual commits
   - [x] Fast-forward local main and remove local/remote `feat/task-service-engine`
 
-Feature 003 completed seven units in the declared order with separate canonical gates and commits. All 91 local scenarios have [execution receipts](docs/verification-evidence/003/README.md), including disk WAL concurrency, stale consent, rollback and process recovery. Final service coverage is 95.8%, parser 98.4%; minimum Go 1.25 full tests and five CGO-free builds pass. Benchmark baselines and [consumer handoffs](docs/service.md) are recorded. Native/hosted/CLI/TUI acceptance remains with Features 004–006. No later-phase implementation is authorized by this Feature 003 run.
+Feature 003 completed seven units in the declared order with separate canonical gates and commits. All 91 local scenarios have [execution receipts](docs/verification-evidence/003/README.md), including disk WAL concurrency, stale consent, rollback and process recovery. Final service coverage is 95.9%, parser 98.4%; minimum Go 1.25 full tests and five CGO-free builds pass. Benchmark baselines and [consumer handoffs](docs/service.md) are recorded. Native/hosted/CLI/TUI acceptance remains with Features 004–006. No later-phase implementation is authorized by this Feature 003 run.
 
 ---
 
@@ -476,7 +476,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [x] Unit 006-1 / U1: Native CI Matrix and Portable Canonical Tooling — local engineering; exact-SHA hosted/native closure pending
   - [x] Unit 006-3 / U3: Storage-Free Completions and Deterministic Manuals — local acceptance
   - [x] Unit 006-4 / U4: README, Installation Guides, Community Files and License Readiness — local acceptance; public activation pending
-  - [ ] Unit 006-2 / U2: Reproducible CGO-Free Payloads and Immutable Version Metadata
+  - [x] Unit 006-2 / U2: Reproducible CGO-Free Payloads and Immutable Version Metadata — local acceptance; hosted/native release evidence separate
   - [ ] Unit 006-6 / U6: Trusted Hosted Candidate Workflow and Artifact Provenance
   - [ ] Unit 006-5 / U5: Exact-Artifact Native Lifecycle, Terminal and Performance Acceptance
   - [ ] Unit 006-7 / U7: Homebrew Cask Candidate and Destination Readiness
@@ -484,7 +484,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
 - [ ] **6.3 Quality Gate & Release Sign-off**
   - [ ] Canonical validation/generated/module gates, minimum Go and five native candidate-SHA jobs
   - [x] Three real-shell completion checks and deterministic manuals on the applicable Linux host
-  - [ ] Complete licensed/checksummed payloads
+  - [x] Complete licensed/checksummed local payloads; trusted hosted candidate pending
   - [ ] Trusted candidate/provenance plus exact-asset native CLI/TUI/install/backup/upgrade/remove acceptance
   - [ ] Owned Kitty/native Windows terminal and retained candidate CLI/TUI performance evidence
   - [ ] Owner license/rights, tap/security-contact and concrete publication decisions closed
@@ -538,6 +538,20 @@ Red/Green and preview. Private GitHub reporting is verified disabled; the public
 owner route does not promise confidentiality. Native binary installation and live
 GitHub metadata/license/rendering remain U5/U8 gates. U3 is committed as e543502;
 U2 starts after the coherent U4 commit.
+
+### Feature 006 U2 local checkpoint — 2026-10-01
+
+Immutable constant overlays, verified pinned GoReleaser and five CGO-free payloads
+pass current canonical/generated/notices checks, minimum-Go compatibility and
+negative manifest/archive/config/input fixtures. Inspector coverage is 95.9% with
+no exemption. Two owned locations produce byte-identical nine-file candidate sets;
+the real complete source archive builds under Go 1.25.0. Exact preliminary Linux
+bytes run storage-free help/version, named-zone CLI/JSON and TUI/resize/q in an
+owned Kitty window, now closed. Failed initial dist packaging and every observed
+Red remain retained in [the U2 receipt](docs/verification-evidence/006/u2.json).
+U4 is committed as 709015d. The preliminary private validation SHA is not final
+source freeze or trusted hosted evidence. U6 local engineering follows the U2
+commit; no push, dispatch, tag, release or settings action is authorized.
 
 ---
 

@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Implementation active - U1/U3/U4 locally accepted; U2 next
+status: Implementation active - U1/U3/U4/U2 locally accepted; U6 next
 evidence-scope: Five local U1 scenario closures; hosted/native release gates pending
 deepened: 2026-10-01
 ---
@@ -175,24 +175,47 @@ GitHub metadata/social-preview/license readback remains U8.
 
 ### U2 — Versioned packaging and local lifecycle safety
 
-- [ ] 006-V45 **Immutable version:** All three version forms report the intended validated tag version in actual built binaries; ordinary source and snapshot labels remain clearly unreleased.
-- [ ] 006-V46 **No mutable linker metadata:** Default `-X` injection or a mutable version global fails the build contract; generated constant/overlay input hash appears in the manifest and the original checkout stays clean.
-- [ ] 006-V47 **Version/input rejection:** Empty/malformed/non-semver values, shell/code injection text, conflicting tag and unsafe overlay/output paths fail before build/publication; spaces in owned temporary paths remain supported.
-- [ ] 006-V48 **Complete target matrix:** Exactly the five required OS/architecture payloads exist with matching executable architecture and no invented Windows arm64 target; omission/duplicate/wrong arch fails release-check.
-- [ ] 006-V49 **Runtime identity:** Build metadata proves CGO disabled, embedded timezone data and selected patched graph; Linux has no dynamic interpreter dependency. Darwin/Windows OS-library use does not become an unsupported fully-static claim.
-- [ ] 006-V50 **Payload contract:** Unix tar.gz/Windows zip have the right executable, names/modes, README, three completion scripts, all manuals and required notices; extraction exposes the root executable as documented.
-- [ ] 006-V51 **Licenses:** Missing project license, missing replacement-tree/embedded-asset notice and unclassified dependency obligations fail distribution checks; notices retain upstream grant text.
-- [ ] 006-V52 **Archive abuse:** Absolute paths, `..` traversal, unsafe links, unexpected database/sidecar/credential files and unexpected executable members fail manifest/member validation.
-- [ ] 006-V53 **Source archive:** Complete tagged source includes both patched third-party modules and verified gallery bytes; documented checkout build retains the intended graph without an LFS service requirement.
-- [ ] 006-V54 **Payload consumption:** A clean isolated native home can extract and run version/help without Go, compiler, external service or database initialization; verify archive and executable hashes separately.
-- [ ] 006-V55 **Manifest/checksums:** Payload corruption, missing hash, wrong target/version/SHA/tool input or a self-hash dependency cycle fails verification; manifest/checksum files identify one complete candidate.
-- [ ] 006-V56 **No remote side effects:** Both snapshot and local intended-tag candidate modes trap any release API/tag push/tap mutation; no publishing credentials are required or read.
-- [ ] 006-V57 **Cleanup/data boundaries:** Failure/cancellation cleans only owned temporary build storage, keeps diagnostics and preserves user DB/sidecars/unrelated dirty files; colliding retained outputs are rejected.
-- [ ] 006-V58 **Binary reproducibility:** Same source/version/compiler/overlay/tool pins built in two owned locations produce matching executable hashes; timestamp/path entropy is detected rather than excused.
-- [ ] 006-V59 **Archive reproducibility:** Same payloads/source timestamp/tool pins reproduce archive/man/completion bytes; manifest contains stable inputs and separately records non-deterministic workflow identity where appropriate.
-- [ ] 006-V60 **Failed prerequisites:** Bad tool digest, unavailable pin, failed documentation generation or failed child build produces nonzero release-check/candidate result; preserve existing accepted outputs and no fallback compiler.
-- [ ] 006-V61 **Notice inventory scope:** Source and executable dependency/asset inventories include local replacement paths and patch provenance; stale inventory fails after a dependency/asset change.
-- [ ] 006-V62 **U2 closure:** Canonical/generated/minimum checks, manifest/member negative fixtures and current native local smoke pass with synchronized review/receipts before the U2 commit; hosted/native release claims remain open.
+The `scripts/releasecheck/` Go helper is exercised by `make test-release`, full
+canonical tests/race/coverage and the minimum compiler; no coverage exemption.
+Archive/binary metadata inspection uses standard libraries on any build host.
+Unsafe Make parameter fixtures must fail without evaluating shell/Make code.
+Pre-commit validation artifacts name their private local validation SHA and do
+not close trusted hosted/native acceptance.
+
+Source archive checks use actual Git archives, a narrow initial PAX commit
+comment and fixed 0022 tar umask, with executable bits read from Git rather than
+OS permissions. Component Red/Green covers config hooks/payload mutations,
+substituted/missing manifest inputs, trailing tar data, setuid/setgid/sticky
+archive modes and fresh-checkout sqlc.
+The cross-built integration fixture contains the real app and payload; the actual
+full repository archive is still required for V53. All V45–V62 local results are recorded in [the U2 receipt](../verification-evidence/006/u2.json):
+actual complete source archive, byte-identical B/C assets, candidate/snapshot
+version smoke, minimum compiler and fresh canonical gates. These private local
+validation objects do not close U6 hosted provenance or U5 native release gates.
+
+The canonical config hash excludes temporary-path entropy. A generated runtime
+config changes only literal `dist`; retain its actual bytes outside assets and
+compare the stable manifest/payload set between owned locations. The first real
+packager run exposed unsupported `dist` templating and remains a failed receipt.
+
+- [x] 006-V45 **Immutable version:** All three version forms report the intended validated tag version in actual built binaries; ordinary source and snapshot labels remain clearly unreleased.
+- [x] 006-V46 **No mutable linker metadata:** Default `-X` injection or a mutable version global fails the build contract; generated constant/overlay input hash appears in the manifest and the original checkout stays clean.
+- [x] 006-V47 **Version/input rejection:** Empty/malformed/non-semver values, shell/code injection text, conflicting tag and unsafe overlay/output paths fail before build/publication; spaces in owned temporary paths remain supported.
+- [x] 006-V48 **Complete target matrix:** Exactly the five required OS/architecture payloads exist with matching executable architecture and no invented Windows arm64 target; omission/duplicate/wrong arch fails release-check.
+- [x] 006-V49 **Runtime identity:** Build metadata proves CGO disabled, embedded timezone data and selected patched graph; Linux has no dynamic interpreter dependency. Darwin/Windows OS-library use does not become an unsupported fully-static claim.
+- [x] 006-V50 **Payload contract:** Unix tar.gz/Windows zip have the right executable, names/modes, README, three completion scripts, all manuals and required notices; extraction exposes the root executable as documented.
+- [x] 006-V51 **Licenses:** Missing project license, missing replacement-tree/embedded-asset notice and unclassified dependency obligations fail distribution checks; notices retain upstream grant text.
+- [x] 006-V52 **Archive abuse:** Absolute paths, `..` traversal, unsafe links, unexpected database/sidecar/credential files and unexpected executable members fail manifest/member validation.
+- [x] 006-V53 **Source archive:** Complete tagged source includes both patched third-party modules and verified gallery bytes; documented checkout build retains the intended graph without an LFS service requirement.
+- [x] 006-V54 **Payload consumption:** A clean isolated native home can extract and run version/help without Go, compiler, external service or database initialization; verify archive and executable hashes separately.
+- [x] 006-V55 **Manifest/checksums:** Payload corruption, missing hash, wrong target/version/SHA/tool input or a self-hash dependency cycle fails verification; manifest/checksum files identify one complete candidate.
+- [x] 006-V56 **No remote side effects:** Both snapshot and local intended-tag candidate modes trap any release API/tag push/tap mutation; no publishing credentials are required or read.
+- [x] 006-V57 **Cleanup/data boundaries:** Failure/cancellation cleans only owned temporary build storage, keeps diagnostics and preserves user DB/sidecars/unrelated dirty files; colliding retained outputs are rejected.
+- [x] 006-V58 **Binary reproducibility:** Same source/version/compiler/overlay/tool pins built in two owned locations produce matching executable hashes; timestamp/path entropy is detected rather than excused.
+- [x] 006-V59 **Archive reproducibility:** Same payloads/source timestamp/tool pins reproduce archive/man/completion bytes; manifest contains stable inputs and separately records non-deterministic workflow identity where appropriate.
+- [x] 006-V60 **Failed prerequisites:** Bad tool digest, unavailable pin, failed documentation generation or failed child build produces nonzero release-check/candidate result; preserve existing accepted outputs and no fallback compiler.
+- [x] 006-V61 **Notice inventory scope:** Source and executable dependency/asset inventories include local replacement paths and patch provenance; stale inventory fails after a dependency/asset change.
+- [x] 006-V62 **U2 closure:** Canonical/generated/minimum checks, manifest/member negative fixtures and current native local smoke pass with synchronized review/receipts before the U2 commit; hosted/native release claims remain open.
 
 ### U6 — Hosted candidate and trusted provenance
 

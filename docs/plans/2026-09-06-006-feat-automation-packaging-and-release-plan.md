@@ -309,6 +309,32 @@ rendering remain U5/U8. U2 follows the coherent U4 local commit.
 
 **Files / ownership:** `.goreleaser.yaml`, `.gitignore`, `cmd/tusk/main.go`, `cmd/tusk/version.go`, `cmd/tusk/main_test.go`, `scripts/release.sh`, `scripts/release_check.sh`, `scripts/test/test_release.sh`, `Makefile`, `docs/releasing.md`.
 
+**Helper implementation amendment:** `scripts/releasecheck/` owns a build-time
+Go standard-library inspector/generator, invoked by `scripts/release_check.sh`.
+It validates tar/zip members and ELF/Mach-O/PE/build metadata without relying on
+host-specific inspectors; it is outside the shipped application's dependency
+graph. Canonical package coverage applies without exemption. Release parameters
+cross Make as raw environment data, never interpolated recipe code. Before the
+unit commit, private local validation commits may exercise exact-SHA packaging;
+their artifacts remain preliminary local evidence, not trusted hosted candidates.
+
+Source archive modes use Git's tracked executable bits on every host. The owned
+checkout fixes `tar.umask=0022` and LF checkout; its Git global PAX header accepts
+only one initial full-commit comment. Component Red/Green has exposed and fixed
+configuration hooks/extra payloads, incomplete manifest input inventories,
+trailing tar streams, special archive permission bits, missing fresh-checkout sqlc
+and OS-dependent source modes.
+The [U2 receipt](../verification-evidence/006/u2.json) records actual GoReleaser
+five-target payloads, two-location byte reproducibility, minimum-Go source-archive
+build and owned Kitty consumption. V45–V62 are locally accepted. Private validation
+objects and their payloads remain preliminary; they do not close hosted U6 or U5.
+
+GoReleaser's top-level `dist` is literal. Its canonical value is `dist`; the helper
+creates an external runtime config that changes only this field to owned temporary
+storage. The manifest hashes the canonical source config; the actual path override
+is retained outside the assets as a per-run diagnostic. The observed failed local
+run remains evidence and cannot become an accepted candidate.
+
 **Approach:** KTD5–KTD9. Add separate check/snapshot/candidate modes and an owned temporary checkout/overlay. Package all five targets from the full main package and include local replacements/source. Check payload membership, architecture/build metadata, version/hash/notice consistency and deterministic binary rebuilds; archive determinism uses the same version, source time and tool pins. No network publishing credentials are needed locally.
 
 **Red-first tests:** Constant/tag mismatch, malformed version injection, default `-X` metadata, missing target/tzdata/patched source/notice, wrong hash, unsafe archive member and failed generation/download. Snapshot and candidate fixtures trap attempted remote publication or changes to the original checkout.

@@ -1,0 +1,219 @@
+{
+  "version": 2,
+  "project_name": "tusk",
+  "dist": "/tmp/tmp.fmXpqhoO4C/dist",
+  "builds": [
+    {
+      "id": "tusk",
+      "main": "./cmd/tusk",
+      "binary": "tusk",
+      "env": [
+        "CGO_ENABLED=0"
+      ],
+      "goos": [
+        "linux",
+        "darwin",
+        "windows"
+      ],
+      "goarch": [
+        "amd64",
+        "arm64"
+      ],
+      "ignore": [
+        {
+          "goos": "windows",
+          "goarch": "arm64"
+        }
+      ],
+      "flags": [
+        "-trimpath",
+        "-overlay={{ .Env.TUSK_RELEASE_OVERLAY }}"
+      ],
+      "ldflags": [
+        "-s -w"
+      ],
+      "mod_timestamp": "{{ .CommitTimestamp }}"
+    }
+  ],
+  "archives": [
+    {
+      "id": "tusk",
+      "ids": [
+        "tusk"
+      ],
+      "name_template": "tusk_{{ .Version }}_{{ .Os }}_{{ .Arch }}",
+      "formats": [
+        "tar.gz"
+      ],
+      "format_overrides": [
+        {
+          "goos": "windows",
+          "formats": [
+            "zip"
+          ]
+        }
+      ],
+      "builds_info": {
+        "owner": "root",
+        "group": "root",
+        "mtime": "{{ .CommitDate }}"
+      },
+      "files": [
+        {
+          "src": "README.md",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "LICENSE",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "THIRD_PARTY_NOTICES.md",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "CONTRIBUTING.md",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "SECURITY.md",
+          "dst": ".",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/completions/*",
+          "dst": "completions",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/man/*.1",
+          "dst": "man",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/cli.md",
+          "dst": "docs",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/tui.md",
+          "dst": "docs",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/install.md",
+          "dst": "docs",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/service.md",
+          "dst": "docs",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        },
+        {
+          "src": "docs/assets/*",
+          "dst": "docs/assets",
+          "strip_parent": true,
+          "info": {
+            "owner": "root",
+            "group": "root",
+            "mode": 420,
+            "mtime": "{{ .CommitDate }}"
+          }
+        }
+      ]
+    }
+  ],
+  "source": {
+    "enabled": true,
+    "format": "tar.gz",
+    "name_template": "tusk_{{ .Version }}_source",
+    "prefix_template": "tusk-{{ .Version }}/"
+  },
+  "checksum": {
+    "disable": true
+  },
+  "changelog": {
+    "disable": true
+  },
+  "snapshot": {
+    "version_template": "{{ .Version }}-dev"
+  },
+  "release": {
+    "disable": true,
+    "github": {
+      "owner": "newbpydev",
+      "name": "tusk"
+    }
+  }
+}

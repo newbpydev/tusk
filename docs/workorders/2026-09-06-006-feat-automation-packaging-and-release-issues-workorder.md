@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Implementation active - U1/U3/U4 locally accepted; U2 next; release gates open
+status: Implementation active - U1/U3/U4/U2 locally accepted; U6 next; release gates open
 evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
@@ -26,7 +26,7 @@ assignment. No release exception or performance waiver is assumed.
 
 | ID | Source / owner-lens | Severity | Status | Impact / next action | Closure evidence |
 | --- | --- | --- | --- | --- | --- |
-| 006-ISS-001 | R21 / repository owner, licensing | P1 | Resolved locally; payload checks pending | MIT grant and complete replacement-aware notices accepted; U2 verifies payload inclusion | Owner decision and U4 receipt; V44 passes locally; V51/V61 remain pending |
+| 006-ISS-001 | R21 / repository owner, licensing | P1 | Resolved locally; payload checks pending | MIT grant and complete replacement-aware notices accepted; U2 verifies payload inclusion | Owner decision and U4 receipt; V44 passes locally; V51/V61 locally pass; hosted distribution pending |
 | 006-ISS-002 | R2,R23,R24 / release maintainer, portability | P1 | Open verification | Arrange all native target/terminal access before U5; absent hosts block release | Exact-asset native runtime and owned terminal records; V73–V84 |
 | 006-ISS-003 | R29 / repository owner, distribution | P1 | Open decision | Establish accessible tap/destination before U7; proposed tap was not found | Owner-controlled repository/path and Intel/ARM local/live cask proof; V87–V98 |
 | 006-ISS-004 | R28 / repository owner, release | P1 | Open decision | Confirm version/SHA and explicit hosted/release authority at concrete U8 candidate | Authorized identity, draft/asset readback and actual public result; V95–V102 |
@@ -57,9 +57,22 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-027 | U4 license inventory / supply chain | P1 | Fixed locally | Block omitted assets, nested SQLite grants and Go/timezone notices in addition to unknown/changed/graph-mismatched entries | Omission Red fixtures, complete-set Green and current canonical gate; U4 receipt |
 | 006-ISS-028 | U4 generated notices / portability | P2 | Fixed locally | Set readable 0644 permissions on staged notice before promotion | Permission Red/Green and minimum/compiler script gates; U4 receipt |
 
+| 006-ISS-029 | U2 packager contract / supply chain | P1 | Resolved locally | Reject hooks, publishers, extra builds/files and checksum overrides through an exact structured config contract | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
+| 006-ISS-030 | U2 manifest inputs / integrity | P1 | Resolved locally | Bind exact required input keys and hashes to source members and the compiler lock | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
+| 006-ISS-031 | U2 trailing archive data / integrity | P1 | Resolved locally | Finish gzip CRC verification with bounded zero padding; reject hidden trailing streams and unsafe global metadata | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
+| 006-ISS-032 | U2 source prerequisites/modes / portability | P2 | Resolved locally | Install pinned sqlc in owned checkout, fix source tar umask/LF and derive executable modes from Git | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
+| 006-ISS-034 | U2 special archive modes / security | P2 | Resolved locally | Reject setuid/setgid/sticky bits for every file/directory before payload acceptance | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
+| 006-ISS-033 | U2 literal distribution path / correctness | P1 | Resolved locally | Generate external runtime config changing only literal dist to owned storage; retain canonical hash and actual override separately | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
+
 ---
 
 ## Open gate details
+
+U2 owns the build-time `scripts/releasecheck/` Go inspector behind its shell
+wrapper. Standard-library archive/binary parsing avoids platform-specific tools;
+the package retains canonical coverage. Raw Make release parameters require
+injection rejection before build. Private local validation commits/artifacts
+are preliminary engineering evidence, not trusted hosted release inputs.
 
 U1's [local receipt](../verification-evidence/006/u1.json) binds source/tool hashes,
 Red/Green, sequential review, Go 1.27.1 and Go 1.25.0 canonical gates and five
@@ -230,3 +243,12 @@ Leave these items unchecked until execution:
 No implementation/release checkbox is closed by this planning pass. Open owner
 decisions are addressed at their explicit unit boundaries; they are not hidden
 assumptions or release waivers.
+
+### U2 local engineering checkpoint — 2026-10-01
+
+V45–V62 pass locally. [Receipt](../verification-evidence/006/u2.json) retains all
+failed and successful packaging/component measurements, current canonical/minimum
+gates and owned Kitty observations. Inspector coverage is 95.9% without exemption.
+The source archive builds with minimum Go; all nine B/C assets reproduce exactly.
+Preliminary private validation SHAs are not final source acceptance. U6 hosted
+provenance, foreign native execution/performance and publication remain open.
