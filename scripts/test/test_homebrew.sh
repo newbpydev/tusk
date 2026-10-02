@@ -19,5 +19,12 @@ done
 printf '#!/usr/bin/env bash\nexit 44\n' >"$scratch/bin/gh";chmod +x "$scratch/bin/gh"
 expect 1 'missing tap remains named prerequisite' env PATH="$scratch/bin:$PATH" bash "$scratch/fixture/scripts/homebrew.sh" destination
 if ! rg -q '006-ISS-003' "$scratch/output";then failed=1;fi
+cat >"$scratch/bin/gh" <<'GH'
+#!/usr/bin/env bash
+[[ "${GH_HOST:-}" == github.com && -z "${GH_DEBUG:-}" && -z "${DEBUG:-}" ]] || exit 78
+[[ "$2" == https://api.github.com/repos/newbpydev/homebrew-tap ]] || exit 79
+printf 'true\n'
+GH
+expect 0 'tap check pins public GitHub host and disables HTTP debug logging' env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 bash "$scratch/fixture/scripts/homebrew.sh" destination
 expect 0 'cask Make target available' make -n -C "$root" check-homebrew
 exit "$failed"

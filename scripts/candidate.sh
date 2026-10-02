@@ -2,6 +2,8 @@
 set -euo pipefail
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
 repo=newbpydev/tusk
+export GH_HOST=github.com
+unset GH_DEBUG DEBUG
 workflow=.github/workflows/release.yml
 die() { printf 'Candidate: %s\n' "$*" >&2; exit 1; }
 digest() {
@@ -100,14 +102,14 @@ verify() (
     # Receipt directories are new, never replaced; failed boundaries stay inspectable.
     mkdir "$output" || die 'verification output collision/parent missing'
     gh --version >"$output/verifier-version.txt"
-    gh api "repos/$repo/actions/runs/$CANDIDATE_RUN_ID/attempts/$attempt" >"$output/run.json"
+    gh api "https://api.github.com/repos/$repo/actions/runs/$CANDIDATE_RUN_ID/attempts/$attempt" >"$output/run.json"
     jq -e --arg sha "$RELEASE_SHA" --argjson run "$CANDIDATE_RUN_ID" --argjson attempt "$attempt" '.id==$run and .run_attempt==$attempt and .path==".github/workflows/release.yml" and .event=="workflow_dispatch" and .head_branch=="main" and .head_sha==$sha and .status=="completed" and .conclusion=="success" and .repository.full_name=="newbpydev/tusk" and .head_repository.full_name=="newbpydev/tusk" and .head_repository.id==.repository.id' "$output/run.json" >/dev/null || die 'run is incomplete or untrusted'
     # Actions returns a minimal repository; default_branch needs its own readback.
-    gh api "repos/$repo" >"$output/repository.json"
+    gh api "https://api.github.com/repos/$repo" >"$output/repository.json"
     jq -e --slurpfile run "$output/run.json" '.full_name=="newbpydev/tusk" and .default_branch=="main" and .id==$run[0].repository.id' "$output/repository.json" >/dev/null || die 'repository/default branch changed'
-    gh api "repos/$repo/actions/runs/$CANDIDATE_RUN_ID/attempts/$attempt/jobs?per_page=100" >"$output/jobs.json"
+    gh api "https://api.github.com/repos/$repo/actions/runs/$CANDIDATE_RUN_ID/attempts/$attempt/jobs?per_page=100" >"$output/jobs.json"
     jq -e '.total_count==9 and (.jobs|length)==9 and all(.jobs[];.status=="completed" and .conclusion=="success") and (["identity","build","provenance","linux/amd64 — release compiler","linux/arm64 — release compiler","darwin/amd64 — release compiler","darwin/arm64 — release compiler","windows/amd64 — release compiler","Linux — minimum compiler and five-target cross-builds"] | all(.[]; . as $name | $jobs[0].jobs | map(select(.name==$name or (.name|endswith(" / "+$name)))) | length==1))' --slurpfile jobs "$output/jobs.json" "$output/jobs.json" >/dev/null || die 'same-run native/minimum/build/provenance gates incomplete'
-    gh api "repos/$repo/actions/runs/$CANDIDATE_RUN_ID/artifacts?per_page=100" >"$output/artifacts.json"
+    gh api "https://api.github.com/repos/$repo/actions/runs/$CANDIDATE_RUN_ID/artifacts?per_page=100" >"$output/artifacts.json"
     jq -e --arg sha "$RELEASE_SHA" --arg name "tusk-candidate-$CANDIDATE_RUN_ID-$attempt" --argjson run "$CANDIDATE_RUN_ID" --slurpfile runmeta "$output/run.json" '[.artifacts[]|select(.name==$name)] as $a | .total_count==(.artifacts|length) and ($a|length)==1 and ($a[0].id|type=="number" and .>0 and floor==.) and $a[0].expired==false and ($a[0].expires_at|fromdateiso8601)>now and ($a[0].digest|test("^sha256:[0-9a-f]{64}$")) and $a[0].workflow_run.id==$run and $a[0].workflow_run.head_sha==$sha and $a[0].workflow_run.head_branch=="main" and $a[0].workflow_run.repository_id==$runmeta[0].repository.id and $a[0].workflow_run.head_repository_id==$runmeta[0].repository.id' "$output/artifacts.json" >/dev/null || die 'artifact missing, expired, duplicated or from a different source'
     artifact_id=$(jq -r --arg name "tusk-candidate-$CANDIDATE_RUN_ID-$attempt" '.artifacts[]|select(.name==$name)|.id' "$output/artifacts.json")
     artifact_digest=$(jq -r --arg name "tusk-candidate-$CANDIDATE_RUN_ID-$attempt" '.artifacts[]|select(.name==$name)|.digest' "$output/artifacts.json")

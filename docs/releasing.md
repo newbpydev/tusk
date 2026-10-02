@@ -166,6 +166,14 @@ quarantine-removal instructions are advertised.
 
 ## Publication and failure recovery
 
+Local promotion and metadata helpers are implemented, with no hosted write run.
+See [acceptance records and exact commands](release-acceptance.md) for the native
+gate inventory, retained reports, separate draft/tag versus publication approval,
+hash-bound notes and current-source checks. `make release-prepare` and
+`make prepare-repository-metadata` produce reviewable unaccepted/unapplied plans
+without API requests. A promotion receipt leaves anonymous/tap/browser/final
+settlement gates open.
+
 Owner authorization must name version/SHA and accepted manifest/run before
 creating a draft. Verify every asset, checksum, notice and provenance record in
 the draft, then publish only after concrete final authorization. Promote accepted

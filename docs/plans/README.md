@@ -29,7 +29,7 @@ graph TD
 | **003** | Task Service Engine | [Plan 003](2026-09-06-003-feat-task-service-engine-plan.md) | [Verification Plan](../verification-plans/2026-09-06-003-feat-task-service-engine-verification-plan.md) | [Workorder](../workorders/2026-09-06-003-feat-task-service-engine-issues-workorder.md) | `locally accepted; consumer/native gates pending` |
 | **004** | CLI Interface & Scripting | [Plan 004](2026-09-06-004-feat-cli-interface-and-scripting-plan.md) | [Verification Plan](../verification-plans/2026-09-06-004-feat-cli-interface-and-scripting-verification-plan.md) | [Workorder](../workorders/2026-09-06-004-feat-cli-interface-and-scripting-issues-workorder.md) | `locally accepted; PR #4 merged; native/hosted release gates pending` |
 | **005** | Interactive TUI Application | [Plan 005](2026-09-06-005-feat-interactive-tui-application-plan.md) | [Verification Plan](../verification-plans/2026-09-06-005-feat-interactive-tui-application-verification-plan.md) | [Workorder](../workorders/2026-09-06-005-feat-interactive-tui-application-issues-workorder.md) | `locally accepted; eight units and approved UX refinement complete; native/hosted release proof pending` |
-| **006** | Automation, Packaging, Release & Public Repository Readiness | [Plan 006](2026-09-06-006-feat-automation-packaging-and-release-plan.md) | [Verification Plan](../verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md) | [Workorder](../workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md) | `planning complete; eight units and 102 scenarios unexecuted; implementation/release pending` |
+| **006** | Automation, Packaging, Release & Public Repository Readiness | [Plan 006](2026-09-06-006-feat-automation-packaging-and-release-plan.md) | [Verification Plan](../verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md) | [Workorder](../workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md) | `eight local engineering checkpoints accepted; 51 local scenarios; final review and actual release gates pending` |
 
 The product triplet defines cross-phase contracts and acceptance. Features
 002–005 are locally accepted; native/hosted release proof remains pending.
@@ -50,7 +50,9 @@ U18→U4, U19→U5/U8 and U20→U6 preserve the existing handoff IDs. V01–V110
 locally complete; V111–V112 are native/hosted release handoffs.
 
 Feature 006 now has 30 requirements, eight units ordered U1 → U3 → U4 → U2 →
-U6 → U5 → U7 → U8 and 102 unexecuted scenarios. Its original U1/U2/U3 IDs remain.
+U6 → U5 → U7 → U8 and 102 scenarios. All eight local engineering checkpoints
+are accepted, with 51 local scenario closures; final local review and actual
+hosted/native/publication gates remain pending. Its original U1/U2/U3 IDs remain.
 Product U21 maps CI to U1; U22 maps packaging/native/provenance/distribution to
 U2/U6/U5/U7/U8; U23 maps completion/public documentation/metadata to U3/U4/U8.
 The pack covers evidence-backed install/use documentation and GitHub landing-page

@@ -133,6 +133,8 @@ test-scripts:
 	@bash scripts/test/test_candidate.sh
 	@bash scripts/test/test_release_smoke.sh
 	@bash scripts/test/test_homebrew.sh
+	@bash scripts/test/test_promotion.sh
+	@bash scripts/test/test_metadata.sh
 
 all: validate build
 
@@ -309,7 +311,7 @@ VULNCHECK_BIN ?= bin/tools/govulncheck
 check-vulnerabilities:
 	"$(VULNCHECK_BIN)" ./cmd/tusk
 
-.PHONY: candidate-identity record-candidate verify-candidate check-candidate-workflow
+.PHONY: candidate-identity record-candidate verify-candidate check-candidate-workflow test-candidate
 # Candidate identity crosses recipes only as raw environment values.
 $(foreach parameter,CANDIDATE_DIR CANDIDATE_MANIFEST_SHA256 CANDIDATE_RUN_ID CANDIDATE_VERIFICATION_DIR,$(eval override $(parameter) := $$(value $(parameter))))
 export CANDIDATE_DIR CANDIDATE_MANIFEST_SHA256 CANDIDATE_RUN_ID CANDIDATE_VERIFICATION_DIR
@@ -321,6 +323,8 @@ verify-candidate:
 	bash scripts/candidate.sh verify
 check-candidate-workflow:
 	bash scripts/candidate.sh contract
+test-candidate:
+	bash scripts/test/test_candidate.sh
 
 .PHONY: test-release-smoke
 test-release-smoke:
@@ -355,3 +359,31 @@ homebrew-candidate:
 	bash scripts/homebrew.sh render
 homebrew-destination:
 	bash scripts/homebrew.sh destination
+
+.PHONY: test-release-promotion release-prepare release-draft release-publish release-readback
+$(foreach parameter,RELEASE_PROMOTION_OUTPUT RELEASE_ACCEPTANCE RELEASE_AUTHORIZATION RELEASE_NOTES,$(eval override $(parameter) := $$(value $(parameter))))
+export RELEASE_PROMOTION_OUTPUT RELEASE_ACCEPTANCE RELEASE_AUTHORIZATION RELEASE_NOTES
+test-release-promotion:
+	bash scripts/test/test_promotion.sh
+release-prepare:
+	bash scripts/promote.sh prepare
+release-draft:
+	bash scripts/promote.sh draft
+release-publish:
+	bash scripts/promote.sh publish
+release-readback:
+	bash scripts/promote.sh readback
+
+.PHONY: lint-release-promotion
+lint-release-promotion:
+	shellcheck scripts/promote.sh scripts/test/test_promotion.sh scripts/repository_metadata.sh scripts/test/test_metadata.sh scripts/candidate.sh scripts/test/test_candidate.sh scripts/homebrew.sh scripts/test/test_homebrew.sh
+
+.PHONY: test-repository-metadata prepare-repository-metadata apply-repository-metadata
+$(foreach parameter,METADATA_OUTPUT METADATA_AUTHORIZATION METADATA_RELEASE_RECEIPT,$(eval override $(parameter) := $$(value $(parameter))))
+export METADATA_OUTPUT METADATA_AUTHORIZATION METADATA_RELEASE_RECEIPT
+test-repository-metadata:
+	bash scripts/test/test_metadata.sh
+prepare-repository-metadata:
+	bash scripts/repository_metadata.sh prepare
+apply-repository-metadata:
+	bash scripts/repository_metadata.sh apply

@@ -47,13 +47,16 @@ jq -n '{total_count:9,jobs:(["identity","ci / linux/amd64 — release compiler",
 cat >"$scratch/bin/gh" <<'GH'
 #!/usr/bin/env bash
 set -euo pipefail
+[[ "${GH_HOST:-}" == github.com && -z "${GH_DEBUG:-}" && -z "${DEBUG:-}" ]] || exit 78
 printf '%s\n' "$*" >>"$FIXTURE_ROOT/gh-calls"
 case "$1" in
     --version) echo 'gh version 2.102.0 (fixture)' ;;
     api)
+        [[ "$2" == https://api.github.com/repos/* ]] || exit 79
+        endpoint=${2#https://api.github.com/}
         [[ "${FIXTURE_API_FAIL:-0}" != 1 ]] || exit 47
         [[ "$*" != *'--method POST'* && "$*" != *'--method PATCH'* && "$*" != *'--method DELETE'* ]] || exit 77
-        case "$2" in
+        case "$endpoint" in
             repos/newbpydev/tusk) cat "$FIXTURE_ROOT/repo.json" ;;
             */artifacts*) cat "$FIXTURE_ROOT/artifact.json" ;;
             */jobs*) cat "$FIXTURE_ROOT/jobs.json" ;;
@@ -70,7 +73,7 @@ case "$1" in
 esac
 GH
 chmod +x "$scratch/bin/gh"
-verify=(env PATH="$scratch/bin:$PATH" FIXTURE_ROOT="$scratch" CANDIDATE_DIR="$scratch/candidate" CANDIDATE_MANIFEST_SHA256="$manifest_hash" CANDIDATE_RUN_ID=123 RELEASE_SHA="$sha" RELEASE_VERSION=v0.3.0)
+verify=(env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 FIXTURE_ROOT="$scratch" CANDIDATE_DIR="$scratch/candidate" CANDIDATE_MANIFEST_SHA256="$manifest_hash" CANDIDATE_RUN_ID=123 RELEASE_SHA="$sha" RELEASE_VERSION=v0.3.0)
 expect 1 'missing cask must refuse complete candidate acceptance' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/missing-cask" bash "$scratch/fixture/scripts/candidate.sh" verify
 mkdir -p "$scratch/candidate/homebrew/Casks"
 printf 'fixture cask' >"$scratch/candidate/homebrew/Casks/tusk.rb"

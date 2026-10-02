@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Implementation active - U1/U3/U4/U2 locally accepted; U6/U5/U7 engineering accepted; U8 local promotion next; release gates open
+status: Local engineering complete - final local review next; actual hosted/native/release gates open
 evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
@@ -65,6 +65,11 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-036 | U6 verifier output / data integrity | P1 | Resolved locally; hosted proof pending | Require new retained output outside candidate and Git storage | Observed verifier accepted and modified candidate storage; boundary regression Green |
 | 006-ISS-037 | U6 workflow skip/input controls / security | P1 | Resolved locally; hosted proof pending | Reject error-skipping/conditional steps, changed source env and unexpected job/step fields | Three accepted unsafe workflow mutations observed Red; exact structured contract Green |
 | 006-ISS-040 | U7 cask audit and provenance / supply chain | P2 | Resolved locally; hosted/native pending | Bind/upload/attest generated cask separately; audit pinned statement order/comment and preserve failures before cleanup | Real packager A/B Red and C Green, missing/tampered cask fixtures, canonical validation; u7.json |
+| 006-ISS-041 | U8 current-main/source authority / correctness | P1 | Resolved locally | Refuse changed remote main build inputs and failed local Git diff; allow only later governance prose | Observed Red/Green and final canonical gate; u8.json |
+| 006-ISS-042 | U8 retained measurement completeness / evidence | P1 | Resolved locally | Unique full three-run case matrices, recomputed reference tail guards and numeric nonnegative memory samples | Duplicate-case and malformed sample Red/Green; u8.json |
+| 006-ISS-043 | U8 tag/tap preflight / release integrity | P1 | Resolved locally; actual tap open | Require live tap readiness and exact accepted source tag in a completed authorized draft | Missing-tap/tag fixtures; actual tap404 remains 006-ISS-003; u8.json |
+| 006-ISS-044 | U8 GitHub host/log boundary / security | P1 | Resolved locally | Pin public host, literal API/upload endpoints and remove inherited HTTP debug flags; no filename-label or clobber parser | API-host/host/debug Red/Green, structured binary upload and final canonical gate; u8.json |
+| 006-ISS-045 | Final release-tool reliability / bounded processes | P2 | Open final local review | GitHub CLI's default HTTP client has no request timeout; bound maintainer invocations before hosted operation | Required ce-code-review and deadline Red/Green; not waived by local API-loss fixtures |
 | 006-ISS-039 | U5 evidence output ownership / integrity | P2 | Resolved locally | Reject smoke/measurement outputs inside candidate/source storage; normalize physical absolute output paths | Observed boundary Red/Green, canonical validation; u5.json |
 | 006-ISS-038 | U6 minimal API repository / contract | P2 | Resolved locally; hosted proof pending | Fetch current repository/default branch separately from minimal Actions run repository | Official REST schema and minimal-run fixture Red/Green; real trusted candidate pending |
 | 006-ISS-034 | U2 special archive modes / security | P2 | Resolved locally | Reject setuid/setgid/sticky bits for every file/directory before payload acceptance | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
@@ -330,3 +335,24 @@ minimum-compiler component checks pass; inspector coverage remains above 95%.
 Native Ruby/Homebrew/Intel/ARM security/runtime checks are unexecuted; current tap
 readback is HTTP404. Parent U7 and V87–V94 remain open. The coherent local commit
 enables U8 promotion/readback engineering, with final hosted candidate required.
+
+### U8 local engineering checkpoint — 2026-10-02 UTC
+
+Promotion and repository metadata helpers pass canonical Go 1.27.1 validation,
+minimum-Go focused checks and strict Bash lint. Read-only preparation consumes the
+real preliminary U7 C manifest/cask and emits nine exact asset digests plus the
+approved About/topics/image preview, explicitly unaccepted/unapplied. Fake API
+fixtures expose and fix stale main, duplicate timing cases, malformed memory
+samples, missing tap, absent draft tag, failed source diff and inherited host/debug
+or API-host redirection. Lost create/upload/publish responses reconcile existing
+state and downloaded bytes without clobber/delete/retag. The current tap still
+returns HTTP404. The custom host compiler notice failure and superseded mixed
+source gate remain retained failures; the final pinned gate passes.
+
+[Receipt](../verification-evidence/006/u8.json) records the local boundary scope.
+No fixture approval is owner consent or real provenance/native/performance proof.
+Parent U8 and V95–V102 remain open; local scenario closures stay 51. Final local
+simplification/code review and source freeze follow the coherent engineering
+commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
+has occurred. Hosted/native/publication acceptance requires its separate actual
+evidence and concrete owner authorization.

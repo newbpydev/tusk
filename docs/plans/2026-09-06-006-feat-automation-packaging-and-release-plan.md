@@ -24,7 +24,7 @@ task and find the data/recovery instructions without reading planning artifacts.
 - **Authority:** [AGENTS.md](../../AGENTS.md), the [product contract](2026-09-06-001-feat-tusk-modern-task-system-plan.md), and [MASTERPLAN.md](../../MASTERPLAN.md). The masterplan controls activation and progress.
 - **Surfaces:** CLI/TUI integration, infrastructure/operations, installation/data lifecycle, documentation and GitHub repository settings.
 - **Artifact pack:** This plan, its [verification plan](../verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md) and [workorder](../workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md), under the existing first-party `docs/` root.
-- **Readiness:** Decisions and test contracts are ready for implementation. Execution, native acceptance, hosted checks and publication are unexecuted. U1 can start after an implementation instruction; license and distribution gates apply at their named boundaries.
+- **Readiness:** U1/U3/U4/U2 are locally accepted; U6/U5/U7/U8 local engineering is complete. Final local review/source freeze follows. There are 51 local scenario closures; actual hosted/native/publication gates remain pending.
 - **Sequence:** U1 → U3 → U4 → U2 → U6 → U5 → U7 → U8. U1/U2/U3 preserve the original CI/packaging/completion identities.
 
 The original request authorized planning. The 2026-10-01 `ce-work` invocation
@@ -421,7 +421,24 @@ replaced. ID-based Action downloads explicitly merge at the reviewed root.
 
 **Dependencies:** U7 and every native/hosted/performance gate; explicit release/tag/SHA and hosted-setting authorization.
 
-**Files / ownership:** Release-promotion helper/tests, `README.md`, `docs/install.md`, `docs/releasing.md`, approved public assets, GitHub repository metadata/social preview, separate tap publication and synchronized product/feature governance artifacts.
+**Files / ownership:** `scripts/promote.sh`, `scripts/repository_metadata.sh`,
+their boundary fixtures, `.github/repository-metadata.json`, `Makefile`,
+`docs/release-acceptance.md`, `docs/releasing.md`, candidate/tap host and diagnostic
+guards, `README.md`, `docs/install.md`, approved public assets, eventual GitHub
+metadata/social preview and separately authorized tap publication, plus
+synchronized product/feature governance artifacts.
+
+**Implemented local interface:** Preparation performs no API request and emits
+explicitly unaccepted/unapplied asset or metadata plans. Promotion binds the nine
+native/performance/cask gate receipts, complete reference sample matrices,
+reviewed notes and a separate exact-action owner approval record. It freshly
+verifies candidate signatures/expiry, tap access, local tool history and remote
+main. Draft approval includes the exact source tag; publish needs separate
+authority. API loss is reconciled against the paginated release/asset state and
+all downloaded hashes; no clobber/delete/retag occurs. Metadata writes only the
+reviewed About/topics fields after public-release/current-documentation readback.
+Read [the acceptance contract](../release-acceptance.md) before operating these
+helpers. Approval records document actual permission and cannot create it.
 
 **Approach:** Compare current SHA and accepted manifest with terminal/hosted receipts. Create a complete draft with existing accepted artifacts, re-download and verify every asset/version/provenance, then publish the authorized tag. Publish the reviewed cask and prove anonymous direct-download/live-tap installs. Activate README release links/badges/platform claims; apply reviewed About/topics/homepage/social preview and verify rendered GitHub content at the published documentation SHA. Documentation-only changes after the binary SHA retain both identities and must not claim identical commits.
 
@@ -611,3 +628,24 @@ minimum-compiler component checks pass; inspector coverage remains above 95%.
 Native Ruby/Homebrew/Intel/ARM security/runtime checks are unexecuted; current tap
 readback is HTTP404. Parent U7 and V87–V94 remain open. The coherent local commit
 enables U8 promotion/readback engineering, with final hosted candidate required.
+
+### U8 local engineering checkpoint — 2026-10-02 UTC
+
+Promotion and repository metadata helpers pass canonical Go 1.27.1 validation,
+minimum-Go focused checks and strict Bash lint. Read-only preparation consumes the
+real preliminary U7 C manifest/cask and emits nine exact asset digests plus the
+approved About/topics/image preview, explicitly unaccepted/unapplied. Fake API
+fixtures expose and fix stale main, duplicate timing cases, malformed memory
+samples, missing tap, absent draft tag, failed source diff and inherited host/debug
+or API-host redirection. Lost create/upload/publish responses reconcile existing
+state and downloaded bytes without clobber/delete/retag. The current tap still
+returns HTTP404. The custom host compiler notice failure and superseded mixed
+source gate remain retained failures; the final pinned gate passes.
+
+[Receipt](../verification-evidence/006/u8.json) records the local boundary scope.
+No fixture approval is owner consent or real provenance/native/performance proof.
+Parent U8 and V95–V102 remain open; local scenario closures stay 51. Final local
+simplification/code review and source freeze follow the coherent engineering
+commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
+has occurred. Hosted/native/publication acceptance requires its separate actual
+evidence and concrete owner authorization.

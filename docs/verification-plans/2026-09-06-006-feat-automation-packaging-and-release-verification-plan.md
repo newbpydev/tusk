@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Implementation active - U1/U3/U4/U2 locally accepted; U6/U5/U7 engineering accepted; U8 local promotion next
+status: Local engineering complete - final local review next; actual hosted/native/release gates open
 evidence-scope: 51 local scenario closures; hosted/native release gates pending
 deepened: 2026-10-01
 ---
@@ -306,9 +306,11 @@ the real installed app and shell completion/manual use.
 | CLI release measurement | `make bench-cli-release RELEASE_BINARY=<extracted-binary> CLI_BENCH_OUTPUT=<new-report>` | Planned U5; invokes the existing runner without rebuilding the supplied binary; hash-preservation fixture required |
 | TUI release measurement | `make bench-tui-release RELEASE_BINARY=<extracted-binary> TUI_BENCH_OUTPUT=<new-report>` | Planned U5; source-model measurements plus separate packaged startup/identity selection, retaining Feature 005 workloads/budgets |
 | Homebrew | `make test-homebrew check-homebrew CANDIDATE_DIR=<dir>` | Planned U7; generated cask syntax/audit/native installation; hosted tap mutation remains separate |
-| Draft | `make release-draft CANDIDATE_RUN_ID=<trusted-id> CANDIDATE_MANIFEST_SHA256=<accepted-digest> RELEASE_VERSION=<semver> RELEASE_SHA=<sha>` | Planned U8; explicit authorized hosted write, accepted bytes only |
-| Publish | `make release-publish RELEASE_TAG=<authorized-tag> CANDIDATE_MANIFEST_SHA256=<accepted-digest>` | Planned U8; verifies complete draft/readback/authorization, never rebuilds |
-| GitHub metadata | Structured GitHub API or documented CLI plus browser readback | U8; exact approved payload, before/after state and documentation SHA; social preview manual upload if necessary |
+| Promotion fixtures | `make test-release-promotion test-repository-metadata lint-release-promotion` | Local U8 boundary/approval/report/API-loss fixtures; no actual consent, signatures or hosted writes |
+| Prepare | `make release-prepare` / `make prepare-repository-metadata` with the [documented inputs](../release-acceptance.md) | Implemented U8; no API, unaccepted/unapplied outputs |
+| Draft | `make release-draft` with candidate/version/SHA/run/manifest, acceptance, draft approval, notes and new output | Implemented U8; separately authorized tag/private draft/assets; exact full interface in [acceptance records](../release-acceptance.md) |
+| Publish/readback | `make release-publish` / `make release-readback` with the same candidate/acceptance/notes and new output | Implemented U8; separate publish approval, complete re-download verification, no rebuild; readback writes no remote state |
+| GitHub metadata | `make apply-repository-metadata` with authorization, published receipt and new output | Exact bounded About/topics payload and current documentation SHA; manual social/browser readbacks remain pending |
 | Terminal | Owned Kitty Linux/macOS; owned Windows Terminal/PowerShell Windows 11 | U3/U5/U7; actual apps, isolated data, target window identity and inspected captures |
 
 Exact new helper/function names are implementation details. The target inputs
@@ -454,3 +456,24 @@ minimum-compiler component checks pass; inspector coverage remains above 95%.
 Native Ruby/Homebrew/Intel/ARM security/runtime checks are unexecuted; current tap
 readback is HTTP404. Parent U7 and V87–V94 remain open. The coherent local commit
 enables U8 promotion/readback engineering, with final hosted candidate required.
+
+### U8 local engineering checkpoint — 2026-10-02 UTC
+
+Promotion and repository metadata helpers pass canonical Go 1.27.1 validation,
+minimum-Go focused checks and strict Bash lint. Read-only preparation consumes the
+real preliminary U7 C manifest/cask and emits nine exact asset digests plus the
+approved About/topics/image preview, explicitly unaccepted/unapplied. Fake API
+fixtures expose and fix stale main, duplicate timing cases, malformed memory
+samples, missing tap, absent draft tag, failed source diff and inherited host/debug
+or API-host redirection. Lost create/upload/publish responses reconcile existing
+state and downloaded bytes without clobber/delete/retag. The current tap still
+returns HTTP404. The custom host compiler notice failure and superseded mixed
+source gate remain retained failures; the final pinned gate passes.
+
+[Receipt](../verification-evidence/006/u8.json) records the local boundary scope.
+No fixture approval is owner consent or real provenance/native/performance proof.
+Parent U8 and V95–V102 remain open; local scenario closures stay 51. Final local
+simplification/code review and source freeze follow the coherent engineering
+commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
+has occurred. Hosted/native/publication acceptance requires its separate actual
+evidence and concrete owner authorization.

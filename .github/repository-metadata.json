@@ -1,0 +1,12 @@
+{
+  "repository": "newbpydev/tusk",
+  "about": {
+    "description": "Local task management in your terminal: a keyboard-driven TUI and scriptable CLI, backed by SQLite.",
+    "homepage": "https://github.com/newbpydev/tusk#readme"
+  },
+  "topics": {
+    "names": ["go", "golang", "cli", "tui", "task-manager", "terminal", "sqlite", "bubbletea", "productivity", "offline", "command-line"]
+  },
+  "social_preview": "docs/assets/tusk-tui.png",
+  "manual_readback": ["social preview", "rendered README at documentation SHA", "license detection", "security contact/settings", "anonymous installs", "native live tap installs"]
+}

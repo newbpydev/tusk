@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 U1/U3/U4/U2 locally accepted; U6/U5/U7 engineering accepted; hosted/native release gates pending
+**Current Status**: Feature 006 all eight local engineering checkpoints accepted; final local review next; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 U8 / Unit 006-8 — Local Promotion, Readback and Metadata Preparation (after the U7 engineering commit; external release gates pending)
+**Active Implementation Target**: Feature 006 — Final Local Simplification, Code Review and Source-Freeze Preparation (after the U8 engineering commit; external release gates pending)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -484,6 +484,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [ ] Unit 006-7 / U7: Homebrew Cask Candidate and Destination Readiness
     - [x] Local config/cask/provenance engineering checkpoint; real packager audit and canonical/minimum checks passed
   - [ ] Unit 006-8 / U8: Authorized Release, Public Metadata and Final Settlement
+    - [x] Local promotion/readback/metadata engineering checkpoint; canonical/minimum/policy fixtures and real read-only previews passed
 - [ ] **6.3 Quality Gate & Release Sign-off**
   - [ ] Canonical validation/generated/module gates, minimum Go and five native candidate-SHA jobs
   - [x] Three real-shell completion checks and deterministic manuals on the applicable Linux host
@@ -491,6 +492,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [ ] Trusted candidate/provenance plus exact-asset native CLI/TUI/install/backup/upgrade/remove acceptance
   - [ ] Owned Kitty/native Windows terminal and retained candidate CLI/TUI performance evidence
   - [ ] Owner license/rights, tap/security-contact and concrete publication decisions closed
+    - [x] Owner-selected MIT and first-party redistribution rights; complete local grants/notices accepted
   - [ ] Authorized complete draft/public release, reviewed Homebrew cask and anonymous install verification
   - [ ] GitHub About/topics/homepage/social preview and rendered README/badges/links/license readback
   - [ ] All 102 applicable scenarios and inherited release obligations have matching receipts; product G4 closed
@@ -718,3 +720,24 @@ minimum-compiler component checks pass; inspector coverage remains above 95%.
 Native Ruby/Homebrew/Intel/ARM security/runtime checks are unexecuted; current tap
 readback is HTTP404. Parent U7 and V87–V94 remain open. The coherent local commit
 enables U8 promotion/readback engineering, with final hosted candidate required.
+
+### U8 local engineering checkpoint — 2026-10-02 UTC
+
+Promotion and repository metadata helpers pass canonical Go 1.27.1 validation,
+minimum-Go focused checks and strict Bash lint. Read-only preparation consumes the
+real preliminary U7 C manifest/cask and emits nine exact asset digests plus the
+approved About/topics/image preview, explicitly unaccepted/unapplied. Fake API
+fixtures expose and fix stale main, duplicate timing cases, malformed memory
+samples, missing tap, absent draft tag, failed source diff and inherited host/debug
+or API-host redirection. Lost create/upload/publish responses reconcile existing
+state and downloaded bytes without clobber/delete/retag. The current tap still
+returns HTTP404. The custom host compiler notice failure and superseded mixed
+source gate remain retained failures; the final pinned gate passes.
+
+[Receipt](docs/verification-evidence/006/u8.json) records the local boundary scope.
+No fixture approval is owner consent or real provenance/native/performance proof.
+Parent U8 and V95–V102 remain open; local scenario closures stay 51. Final local
+simplification/code review and source freeze follow the coherent engineering
+commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
+has occurred. Hosted/native/publication acceptance requires its separate actual
+evidence and concrete owner authorization.
