@@ -66,8 +66,8 @@ invocation. Their fake candidate verifier deliberately models a trusted boundary
 its empty call log does not imply production promotion performs no API reads.
 
 **Honor fake-tool argument selection.** The Go fixture at
-`scripts/test/test_release_smoke.sh:29` returns only each requested `go env` key.
-The Windows case at `scripts/test/test_release_smoke.sh:42` supplies a MINGW
+`scripts/test/test_release_smoke.sh` returns only each requested `go env` key.
+The Windows case in that file supplies a MINGW
 identity, a `cygpath` that exits 23, and a matching Windows manifest digest.
 The corrected pre-fix run returned 0 where refusal 1 was required; the fixed run
 refuses it. The earlier probe used a fake Go response that bypassed the intended
@@ -95,6 +95,18 @@ also passes both real vendor inventories. Release archive fixtures copy the root
 attributes and set their own `core.autocrlf=false` before adding files. Changing
 approved hashes to match converted bytes would conceal the checkout defect.
 See the [combined native CI repair receipt](../../verification-evidence/006/pr6-r2/acceptance.json).
+
+**Match physical paths and every native consumer.** macOS temporary directories
+can use `/var/...` while the driver's `pwd -P` resolves `/private/var/...`. A
+literal argument assertion must use the same physical identity. Reproduce this
+on Linux with an owned symlinked `TMPDIR`; label final assertions so a failed
+path comparison is visible. On Windows, inspect the arguments sent to the
+measurement harness as well as preflight's exported binary path. Pass converted
+binary and report paths explicitly; conversion failure must occur before any
+measurement launch. An argument fixture proves this boundary without claiming
+native Windows execution or depending on implicit shell argument conversion.
+The [third complete-batch receipt](../../verification-evidence/006/pr6-r3/acceptance.json)
+retains that Red/Green comparison and the still-pending native runtime limits.
 
 ## Related
 

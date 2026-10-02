@@ -9,6 +9,10 @@ import (
 )
 
 func confirm(ctx context.Context) (bool, error) {
+	return confirmHandle(ctx, windows.Handle(os.Stdin.Fd()))
+}
+
+func confirmHandle(ctx context.Context, input windows.Handle) (bool, error) {
 	cancelIO := windows.NewLazySystemDLL("kernel32.dll").NewProc("CancelSynchronousIo")
 	// Resolve support before any synchronous read starts.
 	if err := cancelIO.Find(); err != nil {
@@ -22,7 +26,11 @@ func confirm(ctx context.Context) (bool, error) {
 		read := func() (byte, error) {
 			var b [1]byte
 			var n uint32
-			err := windows.ReadFile(windows.Handle(os.Stdin.Fd()), b[:], &n, nil)
+			err := windows.ReadFile(input, b[:], &n, nil)
+			// Windows reports a closed anonymous pipe as ERROR_BROKEN_PIPE.
+			if err == windows.ERROR_BROKEN_PIPE || err == windows.ERROR_HANDLE_EOF {
+				return 0, io.EOF
+			}
 			if err != nil {
 				return 0, err
 			}

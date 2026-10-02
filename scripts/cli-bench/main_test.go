@@ -365,20 +365,37 @@ func TestCLIBenchmark_Seed(t *testing.T) {
 	}
 }
 func TestCLIBenchmark_Execute(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("local Linux harness")
-	}
-	for _, body := range []string{"printf output", "printf failure >&2", "exit 3"} {
-		path := filepath.Join(t.TempDir(), "child")
-		if err := os.WriteFile(path, []byte("#!/bin/sh\n"+body+"\n"), 0700); err != nil {
-			t.Fatal(err)
+	if mode := os.Getenv("TUSK_BENCH_EXECUTE"); mode != "" {
+		switch mode {
+		case "stdout":
+			fmt.Fprint(os.Stdout, "output")
+		case "stderr":
+			fmt.Fprint(os.Stderr, "failure")
+		case "exit":
+			fmt.Fprint(os.Stdout, "partial output")
+			os.Exit(3)
+		default:
+			os.Exit(4)
 		}
-		duration, out, err := execute(path, nil, nil)
-		if duration <= 0 || (err == nil) != (body == "printf output") {
-			t.Fatalf("%s %d %q %v", body, duration, out, err)
-		}
+		os.Exit(0)
 	}
-	if _, _, err := execute("/does-not-exist", nil, nil); err == nil {
+	for _, tc := range []struct {
+		mode, output, errorText string
+	}{{"stdout", "output", ""}, {"stderr", "", "unexpected stderr"}, {"exit", "partial output", "exit status 3"}} {
+		t.Run(tc.mode, func(t *testing.T) {
+			t.Setenv("TUSK_BENCH_EXECUTE", tc.mode)
+			// Instrumented child tests retain their own coverage without diagnostics.
+			t.Setenv("GOCOVERDIR", t.TempDir())
+			duration, out, err := execute(os.Args[0], []string{"-test.run=^TestCLIBenchmark_Execute$"}, os.Environ())
+			if duration <= 0 || string(out) != tc.output || (err == nil) != (tc.errorText == "") {
+				t.Fatalf("duration %d output %q error %v", duration, out, err)
+			}
+			if err != nil && err.Error() != tc.errorText {
+				t.Fatalf("error %v, want %s", err, tc.errorText)
+			}
+		})
+	}
+	if _, _, err := execute(filepath.Join(t.TempDir(), "missing-process"), nil, nil); err == nil {
 		t.Fatal("missing process passed")
 	}
 }

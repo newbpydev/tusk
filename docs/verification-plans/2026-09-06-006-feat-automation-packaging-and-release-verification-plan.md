@@ -652,3 +652,32 @@ checkout inventories under `autocrlf=true`, and all 30 native-binding rejection
 checks with zero fake GitHub calls pass. See [the R2 receipt](../verification-evidence/006/pr6-r2/acceptance.json).
 The containing commit prepares one coherent repair. Windows ACL execution and
 macOS/Windows coverage require the next complete hosted report set.
+
+
+### PR #6 third complete report-batch repair (2026-10-02)
+
+All seven reports finished on `eaa8791c2f82e1320620354fb2da95f5062cd52c`
+before repair edits. Linux/minimum compiler and Kilo pass; both macOS jobs fail
+at the release-smoke fixture's physical-path assertion, and Windows passes
+functional/race tests but misses native coverage in confirmation and the CLI
+measurement process launcher. Previous ACL, checkout-byte and inspector fixes
+pass their native checks. This is progressive failure migration.
+
+- [x] Collect the complete third hosted set before starting one combined pass.
+- [x] Repair physical/native measurement paths and exercise native confirmation
+      and process launching without weakening the 95% package coverage gate.
+- [x] Validate the frozen repair and audit the complete applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+The minimum Go 1.25.0 hosted job passes the actual isolated build-output test,
+refuting Kilo's new portability suggestion. Physical native terminal, trusted
+candidate, exact-byte performance/cask and release/tap acceptance stay pending.
+
+The third combined repair passes frozen-state `make validate build
+check-generated check-docs check-notices check-ci check-candidate-workflow
+lint-release-promotion` with official `GOTOOLCHAIN=go1.27.1`. Linux coverage is
+96.1% for cmd/tusk, 95.6% for CLI measurements and 96.2% for the inspector.
+Five-target CLI/verification tests compile. See [the R3 receipt](../verification-evidence/006/pr6-r3/acceptance.json).
+The containing commit records one coherent repair. Fresh Windows EOF/cancellation
+runtime and package coverage, both macOS smoke fixtures and all other current-head
+hosted reports remain required; no native/release acceptance gate closes here.

@@ -69,8 +69,9 @@ case "${1:-preflight}" in
   exit "$status" ;;
  bench-cli)
   preflight;new_output
+  native_output=$(native_path "$RELEASE_BENCH_OUTPUT") || die 'measurement report native path conversion failed'
   status=0
-  (cd "$root" && go run ./scripts/cli-bench --binary "$RELEASE_BINARY" --output "$RELEASE_BENCH_OUTPUT" --acceptance-profile reference) || status=$?
+  (cd "$root" && go run ./scripts/cli-bench --binary "$TUSK_RELEASE_BINARY" --output "$native_output" --acceptance-profile reference) || status=$?
   [[ "$(digest "$RELEASE_BINARY")" == "$binary_hash" ]] || die 'supplied executable changed during measurements'
   exit "$status" ;;
  bench-tui)

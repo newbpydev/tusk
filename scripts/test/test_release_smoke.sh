@@ -2,6 +2,7 @@
 set -euo pipefail
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 scratch=$(mktemp -d)
+scratch=$(cd "$scratch" && pwd -P)
 trap 'rm -rf "$scratch"' EXIT
 failed=0
 expect() {
@@ -44,7 +45,12 @@ if [[ "$1" == env ]];then
  for key in "$@";do
   case "$key" in GOHOSTOS) printf '%s\n' "$FIXTURE_OS";;GOHOSTARCH) printf '%s\n' "$FIXTURE_ARCH";;*) exit 77;;esac
  done
-else printf '%s\n' "$*" >>"$FIXTURE_ROOT/calls";fi
+else
+ printf '%s\n' "$*" >>"$FIXTURE_ROOT/calls"
+ if [[ -n ${FIXTURE_NATIVE_BINARY:-} ]];then
+  [[ $# == 8 && "$1" == run && "$2" == ./scripts/cli-bench && "$3" == --binary && "$4" == "$FIXTURE_NATIVE_BINARY" && "$5" == --output && "$6" == "$FIXTURE_NATIVE_OUTPUT" && "$7" == --acceptance-profile && "$8" == reference ]] || exit 78
+ fi
+fi
 GO
  chmod +x "$scratch/bin/go"
  preflight=(env PATH="$scratch/bin:$PATH" FIXTURE_ROOT="$scratch" FIXTURE_OS="$fixture_os" FIXTURE_ARCH="$fixture_arch" RELEASE_BINARY="$scratch/accepted" RELEASE_MANIFEST="$scratch/candidate/assets/release-manifest.json" CANDIDATE_MANIFEST_SHA256="$manifest" RELEASE_EVIDENCE_SCOPE=local-fixture)
@@ -67,6 +73,20 @@ CYGPATH
  jq '.targets[0].target="windows/amd64"' "$scratch/original-manifest.json" >"$scratch/candidate/assets/release-manifest.json"
  windows_manifest=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/release-manifest.json")
  expect 1 'failed native path conversion refuses binary acceptance' "${preflight[@]}" FIXTURE_OS=windows FIXTURE_ARCH=amd64 CANDIDATE_MANIFEST_SHA256="$windows_manifest" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
+ cat >"$scratch/bin/cygpath" <<'CYGPATH'
+#!/usr/bin/env bash
+[[ "$1" == -m ]] || exit 24
+if [[ "$2" == */accepted ]];then printf 'C:/owned candidate/accepted.exe\n'
+elif [[ "$2" == */native-report.json ]];then
+ [[ ${FIXTURE_OUTPUT_CONVERSION_FAIL:-0} == 0 ]] || exit 23
+ printf 'C:/owned reports/native-report.json\n'
+else exit 25;fi
+CYGPATH
+ expect 0 'Windows CLI measurement receives native binary and report arguments' "${preflight[@]}" FIXTURE_OS=windows FIXTURE_ARCH=amd64 CANDIDATE_MANIFEST_SHA256="$windows_manifest" FIXTURE_NATIVE_BINARY='C:/owned candidate/accepted.exe' FIXTURE_NATIVE_OUTPUT='C:/owned reports/native-report.json' RELEASE_BENCH_OUTPUT="$scratch/native-report.json" bash "$scratch/fixture/scripts/release_smoke.sh" bench-cli
+ rm -f "$scratch/native-report.json.identity.json"
+ cp "$scratch/calls" "$scratch/calls-before-conversion"
+ expect 1 'failed native report conversion refuses measurement' "${preflight[@]}" FIXTURE_OS=windows FIXTURE_ARCH=amd64 CANDIDATE_MANIFEST_SHA256="$windows_manifest" FIXTURE_OUTPUT_CONVERSION_FAIL=1 RELEASE_BENCH_OUTPUT="$scratch/native-report.json" bash "$scratch/fixture/scripts/release_smoke.sh" bench-cli
+ expect 0 'failed report conversion never launches measurement' cmp -s "$scratch/calls" "$scratch/calls-before-conversion"
  mv "$scratch/original-manifest.json" "$scratch/candidate/assets/release-manifest.json"
  rm "$scratch/bin/uname" "$scratch/bin/cygpath"
  expect 1 'wrong pinned manifest refused' "${preflight[@]}" CANDIDATE_MANIFEST_SHA256="$(printf 'b%.0s' {1..64})" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
@@ -83,7 +103,9 @@ CYGPATH
  expect 1 'measurement output cannot modify candidate assets' "${preflight[@]}" RELEASE_BENCH_OUTPUT="$scratch/candidate/assets/new-bench.json" bash "$scratch/fixture/scripts/release_smoke.sh" bench-cli
  expect 0 'measurement consumes supplied bytes' "${preflight[@]}" RELEASE_BENCH_OUTPUT="$scratch/new-report.json" bash "$scratch/fixture/scripts/release_smoke.sh" bench-cli
  expect 1 'retained measurement identity collision refused' "${preflight[@]}" RELEASE_BENCH_OUTPUT="$scratch/new-report.json" bash "$scratch/fixture/scripts/release_smoke.sh" bench-cli
- cmp -s "$scratch/accepted" "$scratch/original-accepted" || failed=1
- grep -F -- "--binary $scratch/accepted" "$scratch/calls" >/dev/null || failed=1
+ expect 0 'measurement preserves selected binary bytes' cmp -s "$scratch/accepted" "$scratch/original-accepted"
+ expected_binary=$scratch/accepted
+ if [[ "$fixture_os" == windows ]];then expected_binary=$(cygpath -m "$expected_binary");fi
+ expect 0 'measurement records selected native binary path' grep -F -- "--binary $expected_binary" "$scratch/calls"
 fi
 exit "$failed"
