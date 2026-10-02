@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "reviewed_head": "268f0c812c87a4dd894cbc4bec58b1885ac543a1",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37047233155,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 1,
+  "inline_review_threads": 0,
+  "needs_human": 0,
+  "canonical": {
+    "status": "passed",
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "exit": 0,
+    "log": "r4-canonical-frozen.log.gz",
+    "scope": "Scripts, fixture bytes and solution lesson stable throughout; only completed authority status and generated receipts added afterward."
+  },
+  "implementation_sha256": {
+    "scripts/test/test_hashes.sh": "d156a33b0e8b8c8b6c9afa3359d9dc044f264b3ec1edbe4bec16836d996d4c6b",
+    "scripts/test/test_sqlc.sh": "d3a6d783975f2fbc2a36382aa540e6a527a4ddfcab1f666e5e55a4220547a8d5",
+    "scripts/test/fixtures/sqlc-symlink.tar.gz": "8f8a7ec729b75c8c743f5ebe7787268ec9779a7a5539317175fc929b0a7267ba",
+    "scripts/test/fixtures/README.md": "ad5f3e76bc9eb78d2ba99c92b52a42b92943b3340c1f9019a28f8a6ffaf91fdb",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "b453690be3a2e5f426c03f11f2929229a932a83f548deff49c59e02c5a992ae4"
+  },
+  "remediation_commit": "containing commit",
+  "utc": "2026-10-02T18:54:04.321376+00:00",
+  "limits": [
+    "Silent native hash failure does not expose a loader error; DLL/runtime attribution is an inference supported by the documented link-copy default and controlled model. Next Windows execution remains required.",
+    "Complete shell-copy model is Linux evidence, not Windows runtime or physical terminal acceptance.",
+    "Old native Windows confirmation and coverage pass on reviewed head; current-head CI remains separate.",
+    "Sequential main-thread audit does not claim independent model agreement.",
+    "Physical five-host terminals, trusted-main candidate/provenance, exact-byte performance/cask and release/tap publication remain pending."
+  ],
+  "retained_logs_sha256": {
+    "r4-canonical-frozen.log.gz": "a0ca33cbe6253e81d622179bfac5e3a9c084a48a5219ad874b3868a91f35097b",
+    "r4-complete-shell-copy-green.log.gz": "03b3bb3c7f16d291d99009a2e816276863233034253e621f068ade2dfc591a09",
+    "r4-hash-control.log.gz": "d4d09d65493540a708b054324838893da8fb20d592b261f094ba0286b19c5906",
+    "r4-hash-copy-red.log.gz": "d4d09d65493540a708b054324838893da8fb20d592b261f094ba0286b19c5906",
+    "r4-hash-runtime-control.log.gz": "d1883a824fda7de635b75ccd069ec6aa9a643345bf2282131ce444b4faacff4c",
+    "r4-hash-runtime-copy-green.log.gz": "d1883a824fda7de635b75ccd069ec6aa9a643345bf2282131ce444b4faacff4c",
+    "r4-hash-runtime-copy-red.log.gz": "d4d09d65493540a708b054324838893da8fb20d592b261f094ba0286b19c5906",
+    "r4-sqlc-copy-red.log.gz": "dd520a6eb9036ede700b25e9fc15400948c4f4db70ff33a6a63c9c426d1acec8",
+    "windows-native-excerpt.log.gz": "dc68c2c52df610864e9a1a0f5b83552b3960178cac6df734745b22152c84310d"
+  }
+}

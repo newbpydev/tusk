@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 PR #6 published; third complete report batch locally validated; fresh hosted set pending; native/release gates pending
+**Current Status**: Feature 006 PR #6 published; fourth complete report batch locally validated; fresh hosted set pending; native/release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Publish the validated third PR #6 report-batch repair and settle the complete fresh hosted set; native/release acceptance remains pending
+**Active Implementation Target**: Feature 006 — Publish the validated fourth PR #6 report-batch repair and settle the complete fresh hosted set; native/release acceptance remains pending
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -946,3 +946,34 @@ Five-target CLI/verification tests compile. See [the R3 receipt](docs/verificati
 The containing commit records one coherent repair. Fresh Windows EOF/cancellation
 runtime and package coverage, both macOS smoke fixtures and all other current-head
 hosted reports remain required; no native/release acceptance gate closes here.
+
+
+### PR #6 fourth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `268f0c812c87a4dd894cbc4bec58b1885ac543a1`
+before repair edits. Both macOS jobs, all three Linux jobs and Kilo pass. Windows
+passes real EOF/answer/invalid-handle/cancellation tests and coverage (cmd/tusk
+97.4%, CLI measurements 95.6%), then fails the first shell hash fixture. Git
+Bash's default copy-style `ln -s` separates a restricted-PATH executable from
+its adjacent runtime. A passing owned resolved-image control and copy-semantics
+Red establish the fixture defect; native runtime confirmation remains required.
+The related SQLC tool snapshots and archive-member refusal are reviewed together.
+
+- [x] Collect the complete fourth hosted set before repair edits.
+- [x] Preserve installed tool runtimes in restricted snapshots and prove the
+      SQLC archive-member refusal at its intended boundary.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+This remains progressive failure migration: the earlier native repairs pass and
+the Windows job reaches a later gate. Coverage, latency and archive security
+contracts remain unchanged; physical native and release acceptance stay pending.
+
+The fourth combined repair passes frozen-state `make validate build
+check-generated check-docs check-notices check-ci check-candidate-workflow
+lint-release-promotion` with official `GOTOOLCHAIN=go1.27.1`. The complete shell
+suite also passes the owned link-copy/runtime model, including exact archive
+refusal and missing-prerequisite diagnostics. See [the R4 receipt](docs/verification-evidence/006/pr6-r4/acceptance.json).
+The containing commit records one coherent fixture repair. Actual Windows
+execution of the repaired snapshots and the full fresh hosted set remain required.
+No native terminal or release acceptance gate closes here.

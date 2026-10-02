@@ -108,6 +108,24 @@ native Windows execution or depending on implicit shell argument conversion.
 The [third complete-batch receipt](../../verification-evidence/006/pr6-r3/acceptance.json)
 retains that Red/Green comparison and the still-pending native runtime limits.
 
+**Keep restricted tool snapshots faithful.** [Git Bash's default `ln -s`
+creates copies](https://gitforwindows.org/symbolic-links.html). Copying an
+executable into a restricted PATH can separate it from its adjacent runtime;
+[Windows searches the executable directory for DLLs](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order).
+Use Bash launchers that execute each installed image at its original location.
+Keep the restricted PATH when testing prerequisite discovery; a backend-only
+hash launcher may restore its own dependencies after the helper selects it.
+An owned resolved-image control passes, while the same snapshot under copy
+semantics fails. This models the suspected native loader cause; the subsequent
+Windows gate must confirm execution.
+
+Link emulation can also turn a symlink-archive fixture into a regular file. An
+empty copied payload then fails at extraction size, concealing the absent
+non-regular-member refusal. Keep the companion nonempty and assert the exact
+refusal diagnostic. The deterministic `scripts/test/fixtures/sqlc-symlink.tar.gz`
+contains an actual symlink header on every host without filesystem privileges.
+See the [fourth complete-batch receipt](../../verification-evidence/006/pr6-r4/acceptance.json).
+
 ## Related
 
 - [Release acceptance and publication procedure](../../releasing.md)

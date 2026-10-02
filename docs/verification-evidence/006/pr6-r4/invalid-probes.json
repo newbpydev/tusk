@@ -1,0 +1,4 @@
+{
+  "r4-hash-control.log": "Invalid model: BASH_SOURCE kept symlink alias rather than executable image location; superseded by resolved-path model.",
+  "r4-hash-copy-red.log": "Same invalid model had no passing control; not causal Red."
+}

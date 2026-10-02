@@ -1,0 +1,15 @@
+{
+  "scope": "owned resolved-image adjacent-runtime model on Linux, not native DLL execution",
+  "command": [
+    "make",
+    "test-hashes"
+  ],
+  "PATH_layers": [
+    "owned copy-tools only for copy run",
+    "owned runtime-tools",
+    "original PATH"
+  ],
+  "awk_source": "#!/usr/bin/python3\nimport pathlib,os,sys\nif not (pathlib.Path(__file__).resolve().parent / \"runtime.marker\").is_file():\n print(\"owned adjacent runtime missing\",file=sys.stderr);sys.exit(72)\nos.execv('/usr/bin/awk',['/usr/bin/awk',*sys.argv[1:]])\n",
+  "ln_source": "#!/bin/bash\n[[ \"$1\" == -s && $# == 3 ]] || exit 71\nsource=$2\nif [[ \"$source\" != /* ]];then source=\"${3%/*}/$source\";fi\nexec /usr/bin/cp \"$source\" \"$3\"\n",
+  "marker": "runtime-tools/runtime.marker contains owned adjacent dependency; the model resolves its image path before checking it"
+}
