@@ -116,7 +116,10 @@ expect 1 'cross compiler cannot impersonate a native Windows host' env PATH="$sc
 expect 1 'WSL shell cannot close native Windows acceptance' env PATH="$scratch/bin:$PATH" FIXTURE_UNAME=Linux TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
 expect 1 'missing Make is actionable' env TUSK_CI_MAKE=missing-tusk-make bash "$root/scripts/ci-check.sh" preflight
 expect 1 'missing native compiler is actionable' env TUSK_CI_CC=missing-tusk-cc bash "$root/scripts/ci-check.sh" preflight
-expect 1 'wrong native identity refuses cross-build substitution' env TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 bash "$root/scripts/ci-check.sh" preflight
+# Select a mismatch against the owned amd64 identity, even on a Windows host.
+expect 1 'wrong native architecture refuses cross-build substitution' env PATH="$scratch/bin:$PATH" TUSK_CI_OS=windows TUSK_CI_ARCH=arm64 bash "$root/scripts/ci-check.sh" preflight
+cp "$scratch/output" "$scratch/architecture-refusal"
+expect 0 'native architecture refusal reaches the intended guard' grep -Fxq 'CI: Go OS/architecture differs from native job; cross-build is not acceptance' "$scratch/architecture-refusal"
 
 # A digest failure or failed download must preserve the previously accepted tool.
 mkdir -p "$scratch/install/bin/tools"

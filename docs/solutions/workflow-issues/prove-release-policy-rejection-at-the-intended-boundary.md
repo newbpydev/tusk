@@ -164,6 +164,15 @@ from a tool error. A stalled owned process still fails near 30 seconds with the
 explicit deadline diagnostic. Keep the original retry failure and the initial
 transient-failure hypothesis in the [seventh complete-batch receipt](../../verification-evidence/006/pr6-r7/acceptance.json).
 
+**Choose an explicit mismatch for negative identity tests.** Requesting
+`windows/amd64` from the ambient compiler is a negative case only on other hosts;
+it becomes a valid positive control on Windows. Use the owned `windows/amd64`
+identity for both cases, then request `windows/arm64` for the negative. Require
+the exact OS/architecture guard diagnostic as well as exit 1. The controlled
+Windows-identity shell suite reproduces the old false failure and confirms the
+repair; subsequent native CI still supplies the actual host proof. See the
+[eighth complete-batch receipt](../../verification-evidence/006/pr6-r8/acceptance.json).
+
 ## Related
 
 - [Release acceptance and publication procedure](../../releasing.md)

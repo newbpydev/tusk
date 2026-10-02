@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+case "$1" in
+    version) echo 'go version go1.27.1 windows/amd64' ;;
+    env)
+        shift
+        for key in "$@"; do
+            case "$key" in
+                GOOS|GOHOSTOS) printf 'windows\n' ;;
+                GOARCH|GOHOSTARCH) printf 'amd64\n' ;;
+                GOVERSION) printf 'go1.27.1\n' ;;
+                CGO_ENABLED) printf '1\n' ;;
+                *) exit 77 ;;
+            esac
+        done
+        ;;
+    *) exit 77 ;;
+esac

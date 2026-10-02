@@ -2,7 +2,7 @@
 
 **Current Status**: Feature 006 PR #6 published; seventh complete report batch locally validated; fresh hosted set pending; native/release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Publish the validated seventh PR #6 report-batch repair, then settle the complete fresh hosted set; native/release acceptance remains pending
+**Active Implementation Target**: Feature 006 — Publish the validated eighth PR #6 complete-batch repair, then settle all fresh reports; native/release acceptance remains pending
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -1061,3 +1061,33 @@ scenario closures and all physical native/release gates remain unchanged. Fresh
 Windows execution and the complete new hosted set remain required; see [the R7 receipt](docs/verification-evidence/006/pr6-r7/acceptance.json).
 The frozen official-Go canonical gate passes. The containing commit records one
 coherent fixture repair; its fresh hosted reports remain required.
+
+### PR #6 eighth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `c2e5039cd7664f5b2621261ddee461dbc7ff4c04`
+before repair edits. Both macOS jobs, all three Linux jobs and Kilo pass with no
+open threads. Windows confirms functional/race/coverage, the no-LFS checkout,
+all 57 script assertions, profile arguments and restricted SQLC fixtures, then
+fails one CI negative that expects the ambient Windows identity to be wrong.
+On a native Windows host that identity is valid, so its successful exit is correct.
+
+The bounded repair uses the existing owned windows/amd64 identity and explicitly
+requests windows/arm64. It keeps exit 1 and asserts the exact OS/architecture
+refusal diagnostic. A controlled Windows-identity full shell suite reproduces
+the old false failure and validates the same guard after repair. Product and
+workflow implementation, coverage/latency limits and tool pins are unchanged.
+
+- [x] Wait for the complete eighth report set before edits.
+- [x] Reproduce the native-identity negative in an owned control and require the
+      intended rejection diagnostic after repair.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+This is progressive failure migration: the earlier Windows repairs now execute
+and pass. Controlled Linux fixture identities do not replace native re-execution.
+The 51 local closures and physical five-host terminals, trusted-main provenance,
+exact-byte performance/cask and authorized release/tap gates remain unchanged.
+See [the R8 receipt](docs/verification-evidence/006/pr6-r8/acceptance.json).
+The frozen official-Go canonical gate and controlled full shell suite pass.
+The containing commit records one coherent fixture repair; all fresh hosted
+reports remain required before declaring the PR settled.
