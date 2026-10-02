@@ -69,11 +69,37 @@ the invocation-created temporary build storage is cleaned. Compare executable an
 archive hashes from two locations when accepting reproducibility; do not infer it
 from stable filenames.
 
-The hosted candidate workflow is not implemented/activated yet. Its reviewed
-contract is a trusted exact main SHA, no publishing/tap secrets and attested
-payload/manifest hashes. Once authorized, build once and download those exact
-bytes for native install, configuration, CLI/TUI, backup, upgrade, uninstall and
-retained performance checks. A cross-build is not native execution. Required
+The manual hosted workflow is implemented locally and has not been published or
+dispatched. Its source SHA must equal the main dispatch and workflow SHA. Six
+reusable canonical CI jobs must finish before one build uploads a uniquely named
+artifact retained for 90 days. Only the separate provenance job can request OIDC
+and write attestations; no job can publish a release or access tap secrets.
+Canceled/failed upload or attestation leaves the entire run unaccepted.
+
+After authorized workflow publication/dispatch completes successfully, download
+`tusk-candidate-RUN_ID-ATTEMPT` from that run into a new owned directory. It contains
+`assets/` and `candidate-run.json`. Record the maintainer-selected manifest SHA256
+before verification; the digest cannot be inferred as accepted from downloaded
+text alone. Use GitHub CLI with attestation support (tested 2.102.0), authenticated
+read access, pinned Go/Bash/Make and a fresh verification output directory:
+
+```bash
+make verify-candidate CANDIDATE_DIR=/tmp/downloaded-candidate CANDIDATE_VERIFICATION_DIR=/tmp/candidate-verification-unique CANDIDATE_RUN_ID=RUN_ID CANDIDATE_MANIFEST_SHA256=ACCEPTED_SHA256 RELEASE_VERSION=v0.3.0 RELEASE_SHA=FULL_COMMIT_SHA
+```
+
+Run/attempt/repository/default-branch/artifact readbacks must match. Every payload,
+manifest, checksums file and run receipt must have a verified signature from this
+repository's main release workflow, the exact source/builder SHA and the same run
+invocation. This uses signed certificate fields rather than self-reported predicate
+metadata; see the [GitHub CLI verification contract](https://cli.github.com/manual/gh_attestation_verify).
+Receipts retain API artifact ID/digest and complete cryptographic verification.
+The API transport ZIP digest is not represented as an independently computed hash.
+A failed read retains its partial directory without acceptance; retry readback in
+a new directory. An expired/incomplete candidate needs a new workflow run and new
+native acceptance. Verification never writes into candidate or Git storage.
+
+Build once and download those exact bytes for native install, configuration,
+CLI/TUI, backup, upgrade, uninstall and retained performance checks. A cross-build is not native execution. Required
 hosts are Linux amd64/arm64, macOS Intel/ARM and native Windows amd64, including
 an owned Windows 11 terminal. Missing access leaves the gate pending.
 

@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 U1/U3/U4/U2 locally accepted; hosted/native release gates pending
+**Current Status**: Feature 006 U1/U3/U4/U2 locally accepted; U6 engineering accepted; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 U6 / Unit 006-6 — Trusted Hosted Candidate Workflow and Artifact Provenance (after the U2 commit)
+**Active Implementation Target**: Feature 006 U5 / Unit 006-5 — Local Native-Artifact Drivers and Measurement Selectors (after the U6 engineering commit; trusted hosted acceptance pending)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -477,7 +477,8 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [x] Unit 006-3 / U3: Storage-Free Completions and Deterministic Manuals — local acceptance
   - [x] Unit 006-4 / U4: README, Installation Guides, Community Files and License Readiness — local acceptance; public activation pending
   - [x] Unit 006-2 / U2: Reproducible CGO-Free Payloads and Immutable Version Metadata — local acceptance; hosted/native release evidence separate
-  - [ ] Unit 006-6 / U6: Trusted Hosted Candidate Workflow and Artifact Provenance
+  - [ ] Unit 006-6 / U6: Trusted Hosted Candidate Workflow and Artifact Provenance — actual hosted acceptance pending
+    - [x] Local workflow/provenance engineering checkpoint; canonical/minimum/security fixtures accepted
   - [ ] Unit 006-5 / U5: Exact-Artifact Native Lifecycle, Terminal and Performance Acceptance
   - [ ] Unit 006-7 / U7: Homebrew Cask Candidate and Destination Readiness
   - [ ] Unit 006-8 / U8: Authorized Release, Public Metadata and Final Settlement
@@ -497,6 +498,10 @@ its own red/green, applicable review/evidence, synchronized governance and fresh
 `make validate` before its coherent local commit. A local unit checkpoint never
 closes an unexecuted hosted/native/publication gate. Planning and local commits
 do not authorize pushing, tags, GitHub settings changes or release publication.
+For U6/U5/U7/U8, committed local engineering checkpoints allow the next unit’s
+local drivers/configuration to proceed under the synchronized plan's final-source
+freeze contract. Parent release-unit and unexecuted hosted/native/publication
+checkboxes remain open; local fixtures cannot waive those dependencies.
 
 ### Feature 006 U1 local checkpoint — 2026-10-01
 
@@ -552,6 +557,19 @@ Red remain retained in [the U2 receipt](docs/verification-evidence/006/u2.json).
 U4 is committed as 709015d. The preliminary private validation SHA is not final
 source freeze or trusted hosted evidence. U6 local engineering follows the U2
 commit; no push, dispatch, tag, release or settings action is authorized.
+
+### Feature 006 U6 local engineering checkpoint — 2026-10-01
+
+Manual exact-main-SHA candidate workflow reuses all six canonical CI jobs and
+builds once; separate provenance attests all nine assets and the run receipt.
+Verified Action pins, structured job/step boundaries, minimal-API repository
+readback, no credential persistence, expiry/run/attempt checks and new-output
+ownership pass observed failure fixtures and current canonical/minimum/actionlint
+gates. [Receipt](docs/verification-evidence/006/u6.json) distinguishes fake policy
+proof from missing actual hosted signatures/job/artifact URLs. U2 is committed as
+171675d. U6's parent checkbox and V63–V72 remain open until an authorized hosted
+run. After this coherent local engineering commit, U5's local drivers are next;
+no GitHub write or trusted-candidate claim has occurred.
 
 ---
 

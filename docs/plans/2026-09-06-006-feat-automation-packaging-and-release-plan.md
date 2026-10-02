@@ -351,9 +351,25 @@ run remains evidence and cannot become an accepted candidate.
 
 **Dependencies:** U2; hosted operation requires authorized publication of the workflow/code and dispatch.
 
-**Files / ownership:** `.github/workflows/release.yml`, candidate/promotion contracts in `scripts/release.sh`, `scripts/test/test_release.sh`, `Makefile`, `docs/releasing.md`.
+**Files / ownership:** `.github/workflows/release.yml`, reusable source-SHA seam
+in `.github/workflows/ci.yml`/`scripts/ci-check.sh`, verified release Action pins
+in `scripts/tool-versions.json`, `scripts/candidate.sh`,
+`scripts/test/test_candidate.sh`, `Makefile`, `docs/releasing.md`. The separate
+candidate helper keeps the U2 local-only packager free of GitHub credentials.
 
 **Approach:** Manual default-branch candidate dispatch takes an exact trusted SHA/version, calls canonical packaging, records manifest/workflow/run identity, attests payloads/manifest and uploads bounded artifacts with 90-day retention. Publication jobs are separate and disabled by default; U8 consumes the accepted run. Reusable CI gates run on the candidate SHA before packaging. Build and provenance inputs include the immutable version overlay and tool lock.
+
+**Execution contract:** The requested SHA must equal the main dispatch and
+workflow SHA; historical ancestor dispatch is intentionally refused. Reusable
+CI tests that exact SHA. Build and provenance are separate jobs, with only the
+latter receiving OIDC/attestation write. Checkout retrieves tags with credentials
+unpersisted. The verifier binds the API run/attempt/repository/artifact and every
+asset plus run receipt to signed certificate fields and subject digests. GitHub's
+minimal run repository lacks a required default branch, so use a separate current
+repository readback. API ZIP digest is retained, not misrepresented as a computed
+transport hash; cryptographic verification binds the complete extracted payload
+set. Verification output cannot be within candidate/Git storage and is never
+replaced. ID-based Action downloads explicitly merge at the reviewed root.
 
 **Red-first tests:** PR/fork artifact promotion, different SHA/version/run, tampered checksum, missing attestation and release/tap secret access fail before remote writes. Fake GitHub API boundaries expose canceled upload and lost responses without public publication.
 
@@ -432,7 +448,7 @@ external result cannot become a completed release unit or Phase 6 checkbox.
 ## Verification Contract and Definition of Done
 
 The [verification plan](../verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md)
-maps all 30 requirements to 102 unexecuted scenarios, exact Make interfaces,
+maps all 30 requirements to 102 scenarios with local closures below; hosted/native/publication scenarios pending, exact Make interfaces,
 fixtures and evidence tiers. The [workorder](../workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md)
 owns planning corrections and external decisions. Code/config/documentation
 tests, generated-diff checks, canonical ≥95% coverage/race validation and focused
@@ -523,3 +539,14 @@ executed application acceptance is claimed.
 1. Local dry-run of GoReleaser (`goreleaser check` and `goreleaser build --snapshot --clean`).
 2. Verification that generated shell completion scripts load without syntax errors in Bash and Zsh.
 3. CI workflow linter check validating GitHub Actions YAML syntax.
+
+### U6 local engineering checkpoint — 2026-10-01
+
+The manual workflow, reusable same-SHA native/minimum CI, verified Action pins and
+fail-closed candidate/API/certificate policy pass canonical, minimum and actionlint
+checks. [Receipt](../verification-evidence/006/u6.json) retains observed Red/Green
+and sequential security/reliability review. All V63–V72 hosted closure remains open:
+no workflow has been pushed/dispatched and fake signatures are component evidence.
+The committed local checkpoint enables U5's local driver/selector implementation
+under the source-freeze contract; exact hosted artifact acceptance still depends
+on an authorized trusted run after all release build inputs are committed.

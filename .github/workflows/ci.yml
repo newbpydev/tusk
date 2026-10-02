@@ -11,13 +11,21 @@
         "main"
       ]
     },
-    "workflow_dispatch": {}
+    "workflow_dispatch": {},
+    "workflow_call": {
+      "inputs": {
+        "source_sha": {
+          "required": true,
+          "type": "string"
+        }
+      }
+    }
   },
   "permissions": {
     "contents": "read"
   },
   "concurrency": {
-    "group": "native-ci-${{ github.workflow }}-${{ github.ref }}",
+    "group": "native-ci-${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}",
     "cancel-in-progress": true
   },
   "jobs": {
@@ -35,7 +43,7 @@
         "TUSK_CI_ARCH": "${{ matrix.arch }}",
         "TUSK_CI_GO": "1.27.1"
       },
-      "name": "${{ matrix.os }}/${{ matrix.arch }} — release compiler",
+      "name": "${{ matrix.os }}/${{ matrix.arch }} \u2014 release compiler",
       "runs-on": "${{ matrix.runner }}",
       "strategy": {
         "fail-fast": false,
@@ -74,7 +82,8 @@
           "name": "Checkout",
           "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
           "with": {
-            "persist-credentials": false
+            "persist-credentials": false,
+            "ref": "${{ inputs.source_sha || github.sha }}"
           }
         },
         {
@@ -119,14 +128,15 @@
         "TUSK_CI_ARCH": "amd64",
         "TUSK_CI_GO": "1.25.0"
       },
-      "name": "Linux — minimum compiler and five-target cross-builds",
+      "name": "Linux \u2014 minimum compiler and five-target cross-builds",
       "runs-on": "ubuntu-24.04",
       "steps": [
         {
           "name": "Checkout",
           "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
           "with": {
-            "persist-credentials": false
+            "persist-credentials": false,
+            "ref": "${{ inputs.source_sha || github.sha }}"
           }
         },
         {

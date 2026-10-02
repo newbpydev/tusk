@@ -2,8 +2,8 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Implementation active - U1/U3/U4/U2 locally accepted; U6 next
-evidence-scope: Five local U1 scenario closures; hosted/native release gates pending
+status: Implementation active - U1/U3/U4/U2 locally accepted; U6 engineering accepted; U5 local drivers next
+evidence-scope: 51 local scenario closures; hosted/native release gates pending
 deepened: 2026-10-01
 ---
 
@@ -219,6 +219,15 @@ packager run exposed unsupported `dist` templating and remains a failed receipt.
 
 ### U6 — Hosted candidate and trusted provenance
 
+Local workflow/API/certificate fixtures exercise fail-closed identity, exact main
+SHA, all six reusable CI jobs, error-skipping/changed-input rejection, fixed
+artifact extraction layout, payload integrity, expiry and lost-response readback.
+They are component evidence. All V63–V72 remain pending actual authorized hosted
+run/artifact/attestation proof. The verifier requires fresh output outside the
+candidate, retained API artifact digest and signed certificate run/attempt/source
+identity for all ten subjects; it does not claim a computed transport ZIP hash.
+GitHub's minimal run repository is followed by current default-branch readback.
+
 - [ ] 006-V63 **Manual candidate isolation:** Authorized default-branch dispatch builds the requested exact main SHA/version and uploads a candidate without a public release/tag/tap write.
 - [ ] 006-V64 **Trusted source/run:** Reject fork/PR source, untrusted workflow/artifact, nonexistent SHA, unauthorized branch/tag and a run identity that does not match the manifest.
 - [ ] 006-V65 **Required native CI:** Candidate pipeline references successful canonical native and minimum jobs for the same source; a pending/skipped/failing/wrong-SHA check blocks accepted candidate production.
@@ -373,3 +382,14 @@ planned command ownership, external gate owners, unchanged historical receipts
 and unchecked execution scenarios. Its document-only results are recorded in the
 workorder. Application/native/hosted/release execution results must be recorded
 later; none is inferred from a well-formed document or live read-only GitHub query.
+
+### U6 local engineering checkpoint — 2026-10-01
+
+The manual workflow, reusable same-SHA native/minimum CI, verified Action pins and
+fail-closed candidate/API/certificate policy pass canonical, minimum and actionlint
+checks. [Receipt](../verification-evidence/006/u6.json) retains observed Red/Green
+and sequential security/reliability review. All V63–V72 hosted closure remains open:
+no workflow has been pushed/dispatched and fake signatures are component evidence.
+The committed local checkpoint enables U5's local driver/selector implementation
+under the source-freeze contract; exact hosted artifact acceptance still depends
+on an authorized trusted run after all release build inputs are committed.

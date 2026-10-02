@@ -29,7 +29,7 @@ contract() {
     ' "$lock" >/dev/null || die 'invalid immutable tool pin catalogue'
     # JSON is valid YAML; structured contracts avoid a lossy ad-hoc YAML parser.
     jq -e --slurpfile pins "$lock" '
-      .on == {pull_request:{branches:["main"]},push:{branches:["main"]},workflow_dispatch:{}} and
+      .on == {pull_request:{branches:["main"]},push:{branches:["main"]},workflow_dispatch:{},workflow_call:{inputs:{source_sha:{required:true,type:"string"}}}} and
       .permissions == {contents:"read"} and (.jobs | keys == ["minimum", "native"]) and
       (tostring | test("secrets\\."; "i") | not) and
       .concurrency["cancel-in-progress"] == true and
@@ -45,7 +45,7 @@ contract() {
         (has("permissions") | not) and (has("secrets") | not)) and
       all(.jobs[].steps[] | select(has("uses"));
         (.uses == ("actions/checkout@" + $pins[0].actions.checkout.sha) and
-          .with["persist-credentials"] == false) or
+          .with == {"persist-credentials":false,ref:"${{ inputs.source_sha || github.sha }}"}) or
         (.uses == ("actions/setup-go@" + $pins[0].actions.setup_go.sha) and .with.cache == true)) and
       ([.jobs.native.steps[] | select(.name == "Release compiler").with["go-version"]] == [$pins[0].go.release]) and
       ([.jobs.minimum.steps[] | select(.name == "Minimum compiler").with["go-version"]] == [$pins[0].go.minimum]) and
@@ -151,7 +151,7 @@ case "${1:-check}" in
         [[ "$(go env GOOS)" != windows ]] || tool+=.exe
         [[ -x "$tool" ]] || die 'run make setup-ci for pinned actionlint'
         [[ "$("$tool" -version | head -1)" == "$(jq -r '.tools.actionlint.version' "$root/scripts/tool-versions.json")" ]] || die 'incorrect actionlint version'
-        "$tool" -shellcheck= -pyflakes= "$root/.github/workflows/ci.yml"
+        "$tool" -shellcheck= -pyflakes= "$root/.github/workflows/ci.yml" "$root/.github/workflows/release.yml"
         ;;
     *) die 'expected contract, preflight, setup, setup-vulnerabilities, drift or check' ;;
 esac

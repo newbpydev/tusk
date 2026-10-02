@@ -38,6 +38,7 @@ test-release:
 	go test -v ./cmd/tusk -run '^TestVersion_'
 	go test -v ./scripts/releasecheck $(TUSK_RELEASE_TEST_ARGS)
 	bash scripts/test/test_release.sh
+	bash scripts/test/test_candidate.sh
 
 setup-release:
 	bash scripts/release.sh setup
@@ -129,6 +130,7 @@ test-scripts:
 	@bash scripts/test/test_docs.sh
 	@bash scripts/test/test_notices.sh
 	@bash scripts/test/test_release.sh
+	@bash scripts/test/test_candidate.sh
 
 all: validate build
 
@@ -304,3 +306,16 @@ setup-vulnerabilities:
 VULNCHECK_BIN ?= bin/tools/govulncheck
 check-vulnerabilities:
 	"$(VULNCHECK_BIN)" ./cmd/tusk
+
+.PHONY: candidate-identity record-candidate verify-candidate check-candidate-workflow
+# Candidate identity crosses recipes only as raw environment values.
+$(foreach parameter,CANDIDATE_DIR CANDIDATE_MANIFEST_SHA256 CANDIDATE_RUN_ID CANDIDATE_VERIFICATION_DIR,$(eval override $(parameter) := $$(value $(parameter))))
+export CANDIDATE_DIR CANDIDATE_MANIFEST_SHA256 CANDIDATE_RUN_ID CANDIDATE_VERIFICATION_DIR
+candidate-identity:
+	bash scripts/candidate.sh identity
+record-candidate:
+	bash scripts/candidate.sh record
+verify-candidate:
+	bash scripts/candidate.sh verify
+check-candidate-workflow:
+	bash scripts/candidate.sh contract

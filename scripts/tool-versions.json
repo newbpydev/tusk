@@ -130,5 +130,22 @@
       "sum": "h1:FpmTZiV4PyqY3lFfuCkz1JftEXb/+8M2NEkjJM5TF4g=",
       "source_sha": "15aacc21377149f263d1e9587435f22d6af66db1"
     }
+  },
+  "release_actions": {
+    "upload_artifact": {
+      "repository": "actions/upload-artifact",
+      "tag": "v4",
+      "sha": "ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    "download_artifact": {
+      "repository": "actions/download-artifact",
+      "tag": "v4",
+      "sha": "d3f86a106a0bac45b974a628896c90dbdf5c8093"
+    },
+    "attest_build_provenance": {
+      "repository": "actions/attest-build-provenance",
+      "tag": "v3",
+      "sha": "977bb373ede98d70efdf65b84cb5f73e068dcc2a"
+    }
   }
 }

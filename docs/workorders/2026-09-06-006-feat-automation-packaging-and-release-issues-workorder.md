@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Implementation active - U1/U3/U4/U2 locally accepted; U6 next; release gates open
+status: Implementation active - U1/U3/U4/U2 locally accepted; U6 engineering accepted; U5 local drivers next; release gates open
 evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
@@ -61,6 +61,10 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-030 | U2 manifest inputs / integrity | P1 | Resolved locally | Bind exact required input keys and hashes to source members and the compiler lock | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
 | 006-ISS-031 | U2 trailing archive data / integrity | P1 | Resolved locally | Finish gzip CRC verification with bounded zero padding; reject hidden trailing streams and unsafe global metadata | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
 | 006-ISS-032 | U2 source prerequisites/modes / portability | P2 | Resolved locally | Install pinned sqlc in owned checkout, fix source tar umask/LF and derive executable modes from Git | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
+| 006-ISS-035 | U6 ID download layout / correctness | P1 | Resolved locally; hosted proof pending | Explicit merge-multiple extracts the unique selected artifact at its reviewed root | Official pinned Action source and observed layout contract Red/Green; hosted execution pending |
+| 006-ISS-036 | U6 verifier output / data integrity | P1 | Resolved locally; hosted proof pending | Require new retained output outside candidate and Git storage | Observed verifier accepted and modified candidate storage; boundary regression Green |
+| 006-ISS-037 | U6 workflow skip/input controls / security | P1 | Resolved locally; hosted proof pending | Reject error-skipping/conditional steps, changed source env and unexpected job/step fields | Three accepted unsafe workflow mutations observed Red; exact structured contract Green |
+| 006-ISS-038 | U6 minimal API repository / contract | P2 | Resolved locally; hosted proof pending | Fetch current repository/default branch separately from minimal Actions run repository | Official REST schema and minimal-run fixture Red/Green; real trusted candidate pending |
 | 006-ISS-034 | U2 special archive modes / security | P2 | Resolved locally | Reject setuid/setgid/sticky bits for every file/directory before payload acceptance | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
 | 006-ISS-033 | U2 literal distribution path / correctness | P1 | Resolved locally | Generate external runtime config changing only literal dist to owned storage; retain canonical hash and actual override separately | Observed Red/Green, real packager and final canonical/minimum receipts in u2.json; foreign/hosted acceptance separate |
 
@@ -252,3 +256,14 @@ gates and owned Kitty observations. Inspector coverage is 95.9% without exemptio
 The source archive builds with minimum Go; all nine B/C assets reproduce exactly.
 Preliminary private validation SHAs are not final source acceptance. U6 hosted
 provenance, foreign native execution/performance and publication remain open.
+
+### U6 local engineering checkpoint — 2026-10-01
+
+The manual workflow, reusable same-SHA native/minimum CI, verified Action pins and
+fail-closed candidate/API/certificate policy pass canonical, minimum and actionlint
+checks. [Receipt](../verification-evidence/006/u6.json) retains observed Red/Green
+and sequential security/reliability review. All V63–V72 hosted closure remains open:
+no workflow has been pushed/dispatched and fake signatures are component evidence.
+The committed local checkpoint enables U5's local driver/selector implementation
+under the source-freeze contract; exact hosted artifact acceptance still depends
+on an authorized trusted run after all release build inputs are committed.
