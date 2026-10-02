@@ -1,0 +1,45 @@
+{
+  "identity": {
+    "cross_model_route": "composer",
+    "model_requested": "composer-2.5-fast",
+    "effort_requested": "fast",
+    "receipt_supported": false,
+    "model_actual": "unverified",
+    "effort_actual": "unverified",
+    "independence_verified": false
+  },
+  "decisions": [
+    {
+      "title": "Mocked verify-candidate can green while live Actions topology differs",
+      "decision": "rejected",
+      "protected_subject": null,
+      "reason": "scripts/candidate.sh:111,116,118 refuse incomplete/wrong-source/run jobs before any acceptance. Exactly identity/build/provenance + five native matrix + one minimum job are declared in .github/workflows/release.yml and ci.yml. V63-V72 remain expressly pending hosted execution (verification plan:222-236); local fixtures are labeled policy-only. No live false acceptance or current topology mismatch was demonstrated; future GitHub shape drift fails closed."
+    },
+    {
+      "title": "Local candidate bytes not bound to artifact transport digest",
+      "decision": "rejected",
+      "protected_subject": "cryptography",
+      "reason": "scripts/candidate.sh:124-130 hashes and cryptographically verifies every archive, notice, checksum, manifest, cask and candidate-run subject against exact source/workflow/run/attempt; verifyInventory enforces complete nine-file inventory. Wrong/partial/mixed payloads cannot meet those subject/inventory guards. Line133 explicitly does not claim ZIP equality. Alternate extraction with identical signed bytes meets the shipped-byte contract; transport rehash is not a missing integrity guard."
+    },
+    {
+      "title": "Release build compiles workflow SHA not input SHA",
+      "decision": "rejected",
+      "protected_subject": "authorization-authentication",
+      "reason": "scripts/candidate.sh:21 requires GITHUB_SHA and GITHUB_WORKFLOW_SHA equal RELEASE_SHA; release.yml:54-56 runs identity before ci/build (build needs identity and ci), and candidate.sh contract enforces the topology and checkout refs. On this revision requested source equals compiled source. The allegation requires a future edit bypassing present tested guards; no current miscompiled accepted candidate is demonstrated. Peer line362 is a diff-coordinate, not a source line; why_it_matters is also misspelled in the raw artifact."
+    },
+    {
+      "title": "gh_deadline_setup fails when driver already exists",
+      "decision": "rejected",
+      "protected_subject": null,
+      "reason": "scripts/candidate.sh:105 and promote.sh:27 create fresh owned receipt directories and refuse collisions before gh_deadline_setup; docs/release-acceptance.md requires fresh retained directories for retries/readback. A prior partial output intentionally remains untouched. Reusing its executable would contradict the recorded-output contract; no current valid retry is blocked."
+    },
+    {
+      "title": "Native CI never runs release packaging gate",
+      "decision": "rejected",
+      "protected_subject": null,
+      "reason": "Native quality CI and trusted packaging are separate planned gates. release.yml:92 runs setup-release/release-check and line100 builds candidate only after ci; make validate includes release configuration mutations and release inspector tests. Actual preliminary packaging/reproducibility was executed in U2/U7 and is not claimed hosted/native proof. Adding a snapshot job to every PR is a different CI policy, not a demonstrated release gate omission or currently admitted bad candidate."
+    }
+  ],
+  "residual_risks_and_testing_gaps": "Pending actual hosted/native proof is a declared scope limit. Future API topology changes, ZIP transport equivalence and hypothetical guard weakening are not retained as defects or recycled soft buckets.",
+  "agreement_promotion": false
+}

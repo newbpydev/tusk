@@ -1,0 +1,44 @@
+{
+  "reviewed_head": "df102176a3ac4630c7f8ff363d9f2bbafd8bfd45",
+  "full_branch": true,
+  "execution": "All eight lenses performed sequentially in parent per AGENTS; no independent local reviewers or validator.",
+  "fast_pass": "No additional obvious actionable issue on fresh committed diff.",
+  "lenses": {
+    "correctness": [
+      "All release JSON consumers preserve field/hash/identity checks after exactly-one-object admission; failed native_path now propagates before export.",
+      "Candidate dispatch, source/version overlay, current main history, compiler/target/build metadata, static Cobra routing and docgen rollback traced."
+    ],
+    "project-standards": [
+      "AGENTS.md root fallback governs all changed paths. Core/ports/storage boundaries unchanged; completion construction storage-free and package mutable state not added.",
+      "Unit Red precedes fixes; minimum/compiler, canonical gate and synchronized authority records observed before df10217. External gates explicitly pending."
+    ],
+    "testing": [
+      "Parser regressions rebind report/gate/acceptance/approval digests and reset remote fixture state; test asserts refusal and zero API access instead of hitting unrelated stale guards.",
+      "Corrected go-env fixture honors requested keys. Failed cygpath reaches intended Windows branch, with Red 0 vs 1 and Green 1. Hash abc known-vector and real shasum-only full-tree receipt inspected.",
+      "Existing workflow mutations, archive malformed inputs/CRC/format, docgen rollback and exact supplied-binary selector assertions checked; mocks explicitly policy-only, not native/provenance proof."
+    ],
+    "maintainability": [
+      "Shared JSON guard has one precise criterion, four maintainer consumers and no app runtime coupling. Portable hash helper stays test-only.",
+      "Small digest repetition preserves standalone script ownership; cask/rest archive declarations enforce separate eligible IDs; ordered GitHub readbacks preserve uncertainty contract. No warranted structural defect."
+    ],
+    "security": [
+      "Single-object approval/acceptance checks fail before privileged APIs; signatures pinned to run/attempt/workflow/source and all payload subject hashes.",
+      "Source/version/filenames passed as literal data; candidate inspectors reject traversal/link/type/oversized data; owner fixture consent never promoted to actual consent. GH host/API URLs/debug settings remain fixed."
+    ],
+    "performance": [
+      "Application startup/completion ordinary calls retain lazy callback registration and zero storage. Review fixes are cold maintainer boundaries.",
+      "Archive file/member limits and bounded GH operations inspected; no demonstrated hot-path or expected-scale regression introduced. Actual fresh hosted candidate performance remains separately pending."
+    ],
+    "api-contract": [
+      "Published CLI JSON/exit behavior untouched. New completion enum/script/error behavior agrees with Cobra tree and generated outputs.",
+      "Manifest, approval, acceptance, verifier receipt and compiler/executable contracts remain consistent across helpers and docs; concatenated stream refusal is intentional malformed-record contract."
+    ],
+    "reliability": [
+      "Native conversion failure now refuses before benchmark/process execution; helper source paths present in actual and fixture trees.",
+      "Owned output collisions, docgen rollback, bounded process joining, tag/asset/current-main readbacks and lost-response reconciliation preserve partial state without blind mutation retries."
+    ]
+  },
+  "findings": 0,
+  "generated_and_evidence_coverage": "Generator/source contracts, source and notice manifests, representative generated outputs and acceptance records; archived prior reports are historical untrusted data.",
+  "no_native_claim": true
+}

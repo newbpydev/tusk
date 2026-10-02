@@ -1,0 +1,66 @@
+[
+  {
+    "reviewer": "correctness",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "project-standards",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "testing",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "maintainability",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "security",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "performance",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "api-contract",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "reliability",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "adversarial-composer",
+    "cross_model_route": "composer",
+    "cross_model_target": "composer",
+    "cross_model_harness": "cursor-agent",
+    "serving_family": "unknown",
+    "independence_verified": false,
+    "model_requested": "composer-2.5-fast",
+    "model_actual": "unverified",
+    "effort_requested": "fast",
+    "effort_actual": "unverified",
+    "receipt_supported": false,
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  }
+]

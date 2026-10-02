@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 owner-requested renewed local simplification and full P0–P2 review loop underway; hosted/native release gates pending
+**Current Status**: Feature 006 renewed local simplification, P0–P2 fixes and clean repeat review complete; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Renewed local ce-simplify-code, full ce-code-review and P0–P2 Red/Green remediation loop (owner instruction; no publication authorized)
+**Active Implementation Target**: Feature 006 — Held after completed owner-requested local review loop; publication deferred (no push/PR authorized)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -805,3 +805,24 @@ model/effort/independence is unverified. No independent agreement is claimed.
 Local scenario closures remain 51; parent U6/U5/U7/U8, Phase 6/G4 and actual
 native/hosted/tap/publication gates remain open. No remote mutation or publication
 is authorized. The active target remains this review/fix loop.
+
+### Renewed local review loop completion — 2026-10-02 UTC
+
+- [x] Apply ce-simplify-code to the full Feature 006 branch (no worthwhile edits).
+- [x] Fix all three confirmed P2 issues with observed Red/Green, focused review,
+  minimum-Go/lint/canonical checks and coherent local commit `df10217`.
+- [x] Repeat full ce-code-review on that committed head to a clean local pass.
+
+Run `20261002-143551-fd10da2c` is complete with no remaining confirmed P0–P2
+finding or unresolved review gate. [Clean repeat receipt](docs/verification-evidence/006/review-r3/acceptance.json)
+retains full coverage, all five rejected peer claims with current guards and
+source binding. Local lenses/finish roles ran sequentially; Claude returned
+HTTP401 and Composer's actual model/effort/independence is unverified. No
+independent agreement is claimed. Both consumed peer jobs are deleted.
+
+Fresh closure canonical validation/build/generated/docs/notices/workflow checks
+pass before the governance/evidence commit. The reviewed executable sources remain unchanged. The local review loop
+is complete and publication remains deferred by the owner. Actual native/hosted,
+tap, cask/performance and publication gates remain open; parent U6/U5/U7/U8,
+Phase 6/G4 and the 51 local scenario count do not change. No push/PR, workflow
+dispatch, tag, draft/release, settings or tap write occurred.

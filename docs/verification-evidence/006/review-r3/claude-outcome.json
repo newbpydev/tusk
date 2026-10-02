@@ -1,0 +1,9 @@
+{
+  "job": "20261002T143614Z-138d2fc8",
+  "state": "done",
+  "result_exit": 3,
+  "provider_outcome": "HTTP401 OAuth access token invalid after provider-capable unrestricted dispatch",
+  "review_produced": false,
+  "model_requested": "claude-opus-5",
+  "effort_requested": "high"
+}

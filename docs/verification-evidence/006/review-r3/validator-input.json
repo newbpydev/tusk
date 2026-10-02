@@ -1,0 +1,28 @@
+{
+  "findings": [],
+  "skip_count": 0,
+  "reason": "No admitted finding remains after source-based admission; no validator batch selected.",
+  "scope": {
+    "mode": "standalone",
+    "base": "30fb5e94cc88aacfc1255198d066a140c77cb38d",
+    "diff_a": "30fb5e94cc88aacfc1255198d066a140c77cb38d",
+    "diff_b": null,
+    "pr": {
+      "number": null,
+      "url": null,
+      "title": null,
+      "body": null,
+      "base_ref_name": null,
+      "head_ref_oid": null,
+      "head_ref": null,
+      "base_ref": null,
+      "has_prior_comments": false
+    },
+    "branch": "feat/automation-packaging-release",
+    "head_sha": "df102176a3ac4630c7f8ff363d9f2bbafd8bfd45",
+    "files": "/tmp/compound-engineering-1000/ce-code-review/20261002-143551-fd10da2c/files.txt",
+    "diff": "/tmp/compound-engineering-1000/ce-code-review/20261002-143551-fd10da2c/full.diff",
+    "tree_is_reviewed_head": true,
+    "untracked_excluded": []
+  }
+}
