@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "reviewed_head": "5c3f63ff9d818071deb6585b9ea6b5c0b12f9349",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37056227612,
+  "native_run_attempts": [
+    1,
+    2
+  ],
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 1,
+  "inline_review_threads": 0,
+  "needs_human": 0,
+  "canonical": {
+    "status": "passed",
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "exit": 0,
+    "log": "r7-canonical-frozen.log.gz",
+    "scope": "Test implementation and lesson stable throughout; completed authority status and receipts recorded afterward."
+  },
+  "implementation_sha256": {
+    "internal/tui/compatibility_test.go": "2a48ada5ee8f812ba79778a8f595dd4041995a772c511aae1e2bda4266e08c39",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "7de8d354a40da0cd8a9719b4bcc9542a2f627abe2c53aea9bf0eaa78b0396d6e"
+  },
+  "remediation_commit": "containing commit",
+  "utc": "2026-10-02T20:22:54.990445+00:00",
+  "hypothesis_update": {
+    "initial": "flaky-infra; unchanged test had four preceding native passes",
+    "action": "one failed-only same-head retry, after all seven reports finished",
+    "result": "same Git add refusal near 10s reproduced; retry alone is insufficient",
+    "repair": "independent per-operation 30s fixture resource contexts, immediate cancellation and explicit expiry/elapsed diagnostics"
+  },
+  "red": {
+    "native_attempt_subcase_seconds": [
+      11.3,
+      10.79
+    ],
+    "controlled_slow_git_exit": 2,
+    "controlled_slow_git_seconds": 10.02,
+    "command": "GOTOOLCHAIN=go1.27.1 make test-tui TUI_TEST_RUN=TestTUI_DependencyCheckoutNeedsNoLFS/glamour with owned delayed Git"
+  },
+  "green": {
+    "controlled_slow_git_exit": 0,
+    "controlled_slow_git_seconds": 15.15,
+    "scope": "Same real init/add/checkout and complete vendor bytes; five-second delay before each command",
+    "native_windows_reexecution": "pending"
+  },
+  "negative": {
+    "owned_stalled_git_exit": 2,
+    "context_diagnostic": "context deadline exceeded",
+    "elapsed_seconds": 30.027938066,
+    "scope": "Exec-replaced sleep process enforces the resource cutoff without descendant-held output"
+  },
+  "limits": [
+    "Original native failure did not print ctx.Err; exact native expiry attribution remains an inference supported by repeated timing, prior passes and the controlled reproducer.",
+    "Controlled Linux delays and stalled-process checks do not replace fresh native Windows or physical terminal proof.",
+    "Resource budget explicitly changes; required no-LFS assertion and product latency/coverage limits do not.",
+    "Sequential main-thread audit does not claim independent model agreement.",
+    "Physical five-host terminals, trusted-main candidate/provenance, exact-byte performance/cask and release/tap publication remain pending."
+  ],
+  "retained_logs_sha256": {
+    "r7-canonical-frozen.log.gz": "c592b84c5ee1d2ab17b1ace8db28ea816e99ba00dbfbc782fc0daabad4ce1c93",
+    "r7-slow-git-green.log.gz": "904a32da89f26d9371a7282295fc704753278086d255a950c52d3c81ef865241",
+    "r7-slow-git-red.log.gz": "e2b52beaf08eed57306925d628041c9cef1ad6a9cd64a083b2260b8252ca3ec9",
+    "r7-stalled-git-negative.log.gz": "4b3edf49ad1528d6e97b8802a83fe6e6a57c7b0532438567a0fb3f1a77770d9c",
+    "windows-first-attempt-excerpt.log.gz": "0db5022cf4e29fe62546938578ba66d5e221164e3bc744938b8b3ce00d52550b",
+    "windows-retry-excerpt.log.gz": "7958174698070e05c12018feca3cf3bcc4e2f656f461bc5e024df71cd5bce93c"
+  }
+}

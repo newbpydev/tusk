@@ -767,3 +767,32 @@ remain unchanged. Fresh native Windows and complete hosted verification remain
 required; see [the R6 receipt](../verification-evidence/006/pr6-r6/acceptance.json).
 The frozen official-Go canonical gate passes. The containing commit records one
 coherent fixture repair; its fresh hosted reports remain required.
+
+### PR #6 seventh complete report-batch repair (2026-10-02)
+
+All seven reports finished on `5c3f63ff9d818071deb6585b9ea6b5c0b12f9349`
+before remediation. Both macOS jobs, all three Linux jobs and Kilo pass with no
+open threads. Windows fails an unchanged no-LFS dependency-checkout fixture
+before the profile repair executes. A failed-only same-head retry reproduces the
+same Git staging failure after roughly ten seconds, invalidating the initial
+transient-failure classification as a sufficient remedy.
+
+The fixture shared one ten-second context across three Git operations. A controlled
+five-second delay before each real operation reproduces the failure and passes
+the same complete checkout after repair. Each operation now has its own bounded
+30-second resource budget; cancellation is immediate and failures include context
+expiry and elapsed time. This explicitly changes the fixture resource budget,
+while preserving every no-LFS/pointer assertion and product latency/coverage limit.
+
+- [x] Wait for the complete seventh set and preserve the failed same-head retry.
+- [x] Observe the delayed real-Git checkout Red/Green and retain an owned stalled
+      process negative that confirms deadline refusal.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+The old native logs did not print `ctx.Err()`; precise expiry attribution remains
+an inference supported by timing and the controlled reproducer. The 51 local
+scenario closures and all physical native/release gates remain unchanged. Fresh
+Windows execution and the complete new hosted set remain required; see [the R7 receipt](../verification-evidence/006/pr6-r7/acceptance.json).
+The frozen official-Go canonical gate passes. The containing commit records one
+coherent fixture repair; its fresh hosted reports remain required.

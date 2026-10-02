@@ -1,0 +1,74 @@
+{
+  "utc": "2026-10-02T20:03:29.171947+00:00",
+  "head": "5c3f63ff9d818071deb6585b9ea6b5c0b12f9349",
+  "all_reports_complete_before_action": true,
+  "checks": [
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37056227612/job/111001491089",
+      "name": "Linux \u2014 minimum compiler and five-target cross-builds",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37056227612/job/111001491503",
+      "name": "darwin/arm64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37056227612/job/111001491516",
+      "name": "linux/arm64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37056227612/job/111001491432",
+      "name": "darwin/amd64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37056227612/job/111001491564",
+      "name": "linux/amd64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "fail",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37056227612/job/111001491559",
+      "name": "windows/amd64 \u2014 release compiler",
+      "state": "FAILURE"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://app.kilo.ai/code-reviews/a8fd2656-bc41-421c-b876-ffe942ae281e",
+      "name": "Kilo Code Review",
+      "state": "SUCCESS"
+    }
+  ],
+  "action": "rerun failed Windows job only, same head, one retry",
+  "classification": "flaky-infra",
+  "evidence": {
+    "test": "TestTUI_DependencyCheckoutNeedsNoLFS/glamour",
+    "test_source_sha256": "6374d955083d985849e74dcaecb84084f4934621d30a44ebc57114ea43f5ea5d",
+    "unchanged_on_heads": [
+      "79dd1e5",
+      "ffe8731",
+      "5c3f63f"
+    ],
+    "preceding_native_passes": [
+      "2026-10-02T18:57:31.2393168Z     --- PASS: TestTUI_DependencyCheckoutNeedsNoLFS/glamour (5.06s)",
+      "2026-10-02T19:02:01.1904767Z     --- PASS: TestTUI_DependencyCheckoutNeedsNoLFS/glamour (3.41s)",
+      "2026-10-02T19:21:00.4494998Z     --- PASS: TestTUI_DependencyCheckoutNeedsNoLFS/glamour (6.69s)",
+      "2026-10-02T19:25:28.2289746Z     --- PASS: TestTUI_DependencyCheckoutNeedsNoLFS/glamour (7.98s)"
+    ],
+    "deadline_seconds": 10,
+    "failing_subcase_seconds": 11.3,
+    "failing_command": "git add .",
+    "diagnostic": "exit status 1, only CRLF warnings; no fatal/error line",
+    "inference": "deadline termination on a slower runner; context.Err was not printed, so retry outcome remains necessary"
+  },
+  "source_changes": false,
+  "threshold_changes": false,
+  "run_id": "37056227612"
+}

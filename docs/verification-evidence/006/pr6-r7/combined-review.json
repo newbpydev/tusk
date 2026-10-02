@@ -1,0 +1,14 @@
+{
+  "scope": "Sequential main-thread audit of the actual no-LFS fixture and related child deadlines",
+  "confirmed_p0_p2": 0,
+  "independent_review": false,
+  "checks": [
+    "All original Git commands, required failing LFS filter, checkout scan and pointer refusal stay identical.",
+    "Context is created for each operation and canceled immediately after CombinedOutput; diagnostics capture ctx.Err before cancel.",
+    "Only test resource budget changes: aggregate 10s becomes independent 30s per command; product latency and coverage guards unchanged.",
+    "Actual controlled delayed full checkout passes; owned stalled command fails with deadline exceeded at 30.0279s.",
+    "Other 10s child in the same file tests the integrity process, not a multi-step Git checkout, and has no equivalent coupled budget.",
+    "Runtime source is unchanged; no new dependency, abstraction or persistent test delay is introduced."
+  ],
+  "source": "https://pkg.go.dev/os/exec#CommandContext"
+}

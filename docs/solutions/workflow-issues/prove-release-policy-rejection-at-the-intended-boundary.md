@@ -150,6 +150,20 @@ reproduces the old lexical comparison failure and passes after explicit conversi
 it does not replace the subsequent native Windows run. See the
 [sixth complete-batch receipt](../../verification-evidence/006/pr6-r6/acceptance.json).
 
+**Keep fixture resource budgets separate from performance assertions.** An owned
+dependency checkout shared one ten-second context across Git init, staging and
+checkout. Two Windows attempts stopped during staging after roughly ten seconds;
+unchanged earlier attempts passed. A controlled five-second delay before each
+real Git operation reproduces the coupled-budget failure and then completes the
+same full checkout after repair. Give each operation a bounded 30-second context
+and cancel it immediately afterward. This changes the fixture's resource budget,
+while its required failing LFS filter, pointer refusal and product latency targets
+remain intact. [CommandContext interrupts its child when the context ends](https://pkg.go.dev/os/exec#CommandContext);
+record `ctx.Err()` before calling `cancel()` so an actual expiry is distinguishable
+from a tool error. A stalled owned process still fails near 30 seconds with the
+explicit deadline diagnostic. Keep the original retry failure and the initial
+transient-failure hypothesis in the [seventh complete-batch receipt](../../verification-evidence/006/pr6-r7/acceptance.json).
+
 ## Related
 
 - [Release acceptance and publication procedure](../../releasing.md)

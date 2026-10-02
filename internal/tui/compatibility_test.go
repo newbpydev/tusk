@@ -30,8 +30,6 @@ func TestTUI_DependencyCheckoutNeedsNoLFS(t *testing.T) {
 			if err := os.CopyFS(dir, os.DirFS("../../third_party/"+module)); err != nil {
 				t.Fatal(err)
 			}
-			ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
-			defer cancel()
 			for _, args := range [][]string{
 				{"init", "--quiet"},
 				{"-c", "filter.lfs.process=", "-c", "filter.lfs.clean=cat", "add", "."},
@@ -39,10 +37,17 @@ func TestTUI_DependencyCheckoutNeedsNoLFS(t *testing.T) {
 				// service without installing Git LFS or contacting a network.
 				{"-c", "filter.lfs.process=", "-c", "filter.lfs.clean=cat", "-c", "filter.lfs.smudge=false", "-c", "filter.lfs.required=true", "checkout-index", "--prefix=" + checkout + string(os.PathSeparator), "--all"},
 			} {
+				// Each Git operation gets its own resource budget; staging the
+				// gallery must not consume the checkout operation's allowance.
+				ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
+				started := time.Now()
 				cmd := exec.CommandContext(ctx, "git", args...)
 				cmd.Dir = dir
-				if output, err := cmd.CombinedOutput(); err != nil {
-					t.Fatalf("dependency checkout must work without Git LFS (%v): %v\n%s", args, err, output)
+				output, err := cmd.CombinedOutput()
+				contextErr := ctx.Err()
+				cancel()
+				if err != nil {
+					t.Fatalf("dependency checkout must work without Git LFS (%v): %v (context: %v, elapsed: %s)\n%s", args, err, contextErr, time.Since(started), output)
 				}
 			}
 			if err := filepath.WalkDir(checkout, func(path string, entry fs.DirEntry, err error) error {
