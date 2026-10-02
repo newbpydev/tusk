@@ -8,7 +8,9 @@ replacements. A versioned Go install from a module proxy cannot resolve them.
 
 Install Git, Go 1.25.0 or newer, **GNU Make** and **Bash**. `make setup` checks Go;
 it does not install the other prerequisites. `make validate` also requires a
-native C compiler for Go's race detector and jq 1.7+ for script fixtures. Linux uses
+native C compiler for Go's race detector and jq for script fixtures. Windows
+requires jq 1.7+ with binary output support; `make setup` and `make preflight-ci`
+check that capability and explain how to repair it. Linux uses
 GCC; macOS uses the Command Line Tools compiler. Windows developers use native
 Go, Git Bash, GNU Make and native GCC, with Make/GCC on PATH. WSL checks do not
 establish native Windows behavior. Python, Kitty and jq are not runtime requirements.

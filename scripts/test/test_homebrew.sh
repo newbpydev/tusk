@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+jq_binary_option=''
+case "${OSTYPE:-}" in msys*|cygwin*) jq_binary_option=--binary ;; esac
+export jq_binary_option
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
@@ -16,7 +19,7 @@ cp "$root/Makefile" "$scratch/fixture/"
 cp "$root/scripts/gh_deadline.sh" "$scratch/fixture/scripts/"
 cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
 for mutation in '.homebrew_casks[0].skip_upload=false' '.homebrew_casks[0].hooks={post:{install:"xattr"}}' '.homebrew_casks[0].zap={trash:["~/.local/share/tusk"]}' '.homebrew_casks[0].ids=["tusk"]' '.homebrew_casks[0].repository.token="secret"' '.homebrew_casks[0].manpages=[]' '.homebrew_casks[0].custom_block="system(\"evil\")"' '.builds[1].goos=["linux","darwin"]';do
- jq --binary "$mutation" "$root/.goreleaser.yaml" >"$scratch/fixture/.goreleaser.yaml"
+ jq ${jq_binary_option:+"--binary"} "$mutation" "$root/.goreleaser.yaml" >"$scratch/fixture/.goreleaser.yaml"
  expect 1 "reject cask mutation: $mutation" bash "$scratch/fixture/scripts/release.sh" contract
 done
 printf '#!/usr/bin/env bash\nexit 44\n' >"$scratch/bin/gh";chmod +x "$scratch/bin/gh"

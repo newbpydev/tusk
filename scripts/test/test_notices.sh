@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+jq_binary_option=''
+case "${OSTYPE:-}" in msys*|cygwin*) jq_binary_option=--binary ;; esac
+export jq_binary_option
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
@@ -30,18 +33,24 @@ cat >"$scratch/crlf-bin/jq" <<'JQ'
 #!/usr/bin/env bash
 set -euo pipefail
 binary=false
+args=()
 for arg in "$@"; do
-    case "$arg" in --binary|-b) binary=true ;; esac
+    case "$arg" in --binary|-b) binary=true ;; *) args+=("$arg");; esac
 done
 output=$(mktemp)
 trap 'rm -f "$output"' EXIT
 status=0
-"$FIXTURE_REAL_JQ" --binary "$@" >"$output" || status=$?
+if "$FIXTURE_REAL_JQ" --binary --null-input empty >/dev/null 2>&1; then
+    "$FIXTURE_REAL_JQ" --binary "${args[@]}" >"$output" || status=$?
+else
+    "$FIXTURE_REAL_JQ" "${args[@]}" >"$output" || status=$?
+fi
 if "$binary"; then cat "$output"; else sed 's/$/\r/' "$output"; fi
 exit "$status"
 JQ
 chmod +x "$scratch/crlf-bin/jq"
-expect 0 'Windows JSON output preserves the full notice inventory' env PATH="$scratch/crlf-bin:$PATH" FIXTURE_REAL_JQ="$(command -v jq)" bash "$root/scripts/notices.sh" check "$fixture"
+printf 'export OSTYPE=msys\n' >"$scratch/windows-json-env"
+expect 0 'Windows JSON output preserves the full notice inventory' env BASH_ENV="$scratch/windows-json-env" PATH="$scratch/crlf-bin:$PATH" FIXTURE_REAL_JQ="$(command -v jq)" bash "$root/scripts/notices.sh" check "$fixture"
 for mutation in unclassified missing-module wrong-version traversal missing-replacement missing-asset missing-asset-entry missing-sqlite-notice missing-go-notice; do
     cp "$root/scripts/notices.json" "$fixture/scripts/notices.json"
     case "$mutation" in
@@ -55,7 +64,7 @@ for mutation in unclassified missing-module wrong-version traversal missing-repl
         missing-sqlite-notice) filter='(.modules[]|select(.path=="modernc.org/sqlite")|.licenses) |= map(select(.file!="LICENSE-SQLITE"))' ;;
         missing-go-notice) filter='.extras |= .[1:]' ;;
     esac
-    jq --binary "$filter" "$root/scripts/notices.json" >"$fixture/scripts/notices.json"
+    jq ${jq_binary_option:+"--binary"} "$filter" "$root/scripts/notices.json" >"$fixture/scripts/notices.json"
     cp "$root/THIRD_PARTY_NOTICES.md" "$fixture/"
     expect 1 "distribution refuses $mutation" bash "$root/scripts/notices.sh" generate "$fixture"
     expect 0 "failed $mutation preserves accepted notices" cmp "$root/THIRD_PARTY_NOTICES.md" "$fixture/THIRD_PARTY_NOTICES.md"

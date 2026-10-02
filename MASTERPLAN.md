@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 PR #6 published; seventh complete report batch locally validated; fresh hosted set pending; native/release gates pending
+**Current Status**: Feature 006 PR #6 published; tenth complete report batch locally validated; fresh hosted/native/release gates open
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Publish the validated ninth combined PR #6 report-batch repair, then settle all fresh reports; native/release acceptance remains pending
+**Active Implementation Target**: Feature 006 — Publish the validated tenth combined PR #6 report-batch repair, then settle all fresh reports; native/release acceptance remains pending
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -1123,3 +1123,27 @@ remain unchanged; see [the R9 receipt](docs/verification-evidence/006/pr6-r9/acc
 The frozen official-Go canonical gate, complete CRLF-output shell model and
 precise OS-predicate mutation control pass. The containing commit records one
 combined repair; fresh hosted/native reports remain required for settlement.
+
+### PR #6 tenth complete report-batch repair (2026-10-02)
+
+All seven reports on `79c34f9c8be00ff23c6fc9a2f560a142b88b95d3` completed before
+this combined repair: both macOS gates passed, three Linux gates rejected the
+Windows-only jq flag, Windows passed notices/OS controls and then selected
+installed `gh.exe` instead of the owned candidate fixture, and Kilo identified
+stale status headers plus missing actionable jq prerequisite checks.
+
+Unix jq callers now omit binary mode; MSYS/Cygwin callers select it. Windows
+setup/preflight probe binary-output support and name the jq 1.7+ prerequisite.
+Native owned GitHub fixture launchers isolate candidate, promotion and metadata
+API tests. New negative/control tests reproduce the prerequisites and preserve
+literal argv, streams and exit codes. No product Go or production GitHub deadline
+behavior changes. Current authority headers are synchronized with this unit.
+
+- [x] Wait for all seven reports before changes or replies.
+- [x] Observe Red for legacy Unix jq, unsupported Windows prerequisites and missing native fixture capability.
+- [x] Pass focused controls, full legacy/CRLF shell models and the frozen canonical gate.
+- [ ] Settle every fresh hosted report after combined repair publication.
+
+The 51 local closures remain unchanged. Physical terminals, trusted-main candidate
+provenance, exact-byte performance/cask/release acceptance and tap/settings/release
+authority remain pending. See [the R10 receipt](docs/verification-evidence/006/pr6-r10/acceptance.json).

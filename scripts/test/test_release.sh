@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+jq_binary_option=''
+case "${OSTYPE:-}" in msys*|cygwin*) jq_binary_option=--binary ;; esac
+export jq_binary_option
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
@@ -31,7 +34,7 @@ done
 expect 0 'local release configuration contract' bash "$root/scripts/release.sh" contract
 mkdir -p "$scratch/compiler/scripts" "$scratch/compiler-bin"
 cp "$root/Makefile" "$scratch/compiler/"
-jq --binary '.go.release="1.27.2"' "$root/scripts/tool-versions.json" >"$scratch/compiler/scripts/tool-versions.json"
+jq ${jq_binary_option:+"--binary"} '.go.release="1.27.2"' "$root/scripts/tool-versions.json" >"$scratch/compiler/scripts/tool-versions.json"
 cat >"$scratch/compiler-bin/go" <<'GO'
 #!/usr/bin/env bash
 [[ "$GOTOOLCHAIN" == go1.27.2 && "$CGO_ENABLED" == 0 ]] || exit 62
@@ -42,7 +45,7 @@ expect 0 'fixture compiler follows the release catalog' env PATH="$scratch/compi
 mkdir -p "$scratch/config/scripts"
 cp "$root/scripts/release.sh" "$scratch/config/scripts/"
 for mutation in '.builds[0].hooks = {pre:["touch outside"]}' '.archives[0].files += [{src:".env"}]' '.announce = {slack:{enabled:true}}' '.builds += [.builds[0]]' '.checksum.disable = false'; do
-    jq --binary "$mutation" "$root/.goreleaser.yaml" >"$scratch/config/.goreleaser.yaml"
+    jq ${jq_binary_option:+"--binary"} "$mutation" "$root/.goreleaser.yaml" >"$scratch/config/.goreleaser.yaml"
     expect 1 "reject packager mutation: $mutation" bash "$scratch/config/scripts/release.sh" contract
 done
 # Intentionally literal attack strings.
@@ -72,7 +75,7 @@ cp "$root/scripts/release.sh" "$scratch/atomic/scripts/"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$scratch/packager/goreleaser"
 tar -czf "$scratch/packager.tar.gz" -C "$scratch/packager" goreleaser
 archive_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/packager.tar.gz")
-jq --binary --arg hash "$archive_hash" '.tools.goreleaser.assets.linux_amd64.sha256=$hash' "$root/scripts/tool-versions.json" >"$scratch/atomic/scripts/tool-versions.json"
+jq ${jq_binary_option:+"--binary"} --arg hash "$archive_hash" '.tools.goreleaser.assets.linux_amd64.sha256=$hash' "$root/scripts/tool-versions.json" >"$scratch/atomic/scripts/tool-versions.json"
 printf 'accepted archive\n' >"$scratch/atomic-tools/goreleaser.archive"
 cat >"$scratch/atomic-bin/go" <<'GO'
 #!/usr/bin/env bash

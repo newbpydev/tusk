@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
+jq_binary_option=''
+case "${OSTYPE:-}" in msys*|cygwin*) jq_binary_option=--binary ;; esac
 mode=${1:-check}
 root=${2:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
 case "$mode" in check|generate) ;; *) echo 'Expected check or generate' >&2; exit 2 ;; esac
@@ -14,7 +16,7 @@ digest() {
 }
 inventory=scripts/notices.json
 [[ -s LICENSE && -s "$inventory" ]] || fail 'first-party license or reviewed inventory missing'
-jq --binary -e '.contract == "tusk-notices/v1" and (.modules|length)>0 and
+jq ${jq_binary_option:+"--binary"} -e '.contract == "tusk-notices/v1" and (.modules|length)>0 and
     all(.modules[]; (.licenses|length)>0) and
     all((.modules[].licenses[], .extras[].licenses[], .assets[]);
         (.classification | IN("MIT", "MIT-declaration", "BSD-2-Clause", "BSD-3-Clause", "MPL-2.0", "Apache-2.0", "attribution", "public-domain", "BSD-3-Clause AND MIT AND BSD-2-Clause AND public-domain")) and
@@ -29,13 +31,13 @@ cp go.mod "$scratch/go.mod"
 cp go.sum "$scratch/go.sum"
 go mod download -modfile="$scratch/go.mod" all
 go list -modfile="$scratch/go.mod" -m -json all >"$scratch/modules"
-jq --binary -s '[.[]|select(.Main != true)|{path:.Path,version:.Version,replacement:(.Replace.Path // "")}]|sort_by(.path)' "$scratch/modules" >"$scratch/current"
-jq --binary '[.modules[]|{path,version,replacement}]|sort_by(.path)' "$inventory" >"$scratch/accepted"
+jq ${jq_binary_option:+"--binary"} -s '[.[]|select(.Main != true)|{path:.Path,version:.Version,replacement:(.Replace.Path // "")}]|sort_by(.path)' "$scratch/modules" >"$scratch/current"
+jq ${jq_binary_option:+"--binary"} '[.modules[]|{path,version,replacement}]|sort_by(.path)' "$inventory" >"$scratch/accepted"
 cmp -s "$scratch/current" "$scratch/accepted" || fail 'module graph differs from reviewed inventory'
 go_root=$(go env GOROOT)
 go_root=${go_root//\\//}
 find docs/assets third_party/glamour/styles/gallery -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.svg' \) | LC_ALL=C sort >"$scratch/assets-current"
-jq --binary -r '.assets[].file' "$inventory" | LC_ALL=C sort >"$scratch/assets-accepted"
+jq ${jq_binary_option:+"--binary"} -r '.assets[].file' "$inventory" | LC_ALL=C sort >"$scratch/assets-accepted"
 cmp -s "$scratch/assets-current" "$scratch/assets-accepted" || fail 'checked-in asset inventory is incomplete'
 {
     cat <<'EOF'
@@ -62,7 +64,7 @@ https://proxy.golang.org/github.com/hashicorp/golang-lru/v2/@v/v2.0.7.zip
 
 EOF
     while IFS=$'\t' read -r module version replacement; do
-        module_root=$(jq --binary -rs --arg path "$module" '.[]|select(.Path==$path)|.Replace.Dir // .Dir // empty' "$scratch/modules")
+        module_root=$(jq ${jq_binary_option:+"--binary"} -rs --arg path "$module" '.[]|select(.Path==$path)|.Replace.Dir // .Dir // empty' "$scratch/modules")
         [[ -n "$module_root" ]] || fail "download sources first: go mod download $module@$version"
         module_root=${module_root//\\//}
         find "$module_root" -type f \( -iname 'license*' -o -iname 'licence*' -o -iname 'copying*' -o -iname 'copyright*' -o -iname 'notice*' \) \
@@ -72,7 +74,7 @@ EOF
         if [[ "$module" == github.com/mattn/go-localereader && ! -s "$scratch/grants-current" ]]; then
             printf 'README.md\n' >"$scratch/grants-current"
         fi
-        jq --binary -r --arg path "$module" '.modules[]|select(.path==$path)|.licenses[].file' "$inventory" | LC_ALL=C sort >"$scratch/grants-accepted"
+        jq ${jq_binary_option:+"--binary"} -r --arg path "$module" '.modules[]|select(.path==$path)|.licenses[].file' "$inventory" | LC_ALL=C sort >"$scratch/grants-accepted"
         cmp -s "$scratch/grants-current" "$scratch/grants-accepted" || fail "incomplete grant inventory: $module"
         printf '\n## %s %s\n\n' "$module" "$version"
         # Literal Markdown backticks, never shell command substitutions.
@@ -84,20 +86,20 @@ EOF
             printf '### %s (%s)\n\n```text\n' "$file" "$classification"
             cat "$module_root/$file"
             printf '\n```\n'
-        done < <(jq --binary -r --arg path "$module" '.modules[]|select(.path==$path)|.licenses[]|[.file,.classification,.sha256]|@tsv' "$inventory")
-    done < <(jq --binary -r '.modules[]|[.path,.version,.replacement]|@tsv' "$inventory")
+        done < <(jq ${jq_binary_option:+"--binary"} -r --arg path "$module" '.modules[]|select(.path==$path)|.licenses[]|[.file,.classification,.sha256]|@tsv' "$inventory")
+    done < <(jq ${jq_binary_option:+"--binary"} -r '.modules[]|[.path,.version,.replacement]|@tsv' "$inventory")
     while IFS=$'\t' read -r name file classification hash; do
         [[ -f "$go_root/$file" && "$(digest "$go_root/$file")" == "$hash" ]] || fail "missing/changed $name notice"
         printf '\n## %s (%s)\n\n```text\n' "$name" "$classification"
         cat "$go_root/$file"
         printf '\n```\n'
-    done < <(jq --binary -r '.extras[]|.name as $name|.licenses[]|[$name,.file,.classification,.sha256]|@tsv' "$inventory")
+    done < <(jq ${jq_binary_option:+"--binary"} -r '.extras[]|.name as $name|.licenses[]|[$name,.file,.classification,.sha256]|@tsv' "$inventory")
     printf '\n## Checked-in assets\n\n'
     while IFS=$'\t' read -r file classification hash source; do
         [[ -f "$file" && "$(digest "$file")" == "$hash" ]] || fail "missing/changed asset: $file"
         # shellcheck disable=SC2016
         printf -- '- `%s`: %s; %s. SHA256 `%s`.\n' "$file" "$classification" "$source" "$hash"
-    done < <(jq --binary -r '.assets[]|[.file,.classification,.sha256,.source]|@tsv' "$inventory")
+    done < <(jq ${jq_binary_option:+"--binary"} -r '.assets[]|[.file,.classification,.sha256,.source]|@tsv' "$inventory")
 } >"$scratch/notices"
 if [[ "$mode" == check ]]; then
     cmp -s "$scratch/notices" THIRD_PARTY_NOTICES.md || fail 'missing/stale generated notices; review inventory then make generate-notices'

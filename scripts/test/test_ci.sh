@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+jq_binary_option=''
+case "${OSTYPE:-}" in msys*|cygwin*) jq_binary_option=--binary ;; esac
+export jq_binary_option
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
@@ -47,12 +50,12 @@ for mutation in floating write missing-race missing-native wrong-go credentials 
         credentials) filter='.jobs.native.steps[0].with["persist-credentials"] = true' ;;
         privileged) filter='.on.pull_request_target = {}' ;;
     esac
-    jq --binary "$filter" "$root/.github/workflows/ci.yml" >"$scratch/config/.github/workflows/ci.yml"
+    jq ${jq_binary_option:+"--binary"} "$filter" "$root/.github/workflows/ci.yml" >"$scratch/config/.github/workflows/ci.yml"
     expect 1 "CI refuses $mutation" bash "$root/scripts/ci-check.sh" contract "$scratch/config"
 done
 cp "$root/.github/workflows/ci.yml" "$scratch/config/.github/workflows/ci.yml"
 for filter in '.tools.actionlint.assets.linux_amd64.sha256 = "bad"' '.actions.checkout.sha = "main"' 'del(.go.release)' '.tools.goreleaser.version = "latest"'; do
-    jq --binary "$filter" "$root/scripts/tool-versions.json" >"$scratch/config/scripts/tool-versions.json"
+    jq ${jq_binary_option:+"--binary"} "$filter" "$root/scripts/tool-versions.json" >"$scratch/config/scripts/tool-versions.json"
     expect 1 "CI refuses invalid tool pin: $filter" bash "$root/scripts/ci-check.sh" contract "$scratch/config"
 done
 
@@ -61,7 +64,7 @@ done
 mkdir -p "$scratch/runner/c/mingw64/bin"
 touch "$scratch/runner/c/mingw64/bin/make.exe" "$scratch/runner/c/mingw64/bin/gcc.exe"
 chmod +x "$scratch/runner/c/mingw64/bin/"*.exe
-jq --binary -er '.jobs.native.steps[] | select(.name=="Windows native tooling").run' "$root/.github/workflows/ci.yml" >"$scratch/windows-step"
+jq ${jq_binary_option:+"--binary"} -er '.jobs.native.steps[] | select(.name=="Windows native tooling").run' "$root/.github/workflows/ci.yml" >"$scratch/windows-step"
 cat >"$scratch/drive-paths" <<'EOF'
 test() {
     if [[ $# == 2 && "$1" == -x && "$2" == /c/* ]]; then
@@ -112,6 +115,24 @@ echo "${FIXTURE_UNAME:-MINGW64_NT-10.0}"
 EOF
 chmod +x "$scratch/bin/"*
 expect 0 'native Windows prerequisite fixture' env PATH="$scratch/bin:$PATH" TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
+mkdir -p "$scratch/legacy-jq"
+cat >"$scratch/legacy-jq/jq" <<'JQ'
+#!/usr/bin/env bash
+for arg in "$@"; do
+    case "$arg" in --binary|-b) echo 'jq: Unknown option --binary' >&2; exit 2;; esac
+done
+exec "$FIXTURE_LEGACY_JQ" "$@"
+JQ
+chmod +x "$scratch/legacy-jq/jq"
+printf 'export OSTYPE=linux-gnu\n' >"$scratch/unix-env"
+printf 'export OSTYPE=msys\n' >"$scratch/windows-env"
+expect 0 'Unix jq does not require the Windows binary option' env PATH="$scratch/legacy-jq:$PATH" FIXTURE_LEGACY_JQ="$(command -v jq)" BASH_ENV="$scratch/unix-env" bash "$root/scripts/ci-check.sh" contract
+expect 1 'Windows preflight rejects jq without binary output support' env PATH="$scratch/legacy-jq:$scratch/bin:$PATH" FIXTURE_LEGACY_JQ="$(command -v jq)" BASH_ENV="$scratch/windows-env" bash "$root/scripts/ci-check.sh" preflight
+cp "$scratch/output" "$scratch/jq-refusal"
+expect 0 'Windows jq prerequisite has an actionable diagnostic' grep -Fq 'Windows requires jq 1.7+ with binary output support' "$scratch/jq-refusal"
+expect 1 'Windows setup rejects jq without binary output support' env PATH="$scratch/legacy-jq:$scratch/bin:$PATH" FIXTURE_LEGACY_JQ="$(command -v jq)" BASH_ENV="$scratch/windows-env" bash "$root/scripts/setup.sh"
+cp "$scratch/output" "$scratch/jq-refusal"
+expect 0 'Windows setup explains the jq prerequisite' grep -Fq 'Windows requires jq 1.7+ with binary output support' "$scratch/jq-refusal"
 expect 1 'cross compiler cannot impersonate a native Windows host' env PATH="$scratch/bin:$PATH" FIXTURE_GO_HOST=linux TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
 expect 1 'WSL shell cannot close native Windows acceptance' env PATH="$scratch/bin:$PATH" FIXTURE_UNAME=Linux TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
 expect 1 'missing Make is actionable' env TUSK_CI_MAKE=missing-tusk-make bash "$root/scripts/ci-check.sh" preflight
@@ -140,6 +161,8 @@ chmod +x "$scratch/bin/curl"
 expect 1 'corrupt tool download is rejected' env PATH="$scratch/bin:$PATH" FIXTURE_CURL_CALLS="$scratch/curl-calls" TUSK_CI_TOOL_DIR="$scratch/install/bin/tools" bash "$root/scripts/ci-check.sh" setup
 expect 0 'digest failure reaches the actual download boundary' grep -Fxq 'curl reached' "$scratch/curl-calls"
 expect 0 'corrupt download preserves accepted executable' is_accepted_tool "$scratch/install/bin/tools/actionlint"
+# The variable belongs to the generated fixture script.
+# shellcheck disable=SC2016
 printf '#!/usr/bin/env bash\nprintf "failed curl reached\\n" >>"$FIXTURE_CURL_CALLS"\nexit 19\n' >"$scratch/bin/curl"
 expect 1 'failed tool download propagates' env PATH="$scratch/bin:$PATH" FIXTURE_CURL_CALLS="$scratch/curl-calls" TUSK_CI_TOOL_DIR="$scratch/install/bin/tools" bash "$root/scripts/ci-check.sh" setup
 expect 0 'failed download reaches the actual request boundary' grep -Fxq 'failed curl reached' "$scratch/curl-calls"

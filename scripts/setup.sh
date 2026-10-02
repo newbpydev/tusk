@@ -28,6 +28,15 @@ else
     exit 1
 fi
 
+case "${OSTYPE:-}" in
+    msys*|cygwin*)
+        if ! command -v jq >/dev/null 2>&1 || ! jq --binary --null-input empty >/dev/null 2>&1; then
+            echo 'ERROR: Windows requires jq 1.7+ with binary output support; install a current native jq.exe.' >&2
+            exit 1
+        fi
+        ;;
+esac
+
 # Ensure bin directory exists
 mkdir -p bin
 

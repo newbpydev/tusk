@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+jq_binary_option=''
+case "${OSTYPE:-}" in msys*|cygwin*) jq_binary_option=--binary ;; esac
+export jq_binary_option
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 scratch=$(mktemp -d)
 scratch=$(cd "$scratch" && pwd -P)
@@ -36,7 +39,7 @@ if [[ -f "$root/scripts/release_smoke.sh" ]];then
  cp "$scratch/accepted" "$scratch/original-accepted"
  fixture_os=$(go env GOHOSTOS);fixture_arch=$(go env GOHOSTARCH)
  hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/accepted")
- jq --binary -n --arg hash "$hash" --arg target "$fixture_os/$fixture_arch" '{schema:1,mode:"candidate",version:"0.3.0",source_sha:("a"*40),compiler:"1.27.1",targets:[{target:$target,archive:"payload.tar.gz",executable_sha256:$hash}]}' >"$scratch/candidate/assets/release-manifest.json"
+ jq ${jq_binary_option:+"--binary"} -n --arg hash "$hash" --arg target "$fixture_os/$fixture_arch" '{schema:1,mode:"candidate",version:"0.3.0",source_sha:("a"*40),compiler:"1.27.1",targets:[{target:$target,archive:"payload.tar.gz",executable_sha256:$hash}]}' >"$scratch/candidate/assets/release-manifest.json"
  manifest=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/release-manifest.json")
  cat >"$scratch/bin/go" <<'GO'
 #!/usr/bin/env bash
@@ -70,7 +73,7 @@ exit 23
 CYGPATH
  chmod +x "$scratch/bin/uname" "$scratch/bin/cygpath"
  cp "$scratch/candidate/assets/release-manifest.json" "$scratch/original-manifest.json"
- jq --binary '.targets[0].target="windows/amd64"' "$scratch/original-manifest.json" >"$scratch/candidate/assets/release-manifest.json"
+ jq ${jq_binary_option:+"--binary"} '.targets[0].target="windows/amd64"' "$scratch/original-manifest.json" >"$scratch/candidate/assets/release-manifest.json"
  windows_manifest=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/release-manifest.json")
  expect 1 'failed native path conversion refuses binary acceptance' "${preflight[@]}" FIXTURE_OS=windows FIXTURE_ARCH=amd64 CANDIDATE_MANIFEST_SHA256="$windows_manifest" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
  cat >"$scratch/bin/cygpath" <<'CYGPATH'
@@ -91,9 +94,9 @@ CYGPATH
  rm "$scratch/bin/uname" "$scratch/bin/cygpath"
  expect 1 'wrong pinned manifest refused' "${preflight[@]}" CANDIDATE_MANIFEST_SHA256="$(printf 'b%.0s' {1..64})" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
  expect 1 'trusted acceptance needs actual verification receipt' "${preflight[@]}" RELEASE_EVIDENCE_SCOPE=trusted-candidate bash "$scratch/fixture/scripts/release_smoke.sh" preflight
- jq --binary -n --arg hash "$manifest" '{status:"verified",repository:"newbpydev/tusk",workflow:".github/workflows/release.yml",manifest_sha256:$hash,source_sha:("a"*40),version:"v0.3.0"}' >"$scratch/verified.json"
+ jq ${jq_binary_option:+"--binary"} -n --arg hash "$manifest" '{status:"verified",repository:"newbpydev/tusk",workflow:".github/workflows/release.yml",manifest_sha256:$hash,source_sha:("a"*40),version:"v0.3.0"}' >"$scratch/verified.json"
  expect 0 'single trusted verification receipt accepted' "${preflight[@]}" RELEASE_EVIDENCE_SCOPE=trusted-candidate CANDIDATE_VERIFICATION_RECEIPT="$scratch/verified.json" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
- jq --binary '.status="not-verified"' "$scratch/verified.json" >"$scratch/concatenated.json"
+ jq ${jq_binary_option:+"--binary"} '.status="not-verified"' "$scratch/verified.json" >"$scratch/concatenated.json"
  cat "$scratch/verified.json" >>"$scratch/concatenated.json"
  expect 1 'concatenated trusted verification receipt refused' "${preflight[@]}" RELEASE_EVIDENCE_SCOPE=trusted-candidate CANDIDATE_VERIFICATION_RECEIPT="$scratch/concatenated.json" bash "$scratch/fixture/scripts/release_smoke.sh" preflight
  expect 1 'unsupported evidence label refused' "${preflight[@]}" RELEASE_EVIDENCE_SCOPE=anything bash "$scratch/fixture/scripts/release_smoke.sh" preflight

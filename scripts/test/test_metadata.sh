@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+jq_binary_option=''
+case "${OSTYPE:-}" in msys*|cygwin*) jq_binary_option=--binary ;; esac
+export jq_binary_option
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 make -n -C "$root" prepare-repository-metadata >/dev/null
 make -n -C "$root" apply-repository-metadata >/dev/null
@@ -22,9 +25,9 @@ cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
 cp "$root/.github/repository-metadata.json" "$scratch/fixture/.github/"
 printf preview-fixture >"$scratch/fixture/docs/assets/tusk-tui.png"
 payload_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/fixture/.github/repository-metadata.json")
-jq --binary -n '{schema:1,status:"published",repository:"newbpydev/tusk",release_id:8,version:"v0.3.0",source_sha:("a"*40),assets_verified:9,fixture:true}' >"$scratch/release-receipt.json"
+jq ${jq_binary_option:+"--binary"} -n '{schema:1,status:"published",repository:"newbpydev/tusk",release_id:8,version:"v0.3.0",source_sha:("a"*40),assets_verified:9,fixture:true}' >"$scratch/release-receipt.json"
 release_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/release-receipt.json")
-jq --binary -n --arg payload "$payload_hash" --arg release "$release_hash" '{schema:1,status:"owner-approved",action:"metadata",repository:"newbpydev/tusk",documentation_sha:("a"*40),payload_sha256:$payload,release_receipt_sha256:$release,approval_reference:"fixture only; not actual owner consent"}' >"$scratch/approval.json"
+jq ${jq_binary_option:+"--binary"} -n --arg payload "$payload_hash" --arg release "$release_hash" '{schema:1,status:"owner-approved",action:"metadata",repository:"newbpydev/tusk",documentation_sha:("a"*40),payload_sha256:$payload,release_receipt_sha256:$release,approval_reference:"fixture only; not actual owner consent"}' >"$scratch/approval.json"
 printf '{"full_name":"newbpydev/tusk","description":"","homepage":""}' >"$scratch/repository.json"
 printf '{"names":[]}' >"$scratch/topics.json"
 cat >"$scratch/bin/git" <<'GIT'
@@ -32,7 +35,7 @@ cat >"$scratch/bin/git" <<'GIT'
 shift 2
 case "$1" in rev-parse) printf 'a%.0s' {1..40};;status) ;;*) exit 77;;esac
 GIT
-cat >"$scratch/bin/gh" <<'GH'
+cat >"$scratch/bin/gh-script" <<'GH'
 #!/usr/bin/env bash
 set -euo pipefail
 [[ "${GH_HOST:-}" == github.com && -z "${GH_DEBUG:-}" && -z "${DEBUG:-}" ]] || exit 78
@@ -44,13 +47,13 @@ while [[ $# -gt 0 ]];do
  case "$1" in --method) method=$2;shift 2;;--input) input=$2;shift 2;;*) shift;;esac
 done
 case "$endpoint:$method" in
- repos/newbpydev/tusk/releases/8:GET) jq --binary -n '{id:8,draft:false,tag_name:"v0.3.0",target_commitish:("a"*40)}' ;;
- repos/newbpydev/tusk/git/ref/heads/main:GET) jq --binary -n --arg changed "${FIXTURE_MAIN_CHANGED:-0}" '{object:{type:"commit",sha:((if $changed=="1" then "b" else "a" end)*40)}}' ;;
+ repos/newbpydev/tusk/releases/8:GET) jq ${jq_binary_option:+"--binary"} -n '{id:8,draft:false,tag_name:"v0.3.0",target_commitish:("a"*40)}' ;;
+ repos/newbpydev/tusk/git/ref/heads/main:GET) jq ${jq_binary_option:+"--binary"} -n --arg changed "${FIXTURE_MAIN_CHANGED:-0}" '{object:{type:"commit",sha:((if $changed=="1" then "b" else "a" end)*40)}}' ;;
  repos/newbpydev/tusk:GET) cat "$FIXTURE_ROOT/repository.json" ;;
  repos/newbpydev/tusk/topics:GET) cat "$FIXTURE_ROOT/topics.json" ;;
  repos/newbpydev/tusk:PATCH)
-  jq --binary -e 'keys==["description","homepage"]' "$input" >/dev/null || exit 77
-  jq --binary '.+{full_name:"newbpydev/tusk"}' "$input" >"$FIXTURE_ROOT/repository.json"
+  jq ${jq_binary_option:+"--binary"} -e 'keys==["description","homepage"]' "$input" >/dev/null || exit 77
+  jq ${jq_binary_option:+"--binary"} '.+{full_name:"newbpydev/tusk"}' "$input" >"$FIXTURE_ROOT/repository.json"
   [[ "${FIXTURE_LOST:-0}" != 1 ]] || exit 49 ;;
  repos/newbpydev/tusk/topics:PUT)
   [[ "${FIXTURE_TOPICS_FAIL:-0}" != 1 ]] || exit 47
@@ -60,12 +63,21 @@ case "$endpoint:$method" in
 esac
 GH
 chmod +x "$scratch/bin/"*
-invoke=(env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 FIXTURE_ROOT="$scratch" METADATA_AUTHORIZATION="$scratch/approval.json" METADATA_RELEASE_RECEIPT="$scratch/release-receipt.json")
+fixture_gh_shell=$(command -v bash)
+fixture_gh_script="$scratch/bin/gh-script"
+fixture_gh_binary="$scratch/bin/gh"
+if command -v cygpath >/dev/null 2>&1; then
+    fixture_gh_shell=$(cygpath -m "$fixture_gh_shell")
+    fixture_gh_script=$(cygpath -m "$fixture_gh_script")
+    fixture_gh_binary="$scratch/bin/gh.exe"
+fi
+GH_FIXTURE_OUTPUT="$fixture_gh_binary" make --no-print-directory -C "$root" build-gh-fixture
+invoke=(env FIXTURE_GH_BASH="$fixture_gh_shell" FIXTURE_GH_SCRIPT="$fixture_gh_script" PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 FIXTURE_ROOT="$scratch" METADATA_AUTHORIZATION="$scratch/approval.json" METADATA_RELEASE_RECEIPT="$scratch/release-receipt.json")
 cat >"$scratch/interrupt-env" <<'INTERRUPT'
 trap 'if [[ "$BASH_COMMAND" == gh_deadline_setup* ]]; then trap - DEBUG; kill -TERM "$$"; fi' DEBUG
 INTERRUPT
 expect 143 'interrupted mutation retains its signal status' "${invoke[@]}" BASH_ENV="$scratch/interrupt-env" METADATA_OUTPUT="$scratch/interrupted" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
-expect 0 'interrupted audit receipt records exit 143' jq --binary -e '.exit_status==143' "$scratch/interrupted/result.json"
+expect 0 'interrupted audit receipt records exit 143' jq ${jq_binary_option:+"--binary"} -e '.exit_status==143' "$scratch/interrupted/result.json"
 
 expect 0 'metadata prepare performs no API request' "${invoke[@]}" METADATA_OUTPUT="$scratch/prepared" bash "$scratch/fixture/scripts/repository_metadata.sh" prepare
 [[ ! -e "$scratch/calls" ]] || failed=1
@@ -73,7 +85,7 @@ expect 1 'missing owner authorization refuses metadata writes' "${invoke[@]}" ME
 [[ ! -e "$scratch/calls" ]] || failed=1
 cp "$scratch/approval.json" "$scratch/original-approval.json"
 cp "$scratch/repository.json" "$scratch/original-repository.json";cp "$scratch/topics.json" "$scratch/original-topics.json"
-jq --binary '.status="not-approved"' "$scratch/original-approval.json" >"$scratch/approval.json"
+jq ${jq_binary_option:+"--binary"} '.status="not-approved"' "$scratch/original-approval.json" >"$scratch/approval.json"
 cat "$scratch/original-approval.json" >>"$scratch/approval.json"
 expect 1 'concatenated metadata approval refuses all API calls' "${invoke[@]}" METADATA_OUTPUT="$scratch/concatenated-approval" bash "$scratch/fixture/scripts/repository_metadata.sh" apply
 [[ ! -e "$scratch/calls" ]] || failed=1

@@ -184,15 +184,33 @@ identity predicate itself does not change; no extra fake-platform knob is needed
 CRLF unless binary output is selected](https://jqlang.org/manual/v1.7/#invoking-jq).
 A notices control then compares LF filesystem paths with CRLF JSON-derived paths
 and reports an incomplete inventory despite identical asset names. Select
-`jq --binary` for the maintainer helpers, their fixtures and the Make compiler-pin
-lookup. This keeps paths, TSV fields and newly generated records consistent;
+`jq --binary` on MSYS/Cygwin for the maintainer helpers, their fixtures and
+the Make compiler-pin lookup; leave Unix invocations unflagged. This keeps paths, TSV fields and newly generated records consistent;
 it does not remove carriage returns from source license text or JSON values.
-Document jq 1.7+ as a build/maintainer prerequisite. A permanent notices fixture
+Require jq 1.7+ with binary output support on Windows and probe that capability
+at setup/preflight. Older Unix jq builds reject this Windows option; presence
+alone does not establish Windows support. A permanent notices fixture
 models this translation and preserves jq exit codes; an owned full-shell model
 checks the other callers. Its Linux bootstrap failure is a broader model result,
 separate from the actual Windows notices failure. Fresh native execution remains
 required to confirm the native line-ending hypothesis. See the
 [ninth complete-batch receipt](../../verification-evidence/006/pr6-r9/acceptance.json).
+
+**Use native launchers for native process fixtures.** Go's Windows executable
+lookup can select installed `gh.exe` ahead of an extensionless Bash fake. Build
+an owned native `gh.exe` that dispatches the owned Bash script with literal argv,
+forwarded streams and the original exit status. Use the same launcher for
+candidate, promotion and metadata tests so native API and mutation fixtures
+cannot reach the installed client. A missing launcher configuration fails closed.
+The test launcher is excluded from product builds; the production deadline and
+GitHub client remain unchanged. Retain actual Windows evidence separately from
+local launcher controls. See the
+[tenth complete-batch receipt](../../verification-evidence/006/pr6-r10/acceptance.json).
+
+**Synchronize current headers as well as appended receipts.** Historical sections
+can be correct while top-level status still names an older review batch. Update
+the master status, active pointer and paired plan/workorder evidence headers in
+the same unit, keeping local closures separate from pending native/release gates.
 
 ## Related
 

@@ -21,7 +21,8 @@ source, notices, checksums and a manifest. The intended archive format is
 Linux ELF inspection must prove no interpreter/shared-library dependency; Darwin
 and Windows may use normal OS libraries. Avoid a universal “fully static” claim.
 
-Use Bash and GNU Make with `jq` 1.7+, Git, `curl` and the pinned Go toolchain available.
+Use Bash and GNU Make with `jq`, Git, `curl` and the pinned Go toolchain available.
+Windows requires jq 1.7+ with binary output support, checked by setup/preflight.
 Install the verified packager once, then check the current source prerequisites:
 
 ```bash

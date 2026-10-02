@@ -5,6 +5,10 @@
 test-ci:
 	bash scripts/test/test_ci.sh
 
+.PHONY: test-gh-fixture
+test-gh-fixture:
+	bash scripts/test/test_gh_fixture.sh
+
 .PHONY: test-docgen
 DOCGEN_TEST_FLAGS ?=
 test-docgen:
@@ -63,7 +67,12 @@ coverage-release:
 
 # Test-owned checkout and output; called by the inspector integration tests.
 build-release-fixture:
-	@release_go=$$(jq --binary -er '.go.release' scripts/tool-versions.json) && CGO_ENABLED=0 GOTOOLCHAIN="go$$release_go" go build -trimpath -overlay="$$TUSK_RELEASE_OVERLAY" -ldflags='-s -w' -o "$$TUSK_RELEASE_FIXTURE_BINARY" ./cmd/tusk
+	@jq_binary_option=; case "$${OSTYPE:-}" in msys*|cygwin*) jq_binary_option=--binary;; esac; release_go=$$(jq $${jq_binary_option:+"--binary"} -er '.go.release' scripts/tool-versions.json) && CGO_ENABLED=0 GOTOOLCHAIN="go$$release_go" go build -trimpath -overlay="$$TUSK_RELEASE_OVERLAY" -ldflags='-s -w' -o "$$TUSK_RELEASE_FIXTURE_BINARY" ./cmd/tusk
+
+.PHONY: build-gh-fixture
+build-gh-fixture:
+	@test -n "$$GH_FIXTURE_OUTPUT"
+	CGO_ENABLED=0 go build -trimpath -buildvcs=false -o "$$GH_FIXTURE_OUTPUT" scripts/test/fixtures/gh-launcher.go
 
 .PHONY: build-gh-deadline
 build-gh-deadline:
@@ -133,7 +142,7 @@ test-hashes:
 
 .PHONY: test-hashes
 
-test-scripts:
+test-scripts: test-gh-fixture
 	bash scripts/test/test_hashes.sh
 	@./scripts/test/test_scripts.sh
 	@bash scripts/test/test_sqlc.sh
