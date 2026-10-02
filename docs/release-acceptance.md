@@ -74,6 +74,13 @@ matching target and archive in the cryptographically verified manifest. These
 fields record the bytes actually inspected on that host; they do not substitute
 for the retained terminal observations or the maintainer's acceptance.
 
+`finalize` and `verify` quarantine and inspect candidate bytes; they do not
+claim to execute foreign architectures or establish the constant's runtime
+value. A candidate cannot be promoted until **all five** native target receipts
+bind their observed `--version` to the manifest and the exact executable/archive
+digests. A missing or mismatched version on any target refuses promotion before
+every GitHub write.
+
 Every GitHub subprocess is bounded to five minutes, plus at most one second to
 join inherited pipes. `GH_REQUEST_TIMEOUT` can select a shorter positive Go
 duration (for example `30s`), never a longer or unlimited duration. The owned

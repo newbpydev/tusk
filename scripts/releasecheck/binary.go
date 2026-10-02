@@ -75,8 +75,10 @@ func inspectFormat(data []byte, target string) error {
 			return err
 		}
 		for _, library := range libraries {
+			// Lock imports to the pinned release's audited set. Even OS-shipped
+			// additions require review before changing this allowlist.
 			if !strings.EqualFold(library, "kernel32.dll") {
-				return fmt.Errorf("non-system Windows library: %s", library)
+				return fmt.Errorf("unreviewed Windows library: %s", library)
 			}
 		}
 	default:

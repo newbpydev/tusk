@@ -1,4 +1,4 @@
-* text=auto
+* text=auto eol=lf
 db/migrations/*.sql text eol=lf
 *.sh text eol=lf
 *.go text eol=lf
@@ -10,3 +10,6 @@ Makefile text eol=lf
 *.png binary
 *.gz binary
 *.zip binary
+# Pinned upstream fixtures may contain intentional CRLF; retain exact bytes.
+# Keep this after extension rules so they cannot normalize vendored sources.
+third_party/** -text

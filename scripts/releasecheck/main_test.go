@@ -187,6 +187,9 @@ func TestMetadata_CompilerCGOAndPatchedGraph(t *testing.T) {
 	if err := validateBuildInfo(good(), "linux/amd64", "1.27.1", strings.Repeat("a", 40)); err != nil {
 		t.Fatal(err)
 	}
+	if err := validateBuildInfo(good(), "linux", "1.27.1", strings.Repeat("a", 40)); err == nil || !strings.Contains(err.Error(), "invalid target") {
+		t.Fatalf("malformed target accepted: %v", err)
+	}
 	for _, mutate := range []func(*debug.BuildInfo){
 		func(v *debug.BuildInfo) { v.GoVersion = "go1.25.0" },
 		func(v *debug.BuildInfo) { v.Settings[0].Value = "1" },

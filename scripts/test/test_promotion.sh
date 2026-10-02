@@ -146,18 +146,21 @@ expect 47 'expired candidate refuses every remote write' "${invoke[@]}" FIXTURE_
 expect 1 'fresh main code change invalidates acceptance' "${invoke[@]}" FIXTURE_MAIN_CHANGED=1 RELEASE_PROMOTION_OUTPUT="$scratch/main-changed" bash "$scratch/fixture/scripts/promote.sh" draft
 reset
 index=0
-for mutation in 'del(.executable_sha256)' '.executable_sha256=("c"*64)' '.archive_sha256=("c"*64)' '.target="linux/arm64"' 'del(.observed_version)' '.observed_version="dev"';do
+for binding in linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64; do
+for mutation in 'del(.executable_sha256)' '.executable_sha256=("c"*64)' '.archive_sha256=("c"*64)' '.target="wrong/target"' 'del(.observed_version)' '.observed_version="dev"';do
  index=$((index+1))
- path="$scratch/gates/native-linux-amd64.json"
+ path="$scratch/gates/native-${binding//\//-}.json"
  cp "$path" "$scratch/original-gate.json";cp "$scratch/acceptance.json" "$scratch/original-acceptance.json";cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
  jq "$mutation" "$path" >"$scratch/new";mv "$scratch/new" "$path"
  hash=$(bash "$root/scripts/test/sha256.sh" "$path")
- jq --arg hash "$hash" '(.gates[]|select(.id=="native/linux/amd64")|.receipt.sha256)=$hash' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
+ jq --arg hash "$hash" --arg id "native/$binding" '(.gates[]|select(.id==$id)|.receipt.sha256)=$hash' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
  hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/acceptance.json")
  jq --arg hash "$hash" '.acceptance_sha256=$hash' "$scratch/draft-approval.json" >"$scratch/new";mv "$scratch/new" "$scratch/draft-approval.json"
- expect 1 "reject native candidate binding: $mutation" "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/native-binding-$index" bash "$scratch/fixture/scripts/promote.sh" draft
+ expect 1 "reject $binding native candidate binding: $mutation" "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/native-binding-$index" bash "$scratch/fixture/scripts/promote.sh" draft
+ expect 0 "rejected $binding binding makes no GitHub calls: $mutation" test ! -s "$scratch/gh-calls"
  mv "$scratch/original-gate.json" "$path";mv "$scratch/original-acceptance.json" "$scratch/acceptance.json";mv "$scratch/original-approval.json" "$scratch/draft-approval.json"
  reset
+done
 done
 cp "$scratch/cli.json" "$scratch/original-cli.json"
 jq '.cases[1]=.cases[0]' "$scratch/cli.json" >"$scratch/new";mv "$scratch/new" "$scratch/cli.json"

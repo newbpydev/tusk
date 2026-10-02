@@ -48,7 +48,7 @@ func releaseFixture(t *testing.T) (string, string, string, string) {
 		// unrelated test suites add no inspector coverage and amplify race costs.
 		if !strings.Contains(name, "/") {
 			switch name {
-			case "Makefile", ".goreleaser.yaml", "go.mod", "go.sum", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md", "CONTRIBUTING.md", "SECURITY.md":
+			case "Makefile", ".gitattributes", ".goreleaser.yaml", "go.mod", "go.sum", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md", "CONTRIBUTING.md", "SECURITY.md":
 			default:
 				continue
 			}
@@ -79,6 +79,7 @@ func releaseFixture(t *testing.T) (string, string, string, string) {
 		}
 	}
 	command(t, checkout, nil, "git", "init", "--quiet")
+	command(t, checkout, nil, "git", "config", "core.autocrlf", "false")
 	command(t, checkout, nil, "git", "config", "tar.umask", "0022")
 	command(t, checkout, nil, "git", "add", "--all")
 	command(t, checkout, nil, "git", "-c", "user.name=Release fixture", "-c", "user.email=fixture@example.invalid", "commit", "--quiet", "-m", "isolated test fixture")

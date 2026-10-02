@@ -58,10 +58,10 @@ acceptance still needs the evidence required by the release plan.
 ## Examples
 
 **Reset competing guards and repair dependent hashes.** In
-`scripts/test/test_promotion.sh:180`, the concatenated-approval test resets remote
+`scripts/test/test_promotion.sh`, the concatenated-approval test resets remote
 state before injecting a failed object followed by an approved one. The test
 checks refusal and an empty owned fake API call log. The report variants at
-`scripts/test/test_promotion.sh:188` recompute both dependent digests before
+`scripts/test/test_promotion.sh` recompute both dependent digests before
 invocation. Their fake candidate verifier deliberately models a trusted boundary;
 its empty call log does not imply production promotion performs no API reads.
 
@@ -84,6 +84,17 @@ The [review receipt](../../verification-evidence/006/review-r2/acceptance.json)
 identifies valid Red/Green checks and incomplete probes; the corresponding
 compressed logs remain in that directory. The [portability comparison](../../verification-evidence/006/review-r2/checksum-portability-green.json)
 lists all four target results.
+
+**Preserve checkout bytes before testing digest integrity.** Native Windows CI
+exposed approved dependency hash drift because `core.autocrlf` converted Markdown
+fixtures. Keep first-party text at LF and pinned vendor files at `-text`. Put the
+vendor rule after extension rules: an earlier `third_party/** -text` is overridden
+by a later `*.go text`. The owned checkout regression retains a CRLF vendor Go
+file and an LF first-party document under `autocrlf=true`; a fresh full checkout
+also passes both real vendor inventories. Release archive fixtures copy the root
+attributes and set their own `core.autocrlf=false` before adding files. Changing
+approved hashes to match converted bytes would conceal the checkout defect.
+See the [combined native CI repair receipt](../../verification-evidence/006/pr6-r2/acceptance.json).
 
 ## Related
 

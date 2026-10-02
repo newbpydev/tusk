@@ -105,6 +105,30 @@ func TestBinary_PEImportsOrdinalAndMalformedTables(t *testing.T) {
 	}
 }
 
+func TestBinary_PEPolicyAndBuildInfoBoundaries(t *testing.T) {
+	data := peImportFixture()
+	if err := inspectBinary(data, "windows/amd64", "1.27.1", strings.Repeat("a", 40)); err == nil || !strings.Contains(err.Error(), "not a Go executable") {
+		t.Fatalf("format-valid binary without Go metadata: %v", err)
+	}
+	binary.LittleEndian.PutUint16(data[132:], pe.IMAGE_FILE_MACHINE_I386)
+	if err := inspectFormat(data, "windows/amd64"); err == nil || !strings.Contains(err.Error(), "architecture") {
+		t.Fatalf("wrong PE architecture: %v", err)
+	}
+	data = peImportFixture()
+	binary.LittleEndian.PutUint32(data[272:], 0)
+	if err := inspectFormat(data, "windows/amd64"); err == nil || !strings.Contains(err.Error(), "outside file") {
+		t.Fatalf("invalid PE import table: %v", err)
+	}
+	for _, name := range []string{"ws2_32.dll", "advapi32.dll", "vendor.dll"} {
+		data = peImportFixture()
+		clear(data[512+3072 : 512+3328])
+		copy(data[512+3072:], name)
+		if err := inspectFormat(data, "windows/amd64"); err == nil || !strings.Contains(err.Error(), "unreviewed Windows library: "+name) {
+			t.Fatalf("new import must request policy review: %v", err)
+		}
+	}
+}
+
 func timezoneZIPFixture(t *testing.T, count int, method uint16, size int) []byte {
 	t.Helper()
 	zone := make([]byte, size)

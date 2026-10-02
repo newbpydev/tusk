@@ -1,0 +1,28 @@
+{
+  "scope": "working repair against 79646a31; sequential main-thread validation under repository mapping",
+  "lenses": [
+    "correctness",
+    "test validity",
+    "maintainability",
+    "security of owned Windows token/ACL fixtures",
+    "CI and checkout byte integrity",
+    "acceptance boundaries"
+  ],
+  "independent_review": false,
+  "findings_applied": [
+    {
+      "item": "vendor attribute precedence",
+      "proof": "r2-vendor-policy-red.log; moved -text rule after extension rules"
+    },
+    {
+      "item": "promotion negative receipt tests must prove no API calls",
+      "fix": "all 30 native-binding rejection cases explicitly assert no GitHub call"
+    }
+  ],
+  "remaining_confirmed_p0_p2": [],
+  "limits": [
+    "Windows token and directory ACL fixture runtime remains hosted-only",
+    "macOS/Windows coverage is pending on next complete report set",
+    "physical native app acceptance remains pending"
+  ]
+}

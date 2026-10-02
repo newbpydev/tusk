@@ -36,6 +36,7 @@ func TestCask_IdentityAndDeclarativeBoundary(t *testing.T) {
 	for _, mutate := range []func(*manifest){
 		func(m *manifest) { m.Version = "0.3.0\";system(\"evil\")" },
 		func(m *manifest) { m.Mode = "snapshot" },
+		func(m *manifest) { m.Mode = "snapshot"; m.Version = "0.3.0-dev" },
 		func(m *manifest) { m.Targets = m.Targets[:1] },
 		func(m *manifest) { m.Targets = append(m.Targets, m.Targets[0]) },
 		func(m *manifest) { m.Targets[0].Archive = "../../db" },
@@ -77,6 +78,18 @@ func TestCask_IdentityAndDeclarativeBoundary(t *testing.T) {
 	}
 	if run([]string{"check-cask", mf, filepath.Join(dir, "missing")}, os.Stderr) == 0 {
 		t.Fatal("missing cask accepted")
+	}
+	if run([]string{"check-cask", mf, dir}, os.Stderr) == 0 {
+		t.Fatal("directory cask accepted")
+	}
+	if err := writeJSON(mf, manifest{}); err != nil {
+		t.Fatal(err)
+	}
+	if run([]string{"render-cask", mf, filepath.Join(dir, "invalid")}, os.Stderr) == 0 {
+		t.Fatal("invalid identity accepted through cask entry point")
+	}
+	if err := writeJSON(mf, caskFixture()); err != nil {
+		t.Fatal(err)
 	}
 	if run([]string{"render-cask", filepath.Join(dir, "missing"), filepath.Join(dir, "new")}, os.Stderr) == 0 {
 		t.Fatal("missing manifest accepted")

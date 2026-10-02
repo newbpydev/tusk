@@ -797,3 +797,30 @@ lint-release-promotion`, using official `GOTOOLCHAIN=go1.27.1`. Release-inspecto
 coverage is 95.2%. The containing commit is the coherent local remediation unit;
 publication, visible thread replies/resolution and fresh hosted reports are
 verified separately on PR #6. Pending native/release gates remain unchanged.
+
+### PR #6 second complete hosted report batch — 2026-10-02 UTC
+
+All six Native CI jobs and Kilo review completed on unchanged
+`79646a31bae6b95980b8bd518b744c15944a4fb7` before this repair unit began.
+Linux release/minimum compiler jobs pass. Both macOS runners pass functional
+checks but reject release-inspector coverage at 94.9%. Windows now passes tool
+setup and exposes build-output quoting, checkout-byte conversion and platform
+fixture assumptions. One new import-policy suggestion and four carried summary
+claims are assessed against current source and retained evidence together.
+
+- [x] Repair the complete confirmed batch with causal Red/Green.
+- [x] Pass fresh canonical validation and review the complete applied diff.
+- [ ] Commit/push one coherent repair and settle all fresh hosted reports.
+
+Parent units, the 51 local scenario closures and native/release acceptance
+remain unchanged. No merge, release, tag, workflow dispatch, settings or tap
+mutation is included.
+
+The second combined repair passes frozen-state `make validate build
+check-generated check-docs check-notices check-ci check-candidate-workflow
+lint-release-promotion` with official `GOTOOLCHAIN=go1.27.1`. Inspector coverage
+is 96.2% on Linux. Five-target verification-test compilation, the actual vendor
+checkout inventories under `autocrlf=true`, and all 30 native-binding rejection
+checks with zero fake GitHub calls pass. See [the R2 receipt](../verification-evidence/006/pr6-r2/acceptance.json).
+The containing commit prepares one coherent repair. Windows ACL execution and
+macOS/Windows coverage require the next complete hosted report set.

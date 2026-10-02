@@ -138,9 +138,45 @@ printf 'module fixture\n\ngo 1.25.0\n' > "${TMP_DIR}/build-fixture/go.mod"
 printf 'package main\nfunc main() { sibling() }\n' > "${TMP_DIR}/build-fixture/cmd/tusk/main.go"
 printf 'package main\nfunc sibling() {}\n' > "${TMP_DIR}/build-fixture/cmd/tusk/app.go"
 result=0
-make --no-print-directory -C "${TMP_DIR}/build-fixture" build GOFLAGS=-buildvcs=false BUILD_OUTPUT="${TMP_DIR}/fixture-tusk" >"${TMP_DIR}/build-output" 2>&1 || result=$?
+make --no-print-directory -C "${TMP_DIR}/build-fixture" build GOFLAGS=-buildvcs=false BUILD_OUTPUT="${TMP_DIR}/new/output/fixture-tusk" >"${TMP_DIR}/build-output" 2>&1 || result=$?
 assert_eq 0 "$result" "build includes siblings and accepts isolated output"
-test -f "${TMP_DIR}/fixture-tusk"
+test -f "${TMP_DIR}/new/output/fixture-tusk"
+
+# Values reach the shell as data, including Windows backslashes and trailing
+# separators; neither Make nor the shell may evaluate a caller's filename.
+mkdir -p "${TMP_DIR}/build-bin"
+cat >"${TMP_DIR}/build-bin/go" <<'GO'
+#!/usr/bin/env bash
+[[ "$1" == build && "$2" == -o && "$3" == "$FIXTURE_BUILD_OUTPUT" && "$4" == ./cmd/tusk ]] || exit 71
+GO
+chmod +x "${TMP_DIR}/build-bin/go"
+# shellcheck disable=SC2016
+for output in 'C:\Users\Runner\Temp\owned\tusk.exe' 'C:\Users\Runner\Temp\owned\' 'path with spaces/tusk' 'literal$(shell touch injected)`touch injected`'; do
+    result=0
+    env PATH="${TMP_DIR}/build-bin:$PATH" FIXTURE_BUILD_OUTPUT="$output" make --no-print-directory -C "${TMP_DIR}/build-fixture" build BUILD_OUTPUT="$output" >"${TMP_DIR}/build-data-output" 2>&1 || result=$?
+    assert_eq 0 "$result" "build output stays literal: $output"
+    test ! -e "${TMP_DIR}/build-fixture/injected"
+done
+
+# Checkout policy preserves pinned upstream bytes and canonical first-party LF,
+# even under a Windows-style global autocrlf default.
+mkdir -p "${TMP_DIR}/checkout-fixture/third_party/example"
+cp "${ROOT_DIR}/.gitattributes" "${TMP_DIR}/checkout-fixture/"
+printf 'canonical\n' >"${TMP_DIR}/checkout-fixture/README.md"
+printf 'upstream\r\n' >"${TMP_DIR}/checkout-fixture/third_party/example/fixture.go"
+git -C "${TMP_DIR}/checkout-fixture" init --quiet
+git -C "${TMP_DIR}/checkout-fixture" -c core.autocrlf=false add --all
+git -C "${TMP_DIR}/checkout-fixture" -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m fixture
+rm "${TMP_DIR}/checkout-fixture/README.md" "${TMP_DIR}/checkout-fixture/third_party/example/fixture.go"
+git -C "${TMP_DIR}/checkout-fixture" -c core.autocrlf=true checkout -- .
+printf 'canonical\n' >"${TMP_DIR}/expected-doc"
+printf 'upstream\r\n' >"${TMP_DIR}/expected-upstream"
+result=0
+cmp "${TMP_DIR}/expected-doc" "${TMP_DIR}/checkout-fixture/README.md" || result=$?
+assert_eq 0 "$result" 'first-party LF survives autocrlf checkout'
+result=0
+cmp "${TMP_DIR}/expected-upstream" "${TMP_DIR}/checkout-fixture/third_party/example/fixture.go" || result=$?
+assert_eq 0 "$result" 'pinned upstream bytes survive autocrlf checkout'
 
 # Verify the CLI gates select the right packages and propagate tool failures.
 for target in test-cli build-cli; do
@@ -148,6 +184,11 @@ for target in test-cli build-cli; do
     result=1
     if [[ "$recipe" == *"./internal/cli"* && "$recipe" == *"./cmd/tusk"* ]]; then result=0; fi
     assert_eq 0 "$result" "CLI target includes adapter and executable: $target"
+    if [[ "$target" == build-cli ]]; then
+        result=1
+        if [[ "$recipe" == *'./scripts/docgen'* && "$recipe" == *'./scripts/releasecheck'* ]]; then result=0; fi
+        assert_eq 0 "$result" 'five-target builds compile native verification tests'
+    fi
     printf '#!/usr/bin/env bash\nexit 19\n' > "${TMP_DIR}/go"
     chmod +x "${TMP_DIR}/go"
     result=0

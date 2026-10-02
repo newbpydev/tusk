@@ -255,7 +255,7 @@ func TestCLIBenchmark_EveryRunMustPass(t *testing.T) {
 		execute := func(binary string, args, env []string) (int64, []byte, error) {
 			duration, out, err := fakeProcess(binary, args, env)
 			for _, value := range env {
-				if strings.Contains(value, fmt.Sprintf("/run-%d/", failingRun)) && args[0] == "--help" {
+				if strings.Contains(filepath.ToSlash(value), fmt.Sprintf("/run-%d/", failingRun)) && args[0] == "--help" {
 					duration = int64(8 * time.Millisecond)
 				}
 			}
@@ -323,7 +323,10 @@ func TestCLIBenchmark_ReportAndFailures(t *testing.T) {
 		}
 	})
 	t.Run("temporary directory failure", func(t *testing.T) {
-		t.Setenv("TMPDIR", filepath.Join(t.TempDir(), "missing"))
+		missing := filepath.Join(t.TempDir(), "missing")
+		for _, key := range []string{"TMPDIR", "TMP", "TEMP"} {
+			t.Setenv(key, missing)
+		}
 		if code := runWith([]string{"--binary", binary, "--output", output}, io.Discard, io.Discard, fakeProcess, nil); code != 1 {
 			t.Fatal(code)
 		}

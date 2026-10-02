@@ -206,6 +206,8 @@ validate: fmt vet test race coverage test-scripts check-modules
 	@echo "All canonical quality gates passed."
 
 BUILD_OUTPUT ?= bin/tusk
+override BUILD_OUTPUT := $(value BUILD_OUTPUT)
+export BUILD_OUTPUT
 CLI_TEST_RUN ?= .
 TUI_TEST_RUN ?= .
 TUI_TEST_FLAGS ?=
@@ -248,11 +250,12 @@ build-cli:
 		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go build -o "$$build_tmp/tusk-$${target%/*}-$${target#*/}" ./cmd/tusk; \
 		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/cli-$${target%/*}-$${target#*/}.test" ./internal/cli; \
 		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/main-$${target%/*}-$${target#*/}.test" ./cmd/tusk; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/docgen-$${target%/*}-$${target#*/}.test" ./scripts/docgen; \
+		CGO_ENABLED=0 GOOS=$${target%/*} GOARCH=$${target#*/} go test -c -o "$$build_tmp/releasecheck-$${target%/*}-$${target#*/}.test" ./scripts/releasecheck; \
 	done
 
 build:
-	mkdir -p "$(dir $(BUILD_OUTPUT))"
-	CGO_ENABLED=0 go build -o "$(BUILD_OUTPUT)" ./cmd/tusk
+	CGO_ENABLED=0 go build -o "$$BUILD_OUTPUT" ./cmd/tusk
 
 clean:
 	rm -rf bin/ coverage.out .tusk-test*.db
