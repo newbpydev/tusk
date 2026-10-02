@@ -72,6 +72,7 @@ build-release-fixture:
 .PHONY: build-gh-fixture
 build-gh-fixture:
 	@test -n "$$GH_FIXTURE_OUTPUT"
+	go env GOOS GOARCH GOVERSION
 	CGO_ENABLED=0 go build -trimpath -buildvcs=false -o "$$GH_FIXTURE_OUTPUT" scripts/test/fixtures/gh-launcher.go
 
 .PHONY: build-gh-deadline
@@ -399,7 +400,7 @@ release-readback:
 
 .PHONY: lint-release-promotion
 lint-release-promotion:
-	shellcheck -x scripts/promote.sh scripts/test/test_promotion.sh scripts/repository_metadata.sh scripts/test/test_metadata.sh scripts/candidate.sh scripts/test/test_candidate.sh scripts/homebrew.sh scripts/test/test_homebrew.sh
+	shellcheck -x scripts/promote.sh scripts/test/test_promotion.sh scripts/repository_metadata.sh scripts/test/test_metadata.sh scripts/candidate.sh scripts/test/test_candidate.sh scripts/homebrew.sh scripts/test/test_homebrew.sh scripts/test/test_gh_fixture.sh
 
 .PHONY: test-repository-metadata prepare-repository-metadata apply-repository-metadata
 $(foreach parameter,METADATA_OUTPUT METADATA_AUTHORIZATION METADATA_RELEASE_RECEIPT,$(eval override $(parameter) := $$(value $(parameter))))

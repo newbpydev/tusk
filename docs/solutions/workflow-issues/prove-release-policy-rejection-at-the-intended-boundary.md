@@ -204,8 +204,14 @@ candidate, Homebrew, promotion and metadata tests so native API and mutation fix
 cannot reach the installed client. A missing launcher configuration fails closed.
 Require named assertions for argv/streams/status, map a Unix signaled child to
 128 plus its signal number, and use a native fixture stall for deadline controls
-so cancellation does not leave a Bash grandchild. Record the host jq identity
-when retaining a CRLF model that depends on the host binary-output capability.
+so cancellation does not leave a Bash grandchild. Require an explicit positive
+sub-minute deadline for that finite stall; invalid, unset or longer deadlines
+fail immediately instead of later looking like a successful empty API response.
+Keep its named assertion suite in the canonical shellcheck target. Record the host jq identity
+and exported executable selector when retaining a CRLF model that depends on
+the host binary-output capability. Probe the selected executable. Retain actual
+GOOS/GOARCH/GOVERSION, command environment, exit status and inspected binary
+build settings for cross-build evidence; recipe echoes alone do not prove target.
 The test launcher is excluded from product builds; the production deadline and
 GitHub client remain unchanged. Retain actual Windows evidence separately from
 local launcher controls. See the

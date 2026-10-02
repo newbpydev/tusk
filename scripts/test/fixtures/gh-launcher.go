@@ -18,8 +18,13 @@ func main() {
 		fmt.Fprintln(os.Stderr, "owned gh fixture requires FIXTURE_GH_BASH and FIXTURE_GH_SCRIPT")
 		os.Exit(127)
 	}
-	// Deadline controls stall this native child without leaving a Bash grandchild.
+	// Short-deadline controls stall this child without leaving a Bash grandchild.
 	if os.Getenv("FIXTURE_GH_STALL") == "1" {
+		deadline, err := time.ParseDuration(os.Getenv("GH_REQUEST_TIMEOUT"))
+		if err != nil || deadline <= 0 || deadline >= time.Minute {
+			fmt.Fprintln(os.Stderr, "owned gh stall requires explicit GH_REQUEST_TIMEOUT below one minute")
+			os.Exit(127)
+		}
 		time.Sleep(time.Minute)
 		return
 	}

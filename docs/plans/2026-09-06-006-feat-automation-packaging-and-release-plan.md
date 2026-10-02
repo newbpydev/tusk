@@ -1079,3 +1079,28 @@ Production cancellation/deadline behavior and all acceptance thresholds are unch
 
 The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
 gates remain unchanged. See [the R11 receipt](../verification-evidence/006/pr6-r11/acceptance.json).
+
+### PR #6 twelfth complete report-batch repair (2026-10-02)
+
+All seven reports on `a23734eefc851ef4ca331b1c63c2c3a52d4c60b1` completed and
+passed before this combined review. Fresh native macOS/Windows execution confirms
+the preceding cancellation and API-fixture repairs. Kilo's five findings concern
+stall configuration, canonical shellcheck coverage, hostile-environment fixture
+consistency, the retained jq selector and cross-build evidence identity.
+
+The finite native stall now requires an explicit positive timeout below one minute;
+unsupported configurations fail with a named diagnostic. Deterministic controls
+reproduce the prior stalled invalid configurations and verify immediate refusal.
+The launcher test joins the existing lint target; Homebrew's base environment
+consistently supplies hostile host/debug values. The model README selects/probes
+MODEL_REAL_JQ explicitly. Fresh cross-build logs retain exact environment,
+GOOS/GOARCH/GOVERSION, exit status and inspected binary settings; older measured
+logs remain unchanged. Product behavior and acceptance thresholds remain unchanged.
+
+- [x] Wait for all seven reports before assessment, changes or replies.
+- [x] Observe Red for missing, malformed and non-short stall deadlines.
+- [x] Pass focused/cross-build controls and the frozen canonical gate.
+- [ ] Settle fresh hosted reports after combined repair publication.
+
+The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
+gates remain unchanged. See [the R12 receipt](../verification-evidence/006/pr6-r12/acceptance.json).

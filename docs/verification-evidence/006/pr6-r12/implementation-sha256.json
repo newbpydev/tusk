@@ -1,0 +1,8 @@
+{
+  "Makefile": "adc91795f9da3f8007129465652d9d8389e0e6e1b1cbaf9ccecb5f28e1523d59",
+  "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "2d7989f1282ff4f82a5df6799d4a4150d5bb4fd30cfd0f0d0b06b1c8ef69f9fd",
+  "docs/verification-evidence/006/pr6-r10/r9-jq-crlf-model/README.md": "2921eca538166fb781ab5509b6c612ff4edc7743516680f868d0becb6e8b43d6",
+  "scripts/test/fixtures/gh-launcher.go": "4f5b934680cfbf144a004ebaedb21c4430de1a5a1caa25ffdf369f72d61d35fb",
+  "scripts/test/test_gh_fixture.sh": "c7001a775c38d9a5cccf0362612ae0e2b7b1e3c0038c93af04bd4a2ca613797a",
+  "scripts/test/test_homebrew.sh": "eb8273f794ac4b93c4872b35889ba9408e93b5b063e7976d91f8851d721e5207"
+}

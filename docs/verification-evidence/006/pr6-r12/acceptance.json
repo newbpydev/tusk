@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "reviewed_head": "a23734eefc851ef4ca331b1c63c2c3a52d4c60b1",
+  "remediation_commit": "containing commit",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37073742389,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 0,
+  "inline_review_threads": 5,
+  "needs_human": 0,
+  "utc": "2026-10-02T23:13:19.253519+00:00",
+  "canonical": {
+    "status": "passed",
+    "exit": 0,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "log": "r12-canonical-frozen.log.gz",
+    "scope": "Six fixture/test/documentation/lesson inputs unchanged; completion statuses and receipts recorded afterward."
+  },
+  "implementation_sha256": {
+    "Makefile": "adc91795f9da3f8007129465652d9d8389e0e6e1b1cbaf9ccecb5f28e1523d59",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "2d7989f1282ff4f82a5df6799d4a4150d5bb4fd30cfd0f0d0b06b1c8ef69f9fd",
+    "docs/verification-evidence/006/pr6-r10/r9-jq-crlf-model/README.md": "2921eca538166fb781ab5509b6c612ff4edc7743516680f868d0becb6e8b43d6",
+    "scripts/test/fixtures/gh-launcher.go": "4f5b934680cfbf144a004ebaedb21c4430de1a5a1caa25ffdf369f72d61d35fb",
+    "scripts/test/test_gh_fixture.sh": "c7001a775c38d9a5cccf0362612ae0e2b7b1e3c0038c93af04bd4a2ca613797a",
+    "scripts/test/test_homebrew.sh": "eb8273f794ac4b93c4872b35889ba9408e93b5b063e7976d91f8851d721e5207"
+  },
+  "items": [
+    {
+      "label": "stall",
+      "root_comment_id": 4170486325,
+      "invariant_key": "native-fixture-stall-contract",
+      "verdict": "fixed-differently",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ohCnc"
+    },
+    {
+      "label": "lint",
+      "root_comment_id": 4170486336,
+      "invariant_key": "native-fixture-lint-coverage",
+      "verdict": "fixed",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ohCni"
+    },
+    {
+      "label": "env",
+      "root_comment_id": 4170486341,
+      "invariant_key": "homebrew-hostile-environment-coverage",
+      "verdict": "fixed",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ohCnp"
+    },
+    {
+      "label": "selector",
+      "root_comment_id": 4170486351,
+      "invariant_key": "retained-model-tool-identity",
+      "verdict": "fixed",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ohCnw"
+    },
+    {
+      "label": "cross",
+      "root_comment_id": 4170486361,
+      "invariant_key": "cross-build-evidence-identity",
+      "verdict": "fixed-differently",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ohCn3"
+    }
+  ],
+  "red": {
+    "exit": 2,
+    "cases": [
+      "unset",
+      "invalid",
+      "60s",
+      "5m"
+    ],
+    "diagnostics": "Non-short stall configurations stay live until the owned one-second cleanup (143), with no required refusal diagnostic."
+  },
+  "green": {
+    "exit": 0,
+    "cases": "All invalid configurations return 127 with the named sub-minute deadline diagnostic; valid 100ms deadline still passes; launcher assertions are in canonical shellcheck."
+  },
+  "cross_builds": {
+    "windows/amd64": {
+      "exit": 0,
+      "log": "cross-windows.log"
+    },
+    "darwin/amd64": {
+      "exit": 0,
+      "log": "cross-darwin.log"
+    },
+    "scope": "Exact command/env, actual GOOS/GOARCH/GOVERSION, exit and inspected executable settings; older measured logs preserved."
+  },
+  "trajectory_assessment": "Bounded fixture configuration/lint/evidence improvements; explicit short-stall contract avoids expanding fixture resource budgets. Selector documentation completes the retained-model identity class. No production behavior or acceptance threshold changes.",
+  "native_reexecution": "pending",
+  "limits": [
+    "All seven predecessor reports pass, confirming the previous native repairs; fresh reports for this containing commit remain required.",
+    "Local/cross-build controls are distinct from native execution and physical terminals.",
+    "No independent model agreement; prior Claude authentication/Codex quota gaps remain disclosed.",
+    "51 local closures unchanged; physical/trusted-main/performance/cask/release/tap/settings gates open."
+  ],
+  "retained_logs_sha256": {
+    "r12-canonical-frozen.log.gz": "15889e32ed879cf358f277dac6493f01802f48e171169029ff75164ae3d3f5a6",
+    "r12-focused-green.log.gz": "9b6f88ab765cd402598e1e7e1f43b42d70ad8e24468cf123898869bf3c4696d1",
+    "r12-stall-red.log.gz": "51d44772f97b71f723b4febaa48e37e3b7ae5ce9eaea2b6f3c31f8342582967f"
+  }
+}

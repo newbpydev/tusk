@@ -46,6 +46,16 @@ case "${OSTYPE:-}" in
         status=0
         FIXTURE_GH_BASH="$shell" FIXTURE_GH_SCRIPT="$script" "$binary" >"$scratch/stdout" 2>"$scratch/stderr" || status=$?
         check "native fixture maps SIGTERM to 143 (observed $status)" test "$status" -eq 143
+        for deadline in '' invalid 60s 5m; do
+            status=0
+            FIXTURE_GH_BASH="$shell" FIXTURE_GH_SCRIPT="$script" FIXTURE_GH_STALL=1 GH_REQUEST_TIMEOUT="$deadline" "$binary" >"$scratch/stdout" 2>"$scratch/stderr" &
+            owned_pid=$!
+            sleep 1
+            kill -TERM "$owned_pid" 2>/dev/null || true
+            wait "$owned_pid" || status=$?
+            check "stall refuses non-short deadline '$deadline' (observed $status)" test "$status" -eq 127
+            check 'stall explains its explicit short-deadline contract' grep -Fq 'owned gh stall requires explicit GH_REQUEST_TIMEOUT below one minute' "$scratch/stderr"
+        done
         ;;
 esac
 status=0

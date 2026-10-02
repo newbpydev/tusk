@@ -31,7 +31,7 @@ if command -v cygpath >/dev/null 2>&1; then
     fixture_gh_binary="$scratch/bin/gh.exe"
 fi
 GH_FIXTURE_OUTPUT="$fixture_gh_binary" make --no-print-directory -C "$root" build-gh-fixture
-invoke=(env FIXTURE_GH_BASH="$fixture_gh_shell" FIXTURE_GH_SCRIPT="$fixture_gh_script" PATH="$scratch/bin:$PATH")
+invoke=(env FIXTURE_GH_BASH="$fixture_gh_shell" FIXTURE_GH_SCRIPT="$fixture_gh_script" PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1)
 printf '#!/usr/bin/env bash\nexit 44\n' >"$scratch/bin/gh-script";chmod +x "$scratch/bin/gh-script"
 expect 1 'missing tap remains named prerequisite' "${invoke[@]}" bash "$scratch/fixture/scripts/homebrew.sh" destination
 if ! grep -Eq '006-ISS-003' "$scratch/output";then failed=1;fi
@@ -41,7 +41,7 @@ cat >"$scratch/bin/gh-script" <<'GH'
 [[ "$2" == https://api.github.com/repos/newbpydev/homebrew-tap ]] || exit 79
 printf 'true\n'
 GH
-expect 0 'tap check pins public GitHub host and disables HTTP debug logging' "${invoke[@]}" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1 bash "$scratch/fixture/scripts/homebrew.sh" destination
+expect 0 'tap check pins public GitHub host and disables HTTP debug logging' "${invoke[@]}" bash "$scratch/fixture/scripts/homebrew.sh" destination
 expect 1 'stalled owned GitHub child has a deadline' "${invoke[@]}" FIXTURE_GH_STALL=1 GH_REQUEST_TIMEOUT=100ms bash "$scratch/fixture/scripts/homebrew.sh" destination
 if ! grep -Eq 'GitHub deadline: context deadline exceeded' "$scratch/output";then failed=1;cat "$scratch/output" >&2;fi
 expect 0 'cask Make target available' make -n -C "$root" check-homebrew
