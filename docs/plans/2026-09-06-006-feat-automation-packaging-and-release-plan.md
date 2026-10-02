@@ -24,7 +24,7 @@ task and find the data/recovery instructions without reading planning artifacts.
 - **Authority:** [AGENTS.md](../../AGENTS.md), the [product contract](2026-09-06-001-feat-tusk-modern-task-system-plan.md), and [MASTERPLAN.md](../../MASTERPLAN.md). The masterplan controls activation and progress.
 - **Surfaces:** CLI/TUI integration, infrastructure/operations, installation/data lifecycle, documentation and GitHub repository settings.
 - **Artifact pack:** This plan, its [verification plan](../verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md) and [workorder](../workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md), under the existing first-party `docs/` root.
-- **Readiness:** U1/U3/U4/U2 are locally accepted; U6/U5/U7/U8 local engineering is complete. Final local review/source freeze follows. There are 51 local scenario closures; actual hosted/native/publication gates remain pending.
+- **Readiness:** U1/U3/U4/U2 are locally accepted; U6/U5/U7/U8 local engineering and the repeated local review are complete. Branch/PR publication is authorized. There are 51 local scenario closures; actual hosted/native/release gates remain pending.
 - **Sequence:** U1 → U3 → U4 → U2 → U6 → U5 → U7 → U8. U1/U2/U3 preserve the original CI/packaging/completion identities.
 
 The original request authorized planning. The 2026-10-01 `ce-work` invocation
@@ -733,3 +733,25 @@ is complete and publication remains deferred by the owner. Actual native/hosted,
 tap, cask/performance and publication gates remain open; parent U6/U5/U7/U8,
 Phase 6/G4 and the 51 local scenario count do not change. No push/PR, workflow
 dispatch, tag, draft/release, settings or tap write occurred.
+
+
+### Learning and authorized PR publication — 2026-10-02 UTC
+
+The owner invoked ce-compound followed by ce-commit-push-pr, superseding the
+previous publication hold for branch push and PR creation. The reviewed executable
+sources remain unchanged from the clean repeat review at `df10217`. The
+[release-check learning](../solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md)
+records how to establish causal Red/Green evidence with controlled fixtures.
+Full compounding ran sequentially under root AGENTS; frontmatter, links and six
+behavior claims pass grounding checks. No glossary or instruction edit was needed.
+
+- [x] Capture the verified learning and synchronize publication authority after a
+  fresh canonical gate. [Receipt](../verification-evidence/006/publication/acceptance.json).
+
+The containing documentation unit passed canonical validation before commit
+and publication. The complete branch targets GitHub main for hosted review;
+publication of a PR does not close release acceptance. Actual native terminals,
+trusted-main candidate provenance, exact-byte cask/performance acceptance, tap
+availability and release/settings/tap writes remain pending. Parent U6/U5/U7/U8,
+Phase 6/G4 and the 51 local scenario count are unchanged. No merge, release tag,
+workflow dispatch, repository settings or tap write is authorized by this request.

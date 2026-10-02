@@ -2,7 +2,7 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: Renewed owner-requested local simplification and full P0-P2 review underway; actual hosted/native/release gates open
+status: Local simplification and full P0-P2 review complete; branch/PR publication authorized; hosted/native/release gates open
 evidence-scope: U1 Red/Green and canonical receipts; hosted/native proof pending
 deepened: 2026-10-01
 ---
@@ -445,3 +445,25 @@ is complete and publication remains deferred by the owner. Actual native/hosted,
 tap, cask/performance and publication gates remain open; parent U6/U5/U7/U8,
 Phase 6/G4 and the 51 local scenario count do not change. No push/PR, workflow
 dispatch, tag, draft/release, settings or tap write occurred.
+
+
+### Learning and authorized PR publication — 2026-10-02 UTC
+
+The owner invoked ce-compound followed by ce-commit-push-pr, superseding the
+previous publication hold for branch push and PR creation. The reviewed executable
+sources remain unchanged from the clean repeat review at `df10217`. The
+[release-check learning](../solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md)
+records how to establish causal Red/Green evidence with controlled fixtures.
+Full compounding ran sequentially under root AGENTS; frontmatter, links and six
+behavior claims pass grounding checks. No glossary or instruction edit was needed.
+
+- [x] Capture the verified learning and synchronize publication authority after a
+  fresh canonical gate. [Receipt](../verification-evidence/006/publication/acceptance.json).
+
+The containing documentation unit passed canonical validation before commit
+and publication. The complete branch targets GitHub main for hosted review;
+publication of a PR does not close release acceptance. Actual native terminals,
+trusted-main candidate provenance, exact-byte cask/performance acceptance, tap
+availability and release/settings/tap writes remain pending. Parent U6/U5/U7/U8,
+Phase 6/G4 and the 51 local scenario count are unchanged. No merge, release tag,
+workflow dispatch, repository settings or tap write is authorized by this request.

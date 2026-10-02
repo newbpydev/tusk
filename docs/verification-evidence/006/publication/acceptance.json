@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "utc": "2026-10-02T15:14:16.886370+00:00",
+  "base_head": "1ad10a680635112d2b5dcae0e38cc08e3b2b42c2",
+  "publication_commit": "containing documentation commit",
+  "branch": "feat/automation-packaging-release",
+  "base_branch": "main",
+  "authority": "Owner invoked ce-compound then ce-commit-push-pr; commit/push/PR authorized; merge, dispatch, release/settings/tap writes excluded",
+  "canonical": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow",
+    "exit": 0,
+    "log": "canonical.log.gz",
+    "log_sha256": "a9b251ca262fb057a4478649cc25c6c3f426d0f0c075e274157136f9100a1f32",
+    "scope": "Current reviewed code and generated/public docs. Only completed status text and this generated gate receipt/log were added after success; no implementation or test input changed."
+  },
+  "review_source_sha": "df102176a3ac4630c7f8ff363d9f2bbafd8bfd45",
+  "implementation_sha256": {
+    "Makefile": "9d9dc1f73366ca5dfb02bc0846bfd72195a32d698ae04dafa0621135bdbc14bd",
+    "scripts/json_check.sh": "8bac811878f7856bf6217d482bfeca05475d2eadb27f65bbcb0b386277464d82",
+    "scripts/candidate.sh": "5b58a9bbea5244a6e436f79fe58fc009ed4b1eadf264d1da401c6ea5512ac1ec",
+    "scripts/promote.sh": "400513a7bcfcad85ec8e7f42687f2b6f3732153dfb51ee7f17f2b7c3497f5db8",
+    "scripts/release_smoke.sh": "6157b437e6799503b6b6176e6c762c6d2ee0cca6f38c133a5aee13fb46379447",
+    "scripts/repository_metadata.sh": "378c8ad16f2818d00449b2e2dfe0d10e6fddaefd5c213f98759929de6fbaec30",
+    "scripts/test/sha256.sh": "e2b280c8c2de72f236eda290d062eaf4f91e5c11d0f10e1a9456e03bf90413b5",
+    "scripts/test/test_hashes.sh": "920cb4058a14eb687f4028885403db6fbf42205cc79ed96276c49b23fcbcb281",
+    "scripts/test/test_candidate.sh": "1e50de940be65966de1fb0650d1b22ec1307814b31bd99b19a9bf19af306c3c4",
+    "scripts/test/test_promotion.sh": "37baccbd77dc28703ab9bca98323a28b0b9404b5968e61828f829911916c17a5",
+    "scripts/test/test_metadata.sh": "fc2144e9cf837473784756c7fcf29a79bd8f3d1b4463d7571855cc9dd8540df8",
+    "scripts/test/test_release_smoke.sh": "ffba2911e90eb6cfda3c5183be4778c0ff8e0b07fcb58b97332e3b93359fd86b"
+  },
+  "documentation_sha256": {
+    "MASTERPLAN.md": "4e0e1fe766d62aaa7e76e838ed5232878a1c4946c00130c0cece27cc856babf8",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "d2e7cace71aa1b97b17c5d4c53248e6f44d3540c762b18fae1dad7c1a3e7aed7",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "7a9c49a645f2f7fb106429b9501b853b17f88e285f4401ed5085927e8d8109c4",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "26ebcd8e32e7c9d080f177b2d118d67d9b2005d10d33ed0e38a9cae773c52b02",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "000d6e158a6b8fae7291b182f66565a9b912fbdf924874439d5c4f4d0e2aff32"
+  },
+  "compound": {
+    "mode": "Full",
+    "roles": "Context Analyzer, Solution Extractor, Related Docs Finder and semantic validator executed inline sequentially per AGENTS; no independence claimed",
+    "frontmatter": "required schema fields, valid knowledge enums and quoted arrays checked; parser validator exit0",
+    "mechanical": "2 paths, 0 SHAs, 4 links, 0 flags",
+    "semantic": {
+      "claims": [
+        {
+          "claim": "Concatenated approval fixture resets competing remote state and checks no fake calls",
+          "verdict": "verified",
+          "evidence": "scripts/test/test_promotion.sh:180-187: reset; expect 1; [[ ! -s .../gh-calls ]]"
+        },
+        {
+          "claim": "Report variants repair both dependent digests",
+          "verdict": "verified",
+          "evidence": "scripts/test/test_promotion.sh:194-197: .reports[$kind].sha256=$hash then .acceptance_sha256=$hash"
+        },
+        {
+          "claim": "Candidate verifier is a modeled boundary; empty fake log is not absence of production reads",
+          "verdict": "verified",
+          "evidence": "scripts/test/test_promotion.sh:79 fake verify-candidate; scripts/promote.sh:71 fresh make verify-candidate precedes report checks"
+        },
+        {
+          "claim": "Fake Go returns only requested host keys",
+          "verdict": "verified",
+          "evidence": "scripts/test/test_release_smoke.sh:33-34 for key in args; case GOHOSTOS/GOHOSTARCH"
+        },
+        {
+          "claim": "Windows fixture selects matching manifest and cygpath exit23",
+          "verdict": "verified",
+          "evidence": "scripts/test/test_release_smoke.sh:42-54 MINGW; exit23; windows/amd64; recomputed digest; expect1"
+        },
+        {
+          "claim": "Four portability target failures subsequently pass",
+          "verdict": "verified",
+          "evidence": "review-r2/checksum-portability.json and checksum-portability-green.json enumerate test-candidate, test-release-smoke, test-release-promotion, test-repository-metadata, respectively exit2 then0"
+        }
+      ],
+      "merge_state_claims": 0,
+      "unverified_behavior_claims": 0,
+      "historical_probe_statements": "Attributed to retained review investigation, not present-tree behavior"
+    },
+    "vocabulary": "scanned doc and surrounding conversation; no qualifying terms; CONCEPTS.md byte unchanged; no glossary neighborhood implicated",
+    "refresh": "not needed; overlap low",
+    "instruction_discoverability": "already satisfied; AGENTS unchanged",
+    "session_history": "No relevant prior sessions after current enclosing session exclusion and topic threshold",
+    "packs": "none configured; resolver clean"
+  },
+  "local_scenarios_closed": 51,
+  "release_parent_gates": "U6/U5/U7/U8, Phase6/G4 remain open",
+  "hosted_native": "Actual trusted-main provenance, five-platform terminals, exact-byte performance/cask and public tap/install/readback pending; local fixtures do not substitute.",
+  "publication_readback": "PR and exact remote head will be verified after publication; this is a pre-publication gate receipt."
+}
