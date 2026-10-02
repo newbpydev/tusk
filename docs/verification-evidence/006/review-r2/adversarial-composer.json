@@ -1,0 +1,119 @@
+{
+  "reviewer": "adversarial-composer",
+  "cross_model_route": "composer",
+  "cross_model_target": "composer",
+  "cross_model_harness": "cursor-agent",
+  "serving_family": "unknown",
+  "independence_verified": false,
+  "model_requested": "composer-2.5-fast",
+  "model_actual": "unverified",
+  "effort_requested": "fast",
+  "effort_actual": "unverified",
+  "receipt_supported": false,
+  "findings": [
+    {
+      "title": "Local check-ci green without native matrix",
+      "severity": "P2",
+      "file": "scripts/ci-check.sh",
+      "line": 148,
+      "why_it_matters": "A maintainer can treat passing make check-ci as release readiness while macOS, Windows, arm64, or minimum-compiler failures only surface on hosted Native CI, delaying discovery until after push or dispatch.",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        "scripts/ci-check.sh:148-154:    check)\n        contract \"$root\"\n        tool=\"${TUSK_CI_TOOL_DIR:-$root/bin/tools}/actionlint\"\n        ...\n        \"$tool\" -shellcheck= -pyflakes= \"$root/.github/workflows/ci.yml\" \"$root/.github/workflows/release.yml\"\n        ;;",
+        "Canonical gates in .github/workflows/ci.yml run make validate, build, check-generated, check-ci, and check-ci-drift on five native runners plus a separate minimum Go 1.25 job; none of that executes inside ci-check.sh check.",
+        "Trigger: developer runs make check-ci on linux/amd64 only; actionlint and jq contract pass; a darwin-only compile or Windows MSYS toolchain failure remains undetected locally."
+      ],
+      "pre_existing": false,
+      "suggested_fix": "Document that check-ci is contract/lint only, or add an optional make check-ci-native wrapper that fails unless TUSK_CI_OS/ARCH match and preflight-ci was run on a host matching each required matrix row (without claiming full CI simulation).",
+      "first_evidence": "scripts/ci-check.sh:148-154:    check)\n        contract \"$root\"\n        tool=\"${TUSK_CI_TOOL_DIR:-$root/bin/tools}/actionlint\"\n        ...\n        \"$tool\" -shellcheck= -pyflakes= \"$root/.github/workflows/ci.yml\" \"$root/.github/workflows/release.yml\"\n        ;;"
+    },
+    {
+      "title": "Manual gate receipts lack artifact binding",
+      "severity": "P2",
+      "file": "scripts/promote.sh",
+      "line": 47,
+      "why_it_matters": "Promotion can proceed with syntactically valid cli-reference, tui-reference, and cask gate receipts that were never tied to the candidate bytes under review, unlike native gates that must match manifest executables and archives.",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        "scripts/promote.sh:47-53: if [[ \"$id\" == native/* ]];then\n  jq -e --arg target \"${id#native/}\" --slurpfile m \"$manifest\" '\n   ... $r.executable_sha256==$t[0].executable_sha256 ...'\n fi",
+        "scripts/promote.sh:42-45 validates every gate receipt only for scope, source_sha, version, manifest_sha256, and run_id; cli-reference, tui-reference, and cask/* branches skip the native/* manifest binding block.",
+        "scripts/test/test_promotion.sh:42-49 builds cli-reference/tui-reference gate JSON with fixture:true and no terminal evidence fields; structure matches what promote accepts for non-native gates."
+      ],
+      "pre_existing": false,
+      "suggested_fix": "Extend the promote gate loop to require cask gate receipts to include cask_sha256 matching the candidate, and require cli-reference/tui-reference receipts to reference the same report paths and sha256 values already validated under acceptance.reports.",
+      "first_evidence": "scripts/promote.sh:47-53: if [[ \"$id\" == native/* ]];then\n  jq -e --arg target \"${id#native/}\" --slurpfile m \"$manifest\" '\n   ... $r.executable_sha256==$t[0].executable_sha256 ...'\n fi"
+    },
+    {
+      "title": "Artifact API digest never gates download",
+      "severity": "P2",
+      "file": ".github/workflows/release.yml",
+      "line": 155,
+      "why_it_matters": "The release workflow records artifact-digest from upload but provenance and verify-candidate never compare that digest to downloaded bytes, so transport-level corruption or artifact substitution that still yields internally consistent extracted files is outside the automated gate (partially mitigated by per-file verify and attestations).",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        ".github/workflows/release.yml:128-131: \"artifact_id\": \"${{ steps.upload.outputs.artifact-id }}\", \"artifact_digest\": \"${{ steps.upload.outputs.artifact-digest }}\"",
+        ".github/workflows/release.yml:152-158: download-artifact uses only artifact-ids; needs.build.outputs.artifact_digest is unused in later steps.",
+        "scripts/candidate.sh:131: receipt transport field states no claim of independently hashing the transport ZIP while artifact_api_digest is stored from the API only."
+      ],
+      "pre_existing": false,
+      "suggested_fix": "After download-artifact in provenance (and optionally in verify-candidate), re-fetch artifact metadata by artifact_id and fail unless the Actions-reported digest matches a maintainer-computed digest of the downloaded artifact bundle, or document that only extracted subject attestations are authoritative.",
+      "first_evidence": ".github/workflows/release.yml:128-131: \"artifact_id\": \"${{ steps.upload.outputs.artifact-id }}\", \"artifact_digest\": \"${{ steps.upload.outputs.artifact-digest }}\""
+    },
+    {
+      "title": "Verify-candidate assumes local tree is artifact",
+      "severity": "P2",
+      "file": "scripts/candidate.sh",
+      "line": 90,
+      "why_it_matters": "verify-candidate cryptographically validates files in operator-supplied CANDIDATE_DIR and GitHub run metadata but does not re-download the workflow artifact by artifact_id, so a directory assembled from mixed runs or partial extracts can be evaluated without proving it equals the uploaded artifact ZIP.",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        "scripts/candidate.sh:90-94: verify starts from CANDIDATE_DIR on disk, checks manifest digest and candidate-run.json, without gh run download of artifact_id.",
+        "scripts/candidate.sh:115-117: jq checks artifact name, digest prefix, and workflow_run.head_sha in artifacts.json but no step hashes the downloaded ZIP against artifact_api_digest.",
+        "scripts/promote.sh:69-70: promote calls make verify-candidate with the same local candidate tree pattern, inheriting the same assumption."
+      ],
+      "pre_existing": false,
+      "suggested_fix": "Add an optional verify-candidate path that downloads the artifact by artifact_id into a fresh directory before release_check verify and gh attestation verify, then compare manifest hash to CANDIDATE_MANIFEST_SHA256.",
+      "first_evidence": "scripts/candidate.sh:90-94: verify starts from CANDIDATE_DIR on disk, checks manifest digest and candidate-run.json, without gh run download of artifact_id."
+    },
+    {
+      "title": "Provenance attestation omits signer-digest binding",
+      "severity": "P3",
+      "file": ".github/workflows/release.yml",
+      "line": 168,
+      "why_it_matters": "Maintainer-side verify-candidate passes explicit --signer-digest and --source-digest to gh attestation verify, but the hosted provenance job relies on default attest-build-provenance behavior, widening the gap between what CI attests and what later verification proves if defaults ever diverge from the release workflow contract.",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 50,
+      "evidence": [
+        ".github/workflows/release.yml:168-173: attest-build-provenance with subject-path only; no signer-digest or source-digest inputs.",
+        "scripts/candidate.sh:127: gh attestation verify ... --signer-digest \"$RELEASE_SHA\" --source-ref refs/heads/main --source-digest \"$RELEASE_SHA\" ...",
+        "Composition: same run attestation in provenance vs stricter flags in verify-candidate may accept different certificate interpretations if GitHub CLI defaults change."
+      ],
+      "pre_existing": false,
+      "first_evidence": ".github/workflows/release.yml:168-173: attest-build-provenance with subject-path only; no signer-digest or source-digest inputs."
+    }
+  ],
+  "residual_risks": [
+    "Hosted native, terminal, and public release acceptance remain explicitly pending; green candidate CI and promotion tooling do not substitute for those proofs.",
+    "RELEASE_EVIDENCE_SCOPE=local-fixture allows release_smoke preflight without a trusted verification receipt; it must never feed promotion acceptance, but nothing in promote.sh references smoke scope directly.",
+    "Release packaging reuses the runner GOMODCACHE/GOCACHE while git checkout is isolated; module integrity still depends on go.sum, but shared cache behavior on compromised runners is outside the scripts' threat model."
+  ],
+  "testing_gaps": [
+    "End-to-end test that provenance fails when upload artifact-digest metadata disagrees with a tampered download while per-file hashes still accidentally align (transport fidelity).",
+    "Promotion test asserting cli-reference/tui-reference/cask gate receipts are rejected when they omit bindings that native/* receipts already enforce.",
+    "Workflow test that release build fails if github.sha and inputs.source_sha diverge when identity checks are bypassed or regressed (contract-only simulation)."
+  ]
+}

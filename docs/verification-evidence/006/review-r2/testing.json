@@ -1,0 +1,25 @@
+{
+  "reviewer": "testing",
+  "findings": [
+    {
+      "title": "Release policy tests require an unavailable GNU hash command",
+      "severity": "P2",
+      "file": "scripts/test/test_candidate.sh",
+      "line": 41,
+      "confidence": 100,
+      "autofix_class": "gated_auto",
+      "owner": "downstream-resolver",
+      "requires_verification": true,
+      "pre_existing": false,
+      "suggested_fix": "Use a portable shared test-only SHA256 helper with sha256sum when present and shasum -a 256 otherwise; cover both paths and rerun the affected canonical policy targets with sha256sum removed from PATH.",
+      "why_it_matters": "Canonical release policy tests fail before their assertions on a supported shell that provides shasum but lacks GNU sha256sum. The production release tools already support that environment, so their tests add an undeclared platform prerequisite. A shared test-only digest helper makes the fixture hashes portable without changing shipped code.",
+      "evidence": [
+        "scripts/test/test_candidate.sh:41 -- file_hash=$(sha256sum \"$scratch/candidate/assets/payload.tar.gz\" | cut -d' ' -f1)",
+        "checksum-portability-red.log: candidate, promotion and metadata canonical targets exit 2 with sha256sum command not found when PATH removes only sha256sum and retains shasum; this is a Linux portability fixture, not native macOS acceptance.",
+        "GitHub macOS 15 toolset common_packages does not declare coreutils: https://raw.githubusercontent.com/actions/runner-images/main/images/macos/toolsets/toolset-15.json ; official Actions runner workflow explicitly installs coreutils before invoking sha256sum on macOS: https://github.com/actions/runner/blob/main/.github/workflows/release.yml"
+      ]
+    }
+  ],
+  "residual_risks": [],
+  "testing_gaps": []
+}

@@ -1,0 +1,17 @@
+{
+  "status": "complete",
+  "original_review_findings_fixed": [
+    1,
+    2
+  ],
+  "addendum": {
+    "severity": "P2",
+    "title": "Failed native path conversion silently loses selected release binary",
+    "file": "scripts/release_smoke.sh",
+    "evidence": "export masks cygpath status; corrected fixture reports 0 vs 1. Separate assignment now propagates failure; focused Green and ShellCheck pass.",
+    "issue": "006-ISS-050"
+  },
+  "focused_review": "New shared record guard retains every identity/hash/sample/approval predicate; portable hash helper is test-only and handles literal filenames; native selector exports only after successful conversion.",
+  "unresolved_p0_p2": [],
+  "execution": "inline nonindependent; full repeat remains pending"
+}

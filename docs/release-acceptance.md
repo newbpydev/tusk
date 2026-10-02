@@ -6,6 +6,10 @@ owner authorization separate. They are not application configuration. Creating a
 session approval, including its exact action and identities, only after receiving
 it. Fixture approvals are test data and authorize no real operation.
 
+Each manifest, approval, acceptance, gate, verification receipt and measurement
+report must be a regular file containing exactly one JSON object. Helpers refuse
+concatenated records, including a failed record followed by a passing one.
+
 ## Candidate and native acceptance
 
 Freeze executable, packaging, verification and promotion tooling in the source

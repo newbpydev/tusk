@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 local engineering and final review accepted; local source freeze; hosted/native release gates pending
+**Current Status**: Feature 006 owner-requested renewed local simplification and full P0–P2 review loop underway; hosted/native release gates pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Branch Push/PR Authorization and Hosted/Main Candidate Preparation (local code frozen in the containing review-fix commit; external release gates pending)
+**Active Implementation Target**: Feature 006 — Renewed local ce-simplify-code, full ce-code-review and P0–P2 Red/Green remediation loop (owner instruction; no publication authorized)
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -770,3 +770,38 @@ separate. Select the final main SHA only after authorized integration, generate
 a fresh hosted candidate and rerun affected exact-byte native/cask/reference
 gates. Earlier private local candidates are preliminary. Parent U6/U5/U7/U8,
 Phase 6/G4 and unexecuted scenarios stay open; local scenario closures remain 51.
+
+
+### Owner-requested renewed local review loop — 2026-10-02 UTC
+
+The owner deferred publication and requested another ce-simplify-code pass, then
+a full ce-code-review and Red/Green remediation loop for all confirmed P0–P2
+findings. The prior acceptance at `72c5eeb` remains historical. The active target
+is this local review loop; no push, PR, tag, workflow dispatch or release is
+authorized. Each completed fix unit must pass canonical validation, synchronize
+this triplet and MASTERPLAN, and be committed before advancing. Actual native,
+hosted, tap and publication evidence remains pending; the 51 local scenario
+closures do not close those parent gates.
+
+### Renewed local review-fix checkpoint — 2026-10-02 UTC
+
+The owner-requested simplification found no worthwhile behavior-preserving change
+(0 reuse/quality/efficiency edits; three deliberate structures retained). Full
+review `20261002-140940-86eb372b` confirmed two P2 issues; caller focused review
+caught a third. Seven Red cases now refuse concatenated approval/acceptance/report
+and verification objects; policy fixture hashes support shasum without GNU
+sha256sum; a failed Windows native path conversion refuses selected-binary
+acceptance. All existing identity, hash, sample and owner-approval guards remain.
+
+[Receipt](docs/verification-evidence/006/review-r2/acceptance.json) retains the
+original completed review, focused addendum, failed/incomplete fixtures, Green
+checks and source hashes. Focused checks, Go 1.25 script suite and strict
+ShellCheck pass. Fresh final canonical validation/build/generated/docs/notices/workflow checks
+pass before this coherent local fix commit; repeat full review on the committed
+head.
+Local roles ran sequentially, Claude authentication failed and Composer serving
+model/effort/independence is unverified. No independent agreement is claimed.
+
+Local scenario closures remain 51; parent U6/U5/U7/U8, Phase 6/G4 and actual
+native/hosted/tap/publication gates remain open. No remote mutation or publication
+is authorized. The active target remains this review/fix loop.

@@ -33,15 +33,17 @@ fi
 mkdir -p "$scratch/fixture/scripts" "$scratch/candidate/assets" "$scratch/bin"
 if [[ ! -f "$root/scripts/candidate.sh" ]]; then exit 1; fi
 cp "$root/scripts/candidate.sh" "$scratch/fixture/scripts/"
+ cp "$root/scripts/json_check.sh" "$scratch/fixture/scripts/"
 cp "$root/Makefile" "$scratch/fixture/"
 cp "$root/scripts/gh_deadline.sh" "$scratch/fixture/scripts/"
 cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
 printf '#!/usr/bin/env bash\nprintf "inventory inspected\\n"\n' >"$scratch/fixture/scripts/release_check.sh"
+cp "$root/scripts/test/sha256.sh" "$scratch/sha256.sh"
 printf payload >"$scratch/candidate/assets/payload.tar.gz"
-file_hash=$(sha256sum "$scratch/candidate/assets/payload.tar.gz" | cut -d' ' -f1)
+file_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/payload.tar.gz")
 jq -n --arg sha "$sha" --arg hash "$file_hash" '{schema:1,mode:"candidate",version:"0.3.0",source_sha:$sha,files_sha256:{"payload.tar.gz":$hash},checksums_sha256:$hash}' >"$scratch/candidate/assets/release-manifest.json"
 printf payload >"$scratch/candidate/assets/checksums.txt"
-manifest_hash=$(sha256sum "$scratch/candidate/assets/release-manifest.json" | cut -d' ' -f1)
+manifest_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/release-manifest.json")
 jq -n --arg sha "$sha" --arg hash "$manifest_hash" '{schema:1,repository:"newbpydev/tusk",workflow:".github/workflows/release.yml",ref:"refs/heads/main",source_sha:$sha,version:"v0.3.0",run_id:123,run_attempt:1,manifest_sha256:$hash}' >"$scratch/candidate/candidate-run.json"
 jq -n --arg sha "$sha" '{id:123,run_attempt:1,path:".github/workflows/release.yml",event:"workflow_dispatch",head_branch:"main",head_sha:$sha,status:"completed",conclusion:"success",repository:{id:8,full_name:"newbpydev/tusk"},head_repository:{id:8,full_name:"newbpydev/tusk"}}' >"$scratch/run.json"
 jq -n '{id:8,full_name:"newbpydev/tusk",default_branch:"main"}' >"$scratch/repo.json"
@@ -69,7 +71,7 @@ case "$1" in
     attestation)
         [[ "$2" == verify && "$*" == *'--source-ref refs/heads/main'* && "$*" == *'--source-digest aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'* && "$*" == *'--signer-digest aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'* && "$*" == *'--deny-self-hosted-runners'* ]] || exit 77
         [[ "${FIXTURE_ATTEST:-ok}" != missing ]] || exit 1
-        hash=$(sha256sum "$3" | cut -d' ' -f1)
+        hash=$(bash "$FIXTURE_ROOT/sha256.sh" "$3")
         if [[ "$3" == */payload.tar.gz && -n "${FIXTURE_PAYLOAD_HASH:-}" ]]; then hash=$FIXTURE_PAYLOAD_HASH; fi
         jq -n --arg hash "$hash" --arg run "${FIXTURE_CERT_RUN:-123}" '[{verificationResult:{signature:{certificate:{issuer:"https://token.actions.githubusercontent.com",buildSignerURI:"https://github.com/newbpydev/tusk/.github/workflows/release.yml@refs/heads/main",buildSignerDigest:("a"*40),sourceRepositoryURI:"https://github.com/newbpydev/tusk",sourceRepositoryDigest:("a"*40),sourceRepositoryRef:"refs/heads/main",runnerEnvironment:"github-hosted",buildTrigger:"workflow_dispatch",runInvocationURI:("https://github.com/newbpydev/tusk/actions/runs/"+$run+"/attempts/1")}},statement:{subject:[{digest:{sha256:$hash}}]}}}]' ;;
     *) exit 77 ;;
@@ -80,7 +82,7 @@ verify=(env PATH="$scratch/bin:$PATH" GH_HOST=wrong.example GH_DEBUG=api DEBUG=1
 expect 1 'missing cask must refuse complete candidate acceptance' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/missing-cask" bash "$scratch/fixture/scripts/candidate.sh" verify
 mkdir -p "$scratch/candidate/homebrew/Casks"
 printf 'fixture cask' >"$scratch/candidate/homebrew/Casks/tusk.rb"
-cask_hash=$(sha256sum "$scratch/candidate/homebrew/Casks/tusk.rb" | cut -d' ' -f1)
+cask_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/homebrew/Casks/tusk.rb")
 jq --arg hash "$cask_hash" '.cask_sha256=$hash' "$scratch/candidate/candidate-run.json" >"$scratch/new-receipt"
 mv "$scratch/new-receipt" "$scratch/candidate/candidate-run.json"
 expect 0 'trusted API and certificate identity accepted' "${verify[@]}" CANDIDATE_VERIFICATION_DIR="$scratch/accepted" bash "$scratch/fixture/scripts/candidate.sh" verify

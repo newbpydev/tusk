@@ -1,0 +1,5 @@
+{
+  "outcome": "verdicts",
+  "reason": "Sequential inline per root mapping; lost independent validator coverage explicitly disclosed",
+  "verdicts": "/tmp/compound-engineering-1000/ce-code-review/20261002-140940-86eb372b/validator-verdicts.json"
+}

@@ -1,0 +1,6 @@
+{
+  "command": "make test-release-promotion in owned faithful snapshot plus two proposed malformed-document tests",
+  "exit": 2,
+  "remote": "all APIs are fixtures; no real writes",
+  "log": "parser-reproduction.log"
+}

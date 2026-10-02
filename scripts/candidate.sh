@@ -87,10 +87,12 @@ record() {
 }
 verify() (
     inputs
+    # shellcheck source=scripts/json_check.sh
+    source "$root/scripts/json_check.sh"
     local directory=${CANDIDATE_DIR:?} output=${CANDIDATE_VERIFICATION_DIR:?} manifest="$CANDIDATE_DIR/assets/release-manifest.json" attempt artifact_id artifact_digest file hash
     [[ "${CANDIDATE_MANIFEST_SHA256:-}" =~ ^[0-9a-f]{64}$ ]] || die 'accepted manifest digest required'
     [[ -f "$manifest" && ! -L "$manifest" && "$(digest "$manifest")" == "$CANDIDATE_MANIFEST_SHA256" ]] || die 'manifest digest mismatch'
-    [[ -f "$directory/candidate-run.json" && ! -L "$directory/candidate-run.json" ]] || die 'run receipt missing or unsafe'
+    json_object "$directory/candidate-run.json" || die 'run receipt missing or unsafe'
     jq -e --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --argjson run "$CANDIDATE_RUN_ID" 'keys==(["schema","repository","workflow","ref","source_sha","version","run_id","run_attempt","manifest_sha256","cask_sha256"]|sort) and .schema==1 and .repository=="newbpydev/tusk" and .workflow==".github/workflows/release.yml" and .ref=="refs/heads/main" and .source_sha==$sha and .version==$version and .run_id==$run and .manifest_sha256==$hash and (.run_attempt|type=="number" and .>0 and floor==.)' "$directory/candidate-run.json" >/dev/null || die 'untrusted run receipt'
     jq -e --arg sha "$RELEASE_SHA" --arg version "${RELEASE_VERSION#v}" '.mode=="candidate" and .source_sha==$sha and .version==$version' "$manifest" >/dev/null || die 'manifest identity mismatch'
     [[ -f "$directory/homebrew/Casks/tusk.rb" && ! -L "$directory/homebrew/Casks/tusk.rb" ]] || die 'reviewed cask missing or unsafe'

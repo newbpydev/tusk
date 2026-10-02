@@ -128,7 +128,13 @@ generate-schema-catalog:
 check-schema-catalog:
 	go test ./internal/storage -run '^TestEmbeddedSchemaCatalog$$' -count=1
 
+test-hashes:
+	bash scripts/test/test_hashes.sh
+
+.PHONY: test-hashes
+
 test-scripts:
+	bash scripts/test/test_hashes.sh
 	@./scripts/test/test_scripts.sh
 	@bash scripts/test/test_sqlc.sh
 	@bash scripts/test/test_ci.sh

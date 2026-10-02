@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+# shellcheck source=scripts/json_check.sh
+source "$root/scripts/json_check.sh"
 die() { printf 'Release smoke: %s\n' "$*" >&2; exit 1; }
 digest() {
  if command -v sha256sum >/dev/null 2>&1;then sha256sum "$1" | awk '{print $1}';else shasum -a 256 "$1" | awk '{print $1}';fi
@@ -22,12 +24,13 @@ preflight() {
  case "${RELEASE_EVIDENCE_SCOPE:-trusted-candidate}" in
   local-fixture) printf 'Preliminary local fixture; cannot close native release acceptance.\n' ;;
   trusted-candidate)
-   [[ -f "${CANDIDATE_VERIFICATION_RECEIPT:-}" && ! -L "$CANDIDATE_VERIFICATION_RECEIPT" ]] || die 'actual trusted-candidate verification receipt required'
+   json_object "${CANDIDATE_VERIFICATION_RECEIPT:-}" || die 'actual trusted-candidate verification receipt required'
    jq -e --arg hash "$CANDIDATE_MANIFEST_SHA256" --slurpfile m "$RELEASE_MANIFEST" '.status=="verified" and .repository=="newbpydev/tusk" and .workflow==".github/workflows/release.yml" and .manifest_sha256==$hash and .source_sha==$m[0].source_sha and .version==("v"+$m[0].version)' "$CANDIDATE_VERIFICATION_RECEIPT" >/dev/null || die 'verification receipt does not match candidate' ;;
   *) die 'invalid evidence scope';;
  esac
  RELEASE_BINARY="$(cd "$(dirname "$RELEASE_BINARY")" && pwd -P)/$(basename "$RELEASE_BINARY")"
- export RELEASE_BINARY TUSK_RELEASE_BINARY="$(native_path "$RELEASE_BINARY")"
+ TUSK_RELEASE_BINARY=$(native_path "$RELEASE_BINARY") || die 'supplied binary native path conversion failed'
+ export RELEASE_BINARY TUSK_RELEASE_BINARY
 }
 owned_output() {
  local requested=$1 parent candidate output

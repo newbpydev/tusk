@@ -2,6 +2,8 @@
 # Maintainer tooling only. APIs receive structured JSON and literal argument arrays.
 set -euo pipefail
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+# shellcheck source=scripts/json_check.sh
+source "$root/scripts/json_check.sh"
 repo=newbpydev/tusk
 export GH_HOST=github.com
 unset GH_DEBUG DEBUG
@@ -13,7 +15,7 @@ regular() { [[ -f "$1" && ! -L "$1" ]]; }
 [[ "${RELEASE_VERSION:-}" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ && "${RELEASE_SHA:-}" =~ ^[0-9a-f]{40}$ && "${CANDIDATE_RUN_ID:-}" =~ ^[1-9][0-9]*$ && "${CANDIDATE_MANIFEST_SHA256:-}" =~ ^[0-9a-f]{64}$ ]] || die 'explicit version/source/run/manifest identity required'
 candidate=$(cd "${CANDIDATE_DIR:?}" && pwd -P)
 manifest="$candidate/assets/release-manifest.json"
-regular "$manifest" && [[ "$(digest "$manifest")" == "$CANDIDATE_MANIFEST_SHA256" ]] || die 'selected manifest changed'
+json_object "$manifest" && [[ "$(digest "$manifest")" == "$CANDIDATE_MANIFEST_SHA256" ]] || die 'selected manifest changed'
 jq -e --arg sha "$RELEASE_SHA" --arg version "${RELEASE_VERSION#v}" '.mode=="candidate" and .source_sha==$sha and .version==$version' "$manifest" >/dev/null || die 'candidate identity differs'
 bash "$root/scripts/release_check.sh" verify "$candidate/assets"
 bash "$root/scripts/release_check.sh" check-cask "$manifest" "$candidate/homebrew/Casks/tusk.rb"
@@ -32,7 +34,7 @@ if [[ "$action" == prepare ]];then
  printf 'Prepared reviewable asset plan; no hosted/native acceptance or mutation.\n';exit 0
 fi
 # Human acceptance is hash-bound in a separate record of explicit owner approval.
-if ! regular "${RELEASE_ACCEPTANCE:-}" || ! regular "${RELEASE_NOTES:-}";then die 'accepted gate inventory and reviewed notes required';fi
+if ! json_object "${RELEASE_ACCEPTANCE:-}" || ! regular "${RELEASE_NOTES:-}";then die 'accepted gate inventory and reviewed notes required';fi
 acceptance_hash=$(digest "$RELEASE_ACCEPTANCE");notes_hash=$(digest "$RELEASE_NOTES")
 jq -e --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --arg cask "$cask_hash" --argjson run "$CANDIDATE_RUN_ID" '
  .schema==1 and .status=="accepted" and .repository=="newbpydev/tusk" and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .cask_sha256==$cask and .run_id==$run and .prepublication_scenarios_reviewed==true and
@@ -41,7 +43,7 @@ jq -e --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CAN
 ' "$RELEASE_ACCEPTANCE" >/dev/null || die 'native/terminal/performance/cask gates incomplete or stale'
 while IFS= read -r gate;do
  path=$(jq -r '.receipt.path' <<<"$gate");hash=$(jq -r '.receipt.sha256' <<<"$gate")
- regular "$path" && [[ "$(digest "$path")" == "$hash" ]] || die 'gate receipt changed or absent'
+ json_object "$path" && [[ "$(digest "$path")" == "$hash" ]] || die 'gate receipt changed or absent'
  jq -e --arg id "$(jq -r '.id' <<<"$gate")" --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --argjson run "$CANDIDATE_RUN_ID" '.status=="accepted" and .scope=="trusted-candidate" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' "$path" >/dev/null || die 'gate receipt does not describe this trusted candidate'
  id=$(jq -r '.id' <<<"$gate")
  if [[ "$id" == native/* ]];then
@@ -53,7 +55,7 @@ while IFS= read -r gate;do
  fi
 done < <(jq -c '.gates[]' "$RELEASE_ACCEPTANCE")
 if [[ "$action" != readback ]];then
- regular "${RELEASE_AUTHORIZATION:-}" || die 'record of explicit owner authorization required'
+ json_object "${RELEASE_AUTHORIZATION:-}" || die 'record of explicit owner authorization required'
  jq -e --arg action "$action" --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg hash "$CANDIDATE_MANIFEST_SHA256" --arg cask "$cask_hash" --arg accepted "$acceptance_hash" --arg notes "$notes_hash" --argjson run "$CANDIDATE_RUN_ID" '
  keys==(["schema","status","action","repository","source_sha","version","manifest_sha256","cask_sha256","run_id","acceptance_sha256","notes_sha256","exclusive_release_window","approval_reference"]|sort) and
  .schema==1 and .status=="owner-approved" and .action==$action and .repository=="newbpydev/tusk" and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .cask_sha256==$cask and .run_id==$run and .acceptance_sha256==$accepted and .notes_sha256==$notes and .exclusive_release_window==true and (.approval_reference|type=="string" and length>0)
@@ -67,6 +69,7 @@ while IFS= read -r changed;do
  case "$changed" in README.md|MASTERPLAN.md|CONCEPTS.md|docs/*.md|docs/verification-evidence/*) ;; '') ;; *) die "build/acceptance tooling changed after source freeze: $changed";; esac
 done <"$output/source-diff.txt"
 CANDIDATE_VERIFICATION_DIR="$output/verification" make -C "$root" verify-candidate >"$output/verification.log" 2>&1
+json_object "$output/verification/receipt.json" || die 'invalid verification receipt document'
 jq -e --arg hash "$CANDIDATE_MANIFEST_SHA256" --arg cask "$cask_hash" '.status=="verified" and .manifest_sha256==$hash and .cask_sha256==$cask' "$output/verification/receipt.json" >/dev/null || die 'fresh cryptographic candidate verification failed'
 make -C "$root" homebrew-destination >"$output/tap.log" 2>&1
 # Performance reports retain every sample and compiler/binary identities.
@@ -74,7 +77,7 @@ linux_hash=$(jq -r '.targets[]|select(.target=="linux/amd64")|.executable_sha256
 for kind in cli tui startup;do
  path=$(jq -r --arg kind "$kind" '.reports[$kind].path' "$RELEASE_ACCEPTANCE")
  hash=$(jq -r --arg kind "$kind" '.reports[$kind].sha256' "$RELEASE_ACCEPTANCE")
- regular "$path" && [[ "$(digest "$path")" == "$hash" ]] || die 'retained performance report changed/absent'
+ json_object "$path" && [[ "$(digest "$path")" == "$hash" ]] || die 'retained performance report changed/absent'
  case "$kind" in
  cli) jq -e --arg hash "$linux_hash" --arg go "go$(jq -r '.compiler' "$manifest")" '
  def names: ["--help/invalid-config=false","--help/invalid-config=true","--version/invalid-config=false","--version/invalid-config=true"] + [[0,100,1000][] as $n|["list","tree","stats","history"][] as $cmd|[false,true][]|"\($n)/\($cmd)/json=\(.)"];

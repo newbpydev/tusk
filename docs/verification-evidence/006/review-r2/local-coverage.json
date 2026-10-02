@@ -1,0 +1,18 @@
+{
+  "execution": "sequential inline per root AGENTS mapping; no independent local reviewers or validator",
+  "reviewed": [
+    "CI and tool pin contracts",
+    "candidate workflow and attempt/job/artifact/certificate identity",
+    "tar/zip and binary format/build metadata, overlays, payload inventories",
+    "bounded direct gh process, stream/exit handling",
+    "promotion tag/release/asset ordering, main and source freeze, sample matrices",
+    "metadata partial writes and independent readbacks",
+    "supplied binary smoke/measurement selectors",
+    "Cobra completion/static registry and docgen rollback",
+    "notice inventory and documentation/plan readiness",
+    "Native checksum prerequisite against official macOS toolset and shasum-only PATH reproduction"
+  ],
+  "finding_count": 2,
+  "standards_fallback": "AGENTS.md",
+  "independent_reviewers": []
+}

@@ -17,24 +17,25 @@ expect() {
 # Only policy/API boundary fixtures. No signatures, native execution or timing proof.
 mkdir -p "$scratch/fixture/scripts" "$scratch/candidate/assets" "$scratch/candidate/homebrew/Casks" "$scratch/bin" "$scratch/remote" "$scratch/gates"
 cp "$root/scripts/promote.sh" "$scratch/fixture/scripts/"
+ cp "$root/scripts/json_check.sh" "$scratch/fixture/scripts/"
 cp "$root/Makefile" "$scratch/fixture/"
 cp "$root/scripts/gh_deadline.sh" "$scratch/fixture/scripts/"
 cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$scratch/fixture/scripts/release_check.sh"
 sha=$(printf 'a%.0s' {1..40})
 for name in tusk_0.3.0_linux_amd64.tar.gz tusk_0.3.0_linux_arm64.tar.gz tusk_0.3.0_darwin_amd64.tar.gz tusk_0.3.0_darwin_arm64.tar.gz tusk_0.3.0_windows_amd64.zip tusk_0.3.0_source.tar.gz THIRD_PARTY_NOTICES.md checksums.txt;do printf 'fixture %s' "$name" >"$scratch/candidate/assets/$name";done
-hash=$(sha256sum "$scratch/candidate/assets/checksums.txt"|cut -d' ' -f1)
+hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/checksums.txt")
 jq -n --arg sha "$sha" --arg hash "$hash" '{schema:1,mode:"candidate",version:"0.3.0",source_sha:$sha,compiler:"1.27.1",checksums_sha256:$hash,files_sha256:{},targets:[{target:"linux/amd64",executable_sha256:("b"*64)}]}' >"$scratch/manifest"
 for file in "$scratch/candidate/assets/"*;do
  [[ "$(basename "$file")" != checksums.txt ]] || continue
- hash=$(sha256sum "$file"|cut -d' ' -f1)
+ hash=$(bash "$root/scripts/test/sha256.sh" "$file")
  jq --arg file "$(basename "$file")" --arg hash "$hash" '.files_sha256[$file]=$hash' "$scratch/manifest" >"$scratch/new";mv "$scratch/new" "$scratch/manifest"
 done
 jq '. as $m | .targets=[ ["linux/amd64","linux/arm64","darwin/amd64","darwin/arm64","windows/amd64"][] as $t | {target:$t,executable_sha256:("b"*64),archive:("tusk_0.3.0_"+($t|gsub("/";"_"))+(if $t|startswith("windows/") then ".zip" else ".tar.gz" end))}]' "$scratch/manifest" >"$scratch/new";mv "$scratch/new" "$scratch/manifest"
 mv "$scratch/manifest" "$scratch/candidate/assets/release-manifest.json"
-manifest_hash=$(sha256sum "$scratch/candidate/assets/release-manifest.json"|cut -d' ' -f1)
+manifest_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/release-manifest.json")
 printf 'fixture cask' >"$scratch/candidate/homebrew/Casks/tusk.rb"
-cask_hash=$(sha256sum "$scratch/candidate/homebrew/Casks/tusk.rb"|cut -d' ' -f1)
+cask_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/homebrew/Casks/tusk.rb")
 # Intentionally literal shell-looking text, passed only through structured JSON.
 # shellcheck disable=SC2016
 printf 'Reviewed notes; $(touch marker) and `touch marker` remain literal.\n' >"$scratch/notes.md"
@@ -45,17 +46,17 @@ for id in native/linux/amd64 native/linux/arm64 native/darwin/amd64 native/darwi
  if [[ "$id" == native/* ]];then
   jq --arg target "${id#native/}" --slurpfile m "$scratch/candidate/assets/release-manifest.json" '. + ($m[0].targets[]|select(.target==$target)|{target:.target,executable_sha256:.executable_sha256,archive_sha256:$m[0].files_sha256[.archive]})' "$path" >"$scratch/new";mv "$scratch/new" "$path"
  fi
- hash=$(sha256sum "$path"|cut -d' ' -f1)
+ hash=$(bash "$root/scripts/test/sha256.sh" "$path")
  jq --arg id "$id" --arg path "$path" --arg hash "$hash" '.gates += [{id:$id,passed:true,receipt:{path:$path,sha256:$hash}}]' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
 done
 jq -n 'def names: ["--help/invalid-config=false","--help/invalid-config=true","--version/invalid-config=false","--version/invalid-config=true"] + [ [0,100,1000][] as $n | ["list","tree","stats","history"][] as $cmd | [false,true][] | "\($n)/\($cmd)/json=\(.)" ]; {passed:true,manifest:{sha256:("b"*64),go:"go1.27.1",selected_acceptance_profile:"reference",fixture:"true"},cases:[range(1;4) as $run|names[]|{name:.,passed:true,run:$run,output_bytes:1,warmup_ns:[range(5)|1],samples_ns:[range(100)|1],p90_ns:1,p95_ns:1,p99_ns:1,max_ns:1}]}' >"$scratch/cli.json"
 jq -n --arg sha "$sha" 'def names: [ [0,100,1000][] as $n | [[80,24],[120,40],[200,60]][] as $s | ["prepare","view"][] | "\(.)/\($n)-tasks/\($s[0])x\($s[1])" ] + [ ["80x24","120x40","200x60"][]|"calendar/1000-tasks/"+.] + ["markdown/32768-bytes","markdown/1048576-bytes","disk-refresh/100-tasks","stress/10000-tasks-1MiB-note-1000-events","stress/read-only-form-1MiB"]; {passed:true,manifest:{binary_sha256:("b"*64),revision:$sha,source_diff:"",go:"go1.27.1",fixture:"true"},cases:[range(1;4) as $run|names[]|{name:.,run:$run,passed:true,preparation_budget:(startswith("prepare/") or startswith("calendar/")),consumed_output_size:1,allocations:[range(100)|0],allocated_bytes:[range(100)|0],warmup_ns:[range(5)|1],samples_ns:[range(100)|1]}]}' >"$scratch/tui.json"
 jq -n '{BinarySHA256:("b"*64),Go:"go1.27.1",Runs:[range(1;4)|{run:.,child_max_rss_kib:[range(100)|1],warmup_ns:[range(5)|1],samples_ns:[range(100)|1]}],fixture:true}' >"$scratch/startup.json"
 for kind in cli tui startup;do
- hash=$(sha256sum "$scratch/$kind.json"|cut -d' ' -f1)
+ hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/$kind.json")
  jq --arg kind "$kind" --arg path "$scratch/$kind.json" --arg hash "$hash" '.reports[$kind]={path:$path,sha256:$hash}' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
 done
-accepted_hash=$(sha256sum "$scratch/acceptance.json"|cut -d' ' -f1);notes_hash=$(sha256sum "$scratch/notes.md"|cut -d' ' -f1)
+accepted_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/acceptance.json");notes_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/notes.md")
 for action in draft publish;do
  jq -n --arg action "$action" --arg sha "$sha" --arg hash "$manifest_hash" --arg cask "$cask_hash" --arg accepted "$accepted_hash" --arg notes "$notes_hash" '{schema:1,status:"owner-approved",action:$action,repository:"newbpydev/tusk",version:"v0.3.0",source_sha:$sha,manifest_sha256:$hash,cask_sha256:$cask,run_id:123,acceptance_sha256:$accepted,notes_sha256:$notes,exclusive_release_window:true,approval_reference:"fixture only; not actual owner consent"}' >"$scratch/$action-approval.json"
 done
@@ -144,9 +145,9 @@ for mutation in 'del(.executable_sha256)' '.executable_sha256=("c"*64)' '.archiv
  path="$scratch/gates/native-linux-amd64.json"
  cp "$path" "$scratch/original-gate.json";cp "$scratch/acceptance.json" "$scratch/original-acceptance.json";cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
  jq "$mutation" "$path" >"$scratch/new";mv "$scratch/new" "$path"
- hash=$(sha256sum "$path"|cut -d' ' -f1)
+ hash=$(bash "$root/scripts/test/sha256.sh" "$path")
  jq --arg hash "$hash" '(.gates[]|select(.id=="native/linux/amd64")|.receipt.sha256)=$hash' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
- hash=$(sha256sum "$scratch/acceptance.json"|cut -d' ' -f1)
+ hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/acceptance.json")
  jq --arg hash "$hash" '.acceptance_sha256=$hash' "$scratch/draft-approval.json" >"$scratch/new";mv "$scratch/new" "$scratch/draft-approval.json"
  expect 1 "reject native candidate binding: $mutation" "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/native-binding-$index" bash "$scratch/fixture/scripts/promote.sh" draft
  mv "$scratch/original-gate.json" "$path";mv "$scratch/original-acceptance.json" "$scratch/acceptance.json";mv "$scratch/original-approval.json" "$scratch/draft-approval.json"
@@ -154,10 +155,10 @@ for mutation in 'del(.executable_sha256)' '.executable_sha256=("c"*64)' '.archiv
 done
 cp "$scratch/cli.json" "$scratch/original-cli.json"
 jq '.cases[1]=.cases[0]' "$scratch/cli.json" >"$scratch/new";mv "$scratch/new" "$scratch/cli.json"
-report_hash=$(sha256sum "$scratch/cli.json"|cut -d' ' -f1)
+report_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/cli.json")
 cp "$scratch/acceptance.json" "$scratch/original-acceptance.json";cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
 jq --arg hash "$report_hash" '.reports.cli.sha256=$hash' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
-accepted_hash=$(sha256sum "$scratch/acceptance.json"|cut -d' ' -f1)
+accepted_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/acceptance.json")
 jq --arg hash "$accepted_hash" '.acceptance_sha256=$hash' "$scratch/draft-approval.json" >"$scratch/new";mv "$scratch/new" "$scratch/draft-approval.json"
 expect 1 'duplicate timing cases cannot satisfy all required runs' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/duplicate-cases" bash "$scratch/fixture/scripts/promote.sh" draft
 mv "$scratch/original-cli.json" "$scratch/cli.json";mv "$scratch/original-acceptance.json" "$scratch/acceptance.json";mv "$scratch/original-approval.json" "$scratch/draft-approval.json"
@@ -166,9 +167,9 @@ for kind in tui startup;do
  cp "$scratch/acceptance.json" "$scratch/original-acceptance.json";cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
  if [[ "$kind" == tui ]];then mutation='.cases[0].allocations[0]="unknown"';else mutation='.Runs[0].child_max_rss_kib[0]=-1';fi
  jq "$mutation" "$scratch/$kind.json" >"$scratch/new";mv "$scratch/new" "$scratch/$kind.json"
- report_hash=$(sha256sum "$scratch/$kind.json"|cut -d' ' -f1)
+ report_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/$kind.json")
  jq --arg kind "$kind" --arg hash "$report_hash" '.reports[$kind].sha256=$hash' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
- accepted_hash=$(sha256sum "$scratch/acceptance.json"|cut -d' ' -f1)
+ accepted_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/acceptance.json")
  jq --arg hash "$accepted_hash" '.acceptance_sha256=$hash' "$scratch/draft-approval.json" >"$scratch/new";mv "$scratch/new" "$scratch/draft-approval.json"
  expect 1 "$kind nonnumeric/negative memory sample refuses acceptance" "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/malformed-$kind" bash "$scratch/fixture/scripts/promote.sh" draft
  mv "$scratch/original-report.json" "$scratch/$kind.json";mv "$scratch/original-acceptance.json" "$scratch/acceptance.json";mv "$scratch/original-approval.json" "$scratch/draft-approval.json"
@@ -176,6 +177,42 @@ done
 reset
 jq -n '{object:{type:"commit",sha:("c"*40)}}' >"$scratch/remote/tag.json"
 expect 1 'conflicting tag refuses draft creation' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/tag-conflict" bash "$scratch/fixture/scripts/promote.sh" draft
+reset
+cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
+jq '.status="not-approved"' "$scratch/original-approval.json" >"$scratch/draft-approval.json"
+cat "$scratch/original-approval.json" >>"$scratch/draft-approval.json"
+expect 1 'concatenated approval refuses all remote calls' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/concatenated-approval" bash "$scratch/fixture/scripts/promote.sh" draft
+[[ ! -s "$scratch/gh-calls" ]] || failed=1
+mv "$scratch/original-approval.json" "$scratch/draft-approval.json"
+reset
+for kind in cli tui startup;do
+ cp "$scratch/$kind.json" "$scratch/original-report.json"
+ cp "$scratch/acceptance.json" "$scratch/original-acceptance.json";cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
+ if [[ "$kind" == startup ]];then mutation='.Go="wrong"';else mutation='.passed=false';fi
+ jq "$mutation" "$scratch/original-report.json" >"$scratch/$kind.json"
+ cat "$scratch/original-report.json" >>"$scratch/$kind.json"
+ hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/$kind.json")
+ jq --arg kind "$kind" --arg hash "$hash" '.reports[$kind].sha256=$hash' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
+ hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/acceptance.json")
+ jq --arg hash "$hash" '.acceptance_sha256=$hash' "$scratch/draft-approval.json" >"$scratch/new";mv "$scratch/new" "$scratch/draft-approval.json"
+ expect 1 "concatenated $kind report refuses all remote calls" "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/concatenated-$kind" bash "$scratch/fixture/scripts/promote.sh" draft
+ [[ ! -s "$scratch/gh-calls" ]] || failed=1
+ mv "$scratch/original-report.json" "$scratch/$kind.json";mv "$scratch/original-acceptance.json" "$scratch/acceptance.json";mv "$scratch/original-approval.json" "$scratch/draft-approval.json"
+ reset
+done
+path="$scratch/gates/native-linux-amd64.json"
+cp "$path" "$scratch/original-gate.json"
+cp "$scratch/acceptance.json" "$scratch/original-acceptance.json";cp "$scratch/draft-approval.json" "$scratch/original-approval.json"
+jq '.archive_sha256=("c"*64)' "$scratch/original-gate.json" >"$path"
+cat "$scratch/original-gate.json" >>"$path"
+hash=$(bash "$root/scripts/test/sha256.sh" "$path")
+jq --arg hash "$hash" '(.gates[]|select(.id=="native/linux/amd64")|.receipt.sha256)=$hash' "$scratch/acceptance.json" >"$scratch/new";mv "$scratch/new" "$scratch/acceptance.json"
+hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/acceptance.json")
+jq --arg hash "$hash" '.acceptance_sha256=$hash' "$scratch/draft-approval.json" >"$scratch/new";mv "$scratch/new" "$scratch/draft-approval.json"
+expect 1 'concatenated native receipt refuses all remote calls' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/concatenated-gate" bash "$scratch/fixture/scripts/promote.sh" draft
+[[ ! -s "$scratch/gh-calls" ]] || failed=1
+mv "$scratch/original-gate.json" "$path";mv "$scratch/original-acceptance.json" "$scratch/acceptance.json";mv "$scratch/original-approval.json" "$scratch/draft-approval.json"
+reset
 reset
 expect 0 'lost create/upload responses reconcile exact accepted bytes' "${invoke[@]}" FIXTURE_LOST_CREATE=1 FIXTURE_LOST_UPLOAD=1 RELEASE_PROMOTION_OUTPUT="$scratch/draft" bash "$scratch/fixture/scripts/promote.sh" draft
 [[ "$(jq -r '.status' "$scratch/draft/receipt.json" 2>/dev/null || true)" == draft-complete ]] || failed=1

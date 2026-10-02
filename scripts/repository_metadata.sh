@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+# shellcheck source=scripts/json_check.sh
+source "$root/scripts/json_check.sh"
 repo=newbpydev/tusk
 export GH_HOST=github.com
 unset GH_DEBUG DEBUG
@@ -10,6 +12,7 @@ digest() { if command -v sha256sum >/dev/null 2>&1;then sha256sum "$1"|awk '{pri
 regular() { [[ -f "$1" && ! -L "$1" ]]; }
 [[ "$mode" == prepare || "$mode" == apply ]] || die 'expected prepare or apply'
 payload="$root/.github/repository-metadata.json"
+json_object "$payload" || die 'single metadata payload object required'
 # Reject unexpected writable fields, endpoints, private settings or script content.
 jq -e 'keys==(["repository","about","topics","social_preview","manual_readback"]|sort) and .repository=="newbpydev/tusk" and (.about|keys)==["description","homepage"] and .about.description=="Local task management in your terminal: a keyboard-driven TUI and scriptable CLI, backed by SQLite." and .about.homepage=="https://github.com/newbpydev/tusk#readme" and .topics=={names:["go","golang","cli","tui","task-manager","terminal","sqlite","bubbletea","productivity","offline","command-line"]} and .social_preview=="docs/assets/tusk-tui.png"' "$payload" >/dev/null || die 'metadata payload outside reviewed field contract'
 [[ -n "${METADATA_OUTPUT:-}" ]] || die 'new retained METADATA_OUTPUT required'
@@ -26,7 +29,7 @@ if [[ "$mode" == prepare ]];then
  jq -n --arg hash "$payload_hash" --arg image "$(digest "$root/docs/assets/tusk-tui.png")" '{schema:1,status:"prepared-unapplied",repository:"newbpydev/tusk",payload_sha256:$hash,preview_sha256:$image,social_preview:"manual owner upload/readback",private_security_settings:"not changed",public_release_install_and_readme:"pending actual evidence"}' >"$output/plan.json"
  printf 'Prepared exact About/topics requests and preview identity; no remote writes.\n';exit 0
 fi
-if ! regular "${METADATA_AUTHORIZATION:-}" || ! regular "${METADATA_RELEASE_RECEIPT:-}";then die 'explicit owner authorization and public release readback required';fi
+if ! json_object "${METADATA_AUTHORIZATION:-}" || ! json_object "${METADATA_RELEASE_RECEIPT:-}";then die 'explicit owner authorization and public release readback required';fi
 documentation_sha=$(git -C "$root" rev-parse HEAD)
 [[ "$documentation_sha" =~ ^[0-9a-f]{40}$ && -z "$(git -C "$root" status --porcelain)" ]] || die 'clean approved documentation SHA required'
 jq -e --arg sha "$documentation_sha" --arg payload "$payload_hash" --arg release "$(digest "$METADATA_RELEASE_RECEIPT")" '
