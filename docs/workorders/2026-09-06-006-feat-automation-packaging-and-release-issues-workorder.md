@@ -596,3 +596,33 @@ refusal and missing-prerequisite diagnostics. See [the R4 receipt](../verificati
 The containing commit records one coherent fixture repair. Actual Windows
 execution of the repaired snapshots and the full fresh hosted set remain required.
 No native terminal or release acceptance gate closes here.
+
+### PR #6 fifth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `79dd1e574481187dd568c63c1da81f4ce2e66a67`
+before repair edits. Both macOS jobs, all three Linux jobs and Kilo pass. Windows
+passes functional/race/coverage and both hash fixtures, then the negative CLI
+Make test runs the real compiler instead of its extensionless shell fixture.
+GNU Make 4.4.1's Windows lookup searches `.exe` across PATH first. The bounded
+repair forces shell lookup only on Make calls injecting fake tools, including
+recursive catalog generation, and checks the fake compiler trace and `Error 19`.
+Actual native re-execution remains required; Linux checks alone cannot close it.
+
+Kilo's one new suggestion assumes `command -v awk` resolves a symlink target.
+It retains the command alias instead. The real BusyBox 1.35.0 awk applet passes
+both ordinary and restricted hash fixtures; invoking the resolved target directly
+fails as the reviewer describes, but that is not the generated launcher.
+The evidence-based verdict is not-addressing; no launcher code change is needed.
+
+- [x] Collect the complete fifth hosted set before repair edits.
+- [x] Repair fake-tool selection and assert its intended failure boundary.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+This remains progressive failure migration, with the old hash refusal repaired.
+No test expectation, coverage threshold, tool pin or canonical recipe changes.
+The 51 local scenario closures remain unchanged. Physical five-host terminals,
+trusted-main candidate/provenance, exact-byte performance/cask and authorized
+release/tap publication remain pending. See [the R5 receipt](../verification-evidence/006/pr6-r5/acceptance.json).
+The frozen official-Go canonical gate and the full shell suite pass. The containing
+commit records one coherent fixture repair; its fresh hosted set remains required.

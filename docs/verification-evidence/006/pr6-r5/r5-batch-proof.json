@@ -1,0 +1,53 @@
+{
+  "utc": "2026-10-02T19:13:28.359706+00:00",
+  "reviewed_head": "79dd1e574481187dd568c63c1da81f4ce2e66a67",
+  "all_reports_complete_before_changes": true,
+  "checks": [
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37050651851/job/110982923878",
+      "name": "linux/amd64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37050651851/job/110982923680",
+      "name": "darwin/arm64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37050651851/job/110982923627",
+      "name": "linux/arm64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37050651851/job/110982923678",
+      "name": "darwin/amd64 \u2014 release compiler",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "fail",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37050651851/job/110982923695",
+      "name": "windows/amd64 \u2014 release compiler",
+      "state": "FAILURE"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37050651851/job/110982923363",
+      "name": "Linux \u2014 minimum compiler and five-target cross-builds",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "link": "https://app.kilo.ai/code-reviews/28bc1880-b898-4a50-98fd-e6c4d98bb6d7",
+      "name": "Kilo Code Review",
+      "state": "SUCCESS"
+    }
+  ],
+  "new_unresolved_threads": 1,
+  "new_review_verdict": "not-addressing; actual BusyBox awk proof retained",
+  "ci_repair": "extension-first native Make lookup bypasses extensionless fake compiler",
+  "trajectory": "progressive failure migration; hash fixture now passes, no oscillation"
+}

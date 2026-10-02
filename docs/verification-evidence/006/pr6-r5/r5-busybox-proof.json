@@ -1,0 +1,15 @@
+{
+  "source": "https://busybox.net/downloads/binaries/1.35.0-x86_64-linux-musl/busybox",
+  "sha256": "6e123e7f3202a8c1e9b1f94d8941580a25135382b99e8d3e34fb858bba311348",
+  "selected_command": "/tmp/compound-engineering-1000/ce-compound/20261002-release-rejection-9e2wqkga/r5-busybox/bin/awk",
+  "actual_symlink_target": "/tmp/compound-engineering-1000/ce-compound/20261002-release-rejection-9e2wqkga/r5-busybox/busybox",
+  "command": [
+    "make",
+    "test-hashes"
+  ],
+  "exit": 0,
+  "negative_resolved_target_exit": 127,
+  "negative_diagnostic": "{print $1}: applet not found",
+  "native_scope": "Linux amd64 BusyBox 1.35.0 awk applet; no host install or repository edits",
+  "verdict": "not-addressing; command -v preserves awk alias path, no readlink target in launcher"
+}

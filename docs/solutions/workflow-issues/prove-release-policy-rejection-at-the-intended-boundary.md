@@ -126,6 +126,20 @@ refusal diagnostic. The deterministic `scripts/test/fixtures/sqlc-symlink.tar.gz
 contains an actual symlink header on every host without filesystem privileges.
 See the [fourth complete-batch receipt](../../verification-evidence/006/pr6-r4/acceptance.json).
 
+**Confirm the fake compiler was selected.** Native Windows GNU Make 4.4.1
+[searches extensions across PATH before extensionless files](https://github.com/mirror/make/blob/4.4.1/src/w32/subproc/sub_proc.c#L479-L527).
+A simple `go test` recipe can therefore find the installed `go.exe` before an
+owned shell-script `go`, although Bash itself selects the fixture. Force shell
+lookup only for Make calls that inject those fake tools:
+`make '.SHELLFLAGS=-e -c' ...`. The separate flags bypass Make's direct-command
+optimization; the regular canonical recipes and compiler selection stay intact.
+Require the fixture's call trace and its `Error 19` diagnostic alongside Make's
+exit 2. A missing trace identifies selection failure; an unrelated Make error
+cannot satisfy the negative test. Include recursive catalog generation in the
+same check, because its `bash` and `go` fixtures share this lookup boundary.
+The [fifth complete-batch receipt](../../verification-evidence/006/pr6-r5/acceptance.json)
+keeps the native failure separate from local confirmation and fresh hosted proof.
+
 ## Related
 
 - [Release acceptance and publication procedure](../../releasing.md)

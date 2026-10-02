@@ -1,0 +1,24 @@
+{
+  "scope": "Sequential main-thread review of all changed executable fixture lines and equivalent fake-tool Make calls",
+  "independent_review": false,
+  "confirmed_p0_p2": 0,
+  "checked": [
+    "Shell flag separation bypasses native Make direct dispatch; recursive MAKEFLAGS inheritance confirmed by actual local generation fixture.",
+    "Call trace is fresh per target and requires Error 19, excluding unrelated Make failure.",
+    "Only Make invocations injecting owned fake tools use the override; canonical recipes, tool pins and package selection unchanged.",
+    "Other fake-tool Make calls in release tests already require shell expansion; no equivalent direct-dispatch case found.",
+    "Actual BusyBox awk alias path passes; no readlink target resolution or exec -a change needed."
+  ],
+  "references": [
+    {
+      "url": "https://github.com/mirror/make/blob/4.4.1/src/w32/subproc/sub_proc.c",
+      "sha256": "cf62c183fd51a91bd29a1f562256b12bdee1718cd3db1456bcfa81847f6e243b",
+      "finding": "find_file searches .exe across PATH before extensionless candidates"
+    },
+    {
+      "url": "https://github.com/mirror/make/blob/4.4.1/src/job.c",
+      "sha256": "c1c32d4bd7fd56d898e952ed094a488edf2d4333a02058a3302d28f5e3f8ca09",
+      "finding": "Shell flags other than -c or -ec force shell command construction"
+    }
+  ]
+}
