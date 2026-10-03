@@ -194,6 +194,27 @@ done
 cp "$root/README.md" "$fixture/README.md"
 printf '\nSee `[x](https://example.com/a%%20b\ntail)` for details.\n' >>"$fixture/README.md"
 expect 1 'wrapped inline code spans retain the documented target tripwire' bash "$root/scripts/docs-check.sh" "$fixture"
+for text in $'> ```text\n> example\n>\t```\n> ![Unverified](https://img。shields.io/badge/CI-passing-green)' $'- item\nlazy paragraph continuation\n\n    ![Unverified](https://img。shields.io/badge/CI-passing-green)' $'- item\n  - child\n\n    ![Unverified](https://img。shields.io/badge/CI-passing-green)' $'- item\n\n    ![Unverified](https://img。shields.io/badge/CI-passing-green)' $'1. item\n\n    ![Unverified](https://img。shields.io/badge/CI-passing-green)' $'> - item\n>\n>     ![Unverified](https://img。shields.io/badge/CI-passing-green)' $'- item\n  ```text\n![Unverified](https://img。shields.io/badge/CI-passing-green)' $'1. item\n   ~~~text\n![Unverified](https://img。shields.io/badge/CI-passing-green)' "- [badge]: <$encoded>"$'\n\n![Unverified][badge]' "> - [badge]: $encoded"$'\n>\n> ![Unverified][badge]'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 1 'list containers retain literal target and reference checks' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+cp "$root/README.md" "$fixture/README.md"
+printf '\n- item\n\n        ![Example](https://example.com/a%%20b)\n' >>"$fixture/README.md"
+expect 1 'list-contained code retains the documented target tripwire' bash "$root/scripts/docs-check.sh" "$fixture"
+cp "$root/README.md" "$fixture/README.md"
+printf '\n- item\n\nNormal paragraph.\n\n    ![Example](https://example.com/a%%20b)\n' >>"$fixture/README.md"
+expect 0 'code exclusion resumes after an explicit list boundary' bash "$root/scripts/docs-check.sh" "$fixture"
+for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' 'https://img.shields.io/github/license/newbpydev/tusk'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n- ![Verified](%s "Title")\n\n- [badge]: <%s>\n\n![Verified][badge]\n' "$url" "$url" >>"$fixture/README.md"
+    expect 0 'verified list links and reference destinations remain allowed' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for text in '<img alt=">" src'$'\n '"=\"$encoded\">" "<img src"$'\n '"=\"$encoded\">" "<source srcset"$'\n '"=\"$encoded\">" "<a href"$'\n '"=\"$encoded\">badge</a>" '![Build: passing](https://evil.example/status.svg)' '<img src="https://evil.example/status.svg">' '<source srcset="https://evil.example/status.svg">' '[badge]: https://evil.example/status.svg'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 1 'remote image sources and reference targets require approval' bash "$root/scripts/docs-check.sh" "$fixture"
+done
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"

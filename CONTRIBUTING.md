@@ -29,6 +29,13 @@ and single-URL `srcset` attributes are checked in raw text; compound `srcset`
 lists are unsupported. Markdown/reference URL targets are checked outside code
 excerpts (single-line spans, ordinary indented blocks and fences indented at most
 three spaces, including block quotes), and link titles are separate from the URL.
+Block exclusions apply outside lists and use spaces in quote indentation.
+List-contained blocks and quote-tab indentation retain the target tripwire;
+code exclusion resumes after an explicit list boundary.
+Resource start tags must fit on one line. Remote image and reference destinations
+must use the two verified badge URLs; use local assets for other images and
+inline hyperlinks for other remote links. Links nested inside image labels are
+outside the supported target syntax.
 Wrapped inline spans retain the target tripwire; put URL examples on one line or
 in a supported code block. Bare URLs in prose and
 code examples are outside target restrictions. Only the exact verified CI and

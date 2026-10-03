@@ -47,6 +47,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   before publishing the combined target-scope correction.
 - [x] Validate the archive binding and Markdown-container correction
   before publishing its combined hosted/cloud review head.
+- [x] Validate list-container and quote-tab target refusal before publishing
+  the combined checker correction.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -80,6 +82,13 @@ review added quoted-reference, code/fence-context and native archive-receipt
 findings. The next combined correction retains archive identity, checks quoted
 references and fence boundaries, and scopes supported code excerpts explicitly.
 Its fresh hosted/cloud settlement remains pending.
+The sixth head `1419c01` passed all six source CI jobs; Codex completed
+with reference, split-attribute and remote-image findings. Kilo and the class
+audit identified list-container and quote-tab bypasses. The next correction keeps those block contexts under
+the literal-target tripwire, validates list reference definitions, refuses split
+resource tags and allowlists remote image/reference destinations; supported
+code exclusion resumes after explicit boundaries. Fresh cloud settlement
+remains pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

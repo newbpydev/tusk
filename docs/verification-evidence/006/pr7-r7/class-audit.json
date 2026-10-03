@@ -1,0 +1,49 @@
+[
+  {
+    "case": "list-reference",
+    "head_sha": "1419c016e1474a523fd4f26423516cd59bd146b7",
+    "checker_sha256": "25ea6a5af4e699e41de992552fb3002d15b7710dddbf9b5bffa2dee887a1711d",
+    "baseline_README_sha256": "59f989fabf6e3aeea9a59dbce4a27babd8295806b1d9154f0924fc01c0863400",
+    "complete_fixture_control_exit": 0,
+    "observed_at": "2026-10-03T21:17:50.119327+00:00",
+    "markdown": "- [badge]: <&#104;&#116;&#116;&#112;&#115;&#58;&#47;&#47;&#105;&#109;&#103;&#46;&#115;&#104;&#105;&#101;&#108;&#100;&#115;&#46;&#105;&#111;&#47;&#98;&#97;&#100;&#103;&#101;&#47;&#67;&#73;&#45;&#112;&#97;&#115;&#115;&#105;&#110;&#103;&#45;&#103;&#114;&#101;&#101;&#110;>\n\n![Unverified][badge]\n",
+    "github_html": "<ul dir=\"auto\">\n<li></li>\n</ul>\n<p dir=\"auto\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://camo.githubusercontent.com/b4778c170e7ff37f58828752e735638f84dafd0ad0ebd09d86c454f9d4bc0ca7/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f43492d70617373696e672d677265656e\"><img src=\"https://camo.githubusercontent.com/b4778c170e7ff37f58828752e735638f84dafd0ad0ebd09d86c454f9d4bc0ca7/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f43492d70617373696e672d677265656e\" alt=\"Unverified\" data-canonical-src=\"https://img.shields.io/badge/CI-passing-green\" style=\"max-width: 100%;\"></a></p>",
+    "checker_exit": 0,
+    "checker_output": "Public guide contracts and local links pass; hosted rendering remains separate.\n"
+  },
+  {
+    "case": "list-paragraph",
+    "head_sha": "1419c016e1474a523fd4f26423516cd59bd146b7",
+    "checker_sha256": "25ea6a5af4e699e41de992552fb3002d15b7710dddbf9b5bffa2dee887a1711d",
+    "baseline_README_sha256": "59f989fabf6e3aeea9a59dbce4a27babd8295806b1d9154f0924fc01c0863400",
+    "complete_fixture_control_exit": 0,
+    "observed_at": "2026-10-03T21:17:50.671875+00:00",
+    "markdown": "- item\n\n    ![Unverified](https://img\u3002shields.io/badge/CI-passing-green)\n",
+    "github_html": "<ul dir=\"auto\">\n<li>\n<p dir=\"auto\">item</p>\n<p dir=\"auto\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://camo.githubusercontent.com/3694ffe940eb358719375a842d062cfdc0a8b184ed4ac0dc8a54f0efae519a6d/68747470733a2f2f696d67254533253830253832736869656c64732e696f2f62616467652f43492d70617373696e672d677265656e\"><img src=\"https://camo.githubusercontent.com/3694ffe940eb358719375a842d062cfdc0a8b184ed4ac0dc8a54f0efae519a6d/68747470733a2f2f696d67254533253830253832736869656c64732e696f2f62616467652f43492d70617373696e672d677265656e\" alt=\"Unverified\" data-canonical-src=\"https://img%E3%80%82shields.io/badge/CI-passing-green\" style=\"max-width: 100%;\"></a></p>\n</li>\n</ul>",
+    "checker_exit": 0,
+    "checker_output": "Public guide contracts and local links pass; hosted rendering remains separate.\n"
+  },
+  {
+    "case": "list-fence",
+    "head_sha": "1419c016e1474a523fd4f26423516cd59bd146b7",
+    "checker_sha256": "25ea6a5af4e699e41de992552fb3002d15b7710dddbf9b5bffa2dee887a1711d",
+    "baseline_README_sha256": "59f989fabf6e3aeea9a59dbce4a27babd8295806b1d9154f0924fc01c0863400",
+    "complete_fixture_control_exit": 0,
+    "observed_at": "2026-10-03T21:17:51.210814+00:00",
+    "markdown": "- item\n  ```text\n![Unverified](https://img\u3002shields.io/badge/CI-passing-green)\n",
+    "github_html": "<ul dir=\"auto\">\n<li>item\n<pre lang=\"text\" class=\"notranslate\"><code class=\"notranslate\"></code></pre>\n</li>\n</ul>\n<p dir=\"auto\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://camo.githubusercontent.com/3694ffe940eb358719375a842d062cfdc0a8b184ed4ac0dc8a54f0efae519a6d/68747470733a2f2f696d67254533253830253832736869656c64732e696f2f62616467652f43492d70617373696e672d677265656e\"><img src=\"https://camo.githubusercontent.com/3694ffe940eb358719375a842d062cfdc0a8b184ed4ac0dc8a54f0efae519a6d/68747470733a2f2f696d67254533253830253832736869656c64732e696f2f62616467652f43492d70617373696e672d677265656e\" alt=\"Unverified\" data-canonical-src=\"https://img%E3%80%82shields.io/badge/CI-passing-green\" style=\"max-width: 100%;\"></a></p>",
+    "checker_exit": 0,
+    "checker_output": "Public guide contracts and local links pass; hosted rendering remains separate.\n"
+  },
+  {
+    "case": "quoted-tab-fence",
+    "head_sha": "1419c016e1474a523fd4f26423516cd59bd146b7",
+    "checker_sha256": "25ea6a5af4e699e41de992552fb3002d15b7710dddbf9b5bffa2dee887a1711d",
+    "complete_fixture_control_exit": 0,
+    "observed_at": "2026-10-03T21:28:17.911863+00:00",
+    "markdown": "> ```text\n> example\n>\t```\n> ![Unverified](https://img\u3002shields.io/badge/CI-passing-green)\n",
+    "github_html": "<blockquote>\n<pre lang=\"text\" class=\"notranslate\"><code class=\"notranslate\">example\n</code></pre>\n<p dir=\"auto\"><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://camo.githubusercontent.com/3694ffe940eb358719375a842d062cfdc0a8b184ed4ac0dc8a54f0efae519a6d/68747470733a2f2f696d67254533253830253832736869656c64732e696f2f62616467652f43492d70617373696e672d677265656e\"><img src=\"https://camo.githubusercontent.com/3694ffe940eb358719375a842d062cfdc0a8b184ed4ac0dc8a54f0efae519a6d/68747470733a2f2f696d67254533253830253832736869656c64732e696f2f62616467652f43492d70617373696e672d677265656e\" alt=\"Unverified\" data-canonical-src=\"https://img%E3%80%82shields.io/badge/CI-passing-green\" style=\"max-width: 100%;\"></a></p>\n</blockquote>",
+    "checker_exit": 0,
+    "checker_output": "Public guide contracts and local links pass; hosted rendering remains separate.\n"
+  }
+]
