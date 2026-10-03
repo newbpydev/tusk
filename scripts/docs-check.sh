@@ -93,6 +93,13 @@ for file in "${files[@]}"; do
                 }
                 return out line
             }
+            function outside_quotes(line) {
+                quote_depth = 0
+                while (match(line, /^ ? ? ?>[ ]?/)) {
+                    line = substr(line, RLENGTH + 1); quote_depth++
+                }
+                return line
+            }
             {
                 # Check complete attribute targets even if their scheme or
                 # hostname is obscured, before scanning known badge hosts.
@@ -117,15 +124,24 @@ for file in "${files[@]}"; do
                 }
                 # Markdown targets exclude code excerpts; HTML attributes and
                 # the known-badge residue check remain raw-text tripwires.
-                markup = outside_code($0)
-                if (match($0, /^[[:blank:]]*(```+|~~~+)/)) {
-                    fence = substr($0, RSTART, RLENGTH)
+                block = $0; sub(/\r$/, "", block)
+                block = outside_quotes(block)
+                if (fence_mark != "" && quote_depth != fence_quote_depth) fence_mark = ""
+                indented = block ~ /^(    |\t)/ && (NR == 1 || blank_before || in_indented) && pending_target == ""
+                in_indented = indented || (in_indented && block ~ /^[[:blank:]]*$/)
+                blank_before = block ~ /^[[:blank:]]*$/
+                markup = outside_code(block)
+                if (match(block, /^ ? ? ?(```+|~~~+)/)) {
+                    fence = substr(block, RSTART, RLENGTH)
                     sub(/^[[:blank:]]*/, "", fence)
-                    if (fence_mark == "") { fence_mark = substr(fence, 1, 1); fence_size = length(fence) }
+                    if (fence_mark == "" && substr(fence, 1, 1) == "`" && index(substr(block, RSTART + RLENGTH), "`")) {
+                        # A backtick in the info string cannot open a fence.
+                    }
+                    else if (fence_mark == "") { fence_mark = substr(fence, 1, 1); fence_size = length(fence); fence_quote_depth = quote_depth; markup = "" }
                     else if (substr(fence, 1, 1) == fence_mark && length(fence) >= fence_size &&
-                        substr($0, RSTART + RLENGTH) ~ /^[[:blank:]]*$/) fence_mark = ""
-                    markup = ""
-                } else if (fence_mark != "") markup = ""
+                        substr(block, RSTART + RLENGTH) ~ /^[[:blank:]]*$/) fence_mark = ""
+                    if (fence_mark != "" || substr(block, RSTART + RLENGTH) ~ /^[[:blank:]]*$/) markup = ""
+                } else if (fence_mark != "" || indented) markup = ""
                 if (await_close) {
                     continuation = markup; sub(/^[[:blank:]]*/, "", continuation)
                     if (continuation !~ /^[)"\047(]/) exit 42

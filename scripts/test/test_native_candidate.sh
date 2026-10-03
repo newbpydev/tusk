@@ -37,7 +37,8 @@ printf '#!/usr/bin/env bash\nprintf "tusk version 0.3.0\\n"\n' >"$scratch/payloa
 chmod +x "$scratch/payload/tusk"
 tar -czf "$scratch/candidate/assets/tusk.tar.gz" -C "$scratch/payload" tusk
 hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/payload/tusk")
-jq -n --arg hash "$hash" '{version:"0.3.0",source_sha:("a"*40),targets:[{target:"linux/amd64",archive:"tusk.tar.gz",executable_sha256:$hash}]}' >"$scratch/candidate/assets/release-manifest.json"
+archive_hash=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/tusk.tar.gz")
+jq -n --arg hash "$hash" --arg archive_hash "$archive_hash" '{files_sha256:{"tusk.tar.gz":$archive_hash},version:"0.3.0",source_sha:("a"*40),targets:[{target:"linux/amd64",archive:"tusk.tar.gz",executable_sha256:$hash}]}' >"$scratch/candidate/assets/release-manifest.json"
 manifest=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/release-manifest.json")
 cat >"$scratch/bin/make" <<'MAKE'
 #!/usr/bin/env bash
@@ -67,6 +68,16 @@ driver=(env PATH="$scratch/bin:$PATH" FIXTURE_ROOT="$scratch" CANDIDATE_DIR="$sc
 expect 0 'verified archive smoke preserves exact executable' "${driver[@]}" RELEASE_NATIVE_OUTPUT="$scratch/accepted" bash "$root/scripts/native_candidate.sh" smoke
 expect 0 'selected executable is unchanged' cmp -s "$scratch/payload/tusk" "$scratch/accepted/payload/tusk"
 expect 0 'automated receipt leaves manual terminal pending' jq -e '.status=="automated-passed" and .manual_terminal=="pending" and .target=="linux/amd64" and .candidate_run_id==123 and .observed_version=="0.3.0"' "$scratch/accepted/receipt.json"
+# jq expands its own argument inside the literal expression.
+# shellcheck disable=SC2016
+expect 0 'native receipt binds the selected archive digest' jq -e --arg hash "$archive_hash" '.archive=="tusk.tar.gz" and .archive_sha256==$hash' "$scratch/accepted/receipt.json"
+cp "$scratch/candidate/assets/release-manifest.json" "$scratch/manifest-saved.json"
+jq '.files_sha256["tusk.tar.gz"]=("0"*64)' "$scratch/manifest-saved.json" >"$scratch/candidate/assets/release-manifest.json"
+wrong_manifest=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/release-manifest.json")
+: >"$scratch/calls"
+expect 1 'archive mismatch refuses extraction and execution' "${driver[@]}" CANDIDATE_MANIFEST_SHA256="$wrong_manifest" RELEASE_NATIVE_OUTPUT="$scratch/wrong-archive" bash "$root/scripts/native_candidate.sh" smoke
+expect 1 'archive mismatch never reaches smoke' grep -q 'release-smoke' "$scratch/calls"
+cp "$scratch/manifest-saved.json" "$scratch/candidate/assets/release-manifest.json"
 expect 1 'existing output is never replaced' "${driver[@]}" RELEASE_NATIVE_OUTPUT="$scratch/accepted" bash "$root/scripts/native_candidate.sh" smoke
 expect 1 'output cannot mutate the source checkout' "${driver[@]}" RELEASE_NATIVE_OUTPUT="$scratch/fixture/inside" bash "$scratch/fixture/scripts/native_candidate.sh" smoke
 expect 1 'output cannot mutate candidate storage' "${driver[@]}" RELEASE_NATIVE_OUTPUT="$scratch/candidate/inside" bash "$root/scripts/native_candidate.sh" smoke
@@ -78,6 +89,8 @@ expect 63 'failed smoke remains a failed invocation' "${driver[@]}" FIXTURE_SMOK
 expect 1 'failed smoke leaves no passing receipt' test -f "$scratch/smoke-failed/receipt.json"
 printf tampered >"$scratch/payload/tusk"
 tar -czf "$scratch/candidate/assets/tusk.tar.gz" -C "$scratch/payload" tusk
+tampered_archive=$(bash "$root/scripts/test/sha256.sh" "$scratch/candidate/assets/tusk.tar.gz")
+jq --arg hash "$tampered_archive" '.files_sha256["tusk.tar.gz"]=$hash' "$scratch/manifest-saved.json" >"$scratch/candidate/assets/release-manifest.json"
 expect 1 'extracted digest mismatch refuses execution' "${driver[@]}" RELEASE_NATIVE_OUTPUT="$scratch/tampered" bash "$root/scripts/native_candidate.sh" smoke
 # Exercise the actual pinned-lint boundary, using a tool fixture that only records
 # its arguments. Omitting the new workflow must fail this assertion.

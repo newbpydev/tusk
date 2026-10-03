@@ -176,6 +176,24 @@ for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg
     printf '\n![Verified](\n%s\n)\n\n![Verified](%s\n)\n\n![Verified][continued]\n\n[continued]:\n  %s\n' "$url" "$url" "$url" >>"$fixture/README.md"
     expect 0 'allow verified URI values continued after their markers' bash "$root/scripts/docs-check.sh" "$fixture"
 done
+for text in "> ![Unverified][badge]"$'\n>\n> '"[badge]: <$encoded>" "> > ![Unverified][badge]"$'\n> >\n> > '"[badge]: $encoded"; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 1 'reject encoded reference targets inside block quotes' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for text in $'```invalid`info\n![Unverified](https://img。shields.io/badge/CI-passing-green)' $'    ```text\n![Unverified](https://img。shields.io/badge/CI-passing-green)' $'\t```text\n![Unverified](https://img。shields.io/badge/CI-passing-green)' $'```text\nexample\n```\r\n![Unverified](https://img。shields.io/badge/CI-passing-green)' $'> ```text\n> example\n![Unverified](https://img。shields.io/badge/CI-passing-green)'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 1 'fence boundaries cannot suppress following live targets' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for text in $'    ![Example](https://example.com/a%20b)' $'\t![Example](https://example.com/a%20b)' $'> ```text\n> ![Example](https://example.com/a%20b)\n> ```' $'   ```text\n![Example](https://example.com/a%20b)\n   ```'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 0 'allow supported indented and quoted fenced code excerpts' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+cp "$root/README.md" "$fixture/README.md"
+printf '\nSee `[x](https://example.com/a%%20b\ntail)` for details.\n' >>"$fixture/README.md"
+expect 1 'wrapped inline code spans retain the documented target tripwire' bash "$root/scripts/docs-check.sh" "$fixture"
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"

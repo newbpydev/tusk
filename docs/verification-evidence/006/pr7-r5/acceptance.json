@@ -193,5 +193,13 @@
   "remote_feedback_settlement": "pending after push",
   "current_head_hosted_review": "pending after push",
   "release_acceptance": "Fresh frozen candidate after owner merge, packaged hosted checks, manual/native/performance/cask and publication remain pending",
-  "completed_at": "2026-10-03T20:23:22.281151+00:00"
+  "completed_at": "2026-10-03T20:23:22.281151+00:00",
+  "input_commit": "fc58788cde42d5e2bda4a0fa12354c4da55419d1",
+  "amended_at": "2026-10-03T20:53:14.460099+00:00",
+  "amendments": [
+    {
+      "recorded_at": "2026-10-03T20:53:14.460099+00:00",
+      "changes": "Bind 33 historical final-worktree inputs to immutable published fc58788 after independent hash readback. Original completion time, local verdict and retained artifacts remain unchanged; original remote-pending fields describe local completion."
+    }
+  ]
 }

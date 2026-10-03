@@ -52,7 +52,7 @@ contract() {
  ' "$root/.github/workflows/native-candidate.yml" >/dev/null || die 'unsafe native candidate workflow'
 }
 smoke() {
- local candidate output parent manifest target archive expected binary hash status=0
+ local candidate output parent manifest target archive archive_hash archive_expected expected binary hash status=0
  candidate=$(cd "${CANDIDATE_DIR:?}" && pwd -P)
  [[ -n "${RELEASE_NATIVE_OUTPUT:-}" ]] || die 'new retained output required'
  parent=$(cd "$(dirname "$RELEASE_NATIVE_OUTPUT")" && pwd -P) || die 'output parent missing'
@@ -71,6 +71,9 @@ smoke() {
  [[ "$target" == "${RELEASE_NATIVE_TARGET:-$target}" ]] || die 'runner target differs from native host'
  archive=$(jq ${jq_binary_option:+"--binary"} -er --arg target "$target" '.targets[]|select(.target==$target)|.archive' "$manifest")
  expected=$(jq ${jq_binary_option:+"--binary"} -er --arg target "$target" '.targets[]|select(.target==$target)|.executable_sha256' "$manifest")
+ archive_expected=$(jq ${jq_binary_option:+"--binary"} -er --arg archive "$archive" '.files_sha256[$archive]' "$manifest")
+ archive_hash=$(digest "$candidate/assets/$archive")
+ [[ "$archive_hash" == "$archive_expected" ]] || die 'selected archive differs from verified manifest'
  mkdir "$output/payload"
  case "$target" in
   windows/amd64) unzip -q "$candidate/assets/$archive" -d "$output/payload";binary="$output/payload/tusk.exe" ;;
@@ -83,7 +86,7 @@ smoke() {
  make -C "$root" release-smoke >"$output/smoke.log" 2>&1 || status=$?
  [[ "$(digest "$binary")" == "$hash" ]] || die 'executable changed during native checks'
  [[ "$status" == 0 ]] || return "$status"
- jq ${jq_binary_option:+"--binary"} -n --arg target "$target" --arg hash "$hash" --arg archive "$archive" --arg manifest "$CANDIDATE_MANIFEST_SHA256" --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg host "$(uname -s)" --argjson run "$CANDIDATE_RUN_ID" --slurpfile smoke "$output/smoke/receipt.json" '{schema:1,status:"automated-passed",scope:"trusted-candidate",target:$target,executable_sha256:$hash,archive:$archive,manifest_sha256:$manifest,source_sha:$sha,version:$version,candidate_run_id:$run,host:$host,observed_version:$smoke[0].observed_version,manual_terminal:"pending",terminal_automation:"Linux child PTY only; macOS/Windows visual console checks remain separate"}' >"$output/receipt.json"
+ jq ${jq_binary_option:+"--binary"} -n --arg target "$target" --arg hash "$hash" --arg archive "$archive" --arg archive_hash "$archive_hash" --arg manifest "$CANDIDATE_MANIFEST_SHA256" --arg sha "$RELEASE_SHA" --arg version "$RELEASE_VERSION" --arg host "$(uname -s)" --argjson run "$CANDIDATE_RUN_ID" --slurpfile smoke "$output/smoke/receipt.json" '{schema:1,status:"automated-passed",scope:"trusted-candidate",target:$target,executable_sha256:$hash,archive:$archive,archive_sha256:$archive_hash,manifest_sha256:$manifest,source_sha:$sha,version:$version,candidate_run_id:$run,host:$host,observed_version:$smoke[0].observed_version,manual_terminal:"pending",terminal_automation:"Linux child PTY only; macOS/Windows visual console checks remain separate"}' >"$output/receipt.json"
 }
 case "${1:-contract}" in
  contract) contract ;;

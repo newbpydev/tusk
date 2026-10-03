@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "scope": "PR 7 combined archive receipt binding and Markdown-container correction",
+  "head_sha": "fc58788cde42d5e2bda4a0fa12354c4da55419d1",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "canonical": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "PATH": "/tmp/pr7-path-without-rg",
+    "ripgrep_lookup_exit": 1,
+    "compiler": "go1.27.1 linux/amd64",
+    "exit_code": 0,
+    "named_script_assertions_passed": 666,
+    "log": "validate.log.gz"
+  },
+  "additional_checks": [
+    "baseline-replay.log.gz: marked controlled replay of immutable fc58788 documentation checker with final refusal/acceptance controls, expected exit 1",
+    "native-replay.log.gz: marked controlled replay of immutable fc58788 native checker with final archive identity controls, expected exit 1",
+    "final-docs.log.gz: marked documentation controls after outcome-only checklist update",
+    "workflow.log.gz: marked pinned workflow contracts/lint and release shellcheck",
+    "synchrony.log.gz: shared planning block equality and final hashes",
+    "historical-audit.log.gz: R2/R3/R4/R5 inputs bind published commits; original retained artifact bytes/hashes/lengths unchanged"
+  ],
+  "artifact_scope": {
+    "original-docs-red.log.gz": "Unmarked original pre-implementation result evidence only; marked immutable baseline replay identifies final checker/test controls independently.",
+    "original-native-red.log.gz": "Unmarked original native receipt regression output; result evidence only; marked immutable native replay binds baseline checker and final test bytes.",
+    "fence-red.log.gz": "Unmarked intermediate refusal failure for an invalid backtick info string; result evidence only. Final test control also fails in the marked immutable baseline replay."
+  },
+  "input_scope": "Final worktree source/test/fixture and verdict-carrying metadata/planning bytes, excluding this receipt. Marked gate logs identify each pre-command input. Source/tests passed canonical validation; outcome-only checklist update afterwards passed marked final documentation/synchrony checks. Unchanged source binds head_sha.",
+  "input_sha256": {
+    ".github/workflows/native-candidate.yml": "58c727df67762596a0fca959ee09fdcbed9bf110907347a8cc5343e3c9b79070",
+    ".github/workflows/release.yml": "59c0b3c2d41077b026e755064769b355dc0f3ce5f22a8eb58c68dc159b8e35a6",
+    "CONTRIBUTING.md": "b173afa12dba8bba82e0e1fc55473886c6e0d6ae474ed5174d4ea0f027ad9650",
+    "LICENSE": "e7b8f7ad23179441d30f557ac1f4052def3c6a20c5a8d3217a82f6cbe8163482",
+    "MASTERPLAN.md": "0665e00c33524acfbccf4cf99c20d686df5dff6ec4a9138f7bc0d9303c7e3fe7",
+    "Makefile": "34bf303bc90b4580d3bf306a6d0053054c6c30ae1825b656399ca448764a4144",
+    "README.md": "59f989fabf6e3aeea9a59dbce4a27babd8295806b1d9154f0924fc01c0863400",
+    "SECURITY.md": "5262d79b05453eab22ce5b416fc13c621fea1ff883a78c8ad61b36b312ac741c",
+    "THIRD_PARTY_NOTICES.md": "ba486e7d36dd649f6b9a9a9c1068e014ca2d701f6b78e38eaf61e12c3691b7ed",
+    "docs/assets/README.md": "bfdad00f995f75d34b0626db8680cd01901353f007a741ce8187b7b70069f64f",
+    "docs/assets/tusk-tui.png": "0a5ad71ac8ba8671f0559fdea62d824504510fa9510574e9dd9059d05542eba7",
+    "docs/cli.md": "dccd177143794898dfc8bb34ad1cb35b337b366f99ce9fa2ef04023a55f2f121",
+    "docs/install.md": "48d65a3abca238883c51740ff1d9ee1a10ba40062c9a18820e8f1e587a726e50",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "a1d1e39d113b9ad854fa6613d07d44adb2b38ce66bdf5b8317e55a5602b306d5",
+    "docs/releasing.md": "51170f0815b951fef89d3d3f545faadf28fe95da625be57f4eec461c538fa669",
+    "docs/tui.md": "d6e54fc9824b5973b4a7515122870c6d26553b483d787afb70ec47963cae41c5",
+    "docs/verification-evidence/006/github-readiness/README.md": "dd697b545438857f7815cd0d0e2e07bba6d7956ea782ebd4eddaaa23961955e4",
+    "docs/verification-evidence/006/github-readiness/repository-metadata.json": "1fd7ba8175d35968001b3344c2a5fb69a84e267dc1a4ece709271a0704a888d9",
+    "docs/verification-evidence/006/github-readiness/review-metadata.json": "4efa6423716f72b0f6c2758e4ffb078bb3d4a2486c17e8cfabaab3fade3bc304",
+    "docs/verification-evidence/006/pr7-r1/acceptance.json": "ae19338e4ea5da29323bc1f2bb60ae52915165016b3884c950ae3e50cd3b1bef",
+    "docs/verification-evidence/006/pr7-r2/acceptance.json": "d6119836d139cdd283c72b2c8869541b8e24ec67e900be27419651f1a54e98a6",
+    "docs/verification-evidence/006/pr7-r3/acceptance.json": "d05083635478583bda7c3354014b117ecc90e2f49cf2398150a8edc5997623a3",
+    "docs/verification-evidence/006/pr7-r4/acceptance.json": "253c5a1dea069473637d9e7e96a50ac5c862cd8358cb9680c4b32c4961c89f53",
+    "docs/verification-evidence/006/pr7-r5/acceptance.json": "0479c4009329bbb0305be8d359b06f659b1e4d7f89542a04aeb590010f2a27b3",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "0df63304b1e16f70b2b92707c622649595f3c87453b506267cc178294bee0e74",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "fa40bc7a0709e2aa32baa8c8333ce3e7d85b641f946b129a23be77c6afdd2b17",
+    "scripts/candidate.sh": "da2bc7e4d75fa6833948730a3f307bfff75c2fab4f9a368931dd5b19c923b7db",
+    "scripts/docs-check.sh": "25ea6a5af4e699e41de992552fb3002d15b7710dddbf9b5bffa2dee887a1711d",
+    "scripts/native_candidate.sh": "af506b0eb3f7eb010f3a57e145784550d01d3fe1b8cf98af76ff6dc87438eb23",
+    "scripts/test/test_candidate.sh": "fbc6a08e368aee7be495483adf1dfcaf95ce3171f492b4c6ac57c9ed6abe71af",
+    "scripts/test/test_docs.sh": "11d33562c357f0da47f9bbed16d030f32a956aeca81240f7bbdfedd16cb4a3e3",
+    "scripts/test/test_native_candidate.sh": "2046c52e975d65a2a546956eee54c5a885f8b6bba244e7ff800a095f0d1a0244",
+    "scripts/test/test_promotion.sh": "d06aba013ed9b0f09962946549417f2d8d94f8b7a025df647fd9ff82f3f357e6",
+    "scripts/test/test_release_version.sh": "30284cf2edb697f2e4be88b5743b852dd51e9b819bb2bf5bf747c7cce762363b"
+  },
+  "feedback": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6orYVL",
+      "comment_node_id": "PRRC_kwDOUQoUDc741ZEY",
+      "root_comment_id": 4174745880,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Scan reference definitions inside block quotes**",
+      "summary": "The checker strips valid block-quote prefixes before reference validation; fence recognition allows at most three spaces, normalizes CRLF and ends quoted fences when their container ends. Refusal controls cover encoded quoted references and fence desynchronization, with accepted indented/quoted code controls.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6orYVP",
+      "comment_node_id": "PRRC_kwDOUQoUDc741ZEe",
+      "root_comment_id": 4174745886,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Record the verified archive digest in native reports**",
+      "summary": "Native smoke hashes the selected archive and checks files_sha256 before extraction, then records archive_sha256 alongside archive/executable/manifest identity. Controls verify the exact recorded digest and refuse mismatches before smoke; manual acceptance stays pending.",
+      "invariant_key": "native-archive-binding",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6orYVQ",
+      "comment_node_id": "PRRC_kwDOUQoUDc741ZEf",
+      "root_comment_id": 4174745887,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Exclude indented code blocks from target validation**",
+      "summary": "The checker strips valid block-quote prefixes before reference validation; fence recognition allows at most three spaces, normalizes CRLF and ends quoted fences when their container ends. Refusal controls cover encoded quoted references and fence desynchronization, with accepted indented/quoted code controls.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6orZMG",
+      "comment_node_id": "PRRC_kwDOUQoUDc741aZt",
+      "root_comment_id": 4174751341,
+      "quote": "**WARNING:** Indented \"fences\" and CRLF files leave fence state stuck open, suppressing all Markdown target checks",
+      "summary": "The checker strips valid block-quote prefixes before reference validation; fence recognition allows at most three spaces, normalizes CRLF and ends quoted fences when their container ends. Refusal controls cover encoded quoted references and fence desynchronization, with accepted indented/quoted code controls.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6orZMI",
+      "comment_node_id": "PRRC_kwDOUQoUDc741aZv",
+      "root_comment_id": 4174751343,
+      "quote": "**SUGGESTION:** Code-span exclusion is single-line only, so wrapped spans still hit the literal-target refusal",
+      "summary": "The contributor contract now explicitly limits inline code exclusion to single-line spans; wrapped spans retain the target tripwire. A refusal control documents that boundary and supported one-line/indented/fenced alternatives. This takes the suggested bounded scope option rather than adding a multiline Markdown parser.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    }
+  ],
+  "judgment": "Wrapped inline code span support is explicitly outside the checker exclusion contract, taking the reviewer suggested bounded scope option. Single-line, ordinary indented and supported fenced excerpts have passing controls; raw HTML and known-badge tripwires remain documented.",
+  "owner_direction": "Continue existing approved PR checker/evidence and review cleanup under the live instruction to proceed; no new merge/publication authority inferred.",
+  "retained_artifacts": {
+    "validate.log.gz": {
+      "sha256": "17aa38f0cc8a7a7f76d3b9a052211d52ce19ab88943a96f648656caa6ec6f844",
+      "uncompressed_bytes": 338655
+    },
+    "final-docs.log.gz": {
+      "sha256": "5a73fb22ba5657033c0108dd627bf6777cd8fa1be12a7f2c46fc5a212216c821",
+      "uncompressed_bytes": 24376
+    },
+    "workflow.log.gz": {
+      "sha256": "027434f5f97c1520fc4c6c11bc5352e5a58ba122b80afcc60ac234e697dc0f27",
+      "uncompressed_bytes": 4377
+    },
+    "synchrony.log.gz": {
+      "sha256": "d2519badfcbe3519ab7e8746b8fcf2abe1ca2a6123680dfc2bbaf8f6d2b669e1",
+      "uncompressed_bytes": 813
+    },
+    "historical-audit.log.gz": {
+      "sha256": "8bf5ac668ed91bcbccb92e6438a5d06273dfb677b6e7b09775235d47ca0d5249",
+      "uncompressed_bytes": 713
+    },
+    "baseline-replay.log.gz": {
+      "sha256": "9a16dab926d92e783c6c4a403c95d34ba0a4421c3906d68f4c8ca57a7926c8af",
+      "uncompressed_bytes": 22132
+    },
+    "native-replay.log.gz": {
+      "sha256": "b39bc16f80ee96e792b50a513be13908e5a406b303c27c4789f3a1409bcafd2a",
+      "uncompressed_bytes": 2572
+    },
+    "original-docs-red.log.gz": {
+      "sha256": "2af2b76376044813f88b5a3a1ca27417784f8b29ab054e6b06144cff0160d5a6",
+      "uncompressed_bytes": 21548
+    },
+    "original-native-red.log.gz": {
+      "sha256": "f0caeace6706d94af26d9b3620a2ad51639e00bb5549c128baddaf5e5c64a192",
+      "uncompressed_bytes": 2073
+    },
+    "fence-red.log.gz": {
+      "sha256": "8a3a3531e6b3d126cc2a263415ed2fd6dcbb83a47cb1035b8f3c6657903d13f0",
+      "uncompressed_bytes": 20718
+    },
+    "prior-head-hosted.json": {
+      "sha256": "3abc8c348e59bd6327a39ff759e14f11b48cd76fc6c33cb06dcdaf9a3f8b79ae"
+    },
+    "prior-head-reviews.jsonl": {
+      "sha256": "8e829ffc33373395f3a843ac67ff307f19f6aa4202556192c5ffdb772a169af5"
+    }
+  },
+  "remote_feedback_settlement": "pending after push",
+  "current_head_hosted_review": "pending after push",
+  "release_acceptance": "Fresh frozen candidate after owner merge, packaged hosted checks, manual/native/performance/cask and publication remain pending",
+  "completed_at": "2026-10-03T21:05:26.732901+00:00"
+}

@@ -58,6 +58,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   before publishing its fresh hosted/cloud review head.
 - [x] Validate the complete host/source refusal and accepted-context matrix
   before publishing the combined target-scope correction.
+- [x] Validate the archive binding and Markdown-container correction
+  before publishing its combined hosted/cloud review head.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -85,6 +87,11 @@ Kilo/Codex batch added Unicode-host and target-scope findings; the class audit
 also confirmed a fully encoded responsive-image target bypass. The next
 combined correction covers literal ASCII hosts and single responsive sources,
 while preserving titled links, code/prose, footnotes and Unicode paths.
+Its fresh hosted/cloud settlement remains pending.
+The fifth head `fc58788` passed all six source CI jobs. Completed Kilo/Codex
+review added quoted-reference, code/fence-context and native archive-receipt
+findings. The next combined correction retains archive identity, checks quoted
+references and fence boundaries, and scopes supported code excerpts explicitly.
 Its fresh hosted/cloud settlement remains pending.
 
 Canonical validation, focused refusal controls, the live version readback and
