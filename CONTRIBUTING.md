@@ -23,11 +23,14 @@ write a failing behavior test, observe it, then implement the smallest fix.
 feature plan, verification plan and workorder synchronized when they change.
 
 README URL targets must be complete, on one line and literal: no character
-references, percent escapes or backslash escapes. HTML `src`/`href`, Markdown
-links and reference targets follow this rule. Prose and image alt text may use
-entities; ordinary query separators are allowed. Only the exact verified CI
-and license URLs may supply badges. The check refuses unsupported target
-syntax rather than interpreting it as a browser or Markdown renderer.
+references, percent escapes or backslash escapes. External hosts must be ASCII;
+Unicode filenames, paths, titles and alt text are allowed. HTML `src`/`href`
+and single-URL `srcset` attributes are checked in raw text; compound `srcset`
+lists are unsupported. Markdown/reference URL targets are checked outside code
+excerpts, and link titles are separate from the URL. Bare URLs in prose and
+code examples are outside target restrictions. Only the exact verified CI and
+license URLs may supply badges; the known-badge residue scan still checks all
+raw README text. This is a strict README tripwire, not a Markdown renderer.
 
 Generate static docs with `make generate-docs`; check drift with `make check-docs`.
 `make test-completions` additionally needs Bash completion, Zsh and Fish. On

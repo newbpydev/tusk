@@ -1,0 +1,197 @@
+{
+  "schema": 1,
+  "scope": "PR 7 combined host/source refusal and accepted-context correction",
+  "head_sha": "a6ded00581712fe64dbd9c70c8064ede27e759d4",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "canonical": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "PATH": "/tmp/pr7-path-without-rg",
+    "ripgrep_lookup_exit": 1,
+    "compiler": "go1.27.1 linux/amd64",
+    "exit_code": 0,
+    "named_script_assertions_passed": 651,
+    "log": "validate.log.gz"
+  },
+  "additional_checks": [
+    "baseline-replay.log.gz: marked controlled replay of immutable a6ded00 checker with final regression tests, expected failing exit 1",
+    "intermediate-replay.log.gz: marked replay of retained intermediate-checker.sh.gz with final tests, expected failing exit 1; reproduces the rendering and continuation regressions",
+    "final-docs.log.gz: fresh marked make test-docs after outcome-only checklist updates",
+    "workflow.log.gz: marked canonical workflow contracts and pinned lint/shellcheck",
+    "synchrony.log.gz: four-block equality and final hashes after outcome-only checklist update",
+    "historical-audit.log.gz: R2/R3/R4 inputs bind immutable commits; original artifacts remain unchanged"
+  ],
+  "artifact_scope": {
+    "original-red.log.gz": "Original pre-implementation failure output; unmarked result evidence only. The marked immutable baseline replay identifies checker/test bytes independently.",
+    "context-red.log.gz": "Intermediate unmarked failure output for non-target/footnote controls; result evidence only, no historical input or ordering claim.",
+    "render-red.log.gz": "Intermediate unmarked failure output for three rendered bypasses and two valid continued targets; result evidence only. The retained checker bytes and marked intermediate replay identify that matrix independently.",
+    "github-render-controls.json": "Inputs sent to GitHub markdown API; paired HTML is its readback, retained as rendering evidence, not a browser/native acceptance claim.",
+    "github-reference-render.json": "Reference-image input sent to GitHub markdown API; paired HTML confirms the continued encoded reference renders.",
+    "r4-input-readback.log.gz": "32 historical R4 input hashes verified against immutable a6ded00 before binding its receipt to that commit."
+  },
+  "input_scope": "Final worktree bytes of changed scripts/tests, direct documentation fixture inputs and verdict-carrying metadata/plans; excludes this receipt. Source/tests passed the canonical gate. Outcome-only checklist updates afterwards passed marked final documentation/synchrony checks. Each marked gate log records its own pre-command inputs. Unchanged sources bind head_sha.",
+  "input_sha256": {
+    ".github/workflows/native-candidate.yml": "58c727df67762596a0fca959ee09fdcbed9bf110907347a8cc5343e3c9b79070",
+    ".github/workflows/release.yml": "59c0b3c2d41077b026e755064769b355dc0f3ce5f22a8eb58c68dc159b8e35a6",
+    "CONTRIBUTING.md": "e4180ffb167b21ad00e6c9047bc0c4ccb0181071185f52ce4139c0ee3ca93dd8",
+    "LICENSE": "e7b8f7ad23179441d30f557ac1f4052def3c6a20c5a8d3217a82f6cbe8163482",
+    "MASTERPLAN.md": "bd235efaa13ffed16b768f0cc1335a0482a53b816ca8f6a964a37e2ee31c8c90",
+    "Makefile": "34bf303bc90b4580d3bf306a6d0053054c6c30ae1825b656399ca448764a4144",
+    "README.md": "59f989fabf6e3aeea9a59dbce4a27babd8295806b1d9154f0924fc01c0863400",
+    "SECURITY.md": "5262d79b05453eab22ce5b416fc13c621fea1ff883a78c8ad61b36b312ac741c",
+    "THIRD_PARTY_NOTICES.md": "ba486e7d36dd649f6b9a9a9c1068e014ca2d701f6b78e38eaf61e12c3691b7ed",
+    "docs/assets/README.md": "bfdad00f995f75d34b0626db8680cd01901353f007a741ce8187b7b70069f64f",
+    "docs/assets/tusk-tui.png": "0a5ad71ac8ba8671f0559fdea62d824504510fa9510574e9dd9059d05542eba7",
+    "docs/cli.md": "dccd177143794898dfc8bb34ad1cb35b337b366f99ce9fa2ef04023a55f2f121",
+    "docs/install.md": "48d65a3abca238883c51740ff1d9ee1a10ba40062c9a18820e8f1e587a726e50",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "99c927cef9f09127841027c34b9b5578acdf4b0d621bf5942f9321c53165005b",
+    "docs/releasing.md": "51170f0815b951fef89d3d3f545faadf28fe95da625be57f4eec461c538fa669",
+    "docs/tui.md": "d6e54fc9824b5973b4a7515122870c6d26553b483d787afb70ec47963cae41c5",
+    "docs/verification-evidence/006/github-readiness/README.md": "dd697b545438857f7815cd0d0e2e07bba6d7956ea782ebd4eddaaa23961955e4",
+    "docs/verification-evidence/006/github-readiness/repository-metadata.json": "1fd7ba8175d35968001b3344c2a5fb69a84e267dc1a4ece709271a0704a888d9",
+    "docs/verification-evidence/006/github-readiness/review-metadata.json": "4efa6423716f72b0f6c2758e4ffb078bb3d4a2486c17e8cfabaab3fade3bc304",
+    "docs/verification-evidence/006/pr7-r1/acceptance.json": "ae19338e4ea5da29323bc1f2bb60ae52915165016b3884c950ae3e50cd3b1bef",
+    "docs/verification-evidence/006/pr7-r2/acceptance.json": "d6119836d139cdd283c72b2c8869541b8e24ec67e900be27419651f1a54e98a6",
+    "docs/verification-evidence/006/pr7-r3/acceptance.json": "d05083635478583bda7c3354014b117ecc90e2f49cf2398150a8edc5997623a3",
+    "docs/verification-evidence/006/pr7-r4/acceptance.json": "253c5a1dea069473637d9e7e96a50ac5c862cd8358cb9680c4b32c4961c89f53",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "8fe40f4d9b7e61e5dd474341e886d561e01079cd3efb4961afcde4049bf47874",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "6fe102f0f61a06cf04d5c7870c2ef65bcabddfcadbdc9ef91a4c548059d050fe",
+    "scripts/candidate.sh": "da2bc7e4d75fa6833948730a3f307bfff75c2fab4f9a368931dd5b19c923b7db",
+    "scripts/docs-check.sh": "6ff944a9b7daae9d48aca4b2c9babad35830ac55bfcd1f578bc78ce3cfaa2353",
+    "scripts/native_candidate.sh": "3b0a30738c33ddc3e9d34bc8a504b08947c681495fa7d0caaaef92934f5eefae",
+    "scripts/test/test_candidate.sh": "fbc6a08e368aee7be495483adf1dfcaf95ce3171f492b4c6ac57c9ed6abe71af",
+    "scripts/test/test_docs.sh": "222fb781d3c044f44b390fc1bd9620563771e00492c64cd54e8de0ffd1ebecf9",
+    "scripts/test/test_native_candidate.sh": "8362e2e7b101766131727dc4d032f841a473e431e478816b547b283cc14ac7e2",
+    "scripts/test/test_promotion.sh": "d06aba013ed9b0f09962946549417f2d8d94f8b7a025df647fd9ff82f3f357e6",
+    "scripts/test/test_release_version.sh": "30284cf2edb697f2e4be88b5743b852dd51e9b819bb2bf5bf747c7cce762363b"
+  },
+  "feedback": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oqcLg",
+      "comment_node_id": "PRRC_kwDOUQoUDc74z5Ud",
+      "root_comment_id": 4174353693,
+      "quote": "**WARNING:** Unicode dot homoglyphs still bypass the badge gate",
+      "summary": "External URL hosts must contain literal ASCII characters; Unicode separator/IDNA aliases and HTML entity authority forms are refused. URI fields remain literal while Unicode paths/local filenames are accepted. Refusal controls cover all three mapped dots across HTML, Markdown and reference targets.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oqcLi",
+      "comment_node_id": "PRRC_kwDOUQoUDc74z5Ug",
+      "root_comment_id": 4174353696,
+      "quote": "**SUGGESTION:** `](` scan hard-fails valid Markdown titles and non-link text",
+      "summary": "Markdown checks extract the URI separately from optional titles, and exclude ordinary prose, inline/fenced code and footnotes. Continued markers retain URI validation. Accepted controls preserve titled and multiline verified links and incidental non-target text.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oqcLm",
+      "comment_node_id": "PRRC_kwDOUQoUDc74z5Ul",
+      "root_comment_id": 4174353701,
+      "quote": "**SUGGESTION:** literal() now refuses every URL token in README, not just targets",
+      "summary": "Bare URLs in prose and code are outside literal target constraints. Actual Markdown/reference/HTML target fields retain the literal URI policy; the known-badge raw-text tripwire remains. Positive controls preserve percent-escaped example URLs.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oqdB7",
+      "comment_node_id": "PRRC_kwDOUQoUDc74z6r_",
+      "root_comment_id": 4174359295,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Reject Unicode-equivalent separators in badge hosts**",
+      "summary": "External URL hosts must contain literal ASCII characters; Unicode separator/IDNA aliases and HTML entity authority forms are refused. URI fields remain literal while Unicode paths/local filenames are accepted. Refusal controls cover all three mapped dots across HTML, Markdown and reference targets.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    }
+  ],
+  "class_audit": {
+    "comment": "https://github.com/newbpydev/tusk/pull/7#issuecomment-5972223837",
+    "root": "documentation-badge-contract",
+    "verdict": "fixed locally",
+    "summary": "Responsive srcset targets use the same literal refusal as src/href. Non-ASCII and entity authorities are refused while Unicode paths, optional link titles and prose/code/footnotes are accepted. Continued Markdown/reference markers retain URL validation."
+  },
+  "owner_direction": "Continue the existing approved checker/evidence approach under the live instruction to proceed; no new question or publication authority inferred.",
+  "retained_artifacts": {
+    "validate.log.gz": {
+      "sha256": "a33905a7e33f5c63bfc306c7f2ebd9886dd769e2d33eab0762f86c96e086c905",
+      "uncompressed_bytes": 337627
+    },
+    "final-docs.log.gz": {
+      "sha256": "a69e56a54b0e7360bcdca10e4f40169daba63e82c21a20252bc2a69aa54e40df",
+      "uncompressed_bytes": 23506
+    },
+    "workflow.log.gz": {
+      "sha256": "3a360e77ab5de162b97a9076dff3c765efa2f2f4c35090b740a63e72841f3d3e",
+      "uncompressed_bytes": 4257
+    },
+    "synchrony.log.gz": {
+      "sha256": "53adda7eb62b705c05bde590d07632b9f55fe66bc5eff1464c05d1b34bacb242",
+      "uncompressed_bytes": 823
+    },
+    "historical-audit.log.gz": {
+      "sha256": "135e66a5a8ef8a0b1cd744263c5189877d1cb460395b965d08f9f1c2154e54ce",
+      "uncompressed_bytes": 660
+    },
+    "baseline-replay.log.gz": {
+      "sha256": "ef3a773dc89a39591d74a2d5b25e59d3bd14d97c2551b79f9967aa4b39d1d8d3",
+      "uncompressed_bytes": 23294
+    },
+    "intermediate-replay.log.gz": {
+      "sha256": "4eb31332ce1384d298b3932375ba0c587ea4a0316ce8cea9659124c63afa5241",
+      "uncompressed_bytes": 20800
+    },
+    "intermediate-checker.sh.gz": {
+      "sha256": "99cac5bfac2fb02c1057e2900548e5bbe539801a4b3316e6370e0f4f375422a5",
+      "uncompressed_bytes": 11373
+    },
+    "original-red.log.gz": {
+      "sha256": "0de47809d3e07d65f101ce574d444506ac0a819a85d281bd48f6d459ef64f000",
+      "uncompressed_bytes": 21634
+    },
+    "context-red.log.gz": {
+      "sha256": "adde67ef21a2acf4d323503c28dd24ef43d57345c718ddbd8beb667156811461",
+      "uncompressed_bytes": 19840
+    },
+    "render-red.log.gz": {
+      "sha256": "450a9f4706f34e6b46f7b96a8844fb5820dca4771064decb53dc5387696d74da",
+      "uncompressed_bytes": 20356
+    },
+    "investigation.log.gz": {
+      "sha256": "07a4c3f555817d43013ba9447dcb9ee8b24ec6803b844b74bb6321855d31a5b5",
+      "uncompressed_bytes": 867
+    },
+    "source-investigation.log.gz": {
+      "sha256": "e8af85da5684c2675be953b2d0580d36e87ee0c9be90440b51159dcacf067e8d",
+      "uncompressed_bytes": 959
+    },
+    "contract-investigation.log.gz": {
+      "sha256": "5f90111eba866177a65568943c6d26685a367b0997180fa2ff0215edaa15324a",
+      "uncompressed_bytes": 668
+    },
+    "r4-input-readback.log.gz": {
+      "sha256": "cbdcaa6f58cd0f25841774b386f2ea2642963c795332328150573709e6bcfd66",
+      "uncompressed_bytes": 3326
+    },
+    "prior-head-hosted.json": {
+      "sha256": "4a8bdbbe99fc127c18556ca5b9f309916faec1020b9f542b181e4a31d5d7db0a"
+    },
+    "prior-head-reviews.jsonl": {
+      "sha256": "1d5646257cf4228e0d478eb56b15a1396b3096d2fb93e68f6304531ce200100a"
+    },
+    "github-render-controls.json": {
+      "sha256": "83aaa50f43c8731d83c6071df1fff5cf41a21543c2a38439250cf0c6301e2d1c"
+    },
+    "github-render-controls.html": {
+      "sha256": "d141c9b8755e6c9429a9ec6f579966c0a8cb10b28af1cc16dc336a124b1a20f3"
+    },
+    "github-reference-render.json": {
+      "sha256": "0b667e81bb9abf7bf26cfb90ebbd08fe816e5a6f391b72a99647e04592c2cc4e"
+    },
+    "github-reference-render.html": {
+      "sha256": "e587190b712aed30d76db077de963cbce1ea50052cbc2eb413ab3488626f4b94"
+    }
+  },
+  "remote_feedback_settlement": "pending after push",
+  "current_head_hosted_review": "pending after push",
+  "release_acceptance": "Fresh frozen candidate after owner merge, packaged hosted checks, manual/native/performance/cask and publication remain pending",
+  "completed_at": "2026-10-03T20:23:22.281151+00:00"
+}

@@ -40,22 +40,65 @@ for file in "${files[@]}"; do
         # Read complete URL targets before removing the two verified literals.
         # Quoted HTML, simple Markdown/angle targets and bare references have
         # different terminators. An embedded URL cannot become a second target.
-        badge_text=$(awk -v ci='https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' \
+        badge_text=$(LC_ALL=C awk -v ci='https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' \
             -v license='https://img.shields.io/github/license/newbpydev/tusk' '
             function badge(value) {
                 return tolower(value) ~ /img[.]shields[.]io|actions\/workflows\/[^[:space:]]*badge/
             }
-            function literal(value) {
+            function literal(value, host) {
                 # README targets use literal URLs, not renderer-dependent
                 # entities, percent escapes, backslashes or split lines.
                 if (value == "" || value ~ /[[:space:]]/ || index(value, "\\") ||
-                    value ~ /&#|&[[:alpha:]][[:alnum:]]*;|%[[:xdigit:]][[:xdigit:]]/) exit 42
+                    value ~ /&#|&[[:alpha:]][[:alnum:]]*;|%[[:xdigit:]][[:xdigit:]]/) {
+                    printf "README URL target requires a literal value: %s\n", value > "/dev/stderr"
+                    exit 42
+                }
+                if (match(tolower(value), /^(https?:)?\/\//)) {
+                    host = substr(value, RLENGTH + 1)
+                    sub(/[\/?#].*$/, "", host); sub(/^.*@/, "", host)
+                    if (host ~ /[^ -~]/ || index(host, "&")) {
+                        printf "README URL host requires literal ASCII: %s\n", host > "/dev/stderr"
+                        exit 42
+                    }
+                }
+            }
+            function needs_literal(value) {
+                return tolower(value) ~ /^(https?:)?\/\// ||
+                    value ~ /&#|&[[:alpha:]][[:alnum:]]*;|%[[:xdigit:]][[:xdigit:]]/ || index(value, "\\")
+            }
+            function target(text, stop) {
+                sub(/^[[:blank:]]*/, "", text)
+                if (substr(text, 1, 1) == "<") {
+                    stop = index(text, ">")
+                    if (stop) return substr(text, 2, stop - 2)
+                    text = substr(text, 2)
+                }
+                match(text, /^[^[:space:])]+/)
+                return substr(text, 1, RLENGTH)
+            }
+            function outside_code(line, out, ticks, size, rest, probe, offset, finish) {
+                out = ""
+                while (match(line, /`+/)) {
+                    out = out substr(line, 1, RSTART - 1)
+                    ticks = substr(line, RSTART, RLENGTH); size = RLENGTH
+                    rest = substr(line, RSTART + RLENGTH)
+                    probe = rest; offset = 0; finish = 0
+                    while (match(probe, /`+/)) {
+                        if (RLENGTH == size) { finish = offset + RSTART; break }
+                        offset += RSTART + RLENGTH - 1
+                        probe = substr(rest, offset + 1)
+                    }
+                    if (!finish) return out ticks rest
+                    out = out " "; line = substr(rest, finish + size)
+                }
+                return out line
             }
             {
                 # Check complete attribute targets even if their scheme or
                 # hostname is obscured, before scanning known badge hosts.
                 attrs = $0
-                while (match(tolower(attrs), /(^|[[:space:]])(src|href)[[:space:]]*=[[:space:]]*/)) {
+                while (match(tolower(attrs), /(^|[[:space:]])(src|href|srcset)[[:space:]]*=[[:space:]]*/)) {
+                    attribute = tolower(substr(attrs, RSTART, RLENGTH))
                     attrs = substr(attrs, RSTART + RLENGTH)
                     quote = substr(attrs, 1, 1)
                     if (quote == "\"" || quote == "\047") {
@@ -69,22 +112,49 @@ for file in "${files[@]}"; do
                         attrs = substr(attrs, RLENGTH + 1)
                     }
                     literal(value)
+                    if (attribute ~ /srcset/ && index(value, ",")) exit 42
                     if (badge(value) && value != ci && value != license) { print; next }
                 }
-                targets = $0
+                # Markdown targets exclude code excerpts; HTML attributes and
+                # the known-badge residue check remain raw-text tripwires.
+                markup = outside_code($0)
+                if (match($0, /^[[:blank:]]*(```+|~~~+)/)) {
+                    fence = substr($0, RSTART, RLENGTH)
+                    sub(/^[[:blank:]]*/, "", fence)
+                    if (fence_mark == "") { fence_mark = substr(fence, 1, 1); fence_size = length(fence) }
+                    else if (substr(fence, 1, 1) == fence_mark && length(fence) >= fence_size &&
+                        substr($0, RSTART + RLENGTH) ~ /^[[:blank:]]*$/) fence_mark = ""
+                    markup = ""
+                } else if (fence_mark != "") markup = ""
+                if (await_close) {
+                    continuation = markup; sub(/^[[:blank:]]*/, "", continuation)
+                    if (continuation !~ /^[)"\047(]/) exit 42
+                    await_close = 0
+                }
+                if (pending_target != "") {
+                    value = target(markup)
+                    if (needs_literal(value)) {
+                        literal(value)
+                        if (pending_target == "link" && !index(markup, ")")) await_close = 1
+                    }
+                    pending_target = ""
+                }
+                targets = markup
                 while (match(targets, /\]\(/)) {
                     targets = substr(targets, RSTART + RLENGTH)
-                    stop = index(targets, ")"); if (!stop) exit 42
-                    value = substr(targets, 1, stop - 1); literal(value)
-                    targets = substr(targets, stop + 1)
+                    stop = index(targets, ")"); value = target(targets)
+                    if (needs_literal(value)) {
+                        if (targets ~ /^[[:blank:]]*</ && !index(targets, ">")) exit 42
+                        literal(value)
+                        if (!stop) await_close = 1
+                    }
+                    if (value == "" && !stop) pending_target = "link"
+                    targets = stop ? substr(targets, stop + 1) : ""
                 }
-                if (match($0, /^[[:blank:]]*\[[^]]+\]:[[:blank:]]*/)) {
-                    value = substr($0, RSTART + RLENGTH)
-                    if (substr(value, 1, 1) == "<") {
-                        stop = index(value, ">"); if (!stop) exit 42
-                        value = substr(value, 2, stop - 2)
-                    } else { match(value, /^[^[:space:]]+/); value = substr(value, 1, RLENGTH) }
-                    literal(value)
+                if (markup !~ /^[[:blank:]]*\[\^/ && match(markup, /^[[:blank:]]*\[.*\]:[[:blank:]]*/)) {
+                    value = target(substr(markup, RSTART + RLENGTH))
+                    if (needs_literal(value)) literal(value)
+                    if (value == "") pending_target = "reference"
                 }
                 cursor = 1; rest = $0; clean = ""; unquoted = 0
                 while (match(tolower(rest), /(https?:)?\/\//)) {
@@ -104,10 +174,10 @@ for file in "${files[@]}"; do
                         else match(tail, /^[^[:space:]"\047]+/)
                         value = substr(tail, 1, RLENGTH)
                     }
-                    literal(value)
+                    if (last == "(") value = target(value)
                     left = before == "" || last ~ /[[:space:]"\047(<]/ || unquoted
                     if (badge(value)) {
-                        if (!left || (delimiter != "" && !stop) || (value != ci && value != license)) { print; next }
+                        if (!left || (delimiter != "" && delimiter != ")" && !stop) || (value != ci && value != license)) { print; next }
                         clean = clean substr($0, cursor, start - cursor)
                     } else clean = clean substr($0, cursor, start - cursor) value
                     cursor = start + length(value)

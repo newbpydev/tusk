@@ -129,6 +129,53 @@ done
 cp "$root/README.md" "$fixture/README.md"
 printf '\nPlain prose &amp; alt text remain independent of literal targets.\n<img src="docs/assets/tusk-tui.png" alt="Tasks &amp; notes">\n[Other](https://example.com/?one=1&two=2)\n' >>"$fixture/README.md"
 expect 0 'allow local images, ordinary query separators and entities outside URL targets' bash "$root/scripts/docs-check.sh" "$fixture"
+for dot in '。' '．' '｡'; do
+    for target in "<img src=\"https://img${dot}shields${dot}io/badge/CI-passing-green\">" "![Unverified](https://img${dot}shields${dot}io/badge/CI-passing-green)" "[unverified]: https://img${dot}shields${dot}io/badge/CI-passing-green"; do
+        cp "$root/README.md" "$fixture/README.md"
+        printf '\n%s\n' "$target" >>"$fixture/README.md"
+        expect 1 'reject Unicode-equivalent remote hosts' bash "$root/scripts/docs-check.sh" "$fixture"
+    done
+done
+encoded='&#104;&#116;&#116;&#112;&#115;&#58;&#47;&#47;&#105;&#109;&#103;&#46;&#115;&#104;&#105;&#101;&#108;&#100;&#115;&#46;&#105;&#111;&#47;&#98;&#97;&#100;&#103;&#101;&#47;&#67;&#73;&#45;&#112;&#97;&#115;&#115;&#105;&#110;&#103;&#45;&#103;&#114;&#101;&#101;&#110;'
+for target in "<picture><source srcset=\"$encoded\"><img src=\"docs/assets/tusk-tui.png\"></picture>" "<img srcset='$encoded' src=\"docs/assets/tusk-tui.png\">" "<source srcset=$encoded>"; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$target" >>"$fixture/README.md"
+    expect 1 'reject fully encoded responsive image targets' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for target in '<source srcset="docs/assets/tusk-tui.png 1x, docs/assets/tusk-tui.png 2x">' '<source srcset="docs/assets/tusk-tui.png,docs/assets/tusk-tui.png">'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$target" >>"$fixture/README.md"
+    expect 1 'reject unsupported compound responsive targets' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for target in '[docs](https://example.com/a "Title")' '[docs](https://example.com/a '\''Title'\'')' 'Example https://example.com/search?q=a%20b' '`[docs](https://example.com/a%20b)`' '``Here `literal` [docs](https://example.com/a%20b)``' 'Text `[status](see CI)`' $'```text\n[docs](https://example.com/a%20b)\n```' $'~~~~text\n[docs](https://example.com/a%20b)\n~~~\n[docs](https://example.com/a%20b)\n~~~~'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$target" >>"$fixture/README.md"
+    expect 0 'allow titled links and URL examples outside target constraints' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' 'https://img.shields.io/github/license/newbpydev/tusk'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n![Verified](%s "Title ü")\n<source srcset="%s">\n' "$url" "$url" >>"$fixture/README.md"
+    expect 0 'allow verified titled badges and single responsive targets' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+cp "$root/README.md" "$fixture/README.md"
+cp "$fixture/docs/assets/tusk-tui.png" "$fixture/docs/assets/图.png"
+printf '\n![Local](docs/assets/图.png)\n<source srcset="docs/assets/图.png">\n[Unicode path](https://example.com/路径)\n' >>"$fixture/README.md"
+expect 0 'allow Unicode local filenames and remote paths with ASCII hosts' bash "$root/scripts/docs-check.sh" "$fixture"
+for text in 'Text [status](see CI)' 'Text [status](<see CI)' '[status]: <see CI' '[^note]: https://example.com/search?q=a%20b'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 0 'leave non-target text and footnotes outside URL constraints' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for text in '<img src="https://img.shields&shy.io/badge/CI-passing-green">' "![Unverified]("$'\n'"$encoded"$'\n)' "![Unverified][continued]"$'\n\n'"[continued]:"$'\n  '"$encoded"; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 1 'reject entity authorities and continued encoded targets' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' 'https://img.shields.io/github/license/newbpydev/tusk'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n![Verified](\n%s\n)\n\n![Verified](%s\n)\n\n![Verified][continued]\n\n[continued]:\n  %s\n' "$url" "$url" "$url" >>"$fixture/README.md"
+    expect 0 'allow verified URI values continued after their markers' bash "$root/scripts/docs-check.sh" "$fixture"
+done
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"

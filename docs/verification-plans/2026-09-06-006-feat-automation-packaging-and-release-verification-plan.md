@@ -43,6 +43,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   before pushing the third combined fix.
 - [x] Validate the literal-target and receipt-amendment class correction
   before publishing its fresh hosted/cloud review head.
+- [x] Validate the complete host/source refusal and accepted-context matrix
+  before publishing the combined target-scope correction.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -58,12 +60,18 @@ current-head review. Kilo confirmed the original ten fixes and reported six
 follow-ups. Those provenance, wording and badge/test corrections were locally
 validated together. The second head `e3dd105` passed all six source CI jobs;
 Kilo and Codex completed review with three boundary/provenance follow-ups.
-The owner approved one bounded correction pass for complete badge URL targets,
-complete single reporting-state declarations and marked validation evidence.
+The owner directed continuing the complete badge URL/reporting-state and
+provenance corrections. The third pass uses complete single state declarations
+and marked validation evidence.
 The third head `7f1fe45` passed all six source CI jobs. Kilo and Codex
 completed review with an encoded-target bypass and two receipt-provenance
 concerns. The combined class correction enforces complete literal targets,
 preserves historical log bytes and records amendments and fresh marked runs.
+The fourth head `a6ded00` passed all six source CI jobs. The completed
+Kilo/Codex batch added Unicode-host and target-scope findings; the class audit
+also confirmed a fully encoded responsive-image target bypass. The next
+combined correction covers literal ASCII hosts and single responsive sources,
+while preserving titled links, code/prose, footnotes and Unicode paths.
 Its fresh hosted/cloud settlement remains pending.
 
 Canonical validation, focused refusal controls, the live version readback and
