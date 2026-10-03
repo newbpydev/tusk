@@ -23,6 +23,7 @@
     "tui"
   ],
   "private_vulnerability_reporting": true,
+  "private_reporting_evidence": "Retained API enabled:true readback; rendered setting capture not retained",
   "browser_readback": {
     "packages_sidebar": false,
     "releases_sidebar": true,

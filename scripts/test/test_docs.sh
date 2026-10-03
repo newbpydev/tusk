@@ -31,6 +31,10 @@ cp "$root/README.md" "$fixture/README.md"
 cp "$fixture/SECURITY.md" "$scratch/security-saved"
 printf '# Security reporting\nGitHub private vulnerability reporting is enabled and verified on 2026-10-03.\nUse https://github.com/newbpydev/tusk/security/advisories/new to report privately.\n' >"$fixture/SECURITY.md"
 expect 0 'verified enabled private reporting is allowed' bash "$root/scripts/docs-check.sh" "$fixture"
+for state in 'was never enabled' 'is no longer enabled' 'is not enabled and verified'; do
+    printf '# Security reporting\nGitHub private vulnerability reporting %s\nUse https://github.com/newbpydev/tusk/security/advisories/new.\n' "$state" >"$fixture/SECURITY.md"
+    expect 1 "reject ambiguous private reporting state: $state" bash "$root/scripts/docs-check.sh" "$fixture"
+done
 mv "$scratch/security-saved" "$fixture/SECURITY.md"
 for missing in docs/install.md LICENSE docs/assets/tusk-tui.png; do
     if [[ -f "$fixture/$missing" ]]; then
@@ -44,6 +48,18 @@ for bad in '[Broken](docs/absent.md)' '[Bad anchor](docs/cli.md#absent-heading)'
     printf '\n%s\n' "$bad" >>"$fixture/README.md"
     expect 1 "reject unsupported public content: $bad" bash "$root/scripts/docs-check.sh" "$fixture"
 done
+cp "$root/README.md" "$fixture/README.md"
+for badge in '<img src="https://img.shields.io/github/v/release/newbpydev/tusk">' '[badge]: https://img.shields.io/badge/CI-passing-green' '<img src="https://github.com/evil/tusk/actions/workflows/ci.yml/badge.svg">' '[badge]: https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main-evil'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$badge" >>"$fixture/README.md"
+    expect 1 "reject unverified raw badge: $badge" bash "$root/scripts/docs-check.sh" "$fixture"
+done
+cp "$root/README.md" "$fixture/README.md"
+printf '\n<img src="https://img.shields.io/github/license/newbpydev/tusk">\n[ci]: https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main\n' >>"$fixture/README.md"
+expect 0 'verified raw HTML and reference badges are allowed' bash "$root/scripts/docs-check.sh" "$fixture"
+cp "$root/README.md" "$fixture/README.md"
+printf '\n<img src="//img.shields.io/badge/CI-passing-green">\n' >>"$fixture/README.md"
+expect 1 'reject protocol-relative unverified badge' bash "$root/scripts/docs-check.sh" "$fixture"
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"

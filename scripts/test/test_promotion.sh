@@ -243,10 +243,10 @@ if [[ ! -s "$scratch/remote/tag.json" ]];then printf 'FAIL: complete draft lacks
 cp "$scratch/gh-calls" "$scratch/prior-calls"
 : >"$scratch/gh-calls"
 expect 1 'newer reserved tag refuses older draft resumption' "${invoke[@]}" FIXTURE_HIGHER_TAG=v0.4.0 RELEASE_PROMOTION_OUTPUT="$scratch/superseded-draft" bash "$scratch/fixture/scripts/promote.sh" draft
-expect 1 'superseded draft makes no remote write' rg -q -- '--method (POST|PATCH|DELETE)' "$scratch/gh-calls"
+expect 1 'superseded draft makes no remote write' grep -Eq -- '--method (POST|PATCH|DELETE)' "$scratch/gh-calls"
 : >"$scratch/gh-calls"
 expect 1 'newer reserved tag refuses older publication' "${invoke[@]}" FIXTURE_HIGHER_TAG=v0.4.0 RELEASE_AUTHORIZATION="$scratch/publish-approval.json" RELEASE_PROMOTION_OUTPUT="$scratch/superseded-publish" bash "$scratch/fixture/scripts/promote.sh" publish
-expect 1 'superseded publication makes no remote write' rg -q -- '--method (POST|PATCH|DELETE)' "$scratch/gh-calls"
+expect 1 'superseded publication makes no remote write' grep -Eq -- '--method (POST|PATCH|DELETE)' "$scratch/gh-calls"
 cat "$scratch/prior-calls" >>"$scratch/gh-calls"
 [[ "$(grep -Ec '^api https://uploads.github.com/.* --method POST' "$scratch/gh-calls" || true)" == 9 ]] || failed=1
 [[ ! -e "$scratch/candidate/assets/marker" ]] || failed=1

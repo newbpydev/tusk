@@ -42,6 +42,7 @@
   },
   "jobs": {
     "native": {
+      "if": "github.event_name == 'workflow_dispatch' && github.repository == 'newbpydev/tusk' && github.ref == 'refs/heads/main' && github.workflow_ref == 'newbpydev/tusk/.github/workflows/native-candidate.yml@refs/heads/main' && github.workflow_sha == github.sha",
       "name": "Packaged ${{ matrix.target }}",
       "runs-on": "${{ matrix.runner }}",
       "timeout-minutes": 30,
@@ -79,10 +80,10 @@
       },
       "steps": [
         {
-          "name": "Checkout frozen source",
+          "name": "Checkout trusted main verifier",
           "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
           "with": {
-            "ref": "${{ inputs.source_sha }}",
+            "ref": "${{ github.workflow_sha }}",
             "persist-credentials": false,
             "fetch-depth": 0
           }

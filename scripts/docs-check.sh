@@ -20,7 +20,7 @@ required docs/install.md 'CGO_ENABLED=0' 'self-contained source build'
 required docs/install.md 'sidecars|WAL/SHM' 'backup safety'
 required docs/install.md 'NORMAL' 'durability limits'
 required SECURITY.md 'https://github.com/newbpydev' 'verified owner route'
-required SECURITY.md 'disabled|not enabled|enabled and verified|enabled$' 'actual private-reporting state'
+required SECURITY.md '^GitHub private vulnerability reporting (is|was) enabled and verified on [0-9]{4}-[0-9]{2}-[0-9]{2}\.|^GitHub private vulnerability reporting is (currently )?(disabled|not enabled)\.' 'actual private-reporting state'
 required LICENSE 'Permission is hereby granted' 'selected MIT grant'
 required THIRD_PARTY_NOTICES.md 'third_party/bubbletea' 'replacement notice'
 required THIRD_PARTY_NOTICES.md 'third_party/glamour' 'replacement notice'
@@ -34,14 +34,16 @@ for file in "${files[@]}"; do
     if [[ "$file" == README.md ]] && grep -Eq '/releases/download/' "$root/$file"; then
         fail 'README advertises an unverified badge or release'
     fi
+    if [[ "$file" == README.md ]]; then
+        # Remove only complete verified URLs, then scan all remaining raw text.
+        # This covers inline links, HTML, references and protocol-relative URLs.
+        if sed -E "s#https://github\.com/newbpydev/tusk/actions/workflows/ci\.yml/badge\.svg\?branch=main($|[[:space:]<>\"'()])#\1#g; s#https://img\.shields\.io/github/license/newbpydev/tusk($|[[:space:]<>\"'()])#\1#g" "$root/$file" |
+            grep -E 'img\.shields\.io|actions/workflows/[^[:space:]]*badge' >/dev/null; then
+            fail 'README advertises an unverified badge'
+        fi
+    fi
     # Links in these guides use simple Markdown targets, without titles/spaces.
     while IFS= read -r target; do
-        if [[ "$file" == README.md && "$target" =~ img\.shields\.io|actions/workflows/.*badge ]]; then
-            case "$target" in
-                https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg\?branch=main|https://img.shields.io/github/license/newbpydev/tusk) ;;
-                *) fail 'README advertises an unverified badge';;
-            esac
-        fi
         case "$target" in https://*|http://*|mailto:*) continue ;; esac
         base=${target%%#*}
         if [[ -z "$base" ]]; then linked="$root/$file"; else linked="$root/$(dirname "$file")/$base"; fi

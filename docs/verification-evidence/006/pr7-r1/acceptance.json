@@ -1,0 +1,176 @@
+{
+  "schema": 1,
+  "scope": "PR 7 combined review and hosted-test portability remediation",
+  "head_sha": "65a611631cb56eeef57e5d01c6491ae1917ba7f9",
+  "working_tree_changes": true,
+  "remote_feedback_settlement": "pending after push",
+  "hosted_current_head_verification": "pending after push",
+  "local_status": "passed",
+  "canonical_command": "GOTOOLCHAIN=go1.27.1 make validate",
+  "canonical_exit_code": 0,
+  "canonical_environment": "ripgrep calls deliberately return 127; no release credentials printed",
+  "additional_checks": [
+    "make test-scripts with rg completely absent from isolated PATH: 477 named assertions pass",
+    "make check-ci check-candidate-workflow check-native-candidate-workflow",
+    "make lint-release-promotion",
+    "receipt timestamp/working-tree qualifier and four-document follow-up block synchrony"
+  ],
+  "initial_lint_correction": "Shellcheck SC2016 identified the intentionally literal GitHub expression in the new mutation; documented with the narrow existing annotation convention, then lint passed.",
+  "input_sha256": {
+    ".github/workflows/native-candidate.yml": "58c727df67762596a0fca959ee09fdcbed9bf110907347a8cc5343e3c9b79070",
+    ".github/workflows/release.yml": "59c0b3c2d41077b026e755064769b355dc0f3ce5f22a8eb58c68dc159b8e35a6",
+    "SECURITY.md": "5262d79b05453eab22ce5b416fc13c621fea1ff883a78c8ad61b36b312ac741c",
+    "docs/releasing.md": "51170f0815b951fef89d3d3f545faadf28fe95da625be57f4eec461c538fa669",
+    "scripts/candidate.sh": "da2bc7e4d75fa6833948730a3f307bfff75c2fab4f9a368931dd5b19c923b7db",
+    "scripts/docs-check.sh": "17e5a9d56668c1242ec1acf62af7dea8dd70dc52b66ca061963199bd27eec7b6",
+    "scripts/native_candidate.sh": "3b0a30738c33ddc3e9d34bc8a504b08947c681495fa7d0caaaef92934f5eefae",
+    "scripts/test/test_candidate.sh": "fbc6a08e368aee7be495483adf1dfcaf95ce3171f492b4c6ac57c9ed6abe71af",
+    "scripts/test/test_docs.sh": "39d5434a49511b0c1a915b9def67d09f2c806c5a03183aa3c637f3ecedc5bdc4",
+    "scripts/test/test_native_candidate.sh": "8362e2e7b101766131727dc4d032f841a473e431e478816b547b283cc14ac7e2",
+    "scripts/test/test_promotion.sh": "d06aba013ed9b0f09962946549417f2d8d94f8b7a025df647fd9ff82f3f357e6",
+    "scripts/test/test_release_version.sh": "30284cf2edb697f2e4be88b5743b852dd51e9b819bb2bf5bf747c7cce762363b"
+  },
+  "feedback": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojIhN",
+      "comment_node_id": "PRRC_kwDOUQoUDc74ofc6",
+      "root_comment_id": 4171364154,
+      "quote": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Pin the verifier checkout before executing repository code**",
+      "summary": "The native workflow checks out github.workflow_sha and rejects non-main or mismatched workflow/dispatch contexts before checkout. Trusted verifier code checks the selected run, source and signed payloads before any candidate executable runs.",
+      "invariant_key": "native-verifier-trust",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojIhP",
+      "comment_node_id": "PRRC_kwDOUQoUDc74ofc9",
+      "root_comment_id": 4171364157,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Use credentials that can observe draft releases**",
+      "summary": "The identity job now has contents: write to list draft reservations. Its job condition permits only the matching trusted-main workflow and dispatch SHA before checkout; CI/build keep read-only permissions. Contract tests reject missing/loosened guards and reduced or expanded identity permissions.",
+      "invariant_key": "draft-history-visibility",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojO-n",
+      "comment_node_id": "PRRC_kwDOUQoUDc74opgG",
+      "root_comment_id": 4171405318,
+      "quote": "**SUGGESTION:** completed_at precedes the receipt's own final stage end",
+      "summary": "The completion timestamp now equals the recorded final report-stage end. The original timestamp is preserved with an explicit correction note.",
+      "invariant_key": "review-receipt-consistency",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojO-t",
+      "comment_node_id": "PRRC_kwDOUQoUDc74opgN",
+      "root_comment_id": 4171405325,
+      "quote": "**WARNING:** Receipt binds its verdict to the PR base commit with no working-tree qualifier",
+      "summary": "The receipt now discloses its precommit working-tree scope and base anchor, identifies the original implementation commit, and limits the verdict to that local review. It does not claim review of later remediation or hosted readiness.",
+      "invariant_key": "review-receipt-consistency",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojO-x",
+      "comment_node_id": "PRRC_kwDOUQoUDc74opgT",
+      "root_comment_id": 4171405331,
+      "quote": "**SUGGESTION:** Name the workflow explicitly instead of the informal packaged-native label",
+      "summary": "MASTERPLAN and all three paired planning documents now name Native candidate verification and .github/workflows/native-candidate.yml explicitly.",
+      "invariant_key": "planning-evidence-consistency",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojO-0",
+      "comment_node_id": "PRRC_kwDOUQoUDc74opgX",
+      "root_comment_id": 4171405335,
+      "quote": "**WARNING:** New enabled-and-verified claim contradicts docs/releasing.md, which still says disabled",
+      "summary": "The release guide now records the verified enabled state and links the security policy, with its evidence scoped to the retained API readback.",
+      "invariant_key": "planning-evidence-consistency",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojO-3",
+      "comment_node_id": "PRRC_kwDOUQoUDc74opga",
+      "root_comment_id": 4171405338,
+      "quote": "**WARNING:** Register row 006-ISS-016 contradicts the new metadata-applied status",
+      "summary": "The issue register now marks 006-ISS-016 as metadata applied and read back, with final publication verification still pending.",
+      "invariant_key": "planning-evidence-consistency",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojO-5",
+      "comment_node_id": "PRRC_kwDOUQoUDc74opgc",
+      "root_comment_id": 4171405340,
+      "quote": "**SUGGESTION:** Browser readback claimed for private reporting is not itemized in the retained receipt",
+      "summary": "The workorder and metadata receipt now state that private-reporting activation is supported by the retained API enabled:true readback. The rendered private-reporting setting capture was not retained, so no browser proof is claimed for that setting.",
+      "invariant_key": "planning-evidence-consistency",
+      "verdict": "fixed-differently"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojO-7",
+      "comment_node_id": "PRRC_kwDOUQoUDc74opge",
+      "root_comment_id": 4171405342,
+      "quote": "**SUGGESTION:** `enabled$` alternative is looser than the state it should certify",
+      "summary": "The checker requires an explicit anchored private-reporting state sentence. Negative fixtures cover never enabled, no longer enabled and not enabled and verified; the policy now uses the accepted explicit wording.",
+      "invariant_key": "documentation-state-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6ojO-8",
+      "comment_node_id": "PRRC_kwDOUQoUDc74opgg",
+      "root_comment_id": 4171405344,
+      "quote": "**WARNING:** Badge allowlist gate no longer sees HTML or reference-style badges",
+      "summary": "The gate scans raw README content after removing only the two complete verified URLs. Tests reject HTML, reference-style, protocol-relative and URL-suffix bypasses, while approved HTML/reference badges pass.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    }
+  ],
+  "private_reporting_api_readback": {
+    "enabled": true
+  },
+  "retained_logs": {
+    "pr7-red.log.gz": {
+      "sha256": "9383534cdcdc0ffc5ae8b3d4b34575347708303c2eff66886e756dff9664847d",
+      "uncompressed_bytes": 10155
+    },
+    "pr7-red-native.log.gz": {
+      "sha256": "5bf5e3e1b3ad0ded84a908950dee6cf94041be2843c837dac7472f14b72ef991",
+      "uncompressed_bytes": 16686
+    },
+    "pr7-red-version.log.gz": {
+      "sha256": "d9565fbd3fd40e4541567f4681dc5a8212779f4697879a36bc7fd0d03ac158ad",
+      "uncompressed_bytes": 19086
+    },
+    "pr7-red-raw-badge.log.gz": {
+      "sha256": "69da5b44265eb4957c64b8066a1917721a10ee49150341fafd9851ef07fe1cb6",
+      "uncompressed_bytes": 2069
+    },
+    "pr7-green-scripts.log.gz": {
+      "sha256": "82fc43289725dcd27fe5d5a493ad10aa3dbdbddb9eda39ea77422925861fe437",
+      "uncompressed_bytes": 28021
+    },
+    "pr7-green-scripts-final.log.gz": {
+      "sha256": "b0e207a018ab2bfacd384b56a1bc3953f98c0e900d981ea35e190e872f8c27e2",
+      "uncompressed_bytes": 29123
+    },
+    "pr7-green-without-rg.log.gz": {
+      "sha256": "a600c0f63135fa4ff5eb2b8025412b9ba5f9b77d988952c995a89484dd2cf0fe",
+      "uncompressed_bytes": 29123
+    },
+    "pr7-green-docs.log.gz": {
+      "sha256": "1d8f7f96ad64cb7da83f3cf74989475977436229f0b73007702974b11eb8f2b5",
+      "uncompressed_bytes": 1926
+    },
+    "pr7-green-contracts.log.gz": {
+      "sha256": "39bcc6d12f0c24b3e82e5dcc4c667ca805781f6af470f81067d5d09d224e528d",
+      "uncompressed_bytes": 108
+    },
+    "pr7-shellcheck.log.gz": {
+      "sha256": "6419a15622f0fce2cd735f6a947e43ae7f00ce64599bebb9fe2a5c1e84d7b45b",
+      "uncompressed_bytes": 389
+    },
+    "pr7-validate.log.gz": {
+      "sha256": "0aca8315994f511e9f7034ef5a0093dc4223e5eb1dfbeac1b32cb3092290b2e7",
+      "uncompressed_bytes": 316021
+    }
+  },
+  "runtime_evidence": "No new physical-console or packaged-candidate acceptance claimed; final frozen candidate and native/manual/performance/cask/publication gates remain pending",
+  "completed_at": "2026-10-03T14:31:42.908088+00:00"
+}

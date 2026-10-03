@@ -39,13 +39,17 @@ make check-release-version RELEASE_VERSION=v0.3.0 RELEASE_VERSION_OUTPUT=/tmp/tu
 ```
 
 This read-only check uses authenticated GitHub access and a bounded client. It
-reads every page of repository tags and releases, including visible drafts,
-and requires the selected stable version to be greater than every existing
+reads every page of repository tags and releases. Use credentials with repository
+push access so draft reservations are visible. The check requires the selected
+stable version to be greater than every existing
 stable version. A failed or malformed read refuses release preparation. Unrelated
 legacy tag names do not establish a stable-version floor. A passing receipt is
 an observation, not a reservation; use an exclusive maintainer release window.
 
-The hosted candidate workflow runs this check before its CI/build jobs.
+The hosted candidate workflow runs this check before its CI/build jobs. Only the
+identity job has `contents: write` to see drafts; its job condition restricts it
+to the matching trusted-main workflow/dispatch SHA before checkout. The history
+check performs reads only. CI and build retain `contents: read`.
 Promotion repeats the check before draft/publication, permitting the selected
 version only for exact resumption; the existing source, notes and asset identity
 guards still apply. Readback of historical releases remains available. Local
@@ -193,6 +197,12 @@ retained for every job; their status is `automated-passed`, with manual terminal
 inspection still pending. This workflow does not rebuild the selected executable,
 publish, create tags or change the Homebrew tap.
 
+Dispatch `.github/workflows/native-candidate.yml` from `main`. Its job condition
+requires the main workflow and dispatch SHAs to match. The verifier checkout is
+that trusted workflow SHA, never `source_sha`; the requested candidate SHA is
+checked independently against the successful main run and signed subjects before
+its downloaded executable runs.
+
 After trusted verification, extract the native archive into an owned directory.
 Keep evidence in a new directory outside both candidate storage and the source
 checkout. The drivers verify manifest and executable identities, consume the
@@ -285,8 +295,9 @@ Apply these values only after owner authorization and retain before/after readba
 - Social preview: the inspected sample capture `docs/assets/tusk-tui.png`, with
   provenance in [assets](assets/README.md). Use manual upload if needed.
 - Website/funding: leave absent optional values empty; no separate website exists.
-- Security: private vulnerability reporting is currently disabled; do not claim
-  it is active without verified setting readback and an updated policy.
+- Security: private vulnerability reporting was enabled and verified through the
+  API on 2026-10-03; [the policy](../SECURITY.md) names the private advisory route.
+  A rendered private-reporting setting capture was not retained.
 
 After publication, verify anonymous downloads/install, complete release assets,
 Homebrew, GitHub About/license/topics/homepage/social preview and actual rendered

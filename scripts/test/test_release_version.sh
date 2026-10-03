@@ -90,9 +90,11 @@ jq -n '[[{name:"v0.2.0"}],[{name:"v0.4.0"}]]' >"$scratch/tags.json"
 expect 1 'remote check inspects newer tag on the second page' "${remote[@]}" "$scratch/later-page"
 expect 1 'remote history refuses output reuse' "${remote[@]}" "$scratch/remote-control"
 # Guard fidelity: this must be wired into the real workflow before CI/build,
-# with only read access, and into the actual promotion implementation.
+# with draft-visible credentials restricted to trusted main, and into promotion.
 # The GitHub expressions are literal workflow policy strings.
 # shellcheck disable=SC2016
 expect 0 'candidate identity gate rejects reused versions before CI' jq -e '.jobs.identity.steps[-1].run=="make check-release-version RELEASE_VERSION_OUTPUT=\"$RUNNER_TEMP/version-history\"" and .jobs.identity.steps[-1].env.GH_TOKEN=="${{ github.token }}" and .jobs.identity.steps[-1].env.RELEASE_VERSION=="${{ inputs.version }}" and .jobs.ci.needs==["identity"] and .permissions=={contents:"read"}' "$root/.github/workflows/release.yml"
-expect 0 'promotion uses the shared remote history check' rg -q 'release_version_remote.*resume' "$root/scripts/promote.sh"
+# shellcheck disable=SC2016
+expect 0 'only trusted main identity has draft-visible contents access' jq -e '.jobs.identity.permissions=={contents:"write"} and (.jobs.identity.if|contains("github.ref == '\''refs/heads/main'\''")) and (.jobs.identity.if|contains("github.workflow_ref == '\''newbpydev/tusk/.github/workflows/release.yml@refs/heads/main'\''")) and (.jobs.identity.if|contains("github.workflow_sha == github.sha")) and (.jobs.build|has("permissions")|not)' "$root/.github/workflows/release.yml"
+expect 0 'promotion uses the shared remote history check' grep -q 'release_version_remote.*resume' "$root/scripts/promote.sh"
 exit "$failed"

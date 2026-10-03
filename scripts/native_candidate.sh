@@ -8,11 +8,13 @@ digest() {
  if command -v sha256sum >/dev/null 2>&1;then sha256sum "$1" | awk '{print $1}';else shasum -a 256 "$1" | awk '{print $1}';fi
 }
 contract() {
+ local guard="github.event_name == 'workflow_dispatch' && github.repository == 'newbpydev/tusk' && github.ref == 'refs/heads/main' && github.workflow_ref == 'newbpydev/tusk/.github/workflows/native-candidate.yml@refs/heads/main' && github.workflow_sha == github.sha"
  jq ${jq_binary_option:+"--binary"} -e --slurpfile pins "$root/scripts/tool-versions.json" '
   .on|keys==["workflow_dispatch"]
  ' "$root/.github/workflows/native-candidate.yml" >/dev/null || die 'manual dispatch required'
- jq ${jq_binary_option:+"--binary"} -e --slurpfile pins "$root/scripts/tool-versions.json" '
+ jq ${jq_binary_option:+"--binary"} -e --arg guard "$guard" --slurpfile pins "$root/scripts/tool-versions.json" '
   .permissions=={contents:"read",actions:"read",attestations:"read"} and
+  .jobs.native.if==$guard and
   (.on.workflow_dispatch.inputs|keys)==["candidate_run_attempt","candidate_run_id","manifest_sha256","source_sha","version"] and
   all(.on.workflow_dispatch.inputs[];.required==true and .type=="string") and
   (.jobs|keys)==["native"] and .jobs.native["timeout-minutes"]==30 and
@@ -30,7 +32,7 @@ contract() {
   all(.jobs.native.steps[]; (has("continue-on-error")|not)) and
   all(.jobs.native.steps[]|select(has("run"));(.run|contains("${{")|not)) and
   .jobs.native.steps[0].uses==("actions/checkout@"+$pins[0].actions.checkout.sha) and
-  .jobs.native.steps[0].with=={ref:"${{ inputs.source_sha }}","persist-credentials":false,"fetch-depth":0} and
+  .jobs.native.steps[0].with=={ref:"${{ github.workflow_sha }}","persist-credentials":false,"fetch-depth":0} and
   .jobs.native.steps[1].uses==("actions/setup-go@"+$pins[0].actions.setup_go.sha) and
   .jobs.native.steps[1].with=={"go-version":$pins[0].go.release,cache:true} and
   .jobs.native.steps[2].if=="runner.os == '\''Windows'\''" and

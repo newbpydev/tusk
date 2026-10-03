@@ -48,8 +48,17 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
 - [x] Complete social-preview upload and rendered GitHub readback; enable
   release immutability and hide the inapplicable Packages sidebar.
 - [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
+- [x] Validate PR #7's combined verifier, draft-history, portable-test and
+  documentation/evidence remediation before publishing the fix.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
-  packaged-native workflow and retain final reference measurements.
+  Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
+  and retain final reference measurements.
+
+PR #7 remediation pins verifier code to the trusted main workflow SHA and guards
+dispatch before checkout. Only the release identity job has draft-visible
+contents access; build/CI/native verification remain read-only. Private-reporting
+activation is supported by retained API evidence; its rendered setting capture
+was not retained. Final hosted/candidate/publication gates remain pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because
@@ -73,7 +82,7 @@ appropriate distribution surface. No placeholder container package is planned.
 | 006-ISS-002 | R2,R23,R24 / release maintainer, portability | P1 | Open verification | Arrange all native target/terminal access before U5; absent hosts block release | Exact-asset native runtime and owned terminal records; V73–V84 |
 | 006-ISS-003 | R29 / repository owner, distribution | P1 | Open decision | Establish accessible tap/destination before U7; proposed tap was not found | Owner-controlled repository/path and Intel/ARM local/live cask proof; V87–V98 |
 | 006-ISS-004 | R28 / repository owner, release | P1 | Open decision | Confirm version/SHA and explicit hosted/release authority at concrete U8 candidate | Authorized identity, draft/asset readback and actual public result; V95–V102 |
-| 006-ISS-005 | R22 / maintainer, security/support | P2 | Private channel activated and read back | GitHub private reporting enabled; SECURITY.md names the verified private route without a response SLA | V42/V44 local pass; live enabled:true and browser readback; broader V100 publication bundle pending |
+| 006-ISS-005 | R22 / maintainer, security/support | P2 | Private channel activated and read back | GitHub private reporting enabled; SECURITY.md names the verified private route without a response SLA | V42/V44 local pass; retained API enabled:true; rendered setting capture not retained; broader V100 publication bundle pending |
 | 006-ISS-006 | Original outline / coherence | P1 | Fixed in plan | Replace unsupported readiness with executable unit and evidence contracts | Eight unit fields, 30 requirements and 102 pending scenarios; full execution still required |
 | 006-ISS-007 | Original Go 1.24 assumption / compatibility | P1 | Fixed in plan | Keep Go 1.25.0 source floor and separate pinned production compiler | Native/minimum jobs and tool lock; V03,V04,V12,V49 |
 | 006-ISS-008 | CI/race/format / portability, testing | P1 | Fixed in plan | Distinguish native Windows Bash/Make/compiler, CGO race and CGO-free release; fail source drift | Negative prerequisites, native jobs and drift fixtures; V05–V11,V16 |
@@ -84,7 +93,7 @@ appropriate distribution surface. No placeholder container package is planned.
 | 006-ISS-013 | Existing benchmark build prerequisites / performance | P1 | Resolved locally; candidate matrices pending | Add supplied-binary mode before release measurements; do not overwrite accepted artifacts | Hash-preservation Red/Green and retained candidate CLI/TUI matrices; V85,V86 |
 | 006-ISS-014 | Inherited native/release handoffs / coherence | P1 | Fixed in plan | Map product V66–V73 and Feature 002–005 release obligations without closing them in planning | Whole inherited contracts mapped to actual receipts; verification handoff table |
 | 006-ISS-015 | Install/backup/uninstall / data integrity | P1 | Fixed in plan | Preserve DB/WAL/SHM and compare domain data around replacement/restore | Native current/newer-schema/backup/remove fixtures; V39,V79–V81,V91 |
-| 006-ISS-016 | Missing repository metadata / documentation | P2 | Fixed in plan | Use concrete About/homepage/topics/social preview and inspect actual rendered GitHub | Preview plus before/after API/browser evidence; V42,V43,V100,V101 |
+| 006-ISS-016 | Missing repository metadata / documentation | P2 | Metadata applied and read back; publication bundle pending | About/homepage/topics/social preview applied and rendered GitHub inspected | Retained before/after API and preview/settings browser evidence; V42/V43 locally pass; V100/V101 final publication bundle pending |
 | 006-ISS-017 | Public support/performance/image claims / product/privacy | P2 | Fixed in plan | Cite actual dated evidence, sanitized captures and verified badges/install routes | Documentation negative checks and released README replay; V40,V41,V99,V102 |
 | 006-ISS-018 | Tool/analyzer/runner availability / operations | P1 | Open verification | Freeze verified pins in U1 and prove analyzer compatibility before release; a missing native job stays pending | Verified tool/action digests, exact compiler and successful analysis/native URLs; V03,V12,V13,V60,V65 |
 | 006-ISS-019 | Partial publication/retries / reliability | P1 | Fixed in plan | Reconcile lost responses; preserve published bytes and use a new version for repairs | API failure fixtures and complete draft/public readback; V70,V95–V98,V102 |
@@ -194,7 +203,7 @@ release/metadata/native-install acceptance remains pending. U2 follows the U4 co
 - **Evidence:** No SECURITY.md exists; private vulnerability reporting availability/activation was not verified. An admin role does not establish a contact SLA or security team.
 - **Decision plan:** Verify and document GitHub private reporting if enabled; otherwise give an accurate owner GitHub contact route and state that public issue content is public. Do not fabricate email/private support promises.
 - **Closure:** Tested real contact links, approved concise policy and hosted feature readback.
-- **Current verification:** GitHub private reporting was enabled under the owner's metadata request and read back as `enabled:true` on 2026-10-03 UTC. SECURITY.md names the private advisory route. V42/V44 pass locally; the broader V100 post-publication bundle remains pending. The GitHub-readiness receipt preserves the current setting and rendered page.
+- **Current verification:** GitHub private reporting was enabled under the owner's metadata request and read back as `enabled:true` on 2026-10-03 UTC. SECURITY.md names the private advisory route. V42/V44 pass locally; the broader V100 post-publication bundle remains pending. The GitHub-readiness receipt preserves the API setting; a rendered private-reporting page capture was not retained.
 - **Blocking effect / revisit:** Contact activation is settled; recheck the setting and documented route at final U8 publication.
 
 ### 006-ISS-018: Verified release tools and native runner availability

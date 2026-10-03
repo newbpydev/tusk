@@ -25,6 +25,10 @@
   },
   "jobs": {
     "identity": {
+      "if": "github.event_name == 'workflow_dispatch' && github.repository == 'newbpydev/tusk' && github.ref == 'refs/heads/main' && github.workflow_ref == 'newbpydev/tusk/.github/workflows/release.yml@refs/heads/main' && github.workflow_sha == github.sha",
+      "permissions": {
+        "contents": "write"
+      },
       "runs-on": "ubuntu-24.04",
       "timeout-minutes": 30,
       "defaults": {

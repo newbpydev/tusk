@@ -1,6 +1,8 @@
 {
   "branch": "feat/github-metadata-release-readiness",
-  "completed_at": "2026-10-03T02:16:17.500846+00:00",
+  "completed_at": "2026-10-03T02:16:17.542792+00:00",
+  "original_completed_at": "2026-10-03T02:16:17.500846+00:00",
+  "timestamp_correction": "Completion normalized to the recorded final report stage end",
   "cost": {
     "host": "codex",
     "scope": {
@@ -68,6 +70,10 @@
     "truncated_events": 0
   },
   "head_sha": "31894ff56fee1c32e34a972883a404a105683133",
+  "base": "31894ff56fee1c32e34a972883a404a105683133",
+  "working_tree_changes": true,
+  "reviewed_changes_commit": "65a611631cb56eeef57e5d01c6491ae1917ba7f9",
+  "verdict_scope": "Local precommit working-tree review based on head_sha; not hosted merge readiness or a review of later remediation",
   "method": "Sequential root analysis per repository mapping; stage timings are receipt-writing timestamps",
   "run_id": "20261003-version-final",
   "verdict": "Ready to merge"

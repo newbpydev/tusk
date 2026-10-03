@@ -24,7 +24,8 @@ identity() {
     [[ "${GITHUB_RUN_ATTEMPT:-}" =~ ^[1-9][0-9]*$ ]] || die 'positive attempt required'
 }
 contract() {
-    jq ${jq_binary_option:+"--binary"} -e --slurpfile pins "$root/scripts/tool-versions.json" '
+    local guard="github.event_name == 'workflow_dispatch' && github.repository == 'newbpydev/tusk' && github.ref == 'refs/heads/main' && github.workflow_ref == 'newbpydev/tusk/.github/workflows/release.yml@refs/heads/main' && github.workflow_sha == github.sha"
+    jq ${jq_binary_option:+"--binary"} -e --arg guard "$guard" --slurpfile pins "$root/scripts/tool-versions.json" '
       keys == (["name","on","permissions","concurrency","jobs"]|sort) and
       (.on|keys) == ["workflow_dispatch"] and
       .on.workflow_dispatch.inputs.source_sha == {description:"Exact main dispatch SHA (40 lowercase hex)",required:true,type:"string"} and
@@ -36,7 +37,8 @@ contract() {
       .jobs.ci == {needs:["identity"],uses:"./.github/workflows/ci.yml",with:{source_sha:"${{ inputs.source_sha }}"}} and
       ($pins[0].release_actions|keys)==["attest_build_provenance","download_artifact","upload_artifact"] and
       all($pins[0].release_actions[];.sha|test("^[0-9a-f]{40}$")) and
-      (.jobs.identity|keys)==(["runs-on","timeout-minutes","defaults","steps"]|sort) and
+      (.jobs.identity|keys)==(["if","permissions","runs-on","timeout-minutes","defaults","steps"]|sort) and
+      .jobs.identity.if==$guard and .jobs.identity.permissions=={contents:"write"} and
       (.jobs.build|keys)==(["runs-on","timeout-minutes","defaults","steps","needs","outputs"]|sort) and
       (.jobs.provenance|keys)==(["runs-on","timeout-minutes","defaults","steps","needs","permissions"]|sort) and
       all(.jobs[].steps[]?; (keys- ["name","run","env","uses","with","id"] | length)==0) and
@@ -48,8 +50,8 @@ contract() {
       .jobs.provenance.permissions == {contents:"read",actions:"read","id-token":"write",attestations:"write"} and
       all(.jobs | to_entries[] | select(.key != "ci");
         .value["runs-on"] == "ubuntu-24.04" and .value["timeout-minutes"] == 30 and
-        .value.defaults.run.shell == "bash" and (.value|has("if")|not) and
-        (.key == "provenance" or (.value|has("permissions")|not))) and
+        .value.defaults.run.shell == "bash" and (.key == "identity" or (.value|has("if")|not)) and
+        (.key == "identity" or .key == "provenance" or (.value|has("permissions")|not))) and
       (.jobs.identity.steps|length) == 4 and (.jobs.build.steps|length) == 6 and (.jobs.provenance.steps|length) == 5 and
       all(.jobs[] | tostring; test("secrets\\.|--clobber|release create|git push";"i")|not) and
       all(.jobs[].steps[]? | select(has("uses"));

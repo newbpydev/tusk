@@ -15,6 +15,9 @@ expect() {
 }
 expect 0 'native candidate workflow contract' bash "$root/scripts/native_candidate.sh" contract
 expect 0 'native verifier explicitly grants read-only attestation access' jq -e '.permissions.attestations=="read"' "$root/.github/workflows/native-candidate.yml"
+# The verifier must never come from the candidate-controlled source input.
+# shellcheck disable=SC2016
+expect 0 'native verifier checkout is bound to the trusted main workflow' jq -e '.jobs.native.steps[0].with.ref=="${{ github.workflow_sha }}" and (.jobs.native.if|contains("github.ref == '\''refs/heads/main'\''")) and (.jobs.native.if|contains("github.workflow_ref == '\''newbpydev/tusk/.github/workflows/native-candidate.yml@refs/heads/main'\''")) and (.jobs.native.if|contains("github.workflow_sha == github.sha"))' "$root/.github/workflows/native-candidate.yml"
 mkdir -p "$scratch/fixture/scripts" "$scratch/fixture/.github/workflows"
 if [[ ! -f "$root/scripts/native_candidate.sh" ]];then exit 1;fi
 cp "$root/scripts/native_candidate.sh" "$scratch/fixture/scripts/"
@@ -22,6 +25,12 @@ cp "$root/scripts/tool-versions.json" "$scratch/fixture/scripts/"
 for mutation in '.permissions.attestations="write"' '.permissions.contents="write"' '.on.push={}' '.jobs.native.strategy["fail-fast"]=true' '.jobs.native.strategy.matrix.include|=.[0:4]' '.jobs.native.steps[0].with["persist-credentials"]=true' '.jobs.native.steps[3].with["run-id"]="999"' '.jobs.native.steps[4].env.CANDIDATE_MANIFEST_SHA256="unselected"' '.jobs.native.steps[4]["continue-on-error"]=true' '.jobs.native.steps[5]["if"]="success()"';do
  jq "$mutation" "$root/.github/workflows/native-candidate.yml" >"$scratch/fixture/.github/workflows/native-candidate.yml"
  expect 1 "reject unsafe hosted contract: $mutation" bash "$scratch/fixture/scripts/native_candidate.sh" contract
+done
+# The candidate expression must stay literal in the mutated workflow.
+# shellcheck disable=SC2016
+for mutation in '.jobs.native.if="true"' 'del(.jobs.native.if)' '.jobs.native.steps[0].with.ref="${{ inputs.source_sha }}"'; do
+ jq "$mutation" "$root/.github/workflows/native-candidate.yml" >"$scratch/fixture/.github/workflows/native-candidate.yml"
+ expect 1 "reject untrusted verifier dispatch: $mutation" bash "$scratch/fixture/scripts/native_candidate.sh" contract
 done
 mkdir -p "$scratch/candidate/assets" "$scratch/bin" "$scratch/payload"
 printf '#!/usr/bin/env bash\nprintf "tusk version 0.3.0\\n"\n' >"$scratch/payload/tusk"
@@ -63,7 +72,7 @@ expect 1 'output cannot mutate the source checkout' "${driver[@]}" RELEASE_NATIV
 expect 1 'output cannot mutate candidate storage' "${driver[@]}" RELEASE_NATIVE_OUTPUT="$scratch/candidate/inside" bash "$root/scripts/native_candidate.sh" smoke
 : >"$scratch/calls"
 expect 61 'failed cryptographic verification refuses execution' "${driver[@]}" FIXTURE_VERIFY_FAIL=1 RELEASE_NATIVE_OUTPUT="$scratch/unverified" bash "$root/scripts/native_candidate.sh" smoke
-expect 1 'failed verification never reaches smoke' rg -q 'release-smoke' "$scratch/calls"
+expect 1 'failed verification never reaches smoke' grep -q 'release-smoke' "$scratch/calls"
 expect 1 'failed verification leaves no passing receipt' test -f "$scratch/unverified/receipt.json"
 expect 63 'failed smoke remains a failed invocation' "${driver[@]}" FIXTURE_SMOKE_FAIL=1 RELEASE_NATIVE_OUTPUT="$scratch/smoke-failed" bash "$root/scripts/native_candidate.sh" smoke
 expect 1 'failed smoke leaves no passing receipt' test -f "$scratch/smoke-failed/receipt.json"
@@ -83,5 +92,5 @@ else printf '%s\n' "$@" >"$FIXTURE_ROOT/lint-arguments";fi
 LINT
 chmod +x "$scratch/fixture/bin/tools/actionlint"
 expect 0 'pinned lint gate executes on complete workflow fixture' env PATH="$scratch/bin:$PATH" FIXTURE_ROOT="$scratch" bash "$scratch/fixture/scripts/ci-check.sh" check
-expect 0 'pinned lint includes the native packaged workflow' rg -F -q "$scratch/fixture/.github/workflows/native-candidate.yml" "$scratch/lint-arguments"
+expect 0 'pinned lint includes the native packaged workflow' grep -F -q "$scratch/fixture/.github/workflows/native-candidate.yml" "$scratch/lint-arguments"
 exit "$failed"

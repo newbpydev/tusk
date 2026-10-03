@@ -35,8 +35,17 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
 - [x] Complete social-preview upload and rendered GitHub readback; enable
   release immutability and hide the inapplicable Packages sidebar.
 - [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
+- [x] Validate PR #7's combined verifier, draft-history, portable-test and
+  documentation/evidence remediation before publishing the fix.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
-  packaged-native workflow and retain final reference measurements.
+  Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
+  and retain final reference measurements.
+
+PR #7 remediation pins verifier code to the trusted main workflow SHA and guards
+dispatch before checkout. Only the release identity job has draft-visible
+contents access; build/CI/native verification remain read-only. Private-reporting
+activation is supported by retained API evidence; its rendered setting capture
+was not retained. Final hosted/candidate/publication gates remain pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

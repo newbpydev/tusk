@@ -34,6 +34,10 @@ if [[ -f "$root/scripts/candidate.sh" && -f "$root/.github/workflows/release.yml
         jq ${jq_binary_option:+"--binary"} "$mutation" "$root/.github/workflows/release.yml" >"$scratch/workflow/.github/workflows/release.yml"
         expect 1 "reject workflow $mutation" bash "$scratch/workflow/scripts/candidate.sh" contract
     done
+    for mutation in 'del(.jobs.identity.if)' '.jobs.identity.if="true"' '.jobs.identity.permissions.contents="read"' '.jobs.identity.permissions.actions="write"'; do
+        jq ${jq_binary_option:+"--binary"} "$mutation" "$root/.github/workflows/release.yml" >"$scratch/workflow/.github/workflows/release.yml"
+        expect 1 "reject untrusted draft-history access: $mutation" bash "$scratch/workflow/scripts/candidate.sh" contract
+    done
 fi
 # API/cryptographic verifier boundary fakes; no native or hosted proof implied.
 mkdir -p "$scratch/fixture/scripts" "$scratch/candidate/assets" "$scratch/bin"
