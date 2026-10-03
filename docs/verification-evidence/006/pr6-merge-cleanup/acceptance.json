@@ -1,0 +1,29 @@
+{
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "state": "MERGED",
+  "source_head": "32eedeb8f504a477b18efacf0aac814bab68d7b0",
+  "source_base": "30fb5e94cc88aacfc1255198d066a140c77cb38d",
+  "merge_commit": "d8f3f0b543076e5d1a4fe7da579f7698a3e741e6",
+  "merged_at": "2026-10-03T00:53:42Z",
+  "method": "merge commit with --match-head-commit",
+  "merge_tree_equals_tested_head": true,
+  "feature_branch": "feat/automation-packaging-release",
+  "local_feature_ref_absent": true,
+  "remote_feature_ref_absent": true,
+  "post_merge_main_matches_origin": true,
+  "canonical_clean": "make clean passed; generated bin/ and coverage.out removed; no test database matched",
+  "legacy_baseline_branch": "preserved",
+  "utc": "2026-10-03T00:53:48.439871+00:00",
+  "canonical_validation": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate check-docs",
+    "status": "passed",
+    "log": "merge-cleanup-validate.log.gz",
+    "exit_code": 0,
+    "utc": "2026-10-03T01:03:30.638464+00:00",
+    "sha256": "93ac95231b9134eabed318b618b96bbf243aeacf81c5ed553059b16840ec96fc",
+    "scope": "Merged source and synchronized closure documents; completion checkbox/log metadata recorded after the gate."
+  },
+  "next_target": "Feature 006 U6 trusted-main candidate prerequisites; physical/exact-byte/release/tap/settings acceptance remains pending",
+  "release_actions": "No candidate dispatch, release/tag, tap or repository-settings mutation",
+  "closure_commit": "containing bookkeeping commit on main"
+}

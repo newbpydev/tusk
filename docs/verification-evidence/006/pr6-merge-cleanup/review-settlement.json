@@ -1,0 +1,18 @@
+{
+  "head": "32eedeb8f504a477b18efacf0aac814bab68d7b0",
+  "pending_review": null,
+  "open_threads": 0,
+  "actionable_counts": {
+    "threads": 0,
+    "ci": 0,
+    "comments": 0,
+    "needs_human": 0
+  },
+  "terminal_checks": 7,
+  "all_checks_ok": true,
+  "current_head_cloud_review": "Kilo: No Issues Found",
+  "unavailable_reviews": [
+    "Codex cloud review quota limit",
+    "Requested Claude peer authentication failure"
+  ]
+}

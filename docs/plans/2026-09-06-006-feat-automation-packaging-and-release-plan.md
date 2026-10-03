@@ -24,7 +24,7 @@ task and find the data/recovery instructions without reading planning artifacts.
 - **Authority:** [AGENTS.md](../../AGENTS.md), the [product contract](2026-09-06-001-feat-tusk-modern-task-system-plan.md), and [MASTERPLAN.md](../../MASTERPLAN.md). The masterplan controls activation and progress.
 - **Surfaces:** CLI/TUI integration, infrastructure/operations, installation/data lifecycle, documentation and GitHub repository settings.
 - **Artifact pack:** This plan, its [verification plan](../verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md) and [workorder](../workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md), under the existing first-party `docs/` root.
-- **Readiness:** U1/U3/U4/U2 are locally accepted; U6/U5/U7/U8 local engineering and the repeated local review are complete. Branch/PR publication is authorized. There are 51 local scenario closures; actual hosted/native/release gates remain pending.
+- **Readiness:** U1/U3/U4/U2 are locally accepted; U6/U5/U7/U8 local engineering and the repeated local review are complete. PR #6 is merged and all seven reviewed-head reports passed. There are 51 local scenario closures; physical/trusted-candidate/release gates remain pending.
 - **Sequence:** U1 → U3 → U4 → U2 → U6 → U5 → U7 → U8. U1/U2/U3 preserve the original CI/packaging/completion identities.
 
 The original request authorized planning. The 2026-10-01 `ce-work` invocation
@@ -1117,7 +1117,32 @@ model-tool identity invariant; it requires no third runtime repair.
 
 - [x] Wait for the complete seven-report set before changes or replies.
 - [x] Correct the capability referent and pass canonical validation/document checks.
-- [ ] Settle fresh hosted reports after publication.
+- [x] Settle fresh hosted reports after publication.
 
 The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
 gates remain unchanged. See [the R13 receipt](../verification-evidence/006/pr6-r13/acceptance.json).
+
+### PR #6 merge and repository cleanup — 2026-10-03 UTC
+
+The owner authorized merge and cleanup after all seven reports on
+`32eedeb8f504a477b18efacf0aac814bab68d7b0` passed. The fresh paginated review
+snapshot has no actionable feedback or pending draft review; all 45 observed
+threads are resolved. GitHub proves the merge computation against current main
+`30fb5e94cc88aacfc1255198d066a140c77cb38d` and reports MERGEABLE/CLEAN.
+
+PR #6 merged as `d8f3f0b543076e5d1a4fe7da579f7698a3e741e6` with
+`--match-head-commit`, preserving the reviewed commits. Its tree equals the tested
+head. Local main fast-forwarded to the merge; both feature refs were removed,
+remote tracking was pruned and canonical generated artifacts were cleaned.
+The existing legacy baseline branch is preserved.
+
+- [x] Settle all seven current-head reports and all observed review feedback.
+- [x] Merge PR #6 with explicit owner authorization and the exact-head guard.
+- [x] Remove the merged local/remote feature refs and synchronize main.
+- [x] Pass canonical validation/document checks before committing this closure.
+
+The active target remains Feature 006 U6 prerequisites: a selected trusted-main
+candidate, actual provenance and physical/exact-byte acceptance. U5/U7/U8,
+Phase 6/G4 and the 51 local scenario closures remain unchanged. Merge authorization
+does not supply release/tag/dispatch/tap/settings authority.
+See [the merge receipt](../verification-evidence/006/pr6-merge-cleanup/acceptance.json).

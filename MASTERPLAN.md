@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 PR #6 published; thirteenth complete report batch locally validated; fresh hosted/native/release gates open
-**Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; local implementation
-**Active Implementation Target**: Feature 006 — Publish the validated PR #6 documentation correction, then settle all fresh reports; native/release acceptance remains pending
+**Current Status**: Feature 006 PR #6 merged; local engineering and reviewed-head hosted checks passed; native/release acceptance pending
+**Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; native/release acceptance
+**Active Implementation Target**: Feature 006 U6 — Trusted-main candidate prerequisites and physical/exact-byte acceptance; release operator gates remain pending
 
 ### Feature 006 planning checkpoint (2026-10-01)
 
@@ -464,7 +464,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
 ---
 
 ### Phase 6: Feature 006 - Automation, Packaging & Release
-- **Status**: ⏳ **IMPLEMENTATION ACTIVE; RELEASE PENDING** (Phases 4 & 5 locally accepted and merged; U1 authorized on 2026-10-01)
+- **Status**: ⏳ **LOCAL ENGINEERING MERGED; RELEASE PENDING** (PR #6 merged on 2026-10-03 UTC; trusted-candidate/native/publication acceptance remains open)
 - **Plan**: `docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md`
@@ -473,7 +473,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
   - [x] Deepened Plan, Verification Plan, and Workorder; 30 requirements, eight units, 102 planned scenarios
   - [x] Synchronize product handoffs, registry and masterplan; review applicable lenses sequentially
 - [ ] **6.2 Implementation Units**
-  - [x] Unit 006-1 / U1: Native CI Matrix and Portable Canonical Tooling — local engineering; exact-SHA hosted/native closure pending
+  - [x] Unit 006-1 / U1: Native CI Matrix and Portable Canonical Tooling — local engineering and reviewed-head native CI passed; trusted-candidate acceptance separate
   - [x] Unit 006-3 / U3: Storage-Free Completions and Deterministic Manuals — local acceptance
   - [x] Unit 006-4 / U4: README, Installation Guides, Community Files and License Readiness — local acceptance; public activation pending
   - [x] Unit 006-2 / U2: Reproducible CGO-Free Payloads and Immutable Version Metadata — local acceptance; hosted/native release evidence separate
@@ -1210,7 +1210,32 @@ model-tool identity invariant; it requires no third runtime repair.
 
 - [x] Wait for the complete seven-report set before changes or replies.
 - [x] Correct the capability referent and pass canonical validation/document checks.
-- [ ] Settle fresh hosted reports after publication.
+- [x] Settle fresh hosted reports after publication.
 
 The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
 gates remain unchanged. See [the R13 receipt](docs/verification-evidence/006/pr6-r13/acceptance.json).
+
+### PR #6 merge and repository cleanup — 2026-10-03 UTC
+
+The owner authorized merge and cleanup after all seven reports on
+`32eedeb8f504a477b18efacf0aac814bab68d7b0` passed. The fresh paginated review
+snapshot has no actionable feedback or pending draft review; all 45 observed
+threads are resolved. GitHub proves the merge computation against current main
+`30fb5e94cc88aacfc1255198d066a140c77cb38d` and reports MERGEABLE/CLEAN.
+
+PR #6 merged as `d8f3f0b543076e5d1a4fe7da579f7698a3e741e6` with
+`--match-head-commit`, preserving the reviewed commits. Its tree equals the tested
+head. Local main fast-forwarded to the merge; both feature refs were removed,
+remote tracking was pruned and canonical generated artifacts were cleaned.
+The existing legacy baseline branch is preserved.
+
+- [x] Settle all seven current-head reports and all observed review feedback.
+- [x] Merge PR #6 with explicit owner authorization and the exact-head guard.
+- [x] Remove the merged local/remote feature refs and synchronize main.
+- [x] Pass canonical validation/document checks before committing this closure.
+
+The active target remains Feature 006 U6 prerequisites: a selected trusted-main
+candidate, actual provenance and physical/exact-byte acceptance. U5/U7/U8,
+Phase 6/G4 and the 51 local scenario closures remain unchanged. Merge authorization
+does not supply release/tag/dispatch/tap/settings authority.
+See [the merge receipt](docs/verification-evidence/006/pr6-merge-cleanup/acceptance.json).
