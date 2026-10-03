@@ -8,7 +8,7 @@ candidate binaries. Public release acceptance remains pending.
 [PR #7 remediation](../pr7-r1/acceptance.json) retains the combined verifier,
 draft-history, portable-test and documentation fixes with observed Red/Green,
 canonical validation and a complete script run with ripgrep absent. Hosted
-current-head reports and thread settlement are tracked after publication.
+current-head reports and thread settlement are tracked after push.
 
 [The receipt](acceptance.json) records canonical validation, focused Red/Green
 controls and the current local review. All review lenses ran sequentially in

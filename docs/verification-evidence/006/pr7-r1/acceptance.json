@@ -28,7 +28,14 @@
     "scripts/test/test_docs.sh": "39d5434a49511b0c1a915b9def67d09f2c806c5a03183aa3c637f3ecedc5bdc4",
     "scripts/test/test_native_candidate.sh": "8362e2e7b101766131727dc4d032f841a473e431e478816b547b283cc14ac7e2",
     "scripts/test/test_promotion.sh": "d06aba013ed9b0f09962946549417f2d8d94f8b7a025df647fd9ff82f3f357e6",
-    "scripts/test/test_release_version.sh": "30284cf2edb697f2e4be88b5743b852dd51e9b819bb2bf5bf747c7cce762363b"
+    "scripts/test/test_release_version.sh": "30284cf2edb697f2e4be88b5743b852dd51e9b819bb2bf5bf747c7cce762363b",
+    "MASTERPLAN.md": "7b94a05acace279780d3d4d0495db23595061b2a13f4079a80ac3dc8844c8531",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "163239dedced98ebd3e4e08789aaa52fca2788c6ba82a2f57e18d7997d4e44da",
+    "docs/verification-evidence/006/github-readiness/README.md": "6a350dac4f961f14a5488c5637b82bd960e8ed7e15aafd8a66a4cce613e028e7",
+    "docs/verification-evidence/006/github-readiness/repository-metadata.json": "1fd7ba8175d35968001b3344c2a5fb69a84e267dc1a4ece709271a0704a888d9",
+    "docs/verification-evidence/006/github-readiness/review-metadata.json": "4efa6423716f72b0f6c2758e4ffb078bb3d4a2486c17e8cfabaab3fade3bc304",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "548e32814c0536f8065e464c1a3121b16fe42b44c3fba8940d9df65bade48f2a",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "bd5b53380576dea602fba997fa03d537d2e5cb5e40bb8eb78350a4b60f880fd1"
   },
   "feedback": [
     {
@@ -172,5 +179,10 @@
     }
   },
   "runtime_evidence": "No new physical-console or packaged-candidate acceptance claimed; final frozen candidate and native/manual/performance/cask/publication gates remain pending",
-  "completed_at": "2026-10-03T14:31:42.908088+00:00"
+  "completed_at": "2026-10-03T14:31:42.908088+00:00",
+  "input_commit": "4351b66b49e1a5c6c00bff372296179a2cfeed86",
+  "input_scope": "Validated code/tests and verdict-carrying metadata/planning at input_commit; this receipt is excluded to avoid self-reference. Retained logs carry separate hashes.",
+  "evidence_binding_readback_at": "2026-10-03T14:58:33.460046+00:00",
+  "input_readback_evidence": "../pr7-r2/r1-input-readback.log.gz",
+  "portable_control_follow_up": "../pr7-r2/rg-absent-control.log.gz"
 }

@@ -2,7 +2,7 @@
 
 **Current Status**: Feature 006 PR #6 merged; GitHub metadata applied; version and packaged-candidate tooling locally verified; hosted follow-up and final native/release acceptance pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; native/release acceptance
-**Active Implementation Target**: Feature 006 U6/U5 — Publish and settle the GitHub/version tooling follow-up, then freeze a fresh trusted candidate for packaged-native and final acceptance; stable publication gates pending
+**Active Implementation Target**: Feature 006 U6/U5 — Settle PR #7's GitHub/version tooling reviews, then after owner merge freeze a fresh trusted candidate for Native candidate verification (.github/workflows/native-candidate.yml) and final acceptance; stable publication gates pending
 
 ### GitHub presentation and hosted candidate follow-up (2026-10-03)
 
@@ -32,6 +32,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
 - [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
 - [x] Validate PR #7's combined verifier, draft-history, portable-test and
   documentation/evidence remediation before publishing the fix.
+- [x] Validate PR #7's follow-up provenance, disabled-state controls and
+  mixed-case badge refusal before pushing the second combined fix.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -41,6 +43,11 @@ dispatch before checkout. Only the release identity job has draft-visible
 contents access; build/CI/native verification remain read-only. Private-reporting
 activation is supported by retained API evidence; its rendered setting capture
 was not retained. Final hosted/candidate/publication gates remain pending.
+
+The first remediation head `4351b66` passed all six source CI jobs and Codex's
+current-head review. Kilo confirmed the original ten fixes and reported six
+follow-ups. Those provenance, wording and badge/test corrections are locally
+validated together; their fresh hosted/cloud settlement remains pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

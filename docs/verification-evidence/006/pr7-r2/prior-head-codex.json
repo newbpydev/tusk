@@ -1,0 +1,7 @@
+[
+  {
+    "author": "chatgpt-codex-connector",
+    "body": "Codex Review: Didn't find any major issues. Chef's kiss.\n\n**Reviewed commit:** `4351b66b49`\n\n<details> <summary>\u2139\ufe0f About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\".\n\nIf Codex has suggestions, it will comment; otherwise it will react with \ud83d\udc4d.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>",
+    "url": "https://github.com/newbpydev/tusk/pull/7#issuecomment-5970178857"
+  }
+]

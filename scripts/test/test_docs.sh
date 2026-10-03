@@ -31,6 +31,10 @@ cp "$root/README.md" "$fixture/README.md"
 cp "$fixture/SECURITY.md" "$scratch/security-saved"
 printf '# Security reporting\nGitHub private vulnerability reporting is enabled and verified on 2026-10-03.\nUse https://github.com/newbpydev/tusk/security/advisories/new to report privately.\n' >"$fixture/SECURITY.md"
 expect 0 'verified enabled private reporting is allowed' bash "$root/scripts/docs-check.sh" "$fixture"
+for state in 'is disabled' 'is currently disabled' 'is not enabled' 'is currently not enabled'; do
+    printf '# Security reporting\nGitHub private vulnerability reporting %s.\nUse https://github.com/newbpydev/tusk to contact the maintainer.\n' "$state" >"$fixture/SECURITY.md"
+    expect 0 "allow explicit disabled private reporting state: $state" bash "$root/scripts/docs-check.sh" "$fixture"
+done
 for state in 'was never enabled' 'is no longer enabled' 'is not enabled and verified'; do
     printf '# Security reporting\nGitHub private vulnerability reporting %s\nUse https://github.com/newbpydev/tusk/security/advisories/new.\n' "$state" >"$fixture/SECURITY.md"
     expect 1 "reject ambiguous private reporting state: $state" bash "$root/scripts/docs-check.sh" "$fixture"
@@ -60,6 +64,11 @@ expect 0 'verified raw HTML and reference badges are allowed' bash "$root/script
 cp "$root/README.md" "$fixture/README.md"
 printf '\n<img src="//img.shields.io/badge/CI-passing-green">\n' >>"$fixture/README.md"
 expect 1 'reject protocol-relative unverified badge' bash "$root/scripts/docs-check.sh" "$fixture"
+for badge in '<img src="https://IMG.SHIELDS.IO/badge/CI-passing-green">' '<img src="//Img.Shields.Io/badge/CI-passing-green">'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$badge" >>"$fixture/README.md"
+    expect 1 "reject mixed-case unverified badge host: $badge" bash "$root/scripts/docs-check.sh" "$fixture"
+done
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"

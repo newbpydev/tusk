@@ -38,7 +38,7 @@ for file in "${files[@]}"; do
         # Remove only complete verified URLs, then scan all remaining raw text.
         # This covers inline links, HTML, references and protocol-relative URLs.
         if sed -E "s#https://github\.com/newbpydev/tusk/actions/workflows/ci\.yml/badge\.svg\?branch=main($|[[:space:]<>\"'()])#\1#g; s#https://img\.shields\.io/github/license/newbpydev/tusk($|[[:space:]<>\"'()])#\1#g" "$root/$file" |
-            grep -E 'img\.shields\.io|actions/workflows/[^[:space:]]*badge' >/dev/null; then
+            grep -iE 'img\.shields\.io|actions/workflows/[^[:space:]]*badge' >/dev/null; then
             fail 'README advertises an unverified badge'
         fi
     fi
