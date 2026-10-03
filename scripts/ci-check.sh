@@ -158,7 +158,7 @@ case "${1:-check}" in
         [[ "$(go env GOOS)" != windows ]] || tool+=.exe
         [[ -x "$tool" ]] || die 'run make setup-ci for pinned actionlint'
         [[ "$("$tool" -version | head -1)" == "$(jq ${jq_binary_option:+"--binary"} -r '.tools.actionlint.version' "$root/scripts/tool-versions.json")" ]] || die 'incorrect actionlint version'
-        "$tool" -shellcheck= -pyflakes= "$root/.github/workflows/ci.yml" "$root/.github/workflows/release.yml"
+        "$tool" -shellcheck= -pyflakes= "$root/.github/workflows/ci.yml" "$root/.github/workflows/release.yml" "$root/.github/workflows/native-candidate.yml"
         ;;
     *) die 'expected contract, preflight, setup, setup-vulnerabilities, drift or check' ;;
 esac

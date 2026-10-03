@@ -6,6 +6,8 @@ set -euo pipefail
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
 # shellcheck source=scripts/json_check.sh
 source "$root/scripts/json_check.sh"
+# shellcheck source=scripts/release_version.sh
+source "$root/scripts/release_version.sh"
 repo=newbpydev/tusk
 export GH_HOST=github.com
 unset GH_DEBUG DEBUG
@@ -168,6 +170,9 @@ complete_readback() {
  bash "$root/scripts/release_check.sh" verify "$output/readback"
 }
 read_tag;read_release
+if [[ "$action" != readback ]];then
+ release_version_remote "$RELEASE_VERSION" resume "$output/version-history" || die 'release version is superseded or history is unavailable'
+fi
 if [[ "$action" == draft ]];then
  if [[ "$(jq ${jq_binary_option:+"--binary"} 'length' "$output/current-release.json")" == 0 ]];then
   jq ${jq_binary_option:+"--binary"} -n --arg version "$RELEASE_VERSION" --arg sha "$RELEASE_SHA" --rawfile notes "$RELEASE_NOTES" '{tag_name:$version,target_commitish:$sha,name:$version,body:$notes,draft:true,prerelease:false,generate_release_notes:false}' >"$output/draft-request.json"

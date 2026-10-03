@@ -1,0 +1,74 @@
+{
+  "branch": "feat/github-metadata-release-readiness",
+  "completed_at": "2026-10-03T02:16:17.500846+00:00",
+  "cost": {
+    "host": "codex",
+    "scope": {
+      "changed_lines": 879,
+      "depth": "full",
+      "exec_nontest_lines": 185,
+      "size_band": "small",
+      "unclassified_lines": 483
+    },
+    "stages": [
+      {
+        "elapsed_seconds": 292.937,
+        "ended_at": "2026-10-03T02:15:36.467728+00:00",
+        "facts": {
+          "changed_lines": 879,
+          "depth": "full",
+          "exec_nontest_lines": 185,
+          "size_band": "small",
+          "unclassified_lines": 483
+        },
+        "stage": "scope",
+        "started_at": "2026-10-03T02:10:43.531130+00:00"
+      },
+      {
+        "elapsed_seconds": 0.052,
+        "ended_at": "2026-10-03T02:15:36.520178+00:00",
+        "reviewers": 8,
+        "stage": "select",
+        "started_at": "2026-10-03T02:15:36.467728+00:00"
+      },
+      {
+        "candidates": 0,
+        "elapsed_seconds": 0.054,
+        "ended_at": "2026-10-03T02:15:36.573928+00:00",
+        "stage": "dispatch",
+        "started_at": "2026-10-03T02:15:36.520178+00:00"
+      },
+      {
+        "candidates": 0,
+        "elapsed_seconds": 40.861,
+        "ended_at": "2026-10-03T02:16:17.434646+00:00",
+        "stage": "merge",
+        "started_at": "2026-10-03T02:15:36.573928+00:00"
+      },
+      {
+        "elapsed_seconds": 0.056,
+        "ended_at": "2026-10-03T02:16:17.490977+00:00",
+        "stage": "validate",
+        "started_at": "2026-10-03T02:16:17.434646+00:00"
+      },
+      {
+        "elapsed_seconds": 0.052,
+        "ended_at": "2026-10-03T02:16:17.542792+00:00",
+        "stage": "report",
+        "started_at": "2026-10-03T02:16:17.490977+00:00"
+      }
+    ],
+    "status": "complete",
+    "totals": {
+      "artifact_bytes": 125499,
+      "candidates": 0,
+      "elapsed_seconds": 334.012,
+      "reviewers": 8
+    },
+    "truncated_events": 0
+  },
+  "head_sha": "31894ff56fee1c32e34a972883a404a105683133",
+  "method": "Sequential root analysis per repository mapping; stage timings are receipt-writing timestamps",
+  "run_id": "20261003-version-final",
+  "verdict": "Ready to merge"
+}

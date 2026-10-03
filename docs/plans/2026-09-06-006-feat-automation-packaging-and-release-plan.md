@@ -13,6 +13,49 @@ planning_scope: release-engineering-and-public-documentation
 
 # Feature Plan 006: Automation, Packaging, Release and Public Repository Readiness
 
+### GitHub presentation and hosted candidate follow-up (2026-10-03)
+
+The owner requested public GitHub metadata, releases and distribution readiness
+using maintainer judgment, and confirmed that only CachyOS computers are available.
+This authorizes About/homepage/topics and security-channel activation before the
+stable release, independently of the post-publication metadata helper. Retain
+before/after API and browser readbacks; do not manufacture a publication receipt.
+
+Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
+
+- [x] Apply the reviewed About/homepage and eleven topics; enable and read back
+  GitHub private vulnerability reporting under the owner's metadata request.
+- [x] Refresh public documentation to distinguish five-platform native source CI
+  from exact packaged-binary and physical terminal acceptance.
+- [x] Implement and locally validate read-only hosted native checks that verify
+  a successful trusted candidate before executing its unchanged platform binary.
+- [x] Enforce owner-requested stable SemVer history checks before hosted
+  candidate construction and release promotion; document version bumps and
+  the repeatable per-release checklist.
+- [x] Produce and cryptographically verify the preliminary trusted-main candidate;
+  all nine reports passed before assessment.
+- [x] Inspect the unchanged preliminary Linux archive in an owned CachyOS
+  terminal; retain CLI/TUI observations and terminal-restoration evidence.
+- [x] Complete social-preview upload and rendered GitHub readback; enable
+  release immutability and hide the inapplicable Packages sidebar.
+- [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
+- [ ] After merge, create a fresh frozen-source candidate, dispatch the new
+  packaged-native workflow and retain final reference measurements.
+
+Canonical validation, focused refusal controls, the live version readback and
+basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because
+this follow-up changes release tooling. No final candidate acceptance or public
+release is claimed. See the GitHub-readiness evidence receipt.
+
+Actions already executes source tests natively on all five OS/architecture pairs.
+The follow-up executes packaged bytes and labels hosted automation separately.
+Physical macOS, Windows 11 and Linux arm64 console observations remain unavailable;
+no automated receipt claims those observations. A stable publication decision must
+explicitly settle these outstanding manual gates against the concrete candidate.
+Homebrew destination/native cask and exact publication authority remain pending.
+GitHub Packages offers no native Go registry; native release archives are the
+appropriate distribution surface. No placeholder container package is planned.
+
 ## Goal Capsule
 
 Make Tusk installable and understandable from its GitHub repository, with verified
@@ -24,7 +67,7 @@ task and find the data/recovery instructions without reading planning artifacts.
 - **Authority:** [AGENTS.md](../../AGENTS.md), the [product contract](2026-09-06-001-feat-tusk-modern-task-system-plan.md), and [MASTERPLAN.md](../../MASTERPLAN.md). The masterplan controls activation and progress.
 - **Surfaces:** CLI/TUI integration, infrastructure/operations, installation/data lifecycle, documentation and GitHub repository settings.
 - **Artifact pack:** This plan, its [verification plan](../verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md) and [workorder](../workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md), under the existing first-party `docs/` root.
-- **Readiness:** U1/U3/U4/U2 are locally accepted; U6/U5/U7/U8 local engineering and the repeated local review are complete. PR #6 is merged and all seven reviewed-head reports passed. There are 51 local scenario closures; physical/trusted-candidate/release gates remain pending.
+- **Readiness:** PR #6 is merged with seven reviewed-head reports passed and 51 local scenario closures. The owner-requested GitHub/version follow-up passes local validation and review; metadata is applied and a preliminary trusted candidate is verified. Follow-up publication, fresh-candidate native/manual/performance/cask and stable-release gates remain pending.
 - **Sequence:** U1 → U3 → U4 → U2 → U6 → U5 → U7 → U8. U1/U2/U3 preserve the original CI/packaging/completion identities.
 
 The original request authorized planning. The 2026-10-01 `ce-work` invocation

@@ -20,10 +20,18 @@ expect 0 'public documentation contract' bash "$root/scripts/docs-check.sh" "$ro
 fixture="$scratch/checkout ü"
 mkdir -p "$fixture"
 cp -R "$root/docs" "$fixture/docs"
-for file in README.md CONTRIBUTING.md SECURITY.md LICENSE THIRD_PARTY_NOTICES.md AGENTS.md MASTERPLAN.md; do
+for file in README.md CHANGELOG.md CONTRIBUTING.md SECURITY.md LICENSE THIRD_PARTY_NOTICES.md AGENTS.md MASTERPLAN.md; do
     if [[ -f "$root/$file" ]]; then cp "$root/$file" "$fixture/"; fi
 done
 expect 0 'complete documentation fixture is a passing control' bash "$root/scripts/docs-check.sh" "$fixture"
+cp "$root/README.md" "$fixture/README.md"
+printf '\n[![Native CI](https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/newbpydev/tusk/actions/workflows/ci.yml)\n[![MIT](https://img.shields.io/github/license/newbpydev/tusk)](LICENSE)\n' >>"$fixture/README.md"
+expect 0 'verified native CI and detected MIT badges are allowed' bash "$root/scripts/docs-check.sh" "$fixture"
+cp "$root/README.md" "$fixture/README.md"
+cp "$fixture/SECURITY.md" "$scratch/security-saved"
+printf '# Security reporting\nGitHub private vulnerability reporting is enabled and verified on 2026-10-03.\nUse https://github.com/newbpydev/tusk/security/advisories/new to report privately.\n' >"$fixture/SECURITY.md"
+expect 0 'verified enabled private reporting is allowed' bash "$root/scripts/docs-check.sh" "$fixture"
+mv "$scratch/security-saved" "$fixture/SECURITY.md"
 for missing in docs/install.md LICENSE docs/assets/tusk-tui.png; do
     if [[ -f "$fixture/$missing" ]]; then
         mv "$fixture/$missing" "$scratch/saved"
@@ -31,7 +39,7 @@ for missing in docs/install.md LICENSE docs/assets/tusk-tui.png; do
         mv "$scratch/saved" "$fixture/$missing"
     fi
 done
-for bad in '[Broken](docs/absent.md)' '[Bad anchor](docs/cli.md#absent-heading)' 'go install github.com/newbpydev/tusk/cmd/tusk@v0.3.0' '![Release](https://img.shields.io/github/v/release/newbpydev/tusk)' 'tusk add sample --due "next week"' 'Guaranteed sub-15ms on every platform'; do
+for bad in '[Broken](docs/absent.md)' '[Bad anchor](docs/cli.md#absent-heading)' 'go install github.com/newbpydev/tusk/cmd/tusk@v0.3.0' '![Release](https://img.shields.io/github/v/release/newbpydev/tusk)' '![Wrong repo](https://github.com/evil/tusk/actions/workflows/ci.yml/badge.svg)' '![Static pass](https://img.shields.io/badge/CI-passing-green)' 'tusk add sample --due "next week"' 'Guaranteed sub-15ms on every platform'; do
     cp "$root/README.md" "$fixture/README.md"
     printf '\n%s\n' "$bad" >>"$fixture/README.md"
     expect 1 "reject unsupported public content: $bad" bash "$root/scripts/docs-check.sh" "$fixture"

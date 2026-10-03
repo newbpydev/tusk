@@ -1,0 +1,84 @@
+{
+  "status": "complete",
+  "verdict": "Ready to merge",
+  "scope": {
+    "base": "31894ff56fee1c32e34a972883a404a105683133",
+    "branch": "feat/github-metadata-release-readiness",
+    "head_sha": "31894ff56fee1c32e34a972883a404a105683133",
+    "pr_url": null,
+    "files_changed": 23,
+    "working_tree_changes": true
+  },
+  "intent": "Enforce selected stable SemVer progression before trusted candidate construction and release promotion; document version and release policy. Execute unchanged, authenticated candidate binaries on five native runner targets and align GitHub presentation with verified evidence.",
+  "intent_confidence": "explicit",
+  "reviewers": [
+    "correctness",
+    "security",
+    "reliability",
+    "testing",
+    "project-standards",
+    "maintainability",
+    "adversarial",
+    "learnings-researcher"
+  ],
+  "findings": [],
+  "actionable_findings": [],
+  "triage_groups": [],
+  "pre_existing_findings": [],
+  "requirements_completeness": {
+    "scope": "Owner-requested Feature 006 follow-up",
+    "met": [
+      "About/topics/security live readback",
+      "Native packaged payload signature/source/run verification before execution",
+      "All five platform reports, read-only permissions and complete retention",
+      "Source CI/public metadata claims remain separate from stable and physical terminal acceptance",
+      "Stable SemVer numeric ordering and complete fail-closed remote history",
+      "Exact draft resumption preserves existing source/notes/assets guards",
+      "Changelog and repeatable per-release checklist"
+    ],
+    "intentionally_pending": [
+      "Final frozen-source candidate and new packaged hosted run",
+      "Full native/manual/performance/cask/release acceptance"
+    ],
+    "unrequested_behavior_rules": []
+  },
+  "learnings": [
+    {
+      "type": "known_pattern",
+      "title": "Prove rejection at the intended release boundary",
+      "citation": "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md",
+      "note": "Passing controls, literal API assertions and no-write negatives retain causal evidence."
+    }
+  ],
+  "agent_native_gaps": [],
+  "deployment_notes": [],
+  "residual_risks": [
+    "The new five-platform packaged workflow needs a default-branch merge and a fresh trusted candidate before hosted execution.",
+    "Preliminary candidate 37086312661 predates new release tooling; final native/manual/performance/cask/publication gates remain open."
+  ],
+  "testing_gaps": [],
+  "coverage": {
+    "depth": "full",
+    "notes": [
+      "All local personas and finish stages performed sequentially in root per AGENTS.md; no independent local agents.",
+      "AGENTS.md fallback criteria governs all changed paths.",
+      "The earlier provider-capable Claude dispatch returned HTTP 401; no independent review output is available for this snapshot. No repeated authentication probe or outstanding peer job.",
+      "Canonical validation and focused release/promotion/documentation/workflow tests passed.",
+      "New native workflow must merge before its default-branch dispatch; preliminary candidate predates changed tooling."
+    ],
+    "cross_model": "adversarial lens: in-process fallback (cross-model peer not run: Claude returned HTTP 401 invalid OAuth token; no review output)",
+    "independent_reviewers": [],
+    "validator_outcome": "empty-batch",
+    "counts": {
+      "confirmed": 0,
+      "rejected": 0,
+      "unresolved": 0,
+      "malformed": 0,
+      "failed": 0,
+      "shortcut_skipped": 0,
+      "first_evidence_backfilled": 0
+    }
+  },
+  "artifact_path": "/tmp/compound-engineering-1000/ce-code-review/20261003-version-final",
+  "run_id": "20261003-version-final"
+}

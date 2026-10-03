@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "status": "automated-passed",
+  "scope": "trusted-candidate",
+  "target": "linux/amd64",
+  "executable_sha256": "49ef04b5ec53f77a4165ae476f6ac96ab6d796e3677c01556f2676964e4d7e32",
+  "archive": "tusk_0.3.0_linux_amd64.tar.gz",
+  "manifest_sha256": "e6f076b8cf29569976d608308545d91e5e6f91494b9eb3ba053e3184a57c61e4",
+  "source_sha": "31894ff56fee1c32e34a972883a404a105683133",
+  "version": "v0.3.0",
+  "candidate_run_id": 37086312661,
+  "host": "Linux",
+  "observed_version": "0.3.0",
+  "manual_terminal": "pending",
+  "terminal_automation": "Linux child PTY only; macOS/Windows visual console checks remain separate"
+}

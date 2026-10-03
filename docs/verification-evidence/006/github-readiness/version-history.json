@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "status": "available",
+  "repository": "newbpydev/tusk",
+  "version": "v0.3.0",
+  "scope": "live-history-readback; no reservation or publication"
+}

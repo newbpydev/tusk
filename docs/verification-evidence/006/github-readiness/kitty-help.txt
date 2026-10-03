@@ -1,0 +1,32 @@
+ TUSK  /  Personal workspace                                                           f Filters   a New task 
+╭─ > Tasks · 3 tasks ──────────────────────╮╭─ Task details · 1–28 / 31 ─────────────────────────────────────╮
+│ /  Search tasks                          ││                                                                │
+│ [1 All tasks]  2 ╭─ > Keyboard shortcuts ───────────────────────────────────────────────╮                  │
+│──────────────────│                                                                      │                  │
+│  Backlog         │  Move around                                                         │                  │
+│ >○ Plan the first│  Tab / Shift+Tab   Switch list and details                           │                  │
+│    Todo · High   │  ↑ ↓ / j k         Move or scroll                                    │                  │
+│  ○ Verify package│  g / G, Home / End First / last                                      │                  │
+│    Todo · Medium │  PgUp / PgDn       Move one page                                     │                  │
+│  ○ Review compati│  ← → / h l         Collapse / expand                                 │                  │
+│    Todo · Medium │                                                                      │                  │
+│                  │  Work with tasks                                                     │         (0 / 1)  │
+│                  │  a  Create    e  Edit    d  Delete                                   │──────────   0%   │
+│                  │  Space / x         Complete subtree / reopen task                    │                  │
+│                  │  /  Search    f  Filter    r  Refresh                                │                  │
+│                  │  1 / 2 / 3         All tasks / Today / Done                          │                  │
+│                  │                                                                      │                  │
+│                  │  Forms                                                               │────────────────  │
+│                  │  Tab / Shift+Tab   Next / previous field                             │                  │
+│                  │  Ctrl+S            Save                                              │                  │
+│                  │  Enter in notes    New line                                          │                  │
+│                  │  Ctrl+P            Calendar / choose parent                          │ parent_id,       │
+│                  │  Ctrl+U            Clear due, tags or parent                         │                  │
+│                  │  Ctrl+E            Replace read-only text                            │                  │
+│                  │                                                                      │                  │
+│                  │  Esc / ? / q close  ·  Ctrl+C exit                                   │────────────────  │
+│                  │                                                                      │                  │
+│                  ╰──────────────────────────────────────────────────────────────────────╯f1                │
+│                                          ││  Due       Not set                                             │
+╰──────────────────────────────────────────╯╰────────────────────────────────────────────────────────────────╯
+ ↑↓ scroll help  ·  Esc / ? / q close  ·  Ctrl+C exit

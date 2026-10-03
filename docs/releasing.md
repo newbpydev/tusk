@@ -6,6 +6,82 @@ not authorize pushing, workflow dispatch, tags, settings changes or publication.
 Binary commands in [installation](install.md#binary-download-drafts) are draft
 instructions until real URLs and native receipts exist.
 
+## Version policy
+
+Tusk follows [Semantic Versioning 2.0.0](https://semver.org/). The public
+compatibility surface includes documented commands and flags, JSON fields and
+types, exit codes, configuration, database compatibility and backup/upgrade
+behavior. The maintainer chooses the bump from the actual change; commits do not
+automatically decide a version.
+
+| Change | Before 1.0 | From 1.0 onward |
+| --- | --- | --- |
+| Compatible fixes | Patch: `0.3.0` to `0.3.1` | Patch: `1.0.0` to `1.0.1` |
+| Compatible features or deprecations | Minor: `0.3.0` to `0.4.0` | Minor: `1.0.0` to `1.1.0` |
+| Incompatible behavior or formats | Minor, with migration notes | Major, with migration notes: `1.0.0` to `2.0.0` |
+
+Reset the patch when increasing the minor, and both minor and patch when
+increasing the major. A `0.x` release remains in initial development; the
+pre-1.0 bump policy above is Tusk's convention. Declare 1.0 only when the public
+contracts and support scope are ready for that commitment.
+
+The Git tag `vMAJOR.MINOR.PATCH` is the published version identity. Release
+construction generates an immutable constant from that selection and checks the
+binary's reported version against the manifest. Ordinary source builds report
+`dev`; local snapshots report the intended version with `-dev`. There is no
+second mutable application version file to keep in sync. The current pipeline
+supports stable versions only; prerelease/build-metadata inputs are refused.
+
+Before dispatching a candidate, select a version and inspect live history:
+
+```bash
+make check-release-version RELEASE_VERSION=v0.3.0 RELEASE_VERSION_OUTPUT=/tmp/tusk-version-history-unique
+```
+
+This read-only check uses authenticated GitHub access and a bounded client. It
+reads every page of repository tags and releases, including visible drafts,
+and requires the selected stable version to be greater than every existing
+stable version. A failed or malformed read refuses release preparation. Unrelated
+legacy tag names do not establish a stable-version floor. A passing receipt is
+an observation, not a reservation; use an exclusive maintainer release window.
+
+The hosted candidate workflow runs this check before its CI/build jobs.
+Promotion repeats the check before draft/publication, permitting the selected
+version only for exact resumption; the existing source, notes and asset identity
+guards still apply. Readback of historical releases remains available. Local
+archive construction is offline engineering evidence and does not check or
+reserve a remote version. Never retag, overwrite published assets or reuse a
+released version for changed contents. Ship a new version for a correction.
+
+## Checklist for every release
+
+1. Review [Unreleased changes](../CHANGELOG.md) and compatibility/migration
+   effects. Select the SemVer bump, full source SHA and supported platforms.
+2. Pass canonical validation, generated/module/license checks, native source CI
+   and the live version-history check. Freeze build and acceptance tooling.
+3. Build one trusted candidate. Review its manifest, nine public assets,
+   checksums, notices and signed provenance. Verify before executing downloads.
+4. Test those unchanged packaged bytes. Retain platform smoke checks, required
+   terminal/install checks, backup/upgrade checks, reference measurements and
+   applicable cask evidence. Settle unavailable gates explicitly; automation
+   receipts do not claim physical console observations.
+5. Write reviewed release notes from the changelog: user-visible changes,
+   breaking changes, migration/backup instructions, install/verification routes,
+   supported platforms and known limitations. Bind the notes and accepted gates
+   to the concrete candidate in the owner-approved action record.
+6. Create or resume the exact draft, upload and read back all nine assets, then
+   publish under the existing promotion gates. Repository release immutability
+   is enabled; published tags and assets are locked. Complete uploads in draft.
+7. Verify the public tag/source, release and asset hashes, anonymous installation,
+   provenance and applicable package-manager route. Date the changelog using the
+   actual publication date; refresh supported versions/security policy, README
+   and public metadata. Retain receipts and start the next Unreleased section.
+
+GitHub [immutable releases](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases)
+and [release integrity verification](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/verify-release-integrity)
+complement the existing candidate provenance checks. Stable publication remains
+pending until this checklist's acceptance and authorization gates are met.
+
 ## Candidate workflow
 
 Keep Go 1.25 as the source floor; production builds use the compiler, GoReleaser
@@ -70,8 +146,9 @@ the invocation-created temporary build storage is cleaned. Compare executable an
 archive hashes from two locations when accepting reproducibility; do not infer it
 from stable filenames.
 
-The manual hosted workflow is implemented locally and has not been published or
-dispatched. Its source SHA must equal the main dispatch and workflow SHA. Six
+The manual hosted workflow is published on main; its first `v0.3.0` candidate
+run passed all nine jobs, including build and provenance. A fresh candidate will
+be required after this tooling follow-up merges. Its source SHA must equal the main dispatch and workflow SHA. Six
 reusable canonical CI jobs must finish before one build uploads a uniquely named
 artifact retained for 90 days. Only the separate provenance job can request OIDC
 and write attestations; no job can publish a release or access tap secrets.
@@ -106,6 +183,15 @@ hosts are Linux amd64/arm64, macOS Intel/ARM and native Windows amd64, including
 an owned Windows 11 terminal. Missing access leaves the gate pending.
 
 ## Native smoke and retained measurements
+
+The separate `Native candidate verification` workflow, once published, downloads the selected
+completed candidate run/attempt. Each Linux amd64/arm64, macOS Intel/ARM and
+Windows amd64 job authenticates every payload, manifest and run identity before
+extracting and executing its native binary. The unchanged binary runs the CLI
+process suite and Linux child-PTY lifecycle checks where available. Reports are
+retained for every job; their status is `automated-passed`, with manual terminal
+inspection still pending. This workflow does not rebuild the selected executable,
+publish, create tags or change the Homebrew tap.
 
 After trusted verification, extract the native archive into an owned directory.
 Keep evidence in a new directory outside both candidate storage and the source

@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "repository": "newbpydev/tusk",
+  "before": {
+    "description": "Keyboard-driven, single-binary task management CLI and TUI written in Go",
+    "homepage": null
+  },
+  "after": {
+    "description": "Local task management in your terminal: a keyboard-driven TUI and scriptable CLI, backed by SQLite.",
+    "homepage": "https://github.com/newbpydev/tusk#readme"
+  },
+  "topics": [
+    "bubbletea",
+    "cli",
+    "command-line",
+    "go",
+    "golang",
+    "offline",
+    "productivity",
+    "sqlite",
+    "task-manager",
+    "terminal",
+    "tui"
+  ],
+  "private_vulnerability_reporting": true,
+  "browser_readback": {
+    "packages_sidebar": false,
+    "releases_sidebar": true,
+    "release_immutability": true,
+    "social_preview": "Existing docs/assets/tusk-tui.png, rendered 2:1 crop",
+    "social_preview_sha256": "0a5ad71ac8ba8671f0559fdea62d824504510fa9510574e9dd9059d05542eba7",
+    "capture": "release-settings.jpg"
+  },
+  "publication": "No public release or tag created"
+}

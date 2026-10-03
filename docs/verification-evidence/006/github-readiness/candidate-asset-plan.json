@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "status": "prepared-unaccepted",
+  "repository": "newbpydev/tusk",
+  "version": "v0.3.0",
+  "source_sha": "31894ff56fee1c32e34a972883a404a105683133",
+  "manifest_sha256": "e6f076b8cf29569976d608308545d91e5e6f91494b9eb3ba053e3184a57c61e4",
+  "cask_sha256": "6cff223b4f59c8e90a3be1fe080d4087d4e48e88e26a333cbbc6b84dc11dc377",
+  "run_id": 37086312661,
+  "assets": {
+    "THIRD_PARTY_NOTICES.md": "ba486e7d36dd649f6b9a9a9c1068e014ca2d701f6b78e38eaf61e12c3691b7ed",
+    "tusk_0.3.0_darwin_amd64.tar.gz": "ec33c21f58ed1a63eafd831a7cfbd7ae3491818c38938f298baf9f41c02e98b2",
+    "tusk_0.3.0_darwin_arm64.tar.gz": "4218a2bfa165585c79d145da4187f0f2b0a1bd716c164cf99641b1cc5bc289ab",
+    "tusk_0.3.0_linux_amd64.tar.gz": "471dc64e90baf972690126bb8295d613305d6f8da1cf341c00e1ec1f76f52043",
+    "tusk_0.3.0_linux_arm64.tar.gz": "f2fb4ae76d1d132a55ec8daafd1b5861347039ae6ef70d582a5b3a952fb1ff9b",
+    "tusk_0.3.0_source.tar.gz": "945c3d6cf57a1405a1400ab61e35b2716625a7b5b4d2177eaecc03d221f1437e",
+    "tusk_0.3.0_windows_amd64.zip": "3c539f8d42d97a4f0b7d8714931c539b6e5c4452c079dccf2591a10d1d77e6e8",
+    "checksums.txt": "46be0940f44db6f4e2cd7b1a6bcfa718d0d8ca493524cedc4be9f16f683caf92",
+    "release-manifest.json": "e6f076b8cf29569976d608308545d91e5e6f91494b9eb3ba053e3184a57c61e4"
+  },
+  "trusted_verification": "pending",
+  "native_terminal_performance_cask": "pending",
+  "owner_authorization": "pending"
+}

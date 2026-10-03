@@ -43,6 +43,8 @@ test-release:
 	go test -v ./scripts/releasecheck $(TUSK_RELEASE_TEST_ARGS)
 	bash scripts/test/test_release.sh
 	bash scripts/test/test_candidate.sh
+	bash scripts/test/test_native_candidate.sh
+	bash scripts/test/test_release_version.sh
 
 setup-release:
 	bash scripts/release.sh setup
@@ -152,6 +154,8 @@ test-scripts: test-gh-fixture
 	@bash scripts/test/test_notices.sh
 	@bash scripts/test/test_release.sh
 	@bash scripts/test/test_candidate.sh
+	@bash scripts/test/test_native_candidate.sh
+	@bash scripts/test/test_release_version.sh
 	@bash scripts/test/test_release_smoke.sh
 	@bash scripts/test/test_homebrew.sh
 	@bash scripts/test/test_promotion.sh
@@ -366,6 +370,20 @@ release-smoke:
 release-smoke-processes:
 	go test -v ./internal/cli -run '^(TestProcess_Workflow|TestDocsExamples_QuickStartAndClosedBackup|TestReleaseLifecycle_)' -count=1
 	go test -v ./cmd/tusk -run '^TestTUIProcess_TerminalLifecycle$$' -count=1
+
+.PHONY: check-native-candidate-workflow native-candidate-smoke
+override RELEASE_NATIVE_OUTPUT := $(value RELEASE_NATIVE_OUTPUT)
+export RELEASE_NATIVE_OUTPUT
+check-native-candidate-workflow:
+	bash scripts/native_candidate.sh contract
+native-candidate-smoke:
+	bash scripts/native_candidate.sh smoke
+
+.PHONY: check-release-version
+override RELEASE_VERSION_OUTPUT := $(value RELEASE_VERSION_OUTPUT)
+export RELEASE_VERSION_OUTPUT
+check-release-version:
+	bash scripts/release_version.sh
 bench-cli-release:
 	RELEASE_BENCH_OUTPUT="$$RELEASE_CLI_BENCH_OUTPUT" bash scripts/release_smoke.sh bench-cli
 bench-tui-release:
@@ -400,7 +418,7 @@ release-readback:
 
 .PHONY: lint-release-promotion
 lint-release-promotion:
-	shellcheck -x scripts/promote.sh scripts/test/test_promotion.sh scripts/repository_metadata.sh scripts/test/test_metadata.sh scripts/candidate.sh scripts/test/test_candidate.sh scripts/homebrew.sh scripts/test/test_homebrew.sh scripts/test/test_gh_fixture.sh
+	shellcheck -x scripts/release_version.sh scripts/test/test_release_version.sh scripts/native_candidate.sh scripts/test/test_native_candidate.sh scripts/promote.sh scripts/test/test_promotion.sh scripts/repository_metadata.sh scripts/test/test_metadata.sh scripts/candidate.sh scripts/test/test_candidate.sh scripts/homebrew.sh scripts/test/test_homebrew.sh scripts/test/test_gh_fixture.sh
 
 .PHONY: test-repository-metadata prepare-repository-metadata apply-repository-metadata
 $(foreach parameter,METADATA_OUTPUT METADATA_AUTHORIZATION METADATA_RELEASE_RECEIPT,$(eval override $(parameter) := $$(value $(parameter))))

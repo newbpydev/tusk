@@ -2,8 +2,8 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: PR 6 merged; local engineering and reviewed-head hosted checks passed; native/release acceptance pending
-evidence-scope: 51 local scenario closures; thirteen PR 6 report batches remediated; reviewed-head hosted checks passed; PR 6 merged; physical/trusted-candidate/release proof pending
+status: PR 6 merged; GitHub metadata applied; version and packaged-candidate tooling locally verified; hosted follow-up and final native/release acceptance pending
+evidence-scope: 51 local scenario closures; PR 6 merged; preliminary candidate verified and CachyOS basic inspection passed; fresh-candidate native/manual/performance/cask/release acceptance pending
 deepened: 2026-10-01
 ---
 
@@ -22,6 +22,49 @@ assignment. No release exception or performance waiver is assumed.
 
 ---
 
+### GitHub presentation and hosted candidate follow-up (2026-10-03)
+
+The owner requested public GitHub metadata, releases and distribution readiness
+using maintainer judgment, and confirmed that only CachyOS computers are available.
+This authorizes About/homepage/topics and security-channel activation before the
+stable release, independently of the post-publication metadata helper. Retain
+before/after API and browser readbacks; do not manufacture a publication receipt.
+
+Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
+
+- [x] Apply the reviewed About/homepage and eleven topics; enable and read back
+  GitHub private vulnerability reporting under the owner's metadata request.
+- [x] Refresh public documentation to distinguish five-platform native source CI
+  from exact packaged-binary and physical terminal acceptance.
+- [x] Implement and locally validate read-only hosted native checks that verify
+  a successful trusted candidate before executing its unchanged platform binary.
+- [x] Enforce owner-requested stable SemVer history checks before hosted
+  candidate construction and release promotion; document version bumps and
+  the repeatable per-release checklist.
+- [x] Produce and cryptographically verify the preliminary trusted-main candidate;
+  all nine reports passed before assessment.
+- [x] Inspect the unchanged preliminary Linux archive in an owned CachyOS
+  terminal; retain CLI/TUI observations and terminal-restoration evidence.
+- [x] Complete social-preview upload and rendered GitHub readback; enable
+  release immutability and hide the inapplicable Packages sidebar.
+- [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
+- [ ] After merge, create a fresh frozen-source candidate, dispatch the new
+  packaged-native workflow and retain final reference measurements.
+
+Canonical validation, focused refusal controls, the live version readback and
+basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because
+this follow-up changes release tooling. No final candidate acceptance or public
+release is claimed. See the GitHub-readiness evidence receipt.
+
+Actions already executes source tests natively on all five OS/architecture pairs.
+The follow-up executes packaged bytes and labels hosted automation separately.
+Physical macOS, Windows 11 and Linux arm64 console observations remain unavailable;
+no automated receipt claims those observations. A stable publication decision must
+explicitly settle these outstanding manual gates against the concrete candidate.
+Homebrew destination/native cask and exact publication authority remain pending.
+GitHub Packages offers no native Go registry; native release archives are the
+appropriate distribution surface. No placeholder container package is planned.
+
 ## Issue register
 
 | ID | Source / owner-lens | Severity | Status | Impact / next action | Closure evidence |
@@ -30,7 +73,7 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-002 | R2,R23,R24 / release maintainer, portability | P1 | Open verification | Arrange all native target/terminal access before U5; absent hosts block release | Exact-asset native runtime and owned terminal records; V73–V84 |
 | 006-ISS-003 | R29 / repository owner, distribution | P1 | Open decision | Establish accessible tap/destination before U7; proposed tap was not found | Owner-controlled repository/path and Intel/ARM local/live cask proof; V87–V98 |
 | 006-ISS-004 | R28 / repository owner, release | P1 | Open decision | Confirm version/SHA and explicit hosted/release authority at concrete U8 candidate | Authorized identity, draft/asset readback and actual public result; V95–V102 |
-| 006-ISS-005 | R22 / maintainer, security/support | P2 | Verified locally; U8 activation pending | Private reporting disabled; verified owner profile/public request route avoids confidentiality claim | U4 API readback and SECURITY.md; V42/V44 local pass; V100 pending |
+| 006-ISS-005 | R22 / maintainer, security/support | P2 | Private channel activated and read back | GitHub private reporting enabled; SECURITY.md names the verified private route without a response SLA | V42/V44 local pass; live enabled:true and browser readback; broader V100 publication bundle pending |
 | 006-ISS-006 | Original outline / coherence | P1 | Fixed in plan | Replace unsupported readiness with executable unit and evidence contracts | Eight unit fields, 30 requirements and 102 pending scenarios; full execution still required |
 | 006-ISS-007 | Original Go 1.24 assumption / compatibility | P1 | Fixed in plan | Keep Go 1.25.0 source floor and separate pinned production compiler | Native/minimum jobs and tool lock; V03,V04,V12,V49 |
 | 006-ISS-008 | CI/race/format / portability, testing | P1 | Fixed in plan | Distinguish native Windows Bash/Make/compiler, CGO race and CGO-free release; fail source drift | Negative prerequisites, native jobs and drift fixtures; V05–V11,V16 |
@@ -151,8 +194,8 @@ release/metadata/native-install acceptance remains pending. U2 follows the U4 co
 - **Evidence:** No SECURITY.md exists; private vulnerability reporting availability/activation was not verified. An admin role does not establish a contact SLA or security team.
 - **Decision plan:** Verify and document GitHub private reporting if enabled; otherwise give an accurate owner GitHub contact route and state that public issue content is public. Do not fabricate email/private support promises.
 - **Closure:** Tested real contact links, approved concise policy and hosted feature readback.
-- **Current verification:** GitHub API returned `enabled:false` on 2026-10-01; the owner profile returned the expected login/URL. SECURITY.md states disabled private reporting and provides a public request route without confidentiality. V42/V44 pass locally; V100 activation/readback remains pending.
-- **Blocking effect / revisit:** Recheck the setting and documented route before U8 activation.
+- **Current verification:** GitHub private reporting was enabled under the owner's metadata request and read back as `enabled:true` on 2026-10-03 UTC. SECURITY.md names the private advisory route. V42/V44 pass locally; the broader V100 post-publication bundle remains pending. The GitHub-readiness receipt preserves the current setting and rendered page.
+- **Blocking effect / revisit:** Contact activation is settled; recheck the setting and documented route at final U8 publication.
 
 ### 006-ISS-018: Verified release tools and native runner availability
 
