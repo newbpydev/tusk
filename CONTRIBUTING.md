@@ -22,6 +22,13 @@ write a failing behavior test, observe it, then implement the smallest fix.
 [MASTERPLAN.md](https://github.com/newbpydev/tusk/blob/main/MASTERPLAN.md) defines current implementation order. Keep the
 feature plan, verification plan and workorder synchronized when they change.
 
+README URL targets must be complete, on one line and literal: no character
+references, percent escapes or backslash escapes. HTML `src`/`href`, Markdown
+links and reference targets follow this rule. Prose and image alt text may use
+entities; ordinary query separators are allowed. Only the exact verified CI
+and license URLs may supply badges. The check refuses unsupported target
+syntax rather than interpreting it as a browser or Markdown renderer.
+
 Generate static docs with `make generate-docs`; check drift with `make check-docs`.
 `make test-completions` additionally needs Bash completion, Zsh and Fish. On
 macOS set `BASH_COMPLETION_SOURCE` to your installed framework. Dependency

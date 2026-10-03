@@ -36,6 +36,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   mixed-case badge refusal before pushing the second combined fix.
 - [x] Validate the owner-approved complete-target/state and evidence correction
   before pushing the third combined fix.
+- [x] Validate the literal-target and receipt-amendment class correction
+  before publishing its fresh hosted/cloud review head.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -53,7 +55,11 @@ validated together. The second head `e3dd105` passed all six source CI jobs;
 Kilo and Codex completed review with three boundary/provenance follow-ups.
 The owner approved one bounded correction pass for complete badge URL targets,
 complete single reporting-state declarations and marked validation evidence.
-That pass's fresh hosted/cloud settlement remains pending.
+The third head `7f1fe45` passed all six source CI jobs. Kilo and Codex
+completed review with an encoded-target bypass and two receipt-provenance
+concerns. The combined class correction enforces complete literal targets,
+preserves historical log bytes and records amendments and fresh marked runs.
+Its fresh hosted/cloud settlement remains pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

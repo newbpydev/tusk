@@ -17,7 +17,7 @@
   "additional_checks": [
     "make test-docs: complete target/state matrix Red/Green plus scanner-error Red/Green",
     "make check-ci check-candidate-workflow check-native-candidate-workflow lint-release-promotion",
-    "final-docs.log.gz and synchrony.log.gz verify outcome-only planning updates after the canonical gate",
+    "final-docs.log.gz records deterministic documentation results only; it does not independently establish run ordering. synchrony.log.gz records the planning-block equality/hash check.",
     "r2-input-readback.log.gz verifies all 20 historical R2 input hashes against immutable e3dd105"
   ],
   "input_scope": "Final worktree bytes of material implementation, direct documentation fixture inputs and verdict-carrying metadata/plans. Code passed canonical validation; outcome-only planning updates afterwards passed documentation/synchrony checks. This receipt is excluded to avoid self-reference; unchanged source remains bound to head_sha and artifacts carry independent hashes.",
@@ -127,5 +127,17 @@
   "remote_feedback_settlement": "pending after push",
   "current_head_hosted_review": "pending after push",
   "release_acceptance": "Fresh frozen candidate after owner merge, packaged hosted checks, manual/native/performance/cask and publication remain pending",
-  "completed_at": "2026-10-03T17:26:29.615503+00:00"
+  "completed_at": "2026-10-03T17:26:29.615503+00:00",
+  "input_commit": "7f1fe45a272358399ff6a70c70645d6103f60be3",
+  "amended_at": "2026-10-03T18:13:49.215855+00:00",
+  "amendments": [
+    {
+      "recorded_at": "2026-10-03T18:13:49.215855+00:00",
+      "changes": "Scope the historical unmarked final-docs artifact as result evidence, not self-evidencing post-gate ordering; bind all 31 historical input hashes to immutable input_commit 7f1fe45. New marked ordered runs are retained separately in pr7-r4.",
+      "original_values": {
+        "additional_checks[2]": "final-docs.log.gz and synchrony.log.gz verify outcome-only planning updates after the canonical gate"
+      },
+      "artifact_policy": "Original log bytes/hashes and completed_at remain unchanged."
+    }
+  ]
 }

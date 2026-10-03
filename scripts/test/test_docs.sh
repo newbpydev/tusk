@@ -114,6 +114,21 @@ mkdir -p "$scratch/failing-awk"
 printf '#!/usr/bin/env bash\nexit 73\n' >"$scratch/failing-awk/awk"
 chmod +x "$scratch/failing-awk/awk"
 expect 1 'refuse documentation certification when badge scanner fails' env PATH="$scratch/failing-awk:$PATH" bash "$root/scripts/docs-check.sh" "$fixture"
+for url in 'https://img&#46;shields&#46;io/badge/CI-passing-green' 'https://img.shie&#118;lds.io/badge/CI-passing-green' 'https://img&#x2e;shields&#x2e;io/badge/CI-passing-green' 'https://img&period;shields&period;io/badge/CI-passing-green' '&#104;ttps://img&#46;shields&#46;io/badge/CI-passing-green' 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badg&#101;.svg?branch=evil' 'https://img%2eshields%2eio/badge/CI-passing-green'; do
+    for target in "<img src=\"$url\">" "<img src='$url'>" "<img src=$url>" "<a href=\"$url\">badge</a>" "![Unverified]($url)" "[unverified]: $url" "[unverified]: <$url>"; do
+        cp "$root/README.md" "$fixture/README.md"
+        printf '\n%s\n' "$target" >>"$fixture/README.md"
+        expect 1 "reject encoded URL target: $target" bash "$root/scripts/docs-check.sh" "$fixture"
+    done
+done
+for target in '![Unverified](https://img\.shields\.io/badge/CI-passing-green)' $'<img src="https://img.\nshields.io/badge/CI-passing-green">' $'<img src="https://img.\tshields.io/badge/CI-passing-green">' $'![Unverified](https://img.\nshields.io/badge/CI-passing-green)' '<img src="https://img&#46shields&#46io/badge/CI-passing-green">'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$target" >>"$fixture/README.md"
+    expect 1 'reject escaped or split URL targets' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+cp "$root/README.md" "$fixture/README.md"
+printf '\nPlain prose &amp; alt text remain independent of literal targets.\n<img src="docs/assets/tusk-tui.png" alt="Tasks &amp; notes">\n[Other](https://example.com/?one=1&two=2)\n' >>"$fixture/README.md"
+expect 0 'allow local images, ordinary query separators and entities outside URL targets' bash "$root/scripts/docs-check.sh" "$fixture"
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"

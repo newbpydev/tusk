@@ -145,5 +145,17 @@
   "current_head_hosted_review": "pending after push",
   "release_acceptance": "Fresh frozen candidate, packaged hosted checks, manual/native/performance/cask and publication remain pending",
   "completed_at": "2026-10-03T15:10:54.006742+00:00",
-  "input_commit": "e3dd105b1d4a9d5252f829a9615c92924392842e"
+  "input_commit": "e3dd105b1d4a9d5252f829a9615c92924392842e",
+  "amended_at": "2026-10-03T18:13:49.215855+00:00",
+  "amendments": [
+    {
+      "recorded_at": "2026-10-03T18:13:49.215855+00:00",
+      "introduced_by": "7f1fe45a272358399ff6a70c70645d6103f60be3",
+      "changes": "The R3 correction removed canonical.PATH, added canonical.environment_scope and bound the historical input hashes to input_commit e3dd105. This entry records that earlier amendment; completed_at remains the original R2 verdict time.",
+      "original_values": {
+        "canonical.PATH": "/tmp/pr7-path-without-rg"
+      },
+      "artifact_policy": "All original retained log bytes, hashes and completion time are preserved. The environment claim is scoped to the separate marked rg_absent_control."
+    }
+  ]
 }

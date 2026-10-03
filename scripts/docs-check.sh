@@ -45,16 +45,46 @@ for file in "${files[@]}"; do
             function badge(value) {
                 return tolower(value) ~ /img[.]shields[.]io|actions\/workflows\/[^[:space:]]*badge/
             }
+            function literal(value) {
+                # README targets use literal URLs, not renderer-dependent
+                # entities, percent escapes, backslashes or split lines.
+                if (value == "" || value ~ /[[:space:]]/ || index(value, "\\") ||
+                    value ~ /&#|&[[:alpha:]][[:alnum:]]*;|%[[:xdigit:]][[:xdigit:]]/) exit 42
+            }
             {
-                # A quoted src value is one target, including any spaces.
+                # Check complete attribute targets even if their scheme or
+                # hostname is obscured, before scanning known badge hosts.
                 attrs = $0
-                while (match(tolower(attrs), /(^|[[:space:]])src[[:space:]]*=[[:space:]]*["\047]/)) {
-                    quote = substr(attrs, RSTART + RLENGTH - 1, 1)
+                while (match(tolower(attrs), /(^|[[:space:]])(src|href)[[:space:]]*=[[:space:]]*/)) {
                     attrs = substr(attrs, RSTART + RLENGTH)
-                    stop = index(attrs, quote)
-                    value = stop ? substr(attrs, 1, stop - 1) : attrs
-                    if (badge(value) && (!stop || (value != ci && value != license))) { print; next }
-                    attrs = stop ? substr(attrs, stop + 1) : ""
+                    quote = substr(attrs, 1, 1)
+                    if (quote == "\"" || quote == "\047") {
+                        attrs = substr(attrs, 2); stop = index(attrs, quote)
+                        if (!stop) exit 42
+                        value = substr(attrs, 1, stop - 1)
+                        attrs = substr(attrs, stop + 1)
+                    } else {
+                        match(attrs, /^[^[:space:]>]+/)
+                        value = substr(attrs, 1, RLENGTH)
+                        attrs = substr(attrs, RLENGTH + 1)
+                    }
+                    literal(value)
+                    if (badge(value) && value != ci && value != license) { print; next }
+                }
+                targets = $0
+                while (match(targets, /\]\(/)) {
+                    targets = substr(targets, RSTART + RLENGTH)
+                    stop = index(targets, ")"); if (!stop) exit 42
+                    value = substr(targets, 1, stop - 1); literal(value)
+                    targets = substr(targets, stop + 1)
+                }
+                if (match($0, /^[[:blank:]]*\[[^]]+\]:[[:blank:]]*/)) {
+                    value = substr($0, RSTART + RLENGTH)
+                    if (substr(value, 1, 1) == "<") {
+                        stop = index(value, ">"); if (!stop) exit 42
+                        value = substr(value, 2, stop - 2)
+                    } else { match(value, /^[^[:space:]]+/); value = substr(value, 1, RLENGTH) }
+                    literal(value)
                 }
                 cursor = 1; rest = $0; clean = ""; unquoted = 0
                 while (match(tolower(rest), /(https?:)?\/\//)) {
@@ -74,6 +104,7 @@ for file in "${files[@]}"; do
                         else match(tail, /^[^[:space:]"\047]+/)
                         value = substr(tail, 1, RLENGTH)
                     }
+                    literal(value)
                     left = before == "" || last ~ /[[:space:]"\047(<]/ || unquoted
                     if (badge(value)) {
                         if (!left || (delimiter != "" && !stop) || (value != ci && value != license)) { print; next }
@@ -84,7 +115,7 @@ for file in "${files[@]}"; do
                     unquoted = 0
                 }
                 print clean rest
-            }' "$root/$file") || fail 'README badge scan failed'
+            }' "$root/$file") || fail 'README badge scan failed: use complete literal URL targets'
         if grep -iE 'img\.shields\.io|actions/workflows/[^[:space:]]*badge' <<<"$badge_text" >/dev/null; then
             fail 'README advertises an unverified badge'
         fi
