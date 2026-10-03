@@ -49,6 +49,10 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   before publishing its combined hosted/cloud review head.
 - [x] Validate list-container and quote-tab target refusal before publishing
   the combined checker correction.
+- [x] Validate the noisy-tool preflight regression and preserve real command
+  failure statuses before publishing the independent CI repair.
+- [ ] Settle the repeated Markdown-checker approach decision and apply the
+  selected reference-image correction with refusal fixtures.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -89,6 +93,19 @@ the literal-target tripwire, validates list reference definitions, refuses split
 resource tags and allowlists remote image/reference destinations; supported
 code exclusion resumes after explicit boundaries. Fresh cloud settlement
 remains pending.
+
+The seventh head `fb7554b` completed Kilo and Codex review with two reproduced
+reference-image bypasses and missing refusal fixtures. Five source jobs passed;
+macOS arm64 preflight stopped at exit 141 after Make version output. The
+independent CI repair drains Make/compiler version output under pipefail and
+keeps nonzero tool statuses fatal, with noisy-producer and failure controls.
+Fresh official-Go canonical validation, the native Linux preflight and pinned
+workflow checks pass. The CI receipt is retained at
+`docs/verification-evidence/006/pr7-ci-sigpipe/acceptance.json`.
+The repeated Markdown-checker root is parked for an owner approach decision:
+use the already-pinned Goldmark parser or one bounded AWK reference-state repair.
+All three review threads remain open. Fresh hosted CI and final acceptance
+remain pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

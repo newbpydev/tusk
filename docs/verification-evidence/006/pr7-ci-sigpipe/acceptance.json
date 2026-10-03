@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "scope": "PR 7 independent macOS preflight SIGPIPE correction; Markdown approach decision remains open",
+  "head_sha": "fb7554bc5c6cb838f86cac1ce9cc4181587c9185",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "root_cause": "preflight pipes successful Make/compiler --version producers into head -1. Early reader exit can deliver SIGPIPE to the producer; pipefail makes preflight fail. The macOS arm64 job printed GNU Make 3.81 and exited 141 before remaining canonical gates.",
+  "fix": "Drain each preflight version producer through sed -n 1p. Keep Make banner/status refusal and compiler nonzero status propagation.",
+  "canonical": {
+    "started_at": "2026-10-03T23:28:34.442993+00:00",
+    "head_sha": "fb7554bc5c6cb838f86cac1ce9cc4181587c9185",
+    "working_tree_changes": true,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "input_sha256": {
+      "scripts/ci-check.sh": "34e27da8ed9bcba7c8d143aabcbbc2750bf22704241ef328982eee922c0a59f7",
+      "scripts/test/test_ci.sh": "2bf63e9f3de6a7cd952db12a3e1fb0d66237627f46705c63c093ddf2399f937f",
+      "MASTERPLAN.md": "8cff3aaf1f7eeb175797890beb86ef441a58186ce3a7af342a0fcc7557fff135",
+      "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "155b098174f5fe0ca46c4104de946a5a10d4b234f99ddc033412ccc77fc8d9c3",
+      "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "ac52950f8ff1f4597ad3dc507ae956a6bb4dd1664de47fb85b01255da5e3d4ca",
+      "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "a5ef4a93530a46d34e12416a0c2352d05227dabf2c77603067a3f495f3428914",
+      "Makefile": "34bf303bc90b4580d3bf306a6d0053054c6c30ae1825b656399ca448764a4144",
+      "go.mod": "4d909e893ac5017cd84d01fa4576178b941127f7b9866656ccb0ff9407d0c2e8",
+      "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7"
+    },
+    "exit_code": 0,
+    "completed_at": "2026-10-03T23:36:40.240411+00:00",
+    "named_script_assertions_passed": 693,
+    "log": "validate.log.gz"
+  },
+  "input_scope": "Canonical metadata records pre-command input hashes. Afterwards only outcome checklist text and its receipt pointer changed; final-docs.log.gz records the final planning hashes and focused documentation/workflow checks. Executable and test inputs are unchanged from the canonical run. Added artifacts retain evidence and do not change executable behavior.",
+  "final_input_sha256": {
+    "scripts/ci-check.sh": "34e27da8ed9bcba7c8d143aabcbbc2750bf22704241ef328982eee922c0a59f7",
+    "scripts/test/test_ci.sh": "2bf63e9f3de6a7cd952db12a3e1fb0d66237627f46705c63c093ddf2399f937f",
+    "MASTERPLAN.md": "88859854832c572a92e6b131f1c4a1e67075d250580b9c51e0f01225bf8f07c8",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "1fb99ef359e27f05ec96de939a06fe1e12c57a3c090c6b059d61beab50c2dc38",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "dca4665a8575c49998b8a852c3cded682cf4fca4418fee5dcb56e4cd176b124e",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "4a1756dcf7a060005e8a561c14bc8c8ddb7c4390aee371ffdf5abfcba4518f43",
+    "Makefile": "34bf303bc90b4580d3bf306a6d0053054c6c30ae1825b656399ca448764a4144",
+    "go.mod": "4d909e893ac5017cd84d01fa4576178b941127f7b9866656ccb0ff9407d0c2e8",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7",
+    "scripts/tool-versions.json": "f644bdbf9333ed00dcf6637076ea7eca935b38a99e4e1161e7961e2bd3f61454",
+    ".github/workflows/ci.yml": "456a3b898ed2ccce868a9f1a1b8443762730f5ab2d560bbb5070c7e13d42b6bb"
+  },
+  "red_green": {
+    "baseline": "Immutable fb7554b with final noisy-producer tests: make test-ci exits 2; preflight success and producer-completion assertions fail, and compiler error 23 is concealed by the earlier Make pipe failure.",
+    "green": "make test-ci preflight-ci check-ci exits 0; valid large outputs complete, failed Make banners refuse, and compiler version exit 23 remains 23.",
+    "scope": "Owned fake Windows identity and noisy tools test pipeline behavior; actual preflight runs on Linux. Fresh hosted macOS execution remains pending."
+  },
+  "review_residual": {
+    "type": "needs-human",
+    "sources": [
+      {
+        "id": "PRRT_kwDOUQoUDc6osKYU",
+        "kind": "thread"
+      },
+      {
+        "id": "PRRT_kwDOUQoUDc6osKYW",
+        "kind": "thread"
+      },
+      {
+        "id": "PRRT_kwDOUQoUDc6osQrW",
+        "kind": "thread"
+      }
+    ],
+    "decision_context": {
+      "quoted_feedback": "Continued reference destinations skip the image allowlist; multiline reference labels bypass destination checks; new refusal behavior lacks fixtures.",
+      "investigation": "scripts/docs-check.sh:212-230 clears pending_image and matches reference labels on one line. Retained reference-reproduction.json shows both unapproved remote-image cases exit 0, a clean control exits 0, and the nested-image guard exits 1. scripts/test/test_docs.sh:169-220 omits these refusal controls. documentation-badge-contract has seven recorded head rounds; Goldmark v1.7.17 is already pinned in go.mod.",
+      "decision_reason": "A further checker change requires an approach choice under the feedback skill third-round guard; repeated block/reference parsing repairs have not closed the Markdown destination invariant.",
+      "options": [
+        {
+          "option": "Use the existing pinned Goldmark parser and retain explicit URL rules",
+          "tradeoff": "Uses Markdown structure for references, containers and code exclusions; requires replacing the Markdown scanning layer and validating the existing policy fixtures."
+        },
+        {
+          "option": "Keep AWK and make one bounded reference-state repair",
+          "tradeoff": "Smaller immediate diff and preserves the current strict syntax; keeps the handwritten Markdown parser and its recurring context-gap risk."
+        }
+      ],
+      "recommendation": "Use the already-pinned Goldmark parser, with regression coverage for every reported bypass and retained explicit target rules."
+    },
+    "thread_urls": [
+      "https://github.com/newbpydev/tusk/pull/7#discussion_r4175062981",
+      "https://github.com/newbpydev/tusk/pull/7#discussion_r4175062984",
+      "https://github.com/newbpydev/tusk/pull/7#discussion_r4175102979"
+    ]
+  },
+  "retained_artifacts": {
+    "baseline-red.log.gz": {
+      "sha256": "7b1cf34e6085decc4a4e8a77183dba5c80f13c41c0dd7e3fc4b571c7aa8cf9fe",
+      "uncompressed_bytes": 3726
+    },
+    "initial-red.log.gz": {
+      "sha256": "b69981437c329237ffd63b264f2469be80a9a45ce338e07de260b1e7c7ee6c38",
+      "uncompressed_bytes": 3328
+    },
+    "focused-green.log.gz": {
+      "sha256": "7758e629c08b8f693736af6fbe1f356c32c14ad310723504f717b8805b7d4c8d",
+      "uncompressed_bytes": 3860
+    },
+    "validate.log.gz": {
+      "sha256": "b9da57cc65e71cc05d41ddd870009a625187efddcc53f3a57f3f7d11b9b0a7a9",
+      "uncompressed_bytes": 339055
+    },
+    "final-docs.log.gz": {
+      "sha256": "3e8c56d46295925513e5f7d1d769728d683d83dd3237e02ca1b91ea6f44d66d1",
+      "uncompressed_bytes": 22826
+    },
+    "failed-macos-job.log.gz": {
+      "sha256": "b63d9e4ae2298b72fc4cc45a5ed9499991dce62a91bafe59e9dfdf3500ea3f47",
+      "uncompressed_bytes": 33478
+    },
+    "reference-reproduction.json": {
+      "sha256": "ba8705d09c498d6cf9a1392093d1baa80379f83e62270252984dfa107c26c75b"
+    }
+  },
+  "hosted_validation": "Pending after this independent CI fix is pushed",
+  "release_acceptance": "Trusted frozen candidate, packaged native/physical/performance/cask and publication gates remain pending",
+  "completed_at": "2026-10-03T23:37:54.056042+00:00"
+}

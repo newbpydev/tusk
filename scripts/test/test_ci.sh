@@ -115,6 +115,34 @@ echo "${FIXTURE_UNAME:-MINGW64_NT-10.0}"
 EOF
 chmod +x "$scratch/bin/"*
 expect 0 'native Windows prerequisite fixture' env PATH="$scratch/bin:$PATH" TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
+mkdir -p "$scratch/version-tools"
+cat >"$scratch/version-tools/make" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+printf 'GNU Make fixture\n'
+awk 'BEGIN { for (i = 0; i < 20000; i++) print "version detail" }'
+printf 'make version output drained\n' >>"$FIXTURE_VERSION_TRACE"
+exit "${FIXTURE_MAKE_VERSION_STATUS:-0}"
+EOF
+cat >"$scratch/version-tools/gcc" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+if [[ "$1" == -dumpmachine ]]; then
+    printf 'x86_64-w64-mingw32\n'
+    exit 0
+fi
+printf 'gcc fixture\n'
+awk 'BEGIN { for (i = 0; i < 20000; i++) print "version detail" }'
+printf 'compiler version output drained\n' >>"$FIXTURE_VERSION_TRACE"
+exit "${FIXTURE_CC_VERSION_STATUS:-0}"
+EOF
+chmod +x "$scratch/version-tools/"*
+: >"$scratch/version-trace"
+expect 0 'preflight drains noisy Make and compiler version output without SIGPIPE' env PATH="$scratch/version-tools:$scratch/bin:$PATH" FIXTURE_VERSION_TRACE="$scratch/version-trace" TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
+expect 0 'Make version producers complete before preflight succeeds' grep -Fxq 'make version output drained' "$scratch/version-trace"
+expect 0 'compiler version producer completes before preflight succeeds' grep -Fxq 'compiler version output drained' "$scratch/version-trace"
+expect 1 'preflight rejects failed Make version command despite a valid banner' env PATH="$scratch/version-tools:$scratch/bin:$PATH" FIXTURE_VERSION_TRACE="$scratch/version-trace" FIXTURE_MAKE_VERSION_STATUS=23 TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
+expect 23 'preflight preserves failed compiler version command status' env PATH="$scratch/version-tools:$scratch/bin:$PATH" FIXTURE_VERSION_TRACE="$scratch/version-trace" FIXTURE_CC_VERSION_STATUS=23 TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
 mkdir -p "$scratch/legacy-jq"
 cat >"$scratch/legacy-jq/jq" <<'JQ'
 #!/usr/bin/env bash
