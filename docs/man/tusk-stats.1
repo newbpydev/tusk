@@ -1,0 +1,41 @@
+.nh
+.TH "TUSK-STATS" "1" "Sep 2026" "Tusk" "Tusk Manual"
+
+.SH NAME
+tusk-stats - Show retained-task statistics
+
+
+.SH SYNOPSIS
+\fBtusk stats [flags]\fP
+
+
+.SH DESCRIPTION
+Show retained-task statistics
+
+
+.SH OPTIONS
+\fB-h\fP, \fB--help\fP[=false]
+	help for stats
+
+.PP
+\fB--json\fP[=false]
+	Print complete JSON
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+\fB--auto-complete-parent\fP[=false]
+	Complete parents when all children are done
+
+.PP
+\fB--timezone\fP=""
+	Date timezone (IANA name)
+
+
+.SH EXAMPLE
+.EX
+  tusk stats --json
+.EE
+
+
+.SH SEE ALSO
+\fBtusk(1)\fP

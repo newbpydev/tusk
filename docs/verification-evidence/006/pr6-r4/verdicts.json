@@ -1,0 +1,32 @@
+[
+  {
+    "item": "Windows shell hash fixture",
+    "verdict": "fixed locally; native rerun required",
+    "invariant_key": "restricted-tool-runtime-location",
+    "cause": "copy-style tool snapshot separates installed executable from adjacent runtime; hidden by unlabeled final assertion",
+    "proof": "owned resolved-image control passes; copy semantics fail; delegating installed image passes with restricted helper namespace",
+    "limits": "exact native DLL failure is inferred from silent log and supported by controlled model plus documented defaults",
+    "references": [
+      "https://gitforwindows.org/symbolic-links.html",
+      "https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order"
+    ]
+  },
+  {
+    "item": "Related SQLC prerequisite snapshots",
+    "verdict": "fixed-differently",
+    "fix": "Bash launchers execute original installed images while preserving restricted PATH for missing-prerequisite assertions; no runtime settings/privilege change"
+  },
+  {
+    "item": "SQLC symlink-archive fixture",
+    "verdict": "fixed-differently",
+    "invariant_key": "archive-symlink-refusal-fixture",
+    "cause": "default link copy can yield empty regular payload; size refusal masks absent symlink-type guard",
+    "proof": "nonempty companion plus exact diagnostic exposes copy-semantics acceptance Red; deterministic genuine USTAR symlink header refuses at intended boundary",
+    "fix": "91-byte first-party symlink-header archive, no filesystem privilege/dependency requirement"
+  },
+  {
+    "item": "Kilo current review",
+    "verdict": "clean",
+    "proof": "No issues found; zero open review threads and pending reviews. Carried PowerShell open-state sentence contradicts fresh authoritative resolved state."
+  }
+]

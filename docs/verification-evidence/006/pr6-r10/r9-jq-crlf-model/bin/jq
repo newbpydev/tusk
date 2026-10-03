@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+binary=false
+for arg in "$@"; do
+    case "$arg" in --binary|-b) binary=true ;; esac
+done
+output=$(mktemp)
+trap 'rm -f "$output"' EXIT
+status=0
+"$MODEL_REAL_JQ" --binary "$@" >"$output" || status=$?
+if "$binary"; then cat "$output"; else sed 's/$/\r/' "$output"; fi
+exit "$status"

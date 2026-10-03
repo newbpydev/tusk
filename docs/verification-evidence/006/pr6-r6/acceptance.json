@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "reviewed_head": "ffe87310c0b5970fec73ff32973ab4ff057accb9",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37053276373,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 1,
+  "inline_review_threads": 0,
+  "needs_human": 0,
+  "canonical": {
+    "status": "passed",
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "exit": 0,
+    "log": "r6-canonical-frozen.log.gz",
+    "scope": "Executable fixture and lesson stable throughout; completed authority status and receipts recorded afterward."
+  },
+  "implementation_sha256": {
+    "scripts/test/test_scripts.sh": "69e48683ee2c2773bf595624146b241db20d80e429b2f0120b8e80b1f62a8a77",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "84dbdc534db2bf07704b3dfdcec1d25759e0f6f7f2061c1a24b7f582c0ff3b89"
+  },
+  "remediation_commit": "containing commit",
+  "utc": "2026-10-02T19:45:27.582309+00:00",
+  "red": {
+    "native_job": "https://github.com/newbpydev/tusk/actions/runs/37053276373/job/110991645314",
+    "native_assertion": "profile test binary follows the selected output path (expected 0, got 1)",
+    "controlled_model_exit": 2,
+    "controlled_model_log": "r6-msys-model-red.log.gz"
+  },
+  "green": {
+    "minimum_go_model_exit": 0,
+    "fixture_assertions": "57/57",
+    "actual_profile_arguments": "-cpuprofile selected path; -o selected path plus .test; observed via owned fake compiler",
+    "native_windows_reexecution": "pending"
+  },
+  "limits": [
+    "Native failing log does not print the dry recipe; the explicit conversion diagnosis is supported by official MSYS semantics and the controlled model.",
+    "Linux conversion model and fake compiler argument checks do not claim Windows runtime, real profiling or physical terminal acceptance.",
+    "Sequential main-thread audit does not claim independent model agreement.",
+    "Physical five-host terminals, trusted-main candidate/provenance, exact-byte performance/cask and release/tap publication remain pending."
+  ],
+  "retained_logs_sha256": {
+    "r6-canonical-frozen.log.gz": "c0a91ade0665ddcc4b5253ab46442c2217e8f989eb121882d6a7cfb874139088",
+    "r6-msys-model-green.log.gz": "14a931415c00add665e17f4998eeddc18305173952df33c0ed43282640fefe2c",
+    "r6-msys-model-red.log.gz": "5689e9a2166d956d5f339799aea3db086bc5b8167a24b3a1a480e9f7387c265c",
+    "windows-native-excerpt.log.gz": "de7e38d2759a3d7eb4e814069ffb17b679c9c063bb178dcad5f208c533161b8f"
+  }
+}

@@ -1,0 +1,73 @@
+.nh
+.TH "TUSK-LIST" "1" "Sep 2026" "Tusk" "Tusk Manual"
+
+.SH NAME
+tusk-list - List tasks with composable filters
+
+
+.SH SYNOPSIS
+\fBtusk list [flags]\fP
+
+
+.SH DESCRIPTION
+List tasks with composable filters
+
+
+.SH OPTIONS
+\fB--all\fP[=false]
+	Include all statuses
+
+.PP
+\fB--due\fP=""
+	Local civil day
+
+.PP
+\fB-h\fP, \fB--help\fP[=false]
+	help for list
+
+.PP
+\fB--json\fP[=false]
+	Print complete JSON
+
+.PP
+\fB--parent\fP=""
+	Full parent task ID
+
+.PP
+\fB-p\fP, \fB--priority\fP=[]
+	Repeatable priority (OR)
+
+.PP
+\fB--root\fP[=false]
+	Root tasks only
+
+.PP
+\fB--search\fP=""
+	Literal title/notes search
+
+.PP
+\fB-s\fP, \fB--status\fP=[]
+	Repeatable status (OR)
+
+.PP
+\fB-t\fP, \fB--tags\fP=[]
+	Require all tags
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+\fB--auto-complete-parent\fP[=false]
+	Complete parents when all children are done
+
+.PP
+\fB--timezone\fP=""
+	Date timezone (IANA name)
+
+
+.SH EXAMPLE
+.EX
+  tusk list --status todo --status blocked --tags work --json
+.EE
+
+
+.SH SEE ALSO
+\fBtusk(1)\fP

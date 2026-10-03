@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "reviewed_head": "79dd1e574481187dd568c63c1da81f4ce2e66a67",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37050651851,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 1,
+  "inline_review_threads": 1,
+  "review_verdict": "not-addressing; original alias preserved and actual BusyBox test passes",
+  "needs_human": 0,
+  "canonical": {
+    "status": "passed",
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "exit": 0,
+    "log": "r5-canonical-frozen.log.gz",
+    "scope": "Executable fixture and lesson stable throughout; completed authority status and receipts recorded afterward."
+  },
+  "implementation_sha256": {
+    "scripts/test/test_scripts.sh": "428887743e5e4768f3aa4a57a2ec77d0769806f852795e33baf72128593ab981",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "f5ac9a246bf081cd9f8f09e6c775625d0c5eb18bb2589ce455667942b0efbb5e"
+  },
+  "remediation_commit": "containing commit",
+  "utc": "2026-10-02T19:18:09.587277+00:00",
+  "red": {
+    "source": "Native Windows existing CLI Make regression",
+    "expected": 2,
+    "actual": 0,
+    "job": "https://github.com/newbpydev/tusk/actions/runs/37050651851/job/110982923695",
+    "scope": "Actual native Red; no claimed local Windows reproduction."
+  },
+  "green": {
+    "shell_suite_exit": 0,
+    "fixture_assertions": "55/55",
+    "compiler_trace_cases": 9,
+    "recursive_catalog_generation": "passed",
+    "native_windows_reexecution": "pending"
+  },
+  "limits": [
+    "Native compiler selection diagnosis matches the logged GNU Make 4.4.1 source and PATH fixture; next hosted execution must confirm the repair.",
+    "Linux shell and actual Linux BusyBox checks do not claim physical Windows or Alpine host acceptance.",
+    "Sequential main-thread review does not claim independent model agreement.",
+    "Physical five-host terminals, trusted-main candidate/provenance, exact-byte performance/cask and release/tap publication remain pending."
+  ],
+  "retained_logs_sha256": {
+    "r5-busybox-hash-proof.log.gz": "d1883a824fda7de635b75ccd069ec6aa9a643345bf2282131ce444b4faacff4c",
+    "r5-canonical-frozen.log.gz": "32239f5b37af7eb7e8b8a89ce08b4672bfe64ab0e3879cf521841ea80874e1ea",
+    "r5-test-scripts-green.log.gz": "d0a45b70b3a4498d928c6fd6bfadb66db28936fccb3bfa9f6a12591bda224f5f",
+    "windows-native-excerpt.log.gz": "4622489fee6f4efacdf0ed356248c23a1bf0398be48dbd5d9f89931c6322879b"
+  }
+}

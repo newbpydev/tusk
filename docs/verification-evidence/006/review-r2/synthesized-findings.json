@@ -1,0 +1,58 @@
+{
+  "findings": [
+    {
+      "#": 1,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/promote.sh:79 --  cli) jq -e --arg hash \"$linux_hash\" --arg go \"go$(jq -r '.compiler' \"$manifest\")\" '",
+        "parser-reproduction.log: make test-release-promotion in a faithful owned snapshot accepted concatenated failed/passing CLI reports (exit 0 vs expected 1); all API calls were fixtures."
+      ],
+      "file": "scripts/promote.sh",
+      "first_evidence": "scripts/promote.sh:79 --  cli) jq -e --arg hash \"$linux_hash\" --arg go \"go$(jq -r '.compiler' \"$manifest\")\" '",
+      "independent_reviewers": [],
+      "line": 79,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Require exactly one JSON value of the expected object shape before reading maintainer approval, gate, verification and performance records; preserve current field/hash predicates and test concatenated failed/passing documents.",
+      "title": "Reject concatenated approval and acceptance JSON records",
+      "why_it_matters": "Promotion accepts a hash-bound CLI report containing a failed record followed by a passing record because jq -e uses the last result. The same single-document ambiguity exists in approval and receipt predicates. Refusing concatenated documents before field checks keeps acceptance aligned with the strict candidate manifest parser."
+    },
+    {
+      "#": 2,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/test/test_candidate.sh:41 -- file_hash=$(sha256sum \"$scratch/candidate/assets/payload.tar.gz\" | cut -d' ' -f1)",
+        "checksum-portability-red.log: candidate, promotion and metadata canonical targets exit 2 with sha256sum command not found when PATH removes only sha256sum and retains shasum; this is a Linux portability fixture, not native macOS acceptance.",
+        "GitHub macOS 15 toolset common_packages does not declare coreutils: https://raw.githubusercontent.com/actions/runner-images/main/images/macos/toolsets/toolset-15.json ; official Actions runner workflow explicitly installs coreutils before invoking sha256sum on macOS: https://github.com/actions/runner/blob/main/.github/workflows/release.yml"
+      ],
+      "file": "scripts/test/test_candidate.sh",
+      "first_evidence": "scripts/test/test_candidate.sh:41 -- file_hash=$(sha256sum \"$scratch/candidate/assets/payload.tar.gz\" | cut -d' ' -f1)",
+      "independent_reviewers": [],
+      "line": 41,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "testing"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Use a portable shared test-only SHA256 helper with sha256sum when present and shasum -a 256 otherwise; cover both paths and rerun the affected canonical policy targets with sha256sum removed from PATH.",
+      "title": "Release policy tests require an unavailable GNU hash command",
+      "why_it_matters": "Canonical release policy tests fail before their assertions on a supported shell that provides shasum but lacks GNU sha256sum. The production release tools already support that environment, so their tests add an undeclared platform prerequisite. A shared test-only digest helper makes the fixture hashes portable without changing shipped code."
+    }
+  ],
+  "pre_existing_findings": [],
+  "residual_risks": [],
+  "testing_gaps": [],
+  "triage_groups": [],
+  "coverage": [
+    "Local reviewers, merge, validator and report ran sequentially in parent per root AGENTS mapping; no independent local corroboration. Claude provider-capable request returned HTTP 401 invalid OAuth token; replacement Composer via cursor-agent requested composer-2.5-fast at fast; receipt_supported=false, model_actual=unverified, effort_actual=unverified, independence_verified=false. Five peer claims rejected with guard-specific evidence; none promoted. All peer job directories deleted."
+  ]
+}

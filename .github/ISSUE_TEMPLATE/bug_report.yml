@@ -1,0 +1,31 @@
+name: Bug report
+description: Report a reproducible task or terminal problem
+body:
+  - type: markdown
+    attributes:
+      value: "For security concerns, follow SECURITY.md. Do not upload personal databases, notes or environment dumps."
+  - type: input
+    id: version
+    attributes:
+      label: Tusk version or source commit
+      description: Output from tusk --version, and commit if built from source
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: OS, architecture and terminal
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Sanitized steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true

@@ -1,0 +1,6 @@
+{
+  "Version": "7.5.4",
+  "IsNull": false,
+  "Replaced": "",
+  "scope": "Exact production advanced-script parameter declarations, invoked via -File with VerificationReceipt omitted; Linux language binding only."
+}

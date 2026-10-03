@@ -1,0 +1,1 @@
+Matched docs/solutions/workflow-issues/verify-owned-kitty-window-without-focus-or-environment-leaks.md. Automated gates remain Bash; visible native proof remains pending and isolated from policy mocks. No new environment logging or borrowed user sessions. No critical-patterns file or declared packs; no contradicted solution rule. Sequential parent inspection.

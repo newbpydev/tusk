@@ -1,0 +1,5 @@
+{
+  "outcome": "empty-batch",
+  "reason": "No admitted primary/actionable findings; no independent validation claim. Peer rejections have guard-specific evidence in peer-admission.json.",
+  "verdicts": null
+}

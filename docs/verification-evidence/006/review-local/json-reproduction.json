@@ -1,0 +1,6 @@
+{
+  "head": "c027114",
+  "trigger": "manifest appended {}",
+  "exit_code": 0,
+  "output": "bash scripts/release_check.sh verify \"$RELEASE_ASSETS\"\n"
+}

@@ -1,0 +1,15 @@
+{
+  "scope": "Sequential main-thread review of the actual ambient-identity fixture repair",
+  "confirmed_p0_p2": 0,
+  "independent_review": false,
+  "checks": [
+    "Same owned windows/amd64 identity is used for the passing native control and architecture negative.",
+    "The negative changes only requested architecture to arm64; existing host/OS/shell/CGO/compiler identities stay valid.",
+    "Exit 1 and exact architecture diagnostic are mandatory.",
+    "Output is copied before expect truncates its capture file.",
+    "No production/workflow implementation, dependency, tool pin or product acceptance threshold changes."
+  ],
+  "limitations": [
+    "The controlled Windows identity runs in Linux Bash; actual native Windows must still rerun."
+  ]
+}

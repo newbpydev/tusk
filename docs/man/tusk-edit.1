@@ -1,0 +1,85 @@
+.nh
+.TH "TUSK-EDIT" "1" "Sep 2026" "Tusk" "Tusk Manual"
+
+.SH NAME
+tusk-edit - Patch supplied task fields
+
+
+.SH SYNOPSIS
+\fBtusk edit <id> [flags]\fP
+
+
+.SH DESCRIPTION
+Patch supplied task fields
+
+
+.SH OPTIONS
+\fB--clear-due\fP[=false]
+	Clear due date
+
+.PP
+\fB--clear-tags\fP[=false]
+	Clear all tags
+
+.PP
+\fB-d\fP, \fB--due\fP=""
+	Due date expression
+
+.PP
+\fB-h\fP, \fB--help\fP[=false]
+	help for edit
+
+.PP
+\fB--json\fP[=false]
+	Print complete JSON
+
+.PP
+\fB-n\fP, \fB--notes\fP=""
+	Task notes (empty clears)
+
+.PP
+\fB--parent\fP=""
+	Full parent task ID
+
+.PP
+\fB-p\fP, \fB--priority\fP=""
+	Priority
+
+.PP
+\fB--progress\fP=0
+	Manual leaf progress 0–100
+
+.PP
+\fB--root\fP[=false]
+	Move task to the root
+
+.PP
+\fB-s\fP, \fB--status\fP=""
+	Task status
+
+.PP
+\fB-t\fP, \fB--tags\fP=[]
+	Repeatable comma-separated tags
+
+.PP
+\fB--title\fP=""
+	Task title
+
+
+.SH OPTIONS INHERITED FROM PARENT COMMANDS
+\fB--auto-complete-parent\fP[=false]
+	Complete parents when all children are done
+
+.PP
+\fB--timezone\fP=""
+	Date timezone (IANA name)
+
+
+.SH EXAMPLE
+.EX
+  tusk edit TASK_ID --notes '' --clear-due --json
+.EE
+
+
+.SH SEE ALSO
+\fBtusk(1)\fP

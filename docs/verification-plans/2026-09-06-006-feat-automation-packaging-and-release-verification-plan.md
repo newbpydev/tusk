@@ -2,8 +2,8 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 surface-profiles: [cli-tui, infrastructure-operations, installation-data-lifecycle, documentation]
-status: Planned - not executed
-evidence-scope: Planning inspection only; all 102 execution scenarios pending
+status: PR 6 published; thirteenth complete report batch locally validated; fresh hosted/native/release gates open
+evidence-scope: 51 local scenario closures; thirteen complete PR 6 report batches locally remediated; final canonical pass; fresh hosted/native/release proof pending
 deepened: 2026-10-01
 ---
 
@@ -19,7 +19,7 @@ behavior; the [workorder](../workorders/2026-09-06-006-feat-automation-packaging
 records defects and external gates. [MASTERPLAN.md](../../MASTERPLAN.md) alone
 activates units and records completion.
 
-All scenarios below are unexecuted. Planning inspected source, local/remote SHA,
+At implementation intake all scenarios below are unexecuted. Planning inspected source, local/remote SHA,
 GitHub settings/workflows/releases and official tool documentation. No build,
 application test, canonical validation, benchmark, native/Kitty check or hosted
 mutation occurred. Historical Feature 002–005 receipts remain labeled with their
@@ -111,76 +111,122 @@ without checking the umbrella item.
 - [ ] 006-V01 **Triggers:** PR to main, main push and explicit dispatch select CI; unrelated tag/branch events do not publish anything.
 - [ ] 006-V02 **Fork/permissions:** Read-only fork PR executes quality checks with no release/tap secrets or write permission; no privileged PR-code checkout.
 - [ ] 006-V03 **Five native jobs:** Each pinned runner reports the expected OS/arch and release compiler, runs setup/validate/generated check/build, and emits current-SHA job URLs; a missing job fails acceptance.
-- [ ] 006-V04 **Minimum compiler:** Go 1.25.0 full canonical checks run on Linux and existing `build-tui` compiles application/tests for all five targets; release builds use the separate pinned compiler.
+- [x] 006-V04 **Minimum compiler:** Go 1.25.0 full canonical checks run on Linux and existing `build-tui` compiles application/tests for all five targets; release builds use the separate pinned compiler.
 - [ ] 006-V05 **Windows prerequisite normal/negative:** Git Bash, GNU Make and native GCC match the Windows Go environment; missing compiler/Make or wrong native architecture fails with actionable diagnostics before a false green race job.
 - [ ] 006-V06 **Checkout portability:** Space/Unicode paths and LF/CRLF fixtures preserve Go sources and script behavior on GNU/BSD/MSYS tooling; reproduce any incompatibility before changing scripts.
-- [ ] 006-V07 **Formatting drift:** A deliberately unformatted tracked fixture fails the post-format source-diff gate; CI cannot quietly repair and pass.
+- [x] 006-V07 **Formatting drift:** A deliberately unformatted tracked fixture fails the post-format source-diff gate; CI cannot quietly repair and pass.
 - [ ] 006-V08 **Generator drift:** Wrong sqlc pin, changed queries/schema, missing/extra generated file and fake generator failure fail their appropriate canonical checks without replacing accepted generated code.
 - [ ] 006-V09 **Module drift:** Dependency metadata changes fail `check-modules`; local replace trees are present and third-party source remains unchanged after checks.
 - [ ] 006-V10 **Coverage/race:** Missing tests, nonexempt coverage below 95% and a race-fixture failure propagate; no new coverage exemption masks a release helper/package.
-- [ ] 006-V11 **Gate propagation:** Failed fmt/vet/test/race/coverage/script child commands cannot yield a successful aggregate workflow result; logs name the failed gate.
-- [ ] 006-V12 **Immutable action/tool pins:** Missing/full-SHA mismatch/floating action ref and missing version/digest fail configuration checks; pins are verified against the upstream repository/release asset.
-- [ ] 006-V13 **Tool setup recovery:** Network failure, truncated archive, wrong hash or missing tool cannot execute unverified bytes or overwrite the last accepted tool; retry uses an owned cache path.
+- [x] 006-V11 **Gate propagation:** Failed fmt/vet/test/race/coverage/script child commands cannot yield a successful aggregate workflow result; logs name the failed gate.
+- [x] 006-V12 **Immutable action/tool pins:** Missing/full-SHA mismatch/floating action ref and missing version/digest fail configuration checks; pins are verified against the upstream repository/release asset.
+- [x] 006-V13 **Tool setup recovery:** Network failure, truncated archive, wrong hash or missing tool cannot execute unverified bytes or overwrite the last accepted tool; retry uses an owned cache path.
 - [ ] 006-V14 **Fresh source:** Fresh checkout and tagged-source fixtures retain Bubble Tea/Glamour replacement trees and gallery bytes without requiring unavailable LFS hydration; build input inventory detects absent patch files.
 - [ ] 006-V15 **Cancellation/cache/log hygiene:** Superseded PR runs can cancel; the matrix still reports independent failures. No executable promotion cache, secret/environment dump, stale job or skipped platform is treated as current evidence.
 - [ ] 006-V16 **U1 closure:** Fresh canonical/generator/native/minimum checks and sequential portability/security review bind the unit SHA and tool lock; synchronize governance before the U1 commit while missing hosted execution remains pending.
 
+U1 [local receipt](../verification-evidence/006/u1.json) closes the five focused/aggregate scenarios checked above. Other U1 scenarios retain their local partial evidence there while required hosted/native portions remain pending. No native Windows/macOS execution or workflow dispatch is claimed.
+
 ### U3 — Static shell completions and manuals
 
-- [ ] 006-V17 **Three scripts:** Bash/Zsh/Fish commands each write only the intended script to stdout and return 0 with redirected streams and absent terminal callbacks.
-- [ ] 006-V18 **No initialization:** Broken path, invalid timezone/parent environment, missing home and rejecting service/TUI/confirmation factories do not affect generation or create DB/data directories.
-- [ ] 006-V19 **Usage:** Missing/unknown shell, extra argument and unsupported flag return 2, leave stdout empty and write one safe stderr diagnostic.
-- [ ] 006-V20 **Output failure:** Short writer/broken pipe return 1; no recursive diagnostic, database open or accepted truncated file.
-- [ ] 006-V21 **Static suggestions:** Representative subcommands, flags and status/priority enums are offered; IDs, user tags, titles and notes are never fetched. User filesystem filename completion, if Cobra emits it, does not open task storage.
-- [ ] 006-V22 **Fresh tree/repetition:** Repeated/concurrent construction for different invocations does not share mutable commands/options; generation leaves existing root/help/version/JSON behavior unchanged.
-- [ ] 006-V23 **Real shell load/use:** `bash -n`, `zsh -n` and `fish -n` pass; disposable real sessions source the matching script and obtain representative completions without shell-startup-file changes.
-- [ ] 006-V24 **Manual generation purity:** Generator obtains the real CLI tree with storage/terminal factories unavailable and emits all registered command manuals, including completion and TUI help.
-- [ ] 006-V25 **Determinism:** Two generations with different wall-clock times and checkout locations produce the same normalized bytes; no current-date/autogenerated footer leak.
-- [ ] 006-V26 **Drift detection:** Changed command/flag help, missing output or extra stale manual/completion fails `check-docs`; rerunning generation repairs only owned outputs.
-- [ ] 006-V27 **Generation failure recovery:** Read-only destination or failing formatter leaves previous accepted outputs intact; no partial generation is represented as green.
-- [ ] 006-V28 **Generated module graph:** Any Cobra doc dependency is justified, pinned and covered by module checks; no database/TUI ownership or global-state regression enters the builder seam.
-- [ ] 006-V29 **Lazy startup non-regression:** Existing help/version/syntax isolation plus completion/manual paths run with inaccessible storage; new registrations do not make root construction perform terminal discovery or network/storage work.
-- [ ] 006-V30 **U3 closure:** Canonical tests, real shell records and owned Kitty inspection of completion/man usage match generated files and synchronized docs; no build/test results are displayed as Kitty app evidence.
+- [x] 006-V17 **Three scripts:** Bash/Zsh/Fish commands each write only the intended script to stdout and return 0 with redirected streams and absent terminal callbacks.
+- [x] 006-V18 **No initialization:** Broken path, invalid timezone/parent environment, missing home and rejecting service/TUI/confirmation factories do not affect generation or create DB/data directories.
+- [x] 006-V19 **Usage:** Missing/unknown shell, extra argument and unsupported flag return 2, leave stdout empty and write one safe stderr diagnostic.
+- [x] 006-V20 **Output failure:** Short writer/broken pipe return 1; no recursive diagnostic, database open or accepted truncated file.
+- [x] 006-V21 **Static suggestions:** Representative subcommands, flags and status/priority enums are offered; IDs, user tags, titles and notes are never fetched. User filesystem filename completion, if Cobra emits it, does not open task storage.
+- [x] 006-V22 **Fresh tree/repetition:** Repeated/concurrent construction for different invocations does not share mutable commands/options; generation leaves existing root/help/version/JSON behavior unchanged.
+- [x] 006-V23 **Real shell load/use:** `bash -n`, `zsh -n` and `fish -n` pass; disposable real sessions source the matching script and obtain representative completions without shell-startup-file changes.
+- [x] 006-V24 **Manual generation purity:** Generator obtains the real CLI tree with storage/terminal factories unavailable and emits all registered command manuals, including completion and TUI help.
+- [x] 006-V25 **Determinism:** Two generations with different wall-clock times and checkout locations produce the same normalized bytes; no current-date/autogenerated footer leak.
+- [x] 006-V26 **Drift detection:** Changed command/flag help, missing output or extra stale manual/completion fails `check-docs`; rerunning generation repairs only owned outputs.
+- [x] 006-V27 **Generation failure recovery:** Read-only destination or failing formatter leaves previous accepted outputs intact; no partial generation is represented as green.
+- [x] 006-V28 **Generated module graph:** Any Cobra doc dependency is justified, pinned and covered by module checks; no database/TUI ownership or global-state regression enters the builder seam.
+- [x] 006-V29 **Lazy startup non-regression:** Existing help/version/syntax isolation plus completion/manual paths run with inaccessible storage; new registrations do not make root construction perform terminal discovery or network/storage work.
+- [x] 006-V30 **U3 closure:** Canonical tests, real shell records and owned Kitty inspection of completion/man usage match generated files and synchronized docs; no build/test results are displayed as Kitty app evidence.
+
+U3 local acceptance is bound to [the receipt](../verification-evidence/006/u3.json),
+including owned Kitty screenshots and three actual shell widgets. Windows ACL
+fixtures are implemented but not natively executed here; foreign native/hosted
+release obligations remain pending. The unit does not claim independent review.
 
 ### U4 — Public documentation, license and community readiness
 
-- [ ] 006-V31 **README information order:** A visitor finds purpose, screenshot, available installation and first-task workflow before developer/planning information; source-only status is explicit before a release exists.
-- [ ] 006-V32 **Source installation:** A fresh checkout keeps replacements, uses documented Go/Make/Bash prerequisites and builds the full command package; no unsupported versioned `go install` path is presented as usable.
-- [ ] 006-V33 **Unix install draft:** Linux/macOS instructions map architecture to exact asset names, verify hashes before extraction, use user-writable paths and show PATH/version recovery for wrong-architecture/permission/download failures; public URLs remain marked pending until release.
-- [ ] 006-V34 **Windows install draft:** Native PowerShell hash/extraction/PATH commands distinguish amd64 and use `tusk.exe`; no WSL or Bash-only command is represented as the Windows user route.
-- [ ] 006-V35 **Quick start replay:** Version, add, list, tree, clean JSON and TUI examples use valid flags and full IDs; no destructive first-run example or hidden prerequisite.
-- [ ] 006-V36 **Dates/status/JSON examples:** `tomorrow`, supported offsets, priority/status enums and JSON schemas match guides/source; invalid `next week` or an undeclared `jq` dependency fails docs review.
-- [ ] 006-V37 **Shared configuration:** Explain actual DB/environment/timezone precedence, relative explicit paths, no invalid-config fallback, Windows home fallback, `NO_COLOR` and terminal requirements.
-- [ ] 006-V38 **Safety/recovery language:** Explain independent force/recursion, no undo, metadata-only history and unknown/committed outcomes; readback precedes retry, and no recovery instruction deletes DB/WAL/SHM.
-- [ ] 006-V39 **Backup rehearsal:** Stop all fixture owners, preserve closed DB plus remaining sidecars, restore to an isolated location, check integrity and compare tasks/events; prohibit live-DB-only copy and state NORMAL durability limits.
-- [ ] 006-V40 **Claims and badges:** Every supported platform/install/performance claim has a matching dated receipt; nonexistent release/CI/license badge and universal latency claim fail review.
-- [ ] 006-V41 **Screenshot/privacy:** Inspect real app image ownership/content, sanitized task data, date/source identity and alt text; social preview is readable and uses an app capture with recorded provenance, not a generated mockup.
-- [ ] 006-V42 **Metadata/community preview:** Exact proposed description/homepage/topics/social preview and issue/PR/contributor/security guidance agree; optional website/funding/contact fields are not fabricated.
-- [ ] 006-V43 **Links/rendering:** Relative guide/image/anchor links resolve; headings/code blocks/tables render legibly, badges have valid targets and the drafted public GitHub layout is inspected before activation.
-- [ ] 006-V44 **U4/license closure:** Owner's selected first-party license/rights confirmation, replacement-aware third-party inventory and verified security contact support all public claims; documentation checks, canonical validation and sequential usability/scope/privacy review pass before the unit commit.
+- [x] 006-V31 **README information order:** A visitor finds purpose, screenshot, available installation and first-task workflow before developer/planning information; source-only status is explicit before a release exists.
+- [x] 006-V32 **Source installation:** A fresh checkout keeps replacements, uses documented Go/Make/Bash prerequisites and builds the full command package; no unsupported versioned `go install` path is presented as usable.
+- [x] 006-V33 **Unix install draft:** Linux/macOS instructions map architecture to exact asset names, verify hashes before extraction, use user-writable paths and show PATH/version recovery for wrong-architecture/permission/download failures; public URLs remain marked pending until release.
+- [x] 006-V34 **Windows install draft:** Native PowerShell hash/extraction/PATH commands distinguish amd64 and use `tusk.exe`; no WSL or Bash-only command is represented as the Windows user route.
+- [x] 006-V35 **Quick start replay:** Version, add, list, tree, clean JSON and TUI examples use valid flags and full IDs; no destructive first-run example or hidden prerequisite.
+- [x] 006-V36 **Dates/status/JSON examples:** `tomorrow`, supported offsets, priority/status enums and JSON schemas match guides/source; invalid `next week` or an undeclared `jq` dependency fails docs review.
+- [x] 006-V37 **Shared configuration:** Explain actual DB/environment/timezone precedence, relative explicit paths, no invalid-config fallback, Windows home fallback, `NO_COLOR` and terminal requirements.
+- [x] 006-V38 **Safety/recovery language:** Explain independent force/recursion, no undo, metadata-only history and unknown/committed outcomes; readback precedes retry, and no recovery instruction deletes DB/WAL/SHM.
+- [x] 006-V39 **Backup rehearsal:** Stop all fixture owners, preserve closed DB plus remaining sidecars, restore to an isolated location, check integrity and compare tasks/events; prohibit live-DB-only copy and state NORMAL durability limits.
+- [x] 006-V40 **Claims and badges:** Every supported platform/install/performance claim has a matching dated receipt; nonexistent release/CI/license badge and universal latency claim fail review.
+- [x] 006-V41 **Screenshot/privacy:** Inspect real app image ownership/content, sanitized task data, date/source identity and alt text; social preview is readable and uses an app capture with recorded provenance, not a generated mockup.
+- [x] 006-V42 **Metadata/community preview:** Exact proposed description/homepage/topics/social preview and issue/PR/contributor/security guidance agree; optional website/funding/contact fields are not fabricated.
+- [x] 006-V43 **Links/rendering:** Relative guide/image/anchor links resolve; headings/code blocks/tables render legibly, badges have valid targets and the drafted public GitHub layout is inspected before activation.
+- [x] 006-V44 **U4/license closure:** Owner's selected first-party license/rights confirmation, replacement-aware third-party inventory and verified security contact support all public claims; documentation checks, canonical validation and sequential usability/scope/privacy review pass before the unit commit.
+
+U4 local acceptance is bound to [the receipt](../verification-evidence/006/u4.json).
+V33/V34 verify explicitly pending installation drafts, not native execution or
+public assets. V35 carries forward the real TUI capture with original provenance;
+CLI/JSON and closed-backup rehearsal use current actual processes. V41/V43 cover
+inspected image and local Chrome rendering of GitHub Markdown API output; hosted
+GitHub metadata/social-preview/license readback remains U8.
 
 ### U2 — Versioned packaging and local lifecycle safety
 
-- [ ] 006-V45 **Immutable version:** All three version forms report the intended validated tag version in actual built binaries; ordinary source and snapshot labels remain clearly unreleased.
-- [ ] 006-V46 **No mutable linker metadata:** Default `-X` injection or a mutable version global fails the build contract; generated constant/overlay input hash appears in the manifest and the original checkout stays clean.
-- [ ] 006-V47 **Version/input rejection:** Empty/malformed/non-semver values, shell/code injection text, conflicting tag and unsafe overlay/output paths fail before build/publication; spaces in owned temporary paths remain supported.
-- [ ] 006-V48 **Complete target matrix:** Exactly the five required OS/architecture payloads exist with matching executable architecture and no invented Windows arm64 target; omission/duplicate/wrong arch fails release-check.
-- [ ] 006-V49 **Runtime identity:** Build metadata proves CGO disabled, embedded timezone data and selected patched graph; Linux has no dynamic interpreter dependency. Darwin/Windows OS-library use does not become an unsupported fully-static claim.
-- [ ] 006-V50 **Payload contract:** Unix tar.gz/Windows zip have the right executable, names/modes, README, three completion scripts, all manuals and required notices; extraction exposes the root executable as documented.
-- [ ] 006-V51 **Licenses:** Missing project license, missing replacement-tree/embedded-asset notice and unclassified dependency obligations fail distribution checks; notices retain upstream grant text.
-- [ ] 006-V52 **Archive abuse:** Absolute paths, `..` traversal, unsafe links, unexpected database/sidecar/credential files and unexpected executable members fail manifest/member validation.
-- [ ] 006-V53 **Source archive:** Complete tagged source includes both patched third-party modules and verified gallery bytes; documented checkout build retains the intended graph without an LFS service requirement.
-- [ ] 006-V54 **Payload consumption:** A clean isolated native home can extract and run version/help without Go, compiler, external service or database initialization; verify archive and executable hashes separately.
-- [ ] 006-V55 **Manifest/checksums:** Payload corruption, missing hash, wrong target/version/SHA/tool input or a self-hash dependency cycle fails verification; manifest/checksum files identify one complete candidate.
-- [ ] 006-V56 **No remote side effects:** Both snapshot and local intended-tag candidate modes trap any release API/tag push/tap mutation; no publishing credentials are required or read.
-- [ ] 006-V57 **Cleanup/data boundaries:** Failure/cancellation cleans only owned temporary build storage, keeps diagnostics and preserves user DB/sidecars/unrelated dirty files; colliding retained outputs are rejected.
-- [ ] 006-V58 **Binary reproducibility:** Same source/version/compiler/overlay/tool pins built in two owned locations produce matching executable hashes; timestamp/path entropy is detected rather than excused.
-- [ ] 006-V59 **Archive reproducibility:** Same payloads/source timestamp/tool pins reproduce archive/man/completion bytes; manifest contains stable inputs and separately records non-deterministic workflow identity where appropriate.
-- [ ] 006-V60 **Failed prerequisites:** Bad tool digest, unavailable pin, failed documentation generation or failed child build produces nonzero release-check/candidate result; preserve existing accepted outputs and no fallback compiler.
-- [ ] 006-V61 **Notice inventory scope:** Source and executable dependency/asset inventories include local replacement paths and patch provenance; stale inventory fails after a dependency/asset change.
-- [ ] 006-V62 **U2 closure:** Canonical/generated/minimum checks, manifest/member negative fixtures and current native local smoke pass with synchronized review/receipts before the U2 commit; hosted/native release claims remain open.
+The `scripts/releasecheck/` Go helper is exercised by `make test-release`, full
+canonical tests/race/coverage and the minimum compiler; no coverage exemption.
+Archive/binary metadata inspection uses standard libraries on any build host.
+Unsafe Make parameter fixtures must fail without evaluating shell/Make code.
+Pre-commit validation artifacts name their private local validation SHA and do
+not close trusted hosted/native acceptance.
+
+Source archive checks use actual Git archives, a narrow initial PAX commit
+comment and fixed 0022 tar umask, with executable bits read from Git rather than
+OS permissions. Component Red/Green covers config hooks/payload mutations,
+substituted/missing manifest inputs, trailing tar data, setuid/setgid/sticky
+archive modes and fresh-checkout sqlc.
+The cross-built integration fixture contains the real app and payload; the actual
+full repository archive is still required for V53. All V45–V62 local results are recorded in [the U2 receipt](../verification-evidence/006/u2.json):
+actual complete source archive, byte-identical B/C assets, candidate/snapshot
+version smoke, minimum compiler and fresh canonical gates. These private local
+validation objects do not close U6 hosted provenance or U5 native release gates.
+
+The canonical config hash excludes temporary-path entropy. A generated runtime
+config changes only literal `dist`; retain its actual bytes outside assets and
+compare the stable manifest/payload set between owned locations. The first real
+packager run exposed unsupported `dist` templating and remains a failed receipt.
+
+- [x] 006-V45 **Immutable version:** All three version forms report the intended validated tag version in actual built binaries; ordinary source and snapshot labels remain clearly unreleased.
+- [x] 006-V46 **No mutable linker metadata:** Default `-X` injection or a mutable version global fails the build contract; generated constant/overlay input hash appears in the manifest and the original checkout stays clean.
+- [x] 006-V47 **Version/input rejection:** Empty/malformed/non-semver values, shell/code injection text, conflicting tag and unsafe overlay/output paths fail before build/publication; spaces in owned temporary paths remain supported.
+- [x] 006-V48 **Complete target matrix:** Exactly the five required OS/architecture payloads exist with matching executable architecture and no invented Windows arm64 target; omission/duplicate/wrong arch fails release-check.
+- [x] 006-V49 **Runtime identity:** Build metadata proves CGO disabled, embedded timezone data and selected patched graph; Linux has no dynamic interpreter dependency. Darwin/Windows OS-library use does not become an unsupported fully-static claim.
+- [x] 006-V50 **Payload contract:** Unix tar.gz/Windows zip have the right executable, names/modes, README, three completion scripts, all manuals and required notices; extraction exposes the root executable as documented.
+- [x] 006-V51 **Licenses:** Missing project license, missing replacement-tree/embedded-asset notice and unclassified dependency obligations fail distribution checks; notices retain upstream grant text.
+- [x] 006-V52 **Archive abuse:** Absolute paths, `..` traversal, unsafe links, unexpected database/sidecar/credential files and unexpected executable members fail manifest/member validation.
+- [x] 006-V53 **Source archive:** Complete tagged source includes both patched third-party modules and verified gallery bytes; documented checkout build retains the intended graph without an LFS service requirement.
+- [x] 006-V54 **Payload consumption:** A clean isolated native home can extract and run version/help without Go, compiler, external service or database initialization; verify archive and executable hashes separately.
+- [x] 006-V55 **Manifest/checksums:** Payload corruption, missing hash, wrong target/version/SHA/tool input or a self-hash dependency cycle fails verification; manifest/checksum files identify one complete candidate.
+- [x] 006-V56 **No remote side effects:** Both snapshot and local intended-tag candidate modes trap any release API/tag push/tap mutation; no publishing credentials are required or read.
+- [x] 006-V57 **Cleanup/data boundaries:** Failure/cancellation cleans only owned temporary build storage, keeps diagnostics and preserves user DB/sidecars/unrelated dirty files; colliding retained outputs are rejected.
+- [x] 006-V58 **Binary reproducibility:** Same source/version/compiler/overlay/tool pins built in two owned locations produce matching executable hashes; timestamp/path entropy is detected rather than excused.
+- [x] 006-V59 **Archive reproducibility:** Same payloads/source timestamp/tool pins reproduce archive/man/completion bytes; manifest contains stable inputs and separately records non-deterministic workflow identity where appropriate.
+- [x] 006-V60 **Failed prerequisites:** Bad tool digest, unavailable pin, failed documentation generation or failed child build produces nonzero release-check/candidate result; preserve existing accepted outputs and no fallback compiler.
+- [x] 006-V61 **Notice inventory scope:** Source and executable dependency/asset inventories include local replacement paths and patch provenance; stale inventory fails after a dependency/asset change.
+- [x] 006-V62 **U2 closure:** Canonical/generated/minimum checks, manifest/member negative fixtures and current native local smoke pass with synchronized review/receipts before the U2 commit; hosted/native release claims remain open.
 
 ### U6 — Hosted candidate and trusted provenance
+
+Local workflow/API/certificate fixtures exercise fail-closed identity, exact main
+SHA, all six reusable CI jobs, error-skipping/changed-input rejection, fixed
+artifact extraction layout, payload integrity, expiry and lost-response readback.
+They are component evidence. All V63–V72 remain pending actual authorized hosted
+run/artifact/attestation proof. The verifier requires fresh output outside the
+candidate, retained API artifact digest and signed certificate run/attempt/source
+identity for all ten subjects; it does not claim a computed transport ZIP hash.
+GitHub's minimal run repository is followed by current default-branch readback.
 
 - [ ] 006-V63 **Manual candidate isolation:** Authorized default-branch dispatch builds the requested exact main SHA/version and uploads a candidate without a public release/tag/tap write.
 - [ ] 006-V64 **Trusted source/run:** Reject fork/PR source, untrusted workflow/artifact, nonexistent SHA, unauthorized branch/tag and a run identity that does not match the manifest.
@@ -260,9 +306,11 @@ the real installed app and shell completion/manual use.
 | CLI release measurement | `make bench-cli-release RELEASE_BINARY=<extracted-binary> CLI_BENCH_OUTPUT=<new-report>` | Planned U5; invokes the existing runner without rebuilding the supplied binary; hash-preservation fixture required |
 | TUI release measurement | `make bench-tui-release RELEASE_BINARY=<extracted-binary> TUI_BENCH_OUTPUT=<new-report>` | Planned U5; source-model measurements plus separate packaged startup/identity selection, retaining Feature 005 workloads/budgets |
 | Homebrew | `make test-homebrew check-homebrew CANDIDATE_DIR=<dir>` | Planned U7; generated cask syntax/audit/native installation; hosted tap mutation remains separate |
-| Draft | `make release-draft CANDIDATE_RUN_ID=<trusted-id> CANDIDATE_MANIFEST_SHA256=<accepted-digest> RELEASE_VERSION=<semver> RELEASE_SHA=<sha>` | Planned U8; explicit authorized hosted write, accepted bytes only |
-| Publish | `make release-publish RELEASE_TAG=<authorized-tag> CANDIDATE_MANIFEST_SHA256=<accepted-digest>` | Planned U8; verifies complete draft/readback/authorization, never rebuilds |
-| GitHub metadata | Structured GitHub API or documented CLI plus browser readback | U8; exact approved payload, before/after state and documentation SHA; social preview manual upload if necessary |
+| Promotion fixtures | `make test-release-promotion test-repository-metadata lint-release-promotion` | Local U8 boundary/approval/report/API-loss fixtures; no actual consent, signatures or hosted writes |
+| Prepare | `make release-prepare` / `make prepare-repository-metadata` with the [documented inputs](../release-acceptance.md) | Implemented U8; no API, unaccepted/unapplied outputs |
+| Draft | `make release-draft` with candidate/version/SHA/run/manifest, acceptance, draft approval, notes and new output | Implemented U8; separately authorized tag/private draft/assets; exact full interface in [acceptance records](../release-acceptance.md) |
+| Publish/readback | `make release-publish` / `make release-readback` with the same candidate/acceptance/notes and new output | Implemented U8; separate publish approval, complete re-download verification, no rebuild; readback writes no remote state |
+| GitHub metadata | `make apply-repository-metadata` with authorization, published receipt and new output | Exact bounded About/topics payload and current documentation SHA; manual social/browser readbacks remain pending |
 | Terminal | Owned Kitty Linux/macOS; owned Windows Terminal/PowerShell Windows 11 | U3/U5/U7; actual apps, isolated data, target window identity and inspected captures |
 
 Exact new helper/function names are implementation details. The target inputs
@@ -336,3 +384,568 @@ planned command ownership, external gate owners, unchanged historical receipts
 and unchecked execution scenarios. Its document-only results are recorded in the
 workorder. Application/native/hosted/release execution results must be recorded
 later; none is inferred from a well-formed document or live read-only GitHub query.
+
+### U6 local engineering checkpoint — 2026-10-01
+
+The manual workflow, reusable same-SHA native/minimum CI, verified Action pins and
+fail-closed candidate/API/certificate policy pass canonical, minimum and actionlint
+checks. [Receipt](../verification-evidence/006/u6.json) retains observed Red/Green
+and sequential security/reliability review. All V63–V72 hosted closure remains open:
+no workflow has been pushed/dispatched and fake signatures are component evidence.
+The committed local checkpoint enables U5's local driver/selector implementation
+under the source-freeze contract; exact hosted artifact acceptance still depends
+on an authorized trusted run after all release build inputs are committed.
+
+### U5 local engineering contract — 2026-10-01
+
+Supplied-binary selectors feed existing real CLI/docs/backup and Linux child PTY
+tests without rebuilding the candidate. Drivers require pinned manifest/executable
+identity and a trusted verification receipt; `local-fixture` is explicitly
+preliminary. Fresh evidence lives outside candidate storage and source checkout.
+Owned process fixtures are retained on success/failure. Replacement/removal checks
+protect task/event identity and data files; newer-schema refusal protects all
+pre-existing DB/sidecar bytes and forbids writes into any newly created WAL.
+SQLite may create an empty WAL and read-cache SHM on read-only inspection; absence
+of these metadata files is not the data-preservation contract. Observed overly
+strict presence assertion and failed run are retained, not relabeled as passes.
+
+CLI release measurements use the reference profile. TUI model measurements require
+a clean exact-source checkout; packaged startup and binary/measurement compiler
+identities remain separate. PowerShell native execution, actual trusted five-target
+runtime/terminal proof and candidate timing remain pending. V73–V86 stay open.
+
+### U5 local engineering checkpoint — 2026-10-01
+
+Supplied-artifact selectors, native smoke drivers, retained owned fixtures and
+reference measurement entry points pass canonical validation, Go 1.25 checks
+and all five application/test cross-builds. The preliminary Linux payload passes
+real CLI/docs/backup/replacement/newer-schema and child PTY checks with its hash
+unchanged. [Receipt](../verification-evidence/006/u5.json) retains unsafe-output
+Red/Green and the corrected SQLite metadata assertion. No production app change,
+trusted candidate timing or other-platform native acceptance is claimed. All
+V73–V86 and the parent U5 checkbox remain open. The coherent local engineering
+commit enables U7 configuration; final source freeze requires a fresh hosted run.
+
+### U7 local cask engineering contract — 2026-10-01
+
+Separate macOS build/archive IDs preserve five targets and nine public assets,
+while current `homebrew_casks` selects only the two macOS archives. Upload is
+disabled; the cask declares macOS, installs the binary, three static completions
+and all 12 manuals, and has no hooks/zap/security bypass. The strict Go audit
+compares complete nonblank statements with manifest architecture/hash/member
+identity without evaluating downloaded Ruby. Only indentation and blank lines
+are ignored; comment/statement boundaries and a pinned no-zap comment are retained.
+
+The candidate bundle now also includes `homebrew/Casks/tusk.rb`, digest-bound in
+`candidate-run.json` and separately attested by the same trusted workflow. It
+stays outside the nine-file public-asset inventory. Missing/tampered casks refuse
+complete candidate acceptance. These workflow/run-schema changes require a fresh
+hosted candidate; earlier U6 component receipts remain historical. Failed local
+packaging retains the generated cask before auditing. Native Ruby/Homebrew and
+Intel/ARM macOS install/removal/security behavior remain unexecuted. The current
+read-only tap lookup is HTTP 404; 006-ISS-003 and V87–V94 stay open.
+
+### U7 local engineering checkpoint — 2026-10-01
+
+Pinned GoReleaser creates a macOS-only Intel/ARM cask with the exact archive hashes,
+12 manuals and three completions; upload is disabled. Real fresh local packaging
+and strict declarative audit pass after retained ordering/comment failures. The
+candidate workflow now uploads/attests the separate run-bound cask. Canonical and
+minimum-compiler component checks pass; inspector coverage remains above 95%.
+[Receipt](../verification-evidence/006/u7.json) retains source/hash/config and review.
+Native Ruby/Homebrew/Intel/ARM security/runtime checks are unexecuted; current tap
+readback is HTTP404. Parent U7 and V87–V94 remain open. The coherent local commit
+enables U8 promotion/readback engineering, with final hosted candidate required.
+
+### U8 local engineering checkpoint — 2026-10-02 UTC
+
+Promotion and repository metadata helpers pass canonical Go 1.27.1 validation,
+minimum-Go focused checks and strict Bash lint. Read-only preparation consumes the
+real preliminary U7 C manifest/cask and emits nine exact asset digests plus the
+approved About/topics/image preview, explicitly unaccepted/unapplied. Fake API
+fixtures expose and fix stale main, duplicate timing cases, malformed memory
+samples, missing tap, absent draft tag, failed source diff and inherited host/debug
+or API-host redirection. Lost create/upload/publish responses reconcile existing
+state and downloaded bytes without clobber/delete/retag. The current tap still
+returns HTTP404. The custom host compiler notice failure and superseded mixed
+source gate remain retained failures; the final pinned gate passes.
+
+[Receipt](../verification-evidence/006/u8.json) records the local boundary scope.
+No fixture approval is owner consent or real provenance/native/performance proof.
+Parent U8 and V95–V102 remain open; local scenario closures stay 51. Final local
+simplification/code review and source freeze follow the coherent engineering
+commit. No push, workflow dispatch, remote tag/draft/release, metadata or tap write
+has occurred. Hosted/native/publication acceptance requires its separate actual
+evidence and concrete owner authorization.
+
+### Final local review-fix and source-freeze checkpoint — 2026-10-02 UTC
+
+All eight local checkpoints are committed. The actual ce-code-review receipt
+(`status: complete`, run `20261002-000427-b58e9f8f`, reviewed c027114) retained three
+validated findings. Caller-owned Red/Green fixes now require native gate target,
+executable and archive digests to match the verified manifest; bound all four
+GitHub helpers with a portable stdlib process driver; and require exactly one
+candidate/overlay JSON value. The driver preserves streams/arguments/exit codes,
+limits every operation to five minutes and joins the owned child/pipes. A shorter
+positive `GH_REQUEST_TIMEOUT` is allowed; unbounded/longer values fail. Canonical
+Go 1.27.1, Go 1.25 fast/script checks and strict ShellCheck pass; helper coverage
+is 97.2%. The real bounded tap readback still returns HTTP404.
+
+[Final local receipt](../verification-evidence/006/review-local/acceptance.json)
+retains the completed report, peer admission decisions, all Red/Green/failure
+logs and focused fix review. Local lenses/finish roles ran sequentially under the
+Task mapping; Claude returned an authentication failure, and the alternate
+Composer receipt did not verify its actual model/effort or serving family. No
+independent model agreement is claimed. No justified review finding remains open.
+
+The containing coherent review-fix commit is the local source freeze. Next is
+separate owner authorization to push this branch and open its reviewable PR;
+merge, main candidate dispatch, tags/releases, settings and tap writes remain
+separate. Select the final main SHA only after authorized integration, generate
+a fresh hosted candidate and rerun affected exact-byte native/cask/reference
+gates. Earlier private local candidates are preliminary. Parent U6/U5/U7/U8,
+Phase 6/G4 and unexecuted scenarios stay open; local scenario closures remain 51.
+
+
+### Owner-requested renewed local review loop — 2026-10-02 UTC
+
+The owner deferred publication and requested another ce-simplify-code pass, then
+a full ce-code-review and Red/Green remediation loop for all confirmed P0–P2
+findings. The prior acceptance at `72c5eeb` remains historical. The active target
+is this local review loop; no push, PR, tag, workflow dispatch or release is
+authorized. Each completed fix unit must pass canonical validation, synchronize
+this triplet and MASTERPLAN, and be committed before advancing. Actual native,
+hosted, tap and publication evidence remains pending; the 51 local scenario
+closures do not close those parent gates.
+
+### Renewed local review-fix checkpoint — 2026-10-02 UTC
+
+The owner-requested simplification found no worthwhile behavior-preserving change
+(0 reuse/quality/efficiency edits; three deliberate structures retained). Full
+review `20261002-140940-86eb372b` confirmed two P2 issues; caller focused review
+caught a third. Seven Red cases now refuse concatenated approval/acceptance/report
+and verification objects; policy fixture hashes support shasum without GNU
+sha256sum; a failed Windows native path conversion refuses selected-binary
+acceptance. All existing identity, hash, sample and owner-approval guards remain.
+
+[Receipt](../verification-evidence/006/review-r2/acceptance.json) retains the
+original completed review, focused addendum, failed/incomplete fixtures, Green
+checks and source hashes. Focused checks, Go 1.25 script suite and strict
+ShellCheck pass. Fresh final canonical validation/build/generated/docs/notices/workflow checks
+pass before this coherent local fix commit; repeat full review on the committed
+head.
+Local roles ran sequentially, Claude authentication failed and Composer serving
+model/effort/independence is unverified. No independent agreement is claimed.
+
+Local scenario closures remain 51; parent U6/U5/U7/U8, Phase 6/G4 and actual
+native/hosted/tap/publication gates remain open. No remote mutation or publication
+is authorized. The active target remains this review/fix loop.
+
+### Renewed local review loop completion — 2026-10-02 UTC
+
+- [x] Apply ce-simplify-code to the full Feature 006 branch (no worthwhile edits).
+- [x] Fix all three confirmed P2 issues with observed Red/Green, focused review,
+  minimum-Go/lint/canonical checks and coherent local commit `df10217`.
+- [x] Repeat full ce-code-review on that committed head to a clean local pass.
+
+Run `20261002-143551-fd10da2c` is complete with no remaining confirmed P0–P2
+finding or unresolved review gate. [Clean repeat receipt](../verification-evidence/006/review-r3/acceptance.json)
+retains full coverage, all five rejected peer claims with current guards and
+source binding. Local lenses/finish roles ran sequentially; Claude returned
+HTTP401 and Composer's actual model/effort/independence is unverified. No
+independent agreement is claimed. Both consumed peer jobs are deleted.
+
+Fresh closure canonical validation/build/generated/docs/notices/workflow checks
+pass before the governance/evidence commit. The reviewed executable sources remain unchanged. The local review loop
+is complete and publication remains deferred by the owner. Actual native/hosted,
+tap, cask/performance and publication gates remain open; parent U6/U5/U7/U8,
+Phase 6/G4 and the 51 local scenario count do not change. No push/PR, workflow
+dispatch, tag, draft/release, settings or tap write occurred.
+
+
+### Learning and authorized PR publication — 2026-10-02 UTC
+
+The owner invoked ce-compound followed by ce-commit-push-pr, superseding the
+previous publication hold for branch push and PR creation. The reviewed executable
+sources remain unchanged from the clean repeat review at `df10217`. The
+[release-check learning](../solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md)
+records how to establish causal Red/Green evidence with controlled fixtures.
+Full compounding ran sequentially under root AGENTS; frontmatter, links and six
+behavior claims pass grounding checks. No glossary or instruction edit was needed.
+
+- [x] Capture the verified learning and synchronize publication authority after a
+  fresh canonical gate. [Receipt](../verification-evidence/006/publication/acceptance.json).
+
+The containing documentation unit passed canonical validation before commit
+and publication. The complete branch targets GitHub main for hosted review;
+publication of a PR does not close release acceptance. Actual native terminals,
+trusted-main candidate provenance, exact-byte cask/performance acceptance, tap
+availability and release/settings/tap writes remain pending. Parent U6/U5/U7/U8,
+Phase 6/G4 and the 51 local scenario count are unchanged. No merge, release tag,
+workflow dispatch, repository settings or tap write is authorized by this request.
+
+### PR #6 complete hosted report batch — 2026-10-02 UTC
+
+[PR #6](https://github.com/newbpydev/tusk/pull/6) is open at
+`ced4417a648c3dcd21d4e48a215788ca2cce3112`. The owner requested all reports
+before one combined remediation pass. All six CI jobs and Kilo's review completed
+on that unchanged commit. The 30 review threads were assessed together: 27
+change items and three evidence-based replies. Six failing CI jobs reduce to
+Windows tool provisioning, macOS fixture assumptions and undeclared ripgrep
+in the shell policy fixtures. Additional instances of those portability
+assumptions are included in the same bounded unit.
+
+- [x] Apply the valid review/CI changes with causal Red/Green evidence.
+- [x] Pass fresh current-state canonical validation and review the combined diff;
+  prepare the complete batch as one coherent commit/push unit.
+- [ ] Settle the complete post-push hosted report set before release acceptance.
+
+These reports do not close the pending actual native terminal, exact-byte
+performance, trusted-main candidate, cask/tap or release-publication gates.
+The 51 local scenario closures and open parent units remain as recorded above.
+
+Native preflight now checks the selected executable’s actual `--version` output.
+Every native promotion receipt requires `observed_version` equal to the candidate
+manifest version. Copied inventories are rechecked before finalize succeeds.
+The complete batch is retained in [the R1 receipt](../verification-evidence/006/pr6-r1/acceptance.json).
+
+The first combined canonical gate passed functional/race tests but rejected
+release-inspector coverage at 92.6%. Malformed PE tables, ordinal imports and
+bounded/corrupt timezone ZIPs now raise focused coverage to 95.5%; final
+canonical validation is pending. The failed gate remains retained.
+
+A follow-up inventory regression rejects a standalone notice that differs from
+the accepted source even when its bundle hashes/checksums are repaired. The
+minimal source-digest binding passed focused Red/Green; final current-state
+canonical validation follows the already-passing intermediate gate.
+
+The final current-state canonical gate passed: `make validate build
+check-generated check-docs check-notices check-ci check-candidate-workflow
+lint-release-promotion`, using official `GOTOOLCHAIN=go1.27.1`. Release-inspector
+coverage is 95.2%. The containing commit is the coherent local remediation unit;
+publication, visible thread replies/resolution and fresh hosted reports are
+verified separately on PR #6. Pending native/release gates remain unchanged.
+
+### PR #6 second complete hosted report batch — 2026-10-02 UTC
+
+All six Native CI jobs and Kilo review completed on unchanged
+`79646a31bae6b95980b8bd518b744c15944a4fb7` before this repair unit began.
+Linux release/minimum compiler jobs pass. Both macOS runners pass functional
+checks but reject release-inspector coverage at 94.9%. Windows now passes tool
+setup and exposes build-output quoting, checkout-byte conversion and platform
+fixture assumptions. One new import-policy suggestion and four carried summary
+claims are assessed against current source and retained evidence together.
+
+- [x] Repair the complete confirmed batch with causal Red/Green.
+- [x] Pass fresh canonical validation and review the complete applied diff.
+- [ ] Commit/push one coherent repair and settle all fresh hosted reports.
+
+Parent units, the 51 local scenario closures and native/release acceptance
+remain unchanged. No merge, release, tag, workflow dispatch, settings or tap
+mutation is included.
+
+The second combined repair passes frozen-state `make validate build
+check-generated check-docs check-notices check-ci check-candidate-workflow
+lint-release-promotion` with official `GOTOOLCHAIN=go1.27.1`. Inspector coverage
+is 96.2% on Linux. Five-target verification-test compilation, the actual vendor
+checkout inventories under `autocrlf=true`, and all 30 native-binding rejection
+checks with zero fake GitHub calls pass. See [the R2 receipt](../verification-evidence/006/pr6-r2/acceptance.json).
+The containing commit prepares one coherent repair. Windows ACL execution and
+macOS/Windows coverage require the next complete hosted report set.
+
+
+### PR #6 third complete report-batch repair (2026-10-02)
+
+All seven reports finished on `eaa8791c2f82e1320620354fb2da95f5062cd52c`
+before repair edits. Linux/minimum compiler and Kilo pass; both macOS jobs fail
+at the release-smoke fixture's physical-path assertion, and Windows passes
+functional/race tests but misses native coverage in confirmation and the CLI
+measurement process launcher. Previous ACL, checkout-byte and inspector fixes
+pass their native checks. This is progressive failure migration.
+
+- [x] Collect the complete third hosted set before starting one combined pass.
+- [x] Repair physical/native measurement paths and exercise native confirmation
+      and process launching without weakening the 95% package coverage gate.
+- [x] Validate the frozen repair and audit the complete applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+The minimum Go 1.25.0 hosted job passes the actual isolated build-output test,
+refuting Kilo's new portability suggestion. Physical native terminal, trusted
+candidate, exact-byte performance/cask and release/tap acceptance stay pending.
+
+The third combined repair passes frozen-state `make validate build
+check-generated check-docs check-notices check-ci check-candidate-workflow
+lint-release-promotion` with official `GOTOOLCHAIN=go1.27.1`. Linux coverage is
+96.1% for cmd/tusk, 95.6% for CLI measurements and 96.2% for the inspector.
+Five-target CLI/verification tests compile. See [the R3 receipt](../verification-evidence/006/pr6-r3/acceptance.json).
+The containing commit records one coherent repair. Fresh Windows EOF/cancellation
+runtime and package coverage, both macOS smoke fixtures and all other current-head
+hosted reports remain required; no native/release acceptance gate closes here.
+
+
+### PR #6 fourth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `268f0c812c87a4dd894cbc4bec58b1885ac543a1`
+before repair edits. Both macOS jobs, all three Linux jobs and Kilo pass. Windows
+passes real EOF/answer/invalid-handle/cancellation tests and coverage (cmd/tusk
+97.4%, CLI measurements 95.6%), then fails the first shell hash fixture. Git
+Bash's default copy-style `ln -s` separates a restricted-PATH executable from
+its adjacent runtime. A passing owned resolved-image control and copy-semantics
+Red establish the fixture defect; native runtime confirmation remains required.
+The related SQLC tool snapshots and archive-member refusal are reviewed together.
+
+- [x] Collect the complete fourth hosted set before repair edits.
+- [x] Preserve installed tool runtimes in restricted snapshots and prove the
+      SQLC archive-member refusal at its intended boundary.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+This remains progressive failure migration: the earlier native repairs pass and
+the Windows job reaches a later gate. Coverage, latency and archive security
+contracts remain unchanged; physical native and release acceptance stay pending.
+
+The fourth combined repair passes frozen-state `make validate build
+check-generated check-docs check-notices check-ci check-candidate-workflow
+lint-release-promotion` with official `GOTOOLCHAIN=go1.27.1`. The complete shell
+suite also passes the owned link-copy/runtime model, including exact archive
+refusal and missing-prerequisite diagnostics. See [the R4 receipt](../verification-evidence/006/pr6-r4/acceptance.json).
+The containing commit records one coherent fixture repair. Actual Windows
+execution of the repaired snapshots and the full fresh hosted set remain required.
+No native terminal or release acceptance gate closes here.
+
+### PR #6 fifth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `79dd1e574481187dd568c63c1da81f4ce2e66a67`
+before repair edits. Both macOS jobs, all three Linux jobs and Kilo pass. Windows
+passes functional/race/coverage and both hash fixtures, then the negative CLI
+Make test runs the real compiler instead of its extensionless shell fixture.
+GNU Make 4.4.1's Windows lookup searches `.exe` across PATH first. The bounded
+repair forces shell lookup only on Make calls injecting fake tools, including
+recursive catalog generation, and checks the fake compiler trace and `Error 19`.
+Actual native re-execution remains required; Linux checks alone cannot close it.
+
+Kilo's one new suggestion assumes `command -v awk` resolves a symlink target.
+It retains the command alias instead. The real BusyBox 1.35.0 awk applet passes
+both ordinary and restricted hash fixtures; invoking the resolved target directly
+fails as the reviewer describes, but that is not the generated launcher.
+The evidence-based verdict is not-addressing; no launcher code change is needed.
+
+- [x] Collect the complete fifth hosted set before repair edits.
+- [x] Repair fake-tool selection and assert its intended failure boundary.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+This remains progressive failure migration, with the old hash refusal repaired.
+No test expectation, coverage threshold, tool pin or canonical recipe changes.
+The 51 local scenario closures remain unchanged. Physical five-host terminals,
+trusted-main candidate/provenance, exact-byte performance/cask and authorized
+release/tap publication remain pending. See [the R5 receipt](../verification-evidence/006/pr6-r5/acceptance.json).
+The frozen official-Go canonical gate and the full shell suite pass. The containing
+commit records one coherent fixture repair; its fresh hosted set remains required.
+
+### PR #6 sixth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `ffe87310c0b5970fec73ff32973ab4ff057accb9`
+before repair edits. Both macOS jobs, all three Linux jobs and Kilo pass with
+zero open review threads. Windows confirms both repaired negative CLI compiler
+traces, then fails the next profile-output lexical assertion. MSYS converts the
+POSIX path passed to native Make; the fixture still expects its original spelling.
+The repair explicitly selects `cygpath -m` on MINGW/MSYS, preserves the spaced
+absolute path, and checks both the dry recipe and actual fake-compiler arguments.
+
+- [x] Collect the complete sixth hosted set before repair edits.
+- [x] Reproduce the exact path-conversion assertion in an owned model, then pass
+      the same minimum-Go model with both profile compiler arguments checked.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+The native failing test and controlled Red/Green remain distinct. This is
+progressive failure migration, not recurrence of the compiler lookup defect.
+No canonical recipe, tool pin, coverage/latency threshold or test expectation
+changes. The 51 local scenario closures and all physical native/release gates
+remain unchanged. Fresh native Windows and complete hosted verification remain
+required; see [the R6 receipt](../verification-evidence/006/pr6-r6/acceptance.json).
+The frozen official-Go canonical gate passes. The containing commit records one
+coherent fixture repair; its fresh hosted reports remain required.
+
+### PR #6 seventh complete report-batch repair (2026-10-02)
+
+All seven reports finished on `5c3f63ff9d818071deb6585b9ea6b5c0b12f9349`
+before remediation. Both macOS jobs, all three Linux jobs and Kilo pass with no
+open threads. Windows fails an unchanged no-LFS dependency-checkout fixture
+before the profile repair executes. A failed-only same-head retry reproduces the
+same Git staging failure after roughly ten seconds, invalidating the initial
+transient-failure classification as a sufficient remedy.
+
+The fixture shared one ten-second context across three Git operations. A controlled
+five-second delay before each real operation reproduces the failure and passes
+the same complete checkout after repair. Each operation now has its own bounded
+30-second resource budget; cancellation is immediate and failures include context
+expiry and elapsed time. This explicitly changes the fixture resource budget,
+while preserving every no-LFS/pointer assertion and product latency/coverage limit.
+
+- [x] Wait for the complete seventh set and preserve the failed same-head retry.
+- [x] Observe the delayed real-Git checkout Red/Green and retain an owned stalled
+      process negative that confirms deadline refusal.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+The old native logs did not print `ctx.Err()`; precise expiry attribution remains
+an inference supported by timing and the controlled reproducer. The 51 local
+scenario closures and all physical native/release gates remain unchanged. Fresh
+Windows execution and the complete new hosted set remain required; see [the R7 receipt](../verification-evidence/006/pr6-r7/acceptance.json).
+The frozen official-Go canonical gate passes. The containing commit records one
+coherent fixture repair; its fresh hosted reports remain required.
+
+### PR #6 eighth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `c2e5039cd7664f5b2621261ddee461dbc7ff4c04`
+before repair edits. Both macOS jobs, all three Linux jobs and Kilo pass with no
+open threads. Windows confirms functional/race/coverage, the no-LFS checkout,
+all 57 script assertions, profile arguments and restricted SQLC fixtures, then
+fails one CI negative that expects the ambient Windows identity to be wrong.
+On a native Windows host that identity is valid, so its successful exit is correct.
+
+The bounded repair uses the existing owned windows/amd64 identity and explicitly
+requests windows/arm64. It keeps exit 1 and asserts the exact OS/architecture
+refusal diagnostic. A controlled Windows-identity full shell suite reproduces
+the old false failure and validates the same guard after repair. Product and
+workflow implementation, coverage/latency limits and tool pins are unchanged.
+
+- [x] Wait for the complete eighth report set before edits.
+- [x] Reproduce the native-identity negative in an owned control and require the
+      intended rejection diagnostic after repair.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent repair and settle its fresh reports.
+
+This is progressive failure migration: the earlier Windows repairs now execute
+and pass. Controlled Linux fixture identities do not replace native re-execution.
+The 51 local closures and physical five-host terminals, trusted-main provenance,
+exact-byte performance/cask and authorized release/tap gates remain unchanged.
+See [the R8 receipt](../verification-evidence/006/pr6-r8/acceptance.json).
+The frozen official-Go canonical gate and controlled full shell suite pass.
+The containing commit records one coherent fixture repair; all fresh hosted
+reports remain required before declaring the PR settled.
+
+### PR #6 ninth complete report-batch repair (2026-10-02)
+
+All seven reports finished on `fbde2f8929377ef47c68214389580e28ed87f1c6`
+before edits or replies. Five CI jobs pass; Windows confirms the architecture
+negative and documentation gate, then its notices positive control fails with
+an incomplete asset inventory. Kilo identifies missing negative coverage for the
+OS operand of the native-job predicate. One combined pass handles both items.
+
+The same owned windows/amd64 control now separately requests linux/amd64 and
+requires the exact OS/architecture refusal diagnostic. An owned predicate
+mutation escaped the old suite and is detected after repair; production identity
+logic stays intact. A CRLF JSON-output notices control reproduces the exact
+native refusal. Maintainer helpers, fixture producers and the Make compiler-pin
+lookup explicitly use jq binary output, preserving LF paths/records without
+changing JSON filters or source license bytes. jq 1.7+ is an explicit build-only
+prerequisite. The full controlled JSON-output shell suite passes after repair.
+
+- [x] Wait for the complete ninth report set before changes or replies.
+- [x] Reproduce both gaps and pass the same bounded identity/line-ending controls.
+- [x] Pass frozen-state canonical validation and audit the applied diff.
+- [ ] Commit/push one coherent combined repair, reply with proof and settle every
+      fresh hosted report.
+
+Original native inventory lists were not retained by that job; precise CRLF
+attribution remains a hypothesis supported by jq documentation and the matching
+controlled refusal. Linux model checks do not replace fresh native execution.
+The 51 local closures and physical native/trusted-main/exact-byte release gates
+remain unchanged; see [the R9 receipt](../verification-evidence/006/pr6-r9/acceptance.json).
+The frozen official-Go canonical gate, complete CRLF-output shell model and
+precise OS-predicate mutation control pass. The containing commit records one
+combined repair; fresh hosted/native reports remain required for settlement.
+
+### PR #6 tenth complete report-batch repair (2026-10-02)
+
+All seven reports on `79c34f9c8be00ff23c6fc9a2f560a142b88b95d3` completed before
+this combined repair: both macOS gates passed, three Linux gates rejected the
+Windows-only jq flag, Windows passed notices/OS controls and then selected
+installed `gh.exe` instead of the owned candidate fixture, and Kilo identified
+stale status headers plus missing actionable jq prerequisite checks.
+
+Unix jq callers now omit binary mode; MSYS/Cygwin callers select it. Windows
+setup/preflight probe binary-output support and name the jq 1.7+ prerequisite.
+Native owned GitHub fixture launchers isolate candidate, promotion and metadata
+API tests. New negative/control tests reproduce the prerequisites and preserve
+literal argv, streams and exit codes. No product Go or production GitHub deadline
+behavior changes. Current authority headers are synchronized with this unit.
+
+- [x] Wait for all seven reports before changes or replies.
+- [x] Observe Red for legacy Unix jq, unsupported Windows prerequisites and missing native fixture capability.
+- [x] Pass focused controls, full legacy/CRLF shell models and the frozen canonical gate.
+- [ ] Settle every fresh hosted report after combined repair publication.
+
+The 51 local closures remain unchanged. Physical terminals, trusted-main candidate
+provenance, exact-byte performance/cask/release acceptance and tap/settings/release
+authority remain pending. See [the R10 receipt](../verification-evidence/006/pr6-r10/acceptance.json).
+
+### PR #6 eleventh complete report-batch repair (2026-10-02)
+
+All seven reports on `d28d44bb1349173a429fa5b90409e847c88d2622` completed before
+this combined assessment. All Linux jobs and macOS arm64 passed. macOS amd64's
+cancellation fixture panicked when a valid retry closed its unblock channel again.
+Windows passed the candidate controls, then exposed installed-client selection in
+the separate Homebrew fixture. Kilo identified signal-status fidelity, unnamed
+launcher assertions and an unstated retained-model jq prerequisite.
+
+The cancellation test now deliberately delays reader completion through a third
+request and closes each synchronization channel once. Homebrew uses the same
+owned native launcher as the other three API fixture families; its native stall
+control avoids a Bash grandchild during deadline cancellation. Unix signal status
+maps to 128 plus the signal, assertions name their contracts, and the retained R10
+model records its observed jq 1.8.2 capability without rewriting measured bytes.
+Production cancellation/deadline behavior and all acceptance thresholds are unchanged.
+
+- [x] Wait for all seven reports before changes or replies.
+- [x] Observe deterministic Red for the cancellation double-close and SIGTERM reported as 255.
+- [x] Pass focused controls, cross-build the test launcher and pass the frozen canonical gate.
+- [ ] Settle every fresh hosted report after combined repair publication.
+
+The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
+gates remain unchanged. See [the R11 receipt](../verification-evidence/006/pr6-r11/acceptance.json).
+
+### PR #6 twelfth complete report-batch repair (2026-10-02)
+
+All seven reports on `a23734eefc851ef4ca331b1c63c2c3a52d4c60b1` completed and
+passed before this combined review. Fresh native macOS/Windows execution confirms
+the preceding cancellation and API-fixture repairs. Kilo's five findings concern
+stall configuration, canonical shellcheck coverage, hostile-environment fixture
+consistency, the retained jq selector and cross-build evidence identity.
+
+The finite native stall now requires an explicit positive timeout below one minute;
+unsupported configurations fail with a named diagnostic. Deterministic controls
+reproduce the prior stalled invalid configurations and verify immediate refusal.
+The launcher test joins the existing lint target; Homebrew's base environment
+consistently supplies hostile host/debug values. The model README selects/probes
+MODEL_REAL_JQ explicitly. Fresh cross-build logs retain exact environment,
+GOOS/GOARCH/GOVERSION, exit status and inspected binary settings; older measured
+logs remain unchanged. Product behavior and acceptance thresholds remain unchanged.
+
+- [x] Wait for all seven reports before assessment, changes or replies.
+- [x] Observe Red for missing, malformed and non-short stall deadlines.
+- [x] Pass focused/cross-build controls and the frozen canonical gate.
+- [ ] Settle fresh hosted reports after combined repair publication.
+
+The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
+gates remain unchanged. See [the R12 receipt](../verification-evidence/006/pr6-r12/acceptance.json).
+
+### PR #6 thirteenth complete report-batch correction (2026-10-02)
+
+All seven reports on `83c8635b198ac8e84e5083483269a49064ced694` completed and
+passed before this combined assessment. Kilo confirms the five preceding fixes
+and identifies one P3 wording issue in the historical jq model README. Naming
+the `--binary` capability directly removes an ambiguous referent. The selected
+tool, capability contract, original wrapper bytes and measured logs are unchanged.
+The trajectory assessment distinguishes this prose correction from the satisfied
+model-tool identity invariant; it requires no third runtime repair.
+
+- [x] Wait for the complete seven-report set before changes or replies.
+- [x] Correct the capability referent and pass canonical validation/document checks.
+- [ ] Settle fresh hosted reports after publication.
+
+The 51 local closures and physical/trusted-main/performance/cask/tap/release/settings
+gates remain unchanged. See [the R13 receipt](../verification-evidence/006/pr6-r13/acceptance.json).

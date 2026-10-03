@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "reviewed_head": "83c8635b198ac8e84e5083483269a49064ced694",
+  "remediation_commit": "containing commit",
+  "utc": "2026-10-02T23:49:37.909293+00:00",
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_run": 37076528352,
+  "native_ci_failures": 0,
+  "inline_review_threads": 1,
+  "severity": "P3",
+  "canonical": {
+    "status": "passed",
+    "exit": 0,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate check-docs",
+    "log": "canonical.log.gz",
+    "scope": "Wording correction unchanged through the gate; completion statuses and receipts recorded afterward."
+  },
+  "implementation_sha256": {
+    "docs/verification-evidence/006/pr6-r10/r9-jq-crlf-model/README.md": "1a9fba10de987dffa73b242ad75c38757b42816ef5289949626353ce625f0a1e"
+  },
+  "retained_logs_sha256": {
+    "canonical.log.gz": "4e2f83cce6fd640c35036e8a9d4e2173f572fe22feab6d7850dbd1283101219a"
+  },
+  "native_reexecution": "pending",
+  "limits": [
+    "Documentation-only: no implementation or historical model-byte change; no failing implementation test applies.",
+    "Current Kilo report confirms all five preceding findings resolved; this sentence fixes a separate prose referent.",
+    "51 local closures unchanged; physical/trusted-main/performance/cask/tap/release/settings gates remain open.",
+    "Fresh reports for the containing documentation commit are required."
+  ]
+}

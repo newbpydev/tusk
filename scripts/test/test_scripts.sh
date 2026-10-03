@@ -42,6 +42,9 @@ assert_eq 1 "$EXIT_CODE" "setup.sh exits 1 when Go is missing"
 # Test 3: fmt.sh formats poorly formatted Go files
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "${TMP_DIR}"' EXIT
+# Native Windows Make searches for .exe across PATH before extensionless files.
+# Separate shell flags force shell lookup of the owned fake tools instead.
+fixture_make=(make '.SHELLFLAGS=-e -c')
 
 # TestSetupGoMinimum: setup must reject unsupported and malformed toolchains.
 for version in go1.24.9 go1.25.0 go1.27.1 malformed; do
@@ -138,9 +141,45 @@ printf 'module fixture\n\ngo 1.25.0\n' > "${TMP_DIR}/build-fixture/go.mod"
 printf 'package main\nfunc main() { sibling() }\n' > "${TMP_DIR}/build-fixture/cmd/tusk/main.go"
 printf 'package main\nfunc sibling() {}\n' > "${TMP_DIR}/build-fixture/cmd/tusk/app.go"
 result=0
-make --no-print-directory -C "${TMP_DIR}/build-fixture" build GOFLAGS=-buildvcs=false BUILD_OUTPUT="${TMP_DIR}/fixture-tusk" >"${TMP_DIR}/build-output" 2>&1 || result=$?
+make --no-print-directory -C "${TMP_DIR}/build-fixture" build GOFLAGS=-buildvcs=false BUILD_OUTPUT="${TMP_DIR}/new/output/fixture-tusk" >"${TMP_DIR}/build-output" 2>&1 || result=$?
 assert_eq 0 "$result" "build includes siblings and accepts isolated output"
-test -f "${TMP_DIR}/fixture-tusk"
+test -f "${TMP_DIR}/new/output/fixture-tusk"
+
+# Values reach the shell as data, including Windows backslashes and trailing
+# separators; neither Make nor the shell may evaluate a caller's filename.
+mkdir -p "${TMP_DIR}/build-bin"
+cat >"${TMP_DIR}/build-bin/go" <<'GO'
+#!/usr/bin/env bash
+[[ "$1" == build && "$2" == -o && "$3" == "$FIXTURE_BUILD_OUTPUT" && "$4" == ./cmd/tusk ]] || exit 71
+GO
+chmod +x "${TMP_DIR}/build-bin/go"
+# shellcheck disable=SC2016
+for output in 'C:\Users\Runner\Temp\owned\tusk.exe' 'C:\Users\Runner\Temp\owned\' 'path with spaces/tusk' 'literal$(shell touch injected)`touch injected`'; do
+    result=0
+    env PATH="${TMP_DIR}/build-bin:$PATH" FIXTURE_BUILD_OUTPUT="$output" "${fixture_make[@]}" --no-print-directory -C "${TMP_DIR}/build-fixture" build BUILD_OUTPUT="$output" >"${TMP_DIR}/build-data-output" 2>&1 || result=$?
+    assert_eq 0 "$result" "build output stays literal: $output"
+    test ! -e "${TMP_DIR}/build-fixture/injected"
+done
+
+# Checkout policy preserves pinned upstream bytes and canonical first-party LF,
+# even under a Windows-style global autocrlf default.
+mkdir -p "${TMP_DIR}/checkout-fixture/third_party/example"
+cp "${ROOT_DIR}/.gitattributes" "${TMP_DIR}/checkout-fixture/"
+printf 'canonical\n' >"${TMP_DIR}/checkout-fixture/README.md"
+printf 'upstream\r\n' >"${TMP_DIR}/checkout-fixture/third_party/example/fixture.go"
+git -C "${TMP_DIR}/checkout-fixture" init --quiet
+git -C "${TMP_DIR}/checkout-fixture" -c core.autocrlf=false add --all
+git -C "${TMP_DIR}/checkout-fixture" -c user.name=Fixture -c user.email=fixture@example.invalid commit --quiet -m fixture
+rm "${TMP_DIR}/checkout-fixture/README.md" "${TMP_DIR}/checkout-fixture/third_party/example/fixture.go"
+git -C "${TMP_DIR}/checkout-fixture" -c core.autocrlf=true checkout -- .
+printf 'canonical\n' >"${TMP_DIR}/expected-doc"
+printf 'upstream\r\n' >"${TMP_DIR}/expected-upstream"
+result=0
+cmp "${TMP_DIR}/expected-doc" "${TMP_DIR}/checkout-fixture/README.md" || result=$?
+assert_eq 0 "$result" 'first-party LF survives autocrlf checkout'
+result=0
+cmp "${TMP_DIR}/expected-upstream" "${TMP_DIR}/checkout-fixture/third_party/example/fixture.go" || result=$?
+assert_eq 0 "$result" 'pinned upstream bytes survive autocrlf checkout'
 
 # Verify the CLI gates select the right packages and propagate tool failures.
 for target in test-cli build-cli; do
@@ -148,29 +187,64 @@ for target in test-cli build-cli; do
     result=1
     if [[ "$recipe" == *"./internal/cli"* && "$recipe" == *"./cmd/tusk"* ]]; then result=0; fi
     assert_eq 0 "$result" "CLI target includes adapter and executable: $target"
-    printf '#!/usr/bin/env bash\nexit 19\n' > "${TMP_DIR}/go"
+    if [[ "$target" == build-cli ]]; then
+        result=1
+        if [[ "$recipe" == *'./scripts/docgen'* && "$recipe" == *'./scripts/releasecheck'* ]]; then result=0; fi
+        assert_eq 0 "$result" 'five-target builds compile native verification tests'
+    fi
+    printf '#!/usr/bin/env bash\nprintf "%%s\\n" "$*" >>"$FIXTURE_GO_CALLS"\nexit 19\n' > "${TMP_DIR}/go"
     chmod +x "${TMP_DIR}/go"
+    rm -f "${TMP_DIR}/go-calls"
     result=0
-    PATH="${TMP_DIR}:$PATH" make --no-print-directory -C "${ROOT_DIR}" "$target" >"${TMP_DIR}/negative-cli" 2>&1 || result=$?
+    FIXTURE_GO_CALLS="${TMP_DIR}/go-calls" PATH="${TMP_DIR}:$PATH" "${fixture_make[@]}" --no-print-directory -C "${ROOT_DIR}" "$target" >"${TMP_DIR}/negative-cli" 2>&1 || result=$?
+    if [[ "$result" != 2 ]]; then cat "${TMP_DIR}/negative-cli" >&2; fi
     assert_eq 2 "$result" "CLI target propagates failed go: $target"
+    result=1
+    if [[ -s "${TMP_DIR}/go-calls" && "$(cat "${TMP_DIR}/negative-cli")" == *'Error 19'* ]]; then result=0; fi
+    assert_eq 0 "$result" "CLI failure reaches the fixture compiler: $target"
 done
 
 profile_output="${TMP_DIR}/profile with spaces.cpu"
+case "$(uname -s)" in
+    MINGW*|MSYS*) profile_output=$(cygpath -m "$profile_output") ;;
+esac
 recipe=$(make --no-print-directory -n -C "${ROOT_DIR}" profile-cli CLI_PROFILE_OUTPUT="$profile_output")
 result=1
 if [[ "$recipe" == *"-o \"${profile_output}.test\""* ]]; then result=0; fi
+if [[ "$result" != 0 ]]; then printf '%s\n' "$recipe" >&2; fi
 assert_eq 0 "$result" "profile test binary follows the selected output path"
+
+# Observe argv as well as Make's printed recipe, preserving the spaced path.
+mkdir -p "${TMP_DIR}/profile-bin"
+cat >"${TMP_DIR}/profile-bin/go" <<'GO'
+#!/usr/bin/env bash
+printf '%s\n' "$@" >"$FIXTURE_PROFILE_CALLS"
+[[ $# == 11 && "$1" == test && "$2" == ./scripts/cli-bench && "$8" == -cpuprofile && "$9" == "$FIXTURE_PROFILE_OUTPUT" && "${10}" == -o && "${11}" == "$FIXTURE_PROFILE_OUTPUT.test" ]] || exit 71
+GO
+chmod +x "${TMP_DIR}/profile-bin/go"
+result=0
+env PATH="${TMP_DIR}/profile-bin:$PATH" FIXTURE_PROFILE_OUTPUT="$profile_output" FIXTURE_PROFILE_CALLS="${TMP_DIR}/profile-calls" "${fixture_make[@]}" --no-print-directory -C "${TMP_DIR}/build-fixture" profile-cli CLI_PROFILE_OUTPUT="$profile_output" >"${TMP_DIR}/profile-argv-output" 2>&1 || result=$?
+if [[ "$result" != 0 ]]; then cat "${TMP_DIR}/profile-argv-output" >&2; fi
+assert_eq 0 "$result" "profile compiler receives both selected output paths"
+result=1
+if [[ -s "${TMP_DIR}/profile-calls" ]]; then result=0; fi
+assert_eq 0 "$result" "profile output assertion reaches the fixture compiler"
 
 for target in bench-tui bench-cli bench-cli-conditions profile-cli test-cli-latency-codec generate-schema-catalog check-schema-catalog; do
     recipe=$(make --no-print-directory -n -C "${ROOT_DIR}" "$target")
     result=1
     if [[ "$recipe" == *"go "* ]]; then result=0; fi
     assert_eq 0 "$result" "CLI measurement target exists: $target"
-    printf '#!/usr/bin/env bash\nexit 19\n' > "${TMP_DIR}/go"
+    printf '#!/usr/bin/env bash\nprintf "%%s\\n" "$*" >>"$FIXTURE_GO_CALLS"\nexit 19\n' > "${TMP_DIR}/go"
     chmod +x "${TMP_DIR}/go"
+    rm -f "${TMP_DIR}/go-calls"
     result=0
-    PATH="${TMP_DIR}:$PATH" make --no-print-directory -C "${ROOT_DIR}" "$target" BUILD_OUTPUT="${TMP_DIR}/negative-build/tusk" >"${TMP_DIR}/negative-bench" 2>&1 || result=$?
+    FIXTURE_GO_CALLS="${TMP_DIR}/go-calls" PATH="${TMP_DIR}:$PATH" "${fixture_make[@]}" --no-print-directory -C "${ROOT_DIR}" "$target" BUILD_OUTPUT="${TMP_DIR}/negative-build/tusk" >"${TMP_DIR}/negative-bench" 2>&1 || result=$?
+    if [[ "$result" != 2 ]]; then cat "${TMP_DIR}/negative-bench" >&2; fi
     assert_eq 2 "$result" "CLI measurement target propagates failed go: $target"
+    result=1
+    if [[ -s "${TMP_DIR}/go-calls" && "$(cat "${TMP_DIR}/negative-bench")" == *'Error 19'* ]]; then result=0; fi
+    assert_eq 0 "$result" "measurement failure reaches the fixture compiler: $target"
 done
 
 # Catalog generation compiles storage, which may refer to newly added sqlc
@@ -188,7 +262,7 @@ test -f sqlc-generated.marker || exit 19
 EOF
 chmod +x "${TMP_DIR}/generation-fixture/bin/"*
 result=0
-PATH="${TMP_DIR}/generation-fixture/bin:$PATH" make --no-print-directory -C "${TMP_DIR}/generation-fixture" generate >"${TMP_DIR}/generation-output" 2>&1 || result=$?
+PATH="${TMP_DIR}/generation-fixture/bin:$PATH" "${fixture_make[@]}" --no-print-directory -C "${TMP_DIR}/generation-fixture" generate >"${TMP_DIR}/generation-output" 2>&1 || result=$?
 assert_eq 0 "$result" "generate bootstraps sqlc before compiling schema catalog"
 
 echo "Script Test Results: ${TESTS_PASSED}/${TESTS_TOTAL} passed"

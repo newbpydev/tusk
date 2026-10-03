@@ -1,0 +1,20 @@
+{
+  "scope": [
+    "scripts/test/test_hashes.sh",
+    "scripts/test/test_sqlc.sh",
+    "scripts/test/fixtures/sqlc-symlink.tar.gz",
+    "scripts/test/fixtures/README.md",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md"
+  ],
+  "independent_review": false,
+  "roles": "sequential main-thread correctness, fixture security, native portability and simplicity audit",
+  "verdict": "no confirmed P0-P2 in applied diff",
+  "notes": [
+    "%q constructs literal Bash data for original tool paths; no eval or untrusted command interpolation.",
+    "Hash backend may restore its process PATH after selection; prerequisite dispatcher and all SQLC wrappers preserve restricted PATH.",
+    "Archive fixture contains exactly one benign USTAR symlink member. No extract side effects precede regular-file guard.",
+    "Nonempty copied counterpart prevents size refusal masking type refusal; exact diagnostic required.",
+    "No production implementation, tool pins, coverage/latency guards, Windows privilege/settings or release/tap behavior changed.",
+    "Copy/runtime model is not a native DLL execution; next hosted run remains necessary."
+  ]
+}

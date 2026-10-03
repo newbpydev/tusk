@@ -1,0 +1,10 @@
+{
+  "job_id": "20261002T030446Z-b316f1bc",
+  "target": "claude",
+  "route": "claude",
+  "start_epoch": 1790910286,
+  "deadline_seconds": 1210,
+  "model_requested": "editorial mapping owned by adapter; see actual receipt",
+  "outcome": "authentication no-review; provider returned HTTP 401 invalid OAuth token",
+  "diagnostic": "Provider-capable unrestricted launch established; no review artifact. Credential refresh required for Claude route."
+}

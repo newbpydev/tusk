@@ -1,0 +1,39 @@
+{
+  "identity": {
+    "cross_model_route": "composer",
+    "model_requested": "composer-2.5-fast",
+    "effort_requested": "fast",
+    "receipt_supported": false,
+    "model_actual": "unverified",
+    "effort_actual": "unverified",
+    "independence_verified": false
+  },
+  "decisions": [
+    {
+      "title": "Local check-ci green without native matrix",
+      "decision": "rejected",
+      "reason": "check-ci is explicitly workflow lint/contract only; .github/workflows/ci.yml native jobs independently execute canonical Make; MASTERPLAN and local receipts explicitly leave hosted/native pending. No falsely claimed native execution."
+    },
+    {
+      "title": "Manual gate receipts lack artifact binding",
+      "decision": "rejected",
+      "reason": "Every gate is bound to source/version/run/manifest (promote.sh:43); cask identity is independently hash-bound in candidate-run, owner acceptance/authorization and fresh verify-candidate/check-cask (lines 19-20,34,53-57,65-66). All CLI/TUI/startup reports are separately hash-checked and their binary/compiler/source/sample identities validated (75-96). Extra manual duplicate hash fields do not demonstrate physical execution; actual native/cask proof remains an explicit maintainer gate."
+    },
+    {
+      "title": "Artifact API digest never gates download",
+      "decision": "rejected",
+      "reason": "candidate.sh:126-129 verifies every payload, manifest, cask and candidate-run subject certificate against exact run/attempt/source. Altered bytes cannot pass those cryptographic subject checks. Transport ZIP metadata is explicitly not an acceptance claim (receipt transport field); producer verifies full extracted inventory. No demonstrated accepted wrong payload."
+    },
+    {
+      "title": "Verify-candidate assumes local tree is artifact",
+      "decision": "rejected",
+      "reason": "candidate.sh:90-101 and 126-129 hash-bind candidate-run/manifest/cask and verify every subject against one exact signed run/attempt. Mixed-run or changed bytes fail those checks regardless of how the directory was extracted; ZIP equality is not the shipped-byte contract."
+    },
+    {
+      "title": "Provenance attestation omits signer-digest binding",
+      "decision": "rejected",
+      "reason": "The immutable hosted identity check binds GITHUB_SHA/GITHUB_WORKFLOW_SHA to requested RELEASE_SHA (candidate.sh:19); pinned attestation action signs in that run, and maintainer verifier explicitly requires signer/source/run certificate identity. Future default divergence is speculation; no current defect demonstrated."
+    }
+  ],
+  "soft_buckets": "Intentional external gates retained as scope limits; hypothetical compromised-runner/ZIP metadata scenarios and duplicated testing concerns rejected, not recycled as residual defects."
+}

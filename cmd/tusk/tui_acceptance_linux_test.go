@@ -316,11 +316,11 @@ func TestTUIStartupMeasurements(t *testing.T) {
 	if output == "" {
 		t.Skip("make bench-tui startup observation")
 	}
-	binary, err := filepath.Abs("../../bin/tusk")
+	binary, err := measurementBinaryPath()
 	if err != nil {
 		t.Fatal(err)
 	}
-	db := filepath.Join(t.TempDir(), "tasks.db")
+	db := filepath.Join(releaseDirectory(t), "tasks.db")
 	seed := exec.Command(binary, "add", "Startup fixture")
 	seed.Env = []string{"PATH=" + os.Getenv("PATH"), "TUSK_DB_PATH=" + db, "TUSK_TIMEZONE=UTC"}
 	if out, err := seed.CombinedOutput(); err != nil {

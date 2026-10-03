@@ -1,0 +1,36 @@
+[
+  {
+    "item": "Both macOS native gates",
+    "verdict": "fixed locally; native rerun pending",
+    "invariant_key": "physical-smoke-path-identity",
+    "cause": "driver physical path differs from fixture logical temporary path; silent final assertion rejects the correct argument",
+    "proof": "same failure reproduced with symlinked TMPDIR; canonical fixture path and labeled assertions pass"
+  },
+  {
+    "item": "Windows native coverage",
+    "verdict": "coverage added; native execution pending",
+    "invariant_key": "windows-confirmation-process-coverage",
+    "cause": "native confirmation never tested; process-launch test skipped Windows",
+    "fix": "owned real Windows pipe/file/invalid handle/cancellation cases and portable real Go test children; 95% threshold unchanged"
+  },
+  {
+    "item": "Windows EOF handling",
+    "verdict": "fixed from source/API contract; native execution pending",
+    "fix": "closed anonymous pipe and Windows EOF status map to io.EOF; invalid handle remains operational failure",
+    "reference": "https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile",
+    "red_limit": "local cross-build Red proves missing owned-input seam, not Windows OS runtime"
+  },
+  {
+    "item": "CLI benchmark native arguments",
+    "verdict": "fixed; modeled argument boundary verified",
+    "invariant_key": "native-measurement-arguments",
+    "fix": "use validated native binary path; explicitly convert report path and refuse conversion failure before harness invocation",
+    "limits": "does not claim the previous command necessarily failed under implicit MSYS argv conversion or prove actual Windows measurement"
+  },
+  {
+    "item": "Kilo minimum compiler suggestion",
+    "verdict": "not-addressing",
+    "thread": "PRRT_kwDOUQoUDc6ocD_L",
+    "proof": "hosted Go 1.25.0 job110957352149 passes actual isolated output build and complete canonical gate; no mkdir reintroduced"
+  }
+]

@@ -1,0 +1,44 @@
+ TUSK  /  Personal workspace                                                                         f Filters   a New task 
+╭─ > Tasks · 1 task ────────────────────────────╮╭─ Task details ──────────────────────────────────────────────────────────╮
+│ /  Search tasks                               ││                                                                         │
+│ [1 All tasks]  2 Today  3 Done                ││  Packaged release sample                                                │
+│───────────────────────────────────────────────││  Root task                                                              │
+│  Upcoming                                     ││                                                                         │
+│ >○ Packaged release sample                    ││  Status                              Priority                           │
+│    Todo · High                                ││  ○ Todo                              High                               │
+│                                               ││                                                                         │
+│                                               ││  Due date                            Tags                               │
+│                                               ││  Oct 3 · 15:14                       None                               │
+│                                               ││                                                                         │
+│                                               ││  Progress                                                      (0 / 1)  │
+│                                               ││  ───────────────────────────────────────────────────────────────   0%   │
+│                                               ││                                                                         │
+│                                               ││  Notes                                                                  │
+│                                               ││  No notes                                                               │
+│                                               ││                                                                         │
+│                                               ││  ─────────────────────────────────────────────────────────────────────  │
+│                                               ││  Activity                                                               │
+│                                               ││                                                                         │
+│                                               ││  #1  create                                                             │
+│                                               ││  Changed completed_at, description, due_date, parent_id, priority,      │
+│                                               ││  progress, status, tags, title                                          │
+│                                               ││  2026-10-01 21:20:50 -03 (-03:00)                                       │
+│                                               ││                                                                         │
+│                                               ││  ─────────────────────────────────────────────────────────────────────  │
+│                                               ││  Task information                                                       │
+│                                               ││  ID        01a0f9fc-33fb-77da-802d-61f72ef4b494                         │
+│                                               ││  Due       2026-10-03 15:14:59 -03 (-03:00)                             │
+│                                               ││  Created   2026-10-01 21:20:50 -03 (-03:00)                             │
+│                                               ││  Updated   2026-10-01 21:20:50 -03 (-03:00)                             │
+│                                               ││  Completed Not set                                                      │
+│                                               ││                                                                         │
+│                                               ││                                                                         │
+│                                               ││                                                                         │
+│                                               ││                                                                         │
+│                                               ││                                                                         │
+│                                               ││                                                                         │
+│                                               ││                                                                         │
+│                                               ││                                                                         │
+│                                               ││                                                                         │
+╰───────────────────────────────────────────────╯╰─────────────────────────────────────────────────────────────────────────╯
+ a new • e edit • / search • ? help • q quit • f filter • r refresh • Tab focus

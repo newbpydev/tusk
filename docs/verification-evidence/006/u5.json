@@ -1,0 +1,82 @@
+{
+  "unit": "U5 / 006-5",
+  "status": "local engineering accepted; trusted native/terminal/performance unit pending",
+  "utc": "2026-10-02T01:42:06.495104+00:00",
+  "base_commit": "270d9ae534d024a0120974905874daa750559d78",
+  "source_sha256": {
+    "scripts/release_smoke.sh": "aba2bea556796d132c92d3bda488277216000376e8e9a5f8cf002903bddd7adb",
+    "scripts/release_smoke.ps1": "54c4d6d16aa286df21188d398406b1fbb1529a9bfbcba38242e84e0302ea67b4",
+    "scripts/test/test_release_smoke.sh": "7ca3e8a6bc9cc64b404b5b6f7b46080bd72a8fdc99c4a39ed47786ec7c3a12ec",
+    "Makefile": "ec27776f8ccf6bedcedc4cdc3c2353503e2691b0e6fa9aca3eaf5c4d4f190fea",
+    "internal/cli/release_selection_test.go": "ab6bc109989cf496371daf5d3d05851de4a3c0e1a7f66b835f80c804cce8fd65",
+    "internal/cli/release_lifecycle_test.go": "5ad6917d1c74b7c5da5ff4b76ab2d79faf54877eb55c01697a9ee8de29e18e56",
+    "internal/cli/process_test.go": "1710030313fda8513c2fec6dabcf94f1360e33ab52ddc86398bbfc7aea7abfcc",
+    "internal/cli/docs_examples_test.go": "cdc84dd68c5de5c71defb03efa5c179ec8273e03d090c5606d49c319770d11dc",
+    "cmd/tusk/measurement_selection_test.go": "31cda23b336b5cdfb2e150fadd09d02137964e092f24e1358a67a0ea6d2c431f",
+    "cmd/tusk/tui_process_linux_test.go": "9a0e1fd7a9ae1e14ac2187dcc28890347aa9d1d25c2b2441c48c989426f07131",
+    "cmd/tusk/tui_acceptance_linux_test.go": "d1deee222caaa81b3247f0965b94b6bb7343b9f0646547a14481f4842491ff30",
+    "internal/tui/bench_test.go": "807a2838a4d1478c53a9390a0297e477dc7c91a9994c243de9b991c5e07030e4"
+  },
+  "red": [
+    "selectors undefined and release target absent",
+    "output paths allowed inside candidate assets",
+    "overly strict absent-sidecar assertion failed: read-only SQLite created empty WAL/read cache; original DB unchanged"
+  ],
+  "green": "Go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow exit0; Go1.25 selector checks and all five application/CLI/TUI test cross-builds exit0",
+  "preliminary_native": {
+    "schema": 1,
+    "binary_sha256": "48ab56da9000b67192eb1bfaba53af7910f91ebe68891ed6a6524c2fc7cc9817",
+    "manifest_sha256": "de866d0e309a85676b3f1f733527e44f740ca7f7d2547a7709654bb1d8061d12",
+    "scope": "local-fixture",
+    "host": "Linux",
+    "process_status": 0,
+    "manual_terminal": "pending; automated child PTY is separate",
+    "fixtures": "owned fixtures retained including DB/WAL/SHM on failure"
+  },
+  "preliminary_source_sha": "ab5ef84e03d9a4f35358f0592f1486e301cb5348",
+  "fixture_storage": "/tmp/tusk-006-u5-native-b-green/fixtures; failed predecessor native-b-final retained",
+  "review": {
+    "data_integrity": "Owned executable replacement/removal preserves files/tasks/events; refusal protects original DB/sidecar bytes and requires new WAL empty; read-cache metadata exception explicit",
+    "portability": "existing real-process workflows reused, special paths and native host target guard; Windows PowerShell/Git Bash paths normalized but native Windows/macOS/ARM remain unexecuted",
+    "performance": "No build prerequisite; sentinel executable/hash unchanged; CLI reference profile fixed; TUI clean exact-source requirement and packaged startup identity separate; no candidate timing claimed",
+    "reliability": "Fresh physical output paths outside candidate/source, literal Make inputs, retained failures/fixtures, no supplied executable replacement, Linux actual child PTY joined",
+    "simplicity": "shared test-only selectors replace duplicate build blocks; production application unchanged; existing inspector/bench harness reused",
+    "independence": "Sequential inline main-thread review per repository mapping"
+  },
+  "local_scenario_closures": [],
+  "pending": [
+    "006-V73",
+    "006-V74",
+    "006-V75",
+    "006-V76",
+    "006-V77",
+    "006-V78",
+    "006-V79",
+    "006-V80",
+    "006-V81",
+    "006-V82",
+    "006-V83",
+    "006-V84",
+    "006-V85",
+    "006-V86"
+  ],
+  "logs": [
+    "u5-cross.log.gz",
+    "u5-final-components.log.gz",
+    "u5-lifecycle-components.log.gz",
+    "u5-minimum.log.gz",
+    "u5-native-b-final-processes.log.gz",
+    "u5-native-b-final.log.gz",
+    "u5-native-b-green-processes.log.gz",
+    "u5-native-b-green.log.gz",
+    "u5-native-b-processes.log.gz",
+    "u5-native-b.log.gz",
+    "u5-output-boundary-green.log.gz",
+    "u5-output-boundary-red.log.gz",
+    "u5-output-literal.log.gz",
+    "u5-selector-green.log.gz",
+    "u5-selector-red.log.gz",
+    "u5-validate-green.log.gz",
+    "u5-validate.log.gz"
+  ]
+}

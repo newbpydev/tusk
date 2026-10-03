@@ -1,0 +1,8 @@
+{
+  "cmd/tusk/confirm_test.go": "b4ad328a03057c6a72f879eb920d05f47f6c4322064a0c28e01bdfb6afdb2711",
+  "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "81b13fe65d80679099b9bd5b47f9d595cac6939af586bebaf91c8a7c662e48d4",
+  "scripts/test/fixtures/gh-launcher.go": "5688e13cb49dbc70738412ac04f3073d27a0754bf49b19a46ee5d341adcb119d",
+  "scripts/test/test_gh_fixture.sh": "32778152a5a88b901a325ed6ead41826b5d58dff85f01406ea0e93352d2b8b23",
+  "scripts/test/test_homebrew.sh": "c31988860490efb8454dac0f7a2ac386d6c5d4622201a51fc866ab0f03432b1b",
+  "docs/verification-evidence/006/pr6-r10/r9-jq-crlf-model/README.md": "a4f9416e26611ac2d103bc44f8bbdf621bbb105a143ca245de94640fa29e935b"
+}

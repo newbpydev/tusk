@@ -1,0 +1,8 @@
+{
+  "route": "claude",
+  "requested_model": "claude-opus-5",
+  "requested_effort": "high",
+  "result": "no review; provider HTTP 401 invalid OAuth access token",
+  "launch": "unrestricted provider-capable; read-only adapter",
+  "job": "20261002T140955Z-d32aaad9"
+}

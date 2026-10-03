@@ -1,0 +1,14 @@
+{
+  "scope": "Sequential main-thread audit of profile path conversion, compiler argv fixture, and related dynamic Make path comparisons",
+  "confirmed_p0_p2": 0,
+  "independent_review": false,
+  "checks": [
+    "Windows branch only converts on MINGW/MSYS; Linux/macOS remain POSIX, conversion failure propagates under set -e.",
+    "The absolute path with spaces remains selected; both -cpuprofile and -o have exact full-argument assertions and a fresh trace.",
+    "Calls use the existing shell override so native Make selects the owned fake compiler.",
+    "Actual canonical Linux and minimum-Go modeled suites pass. No canonical Makefile change.",
+    "Related smoke path comparisons already use physical scratch and Windows native spelling from prior accepted repair."
+  ],
+  "source": "https://www.msys2.org/docs/filesystem-paths/",
+  "root_cause_evidence": "Native log lacks the dry recipe, so path-conversion attribution is supported by official argument semantics plus the controlled exact Red/Green; fresh Windows confirmation is required."
+}

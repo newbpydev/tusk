@@ -1,0 +1,26 @@
+{
+  "skill": "ce-simplify-code",
+  "status": "complete",
+  "scope": "all substantive branch code vs main30fb5e9",
+  "execution": "three prompt assets applied sequentially in main thread per AGENTS.md",
+  "applied": {
+    "reuse": 0,
+    "quality": 0,
+    "efficiency": 0
+  },
+  "skipped": [
+    {
+      "proposal": "consolidate per-script digest/ownership guards",
+      "reason": "different side-effect/ownership boundaries; shared framework adds coupling with no proved behavior-preserving benefit"
+    },
+    {
+      "proposal": "parallelize promotion API/upload writes",
+      "reason": "read-before-write/lost-response ordering is part of safety contract"
+    },
+    {
+      "proposal": "collapse macOS/rest payload config duplication",
+      "reason": "pinned GoReleaser build IDs and Mac-only cask intentionally require separate explicit matching configs"
+    }
+  ],
+  "checks": "current canonical Go1.27.1 validate/build/generated/doc/notice/workflow gates, Go1.25 focused scripts and ShellCheck pass; no simplification code change"
+}

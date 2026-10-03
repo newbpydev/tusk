@@ -1,0 +1,31 @@
+{
+  "compiler": "Go 1.25.0",
+  "scope": "compile only, no native execution",
+  "results": [
+    {
+      "target": "linux/amd64",
+      "exit_code": 0,
+      "output": "go build -trimpath -buildvcs=false -o \"$GH_DEADLINE_OUTPUT\" scripts/ghdeadline/main.go\n"
+    },
+    {
+      "target": "linux/arm64",
+      "exit_code": 0,
+      "output": "go build -trimpath -buildvcs=false -o \"$GH_DEADLINE_OUTPUT\" scripts/ghdeadline/main.go\n"
+    },
+    {
+      "target": "darwin/amd64",
+      "exit_code": 0,
+      "output": "go build -trimpath -buildvcs=false -o \"$GH_DEADLINE_OUTPUT\" scripts/ghdeadline/main.go\n"
+    },
+    {
+      "target": "darwin/arm64",
+      "exit_code": 0,
+      "output": "go build -trimpath -buildvcs=false -o \"$GH_DEADLINE_OUTPUT\" scripts/ghdeadline/main.go\n"
+    },
+    {
+      "target": "windows/amd64",
+      "exit_code": 0,
+      "output": "go build -trimpath -buildvcs=false -o \"$GH_DEADLINE_OUTPUT\" scripts/ghdeadline/main.go\n"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "reviewed_head": "eaa8791c2f82e1320620354fb2da95f5062cd52c",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37042975440,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 3,
+  "inline_review_threads": 1,
+  "needs_human": 0,
+  "canonical": {
+    "status": "passed",
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "exit": 0,
+    "log": "r3-canonical-frozen.log.gz",
+    "scope": "Implementation, tests and solution lesson held stable throughout; only completed authority status and generated receipts added afterward.",
+    "releasecheck_coverage": "96.2%",
+    "cli_bench_coverage": "95.6%",
+    "cmd_tusk_coverage": "96.1%"
+  },
+  "implementation_sha256": {
+    "cmd/tusk/confirm_windows.go": "70aaef229ef0f909f0c08fb9712fc0cc20fd83ea0ea223ccbc3693c82a92b272",
+    "cmd/tusk/confirm_windows_test.go": "d8bd10acbf6d1e741a64260c7beefed166ede9d4b618120c27f90203a796a2a2",
+    "scripts/cli-bench/main_test.go": "01c1b19cdf0b800e365b81721b4c4f42f99ac5302161719426def50cd824fe31",
+    "scripts/release_smoke.sh": "848908cf9181a0d634999c7a8395d6a1f0b1b928e56b33f69068a98652d194c4",
+    "scripts/test/test_release_smoke.sh": "12cd1610f9b4eb9b9f2e0480152f3b97350b4a3399eb3ee44ecfa39bca3cdcea",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "d2b9480fe440dcac07a1afa11bddf6f14028bc152e6432238fe1c0081d5c743a"
+  },
+  "remediation_commit": "containing commit",
+  "utc": "2026-10-02T18:23:55.155739+00:00",
+  "limits": [
+    "Local Windows cross-build Red demonstrates the missing owned-input seam; it is not native EOF/cancellation Red or Green.",
+    "Windows EOF mapping is supported by the ReadFile API contract and source; the added real pipe tests require hosted native execution.",
+    "Native argument fixtures assert explicit paths and no launch on conversion failure; they do not prove actual Windows performance or failure under implicit MSYS argument conversion.",
+    "Linux coverage does not close Windows/macOS package coverage gates.",
+    "The combined audit is sequential main-thread review, not independent model agreement.",
+    "Physical five-host terminals, trusted-main candidate/provenance, exact-byte performance/cask and release/tap publication remain pending."
+  ],
+  "retained_logs_sha256": {
+    "darwin-amd64-causal-excerpt.log.gz": "4a4e5103d380bbbf8898c9fb2d25ec78268da19185bd1897155fadeb09477ae7",
+    "darwin-arm64-causal-excerpt.log.gz": "e5bbb685b25b59037b5aa5a612de2c42ee0a4742fe9e6d888ddb3010d28c9e72",
+    "minimum-causal-excerpt.log.gz": "5e5c580a109af85fbe26be4c1ae5e8e1f4e95832b0ed4657ccae4f26d8c19433",
+    "r3-canonical-frozen.log.gz": "a08f8a0fee4eab12e8ea9d30c3b6ce6a470396846ccdfaa79b496fad824a3956",
+    "r3-confirm-seam-red.log.gz": "7b5d74432ada1a8bb6497e3aed5e322199967c5c471cf3959ef96869aba7b1b7",
+    "r3-coverage-green.log.gz": "7c61e4908cdd52bb0e48f87ae7401c9918193acd1fb638626865d7d131a9f087",
+    "r3-native-measurement-red.log.gz": "d022bf7f24a98331ad0279bd3ffd1e11df1c0de25b29f8e1519dc25ad441f4fd",
+    "r3-native-tests-cross-build-green.log.gz": "1b13f5e278a71e4ceb4dbbf02fee8ebcbe234a24057896028e1a67ae8423970b",
+    "r3-smoke-alias-red.log.gz": "eba80d712fbbfc30e559e642291c8eee27f6b6c98a5be3fed1f0e35eb85cc570",
+    "r3-smoke-paths-green.log.gz": "578eb87a23323fffc86356c660c6480f074fc1b5b0bf5395f14a1064f8a95642",
+    "windows-causal-excerpt.log.gz": "03ea16594160e457d284f285dd53b9e33063662f96a3a78235c1ef35e36067e7"
+  }
+}

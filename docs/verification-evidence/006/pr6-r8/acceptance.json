@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "reviewed_head": "c2e5039cd7664f5b2621261ddee461dbc7ff4c04",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37060215528,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 1,
+  "inline_review_threads": 0,
+  "needs_human": 0,
+  "canonical": {
+    "status": "passed",
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "exit": 0,
+    "log": "r8-canonical-frozen.log.gz",
+    "scope": "Fixture and lesson stable throughout; completed authority status and receipts recorded afterward."
+  },
+  "implementation_sha256": {
+    "scripts/test/test_ci.sh": "148442c1afb92465db9039e06ea7a0e92acfb0525208186b163b8bcf68735d84",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "6909350a03d99c949475eb034bc58971ad5145bf1fe3c4dd154bb0d40dcfa573"
+  },
+  "remediation_commit": "containing commit",
+  "utc": "2026-10-02T20:44:25.625360+00:00",
+  "red": {
+    "command": "GOTOOLCHAIN=go1.27.1 make test-scripts with owned Windows-identity CI model",
+    "exit": 2,
+    "diagnostic": "wrong native identity refuses cross-build substitution (expected 1, got 0)",
+    "actual_identity": "windows/amd64 go1.27.1"
+  },
+  "green": {
+    "command": "same canonical full shell suite with identical Windows-identity model",
+    "exit": 0,
+    "intended_exit": 1,
+    "refusal_diagnostic": "CI: Go OS/architecture differs from native job; cross-build is not acceptance",
+    "native_windows_reexecution": "pending"
+  },
+  "prior_repairs_native_confirmed": [
+    "Functional and race no-LFS Glamour checkouts pass in 7.88s and 5.16s.",
+    "Both CLI negative fake compiler traces and all 57 script assertions pass.",
+    "Profile dry recipe and actual compiler selected-path arguments pass.",
+    "Restricted SQLC prerequisite and archive-member fixtures pass."
+  ],
+  "limits": [
+    "Controlled Windows identity runs in Linux Bash; actual native Windows and all fresh hosted results remain required.",
+    "Only the fixture input changes to an explicit architecture mismatch; production/workflow source, tool pins and product acceptance limits stay intact.",
+    "Sequential main-thread review does not claim independent model agreement.",
+    "Physical five-host terminals, trusted-main candidate/provenance, exact-byte performance/cask and release/tap publication remain pending."
+  ],
+  "retained_logs_sha256": {
+    "r8-canonical-frozen.log.gz": "666b1f9eb1083db5decbd64ae031bbb0414103cc041333522e4b7ec6c2657116",
+    "r8-native-identity-green.log.gz": "fe3e130e6b0d3db3415355e0387122b2c0180aff1c2b5b4fdaa15a1826cc24d1",
+    "r8-native-identity-red.log.gz": "e4fd10bfe64fb84550f1f205306bcf3759f633afb35705646376d6547a73e66b",
+    "windows-failure-excerpt.log.gz": "83af6930ac0dd4678647cc3f1c6eac0a2c5eec6b8bf835d5fd11c817fce1da6e"
+  }
+}

@@ -47,21 +47,27 @@ func TestConfirm_CancelJoinsReader(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	started := make(chan struct{})
 	unblock := make(chan struct{})
+	released := make(chan struct{})
 	closed := false
 	attempts := 0
 	yes, err := threadConfirmation(ctx, func() (func() (byte, error), func() error, func(), error) {
-		read := func() (byte, error) { close(started); cancel(); <-unblock; return 0, io.ErrClosedPipe }
+		read := func() (byte, error) { close(started); cancel(); <-unblock; <-released; return 0, io.ErrClosedPipe }
 		stop := func() error {
 			attempts++
 			if attempts == 1 {
 				return errors.New("no pending IO")
 			}
-			close(unblock)
+			if attempts == 3 {
+				close(released)
+			}
+			if attempts == 2 {
+				close(unblock)
+			}
 			return nil
 		}
 		return read, stop, func() { closed = true }, nil
 	})
-	if yes || !errors.Is(err, context.Canceled) || !closed || attempts < 2 {
+	if yes || !errors.Is(err, context.Canceled) || !closed || attempts < 3 {
 		t.Fatalf("yes %v err %v closed %v attempts %d", yes, err, closed, attempts)
 	}
 }

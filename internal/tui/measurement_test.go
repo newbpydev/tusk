@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestTUIMeasurement_SummaryRetainsSamplesAndRejectsMisses(t *testing.T) {
@@ -51,7 +52,7 @@ func TestTUIMeasurement_RejectsInvalidWarmupsAndEmptyWork(t *testing.T) {
 	if r.Passed {
 		t.Fatal("empty work accepted")
 	}
-	r = measureTUI("valid", 1, false, func() int { return 1 })
+	r = measureTUI("valid", 1, false, func() int { time.Sleep(time.Millisecond); return 1 })
 	if !r.Passed || r.P50 <= 0 {
 		t.Fatal("missing complete statistics")
 	}

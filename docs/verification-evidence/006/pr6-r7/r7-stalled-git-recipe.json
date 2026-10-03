@@ -1,0 +1,5 @@
+{
+  "command": "PATH=<owned stalled-git bin>:$PATH GOTOOLCHAIN=go1.27.1 make test-tui TUI_TEST_RUN=TestTUI_DependencyCheckoutNeedsNoLFS/glamour",
+  "wrapper": "#!/bin/bash\nfor arg in \"$@\"; do if [[ \"$arg\" == add ]]; then exec sleep 35; fi; done\nexec /usr/bin/git \"$@\"\n",
+  "scope": "Inject a hung owned Git add process; exec sleep prevents descendant-held stdout. The fixture must fail with context deadline exceeded at its new 30-second per-command resource bound."
+}

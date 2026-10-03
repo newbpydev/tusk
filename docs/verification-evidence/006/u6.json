@@ -1,0 +1,97 @@
+{
+  "unit": "U6 / 006-6",
+  "status": "local engineering accepted; hosted unit/scenarios pending",
+  "utc": "2026-10-02T01:08:25.005585+00:00",
+  "base_commit": "171675d49e6d8f4a79af7a9d92b4e3d1f01936eb",
+  "source_sha256": {
+    ".github/workflows/release.yml": "8d28ad541041b16d5c5fc49da34f037460463700df4933977f23138d15510750",
+    ".github/workflows/ci.yml": "133d66d15bf86796bb2340c606fa513ced49b628fbfcb0f074825d122e791812",
+    "scripts/candidate.sh": "f664494be377922b41235dc454411db7ebb708a3c67ff6e65d590f5d10e2c7c1",
+    "scripts/test/test_candidate.sh": "f12ff605e91157552d4c8c1dad6d64a82b0968a2bbcab8d9a5a64d15c4240f23",
+    "scripts/ci-check.sh": "a728a20ebbf8db787c52e4dfc4c6a644611fcd39c0577c97a86459ffc098c5de",
+    "scripts/tool-versions.json": "f644bdbf9333ed00dcf6637076ea7eca935b38a99e4e1161e7961e2bd3f61454",
+    "Makefile": "54d196dc4da9d707741af17896659c27fc88468c4e7e50d651f1a577572b9136",
+    "docs/releasing.md": "2b324121fb02d51e278b89443b2e28710d6c6a0b900e332862b24ff3d1c09d2a"
+  },
+  "workflow": {
+    "source": "Only manual main dispatch; requested/source/builder SHA identical; historical ancestor dispatch refused",
+    "ci": "Five release-compiler native jobs and one minimum/five-target job reused on exact SHA before build. Read-only credentials unpersisted. Candidate invocations have separate concurrency; PR/push cancellation retained.",
+    "build": "One nonpublishing package set; tags fetched read-only so conflicts remain visible; named immutable artifact retained 90 days",
+    "provenance": "Separate job downloads exact artifact ID at reviewed root; only this job has OIDC/attestation write; no content-write, tap secret or publishing job"
+  },
+  "action_pins": {
+    "upload_artifact": {
+      "repository": "actions/upload-artifact",
+      "tag": "v4",
+      "sha": "ea165f8d65b6e75b540449e92b4886f43607fa02"
+    },
+    "download_artifact": {
+      "repository": "actions/download-artifact",
+      "tag": "v4",
+      "sha": "d3f86a106a0bac45b974a628896c90dbdf5c8093"
+    },
+    "attest_build_provenance": {
+      "repository": "actions/attest-build-provenance",
+      "tag": "v3",
+      "sha": "977bb373ede98d70efdf65b84cb5f73e068dcc2a"
+    }
+  },
+  "verification": {
+    "policy": "Cryptographic gh verifier (local installed 2.102.0), exact repository/workflow/ref/source/builder digest plus hosted runner requirement; verify signed certificate source/run invocation fields and each subject hash. Do not trust self-reported predicate inputs.",
+    "readback": "Successful same attempt/run with all nine jobs, current main repository, unique unexpired artifact matching repository IDs/source. Default branch fetched separately because official minimal Actions repository schema does not require it.",
+    "payload": "Existing standard-library inventory verifier before interpreting asset names; all nine assets and candidate-run.json attested.",
+    "receipt": "Fresh retained output outside candidate/Git; API artifact ID/digest recorded. No computed transport ZIP hash claim.",
+    "failure": "No success receipt on missing signature, canceled/skipped/wrong source job, bad identity/hash/expiry or lost read. Fresh read-only readback retry tested; upload/attestation rerun requires distinct run identity/native acceptance."
+  },
+  "observed_red": [
+    "Missing workflow/helper at unit start",
+    "ID download layout requires explicit merge-multiple (official pinned Action source + fixture)",
+    "Verifier wrote inside candidate and accepted it",
+    "continue-on-error, conditional attestation and substituted source env were accepted by first workflow contract",
+    "minimal Actions repository omitted default_branch and incorrectly failed valid fixture"
+  ],
+  "green": "u6-validation.log.gz: Go 1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow, exit 0; full real-archive race and 95.9% coverage. Focused/current workflow/API fixtures and Go 1.25.0 pass (u6-minimum.log.gz).",
+  "review": {
+    "security": "Sequential exact workflow/job/step/credential and signed-certificate/API boundary audit; observed findings fixed Red/Green. No release/tap write exists.",
+    "reliability": "Bounded 30-minute jobs, no partial-success skip, retained failed readback and new-directory retries, expiry/conflict/name/run/attempt validation",
+    "testing": "API and attestation boundary fakes explicitly labeled; they exercise verifier policy, not signatures/hosted/native evidence. Real archive inspector remains canonical tested.",
+    "scope_simplicity": "Existing standard-library inventory reused; shell policy is build tooling, no application/global/runtime dependency change. Small helper isolates GitHub credentials from local U2 packager.",
+    "independence": "Main-thread inline review per repository mapping; no independent peer claimed"
+  },
+  "pending": [
+    "Authorized code/workflow publication and exact main dispatch",
+    "Actual native/minimum hosted job URLs and all five native runtimes",
+    "Actual artifact ID/API digest, cryptographically verified GitHub attestations",
+    "U5 exact downloaded native/terminal/performance acceptance",
+    "Final source freeze/new candidate after later release-driver/cask/promotion build-input changes"
+  ],
+  "local_scenario_closures": [],
+  "hosted_scenarios_open": [
+    "006-V63",
+    "006-V64",
+    "006-V65",
+    "006-V66",
+    "006-V67",
+    "006-V68",
+    "006-V69",
+    "006-V70",
+    "006-V71",
+    "006-V72"
+  ],
+  "logs": [
+    "u6-ci-reuse.log.gz",
+    "u6-docs.log.gz",
+    "u6-download-layout-red.log.gz",
+    "u6-focused-final-2.log.gz",
+    "u6-focused-final.log.gz",
+    "u6-green-1.log.gz",
+    "u6-green-2.log.gz",
+    "u6-green-3.log.gz",
+    "u6-minimal-run-red.log.gz",
+    "u6-minimum.log.gz",
+    "u6-output-boundary-red.log.gz",
+    "u6-red.log.gz",
+    "u6-step-contract-red.log.gz",
+    "u6-validation.log.gz"
+  ]
+}

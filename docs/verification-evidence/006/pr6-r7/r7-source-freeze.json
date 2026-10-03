@@ -1,0 +1,7 @@
+{
+  "utc": "2026-10-02T20:18:40.202662+00:00",
+  "implementation_sha256": {
+    "internal/tui/compatibility_test.go": "2a48ada5ee8f812ba79778a8f595dd4041995a772c511aae1e2bda4266e08c39",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "7de8d354a40da0cd8a9719b4bcc9542a2f627abe2c53aea9bf0eaa78b0396d6e"
+  }
+}

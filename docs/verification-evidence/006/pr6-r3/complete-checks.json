@@ -1,0 +1,44 @@
+[
+  {
+    "completedAt": "2026-10-02T18:01:36Z",
+    "link": "https://github.com/newbpydev/tusk/actions/runs/37042975440/job/110957352363",
+    "name": "darwin/arm64 \u2014 release compiler",
+    "state": "FAILURE"
+  },
+  {
+    "completedAt": "2026-10-02T17:54:46Z",
+    "link": "https://github.com/newbpydev/tusk/actions/runs/37042975440/job/110957352512",
+    "name": "linux/arm64 \u2014 release compiler",
+    "state": "SUCCESS"
+  },
+  {
+    "completedAt": "2026-10-02T17:57:29Z",
+    "link": "https://github.com/newbpydev/tusk/actions/runs/37042975440/job/110957352149",
+    "name": "Linux \u2014 minimum compiler and five-target cross-builds",
+    "state": "SUCCESS"
+  },
+  {
+    "completedAt": "2026-10-02T18:12:49Z",
+    "link": "https://github.com/newbpydev/tusk/actions/runs/37042975440/job/110957352544",
+    "name": "darwin/amd64 \u2014 release compiler",
+    "state": "FAILURE"
+  },
+  {
+    "completedAt": "2026-10-02T17:52:39Z",
+    "link": "https://github.com/newbpydev/tusk/actions/runs/37042975440/job/110957352263",
+    "name": "linux/amd64 \u2014 release compiler",
+    "state": "SUCCESS"
+  },
+  {
+    "completedAt": "2026-10-02T18:01:03Z",
+    "link": "https://github.com/newbpydev/tusk/actions/runs/37042975440/job/110957352424",
+    "name": "windows/amd64 \u2014 release compiler",
+    "state": "FAILURE"
+  },
+  {
+    "completedAt": "2026-10-02T18:03:01Z",
+    "link": "https://app.kilo.ai/code-reviews/fd703da1-e035-43b3-8813-fbc4c32aac24",
+    "name": "Kilo Code Review",
+    "state": "SUCCESS"
+  }
+]

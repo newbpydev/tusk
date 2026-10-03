@@ -1,0 +1,136 @@
+{
+  "schema": 1,
+  "reviewed_head": "79c34f9c8be00ff23c6fc9a2f560a142b88b95d3",
+  "remediation_commit": "containing commit",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37066756865,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 4,
+  "inline_review_threads": 2,
+  "needs_human": 0,
+  "utc": "2026-10-02T22:07:58.654166+00:00",
+  "canonical": {
+    "status": "passed",
+    "exit": 0,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "log": "r10-canonical-frozen.log.gz",
+    "scope": "25 implementation/fixture/documentation/lesson inputs unchanged throughout; completed authority statuses and evidence receipts recorded afterward"
+  },
+  "implementation_sha256": {
+    "CONTRIBUTING.md": "25b3013f4cf2d9767bc657f57a5834cade5e1147f71b7532f183a7fb0ba91958",
+    "Makefile": "1ebcc51f0bf98742ad246ce5a179c86ed34ac8570eacb96c6e0b0b777cceabdf",
+    "docs/install.md": "48d65a3abca238883c51740ff1d9ee1a10ba40062c9a18820e8f1e587a726e50",
+    "docs/releasing.md": "f0d7222681bb2966f312f634f008e52b8118ba5ddf2c3089ec6cf45f3ddbca23",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "3436c5c07514f6fcdecc7f27610aae99249964ca9c2ae0f191ed9c00d5d4e438",
+    "scripts/candidate.sh": "ee3c540bee24aab63142104973f1e7688745733b35cc1a298f5ca4293577032f",
+    "scripts/ci-check.sh": "230d6c70bac7697276de2753d6f4f4c1a3ca0082c9eaa8568de4277e3a158eda",
+    "scripts/homebrew.sh": "25dc8891300d58816f332b05f14e584a4c3f7430afe4ceb2a867739d3e89e039",
+    "scripts/json_check.sh": "06a0ed6d1ab3e4918c6bc6b9955f4110229c6f450ced7637177c7aa02c2de755",
+    "scripts/notices.sh": "2d3d077b172b59a5719595c157c7c7b48c9d4caf71429371e0b4e6e8475abd17",
+    "scripts/promote.sh": "3d8c06368e4d3d842cbc4b01b2bdebd35ba9ce061aaf0f66399b688b910389c6",
+    "scripts/release.sh": "76bc950509be51a912c7c8e104245b0dbbea8d3e98052c61a5d19c540f70cb26",
+    "scripts/release_smoke.sh": "c72ec07537a85461c7417fca75ac7d5551cb1f3417a031c7c4f79ccea7b0561b",
+    "scripts/repository_metadata.sh": "8375dcbd2d809719350ce1665d90f20afc911c076173de1bd01f00c4d5de8ab0",
+    "scripts/setup.sh": "9e32738fc9972ec6d42138ad96bf75a69c7307da8a9adadab483880baf2f3de8",
+    "scripts/test/test_candidate.sh": "fc4e092e0911829f52e0e08accd08a4fee69119a8185d32a64c20e62210bc9d5",
+    "scripts/test/test_ci.sh": "68a2bf069ec1863fde472c67859232d325e36b616cef6257727244dada4c4f3c",
+    "scripts/test/test_homebrew.sh": "562e16b3de26f3b2527523f74fad680a342ca68fe3135a2b734e55b797211046",
+    "scripts/test/test_metadata.sh": "239856c6b9e4c9fe79cb7e2a393036ed748ab2b8eba57614e2c33af1e86e21f5",
+    "scripts/test/test_notices.sh": "2ef4a0597b185ae7f732fd8598ee3ae01f8b0d8ffb0be6085f0205c117f10472",
+    "scripts/test/test_promotion.sh": "dbbaeb5e147e03f99df92815dfe5027aa4543660b186c92a172b058caa0e35b1",
+    "scripts/test/test_release.sh": "bfa1c6410705a1465b45db79ec250532860d31d3975205740b902bee716043b7",
+    "scripts/test/test_release_smoke.sh": "6644c75d3f4e9ce61fabdc1a1217b0b517245f00e1357d04a79349a814cc60cf",
+    "scripts/test/fixtures/gh-launcher.go": "26685b2114619aff2a568d02f657a59f632d62e632312b6bafe339c7dd20f073",
+    "scripts/test/test_gh_fixture.sh": "5111eaf380b63efbd631d5f514b38c5e17067167c720f060714f73470bb0592e"
+  },
+  "items": [
+    {
+      "id": "R10-01",
+      "severity": "P1",
+      "source_checks": [
+        "linux/amd64",
+        "linux/arm64",
+        "minimum Go"
+      ],
+      "issue": "Unix jq builds reject the unconditionally selected Windows-only binary option.",
+      "red": {
+        "exit": 2,
+        "diagnostic": "jq: Unknown option --binary; CI: invalid immutable tool pin catalogue",
+        "scope": "Full canonical shell suite with an owned legacy Unix jq wrapper."
+      },
+      "green": {
+        "exit": 0,
+        "scope": "Full canonical shell suite with the same legacy Unix jq wrapper; separate full Windows CRLF-output model also passes."
+      },
+      "repair": "Select binary output only on MSYS/Cygwin across affected helpers, fixtures and Make compiler-pin lookup; leave Unix argv unflagged."
+    },
+    {
+      "id": "R10-02",
+      "severity": "P1",
+      "source_check": "windows/amd64",
+      "source_job": 111036449482,
+      "issue": "Native Go executable lookup selects installed gh.exe instead of the extensionless shell fixture.",
+      "red": {
+        "hosted_diagnostic": "trusted API and certificate identity accepted expected 0 got 1; gh: Not Found (HTTP 404)",
+        "local_exit": 2,
+        "local_diagnostic": "No rule to make target build-gh-fixture"
+      },
+      "green": {
+        "exit": 0,
+        "scope": "Owned native launcher preserves literal arguments (spaces, Unicode, shell-looking data), stdin/stdout/stderr and child exit 47; missing ownership exits 127. Full candidate/promotion/metadata fixtures pass in both shell models and canonical gate."
+      },
+      "repair": "Compile a test-only native gh/gh.exe launcher that invokes the owned Bash script; isolate all three API fixture families; production client/deadline code is unchanged."
+    },
+    {
+      "id": "R10-03",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6of46E",
+      "root_comment_id": 4170008217,
+      "verdict": "fixed",
+      "issue": "Current master status names R7 while the active pointer names R9; paired headers still name R2.",
+      "repair": "Synchronize current R10 master status/pointer and both paired status/evidence headers; preserve historical receipts and pending acceptance gates."
+    },
+    {
+      "id": "R10-04",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6of46J",
+      "root_comment_id": 4170008231,
+      "verdict": "fixed-differently",
+      "issue": "Documented jq prerequisite lacks actionable enforcement.",
+      "red": {
+        "exit": 2,
+        "diagnostics": [
+          "Windows preflight rejects jq without binary output support (expected 1, got 0)",
+          "Windows setup rejects jq without binary output support (expected 1, got 0)"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "scope": "Both Windows prerequisite negatives require exit 1 and exact actionable diagnostic; Unix legacy jq positive remains accepted."
+      },
+      "repair": "Probe the required Windows binary-output capability at setup/preflight, with jq 1.7+ repair guidance; scope the minimum to Windows rather than imposing an unnecessary Unix version requirement."
+    }
+  ],
+  "trajectory_assessment": "Bounded consolidation of all affected JSON producers and all three owned API fixtures; new native compatibility roots with Red/Green controls. No third round on release-version/system-library invariants; no test/coverage/product latency thresholds weakened.",
+  "native_reexecution": "pending",
+  "limits": [
+    "Local models do not replace fresh native CI, physical terminals or exact-byte trusted-release acceptance.",
+    "Windows already confirms the previous notices and OS controls; original raw inventory byte lists were not logged.",
+    "No product Go or production GitHub deadline code changes.",
+    "Sequential root audit does not claim independent model agreement; prior Claude authentication/Codex quota gaps remain disclosed.",
+    "51 local closures remain unchanged; physical/trusted-main/performance/cask/release/tap/settings gates remain open."
+  ],
+  "retained_logs_sha256": {
+    "r10-canonical-frozen.log.gz": "03a359dc23b178c5a3a0d60c4bab2087d7660b49db64151364e706bd28db61f3",
+    "r10-focused-green.log.gz": "3710b99eb1942c7b197bcf59004c3fb3f2059db62665c8c88b5ae812164c4071",
+    "r10-gh-fixture-red.log.gz": "91d946fba3fcf63d19c6b1ef3ae11980430d0f092e62b52f33b431a0c7021197",
+    "r10-jq-crlf-green.log.gz": "976108c04e4a3845ab204cddea2207483d9ca11d8d1fe589906915b7badaa5da",
+    "r10-legacy-jq-green.log.gz": "6c0eb18a7ec3afbe5bec1acf352489821a29383e4e9748338432894423da7a0a",
+    "r10-legacy-jq-red.log.gz": "5d83c46d1c7afe04fe36df9ac30808350205038364a827edc34afac45bacf808",
+    "r10-linux-amd64.clean.log.gz": "8870ecf4ea1c8c9b300731c86d9f1cb33d3ef93459e30071aab72f6b85010bfe",
+    "r10-minimum.clean.log.gz": "1834ed29289874d28e0e968ebb8a760079b75bdf28ef53603890d28cd949b8aa",
+    "r10-prerequisite-red.log.gz": "f93a74fe803d4f7bb2445bcf7aa7ba00aeac533126369ff56ed5347b1da52163",
+    "r10-windows.clean.log.gz": "e1d26bdd13b18bec19d561f63aeb4a6733074cb2e35aac79dbece231c96732ac"
+  }
+}

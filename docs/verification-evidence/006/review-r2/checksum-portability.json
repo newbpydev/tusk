@@ -1,0 +1,27 @@
+{
+  "revision": "72c5eeb",
+  "configuration": "faithful tree; PATH removes only sha256sum; shasum remains available; Linux fixture not native Darwin proof",
+  "results": [
+    {
+      "target": "test-candidate",
+      "exit": 2
+    },
+    {
+      "target": "test-release-smoke",
+      "exit": 2
+    },
+    {
+      "target": "test-release-promotion",
+      "exit": 2
+    },
+    {
+      "target": "test-repository-metadata",
+      "exit": 2
+    }
+  ],
+  "primary_sources": [
+    "https://raw.githubusercontent.com/actions/runner-images/main/images/macos/toolsets/toolset-15.json",
+    "https://github.com/actions/runner/blob/main/.github/workflows/release.yml"
+  ],
+  "inference": "Canonical release policy tests require GNU sha256sum although maintainer tooling already supports native shasum and the selected macOS image does not promise coreutils."
+}

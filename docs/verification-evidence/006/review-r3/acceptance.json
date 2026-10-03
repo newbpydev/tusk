@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "review_run": "20261002-143551-fd10da2c",
+  "reviewed_head": "df102176a3ac4630c7f8ff363d9f2bbafd8bfd45",
+  "scope_base": "30fb5e94cc88aacfc1255198d066a140c77cb38d",
+  "status": "clean local repeat review",
+  "remaining_confirmed_p0_p2": 0,
+  "applied_fixes": "df10217: three P2 fixes from renewed full/focused review",
+  "simplification": "0 worthwhile edits; three structures deliberately retained",
+  "closure_commit": "containing governance/evidence commit; executable fix sources unchanged",
+  "implementation_sha256": {
+    "Makefile": "9d9dc1f73366ca5dfb02bc0846bfd72195a32d698ae04dafa0621135bdbc14bd",
+    "scripts/json_check.sh": "8bac811878f7856bf6217d482bfeca05475d2eadb27f65bbcb0b386277464d82",
+    "scripts/candidate.sh": "5b58a9bbea5244a6e436f79fe58fc009ed4b1eadf264d1da401c6ea5512ac1ec",
+    "scripts/promote.sh": "400513a7bcfcad85ec8e7f42687f2b6f3732153dfb51ee7f17f2b7c3497f5db8",
+    "scripts/release_smoke.sh": "6157b437e6799503b6b6176e6c762c6d2ee0cca6f38c133a5aee13fb46379447",
+    "scripts/repository_metadata.sh": "378c8ad16f2818d00449b2e2dfe0d10e6fddaefd5c213f98759929de6fbaec30",
+    "scripts/test/sha256.sh": "e2b280c8c2de72f236eda290d062eaf4f91e5c11d0f10e1a9456e03bf90413b5",
+    "scripts/test/test_hashes.sh": "920cb4058a14eb687f4028885403db6fbf42205cc79ed96276c49b23fcbcb281",
+    "scripts/test/test_candidate.sh": "1e50de940be65966de1fb0650d1b22ec1307814b31bd99b19a9bf19af306c3c4",
+    "scripts/test/test_promotion.sh": "37baccbd77dc28703ab9bca98323a28b0b9404b5968e61828f829911916c17a5",
+    "scripts/test/test_metadata.sh": "fc2144e9cf837473784756c7fcf29a79bd8f3d1b4463d7571855cc9dd8540df8",
+    "scripts/test/test_release_smoke.sh": "ffba2911e90eb6cfda3c5183be4778c0ff8e0b07fcb58b97332e3b93359fd86b"
+  },
+  "canonical": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow exit 0",
+  "minimum_and_lint": "Go 1.25 script suite and strict ShellCheck passed for unchanged bound sources in review-r2",
+  "peer": {
+    "cross_model_route": "composer",
+    "model_requested": "composer-2.5-fast",
+    "effort_requested": "fast",
+    "receipt_supported": false,
+    "model_actual": "unverified",
+    "effort_actual": "unverified",
+    "independence_verified": false
+  },
+  "independent_local_review": false,
+  "native_hosted_publication": "pending; no increase from 51 local scenario closures",
+  "remote_writes": false,
+  "checks_status": "passed"
+}

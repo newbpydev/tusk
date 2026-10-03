@@ -1,0 +1,120 @@
+{
+  "reviewer": "adversarial-composer",
+  "cross_model_route": "composer",
+  "cross_model_target": "composer",
+  "cross_model_harness": "cursor-agent",
+  "serving_family": "unknown",
+  "independence_verified": false,
+  "model_requested": "composer-2.5-fast",
+  "model_actual": "unverified",
+  "effort_requested": "fast",
+  "effort_actual": "unverified",
+  "receipt_supported": false,
+  "findings": [
+    {
+      "title": "Promotion accepts native receipts without executable binding",
+      "severity": "P1",
+      "file": "scripts/promote.sh",
+      "line": 45,
+      "why_it_matters": "A maintainer can assemble nine syntactically valid native gate receipts that share manifest/run metadata yet never exercised the per-target candidate executables; promote still reaches draft/publish while public archives stay unsmoked on those platforms.",
+      "autofix_class": "manual",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        "jq -e --arg id \"$(jq -r '.id' <<<\"$gate\")\" ... '.status==\"accepted\" and .scope==\"trusted-candidate\" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' \"$path\"",
+        "docs/release-acceptance.md requires native gate receipts to include binary/archive digests and retained evidence; promote never reads executable_sha256 or binary_sha256 from receipts",
+        "scripts/test/test_promotion.sh builds gate receipts with only status/scope/gate/manifest/run_id and no binary fields, illustrating the accepted shape"
+      ],
+      "pre_existing": false,
+      "suggested_fix": "In promote.sh, for each gate id matching native/*, require receipt fields (e.g. executable_sha256 or binary_sha256) and jq-compare them to the matching .targets[].executable_sha256 in the verified release-manifest.json before draft/publish.",
+      "first_evidence": "jq -e --arg id \"$(jq -r '.id' <<<\"$gate\")\" ... '.status==\"accepted\" and .scope==\"trusted-candidate\" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' \"$path\""
+    },
+    {
+      "title": "Native CI green never hashes shipped candidate bytes",
+      "severity": "P1",
+      "file": ".github/workflows/ci.yml",
+      "line": 108,
+      "why_it_matters": "Each native matrix job validates and builds from source on its host, while the published candidate is produced once on ubuntu via GoReleaser cross-compiles; a platform-specific defect in the cross-built artifact can leave native CI fully green and promotion-bound manifest hashes never exercised on that OS.",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        "\"run\": \"make setup preflight-ci setup-sqlc validate build check-generated check-ci\\nmake check-ci-drift\"",
+        ".github/workflows/release.yml build step: \"run\": \"make release-candidate RELEASE_OUTPUT=\\\"$RUNNER_TEMP/candidate\\\"\" on ubuntu-24.04 only",
+        ".goreleaser.yaml builds use \"CGO_ENABLED=0\" with goos linux/windows/darwin cross targets, not the per-runner native binary paths"
+      ],
+      "pre_existing": false,
+      "suggested_fix": "Treat native matrix success as source-only evidence; bind each native/* gate receipt to release_smoke output that digests the extracted manifest target binary, and fail promotion when that binding is missing.",
+      "first_evidence": "\"run\": \"make setup preflight-ci setup-sqlc validate build check-generated check-ci\\nmake check-ci-drift\""
+    },
+    {
+      "title": "Cascade: main CI cancels in-flight candidate CI",
+      "severity": "P2",
+      "file": ".github/workflows/ci.yml",
+      "line": 29,
+      "why_it_matters": "A routine push to main during a release-candidate dispatch shares the Native CI concurrency group with cancel-in-progress=true, aborting the reusable CI child mid-matrix; the candidate run fails or must be restarted, creating retry pressure where operators may skip re-verifying downloaded artifacts.",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        "\"cancel-in-progress\": true",
+        "\"group\": \"native-ci-${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}\"",
+        "release.yml ci job uses workflow_call of ./.github/workflows/ci.yml with the same ref as main pushes"
+      ],
+      "pre_existing": false,
+      "suggested_fix": "Give workflow_call invocations a distinct concurrency group (include caller workflow/run_id) or set cancel-in-progress false when github.event_name is workflow_call.",
+      "first_evidence": "\"cancel-in-progress\": true"
+    },
+    {
+      "title": "Performance gates bind CLI/TUI only to linux amd64",
+      "severity": "P2",
+      "file": "scripts/promote.sh",
+      "line": 65,
+      "why_it_matters": "Promotion recomputes exhaustive CLI/TUI/startup sample matrices against the linux/amd64 executable hash from the manifest; arm64/linux, darwin, and windows shipped binaries receive no analogous automated matrix binding at promote time.",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        "linux_hash=$(jq -r '.targets[]|select(.target==\"linux/amd64\")|.executable_sha256' \"$manifest\")",
+        "CLI jq guard uses .manifest.sha256==$hash with that linux_hash; TUI uses .manifest.binary_sha256==$hash",
+        "Gate list includes native/linux/arm64, native/darwin/*, native/windows/amd64 without per-target performance report requirements"
+      ],
+      "pre_existing": false,
+      "suggested_fix": "Document that only linux/amd64 reference performance is promotion-gated, or add target-scoped performance/report checks for each published GOOS/GOARCH.",
+      "first_evidence": "linux_hash=$(jq -r '.targets[]|select(.target==\"linux/amd64\")|.executable_sha256' \"$manifest\")"
+    },
+    {
+      "title": "Silent-pass: minimum job skips check-ci/actionlint",
+      "severity": "P2",
+      "file": ".github/workflows/ci.yml",
+      "line": 152,
+      "why_it_matters": "Hosted Native CI can succeed on the minimum job path without ever running make check-ci; release workflow lint fidelity then depends entirely on all five native matrix runners also completing, not on the minimum job itself.",
+      "autofix_class": "advisory",
+      "owner": "human",
+      "requires_verification": true,
+      "confidence": 75,
+      "evidence": [
+        "Minimum canonical gates run: \"make setup preflight-ci setup-sqlc validate build check-generated build-tui\\nmake check-ci-drift\"",
+        "Native canonical gates include check-ci; minimum path does not",
+        "scripts/ci-check.sh check runs actionlint on .github/workflows/ci.yml and release.yml"
+      ],
+      "pre_existing": false,
+      "suggested_fix": "Add make check-ci to the minimum job canonical gates and update scripts/ci-check.sh contract to match, so actionlint/contract runs on both paths.",
+      "first_evidence": "Minimum canonical gates run: \"make setup preflight-ci setup-sqlc validate build check-generated build-tui\\nmake check-ci-drift\""
+    }
+  ],
+  "residual_risks": [
+    "Candidate verification retains GitHub artifact API digest but explicitly does not independently hash the transport ZIP; trust depends on per-member manifest hashes after extraction.",
+    "TUI reference measurements run from a clean source checkout at candidate SHA while packaged startup uses the selected binary; divergent overlay/version behavior would not be caught by a single combined bench pass.",
+    "Release gate receipts and acceptance records rely on maintainer discipline; automated promotion cannot distinguish physical native execution from hash-bound JSON alone."
+  ],
+  "testing_gaps": [
+    "Simulate concurrent main push plus release workflow_call to assert candidate CI is not cancelled or failure surfaces a single actionable retry boundary.",
+    "Promotion test should reject native gate receipts that omit executable/binary digests when docs require them.",
+    "End-to-end fixture that native matrix build output SHA256 is not assumed equal to manifest target SHA256 unless explicitly extracted from candidate archives."
+  ]
+}

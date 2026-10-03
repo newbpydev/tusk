@@ -1,0 +1,5 @@
+{
+  "command": "PATH=<owned slow-git bin>:$PATH GOTOOLCHAIN=go1.27.1 make test-tui TUI_TEST_RUN=TestTUI_DependencyCheckoutNeedsNoLFS/glamour",
+  "wrapper": "#!/bin/bash\nsleep 5\nexec /usr/bin/git \"$@\"\n",
+  "scope": "Controlled Linux scheduling delay before each real Git command; all LFS assertions and real vendored source unchanged. Not native Windows proof."
+}

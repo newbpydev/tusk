@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+case "${1:-}" in
+    scripts/test/test_ci.sh|*/scripts/test/test_ci.sh) export PATH="$FIXTURE_NATIVE_BIN:$PATH" ;;
+esac
+exec /usr/bin/bash "$@"

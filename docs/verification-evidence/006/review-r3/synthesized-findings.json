@@ -1,0 +1,23 @@
+{
+  "findings": [],
+  "pre_existing_findings": [],
+  "residual_risks": [],
+  "testing_gaps": [],
+  "triage_groups": [],
+  "peer_admission": "/tmp/compound-engineering-1000/ce-code-review/20261002-143551-fd10da2c/peer-admission.json",
+  "coverage": [
+    "All local lenses and finish roles ran sequentially in parent per root AGENTS mapping; no independent local review or validator. Claude requested claude-opus-5/high returned HTTP401 invalid OAuth token and no review after provider-capable dispatch. One replacement Composer through cursor-agent requested composer-2.5-fast/fast; cross_model_route=composer, receipt_supported=false, model_actual=unverified, effort_actual=unverified, independence_verified=false. Five peer claims rejected on guard-specific evidence; no agreement promotion. Both consumed peer job directories deleted."
+  ],
+  "mechanical_before_admission_counts": {
+    "findings": 5,
+    "first_evidence_backfilled": 0,
+    "malformed_findings": 0,
+    "malformed_returns": 0,
+    "pre_existing_findings": 0,
+    "residual_risks": 3,
+    "status": "complete",
+    "suppressed_by_confidence": {},
+    "suppressed_findings": 0,
+    "testing_gaps": 2
+  }
+}

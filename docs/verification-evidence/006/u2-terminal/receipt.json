@@ -1,0 +1,25 @@
+{
+  "candidate_source_sha": "ab5ef84e03d9a4f35358f0592f1486e301cb5348",
+  "host": "Linux x86_64",
+  "kitty_version": "kitty 0.49.2 created by Kovid Goyal",
+  "executable_identity": {
+    "archive_sha256": "8c7439feba4ad12fa826d09c5c2889b654e7e6d881bf8bcb813b8c2ac76de326",
+    "executable_sha256": "48ab56da9000b67192eb1bfaba53af7910f91ebe68891ed6a6524c2fc7cc9817"
+  },
+  "versions": [
+    "candidate: all three forms = 0.3.0",
+    "snapshot: all three forms = 0.3.0-dev",
+    "ordinary source: --version = dev"
+  ],
+  "isolation": "owned home/data/config; candidate/snapshot PATH contained only extracted payload; help-only DB directory remains absent",
+  "interactive": [
+    "named Asia/Kathmandu first task",
+    "clean JSON list",
+    "TUI shows sample task and details",
+    "owned window resize",
+    "q returns to usable shell; version commands rendered afterward"
+  ],
+  "stty_after": "4500:5:f00bf:8a3b:3:1c:7f:15:4:0:1:0:11:13:1a:0:12:f:17:16:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0",
+  "window_closed": true,
+  "capture_note": "Initial stale help PNG discarded outside repository; final image captured after owned-window resize and visually inspected. Automated tests/builds never displayed in Kitty."
+}

@@ -1,0 +1,103 @@
+{
+  "status": "local final review-fix accepted; containing coherent commit is local source freeze",
+  "utc": "2026-10-02T03:39:33.302502+00:00",
+  "review_receipt": {
+    "status": "complete",
+    "run_id": "20261002-000427-b58e9f8f",
+    "reviewed_head": "c02711478f725181bf07f151bcb8a1bf2e3c34d1",
+    "path": "review.json",
+    "original_artifact_path": "/tmp/compound-engineering-1000/ce-code-review/20261002-000427-b58e9f8f"
+  },
+  "source_sha256": {
+    "Makefile": "8e8c1b13026315ddf66b923cac128e2e2b32e9ff5dca75a856fa013710110fd3",
+    "docs/release-acceptance.md": "b7b08a2ed775676aad1fb803c5f1ad6d57f4d7bc8521565df695a50da386a32e",
+    "scripts/gh_deadline.sh": "b4934630e9cb84c6cc7cd296f63177031bbe05dcb5bbcd39be50a8ab021c03a2",
+    "scripts/ghdeadline/main.go": "f27f1b61876e98fae19e46c83462742a4cc01cf8dc510f437539bffb91b2cb84",
+    "scripts/ghdeadline/main_test.go": "c5a397aedb13c1e776bedfc8137e3b88cdd3ec9cb677fa5b7c753a0de46972cb",
+    "scripts/candidate.sh": "68e6587f8c772503514eb77ad7f085d976c16995233070c8482c8973570ed4a0",
+    "scripts/promote.sh": "a84e1ca6347f1667afc88e0939c3cb484efa501d3a43dd98a5c81b6931e3b0cd",
+    "scripts/homebrew.sh": "148131c1af7a2f26ff9651d097cbc2ba9275b81afd26600b0f1e9e633a19123f",
+    "scripts/repository_metadata.sh": "3fa7a29b0c559ae140f6d7545e9daec06c5f4b275667666fcee661595dc3e65a",
+    "scripts/releasecheck/manifest.go": "e854f6c8baedaab41712318b3e418b8f02cf4813e8552fc3689e8b1ff8634ece",
+    "scripts/releasecheck/json_test.go": "f4ecea04b5a1f5e4d9984c91b49ad89ed4d10efe06e5afff710507f4a419e687",
+    "scripts/test/test_candidate.sh": "7c43bec9a7110df6877760773a21ba7ab44bb6dc4640c7a73fbb1b1c465f48fa",
+    "scripts/test/test_promotion.sh": "d555fac82942adb9f03b8aa456366e98b632ad5849a71f03cab9eeece52fcc7f",
+    "scripts/test/test_homebrew.sh": "4a126b6b2740a9087780425402981fa198f70311de02f96be09b230fa7c3a212",
+    "scripts/test/test_metadata.sh": "f93eb395fa724c9f6db5a389fa38a28255afc1297bf08d9e4738035163c1478f"
+  },
+  "findings": [
+    {
+      "#": 1,
+      "issue": "006-ISS-046",
+      "status": "applied and verified",
+      "red": "Four malformed/absent native executable/archive/target fields reached completed draft (exit0 vs expected1)",
+      "green": "All four refuse before writes; nine valid gate fixture still passes lost-response promotion/readback"
+    },
+    {
+      "#": 2,
+      "issue": "006-ISS-045",
+      "status": "applied and verified",
+      "red": "Owned-process deadline tests fail compilation: missing run capability",
+      "green": "Actual owned child deadline/cancellation/streams/argument/exit tests; all four callers use shared driver; stalled tap child bounded; real tap lookup404"
+    },
+    {
+      "#": 3,
+      "issue": "006-ISS-047",
+      "status": "applied and verified",
+      "red": "Actual make verify-release accepts candidate manifest with appended {}; all four trailing-value/data tests accepted malformed inputs",
+      "green": "Second JSON values/trailing garbage rejected; whitespace accepted; full real archive/overlay integration green"
+    }
+  ],
+  "canonical": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow",
+    "exit_code": 0,
+    "log": "review-validate.log.gz",
+    "ghdeadline_coverage_percent": 97.2,
+    "final_synchronized_gate": {
+      "exit_code": 0,
+      "log": "review-validate-final.log.gz",
+      "same_tool_hashes_verified": true
+    }
+  },
+  "minimum": {
+    "command": "GOTOOLCHAIN=go1.25.0 make test-unit; GOTOOLCHAIN=go1.25.0 make test-scripts",
+    "exit_codes": [
+      0,
+      0
+    ],
+    "scope": "all fast Go tests and current full shell-policy fixtures",
+    "helper_cross_compile": {
+      "exit_code": 0,
+      "targets": 5,
+      "artifact": "helper-minimum-cross.json",
+      "scope": "compile only, not native runtime evidence"
+    }
+  },
+  "shellcheck": {
+    "exit_code": 0,
+    "log": "review-shellcheck-final.log.gz",
+    "retained_initial_warning": "SC2154 implicit bootstrap root corrected to explicit source-root argument"
+  },
+  "followup_review": {
+    "execution": "Sequential main-thread focused correctness/security/reliability/standards/simplicity review; not independent and not a second ce-code-review invocation",
+    "artifact": "focused-fix-review.json",
+    "remaining_actionable_findings": []
+  },
+  "residual_work": {
+    "justified_unresolved_review_findings": 0,
+    "external_gates": "Intentionally pending: trusted hosted main candidate, exact-byte five native/terminal/reference performance, native cask and accessible tap, actual publication/metadata/anonymous installs/readbacks. No local scenario count increase."
+  },
+  "peer": {
+    "claude": "Provider-capable launch returned HTTP401 invalid OAuth token, no review",
+    "alternate_route": "composer",
+    "model_requested": "composer-2.5-fast",
+    "model_actual": "unverified",
+    "effort_requested": "fast",
+    "effort_actual": "unverified",
+    "receipt_supported": false,
+    "independence_verified": false,
+    "job_cleanup": "Both terminal job directories consumed and deleted"
+  },
+  "publication": "No push/PR/dispatch/tag/draft/release/settings/tap write; next concrete authorization is branch push and PR",
+  "freeze": "Containing coherent review-fix commit is local source freeze; select actual main candidate only after authorized PR/merge. Any later build/tool/test-driver change requires new hosted candidate and affected acceptance reruns."
+}

@@ -5,11 +5,6 @@ SQLite database; no daemon or network service is required. `tusk`, `tusk help`,
 `tusk --help`, `tusk -h`, `tusk version`, `tusk --version` and `tusk -v` do not
 open storage. Command help is available as `tusk help add` or `tusk add --help`.
 
-The executable and embedded `cli.Run` preserve Go's runtime scheduling policy,
-including an explicit `GOMAXPROCS` setting. Tusk does not override the processor
-count. The earlier single-processor experiment was removed before local
-acceptance.
-
 ## Commands
 
 Every data command supports `--json`. Pass complete task IDs; prefixes do not
@@ -91,6 +86,9 @@ Boolean environment values use Go boolean syntax (`true/false`, `1/0`,
 relative to the invocation directory and is treated literally. Invalid paths,
 zones, booleans or storage errors never cause a fallback database. Configuration
 is validated only for data commands. The production binary embeds timezone data.
+On Windows the home fallback uses `USERPROFILE` through Go's home-directory
+lookup; it keeps the same `.local/share/tusk/tusk.db` suffix. A relative
+`XDG_DATA_HOME` is ignored; a relative explicit `TUSK_DB_PATH` remains literal.
 
 Due expressions support `today`, `tomorrow`, `tonight`, three-letter weekdays
 (`mon` through `sun`), positive offsets (`+1d`, `+1w`, `+1m`), ISO dates
@@ -149,67 +147,23 @@ back-to-back signals do not guarantee exit. This assumes the normal inherited
 signal disposition. Confirmation readers remain joined on graceful exit, even
 if OS cancellation must be retried.
 
-## Verification and handoff
+## Completion and manuals
 
-Run `make validate build check-generated` and automated latency measurements in
-Codex Bash. Use an owned Kitty window to inspect the required visible CLI
-scenarios with an isolated temporary database, as required by `AGENTS.md`. Keep
-automated results, timing measurements and visible terminal evidence distinct.
-`GOTOOLCHAIN=go1.25.0 make test build-cli` checks the minimum compiler and five
-CGO-free executable/test builds. Cross-builds do not prove native console behavior.
+Generate a script with `tusk completion bash`, `tusk completion zsh` or
+`tusk completion fish`. Scripts contain static command/flag/enum suggestions;
+they do not read your tasks, IDs or tags. Generation and completion requests do
+not open storage or validate data configuration. See the
+[installation guide](install.md#completion-and-manuals) for shell loading and
+manual-page paths. Command help works as `tusk help COMMAND` on every target.
 
-`make bench-cli` builds outside timing and runs the full matrix three times.
-Each case retains five warmups and 100 consecutive fresh-process samples. Query
-p90/p95/p99/max must be below 15/20/30/50 ms; help/version below 5/7.5/10/15 ms.
-The owner-authorized Feature 005 PR #5 Ryzen host calibration is documented
-below; the default reference protocol remains unchanged.
-Every case in every run must pass. Reports include every sample, target-miss
-counts, output sizes, binary hash and host manifest; no outlier is discarded. See
-[execution evidence](verification-evidence/004/README.md) for the current result.
-`make bench-cli-conditions` separately observes first-use, 10,000 tasks, 1 MiB
-notes, a held writer and a throttled pipe. `make profile-cli` is an in-process
-diagnostic; it cannot replace process acceptance. New reference reports use
-snake_case JSON keys throughout (for example `cases`, `p90_ns`, `p95_limit_ns`
-and `passed`); historical evidence retains its original keys. Old `u6-timing-*`
-diagnostics combine child settings with parent interventions and cannot establish
-child-only effects. New timing modes isolate those interventions.
+## Verification and support
 
-Feature 005 owns TUI registration, consent, refresh and draft handling using the
-same service/configuration/outcome contracts. Feature 006 owns completion/man
-pages, native Windows/macOS and architecture runtime, hosted checks and release
-publication. These remain pending until their own candidate evidence exists.
+The [local Linux acceptance record](verification-evidence/005/u6-hierarchy/README.md)
+retains all CLI samples and real application observations on its declared host.
+Those measurements are source-candidate evidence, not a speed guarantee or
+native release acceptance for other platforms. Native Windows/macOS/arm64 and
+hosted candidate checks remain pending.
 
-### Owner-authorized PR #5 host calibration (2026-10-01)
-
-The reference CLI protocol remains the default. The owner authorized using the
-average speed of the runs to calibrate acceptance for this computer. For Feature
-005 PR #5 on Linux amd64, AMD Ryzen 5 4500U, balanced profile, use
-`make bench-cli CLI_BENCH_PROFILE=ryzen-4500u-balanced-v1` with an explicit output
-path. Each of the 28 command/fixture cases must have exactly runs 1, 2 and 3,
-five warmups and 100 valid consecutive samples per run. Its arithmetic mean of
-the three p90 values must be below 18 ms for queries and 5 ms for help/version.
-Every run independently meets host p95/p99/max guards: queries below
-22/30/50 ms; help/version below 7.5/10/15 ms. Errors, incomplete matrices,
-duplicate runs and invalid samples fail. This does not average away tail failures.
-
-The 18 ms query ceiling rounds the largest retained candidate three-run mean
-(16.787 ms) upward with about 7% margin; the latest fixture-closed tree mean is
-15.041 ms. Hardware capacity is a hypothesis, not a proven cause. No child
-runtime knobs, workload sizes, timings, outliers or production code change for
-this calibration. Original case `passed`, percentiles, 15/5 ms limits and miss
-counts remain visible. `host_acceptance` separately records the chosen policy,
-case means and result. Old reports remain unchanged and failed. The fresh host
-matrix and current TUI readback matrix must be retained before acceptance.
-
-Calibration refinement before acceptance: the initial host matrix meets mean
-p90 (worst 16.524 ms) but fails one 20 ms p95 guard at 20.093 ms. It remains
-failed in host-cli-latency-initial.json. The retained earlier control p95 reached
-21.896 ms; a rounded 22 ms host p95 guard covers that observed range. Only the
-host query p95 guard changes; reference limits/results, help/version, query
-p99/max, sample counts and all outliers stay intact. A fresh complete matrix is
-required against this revised contract. This is explicit owner-authorized host
-calibration, not a measured production speedup or proof of hardware causation.
-
-Host-profile runs require an explicit new `CLI_BENCH_OUTPUT` path. Existing
-files are rejected, and final output stays on the exclusively created descriptor.
-Invalid profile names report both accepted choices on stderr.
+See [contributing](../CONTRIBUTING.md) for build/test commands and terminal
+verification. The [release guide](releasing.md) distinguishes local source checks,
+exact-asset native acceptance and public installation routes.

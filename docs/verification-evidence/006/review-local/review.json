@@ -1,0 +1,452 @@
+{
+  "status": "complete",
+  "verdict": "Ready with fixes",
+  "scope": {
+    "base": "30fb5e94cc88aacfc1255198d066a140c77cb38d",
+    "branch": "feat/automation-packaging-release",
+    "head_sha": "c02711478f725181bf07f151bcb8a1bf2e3c34d1",
+    "pr_url": null,
+    "files_changed": 342
+  },
+  "intent": "Deliver Feature 006 local automation, reproducible five-target packaging, complete MIT notices/docs/completions, trusted candidate provenance, exact-byte native/performance drivers, cask and guarded release/metadata preparation. Preserve app/database behavior and storage-free help/version; local fixtures never close actual hosted/native/publication gates. Final source freeze and external actions remain separately authorized.",
+  "intent_confidence": "explicit",
+  "reviewers": [
+    "correctness",
+    "project-standards",
+    "testing",
+    "maintainability",
+    "security",
+    "performance",
+    "api-contract",
+    "reliability",
+    "agent-native-reviewer",
+    "learnings-researcher",
+    "adversarial-composer"
+  ],
+  "findings": [
+    {
+      "#": 1,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/promote.sh:45 --  jq -e --arg id \"$(jq -r '.id' <<<\"$gate\")\" --arg sha \"$RELEASE_SHA\" --arg version \"$RELEASE_VERSION\" --arg hash \"$CANDIDATE_MANIFEST_SHA256\" --argjson run \"$CANDIDATE_RUN_ID\" '.status==\"accepted\" and .scope==\"trusted-candidate\" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' \"$path\" >/dev/null || die 'gate receipt does not describe this trusted candidate'",
+        "docs/release-acceptance.md requires native gate receipts to include binary/archive digests and retained evidence; promote never reads executable_sha256 or binary_sha256 from receipts",
+        "scripts/test/test_promotion.sh builds gate receipts with only status/scope/gate/manifest/run_id and no binary fields, illustrating the accepted shape"
+      ],
+      "file": "scripts/promote.sh",
+      "first_evidence": "scripts/promote.sh:45 --  jq -e --arg id \"$(jq -r '.id' <<<\"$gate\")\" --arg sha \"$RELEASE_SHA\" --arg version \"$RELEASE_VERSION\" --arg hash \"$CANDIDATE_MANIFEST_SHA256\" --argjson run \"$CANDIDATE_RUN_ID\" '.status==\"accepted\" and .scope==\"trusted-candidate\" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' \"$path\" >/dev/null || die 'gate receipt does not describe this trusted candidate'",
+      "independent_reviewers": [],
+      "line": 45,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "adversarial-composer"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Require target, executable_sha256 and archive_sha256 for native gate wrappers and compare them against the matching verified manifest target; retain human review of terminal/evidence records.",
+      "title": "Promotion accepts native receipts without executable binding",
+      "why_it_matters": "Native gate records can omit the binary/archive digests that the acceptance guide requires. Promotion checks manifest/run identity but cannot catch a mistaken target-executable digest in a maintainer receipt.",
+      "validation_status": "confirmed",
+      "validation_reason": "c027114 promote.sh:45 checks run/manifest/gate only, while docs/release-acceptance.md requires binary/archive digests; current fixture reaches successful publication without those fields. Human acceptance incidence was not measured."
+    },
+    {
+      "#": 2,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/promote.sh:91 -- gh api \"https://api.github.com/repos/$repo/git/ref/heads/main\" >\"$output/main.json\" || die 'main readback unavailable'",
+        "006-ISS-045 records the required bounded-process contract. cli/cli v2.102.0 uses go-gh v2.16.1; api ClientOptions defaults to no timeout. All four GitHub helper scripts currently invoke gh without a watchdog."
+      ],
+      "file": "scripts/promote.sh",
+      "first_evidence": "scripts/promote.sh:91 -- gh api \"https://api.github.com/repos/$repo/git/ref/heads/main\" >\"$output/main.json\" || die 'main readback unavailable'",
+      "independent_reviewers": [],
+      "line": 91,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "reliability"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Bound every maintainer gh invocation with a portable process deadline, preserve exit codes and readback reconciliation, and test a stalled owned child.",
+      "title": "Release helpers leave GitHub subprocesses unbounded",
+      "validation_status": "confirmed",
+      "validation_reason": "c027114 four helper scripts call gh without process deadlines; pinned cli/cli v2.102.0 and go-gh v2.16.1 document zero default timeout. Stalled network incidence was not measured."
+    },
+    {
+      "#": 3,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/releasecheck/manifest.go:80 -- return d.Decode(value)",
+        "DisallowUnknownFields only governs the decoded value; readJSON has no subsequent EOF check. Callers use it for inventory and overlay files."
+      ],
+      "file": "scripts/releasecheck/manifest.go",
+      "first_evidence": "scripts/releasecheck/manifest.go:80 -- return d.Decode(value)",
+      "independent_reviewers": [],
+      "line": 80,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness"
+      ],
+      "severity": "P2",
+      "suggested_fix": "After decoding the expected value, require EOF on a second decode; reject second documents and malformed trailing data, while allowing whitespace.",
+      "title": "Strict candidate JSON accepts trailing documents",
+      "validation_status": "confirmed",
+      "validation_reason": "At c027114 with Go 1.27.1, actual make verify-release returns zero for the owned valid candidate manifest followed by {} (json-reproduction.json); readJSON never checks EOF."
+    }
+  ],
+  "actionable_findings": [
+    {
+      "#": 1,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/promote.sh:45 --  jq -e --arg id \"$(jq -r '.id' <<<\"$gate\")\" --arg sha \"$RELEASE_SHA\" --arg version \"$RELEASE_VERSION\" --arg hash \"$CANDIDATE_MANIFEST_SHA256\" --argjson run \"$CANDIDATE_RUN_ID\" '.status==\"accepted\" and .scope==\"trusted-candidate\" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' \"$path\" >/dev/null || die 'gate receipt does not describe this trusted candidate'",
+        "docs/release-acceptance.md requires native gate receipts to include binary/archive digests and retained evidence; promote never reads executable_sha256 or binary_sha256 from receipts",
+        "scripts/test/test_promotion.sh builds gate receipts with only status/scope/gate/manifest/run_id and no binary fields, illustrating the accepted shape"
+      ],
+      "file": "scripts/promote.sh",
+      "first_evidence": "scripts/promote.sh:45 --  jq -e --arg id \"$(jq -r '.id' <<<\"$gate\")\" --arg sha \"$RELEASE_SHA\" --arg version \"$RELEASE_VERSION\" --arg hash \"$CANDIDATE_MANIFEST_SHA256\" --argjson run \"$CANDIDATE_RUN_ID\" '.status==\"accepted\" and .scope==\"trusted-candidate\" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' \"$path\" >/dev/null || die 'gate receipt does not describe this trusted candidate'",
+      "independent_reviewers": [],
+      "line": 45,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "adversarial-composer"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Require target, executable_sha256 and archive_sha256 for native gate wrappers and compare them against the matching verified manifest target; retain human review of terminal/evidence records.",
+      "title": "Promotion accepts native receipts without executable binding",
+      "why_it_matters": "Native gate records can omit the binary/archive digests that the acceptance guide requires. Promotion checks manifest/run identity but cannot catch a mistaken target-executable digest in a maintainer receipt.",
+      "validation_status": "confirmed",
+      "validation_reason": "c027114 promote.sh:45 checks run/manifest/gate only, while docs/release-acceptance.md requires binary/archive digests; current fixture reaches successful publication without those fields. Human acceptance incidence was not measured."
+    },
+    {
+      "#": 2,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/promote.sh:91 -- gh api \"https://api.github.com/repos/$repo/git/ref/heads/main\" >\"$output/main.json\" || die 'main readback unavailable'",
+        "006-ISS-045 records the required bounded-process contract. cli/cli v2.102.0 uses go-gh v2.16.1; api ClientOptions defaults to no timeout. All four GitHub helper scripts currently invoke gh without a watchdog."
+      ],
+      "file": "scripts/promote.sh",
+      "first_evidence": "scripts/promote.sh:91 -- gh api \"https://api.github.com/repos/$repo/git/ref/heads/main\" >\"$output/main.json\" || die 'main readback unavailable'",
+      "independent_reviewers": [],
+      "line": 91,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "reliability"
+      ],
+      "severity": "P2",
+      "suggested_fix": "Bound every maintainer gh invocation with a portable process deadline, preserve exit codes and readback reconciliation, and test a stalled owned child.",
+      "title": "Release helpers leave GitHub subprocesses unbounded",
+      "validation_status": "confirmed",
+      "validation_reason": "c027114 four helper scripts call gh without process deadlines; pinned cli/cli v2.102.0 and go-gh v2.16.1 document zero default timeout. Stalled network incidence was not measured."
+    },
+    {
+      "#": 3,
+      "autofix_class": "gated_auto",
+      "confidence": 100,
+      "evidence": [
+        "scripts/releasecheck/manifest.go:80 -- return d.Decode(value)",
+        "DisallowUnknownFields only governs the decoded value; readJSON has no subsequent EOF check. Callers use it for inventory and overlay files."
+      ],
+      "file": "scripts/releasecheck/manifest.go",
+      "first_evidence": "scripts/releasecheck/manifest.go:80 -- return d.Decode(value)",
+      "independent_reviewers": [],
+      "line": 80,
+      "owner": "downstream-resolver",
+      "pre_existing": false,
+      "requires_verification": true,
+      "reviewers": [
+        "correctness"
+      ],
+      "severity": "P2",
+      "suggested_fix": "After decoding the expected value, require EOF on a second decode; reject second documents and malformed trailing data, while allowing whitespace.",
+      "title": "Strict candidate JSON accepts trailing documents",
+      "validation_status": "confirmed",
+      "validation_reason": "At c027114 with Go 1.27.1, actual make verify-release returns zero for the owned valid candidate manifest followed by {} (json-reproduction.json); readJSON never checks EOF."
+    }
+  ],
+  "triage_groups": [],
+  "pre_existing_findings": [],
+  "requirements_completeness": {
+    "source": "explicit",
+    "requirements": [
+      {
+        "id": "R1",
+        "requirement": "CI runs for pull requests targeting `main`, pushes to `main` and explicit dispatch; PR jobs have read-only repository permissions and no publishing secrets.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R2",
+        "requirement": "Execute canonical native quality/build gates on all five release OS/architecture pairs using the pinned release compiler; additionally prove the Go 1.25.0 source minimum on Linux and compile all five targets with that minimum.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R3",
+        "requirement": "Windows gates use Git Bash, GNU Make and a matching native C compiler for Go race builds; no WSL result or cross-build closes native Windows acceptance.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R4",
+        "requirement": "Formatting, generated SQL/schema and module checks fail on source drift; canonical validation preserves the existing \u226595% nonexempt package coverage policy.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R5",
+        "requirement": "Pin Actions by full upstream commit SHA and downloaded tools by version/digest; preserve the accepted runtime dependencies and local patches.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R6",
+        "requirement": "Release version is an immutable generated constant matching the tag; snapshots and ordinary source builds cannot claim a published version.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R7",
+        "requirement": "Package CGO-disabled Linux amd64/arm64, Darwin amd64/arm64 and Windows amd64 binaries, with embedded timezone data and no runtime Go/compiler/database-service requirement.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R8",
+        "requirement": "Distribute deterministic target archives, completions, man pages, project license, third-party notices, a complete source archive and SHA256 checksums.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R9",
+        "requirement": "Bind source SHA, version, compiler, tool pins, generated version input, target, payload hashes and workflow identity in a release manifest and verified provenance.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R10",
+        "requirement": "Local checks/snapshots/candidates do not publish, create remote tags or update taps; failures retain diagnostics and leave unrelated checkout files and user data intact.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R11",
+        "requirement": "Installing, replacing, upgrading or uninstalling a binary preserves tasks/events and the database/WAL/SHM; newer-schema refusal never attempts an automatic downgrade.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R12",
+        "requirement": "Document and replay a consistent offline backup/restore procedure, including sidecars and SQLite NORMAL durability limitations, without claiming a new backup command.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R13",
+        "requirement": "Completion and manual generation work with broken database/date configuration, redirected streams and no terminal or storage initialization.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R14",
+        "requirement": "`completion bash|zsh|fish` emits only the requested script to stdout; invalid shell, arity or flags exit 2, and output failures exit 1 with a safe stderr diagnostic.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R15",
+        "requirement": "Shell completion suggests static commands, flags and enums only; it does not query task IDs, notes, tags or any database.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R16",
+        "requirement": "Generate manuals/completion files from the actual fresh Cobra command tree with stable dates/order and fail on checked-in drift.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R17",
+        "requirement": "README leads with purpose, a real screenshot, verified installation choices and a short first-task workflow; deeper CLI/TUI/install/recovery/contributor guides remain linked.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R18",
+        "requirement": "Every runnable documentation example matches real command/date/JSON/exit behavior; clearly identify IDs/placeholders and optional tools such as `jq`.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R19",
+        "requirement": "Support and performance claims cite dated candidate evidence with platform, terminal, fixtures and limits; screenshots have sanitized data, alt text and provenance.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R20",
+        "requirement": "Fill repository description, homepage, topics and social preview with reviewed values; verify GitHub's rendered README, links, badges, license detection and release visibility after publication.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R21",
+        "requirement": "Owner selects the project license and confirms authority before redistribution; archive all required notices, including dependencies reached through local replacements.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R22",
+        "requirement": "Add concise contributor and security/support guidance with working GitHub contact routes, issue/PR templates and a version policy; do not invent an email, response SLA, donation link or maintenance team.",
+        "status": "met",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R23",
+        "requirement": "Execute exact packaged bytes natively on every target for first-use storage, path/Unicode/space handling, named timezones, WAL concurrency, JSON/pipes and graceful/forced interruption.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R24",
+        "requirement": "Inspect packaged TUI input, resize, plain mode, save/conflict/delete/recovery and terminal restoration on native terminals; synthetic or headless checks remain separate.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R25",
+        "requirement": "Re-run candidate CLI/TUI performance evidence on the declared measurement host; keep the reference criteria and all failed/raw samples visible.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R26",
+        "requirement": "A trusted manual candidate workflow builds and attests downloadable artifacts without creating a public release; native tests consume those exact archived bytes.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R27",
+        "requirement": "Privileged promotion verifies the trusted workflow/ref/SHA, artifact identity and accepted manifest digest; PR artifacts, branch names and release text cannot become executable shell input.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R28",
+        "requirement": "Create a complete draft, verify downloaded assets, then publish only an explicitly authorized tag/version/candidate; retries cannot replace published bytes or move a release tag.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R29",
+        "requirement": "Provide a tested macOS Homebrew cask in the owner-controlled tap, using the verified release URLs/checksums and preserving data on uninstall.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      },
+      {
+        "id": "R30",
+        "requirement": "Each implementation unit retains red/green, review and applicable evidence, synchronizes its triplet/masterplan and passes `make validate` before its coherent local commit; publication and merge need their own authorization.",
+        "status": "partially addressed",
+        "note": "Local implementation/evidence present; required current hosted/native/publication verification remains intentionally pending under the accepted local engineering checkpoints."
+      }
+    ],
+    "implementation_units": [
+      {
+        "id": "U1",
+        "status": "partially addressed",
+        "note": "Committed local engineering checkpoint; parent external release gates remain pending where applicable."
+      },
+      {
+        "id": "U3",
+        "status": "met",
+        "note": "Committed local engineering checkpoint; parent external release gates remain pending where applicable."
+      },
+      {
+        "id": "U4",
+        "status": "met",
+        "note": "Committed local engineering checkpoint; parent external release gates remain pending where applicable."
+      },
+      {
+        "id": "U2",
+        "status": "partially addressed",
+        "note": "Committed local engineering checkpoint; parent external release gates remain pending where applicable."
+      },
+      {
+        "id": "U6",
+        "status": "partially addressed",
+        "note": "Committed local engineering checkpoint; parent external release gates remain pending where applicable."
+      },
+      {
+        "id": "U5",
+        "status": "partially addressed",
+        "note": "Committed local engineering checkpoint; parent external release gates remain pending where applicable."
+      },
+      {
+        "id": "U7",
+        "status": "partially addressed",
+        "note": "Committed local engineering checkpoint; parent external release gates remain pending where applicable."
+      },
+      {
+        "id": "U8",
+        "status": "partially addressed",
+        "note": "Committed local engineering checkpoint; parent external release gates remain pending where applicable."
+      }
+    ],
+    "intentional_pending_external_gates": true
+  },
+  "learnings": [
+    {
+      "type": "known_pattern",
+      "title": "Owned Kitty inspection without environment leaks",
+      "citation": "docs/solutions/workflow-issues/verify-owned-kitty-window-without-focus-or-environment-leaks.md",
+      "note": "Whitelist terminal metadata and keep actual terminal evidence separate from Bash gates."
+    }
+  ],
+  "agent_native_gaps": [],
+  "deployment_notes": [],
+  "residual_risks": [],
+  "testing_gaps": [],
+  "coverage": {
+    "local_execution": "All local personas and merge/validator/report roles ran sequentially in parent context under user Task mapping. No independent local reviewer/validator or finish-leaf claim.",
+    "cross_model": "Claude returned provider HTTP 401 invalid OAuth token and did not review. Composer alternate reviewed scoped code; requested composer-2.5-fast / fast, actual model and effort unverified, receipt_supported false, independence_verified false. No independent confidence promotion. Both terminal jobs consumed and directories deleted.",
+    "cross_model_route": "composer",
+    "model_requested": "composer-2.5-fast",
+    "model_actual": "unverified",
+    "effort_requested": "fast",
+    "effort_actual": "unverified",
+    "receipt_supported": false,
+    "independence_verified": false,
+    "validator": {
+      "confirmed": 3,
+      "rejected": 0,
+      "unresolved": 0,
+      "malformed": 0,
+      "failed": 0,
+      "shortcut_skipped": 0,
+      "independent": false
+    },
+    "suppressed_by_confidence": {},
+    "first_evidence_backfilled": 0,
+    "quote_demotions": 0,
+    "failed_reviewers": [],
+    "compound_packs": {
+      "roots": [],
+      "warnings": [],
+      "errors": []
+    },
+    "peer_rejected_claims": 4
+  },
+  "artifact_path": "/tmp/compound-engineering-1000/ce-code-review/20261002-000427-b58e9f8f",
+  "run_id": "20261002-000427-b58e9f8f"
+}

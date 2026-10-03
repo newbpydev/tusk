@@ -1,0 +1,64 @@
+{
+  "unit": "U1 / 006-1",
+  "status": "local engineering accepted; hosted native closure pending",
+  "utc": "2026-10-01T21:22:52.689291+00:00",
+  "base_commit": "30fb5e94cc88aacfc1255198d066a140c77cb38d",
+  "engine": "native inline; sequential host review under repository tool mapping",
+  "source_sha256": {
+    ".github/workflows/ci.yml": "02e59aea32975247c2ac4b3de53977d24e007be047e8370298d1cb6f27e662de",
+    "scripts/tool-versions.json": "a6c8c2fd21014d95d9360bae67a692452d1d52aba3759c3862f9e4dad855d42f",
+    "scripts/ci-check.sh": "48311d31795b95560d3362ffb16585791f00160a78c031c708ebba73564df6f9",
+    "scripts/test/test_ci.sh": "c1530e74a99eac0697a3943223746ee7674c22edb11e34c5cf4a75832742f3df",
+    "scripts/fmt.sh": "ff408621e515327b2be883a800f6a70821e442ce71267be19b88ef4c4a51b4fd",
+    ".gitattributes": "44bb92b91ec6da85687060c514367d0ed38da9ed8597cdf7008580ecc3e89f47",
+    "Makefile": "8d78a25753a9dc15afc8017a3b4de30d9b1a211fea773aa2effcac4be16dd9fa",
+    "go.mod": "e4bb70f5fc6d29c716435e447f4bca652911cf2d0d9c9f80f43b4f2866537d34",
+    "go.sum": "df5698d9a43d6e34316a7845e1867a93d884c90856542c287bd7434240146eca",
+    "scripts/sqlc.sh": "96b2c833e5d97f5ffe920dfbe07de1cdacced19da683c801a3bc97bf239d5cda"
+  },
+  "red": [
+    "u1-red.log.gz: spaced Unicode CRLF source fails with lstat/path splitting; absent workflow/tool helper",
+    "u1-analyzer-red.log.gz: pinned analyzer setup absent",
+    "u1-host-red.log.gz: cross-compiler impersonates native Windows host",
+    "u1-wsl-red.log.gz: Linux/WSL shell impersonates native Windows acceptance"
+  ],
+  "green": [
+    "u1-focused-final.log.gz: workflow, supply-chain, prerequisites, formatting, drift and seven aggregate-failure fixtures pass",
+    "u1-minimum-focused.log.gz: final script preflight/fixtures also pass under Go 1.25.0"
+  ],
+  "canonical": "u1-validate-final.log.gz: GOTOOLCHAIN=go1.27.1 make validate build check-generated check-ci passed",
+  "minimum": "u1-minimum.log.gz: Go 1.25.0 full canonical/build/generated gates and five-target application/CLI/TUI test cross-builds passed; foreign executables not run",
+  "vulnerabilities": "u1-vulnerabilities.log.gz: digest-pinned govulncheck v1.4.0 runs on Go 1.27.1; no reachable vulnerabilities; one uncalled module finding retained",
+  "pins": {
+    "actions": "Upstream full commit refs resolved through authenticated GitHub read API; URLs/tags/SHAs in tool lock",
+    "archives": "Go official release feed and GitHub release asset SHA256 catalogue; actionlint archive downloaded and verified before execution",
+    "sqlc": "Existing v1.31.1 digest catalogue unchanged",
+    "analyzer": "Module h1 checksum and upstream v1.4.0 commit in tool lock; built in owned temporary GOBIN"
+  },
+  "review": {
+    "architecture": "One canonical Make gate system; workflow JSON is YAML-compatible and permits lossless jq contract validation without another parser dependency",
+    "portability": "Bash 3-compatible script constructs; find -exec supports literal filenames; LF checkout and native OS/host/compiler assertions; native BSD/MSYS execution still pending",
+    "correctness": "Expected aggregate gate failures are propagated; formatting cannot silently repair tracked/untracked source; incorrect or truncated downloads preserve the accepted tool",
+    "security": "Read-only PR permissions, no publishing credentials/persisted checkout credentials, full-SHA actions, digest/source-pinned tools, no untrusted shell interpolation or environment dumps",
+    "testing": "Observed failing proofs above, real pinned linter/download/analyzer and both compiler canonical gates; coverage policy unchanged",
+    "simplicity": "No Go helper package, mutable application global, runtime dependency upgrade or parallel worker machinery added",
+    "independence": "Host review only; no independent peer or cross-model agreement claimed"
+  },
+  "hosted_pending": [
+    "All five exact-SHA native workflow job URLs; workflow has not been pushed or dispatched",
+    "Native Windows Git Bash/Make/GCC and macOS normal/negative portability results; local Windows fixtures are synthetic",
+    "Superseded/fork PR runtime, native source checkout and candidate-specific release scenarios"
+  ],
+  "local_scenario_closures": [
+    "006-V04",
+    "006-V07",
+    "006-V11",
+    "006-V12",
+    "006-V13"
+  ],
+  "owner_decisions": {
+    "license": "MIT; first-party rights confirmed by owner in this session; grant/notices belong to U4"
+  },
+  "next": "U3 after this unit coherent local commit",
+  "publication": "No push, PR, tag, settings change or release authorized or performed"
+}

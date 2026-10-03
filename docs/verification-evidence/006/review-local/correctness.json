@@ -1,0 +1,24 @@
+{
+  "reviewer": "correctness",
+  "findings": [
+    {
+      "title": "Strict candidate JSON accepts trailing documents",
+      "severity": "P2",
+      "file": "scripts/releasecheck/manifest.go",
+      "line": 80,
+      "confidence": 100,
+      "autofix_class": "gated_auto",
+      "owner": "downstream-resolver",
+      "requires_verification": true,
+      "pre_existing": false,
+      "suggested_fix": "After decoding the expected value, require EOF on a second decode; reject second documents and malformed trailing data, while allowing whitespace.",
+      "why_it_matters": "Candidate inventory and overlay acceptance validate only the first JSON value. Appended objects or garbage pass the strict reader and can be interpreted differently by downstream tools.",
+      "evidence": [
+        "scripts/releasecheck/manifest.go:80 -- return d.Decode(value)",
+        "DisallowUnknownFields only governs the decoded value; readJSON has no subsequent EOF check. Callers use it for inventory and overlay files."
+      ]
+    }
+  ],
+  "residual_risks": [],
+  "testing_gaps": []
+}

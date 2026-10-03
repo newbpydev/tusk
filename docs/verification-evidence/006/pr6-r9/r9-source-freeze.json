@@ -1,0 +1,27 @@
+{
+  "sha256": {
+    "Makefile": "fe897a4a049fefcb314fe0d76bb356a9386304df1384f1ec4afb6f7d028ff58a",
+    "scripts/candidate.sh": "2a09616156fc06be9fa9a4badf2f5208c880ecea45bf63a7f281b38e7f70b770",
+    "scripts/ci-check.sh": "177aaca56c314933bd65b7e97ce844b394f180b5a26a7fd8a98fcad946f75aa9",
+    "scripts/homebrew.sh": "ded1d8b1f374a04bd68312feeada7799b165780fc7c000ef6759d2d771afbffc",
+    "scripts/json_check.sh": "50f0fcf2af8b126b0641a01adca73da436b9a2bda43b666f8c5dba8dfb43c32a",
+    "scripts/notices.sh": "dda963e030c4db774ce8440794ba57ddf419be2c75d7537a05231faaef3dc7fe",
+    "scripts/promote.sh": "de610a19fac0fb8260130cf2837a08465dca0babcb1083d0895143480523b100",
+    "scripts/release.sh": "9a210f470d5333837d3666796099187e6070232a84bff5a5bcca601f0ae85793",
+    "scripts/release_smoke.sh": "7b3498676e785490d839826585c5d89fbd44e79cc9bef23f5ba31e86f16965d5",
+    "scripts/repository_metadata.sh": "04bc10a4b2d2993a005d3cd53bb4a83191fb7b945ebb3b741a9338a566f811bd",
+    "scripts/test/test_candidate.sh": "be34c1d5e80f8b40220fbdeddb7165dc89d5f3e026f46fd089670ee4432a9569",
+    "scripts/test/test_ci.sh": "d083b912fec31e2d57acf6f65f8aa556f2a7746377a79e740c0e2ecc88f9e83c",
+    "scripts/test/test_homebrew.sh": "6b3750e1e1148f4fc2b9c677201b845bbd9de12d95b503cfbe323a0329b85a11",
+    "scripts/test/test_metadata.sh": "893babab77cd94ed110f489144542d35cae878b378b6d67e89136bb99d67bf1d",
+    "scripts/test/test_notices.sh": "8b21fe4866bfc19b79a44392a74992cd97102bc11a9b6091d7079bf71d6336f4",
+    "scripts/test/test_promotion.sh": "6da2cfd1c664fa30cd513815c820826b8cf8f655cd48f6505d20b22675476805",
+    "scripts/test/test_release.sh": "b4acafc01a09d645958dee32267e85493faff90964401ab1fa6016e2f575ca0b",
+    "scripts/test/test_release_smoke.sh": "c6bbcd81d3804760d94e3fafce21b7d1839718db0c274d058366d999323e251a",
+    "docs/install.md": "c3c85f1dbbf1ae1451f7443b18ee843a4ded07b878494413f9ae7dd3131aa117",
+    "CONTRIBUTING.md": "ea3300b33005419eea6f7fed39f93cb36366d1ac08da3bcf46d08f59c8ee970a",
+    "docs/releasing.md": "057e48aad843258665bb1bd79c1096e055c75f9d7af877f21bc9d4b516f7ff9d",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "b54da66c545fecdd875d540654b478d95f14dbd9e82a8b58a36639760b6a35fb"
+  },
+  "utc": "2026-10-02T21:14:23.099449+00:00"
+}

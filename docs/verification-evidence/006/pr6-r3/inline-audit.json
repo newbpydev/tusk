@@ -1,0 +1,20 @@
+{
+  "scope": [
+    "cmd/tusk/confirm_windows.go",
+    "cmd/tusk/confirm_windows_test.go",
+    "scripts/cli-bench/main_test.go",
+    "scripts/release_smoke.sh",
+    "scripts/test/test_release_smoke.sh",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md"
+  ],
+  "roles": "sequential main-thread correctness, native portability, tests, security and simplicity audit",
+  "independent_review": false,
+  "verdict": "no confirmed P0-P2 in applied diff",
+  "notes": [
+    "Owned pipe handles; no stdin/global mutation. Reader joined on normal cancellation; bounded failure cleanup. Native Windows runtime remains pending.",
+    "Real test child exercises execute success, unexpected diagnostics, partial stdout on nonzero exit and launch failure on every host; no Windows skip. Child coverage retained separately.",
+    "Physical temporary path assertion matches driver normalization. Fake Windows tool asserts exact eight arguments including paths with spaces. Conversion refusal asserts unchanged launch trace.",
+    "EOF normalization is limited to Windows EOF/broken-pipe status; invalid handles still fail. Reference: https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile",
+    "No latency/coverage thresholds changed, rebuild added, hosted release gate closed, or new mutable global introduced."
+  ]
+}

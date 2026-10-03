@@ -1,0 +1,3 @@
+==> Formatting Go files with gofmt -s...
+==> Successfully formatted Go files.
+shellcheck -x scripts/promote.sh scripts/test/test_promotion.sh scripts/repository_metadata.sh scripts/test/test_metadata.sh scripts/candidate.sh scripts/test/test_candidate.sh scripts/homebrew.sh scripts/test/test_homebrew.sh

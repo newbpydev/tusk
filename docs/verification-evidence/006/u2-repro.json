@@ -1,0 +1,65 @@
+{
+  "source_sha": "ab5ef84e03d9a4f35358f0592f1486e301cb5348",
+  "locations": [
+    "/tmp/tusk-006-u2-candidate-b/assets",
+    "/tmp/tusk-006-u2-repro \u00fc/candidate-c/assets"
+  ],
+  "files": [
+    {
+      "name": "THIRD_PARTY_NOTICES.md",
+      "first_sha256": "ba486e7d36dd649f6b9a9a9c1068e014ca2d701f6b78e38eaf61e12c3691b7ed",
+      "second_sha256": "ba486e7d36dd649f6b9a9a9c1068e014ca2d701f6b78e38eaf61e12c3691b7ed",
+      "equal": true
+    },
+    {
+      "name": "checksums.txt",
+      "first_sha256": "17ed9a26263fc2018931612240f65e31075a23d1a0307655d174af088cfb35f6",
+      "second_sha256": "17ed9a26263fc2018931612240f65e31075a23d1a0307655d174af088cfb35f6",
+      "equal": true
+    },
+    {
+      "name": "release-manifest.json",
+      "first_sha256": "de866d0e309a85676b3f1f733527e44f740ca7f7d2547a7709654bb1d8061d12",
+      "second_sha256": "de866d0e309a85676b3f1f733527e44f740ca7f7d2547a7709654bb1d8061d12",
+      "equal": true
+    },
+    {
+      "name": "tusk_0.3.0_darwin_amd64.tar.gz",
+      "first_sha256": "e81219f28eee1a19a0e21a67e48abaca2d0031938f7ec0f7a792b4aac9b8390f",
+      "second_sha256": "e81219f28eee1a19a0e21a67e48abaca2d0031938f7ec0f7a792b4aac9b8390f",
+      "equal": true
+    },
+    {
+      "name": "tusk_0.3.0_darwin_arm64.tar.gz",
+      "first_sha256": "96a45977f7ff3945425748999ec01620318dab56820294533b2a70a17ebe5234",
+      "second_sha256": "96a45977f7ff3945425748999ec01620318dab56820294533b2a70a17ebe5234",
+      "equal": true
+    },
+    {
+      "name": "tusk_0.3.0_linux_amd64.tar.gz",
+      "first_sha256": "8c7439feba4ad12fa826d09c5c2889b654e7e6d881bf8bcb813b8c2ac76de326",
+      "second_sha256": "8c7439feba4ad12fa826d09c5c2889b654e7e6d881bf8bcb813b8c2ac76de326",
+      "equal": true
+    },
+    {
+      "name": "tusk_0.3.0_linux_arm64.tar.gz",
+      "first_sha256": "31367fe2ebd2948e59b665a3fa77bc9c133126e975fc211348ce97d89b8449ea",
+      "second_sha256": "31367fe2ebd2948e59b665a3fa77bc9c133126e975fc211348ce97d89b8449ea",
+      "equal": true
+    },
+    {
+      "name": "tusk_0.3.0_source.tar.gz",
+      "first_sha256": "a24b8f3c5f69e0bedb85ef37b0062537f7b692e80f721ec1076743beab887b3e",
+      "second_sha256": "a24b8f3c5f69e0bedb85ef37b0062537f7b692e80f721ec1076743beab887b3e",
+      "equal": true
+    },
+    {
+      "name": "tusk_0.3.0_windows_amd64.zip",
+      "first_sha256": "dd45d5b723e59979408fb8dff8a71897af339fb9084d48f2d419a6ce5ea8e031",
+      "second_sha256": "dd45d5b723e59979408fb8dff8a71897af339fb9084d48f2d419a6ce5ea8e031",
+      "equal": true
+    }
+  ],
+  "all_equal": true,
+  "targets_equal": true
+}

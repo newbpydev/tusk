@@ -1,0 +1,171 @@
+[
+  {
+    "reviewer": "correctness",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "project-standards",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "testing",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "maintainability",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "security",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "performance",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "api-contract",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "reliability",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "adversarial-composer",
+    "cross_model_route": "composer",
+    "cross_model_target": "composer",
+    "cross_model_harness": "cursor-agent",
+    "serving_family": "unknown",
+    "independence_verified": false,
+    "model_requested": "composer-2.5-fast",
+    "model_actual": "unverified",
+    "effort_requested": "fast",
+    "effort_actual": "unverified",
+    "receipt_supported": false,
+    "findings": [
+      {
+        "title": "Mocked verify-candidate can green while live Actions topology differs",
+        "severity": "P1",
+        "file": "scripts/test/test_candidate.sh",
+        "line": 51,
+        "why_it_matters": "Merge-blocking validate proves candidate verification only against a fixed nine-job fixture, not the live Actions jobs/attestation APIs. A hosted release run whose reusable-workflow job flattening, naming, or pagination differs can fail promotion verification after CI is already green, or briefly appear trusted if expectations were wrong in the opposite direction.",
+        "autofix_class": "advisory",
+        "owner": "human",
+        "requires_verification": true,
+        "confidence": 75,
+        "evidence": [
+          "scripts/test/test_candidate.sh:51: jq -n '{total_count:9,jobs:([\"identity\",\"ci / linux/amd64 \u2014 release compiler\",...",
+          "scripts/candidate.sh:115-116: gh api .../jobs?per_page=100 >\"$output/jobs.json\" then jq -e '.total_count==9 and (.jobs|length)==9 and all(.jobs[];...)'",
+          "Makefile:205-206: validate: fmt vet test race coverage test-scripts ... includes test_candidate.sh",
+          ".github/workflows/ci.yml:108: native Canonical gates run make validate but never live verify-candidate against GitHub"
+        ],
+        "pre_existing": false,
+        "suggested_fix": "Add an explicitly authorized hosted smoke (or recorded contract test) that runs candidate verify once against a real completed release workflow run and pins the observed jobs API shape; fail validate if live topology drifts from scripts/candidate.sh expectations.",
+        "first_evidence": "scripts/test/test_candidate.sh:51: jq -n '{total_count:9,jobs:([\"identity\",\"ci / linux/amd64 \u2014 release compiler\",..."
+      },
+      {
+        "title": "Local candidate bytes not bound to artifact transport digest",
+        "severity": "P2",
+        "file": "scripts/candidate.sh",
+        "line": 133,
+        "why_it_matters": "Maintainer verification cryptographically attests files in CANDIDATE_DIR and records artifact_api_digest from the API, but never downloads the Actions artifact ZIP and compares its hash to that digest. A hand-assembled or partially extracted directory that still passes per-file attestation checks can be accepted without proving it is the same transport payload GitHub stored.",
+        "autofix_class": "manual",
+        "owner": "human",
+        "requires_verification": true,
+        "confidence": 75,
+        "evidence": [
+          "scripts/candidate.sh:117-120: artifact_id and artifact_digest read from artifacts API only",
+          "scripts/candidate.sh:122-131: bash release_check.sh verify on local directory/assets plus gh attestation verify per local file path",
+          "scripts/candidate.sh:133: receipt transport field states no claim of independently hashing the transport ZIP"
+        ],
+        "pre_existing": false,
+        "suggested_fix": "In verify(), download the candidate artifact by artifact_id into a fresh temp tree (same gh deadline bounds), hash the ZIP or unpacked file set, and require equality with artifact_api_digest or a manifest of member digests before attesting CANDIDATE_DIR contents.",
+        "first_evidence": "scripts/candidate.sh:117-120: artifact_id and artifact_digest read from artifacts API only"
+      },
+      {
+        "title": "Release build compiles workflow SHA not input SHA",
+        "severity": "P2",
+        "file": ".github/workflows/release.yml",
+        "line": 362,
+        "why_it_matter": "The build job checks out github.sha while the reusable CI job builds inputs.source_sha. Trust rests entirely on the identity job\u2019s environment guard; any future workflow edit that weakens or bypasses identity while keeping build would compile a different commit than CI gated.",
+        "autofix_class": "manual",
+        "owner": "human",
+        "requires_verification": true,
+        "confidence": 75,
+        "evidence": [
+          ".github/workflows/release.yml:362: checkout with.ref \"${{ github.sha }}\"",
+          ".github/workflows/release.yml:344-347: ci reusable workflow with source_sha \"${{ inputs.source_sha }}\"",
+          "scripts/candidate.sh:20-21: identity requires GITHUB_SHA==RELEASE_SHA before record/build semantics",
+          "scripts/candidate.sh:491: contract requires checkout ref \"${{ github.sha }}\" not inputs.source_sha"
+        ],
+        "pre_existing": false,
+        "suggested_fix": "Align build/provenance checkout ref with inputs.source_sha (as CI already does) and extend candidate contract tests so ref drift is rejected even if identity env checks were weakened.",
+        "first_evidence": ".github/workflows/release.yml:362: checkout with.ref \"${{ github.sha }}\""
+      },
+      {
+        "title": "gh_deadline_setup fails when driver already exists",
+        "severity": "P3",
+        "file": "scripts/gh_deadline.sh",
+        "line": 6,
+        "why_it_matters": "If gh-deadline.exe is left in the verification output directory from a partial run, a subsequent verify or promote retry in that directory fails setup before any readback, leaving operators to interpret a tooling collision instead of resuming bounded reconciliation.",
+        "autofix_class": "manual",
+        "owner": "human",
+        "requires_verification": true,
+        "confidence": 75,
+        "evidence": [
+          "scripts/gh_deadline.sh:5-7: gh_deadline_binary=\"$2/gh-deadline.exe\"; [[ ! -e \"$gh_deadline_binary\" && ! -L \"$gh_deadline_binary\" ]] || return 1",
+          "scripts/candidate.sh:105-108: mkdir output then gh_deadline_setup \"$root\" \"$output\" || die",
+          "scripts/promote.sh:71: CANDIDATE_VERIFICATION_DIR=\"$output/verification\" make verify-candidate reuses nested output tree"
+        ],
+        "pre_existing": false,
+        "suggested_fix": "Treat an existing gh-deadline binary as reusable when its digest matches a freshly built artifact, or always build into a unique subdirectory per verify attempt while keeping mkdir collision semantics for receipts.",
+        "first_evidence": "scripts/gh_deadline.sh:5-7: gh_deadline_binary=\"$2/gh-deadline.exe\"; [[ ! -e \"$gh_deadline_binary\" && ! -L \"$gh_deadline_binary\" ]] || return 1"
+      },
+      {
+        "title": "Native CI never runs release packaging gate",
+        "severity": "P2",
+        "file": ".github/workflows/ci.yml",
+        "line": 108,
+        "why_it_matters": "Pull-request and main native CI run validate and check-ci but not setup-release, release-check, or release-candidate. Goreleaser/packaging regressions can merge cleanly and only surface on the manual release workflow, delaying feedback and coupling first packaging proof to dispatch timing.",
+        "autofix_class": "advisory",
+        "owner": "human",
+        "requires_verification": true,
+        "confidence": 75,
+        "evidence": [
+          ".github/workflows/ci.yml:108: Canonical gates make validate build check-generated check-ci",
+          ".github/workflows/release.yml:92: build runs make setup-sqlc setup-release release-check",
+          "Makefile:46-47: release-check invokes scripts/release.sh check (goreleaser check plus doc/notice gates)"
+        ],
+        "pre_existing": false,
+        "suggested_fix": "Add a bounded release-check (or snapshot packaging dry-run) to native linux amd64 CI, or document and enforce that release-candidate is the first packaging gate and track failures as release SLO.",
+        "first_evidence": ".github/workflows/ci.yml:108: Canonical gates make validate build check-generated check-ci"
+      }
+    ],
+    "residual_risks": [
+      "Candidate job-count and name matching assumes GitHub continues to flatten reusable-workflow matrix jobs into the parent run with ci / prefixes; API or naming changes fail closed but require script updates before any release can verify.",
+      "Native performance and terminal acceptance remain hash-bound local artifacts; hosted/native publication proof is explicitly pending per feature scope, so CI green does not close release acceptance.",
+      "artifact_api_digest is retained for audit but promotion paths never reconcile it against a downloaded ZIP, leaving transport integrity to operator procedure."
+    ],
+    "testing_gaps": [
+      "No automated test exercises verify-candidate against a recorded real Actions jobs.json/artifacts.json capture from a completed release run (only the synthetic nine-job fixture).",
+      "No test downloads a release-workflow artifact ZIP and asserts member digests match artifact_api_digest plus local CANDIDATE_DIR attestation subjects."
+    ]
+  }
+]

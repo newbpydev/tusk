@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -27,7 +28,8 @@ func TestResolvePath_Precedence(t *testing.T) {
 			t.Fatalf("path=%s want=%s err=%v", got, tc.want, err)
 		}
 	}
-	bad := func() (string, error) { return "", errors.New("lookup failed") }
+	lookupErr := errors.New("lookup failed")
+	bad := func() (string, error) { return "", lookupErr }
 	inputs := pathInputs{lookup: func(string) string { return "" }, home: bad, cwd: bad}
 	abs := filepath.Join(base, "absolute.db")
 	if got, err := resolvePath(abs, inputs); err != nil || got != abs {
@@ -37,6 +39,9 @@ func TestResolvePath_Precedence(t *testing.T) {
 		if _, err := resolvePath(p, inputs); err == nil {
 			t.Fatalf("accepted %q", p)
 		}
+	}
+	if _, err := resolvePath("relative.db", inputs); !errors.Is(err, lookupErr) {
+		t.Fatalf("current-directory failure was not preserved: %v", err)
 	}
 	inputs.home = func() (string, error) { return "relative-home", nil }
 	if _, err := resolvePath("", inputs); err == nil {
@@ -77,7 +82,16 @@ func TestResolve_EnvironmentPrecedence(t *testing.T) {
 		})
 	}
 	t.Setenv("TUSK_DB_PATH", "bad\xffpath")
-	if _, err := Resolve(""); err == nil {
+	// Windows environment values round-trip through UTF-16 and replace invalid
+	// UTF-8. Direct inputs still exercise rejection in TestResolvePath_Precedence.
+	if runtime.GOOS == "windows" {
+		if os.Getenv("TUSK_DB_PATH") != "bad\ufffdpath" {
+			t.Fatalf("unexpected UTF-16 normalization: %q", os.Getenv("TUSK_DB_PATH"))
+		}
+		if got, err := Resolve(""); err != nil || got != filepath.Join(base, "bad\ufffdpath") {
+			t.Fatalf("normalized environment path: %q %v", got, err)
+		}
+	} else if _, err := Resolve(""); err == nil {
 		t.Fatal("invalid path accepted")
 	}
 }
@@ -96,7 +110,7 @@ func TestPrepareFile_RejectsCreatedDevice(t *testing.T) {
 	if err == nil {
 		t.Fatal("created device accepted as regular database file")
 	}
-	if _, err := opened.Stat(); !errors.Is(err, os.ErrClosed) {
+	if err := opened.Close(); !errors.Is(err, os.ErrClosed) {
 		t.Fatalf("rejected handle leaked: %v", err)
 	}
 }

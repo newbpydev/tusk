@@ -1,0 +1,67 @@
+[
+  {
+    "item": "Windows canonical build paths",
+    "verdict": "fixed",
+    "invariant_key": "build-output-data",
+    "cause": "Make dir() left a trailing native backslash in recipe code; it escaped the closing shell quote",
+    "fix": "Freeze raw BUILD_OUTPUT and export it as environment data. Let Go create output parents; no mkdir or filename interpolation."
+  },
+  {
+    "item": "Windows approved bytes and source archives",
+    "verdict": "fixed",
+    "invariant_key": "checkout-byte-preservation",
+    "cause": "autocrlf changed unpinned Markdown checkout bytes; isolated Git fixture inherited global normalization defaults",
+    "fix": "Canonical first-party LF; final vendor -text rule overrides extension rules. Copy attributes and pin owned fixture autocrlf=false."
+  },
+  {
+    "item": "Native environment, handle, timing and benchmark fixtures",
+    "verdict": "fixed-differently",
+    "invariant_key": "native-fixture-portability",
+    "fix": "Assert actual UTF-16 normalized values, closed-handle Close contract, measurable positive timing, controlled launch context, Windows retained descriptor denial, normalized path separators and all platform temp variables. Runtime guards remain strict."
+  },
+  {
+    "item": "Windows ACL fixtures",
+    "verdict": "fixed; hosted runtime pending",
+    "invariant_key": "native-acl-fixtures",
+    "cause": "Go read opens use FILE_FLAG_BACKUP_SEMANTICS; a privileged runner can bypass ACL read denial. Directory staging requires add-subdirectory denial, not unrelated file-write denial. Privilege cause is an inference pending native execution.",
+    "fix": "Disable privileges only on an owned locked impersonation thread and restore it by defer. Probe actual read/directory capabilities. Complete readable payload before denial. No skips or weaker failure assertions.",
+    "references": [
+      "https://learn.microsoft.com/en-us/windows/win32/fileio/file-security-and-access-rights",
+      "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/icacls"
+    ]
+  },
+  {
+    "item": "macOS inspector coverage",
+    "verdict": "fixed; hosted coverage pending",
+    "invariant_key": "release-inspector-coverage",
+    "fix": "Malformed PE architecture/import/build-info, invalid target and cask identity/mode/directory cases. Linux focused coverage 96.2%; 95% threshold unchanged."
+  },
+  {
+    "item": "Kilo new Windows import policy suggestion",
+    "verdict": "fixed-differently",
+    "thread": "PRRT_kwDOUQoUDc6oa8YG",
+    "invariant_key": "release-system-libraries",
+    "fix": "Document the audited pinned import lock and diagnose new DLLs as unreviewed rather than incorrectly non-system. Test genuine system and vendor additions as requests for review."
+  },
+  {
+    "item": "Kilo carried semantic version claim",
+    "verdict": "fixed-differently",
+    "invariant_key": "release-version-binding",
+    "fix": "Clarify quarantine inspection versus native acceptance. All five required native promotion receipts bind observed runtime version and exact digests. Expand rejection and no-GitHub-call regressions to every target. Do not claim static inspection executes foreign target constants."
+  },
+  {
+    "item": "Kilo carried optional PowerShell string claim",
+    "verdict": "not-addressing",
+    "proof": "Exact advanced-script param block, omitted -File parameter, PowerShell 7.5.4: typed string is empty and Replace succeeds. Retained R1 proof; production param declarations unchanged."
+  },
+  {
+    "item": "Kilo carried screenshot commit claim",
+    "verdict": "not-addressing",
+    "proof": "Full 246db8c55b9e15d168d974a4ab5f183abef3d42b commit resolves locally and through GitHub; retained R1 proof. A shallow review checkout does not establish absence."
+  },
+  {
+    "item": "Kilo carried docs-only CI filter proposal",
+    "verdict": "declined",
+    "reason": "Docs, licenses, assets and generated completion/manual files are approved shipped inputs; the planned native matrix must run for their changes."
+  }
+]

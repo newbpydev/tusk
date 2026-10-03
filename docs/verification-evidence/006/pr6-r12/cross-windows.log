@@ -1,0 +1,17 @@
+{"command": ["make", "build-gh-fixture"], "environment": {"GOTOOLCHAIN": "go1.27.1", "GOOS": "windows", "GOARCH": "amd64", "GH_FIXTURE_OUTPUT": "/tmp/compound-engineering-1000/ce-compound/20261002-release-rejection-9e2wqkga/r12-fixture-windows"}}
+go env GOOS GOARCH GOVERSION
+windows
+amd64
+go1.27.1
+CGO_ENABLED=0 go build -trimpath -buildvcs=false -o "$GH_FIXTURE_OUTPUT" scripts/test/fixtures/gh-launcher.go
+build_exit=0
+/tmp/compound-engineering-1000/ce-compound/20261002-release-rejection-9e2wqkga/r12-fixture-windows: go1.27.1
+	path	command-line-arguments
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	-trimpath=true
+	build	DefaultGODEBUG=cryptocustomrand=1,tlssecpmlkem=0,tracebacklabels=0,urlstrictcolons=0,x509sslcertoverrideplatform=0
+	build	CGO_ENABLED=0
+	build	GOARCH=amd64
+	build	GOOS=windows
+	build	GOAMD64=v1

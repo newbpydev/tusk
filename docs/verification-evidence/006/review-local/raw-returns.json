@@ -1,0 +1,113 @@
+[
+  {
+    "reviewer": "correctness",
+    "findings": [
+      {
+        "title": "Strict candidate JSON accepts trailing documents",
+        "severity": "P2",
+        "file": "scripts/releasecheck/manifest.go",
+        "line": 80,
+        "confidence": 100,
+        "autofix_class": "gated_auto",
+        "owner": "downstream-resolver",
+        "requires_verification": true,
+        "pre_existing": false,
+        "suggested_fix": "After decoding the expected value, require EOF on a second decode; reject second documents and malformed trailing data, while allowing whitespace.",
+        "first_evidence": "scripts/releasecheck/manifest.go:80 -- return d.Decode(value)",
+        "evidence": [
+          "scripts/releasecheck/manifest.go:80 -- return d.Decode(value)",
+          "DisallowUnknownFields only governs the decoded value; readJSON has no subsequent EOF check. Callers use it for inventory and overlay files."
+        ]
+      }
+    ],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "project-standards",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "testing",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "maintainability",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "security",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "performance",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "api-contract",
+    "findings": [],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "reliability",
+    "findings": [
+      {
+        "title": "Release helpers leave GitHub subprocesses unbounded",
+        "severity": "P2",
+        "file": "scripts/promote.sh",
+        "line": 91,
+        "confidence": 100,
+        "autofix_class": "gated_auto",
+        "owner": "downstream-resolver",
+        "requires_verification": true,
+        "pre_existing": false,
+        "suggested_fix": "Bound every maintainer gh invocation with a portable process deadline, preserve exit codes and readback reconciliation, and test a stalled owned child.",
+        "first_evidence": "scripts/promote.sh:91 -- gh api \"https://api.github.com/repos/$repo/git/ref/heads/main\" >\"$output/main.json\" || die 'main readback unavailable'",
+        "evidence": [
+          "scripts/promote.sh:91 -- gh api \"https://api.github.com/repos/$repo/git/ref/heads/main\" >\"$output/main.json\" || die 'main readback unavailable'",
+          "006-ISS-045 records the required bounded-process contract. cli/cli v2.102.0 uses go-gh v2.16.1; api ClientOptions defaults to no timeout. All four GitHub helper scripts currently invoke gh without a watchdog."
+        ]
+      }
+    ],
+    "residual_risks": [],
+    "testing_gaps": []
+  },
+  {
+    "reviewer": "adversarial-composer",
+    "independence_verified": false,
+    "findings": [
+      {
+        "title": "Promotion accepts native receipts without executable binding",
+        "severity": "P2",
+        "file": "scripts/promote.sh",
+        "line": 45,
+        "why_it_matters": "Native gate records can omit the binary/archive digests that the acceptance guide requires. Promotion checks manifest/run identity but cannot catch a mistaken target-executable digest in a maintainer receipt.",
+        "autofix_class": "gated_auto",
+        "owner": "downstream-resolver",
+        "requires_verification": true,
+        "confidence": 100,
+        "evidence": [
+          "scripts/promote.sh:45 --  jq -e --arg id \"$(jq -r '.id' <<<\"$gate\")\" --arg sha \"$RELEASE_SHA\" --arg version \"$RELEASE_VERSION\" --arg hash \"$CANDIDATE_MANIFEST_SHA256\" --argjson run \"$CANDIDATE_RUN_ID\" '.status==\"accepted\" and .scope==\"trusted-candidate\" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' \"$path\" >/dev/null || die 'gate receipt does not describe this trusted candidate'",
+          "docs/release-acceptance.md requires native gate receipts to include binary/archive digests and retained evidence; promote never reads executable_sha256 or binary_sha256 from receipts",
+          "scripts/test/test_promotion.sh builds gate receipts with only status/scope/gate/manifest/run_id and no binary fields, illustrating the accepted shape"
+        ],
+        "pre_existing": false,
+        "suggested_fix": "Require target, executable_sha256 and archive_sha256 for native gate wrappers and compare them against the matching verified manifest target; retain human review of terminal/evidence records.",
+        "first_evidence": "scripts/promote.sh:45 --  jq -e --arg id \"$(jq -r '.id' <<<\"$gate\")\" --arg sha \"$RELEASE_SHA\" --arg version \"$RELEASE_VERSION\" --arg hash \"$CANDIDATE_MANIFEST_SHA256\" --argjson run \"$CANDIDATE_RUN_ID\" '.status==\"accepted\" and .scope==\"trusted-candidate\" and .gate==$id and .source_sha==$sha and .version==$version and .manifest_sha256==$hash and .run_id==$run' \"$path\" >/dev/null || die 'gate receipt does not describe this trusted candidate'"
+      }
+    ],
+    "residual_risks": [],
+    "testing_gaps": []
+  }
+]

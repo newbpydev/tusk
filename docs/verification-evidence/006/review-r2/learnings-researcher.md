@@ -1,0 +1,1 @@
+Searched current docs/solutions paths/titles/frontmatter for CI, packaging, release, provenance, tooling and CLI keywords and read CONCEPTS.md for vocabulary. No applicable release-specific learning or declared Compound Pack. Historical candidate evidence remains distinct from current/native/hosted proof. No contradictory pack rule or additional defect established.

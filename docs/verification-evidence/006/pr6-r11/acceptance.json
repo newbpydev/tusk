@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "reviewed_head": "d28d44bb1349173a429fa5b90409e847c88d2622",
+  "remediation_commit": "containing commit",
+  "pr": "https://github.com/newbpydev/tusk/pull/6",
+  "native_ci_run": 37070854550,
+  "all_reports_complete_before_changes": true,
+  "terminal_checks": 7,
+  "native_ci_failures": 2,
+  "inline_review_threads": 3,
+  "needs_human": 0,
+  "utc": "2026-10-02T22:40:25.804104+00:00",
+  "canonical": {
+    "status": "passed",
+    "exit": 0,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate build check-generated check-docs check-notices check-ci check-candidate-workflow lint-release-promotion",
+    "log": "r11-canonical-frozen.log.gz",
+    "scope": "Six fixture/test/documentation/lesson inputs unchanged; completed authority statuses and receipts recorded afterward. Ordinary Go caching is retained for unchanged packages."
+  },
+  "implementation_sha256": {
+    "cmd/tusk/confirm_test.go": "b4ad328a03057c6a72f879eb920d05f47f6c4322064a0c28e01bdfb6afdb2711",
+    "docs/solutions/workflow-issues/prove-release-policy-rejection-at-the-intended-boundary.md": "81b13fe65d80679099b9bd5b47f9d595cac6939af586bebaf91c8a7c662e48d4",
+    "scripts/test/fixtures/gh-launcher.go": "5688e13cb49dbc70738412ac04f3073d27a0754bf49b19a46ee5d341adcb119d",
+    "scripts/test/test_gh_fixture.sh": "32778152a5a88b901a325ed6ead41826b5d58dff85f01406ea0e93352d2b8b23",
+    "scripts/test/test_homebrew.sh": "c31988860490efb8454dac0f7a2ac386d6c5d4622201a51fc866ab0f03432b1b",
+    "docs/verification-evidence/006/pr6-r10/r9-jq-crlf-model/README.md": "a4f9416e26611ac2d103bc44f8bbdf621bbb105a143ca245de94640fa29e935b"
+  },
+  "items": [
+    {
+      "id": "R11-01",
+      "severity": "P1",
+      "source_check": "darwin/amd64",
+      "issue": "Cancellation test fake closes its unblock channel again while the reader has not yet joined.",
+      "red": {
+        "exit": 2,
+        "diagnostic": "TestConfirm_CancelJoinsReader: panic: close of closed channel",
+        "scope": "Hold the fake reader through a third cancellation request, deterministically reproducing the actual native panic."
+      },
+      "green": {
+        "exit": 0,
+        "scope": "Still requires cancellation, at least three requests and completed thread release; synchronization channels close once."
+      },
+      "repair": "Only the test fake changes; production retries and joining remain unchanged."
+    },
+    {
+      "id": "R11-02",
+      "severity": "P1",
+      "source_check": "windows/amd64",
+      "issue": "Separate Homebrew API fixture still uses extensionless gh, which native executable lookup bypasses.",
+      "red": {
+        "diagnostic": "tap check pins public GitHub host and disables HTTP debug logging (1 vs 0); gh: Not Found (HTTP 404)",
+        "scope": "Actual Windows report; preceding candidate controls pass."
+      },
+      "green": {
+        "exit": 0,
+        "scope": "All cask mutations, missing-tap negative, host/debug positive and native-child deadline control pass."
+      },
+      "repair": "Fourth API fixture family uses the owned native launcher. The fixture-native stall avoids leaving a Bash grandchild during timeout; production deadline code is unchanged."
+    },
+    {
+      "id": "R11-03",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ogh5L",
+      "root_comment_id": 4170274222,
+      "verdict": "fixed",
+      "issue": "Signal-terminated fixture children surface as 255.",
+      "red": {
+        "exit": 2,
+        "diagnostic": "native fixture maps SIGTERM to 143 (observed 255)"
+      },
+      "green": {
+        "exit": 0,
+        "diagnostic": "native fixture maps SIGTERM to 143 (observed 143)"
+      },
+      "repair": "Use the native process WaitStatus signal to preserve shell-style 128+signal, keeping normal child exit codes."
+    },
+    {
+      "id": "R11-04",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ogh5Q",
+      "root_comment_id": 4170274229,
+      "verdict": "fixed",
+      "issue": "Launcher test assertions fail without identifying the broken invariant.",
+      "repair": "Named checks report expected contracts and retained stdout/stderr. The signal Red itself demonstrates the observed status in its named FAIL."
+    },
+    {
+      "id": "R11-05",
+      "severity": "P2",
+      "source_thread": "PRRT_kwDOUQoUDc6ogh5V",
+      "root_comment_id": 4170274235,
+      "verdict": "fixed-differently",
+      "issue": "Retained CRLF replay depends on unstated host jq binary-output capability.",
+      "repair": "Record observed jq-1.8.2 and the exact capability probe in the adjacent R10 model README. Preserve the original wrapper and measured logs, and distinguish this historical model prerequisite from Unix product tooling."
+    }
+  ],
+  "cross_builds": {
+    "windows/amd64": {
+      "exit": 0,
+      "target": "make build-gh-fixture",
+      "log": "cross-fixture-windows.log"
+    },
+    "darwin/amd64": {
+      "exit": 0,
+      "target": "make build-gh-fixture",
+      "log": "cross-fixture-darwin.log"
+    }
+  },
+  "trajectory_assessment": "Two bounded fixture roots plus status/diagnostic/replay refinements. Homebrew completes the native-client isolation class identified in R10. No production change, release threshold relaxation or third round on previously escalated release-version/system-library invariants.",
+  "native_reexecution": "pending",
+  "limits": [
+    "Cross-compilation and local fixture controls are distinct from fresh native execution.",
+    "All Linux and macOS arm64 jobs passed on the preceding head; Windows confirms the candidate launcher repair.",
+    "Sequential root audit does not claim independent model agreement; prior Claude authentication/Codex quota gaps remain disclosed.",
+    "51 local closures remain unchanged; physical/trusted-main/performance/cask/release/tap/settings gates remain open."
+  ],
+  "retained_logs_sha256": {
+    "r11-cancel-red.log.gz": "eb7844909564c73a595fa94ec5a5086d7225aeedc3ed1fbabbdb81424f8d810c",
+    "r11-canonical-frozen.log.gz": "0ec284189d2b215a7189071ffc1746ba30c52a4edf9ff9c861921b79498e82dd",
+    "r11-focused-green.log.gz": "b714af56b6dfc6a80bd2e930f86e733cb9fc84d8138f23cd6285d17cc800bdd0",
+    "r11-macos-amd64.clean.log.gz": "45c3554e7e0ad70d8b8ac026ba646c6ac09d098d15c5006296349c2572369d85",
+    "r11-signal-red.log.gz": "7d03bf4d418f6a9ba9cd911abbb61b5487a90b5d9036e46e3d1394f9341c8329",
+    "r11-windows.clean.log.gz": "8b13ca8aaab8da81b3afa78ffb2bb9a075c0a96c40c2c96d32bb43c543d6165d"
+  }
+}

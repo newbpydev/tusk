@@ -3,12 +3,15 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -174,10 +177,17 @@ func TestHostAcceptance_FinalWriteCannotFollowReplacedPath(t *testing.T) {
 	}
 	sentinel := []byte("retained evidence")
 	moved := false
+	replacementBlocked := false
 	fake := func(b string, a, e []string) (int64, []byte, error) {
-		if !moved {
+		if !moved && !replacementBlocked {
 			if err := os.Rename(output, owned); err != nil {
-				t.Fatal(err)
+				// Windows retains an exclusive descriptor without delete sharing.
+				const sharingViolation = syscall.Errno(32)
+				if runtime.GOOS != "windows" || !errors.Is(err, sharingViolation) {
+					t.Fatal(err)
+				}
+				replacementBlocked = true
+				return fakeProcess(b, a, e)
 			}
 			if err := os.WriteFile(output, sentinel, 0600); err != nil {
 				t.Fatal(err)
@@ -190,6 +200,15 @@ func TestHostAcceptance_FinalWriteCannotFollowReplacedPath(t *testing.T) {
 		t.Fatal(code)
 	}
 	data, err := os.ReadFile(output)
+	if replacementBlocked {
+		if err != nil || !bytes.Contains(data, []byte("host_acceptance")) {
+			t.Fatalf("protected original report incomplete: %v", err)
+		}
+		if _, err := os.Stat(owned); !errors.Is(err, os.ErrNotExist) {
+			t.Fatalf("denied replacement created another report: %v", err)
+		}
+		return
+	}
 	if err != nil || !bytes.Equal(data, sentinel) {
 		t.Fatalf("replacement changed: %q %v", data, err)
 	}

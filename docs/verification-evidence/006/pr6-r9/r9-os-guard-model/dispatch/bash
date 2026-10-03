@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+case "${1:-}:${2:-}" in
+    scripts/ci-check.sh:preflight|*/scripts/ci-check.sh:preflight) shift; exec /usr/bin/bash "$FIXTURE_CI_MUTANT" "$@" ;;
+esac
+exec /usr/bin/bash "$@"

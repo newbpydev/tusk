@@ -1,0 +1,28 @@
+Tusk - Zero-friction terminal task management system
+
+Usage:
+  tusk [flags]
+  tusk [command]
+
+Available Commands:
+  add         Create a task
+  completion  Generate a shell completion script
+  delete      Delete a task with explicit consent
+  done        Complete a task and its descendants
+  edit        Patch supplied task fields
+  help        Help about any command
+  history     Show oldest-first task metadata history
+  list        List tasks with composable filters
+  stats       Show retained-task statistics
+  tree        Show the forest or a complete subtree
+  tui         Open the interactive task application
+  version     Print the version of tusk
+
+Flags:
+      --auto-complete-parent   Complete parents when all children are done
+  -h, --help                   help for tusk
+      --timezone string        Date timezone (IANA name)
+  -v, --version                Print version
+
+Use "tusk [command] --help" for more information about a command.
+[U2]$

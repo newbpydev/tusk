@@ -1,0 +1,86 @@
+[
+  {
+    "path": "Makefile",
+    "binary_calls": 1
+  },
+  {
+    "path": "scripts/candidate.sh",
+    "binary_calls": 16
+  },
+  {
+    "path": "scripts/ci-check.sh",
+    "binary_calls": 10
+  },
+  {
+    "path": "scripts/homebrew.sh",
+    "binary_calls": 1
+  },
+  {
+    "path": "scripts/json_check.sh",
+    "binary_calls": 1
+  },
+  {
+    "path": "scripts/notices.sh",
+    "binary_calls": 10
+  },
+  {
+    "path": "scripts/promote.sh",
+    "binary_calls": 52
+  },
+  {
+    "path": "scripts/release.sh",
+    "binary_calls": 8
+  },
+  {
+    "path": "scripts/release_smoke.sh",
+    "binary_calls": 6
+  },
+  {
+    "path": "scripts/repository_metadata.sh",
+    "binary_calls": 14
+  },
+  {
+    "path": "scripts/test/test_candidate.sh",
+    "binary_calls": 15
+  },
+  {
+    "path": "scripts/test/test_ci.sh",
+    "binary_calls": 3
+  },
+  {
+    "path": "scripts/test/test_homebrew.sh",
+    "binary_calls": 1
+  },
+  {
+    "path": "scripts/test/test_metadata.sh",
+    "binary_calls": 8
+  },
+  {
+    "path": "scripts/test/test_notices.sh",
+    "binary_calls": 1
+  },
+  {
+    "path": "scripts/test/test_promotion.sh",
+    "binary_calls": 45
+  },
+  {
+    "path": "scripts/test/test_release.sh",
+    "binary_calls": 3
+  },
+  {
+    "path": "scripts/test/test_release_smoke.sh",
+    "binary_calls": 4
+  },
+  {
+    "path": "docs/install.md",
+    "kind": "build-only jq prerequisite"
+  },
+  {
+    "path": "CONTRIBUTING.md",
+    "kind": "build-only jq prerequisite"
+  },
+  {
+    "path": "docs/releasing.md",
+    "kind": "build-only jq prerequisite"
+  }
+]

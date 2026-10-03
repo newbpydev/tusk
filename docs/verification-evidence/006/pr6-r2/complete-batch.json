@@ -1,0 +1,55 @@
+{
+  "head": "79646a31bae6b95980b8bd518b744c15944a4fb7",
+  "checks": [
+    {
+      "completedAt": "2026-10-02T17:06:40Z",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37036903728/job/110937232877",
+      "name": "darwin/arm64 \u2014 release compiler",
+      "startedAt": "2026-10-02T16:52:47Z",
+      "state": "FAILURE"
+    },
+    {
+      "completedAt": "2026-10-02T17:12:30Z",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37036903728/job/110937232690",
+      "name": "darwin/amd64 \u2014 release compiler",
+      "startedAt": "2026-10-02T16:52:45Z",
+      "state": "FAILURE"
+    },
+    {
+      "completedAt": "2026-10-02T17:03:13Z",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37036903728/job/110937232750",
+      "name": "linux/arm64 \u2014 release compiler",
+      "startedAt": "2026-10-02T16:52:44Z",
+      "state": "SUCCESS"
+    },
+    {
+      "completedAt": "2026-10-02T17:02:39Z",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37036903728/job/110937232854",
+      "name": "linux/amd64 \u2014 release compiler",
+      "startedAt": "2026-10-02T16:52:42Z",
+      "state": "SUCCESS"
+    },
+    {
+      "completedAt": "2026-10-02T16:57:09Z",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37036903728/job/110937232705",
+      "name": "windows/amd64 \u2014 release compiler",
+      "startedAt": "2026-10-02T16:52:42Z",
+      "state": "FAILURE"
+    },
+    {
+      "completedAt": "2026-10-02T17:06:29Z",
+      "link": "https://github.com/newbpydev/tusk/actions/runs/37036903728/job/110937232451",
+      "name": "Linux \u2014 minimum compiler and five-target cross-builds",
+      "startedAt": "2026-10-02T16:52:42Z",
+      "state": "SUCCESS"
+    },
+    {
+      "completedAt": "2026-10-02T17:02:40Z",
+      "link": "https://app.kilo.ai/code-reviews/47d31795-0024-494d-9461-35d73617d8fb",
+      "name": "Kilo Code Review",
+      "startedAt": "2026-10-02T16:52:38Z",
+      "state": "SUCCESS"
+    }
+  ],
+  "code_edits_before_all_reports": false
+}

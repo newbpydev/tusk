@@ -1,0 +1,35 @@
+{
+  "route": "composer",
+  "model_requested": "composer-2.5-fast",
+  "model_actual": "unverified",
+  "effort_requested": "fast",
+  "effort_actual": "unverified",
+  "receipt_supported": false,
+  "independence_verified": false,
+  "admitted": [
+    {
+      "original_index": 1,
+      "severity": "P2",
+      "reason": "Guide requires binary/archive digests; missing mechanical match is a bounded receipt correctness gap, not proof of malicious/forged human acceptance."
+    }
+  ],
+  "rejected": [
+    {
+      "original_index": 2,
+      "reason": "Native CI intentionally proves source gates. Separate exact-byte native manual smoke acceptance is mandatory and not claimed closed."
+    },
+    {
+      "original_index": 3,
+      "reason": "Reusable workflow github context retains caller workflow/event/run. A release manual dispatch has distinct caller workflow/run group; main pushes use Native CI group."
+    },
+    {
+      "original_index": 4,
+      "reason": "Reference measurements intentionally run on the declared Linux amd64 host (KTD16/R25), already documented."
+    },
+    {
+      "original_index": 5,
+      "reason": "All five native jobs run check-ci and candidate ci needs every job to succeed; no demonstrated silent pass. Minimum job intentionally proves compiler/source minimum."
+    }
+  ],
+  "peer_job_cleanup": "Both terminal job directories deleted"
+}

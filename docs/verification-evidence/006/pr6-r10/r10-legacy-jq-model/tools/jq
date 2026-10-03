@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+for arg in "$@"; do
+    case "$arg" in --binary|-b) echo 'jq: Unknown option --binary' >&2;exit 2 ;;esac
+done
+exec "$MODEL_REAL_JQ" "$@"

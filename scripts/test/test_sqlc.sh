@@ -43,13 +43,14 @@ verify_sqlc_archive "$test_dir/good.tar.gz" "$(sqlc_sha256 "$test_dir/good.tar.g
 cmp "$test_dir/archive/sqlc" "$test_dir/extracted"
 tar -czPf "$test_dir/traversal.tar.gz" -C "$test_dir/archive" nested/../sqlc
 expect_failure verify_sqlc_archive "$test_dir/traversal.tar.gz" "$(sqlc_sha256 "$test_dir/traversal.tar.gz")" "$test_dir/extracted"
-touch "$test_dir/archive/extra"
+printf 'nonempty companion\n' > "$test_dir/archive/extra"
 tar -czf "$test_dir/extra.tar.gz" -C "$test_dir/archive" sqlc extra
 expect_failure verify_sqlc_archive "$test_dir/extra.tar.gz" "$(sqlc_sha256 "$test_dir/extra.tar.gz")" "$test_dir/extracted"
-rm "$test_dir/archive/sqlc"
-ln -s extra "$test_dir/archive/sqlc"
-tar -czf "$test_dir/symlink.tar.gz" -C "$test_dir/archive" sqlc
+# Test an actual archive symlink header without host symlink privileges or
+# Git Bash's copy-style ln -s changing it into a regular file.
+cp "$ROOT_DIR/scripts/test/fixtures/sqlc-symlink.tar.gz" "$test_dir/symlink.tar.gz"
 expect_failure verify_sqlc_archive "$test_dir/symlink.tar.gz" "$(sqlc_sha256 "$test_dir/symlink.tar.gz")" "$test_dir/extracted"
+grep -F 'sqlc archive member is not a regular file' "$test_dir/failure.log" >/dev/null || { cat "$test_dir/failure.log" >&2;exit 1; }
 before=$(sqlc_sha256 "$TUSK_SQLC_BIN")
 printf '#!/usr/bin/env bash\nexit 1\n' > "$test_dir/bin/curl"
 chmod +x "$test_dir/bin/curl"
@@ -64,7 +65,10 @@ for scenario in setup:curl generate:gofmt check:diff; do
     mkdir -p "$restricted"
     for dependency in bash dirname mktemp uname rm curl gofmt diff; do
         if [[ "$dependency" != "$missing" ]]; then
-            ln -s "$(command -v "$dependency")" "$restricted/$dependency"
+            # Keep the restricted PATH for prerequisite checks while executing
+            # each installed image beside its native runtime dependencies.
+            printf '#!/bin/bash\nexec %q "$@"\n' "$(command -v "$dependency")" > "$restricted/$dependency"
+            chmod +x "$restricted/$dependency"
         fi
     done
     expect_failure env PATH="$restricted" TUSK_SQLC_HOST=Linux/x86_64 bash "$ROOT_DIR/scripts/sqlc.sh" "$action" "$test_dir/project"

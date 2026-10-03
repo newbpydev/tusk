@@ -1,0 +1,16 @@
+{
+  "verdicts": [
+    {
+      "#": 1,
+      "status": "confirmed",
+      "protected_subject": "authorization-authentication",
+      "reason": "Reviewed 72c5eeb with go1.27.1 in an owned faithful snapshot; concatenated failed/passing hash-bound CLI report reached fixture release completion (exit 0, expected refusal); jq -e predicates lack single-document checks. Approval variant was stopped by a conflicting remote-tag fixture after passing approval, so its full-write reproduction must reset remote state."
+    },
+    {
+      "#": 2,
+      "status": "confirmed",
+      "protected_subject": null,
+      "reason": "Reviewed 72c5eeb; canonical candidate/promotion/metadata targets in a snapshot with only sha256sum removed from PATH exit 2 at the quoted hash command while shasum is available. Native macOS execution not claimed; official toolset does not promise GNU coreutils."
+    }
+  ]
+}
