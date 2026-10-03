@@ -34,6 +34,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   documentation/evidence remediation before publishing the fix.
 - [x] Validate PR #7's follow-up provenance, disabled-state controls and
   mixed-case badge refusal before pushing the second combined fix.
+- [x] Validate the owner-approved complete-target/state and evidence correction
+  before pushing the third combined fix.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -46,8 +48,12 @@ was not retained. Final hosted/candidate/publication gates remain pending.
 
 The first remediation head `4351b66` passed all six source CI jobs and Codex's
 current-head review. Kilo confirmed the original ten fixes and reported six
-follow-ups. Those provenance, wording and badge/test corrections are locally
-validated together; their fresh hosted/cloud settlement remains pending.
+follow-ups. Those provenance, wording and badge/test corrections were locally
+validated together. The second head `e3dd105` passed all six source CI jobs;
+Kilo and Codex completed review with three boundary/provenance follow-ups.
+The owner approved one bounded correction pass for complete badge URL targets,
+complete single reporting-state declarations and marked validation evidence.
+That pass's fresh hosted/cloud settlement remains pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

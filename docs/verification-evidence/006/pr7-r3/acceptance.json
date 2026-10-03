@@ -1,0 +1,131 @@
+{
+  "schema": 1,
+  "scope": "PR 7 owner-approved bounded third correction pass; complete documentation targets/state declarations and explicit environment evidence",
+  "head_sha": "e3dd105b1d4a9d5252f829a9615c92924392842e",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "canonical": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "PATH": "/tmp/pr7-path-without-rg",
+    "ripgrep_lookup_exit": 1,
+    "compiler": "go1.27.1 linux/amd64",
+    "exit_code": 0,
+    "named_script_assertions_passed": 562,
+    "log": "validate.log.gz",
+    "environment_evidence": "The real run log records PATH, Bash lookup exit, compiler version, canonical command, and final exit status; no historical log was rewritten."
+  },
+  "additional_checks": [
+    "make test-docs: complete target/state matrix Red/Green plus scanner-error Red/Green",
+    "make check-ci check-candidate-workflow check-native-candidate-workflow lint-release-promotion",
+    "final-docs.log.gz and synchrony.log.gz verify outcome-only planning updates after the canonical gate",
+    "r2-input-readback.log.gz verifies all 20 historical R2 input hashes against immutable e3dd105"
+  ],
+  "input_scope": "Final worktree bytes of material implementation, direct documentation fixture inputs and verdict-carrying metadata/plans. Code passed canonical validation; outcome-only planning updates afterwards passed documentation/synchrony checks. This receipt is excluded to avoid self-reference; unchanged source remains bound to head_sha and artifacts carry independent hashes.",
+  "input_sha256": {
+    ".github/workflows/native-candidate.yml": "58c727df67762596a0fca959ee09fdcbed9bf110907347a8cc5343e3c9b79070",
+    ".github/workflows/release.yml": "59c0b3c2d41077b026e755064769b355dc0f3ce5f22a8eb58c68dc159b8e35a6",
+    "CONTRIBUTING.md": "25b3013f4cf2d9767bc657f57a5834cade5e1147f71b7532f183a7fb0ba91958",
+    "LICENSE": "e7b8f7ad23179441d30f557ac1f4052def3c6a20c5a8d3217a82f6cbe8163482",
+    "MASTERPLAN.md": "6c192cc9b804fd91d2197b098bb794bcea79723a2fa751939f23de08f1bc9677",
+    "Makefile": "34bf303bc90b4580d3bf306a6d0053054c6c30ae1825b656399ca448764a4144",
+    "README.md": "59f989fabf6e3aeea9a59dbce4a27babd8295806b1d9154f0924fc01c0863400",
+    "SECURITY.md": "5262d79b05453eab22ce5b416fc13c621fea1ff883a78c8ad61b36b312ac741c",
+    "THIRD_PARTY_NOTICES.md": "ba486e7d36dd649f6b9a9a9c1068e014ca2d701f6b78e38eaf61e12c3691b7ed",
+    "docs/assets/README.md": "bfdad00f995f75d34b0626db8680cd01901353f007a741ce8187b7b70069f64f",
+    "docs/assets/tusk-tui.png": "0a5ad71ac8ba8671f0559fdea62d824504510fa9510574e9dd9059d05542eba7",
+    "docs/cli.md": "dccd177143794898dfc8bb34ad1cb35b337b366f99ce9fa2ef04023a55f2f121",
+    "docs/install.md": "48d65a3abca238883c51740ff1d9ee1a10ba40062c9a18820e8f1e587a726e50",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "17bf8ce91cbc1a50d2d5ab8cd2da2007c4814e4e0a61dc30775ea5908c8124f4",
+    "docs/releasing.md": "51170f0815b951fef89d3d3f545faadf28fe95da625be57f4eec461c538fa669",
+    "docs/tui.md": "d6e54fc9824b5973b4a7515122870c6d26553b483d787afb70ec47963cae41c5",
+    "docs/verification-evidence/006/github-readiness/README.md": "dd697b545438857f7815cd0d0e2e07bba6d7956ea782ebd4eddaaa23961955e4",
+    "docs/verification-evidence/006/github-readiness/repository-metadata.json": "1fd7ba8175d35968001b3344c2a5fb69a84e267dc1a4ece709271a0704a888d9",
+    "docs/verification-evidence/006/github-readiness/review-metadata.json": "4efa6423716f72b0f6c2758e4ffb078bb3d4a2486c17e8cfabaab3fade3bc304",
+    "docs/verification-evidence/006/pr7-r1/acceptance.json": "ae19338e4ea5da29323bc1f2bb60ae52915165016b3884c950ae3e50cd3b1bef",
+    "docs/verification-evidence/006/pr7-r2/acceptance.json": "8172971b0197e11ec8f38bce1914d6b160c2569e0e95bb546f8f2b2070a14948",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "dd0c4b9be01ede51fcd043dc5c94b0938521110ca50d295c8b76221e80fd7b0e",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "64f31cf3db92a6dec7b44861d80178c4045099b9b06e689f9fd99a85fb100b20",
+    "scripts/candidate.sh": "da2bc7e4d75fa6833948730a3f307bfff75c2fab4f9a368931dd5b19c923b7db",
+    "scripts/docs-check.sh": "f63dca38b9904e1c8c3bae2af92b3ca00c15948a6d1c2b2c0dfb532b154b9552",
+    "scripts/native_candidate.sh": "3b0a30738c33ddc3e9d34bc8a504b08947c681495fa7d0caaaef92934f5eefae",
+    "scripts/test/test_candidate.sh": "fbc6a08e368aee7be495483adf1dfcaf95ce3171f492b4c6ac57c9ed6abe71af",
+    "scripts/test/test_docs.sh": "3e30b2d5f5699bb62b15ca8c2fb864d8f2f87348de76cdf52e947daf4ecd27e8",
+    "scripts/test/test_native_candidate.sh": "8362e2e7b101766131727dc4d032f841a473e431e478816b547b283cc14ac7e2",
+    "scripts/test/test_promotion.sh": "d06aba013ed9b0f09962946549417f2d8d94f8b7a025df647fd9ff82f3f357e6",
+    "scripts/test/test_release_version.sh": "30284cf2edb697f2e4be88b5743b852dd51e9b819bb2bf5bf747c7cce762363b"
+  },
+  "feedback": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oo3XI",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xfnP",
+      "root_comment_id": 4173705373,
+      "quote": "**SUGGESTION:** Canonical validate run's isolated-PATH claim is not self-evidencing in its retained log",
+      "summary": "The R2 receipt scopes absence proof to its marked control and preserves the historical validation log. Its 20 input hashes now bind to immutable e3dd105. Fresh canonical validation records PATH, failed rg lookup, compiler version, command and exit status.",
+      "invariant_key": "verification-run-provenance",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oo4sr",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xfq4",
+      "root_comment_id": 4173713956,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Require a left boundary for approved badge URLs**",
+      "summary": "Complete URL targets are read with the terminators for HTML, simple Markdown and references before allowing exact verified literals. The matrix covers both approved URLs, supported forms, foreign path/query/parenthesis/angle embeddings, suffixes and scanner failures.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oo4st",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xfu6",
+      "root_comment_id": 4173713958,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Require the security-state sentence to end after the date**",
+      "summary": "One complete reporting-state declaration is required, with only trailing blanks allowed. All enabled/verified and explicit disabled forms have positive controls; trailing text, contradictions and duplicates are refused.",
+      "invariant_key": "documentation-state-contract",
+      "verdict": "fixed"
+    }
+  ],
+  "owner_direction": "The owner requested proceeding from the saved checkpoint; the escalation answer was recorded before implementation.",
+  "retained_artifacts": {
+    "docs-red.log.gz": {
+      "sha256": "1f6ce2f3440799841af5ebf45f80f8732e6752ebaa06ebcb9a9ba592a6b9f3a0",
+      "uncompressed_bytes": 21219
+    },
+    "scanner-red.log.gz": {
+      "sha256": "e0b92916d28cb6e04265358f3eaf65e13ae1fd0c31e036d6f80ec7321811f36b",
+      "uncompressed_bytes": 12451
+    },
+    "docs-green.log.gz": {
+      "sha256": "a9bc562bd0be4ce6c412352287f9e829bf5359badab79de04762f46bc568fd3f",
+      "uncompressed_bytes": 12308
+    },
+    "final-docs.log.gz": {
+      "sha256": "a9bc562bd0be4ce6c412352287f9e829bf5359badab79de04762f46bc568fd3f",
+      "uncompressed_bytes": 12308
+    },
+    "validate.log.gz": {
+      "sha256": "1f5765fdc0eb90ea9efba18b535261f7d1e74a6806a67f5f51ae39a1c419f2cd",
+      "uncompressed_bytes": 326721
+    },
+    "workflow-shellcheck.log.gz": {
+      "sha256": "376da3675efce229940fbe512a272715b9a85e1e229debe7f2cebcfc802488a8",
+      "uncompressed_bytes": 497
+    },
+    "synchrony.log.gz": {
+      "sha256": "2eebbe41b5694e56453fd6417e4565d3db8f824b35257db51b2013471e9fde77",
+      "uncompressed_bytes": 579
+    },
+    "r2-input-readback.log.gz": {
+      "sha256": "6f9ff53bd24271b8eb211e06aed3980b8a8cd30bb65e2477fd3cc410339f0ede",
+      "uncompressed_bytes": 246
+    },
+    "prior-head-hosted.json": {
+      "sha256": "42ea5ff215cb4667fefb86fc0402ff29da51062d1dceaf083619d9d7a0f41ea1"
+    },
+    "prior-head-reviews.jsonl": {
+      "sha256": "cbcedf3ebf1eaae971bef0794e7b4be343c0a2fd240e30468178fc9e2bfa8558"
+    }
+  },
+  "remote_feedback_settlement": "pending after push",
+  "current_head_hosted_review": "pending after push",
+  "release_acceptance": "Fresh frozen candidate after owner merge, packaged hosted checks, manual/native/performance/cask and publication remain pending",
+  "completed_at": "2026-10-03T17:26:29.615503+00:00"
+}

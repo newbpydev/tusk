@@ -40,6 +40,18 @@ for state in 'was never enabled' 'is no longer enabled' 'is not enabled and veri
     expect 1 "reject ambiguous private reporting state: $state" bash "$root/scripts/docs-check.sh" "$fixture"
 done
 mv "$scratch/security-saved" "$fixture/SECURITY.md"
+cp "$fixture/SECURITY.md" "$scratch/security-saved"
+for state in 'is enabled and verified on 2026-10-03' 'was enabled and verified on 2026-10-03' 'is disabled' 'is currently disabled' 'is not enabled' 'is currently not enabled'; do
+    printf '# Security reporting\nGitHub private vulnerability reporting %s.  \nUse https://github.com/newbpydev/tusk.\n' "$state" >"$fixture/SECURITY.md"
+    expect 0 "allow complete reporting-state line with trailing blanks: $state" bash "$root/scripts/docs-check.sh" "$fixture"
+    printf '# Security reporting\nGitHub private vulnerability reporting %s. It is now disabled.\nUse https://github.com/newbpydev/tusk.\n' "$state" >"$fixture/SECURITY.md"
+    expect 1 "reject trailing reporting-state text: $state" bash "$root/scripts/docs-check.sh" "$fixture"
+done
+printf '# Security reporting\nGitHub private vulnerability reporting is enabled and verified on 2026-10-03.\nGitHub private vulnerability reporting is disabled.\nUse https://github.com/newbpydev/tusk.\n' >"$fixture/SECURITY.md"
+expect 1 'reject conflicting reporting-state declarations' bash "$root/scripts/docs-check.sh" "$fixture"
+printf '# Security reporting\nGitHub private vulnerability reporting is disabled.\nGitHub private vulnerability reporting is disabled.\nUse https://github.com/newbpydev/tusk.\n' >"$fixture/SECURITY.md"
+expect 1 'require one reporting-state declaration' bash "$root/scripts/docs-check.sh" "$fixture"
+mv "$scratch/security-saved" "$fixture/SECURITY.md"
 for missing in docs/install.md LICENSE docs/assets/tusk-tui.png; do
     if [[ -f "$fixture/$missing" ]]; then
         mv "$fixture/$missing" "$scratch/saved"
@@ -69,6 +81,39 @@ for badge in '<img src="https://IMG.SHIELDS.IO/badge/CI-passing-green">' '<img s
     printf '\n%s\n' "$badge" >>"$fixture/README.md"
     expect 1 "reject mixed-case unverified badge host: $badge" bash "$root/scripts/docs-check.sh" "$fixture"
 done
+for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' 'https://img.shields.io/github/license/newbpydev/tusk'; do
+    for badge in "![Verified]($url)" "<img src=\"$url\">" "<img src='$url'>" "<img src=$url>" "[verified]: $url" "[verified]: <$url>" "![Verified](<$url>)" "($url)"; do
+        cp "$root/README.md" "$fixture/README.md"
+        printf '\n%s\n' "$badge" >>"$fixture/README.md"
+        expect 0 "allow complete approved badge target: $badge" bash "$root/scripts/docs-check.sh" "$fixture"
+    done
+    for target in "https://evil.example/proxy/$url" "https://evil.example/?url=$url" "https://evil.example/proxy/($url)" "https://evil.example/<$url>" "prefix-$url" "$url-extra" "$url)extra"; do
+        for badge in "![Unverified]($target)" "<img src=\"$target\">" "[unverified]: $target"; do
+            # A closing parenthesis terminates a simple Markdown target.
+            [[ "$target" == "$url)extra" && "$badge" == '!['* ]] && continue
+            cp "$root/README.md" "$fixture/README.md"
+            printf '\n%s\n' "$badge" >>"$fixture/README.md"
+            expect 1 "reject incomplete or embedded approved badge target: $badge" bash "$root/scripts/docs-check.sh" "$fixture"
+            if ! grep -Fq 'README advertises an unverified badge' "$scratch/result"; then
+                printf 'FAIL: badge refusal did not reach its boundary: %s\n' "$badge" >&2
+                failed=1
+            fi
+        done
+    done
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n[Other](https://example.com)![Verified](%s)\n' "$url" >>"$fixture/README.md"
+    expect 0 'allow adjacent independent Markdown targets' bash "$root/scripts/docs-check.sh" "$fixture"
+    for target in "prefix $url" "https://evil.example/proxy/ $url" "$url suffix"; do
+        cp "$root/README.md" "$fixture/README.md"
+        printf '\n<img src="%s">\n' "$target" >>"$fixture/README.md"
+        expect 1 'quoted HTML source is one complete target, including spaces' bash "$root/scripts/docs-check.sh" "$fixture"
+    done
+done
+cp "$root/README.md" "$fixture/README.md"
+mkdir -p "$scratch/failing-awk"
+printf '#!/usr/bin/env bash\nexit 73\n' >"$scratch/failing-awk/awk"
+chmod +x "$scratch/failing-awk/awk"
+expect 1 'refuse documentation certification when badge scanner fails' env PATH="$scratch/failing-awk:$PATH" bash "$root/scripts/docs-check.sh" "$fixture"
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"

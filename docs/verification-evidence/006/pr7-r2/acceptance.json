@@ -6,9 +6,9 @@
   "local_status": "passed",
   "canonical": {
     "command": "GOTOOLCHAIN=go1.27.1 make validate",
-    "PATH": "/tmp/pr7-path-without-rg",
     "exit_code": 0,
-    "log": "validate.log.gz"
+    "log": "validate.log.gz",
+    "environment_scope": "The historical validate log records the canonical gate result only. Ripgrep absence is evidenced separately by rg_absent_control and its marked log; no environment claim is attached to validate.log.gz."
   },
   "rg_absent_control": {
     "recipe": "PATH=/tmp/pr7-path-without-rg bash -c: print PATH; require command -v rg exit 1; print the canonical command; GOTOOLCHAIN=go1.27.1 make test-scripts",
@@ -144,5 +144,6 @@
   "remote_feedback_settlement": "pending after push",
   "current_head_hosted_review": "pending after push",
   "release_acceptance": "Fresh frozen candidate, packaged hosted checks, manual/native/performance/cask and publication remain pending",
-  "completed_at": "2026-10-03T15:10:54.006742+00:00"
+  "completed_at": "2026-10-03T15:10:54.006742+00:00",
+  "input_commit": "e3dd105b1d4a9d5252f829a9615c92924392842e"
 }
