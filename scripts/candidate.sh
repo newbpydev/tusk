@@ -24,7 +24,8 @@ identity() {
     [[ "${GITHUB_RUN_ATTEMPT:-}" =~ ^[1-9][0-9]*$ ]] || die 'positive attempt required'
 }
 contract() {
-    jq ${jq_binary_option:+"--binary"} -e --slurpfile pins "$root/scripts/tool-versions.json" '
+    local guard="github.event_name == 'workflow_dispatch' && github.repository == 'newbpydev/tusk' && github.ref == 'refs/heads/main' && github.workflow_ref == 'newbpydev/tusk/.github/workflows/release.yml@refs/heads/main' && github.workflow_sha == github.sha"
+    jq ${jq_binary_option:+"--binary"} -e --arg guard "$guard" --slurpfile pins "$root/scripts/tool-versions.json" '
       keys == (["name","on","permissions","concurrency","jobs"]|sort) and
       (.on|keys) == ["workflow_dispatch"] and
       .on.workflow_dispatch.inputs.source_sha == {description:"Exact main dispatch SHA (40 lowercase hex)",required:true,type:"string"} and
@@ -36,21 +37,22 @@ contract() {
       .jobs.ci == {needs:["identity"],uses:"./.github/workflows/ci.yml",with:{source_sha:"${{ inputs.source_sha }}"}} and
       ($pins[0].release_actions|keys)==["attest_build_provenance","download_artifact","upload_artifact"] and
       all($pins[0].release_actions[];.sha|test("^[0-9a-f]{40}$")) and
-      (.jobs.identity|keys)==(["runs-on","timeout-minutes","defaults","steps"]|sort) and
+      (.jobs.identity|keys)==(["if","permissions","runs-on","timeout-minutes","defaults","steps"]|sort) and
+      .jobs.identity.if==$guard and .jobs.identity.permissions=={contents:"write"} and
       (.jobs.build|keys)==(["runs-on","timeout-minutes","defaults","steps","needs","outputs"]|sort) and
       (.jobs.provenance|keys)==(["runs-on","timeout-minutes","defaults","steps","needs","permissions"]|sort) and
       all(.jobs[].steps[]?; (keys- ["name","run","env","uses","with","id"] | length)==0) and
       .jobs.build.outputs=={artifact_id:"${{ steps.upload.outputs.artifact-id }}",artifact_digest:"${{ steps.upload.outputs.artifact-digest }}"} and
-      .jobs.identity.steps[1].env=={RELEASE_VERSION:"${{ inputs.version }}",RELEASE_SHA:"${{ inputs.source_sha }}"} and
-      .jobs.build.steps[3].env==.jobs.identity.steps[1].env and .jobs.build.steps[4].env==.jobs.identity.steps[1].env and
+      .jobs.identity.steps[2].env=={RELEASE_VERSION:"${{ inputs.version }}",RELEASE_SHA:"${{ inputs.source_sha }}"} and
+      .jobs.build.steps[3].env==.jobs.identity.steps[2].env and .jobs.build.steps[4].env==.jobs.identity.steps[2].env and
       .jobs.provenance.steps[3].env=={GOTOOLCHAIN:"local"} and
       .jobs.build.needs == ["identity","ci"] and .jobs.provenance.needs == ["build"] and
       .jobs.provenance.permissions == {contents:"read",actions:"read","id-token":"write",attestations:"write"} and
       all(.jobs | to_entries[] | select(.key != "ci");
         .value["runs-on"] == "ubuntu-24.04" and .value["timeout-minutes"] == 30 and
-        .value.defaults.run.shell == "bash" and (.value|has("if")|not) and
-        (.key == "provenance" or (.value|has("permissions")|not))) and
-      (.jobs.identity.steps|length) == 2 and (.jobs.build.steps|length) == 6 and (.jobs.provenance.steps|length) == 5 and
+        .value.defaults.run.shell == "bash" and (.key == "identity" or (.value|has("if")|not)) and
+        (.key == "identity" or .key == "provenance" or (.value|has("permissions")|not))) and
+      (.jobs.identity.steps|length) == 4 and (.jobs.build.steps|length) == 6 and (.jobs.provenance.steps|length) == 5 and
       all(.jobs[] | tostring; test("secrets\\.|--clobber|release create|git push";"i")|not) and
       all(.jobs[].steps[]? | select(has("uses"));
         .uses == ("actions/checkout@"+$pins[0].actions.checkout.sha) or
@@ -60,7 +62,11 @@ contract() {
         .uses == ("actions/attest-build-provenance@"+$pins[0].release_actions.attest_build_provenance.sha)) and
       all(.jobs[].steps[]? | select((.uses? // "") | startswith("actions/checkout@")); .with == {ref:"${{ github.sha }}","persist-credentials":false,"fetch-depth":0}) and
       all(.jobs[].steps[]? | select(has("run")); (.run|contains("${{")|not) and (has("if")|not)) and
-      .jobs.identity.steps[1].run == "make candidate-identity" and
+      .jobs.identity.steps[2].run == "make candidate-identity" and
+      .jobs.identity.steps[1].uses == ("actions/setup-go@"+$pins[0].actions.setup_go.sha) and
+      .jobs.identity.steps[1].with == {"go-version":$pins[0].go.release,cache:true} and
+      .jobs.identity.steps[3].run == "make check-release-version RELEASE_VERSION_OUTPUT=\"$RUNNER_TEMP/version-history\"" and
+      .jobs.identity.steps[3].env == {GH_TOKEN:"${{ github.token }}",GOTOOLCHAIN:"local",RELEASE_VERSION:"${{ inputs.version }}"} and
       .jobs.build.steps[1].with == {"go-version":$pins[0].go.release,cache:true} and
       .jobs.build.steps[2].run == "make setup-sqlc setup-release release-check" and
       .jobs.build.steps[3].run == "make release-candidate RELEASE_OUTPUT=\"$RUNNER_TEMP/candidate\"" and

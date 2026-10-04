@@ -1,11 +1,20 @@
 # Tusk
 
+[![Native CI](https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/newbpydev/tusk/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/newbpydev/tusk)](LICENSE)
+
 Local task management in your terminal: a keyboard-driven TUI and scriptable
 CLI, backed by SQLite. Keep tasks, subtasks, notes and activity history on your
 computer. One binary; no daemon, account or network service.
 
 Tusk is available through **source installation**. There is **no public release**
-yet. Linux amd64 has local CLI/TUI acceptance; other native targets are pending.
+yet. Native source tests run on Linux, macOS and Windows through
+[GitHub Actions](https://github.com/newbpydev/tusk/actions/workflows/ci.yml).
+Packaged release verification is in progress.
+
+Releases follow the [SemVer policy and release checklist](docs/releasing.md#version-policy).
+See the [changelog](CHANGELOG.md) for changes awaiting publication. Source builds
+report `dev`; packaged candidates carry their selected version.
 
 ![Tusk's dark terminal workspace showing a task hierarchy, fractional progress, notes and activity](docs/assets/tusk-tui.png)
 
@@ -29,10 +38,15 @@ pending; the guide labels their draft instructions explicitly.
 
 | Platform | Current evidence | Installation |
 | --- | --- | --- |
-| Linux amd64 | Local source CLI/TUI acceptance | Source checkout |
-| Linux arm64 | Cross-build only; native acceptance pending | Source checkout; native validation pending |
-| macOS Intel / Apple Silicon | Cross-build only; native terminal acceptance pending | Source checkout; native validation pending |
-| Windows amd64 | Cross-build only; native Windows 11 acceptance pending | Source checkout with native Go and Git Bash; validation pending |
+| Linux amd64 | Native automated CI and local CLI/TUI acceptance | Source checkout |
+| Linux arm64 | Native automated CI on Ubuntu arm64 | Source checkout |
+| macOS Intel / Apple Silicon | Native automated CI on macOS 15, both architectures | Source checkout |
+| Windows amd64 | Native automated CI on Windows Server 2025 | Source checkout with native Go and Git Bash |
+
+CI checks the source build. Release verification checks the exact archived
+binaries separately. Manual terminal inspection is currently available on
+CachyOS amd64; hosted macOS and Windows results do not claim Windows 11 or
+physical console inspection.
 
 ## Your first tasks
 
@@ -81,8 +95,8 @@ read fresh tasks and history before retrying a write.
 include real terminal checks and retained measurements on a declared Linux
 amd64 Ryzen 5 4500U host. The recorded query/help worst p90 was 14.291/4.112 ms
 across three complete runs. These finite samples do not promise latency on other
-computers or prove a released binary. Native macOS/Windows/arm64, hosted candidate
-checks and packaged release acceptance remain pending.
+computers or prove a released binary. Native source CI passes on all five targets;
+packaged release acceptance and additional manual platform checks remain pending.
 
 Report bugs with OS, architecture, version and a sanitized reproduction through
 [GitHub issues](https://github.com/newbpydev/tusk/issues).

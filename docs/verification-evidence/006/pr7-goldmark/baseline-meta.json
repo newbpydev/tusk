@@ -1,0 +1,7 @@
+{
+  "baseline_sha": "53698a4b42aef79dd70891a72bdee1c0208cd213",
+  "checker_sha256": "11b4e8ce5703a341fcaabdf2105c806b5b299836e071f949abf32fbb352c7e09",
+  "test_sha256": "bd484a00dd68685a6ca10899c794627fe2ec8156b2fd69a8a765d8b2cd2732d2",
+  "adaptation": "Final test harness, helper package and its build target copied into baseline; the baseline docs-check.sh is unchanged and ignores the helper. This isolates the original Markdown scanner while preserving the final reference matrix.",
+  "exit_code": 2
+}

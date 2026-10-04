@@ -1,0 +1,25 @@
+{
+  "started_at": "2026-10-03T23:52:25.714629+00:00",
+  "head_sha": "53698a4b42aef79dd70891a72bdee1c0208cd213",
+  "working_tree_changes": true,
+  "command": "GOTOOLCHAIN=go1.27.1 make validate",
+  "input_sha256": {
+    "scripts/docs-check.sh": "9634dbc6eff7818665a84ed0f60e55cc0492fb09bac28400f4ad712a7c9ab22b",
+    "scripts/test/test_docs.sh": "91b8ffba2488cf5c13bf8eb3c5fc5af6073de2b57bddc09d2cd7460d633ba73e",
+    "scripts/doccheck/main.go": "e372b8662d281e6c8216d0ce8d6c7c6283f60cc19d32acc177bb6552e89ef9f1",
+    "scripts/doccheck/main_test.go": "f80a7b2f3e200aae88769ed02fcd3230a8ceeeb6f8415ab1e034b447e1b71003",
+    "CONTRIBUTING.md": "24657d7ec3706e29ce4f2bd458a67a849f26a4d21c92712199d3f7c1a47733b9",
+    "MASTERPLAN.md": "f4d6f8f70678371d8e266999a5bcb1605064198e3ab8dfb797f1c0b3c9cbe799",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "62dcd3e0bc46e99aac00011c671c8534e813ec19cad90faa3726899c89c484ff",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "1086821b72af6aea855f2d9fb36faa3494ee6bf02c87c2402a3416f0b1741da9",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "807003b7baf9ee737209a04ac670a180c623c42b3364bf59f2933012e0fe7dc8",
+    "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+    "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7",
+    "scripts/ci-check.sh": "34e27da8ed9bcba7c8d143aabcbbc2750bf22704241ef328982eee922c0a59f7",
+    "scripts/test/test_ci.sh": "2bf63e9f3de6a7cd952db12a3e1fb0d66237627f46705c63c093ddf2399f937f"
+  },
+  "status": "interrupted for reproduced self-audit regressions before any commit",
+  "completed_at": "2026-10-03T23:53:35.415828+00:00",
+  "exit_code": 143
+}

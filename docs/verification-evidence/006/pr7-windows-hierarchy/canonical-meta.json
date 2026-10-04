@@ -1,0 +1,25 @@
+{
+  "started_at": "2026-10-04T00:16:26.563101+00:00",
+  "head_sha": "2633ff8db6f4dd6b985938d79fd4ef3986a1d196",
+  "working_tree_changes": true,
+  "command": "GOTOOLCHAIN=go1.27.1 make validate",
+  "input_sha256": {
+    "internal/tui/hierarchy_presentation_test.go": "b2a83b3bcdc048d9783b02a4c247b67c35c37faee3c595f151d8c8e0f4f6a05a",
+    "internal/tui/mutation_integration_test.go": "356d4161437a72426a73f8b4c249f33a4a69a404ebd20c929ba65e157c5225f9",
+    "MASTERPLAN.md": "89bc5c21cbb1bee9311df3accd89e1553508f717be0dfc8c00b32ab11071b04a",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "a0f3cc6448dd02c19b466e296d8b073e98a7edb9b5f16dfa43d3c9d797f1ce79",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "9e2df62304071c74a9a0d2c6fa2e1e97f045c81295b2c2e4abc361b4e3ea6501",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "bd01e8b7ff24c2cb0732037dc3dc9ef5d6d63f2bb50854894bf4f62650ba3ec0",
+    "scripts/ci-check.sh": "150936b2f1feb4b21f8fc507e3b21ba175dc13a64e82af71a17697d2dd5c7769",
+    "scripts/test/test_ci.sh": "3a85d2d7b532a96f7c5ee6328ad841de515dbbbacff2d14da3a839ed84acd45b",
+    "scripts/doccheck/main.go": "39c859c67a05d379d2a94d6024b86ee8fcd4253027eefc5ba007884c88276092",
+    "scripts/doccheck/main_test.go": "575f548c49712a2fe650e456e52d4b4d6ea7a66c0790e37673b15a0938be7596",
+    "scripts/docs-check.sh": "9634dbc6eff7818665a84ed0f60e55cc0492fb09bac28400f4ad712a7c9ab22b",
+    "scripts/test/test_docs.sh": "bd484a00dd68685a6ca10899c794627fe2ec8156b2fd69a8a765d8b2cd2732d2",
+    "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+    "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7"
+  },
+  "exit_code": 0,
+  "completed_at": "2026-10-04T00:18:35.119213+00:00"
+}

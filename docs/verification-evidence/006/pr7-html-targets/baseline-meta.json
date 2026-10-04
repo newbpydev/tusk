@@ -1,0 +1,21 @@
+{
+  "baseline_sha": "87a9396869f3dffa62673b561163a09a50db0499",
+  "fixture_only_overrides": {
+    "scripts/doccheck/main_test.go": "0895a9273d9065f76a5f43a4103b7442fd54e841abf7324374d4810d71abf895",
+    "scripts/test/test_docs.sh": "278a85c344c464289b0a050066326c97728ecf863b5e4317623eb021044087d9"
+  },
+  "started_at": "2026-10-04T00:26:56.831317+00:00",
+  "commands": [
+    {
+      "command": "GOTOOLCHAIN=go1.27.1 make test-doccheck",
+      "exit_code": 2,
+      "log": "html-baseline-unit-red.log"
+    },
+    {
+      "command": "GOTOOLCHAIN=go1.27.1 make test-docs",
+      "exit_code": 2,
+      "log": "html-baseline-shell-red.log"
+    }
+  ],
+  "completed_at": "2026-10-04T00:27:15.524250+00:00"
+}

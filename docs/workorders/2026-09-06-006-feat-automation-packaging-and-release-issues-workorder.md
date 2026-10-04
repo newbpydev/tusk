@@ -2,8 +2,8 @@
 feature-id: "006"
 plan-source: docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md
 verification-plan: docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md
-status: PR 6 merged; local engineering and reviewed-head hosted checks passed; native/release acceptance pending
-evidence-scope: 51 local scenario closures; thirteen PR 6 report batches remediated; reviewed-head hosted checks passed; PR 6 merged; physical/trusted-candidate/release proof pending
+status: PR 6 merged; GitHub metadata applied; version and packaged-candidate tooling locally verified; hosted follow-up and final native/release acceptance pending
+evidence-scope: 51 local scenario closures; PR 6 merged; preliminary candidate verified and CachyOS basic inspection passed; fresh-candidate native/manual/performance/cask/release acceptance pending
 deepened: 2026-10-01
 ---
 
@@ -22,6 +22,174 @@ assignment. No release exception or performance waiver is assumed.
 
 ---
 
+### GitHub presentation and hosted candidate follow-up (2026-10-03)
+
+The owner requested public GitHub metadata, releases and distribution readiness
+using maintainer judgment, and confirmed that only CachyOS computers are available.
+This authorizes About/homepage/topics and security-channel activation before the
+stable release, independently of the post-publication metadata helper. Retain
+before/after API and browser readbacks; do not manufacture a publication receipt.
+
+Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
+
+- [x] Apply the reviewed About/homepage and eleven topics; enable and read back
+  GitHub private vulnerability reporting under the owner's metadata request.
+- [x] Refresh public documentation to distinguish five-platform native source CI
+  from exact packaged-binary and physical terminal acceptance.
+- [x] Implement and locally validate read-only hosted native checks that verify
+  a successful trusted candidate before executing its unchanged platform binary.
+- [x] Enforce owner-requested stable SemVer history checks before hosted
+  candidate construction and release promotion; document version bumps and
+  the repeatable per-release checklist.
+- [x] Produce and cryptographically verify the preliminary trusted-main candidate;
+  all nine reports passed before assessment.
+- [x] Inspect the unchanged preliminary Linux archive in an owned CachyOS
+  terminal; retain CLI/TUI observations and terminal-restoration evidence.
+- [x] Complete social-preview upload and rendered GitHub readback; enable
+  release immutability and hide the inapplicable Packages sidebar.
+- [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
+- [x] Validate PR #7's combined verifier, draft-history, portable-test and
+  documentation/evidence remediation before publishing the fix.
+- [x] Validate PR #7's follow-up provenance, disabled-state controls and
+  mixed-case badge refusal before pushing the second combined fix.
+- [x] Validate the owner-approved complete-target/state and evidence correction
+  before pushing the third combined fix.
+- [x] Validate the literal-target and receipt-amendment class correction
+  before publishing its fresh hosted/cloud review head.
+- [x] Validate the complete host/source refusal and accepted-context matrix
+  before publishing the combined target-scope correction.
+- [x] Validate the archive binding and Markdown-container correction
+  before publishing its combined hosted/cloud review head.
+- [x] Validate list-container and quote-tab target refusal before publishing
+  the combined checker correction.
+- [x] Validate the noisy-tool preflight regression and preserve real command
+  failure statuses before publishing the independent CI repair.
+- [x] Record the owner-approved switch to the existing pinned Goldmark parser,
+  retaining explicit URL rules and all reported refusal cases.
+- [x] Validate the parsed-destination/reference correction and the complete
+  preserved README policy matrix before publishing its review fix.
+- [x] Validate distinct Make-version failure/status and non-GNU banner
+  diagnostics before publishing the remaining preflight review fix.
+- [x] Validate the deterministic hierarchy-rollup fixture and identity-based
+  selection before publishing the Windows source-CI correction.
+- [x] Validate solidus-separated raw resource attributes and conservative
+  Markdown target checks across parsed HTML contexts before publishing.
+- [x] Validate fixture ID exhaustion and preserve the documented raw-HTML
+  policy with paired raw-HTML/Markdown code controls before publishing.
+- [ ] After merge, create a fresh frozen-source candidate, dispatch the new
+  Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
+  and retain final reference measurements.
+
+PR #7 remediation pins verifier code to the trusted main workflow SHA and guards
+dispatch before checkout. Only the release identity job has draft-visible
+contents access; build/CI/native verification remain read-only. Private-reporting
+activation is supported by retained API evidence; its rendered setting capture
+was not retained. Final hosted/candidate/publication gates remain pending.
+
+The first remediation head `4351b66` passed all six source CI jobs and Codex's
+current-head review. Kilo confirmed the original ten fixes and reported six
+follow-ups. Those provenance, wording and badge/test corrections were locally
+validated together. The second head `e3dd105` passed all six source CI jobs;
+Kilo and Codex completed review with three boundary/provenance follow-ups.
+The owner directed continuing the complete badge URL/reporting-state and
+provenance corrections. The third pass uses complete single state declarations
+and marked validation evidence.
+The third head `7f1fe45` passed all six source CI jobs. Kilo and Codex
+completed review with an encoded-target bypass and two receipt-provenance
+concerns. The combined class correction enforces complete literal targets,
+preserves historical log bytes and records amendments and fresh marked runs.
+The fourth head `a6ded00` passed all six source CI jobs. The completed
+Kilo/Codex batch added Unicode-host and target-scope findings; the class audit
+also confirmed a fully encoded responsive-image target bypass. The next
+combined correction covers literal ASCII hosts and single responsive sources,
+while preserving titled links, code/prose, footnotes and Unicode paths.
+Its fresh hosted/cloud settlement remains pending.
+The fifth head `fc58788` passed all six source CI jobs. Completed Kilo/Codex
+review added quoted-reference, code/fence-context and native archive-receipt
+findings. The next combined correction retains archive identity, checks quoted
+references and fence boundaries, and scopes supported code excerpts explicitly.
+Its fresh hosted/cloud settlement remains pending.
+The sixth head `1419c01` passed all six source CI jobs; Codex completed
+with reference, split-attribute and remote-image findings. Kilo and the class
+audit identified list-container and quote-tab bypasses. The next correction keeps those block contexts under
+the literal-target tripwire, validates list reference definitions, refuses split
+resource tags and allowlists remote image/reference destinations; supported
+code exclusion resumes after explicit boundaries. Fresh cloud settlement
+remains pending.
+
+The seventh head `fb7554b` completed Kilo and Codex review with two reproduced
+reference-image bypasses and missing refusal fixtures. Five source jobs passed;
+macOS arm64 preflight stopped at exit 141 after Make version output. The
+independent CI repair drains Make/compiler version output under pipefail and
+keeps nonzero tool statuses fatal, with noisy-producer and failure controls.
+Fresh official-Go canonical validation, the native Linux preflight and pinned
+workflow checks pass. The CI receipt is retained at
+`docs/verification-evidence/006/pr7-ci-sigpipe/acceptance.json`.
+The owner selected the existing pinned Goldmark parser with explicit URL rules
+and all reported refusal cases. The correction replaces handwritten Markdown
+context parsing, retains every reference definition (including unused and
+shadowed definitions), and covers continued destinations, multiline labels and
+nested image-label refusal. Official-Go canonical validation and the complete
+policy matrix pass, including deep and nested list code; helper coverage is
+97.8%. The bound receipt is retained at
+`docs/verification-evidence/006/pr7-goldmark/acceptance.json`.
+The Goldmark fix was published as `b763be4`; all three Markdown threads have
+submitted substantive replies and verified resolutions. The remaining preflight
+suggestion is corrected by reporting the failed Make-version producer status
+separately from a successful non-GNU banner. Focused noisy-output, real-error
+and banner controls pass. Official-Go canonical validation passes 710 named
+script assertions; its receipt is retained at
+`docs/verification-evidence/006/pr7-preflight-diagnostic/acceptance.json`.
+The diagnostic fix was published as `2633ff8`; its submitted reply and
+authoritative thread resolution are verified. That head failed native Windows
+source CI because the hierarchy-rollup test assumed the first-created child
+was the next displayed row. A fixed-clock, descending-ID fixture reproduces
+that invalid assumption deterministically; selecting the intended parent by ID
+retains every progress/count assertion and passes 20 repetitions. This changes
+test setup and navigation only. Official-Go canonical validation passes 710
+named script assertions; the bound receipt is retained at
+`docs/verification-evidence/006/pr7-windows-hierarchy/acceptance.json`.
+The Windows correction was published as `87a9396`; fresh source-CI verification
+remains pending at this checkpoint. Two new checker findings reproduce a
+solidus-separated raw image attribute bypass and narrowed Markdown-image
+refusal inside HTML blocks. The owner-approved Goldmark approach remains in
+force: raw URL rules cover solidus attribute boundaries, and conservative
+inspection includes every parsed HTML block kind and inline raw HTML.
+The immutable baseline fails the new refusal controls; approved quoted and
+unquoted targets remain accepted after the correction. Official-Go canonical
+validation passes 739 named script assertions and 98.1% helper coverage.
+The first passing canonical run was superseded by the extra unquoted controls;
+the fresh final run validates the complete correction. Its bound receipt is
+retained at `docs/verification-evidence/006/pr7-html-targets/acceptance.json`.
+The HTML correction was published as `5e2da14`; both reported threads have
+submitted replies and authoritative resolutions. A follow-up adds a fail-fast
+exhaustion guard to the six-ID hierarchy fixture. The request to exempt raw HTML
+attributes in code examples contradicts the retained contributor policy: only
+Markdown/reference targets receive those code exclusions; raw HTML attributes
+and known-badge residue remain checked in raw README text. Paired controls
+retain the documented refusal and Markdown code acceptance. The unchanged
+fixture generator fails the new exhaustion assertion, while the guarded
+fixture passes 20 repetitions with every original rollup assertion retained.
+Official-Go canonical validation passes 743 named script assertions; its
+bound receipt is retained at
+`docs/verification-evidence/006/pr7-fixture-guard/acceptance.json`.
+Publication, fresh hosted settlement and release acceptance remain pending at
+this local checkpoint.
+
+Canonical validation, focused refusal controls, the live version readback and
+basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because
+this follow-up changes release tooling. No final candidate acceptance or public
+release is claimed. See the GitHub-readiness evidence receipt.
+
+Actions already executes source tests natively on all five OS/architecture pairs.
+The follow-up executes packaged bytes and labels hosted automation separately.
+Physical macOS, Windows 11 and Linux arm64 console observations remain unavailable;
+no automated receipt claims those observations. A stable publication decision must
+explicitly settle these outstanding manual gates against the concrete candidate.
+Homebrew destination/native cask and exact publication authority remain pending.
+GitHub Packages offers no native Go registry; native release archives are the
+appropriate distribution surface. No placeholder container package is planned.
+
 ## Issue register
 
 | ID | Source / owner-lens | Severity | Status | Impact / next action | Closure evidence |
@@ -30,7 +198,7 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-002 | R2,R23,R24 / release maintainer, portability | P1 | Open verification | Arrange all native target/terminal access before U5; absent hosts block release | Exact-asset native runtime and owned terminal records; V73–V84 |
 | 006-ISS-003 | R29 / repository owner, distribution | P1 | Open decision | Establish accessible tap/destination before U7; proposed tap was not found | Owner-controlled repository/path and Intel/ARM local/live cask proof; V87–V98 |
 | 006-ISS-004 | R28 / repository owner, release | P1 | Open decision | Confirm version/SHA and explicit hosted/release authority at concrete U8 candidate | Authorized identity, draft/asset readback and actual public result; V95–V102 |
-| 006-ISS-005 | R22 / maintainer, security/support | P2 | Verified locally; U8 activation pending | Private reporting disabled; verified owner profile/public request route avoids confidentiality claim | U4 API readback and SECURITY.md; V42/V44 local pass; V100 pending |
+| 006-ISS-005 | R22 / maintainer, security/support | P2 | Private channel activated and read back | GitHub private reporting enabled; SECURITY.md names the verified private route without a response SLA | V42/V44 local pass; retained API enabled:true; rendered setting capture not retained; broader V100 publication bundle pending |
 | 006-ISS-006 | Original outline / coherence | P1 | Fixed in plan | Replace unsupported readiness with executable unit and evidence contracts | Eight unit fields, 30 requirements and 102 pending scenarios; full execution still required |
 | 006-ISS-007 | Original Go 1.24 assumption / compatibility | P1 | Fixed in plan | Keep Go 1.25.0 source floor and separate pinned production compiler | Native/minimum jobs and tool lock; V03,V04,V12,V49 |
 | 006-ISS-008 | CI/race/format / portability, testing | P1 | Fixed in plan | Distinguish native Windows Bash/Make/compiler, CGO race and CGO-free release; fail source drift | Negative prerequisites, native jobs and drift fixtures; V05–V11,V16 |
@@ -41,7 +209,7 @@ assignment. No release exception or performance waiver is assumed.
 | 006-ISS-013 | Existing benchmark build prerequisites / performance | P1 | Resolved locally; candidate matrices pending | Add supplied-binary mode before release measurements; do not overwrite accepted artifacts | Hash-preservation Red/Green and retained candidate CLI/TUI matrices; V85,V86 |
 | 006-ISS-014 | Inherited native/release handoffs / coherence | P1 | Fixed in plan | Map product V66–V73 and Feature 002–005 release obligations without closing them in planning | Whole inherited contracts mapped to actual receipts; verification handoff table |
 | 006-ISS-015 | Install/backup/uninstall / data integrity | P1 | Fixed in plan | Preserve DB/WAL/SHM and compare domain data around replacement/restore | Native current/newer-schema/backup/remove fixtures; V39,V79–V81,V91 |
-| 006-ISS-016 | Missing repository metadata / documentation | P2 | Fixed in plan | Use concrete About/homepage/topics/social preview and inspect actual rendered GitHub | Preview plus before/after API/browser evidence; V42,V43,V100,V101 |
+| 006-ISS-016 | Missing repository metadata / documentation | P2 | Metadata applied and read back; publication bundle pending | About/homepage/topics/social preview applied and rendered GitHub inspected | Retained before/after API and preview/settings browser evidence; V42/V43 locally pass; V100/V101 final publication bundle pending |
 | 006-ISS-017 | Public support/performance/image claims / product/privacy | P2 | Fixed in plan | Cite actual dated evidence, sanitized captures and verified badges/install routes | Documentation negative checks and released README replay; V40,V41,V99,V102 |
 | 006-ISS-018 | Tool/analyzer/runner availability / operations | P1 | Open verification | Freeze verified pins in U1 and prove analyzer compatibility before release; a missing native job stays pending | Verified tool/action digests, exact compiler and successful analysis/native URLs; V03,V12,V13,V60,V65 |
 | 006-ISS-019 | Partial publication/retries / reliability | P1 | Fixed in plan | Reconcile lost responses; preserve published bytes and use a new version for repairs | API failure fixtures and complete draft/public readback; V70,V95–V98,V102 |
@@ -151,8 +319,8 @@ release/metadata/native-install acceptance remains pending. U2 follows the U4 co
 - **Evidence:** No SECURITY.md exists; private vulnerability reporting availability/activation was not verified. An admin role does not establish a contact SLA or security team.
 - **Decision plan:** Verify and document GitHub private reporting if enabled; otherwise give an accurate owner GitHub contact route and state that public issue content is public. Do not fabricate email/private support promises.
 - **Closure:** Tested real contact links, approved concise policy and hosted feature readback.
-- **Current verification:** GitHub API returned `enabled:false` on 2026-10-01; the owner profile returned the expected login/URL. SECURITY.md states disabled private reporting and provides a public request route without confidentiality. V42/V44 pass locally; V100 activation/readback remains pending.
-- **Blocking effect / revisit:** Recheck the setting and documented route before U8 activation.
+- **Current verification:** GitHub private reporting was enabled under the owner's metadata request and read back as `enabled:true` on 2026-10-03 UTC. SECURITY.md names the private advisory route. V42/V44 pass locally; the broader V100 post-publication bundle remains pending. The GitHub-readiness receipt preserves the API setting; a rendered private-reporting page capture was not retained.
+- **Blocking effect / revisit:** Contact activation is settled; recheck the setting and documented route at final U8 publication.
 
 ### 006-ISS-018: Verified release tools and native runner availability
 

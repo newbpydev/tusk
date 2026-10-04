@@ -1,0 +1,21 @@
+{
+  "started_at": "2026-10-04T00:29:47.757706+00:00",
+  "head_sha": "87a9396869f3dffa62673b561163a09a50db0499",
+  "working_tree_changes": true,
+  "command": "GOTOOLCHAIN=go1.27.1 make validate",
+  "input_sha256": {
+    "scripts/doccheck/main.go": "c1c13787b9e0a795ec3e9588e8b4a2517c4096e4934ffd4d8d98c760255b7a6b",
+    "scripts/doccheck/main_test.go": "0895a9273d9065f76a5f43a4103b7442fd54e841abf7324374d4810d71abf895",
+    "scripts/docs-check.sh": "422026f57c6ad1b27aac731c7ed381eb5175de1fd1379b33debc7909293435ea",
+    "scripts/test/test_docs.sh": "a8b79af04e51506d08c7bf5f5541f9b93bc801d037630f19ae08d3bba8f750e4",
+    "MASTERPLAN.md": "471ed051bba326ad72f14f348752b485d78fabdb305956e0ca7eeb15354c3bd2",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "612ed16b2288e7cf0b8ec8c830bef867f8ce02feb8de847d815977a3d2e5faaf",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "00d9238cb70b096ed8003cc224bfdd00f121e2517ab27745c371cf138e2e493b",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "fc124a268285d302efe479edfe2d75550d1536750fc92b215c8a03502c16aad3",
+    "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+    "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7"
+  },
+  "exit_code": 0,
+  "completed_at": "2026-10-04T00:30:53.277995+00:00"
+}

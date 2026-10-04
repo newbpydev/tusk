@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "scope": "PR 7 owner-approved Goldmark Markdown destination correction",
+  "head_sha": "53698a4b42aef79dd70891a72bdee1c0208cd213",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "owner_decision": {
+    "decision_id": "decision:c272c6a3086285f95a5b1a21c45969cb93cddf36e420ec57a02fb5de5b5564aa",
+    "answer": "Use the existing pinned Goldmark parser, retain explicit URL rules, and cover all reported cases (recommended).",
+    "recorded_at": "2026-10-03T23:43:18.546836+00:00"
+  },
+  "fix": "Pinned Goldmark v1.7.17 owns Markdown structure. Policy examines raw parsed image/link/autolink destinations and every reference definition, including unused and duplicate definitions. Independent raw HTML and known-badge residue checks remain in AWK. Conservative list-code and wrapped-span checks remain explicit policy.",
+  "red_green": {
+    "original_scanner": "Both reported valid reference bypasses and an unused continued remote definition accepted with exit 0. Three expected refusals failed before implementation; the existing nested-image guard and a local-link control passed.",
+    "baseline": "Unchanged 53698a4 docs-check.sh with the final harness fails the three reference refusals and the new missing-helper refusal. baseline-meta.json records the unchanged scanner hash and the final harness adaptation.",
+    "helper": "Unit tests first failed to compile because check/run did not exist. The self-audit then reproduced two missed list-code tripwires (deep indentation and nested fences); both now refuse.",
+    "green": "All existing Markdown, code/container, HTML and badge rules plus continued/multiline/unused references, duplicate definitions, nested image-label refusal and failure-to-execute controls pass."
+  },
+  "canonical": {
+    "started_at": "2026-10-03T23:54:11.013193+00:00",
+    "head_sha": "53698a4b42aef79dd70891a72bdee1c0208cd213",
+    "working_tree_changes": true,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "input_sha256": {
+      "scripts/docs-check.sh": "9634dbc6eff7818665a84ed0f60e55cc0492fb09bac28400f4ad712a7c9ab22b",
+      "scripts/test/test_docs.sh": "bd484a00dd68685a6ca10899c794627fe2ec8156b2fd69a8a765d8b2cd2732d2",
+      "scripts/doccheck/main.go": "39c859c67a05d379d2a94d6024b86ee8fcd4253027eefc5ba007884c88276092",
+      "scripts/doccheck/main_test.go": "575f548c49712a2fe650e456e52d4b4d6ea7a66c0790e37673b15a0938be7596",
+      "CONTRIBUTING.md": "24657d7ec3706e29ce4f2bd458a67a849f26a4d21c92712199d3f7c1a47733b9",
+      "MASTERPLAN.md": "f4d6f8f70678371d8e266999a5bcb1605064198e3ab8dfb797f1c0b3c9cbe799",
+      "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "62dcd3e0bc46e99aac00011c671c8534e813ec19cad90faa3726899c89c484ff",
+      "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "1086821b72af6aea855f2d9fb36faa3494ee6bf02c87c2402a3416f0b1741da9",
+      "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "807003b7baf9ee737209a04ac670a180c623c42b3364bf59f2933012e0fe7dc8",
+      "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+      "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+      "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7",
+      "scripts/ci-check.sh": "34e27da8ed9bcba7c8d143aabcbbc2750bf22704241ef328982eee922c0a59f7",
+      "scripts/test/test_ci.sh": "2bf63e9f3de6a7cd952db12a3e1fb0d66237627f46705c63c093ddf2399f937f"
+    },
+    "exit_code": 0,
+    "completed_at": "2026-10-04T00:01:50.685064+00:00",
+    "named_script_assertions_passed": 707,
+    "helper_coverage_percent": 97.8,
+    "log": "validate.log.gz",
+    "metadata": "canonical-meta.json"
+  },
+  "input_scope": "Pre-command metadata records the parent SHA and dirty source hashes. Only outcome text in the four synchronized authority files changed after the canonical run. Final documentation/workflow checks pass. All executable/test/module inputs match the canonical input hashes. New receipt artifacts do not change implementation.",
+  "final_input_sha256": {
+    "scripts/docs-check.sh": "9634dbc6eff7818665a84ed0f60e55cc0492fb09bac28400f4ad712a7c9ab22b",
+    "scripts/test/test_docs.sh": "bd484a00dd68685a6ca10899c794627fe2ec8156b2fd69a8a765d8b2cd2732d2",
+    "scripts/doccheck/main.go": "39c859c67a05d379d2a94d6024b86ee8fcd4253027eefc5ba007884c88276092",
+    "scripts/doccheck/main_test.go": "575f548c49712a2fe650e456e52d4b4d6ea7a66c0790e37673b15a0938be7596",
+    "CONTRIBUTING.md": "24657d7ec3706e29ce4f2bd458a67a849f26a4d21c92712199d3f7c1a47733b9",
+    "MASTERPLAN.md": "591cf0a30e692050980d44e954e374b86f78fe488f15f6a8d921ba759c1a27b2",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "11f874ba842ef7f0f45ed4a54a914eae1fbcea00ff67bd35290d5b43384d2bce",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "5c66831e17b0592bb50dffa7d60e6757e591e8c65419d4f10519ff828a62764a",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "6a7b663356d93517a5f47b9222cbd44279525c80fc8e6d8d882bc5386307936e",
+    "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+    "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7",
+    "scripts/ci-check.sh": "34e27da8ed9bcba7c8d143aabcbbc2750bf22704241ef328982eee922c0a59f7",
+    "scripts/test/test_ci.sh": "2bf63e9f3de6a7cd952db12a3e1fb0d66237627f46705c63c093ddf2399f937f"
+  },
+  "authority_checkpoint_sha256": "72acd78946b371a527386113f6c7dd7c8f36365f72a0fde71b4cb87f7b62e9ed",
+  "covered_threads": [
+    "PRRT_kwDOUQoUDc6osKYU",
+    "PRRT_kwDOUQoUDc6osKYW",
+    "PRRT_kwDOUQoUDc6osQrW"
+  ],
+  "review_resolution": "Pending published fix and independent REST reply/resolution readbacks",
+  "hosted_validation": "Fresh source CI and review remain pending for the implementation that will be published",
+  "release_acceptance": "Fresh trusted candidate after owner merge, packaged native/physical/performance/cask and publication gates remain pending",
+  "retained_artifacts": {
+    "shell-red.log.gz": {
+      "sha256": "91485c40cb1dabdba04765a41fa9ab845925bf724b1bb20d2d2efb8fecd30fde",
+      "uncompressed_bytes": 23557
+    },
+    "unit-red.log.gz": {
+      "sha256": "65a899cae190186004e79c8e800a8f4868d1a6323c49a41936bd8a3de73b6698",
+      "uncompressed_bytes": 347
+    },
+    "audit-red.log.gz": {
+      "sha256": "c1fe2881d746702472e1ef6b06165113d9cdb2f0da8118bbae5ee693f78f10a3",
+      "uncompressed_bytes": 5005
+    },
+    "baseline-red.log.gz": {
+      "sha256": "25f9769a130d9b604eb1f4a8f4f939f02d3f61cdfbbc46dee52c2be438ea342a",
+      "uncompressed_bytes": 24555
+    },
+    "focused-green.log.gz": {
+      "sha256": "dbe62b5378d739829d09901e9858b2d7f7c9ca1ac3a21600420d264350e294bb",
+      "uncompressed_bytes": 28607
+    },
+    "interrupted-gate.log.gz": {
+      "sha256": "61ad43e15a3f09e8bc14a2bdc8a4da0df8adf96d94b699171fc5bf5ce2f768a9",
+      "uncompressed_bytes": 287908
+    },
+    "validate.log.gz": {
+      "sha256": "7f8413538b8f628c43772ec3df02a632c57d7ba79155e30ccaed6d0bcc3a1709",
+      "uncompressed_bytes": 347729
+    },
+    "final-docs.log.gz": {
+      "sha256": "cd0b4646d4089d739a13457f4aa0d8831dd86405f0fd8262c02e2cbcd2d089fd",
+      "uncompressed_bytes": 23467
+    },
+    "baseline-meta.json": {
+      "sha256": "45a111078d894b53b5373cd5ee62478f9bdbf8be5adcdfaeab101003654919a1"
+    },
+    "canonical-meta.json": {
+      "sha256": "2318a0df7d3a7239eeae0c13a4d375624eb3ec485b3f910ed17a297f868f4d8c"
+    },
+    "interrupted-meta.json": {
+      "sha256": "e09713e0367ffbc239d0a3534acd08a484287cc1d8fce677ef1efde829417287"
+    }
+  },
+  "completed_at": "2026-10-04T00:03:00.601168+00:00"
+}
