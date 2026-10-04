@@ -4,6 +4,8 @@ root=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
 failed=0
+export TUSK_DOCCHECK_BIN="$scratch/doccheck.exe"
+TUSK_DOCCHECK_OUTPUT="$TUSK_DOCCHECK_BIN" make -C "$root" build-doccheck
 expect() {
     local want=$1 name=$2 actual=0
     shift 2
@@ -24,6 +26,7 @@ for file in README.md CHANGELOG.md CONTRIBUTING.md SECURITY.md LICENSE THIRD_PAR
     if [[ -f "$root/$file" ]]; then cp "$root/$file" "$fixture/"; fi
 done
 expect 0 'complete documentation fixture is a passing control' bash "$root/scripts/docs-check.sh" "$fixture"
+expect 1 'refuse documentation certification when Markdown checker cannot execute' env TUSK_DOCCHECK_BIN="$scratch/missing-checker" bash "$root/scripts/docs-check.sh" "$fixture"
 cp "$root/README.md" "$fixture/README.md"
 printf '\n[![Native CI](https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/newbpydev/tusk/actions/workflows/ci.yml)\n[![MIT](https://img.shields.io/github/license/newbpydev/tusk)](LICENSE)\n' >>"$fixture/README.md"
 expect 0 'verified native CI and detected MIT badges are allowed' bash "$root/scripts/docs-check.sh" "$fixture"
@@ -176,6 +179,26 @@ for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg
     printf '\n![Verified](\n%s\n)\n\n![Verified](%s\n)\n\n![Verified][continued]\n\n[continued]:\n  %s\n' "$url" "$url" "$url" >>"$fixture/README.md"
     expect 0 'allow verified URI values continued after their markers' bash "$root/scripts/docs-check.sh" "$fixture"
 done
+for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' 'https://img.shields.io/github/license/newbpydev/tusk' 'https://evil.example/status.svg'; do
+    want=0
+    [[ "$url" != 'https://evil.example/status.svg' ]] || want=1
+    for text in "[remote]:"$'\n  '"$url"$'\n\n![Unverified][remote]' "[Foo"$'\n bar]: '"$url"$'\n\n![Unverified][Foo bar]' "[unused]:"$'\n  '"$url"; do
+        cp "$root/README.md" "$fixture/README.md"
+        printf '\n%s\n' "$text" >>"$fixture/README.md"
+        expect "$want" 'reference policy covers continued destinations, multiline labels and unused definitions' bash "$root/scripts/docs-check.sh" "$fixture"
+        if [[ "$want" == 1 ]] && ! grep -Fq 'README advertises an unverified badge' "$scratch/result"; then
+            echo 'FAIL: reference refusal did not reach the remote-image boundary' >&2
+            failed=1
+        fi
+    done
+done
+cp "$root/README.md" "$fixture/README.md"
+touch "$fixture/u1"
+printf '\n![a [b](u1)\n' >>"$fixture/README.md"
+expect 1 'reject links inside unfinished image labels even when the local link exists' bash "$root/scripts/docs-check.sh" "$fixture"
+cp "$root/README.md" "$fixture/README.md"
+printf '\n[a [b](u1)\n' >>"$fixture/README.md"
+expect 0 'ordinary local links are a control for the unsupported image-label guard' bash "$root/scripts/docs-check.sh" "$fixture"
 for text in "> ![Unverified][badge]"$'\n>\n> '"[badge]: <$encoded>" "> > ![Unverified][badge]"$'\n> >\n> > '"[badge]: $encoded"; do
     cp "$root/README.md" "$fixture/README.md"
     printf '\n%s\n' "$text" >>"$fixture/README.md"
@@ -202,6 +225,11 @@ done
 cp "$root/README.md" "$fixture/README.md"
 printf '\n- item\n\n        ![Example](https://example.com/a%%20b)\n' >>"$fixture/README.md"
 expect 1 'list-contained code retains the documented target tripwire' bash "$root/scripts/docs-check.sh" "$fixture"
+for text in $'- item\n\n            ![Example](https://example.com/a%20b)' $'- item\n  ~~~~text\n  ```\n  ![Example](https://example.com/a%20b)\n  ```\n  ~~~~'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 1 'deep and nested list code retains the documented target tripwire' bash "$root/scripts/docs-check.sh" "$fixture"
+done
 cp "$root/README.md" "$fixture/README.md"
 printf '\n- item\n\nNormal paragraph.\n\n    ![Example](https://example.com/a%%20b)\n' >>"$fixture/README.md"
 expect 0 'code exclusion resumes after an explicit list boundary' bash "$root/scripts/docs-check.sh" "$fixture"

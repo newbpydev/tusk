@@ -64,8 +64,10 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   the combined checker correction.
 - [x] Validate the noisy-tool preflight regression and preserve real command
   failure statuses before publishing the independent CI repair.
-- [ ] Settle the repeated Markdown-checker approach decision and apply the
-  selected reference-image correction with refusal fixtures.
+- [x] Record the owner-approved switch to the existing pinned Goldmark parser,
+  retaining explicit URL rules and all reported refusal cases.
+- [x] Validate the parsed-destination/reference correction and the complete
+  preserved README policy matrix before publishing its review fix.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -115,9 +117,17 @@ keeps nonzero tool statuses fatal, with noisy-producer and failure controls.
 Fresh official-Go canonical validation, the native Linux preflight and pinned
 workflow checks pass. The CI receipt is retained at
 `docs/verification-evidence/006/pr7-ci-sigpipe/acceptance.json`.
-The repeated Markdown-checker root is parked for an owner approach decision:
-use the already-pinned Goldmark parser or one bounded AWK reference-state repair.
-All three review threads remain open. Fresh hosted CI and final acceptance
+The owner selected the existing pinned Goldmark parser with explicit URL rules
+and all reported refusal cases. The correction replaces handwritten Markdown
+context parsing, retains every reference definition (including unused and
+shadowed definitions), and covers continued destinations, multiline labels and
+nested image-label refusal. Official-Go canonical validation and the complete
+policy matrix pass, including deep and nested list code; helper coverage is
+97.8%. The bound receipt is retained at
+`docs/verification-evidence/006/pr7-goldmark/acceptance.json`.
+All three Markdown review threads
+remain open until the published fix is verified. The separate preflight
+diagnostic suggestion remains pending. Fresh hosted CI and final acceptance
 remain pending.
 
 Canonical validation, focused refusal controls, the live version readback and

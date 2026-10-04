@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-root=${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}
+source_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+root=${1:-$source_root}
 fail() { printf 'Documentation: %s\n' "$*" >&2; exit 1; }
 required() { grep -Eiq -- "$2" "$root/$1" || fail "$1 lacks $3"; }
 files=(README.md docs/install.md docs/releasing.md docs/cli.md docs/tui.md CONTRIBUTING.md SECURITY.md docs/assets/README.md)
@@ -37,6 +38,11 @@ for file in "${files[@]}"; do
         fail 'README advertises an unverified badge or release'
     fi
     if [[ "$file" == README.md ]]; then
+        if [[ -n "${TUSK_DOCCHECK_BIN:-}" ]]; then
+            "$TUSK_DOCCHECK_BIN" "$root/$file" || fail 'README Markdown target policy failed'
+        else
+            (cd "$source_root" && go run ./scripts/doccheck "$root/$file") || fail 'README Markdown target policy failed'
+        fi
         # Read complete URL targets before removing the two verified literals.
         # Quoted HTML, simple Markdown/angle targets and bare references have
         # different terminators. An embedded URL cannot become a second target.
@@ -62,25 +68,11 @@ for file in "${files[@]}"; do
                     }
                 }
             }
-            function needs_literal(value) {
-                return tolower(value) ~ /^(https?:)?\/\// ||
-                    value ~ /&#|&[[:alpha:]][[:alnum:]]*;|%[[:xdigit:]][[:xdigit:]]/ || index(value, "\\")
-            }
             function image(value) {
                 if ((value ~ /^[[:alpha:]][[:alnum:]+.-]*:/ || value ~ /^\//) && value != ci && value != license) {
                     printf "README advertises an unverified badge: remote image/reference target %s\n", value > "/dev/stderr"
                     exit 42
                 }
-            }
-            function labels(text, stack, i, ch, previous) {
-                for (i = 1; i <= length(text); i++) {
-                    ch = substr(text, i, 1)
-                    if (ch == "\\") { i++; previous = ""; continue }
-                    if (ch == "[") stack = stack (previous == "!" ? "1" : "0")
-                    else if (ch == "]" && length(stack)) stack = substr(stack, 1, length(stack) - 1)
-                    previous = ch
-                }
-                return stack
             }
             function tag_end(text, i, ch, quote) {
                 for (i = 1; i <= length(text); i++) {
@@ -100,30 +92,6 @@ for file in "${files[@]}"; do
                 }
                 match(text, /^[^[:space:])]+/)
                 return substr(text, 1, RLENGTH)
-            }
-            function outside_code(line, out, ticks, size, rest, probe, offset, finish) {
-                out = ""
-                while (match(line, /`+/)) {
-                    out = out substr(line, 1, RSTART - 1)
-                    ticks = substr(line, RSTART, RLENGTH); size = RLENGTH
-                    rest = substr(line, RSTART + RLENGTH)
-                    probe = rest; offset = 0; finish = 0
-                    while (match(probe, /`+/)) {
-                        if (RLENGTH == size) { finish = offset + RSTART; break }
-                        offset += RSTART + RLENGTH - 1
-                        probe = substr(rest, offset + 1)
-                    }
-                    if (!finish) return out ticks rest
-                    out = out " "; line = substr(rest, finish + size)
-                }
-                return out line
-            }
-            function outside_quotes(line) {
-                quote_depth = 0
-                while (match(line, /^ ? ? ?>[ ]?/)) {
-                    line = substr(line, RLENGTH + 1); quote_depth++
-                }
-                return line
             }
             {
                 tags = $0
@@ -154,80 +122,6 @@ for file in "${files[@]}"; do
                     if (attribute !~ /href/) image(value)
                     if (attribute ~ /srcset/ && index(value, ",")) exit 42
                     if (badge(value) && value != ci && value != license) { print; next }
-                }
-                # Markdown targets exclude code excerpts; HTML attributes and
-                # the known-badge residue check remain raw-text tripwires.
-                block = $0; sub(/\r$/, "", block)
-                block = outside_quotes(block)
-                if (fence_mark != "" && quote_depth != fence_quote_depth) fence_mark = ""
-                quote_tabs = quote_depth > 0 && block ~ /^[[:blank:]]*\t/
-                if (quote_tabs) fence_mark = ""
-                layout = block; gsub(/\t/, "    ", layout)
-                match(layout, /^ */); indent = RLENGTH
-                if (fence_mark == "" && match(block, /^ ? ? ?([-+*]|[0-9]+[.)])[[:blank:]]+/)) {
-                    prefix = substr(block, 1, RLENGTH); sub(/[[:blank:]]+$/, "", prefix)
-                    # Keep the outermost minimum column; nested markers and
-                    # lazy paragraphs cannot end the list exclusion boundary.
-                    if (!list_open) { list_column = length(prefix) + 1; list_quote_depth = quote_depth }
-                    list_open = 1
-                } else if (list_open && blank_before && quote_depth <= list_quote_depth &&
-                    indent < list_column && block !~ /^[[:blank:]]*$/) list_open = 0
-                indented = !list_open && !quote_tabs && block ~ /^(    |\t)/ &&
-                    (NR == 1 || blank_before || in_indented) && pending_target == ""
-                in_indented = indented || (in_indented && block ~ /^[[:blank:]]*$/)
-                blank_before = block ~ /^[[:blank:]]*$/
-                markup = outside_code(block)
-                if (!list_open && !quote_tabs && match(block, /^ ? ? ?(```+|~~~+)/)) {
-                    fence = substr(block, RSTART, RLENGTH)
-                    sub(/^[[:blank:]]*/, "", fence)
-                    if (fence_mark == "" && substr(fence, 1, 1) == "`" && index(substr(block, RSTART + RLENGTH), "`")) {
-                        # A backtick in the info string cannot open a fence.
-                    }
-                    else if (fence_mark == "") { fence_mark = substr(fence, 1, 1); fence_size = length(fence); fence_quote_depth = quote_depth; markup = "" }
-                    else if (substr(fence, 1, 1) == fence_mark && length(fence) >= fence_size &&
-                        substr(block, RSTART + RLENGTH) ~ /^[[:blank:]]*$/) fence_mark = ""
-                    if (fence_mark != "" || substr(block, RSTART + RLENGTH) ~ /^[[:blank:]]*$/) markup = ""
-                } else if (fence_mark != "" || indented) markup = ""
-                if (await_close) {
-                    continuation = markup; sub(/^[[:blank:]]*/, "", continuation)
-                    if (continuation !~ /^[)"\047(]/) exit 42
-                    await_close = 0
-                }
-                if (pending_target != "") {
-                    value = target(markup)
-                    if (needs_literal(value)) {
-                        literal(value)
-                        if (pending_image) image(value)
-                        if (pending_target == "link" && !index(markup, ")")) await_close = 1
-                    }
-                    pending_target = ""
-                    pending_image = 0
-                }
-                targets = markup; target_offset = 0
-                while (match(targets, /\]\(/)) {
-                    context = labels(substr(markup, 1, target_offset + RSTART - 1), image_stack)
-                    is_image = index(context, "1") > 0
-                    if (is_image && substr(context, length(context), 1) != "1") exit 42
-                    target_offset += RSTART + RLENGTH - 1
-                    targets = substr(targets, RSTART + RLENGTH)
-                    stop = index(targets, ")"); value = target(targets)
-                    if (needs_literal(value)) {
-                        if (targets ~ /^[[:blank:]]*</ && !index(targets, ">")) exit 42
-                        literal(value)
-                        if (!stop) await_close = 1
-                    }
-                    if (is_image && value != "") { literal(value); image(value) }
-                    if (value == "" && !stop) { pending_target = "link"; pending_image = is_image }
-                    target_offset += stop
-                    targets = stop ? substr(targets, stop + 1) : ""
-                }
-                image_stack = markup ~ /^[[:blank:]]*$/ ? "" : labels(markup, image_stack)
-                reference = markup
-                if (match(reference, /^ ? ? ?([-+*]|[0-9]+[.)])[[:blank:]]+/)) reference = substr(reference, RLENGTH + 1)
-                if (reference !~ /^[[:blank:]]*\[\^/ && match(reference, /^[[:blank:]]*\[.*\]:[[:blank:]]*/)) {
-                    value = target(substr(reference, RSTART + RLENGTH))
-                    if (needs_literal(value) || value ~ /^[[:alpha:]][[:alnum:]+.-]*:/) { literal(value); image(value) }
-                    if (value == "") pending_target = "reference"
                 }
                 cursor = 1; rest = $0; clean = ""; unquoted = 0
                 while (match(tolower(rest), /(https?:)?\/\//)) {

@@ -14,6 +14,15 @@ DOCGEN_TEST_FLAGS ?=
 test-docgen:
 	go test $(DOCGEN_TEST_FLAGS) -v ./scripts/docgen
 
+.PHONY: test-doccheck build-doccheck
+DOCCHECK_TEST_FLAGS ?=
+test-doccheck:
+	go test $(DOCCHECK_TEST_FLAGS) -v ./scripts/doccheck
+
+build-doccheck:
+	@test -n "$$TUSK_DOCCHECK_OUTPUT" || { echo 'TUSK_DOCCHECK_OUTPUT is required' >&2; exit 1; }
+	go build -o "$$TUSK_DOCCHECK_OUTPUT" ./scripts/doccheck
+
 .PHONY: test-docs test-notices check-notices generate-notices
 test-docs:
 	bash scripts/test/test_docs.sh
