@@ -1,0 +1,23 @@
+{
+  "head": "21712acdbf4ee73df2b785ca4df53f89c34ac1b0",
+  "pending_review": null,
+  "observed_threads": 46,
+  "open_threads": 0,
+  "actionable_counts": {
+    "threads": 0,
+    "ci": 0,
+    "comments": 0,
+    "needs_human": 0
+  },
+  "terminal_checks": 7,
+  "all_checks_ok": true,
+  "current_head_cloud_review": {
+    "kilo": "Submitted current-head COMMENTED review and successful review check; singleton suggestion answered and resolved",
+    "codex": "Current-head Completed summary and documented no-findings +1 reaction at 2026-10-04T00:43:17Z; not formal approval"
+  },
+  "last_remediation_outcomes": {
+    "fixed_findings": 7,
+    "evidence_based_no_code_change_replies": 2
+  },
+  "current_user_merge_authorization": "please merge and clear the branch so our repo is clean"
+}

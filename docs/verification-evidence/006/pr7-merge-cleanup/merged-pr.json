@@ -1,0 +1,11 @@
+{
+  "baseRefName": "main",
+  "headRefName": "feat/github-metadata-release-readiness",
+  "headRefOid": "21712acdbf4ee73df2b785ca4df53f89c34ac1b0",
+  "mergeCommit": {
+    "oid": "f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435"
+  },
+  "mergedAt": "2026-10-04T15:13:46Z",
+  "state": "MERGED",
+  "url": "https://github.com/newbpydev/tusk/pull/7"
+}

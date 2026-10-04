@@ -1,0 +1,121 @@
+{
+  "schema": "tusk-feature006-pr7-merge-cleanup/v1",
+  "scope": "Owner-authorized PR #7 merge, branch cleanup and synchronized governance closure",
+  "head_sha": "f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435",
+  "working_tree_changes": true,
+  "reviewed_head_sha": "21712acdbf4ee73df2b785ca4df53f89c34ac1b0",
+  "pre_merge_base_sha": "31894ff56fee1c32e34a972883a404a105683133",
+  "merge_commit_sha": "f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435",
+  "merged_at": "2026-10-04T15:13:46Z",
+  "merge_guard": "--match-head-commit 21712acdbf4ee73df2b785ca4df53f89c34ac1b0",
+  "merge_method": "merge commit preserves the reviewed remediation commits",
+  "merged_tree_equals_reviewed_head_tree": true,
+  "reviewed_head_is_merge_ancestor": true,
+  "review_settlement": "review-settlement.json",
+  "branch_cleanup": "branch-cleanup.json",
+  "branch_ref_facts": {
+    "local_absent": true,
+    "remote_absent": true,
+    "tracking_absent": true,
+    "removed": "feat/github-metadata-release-readiness",
+    "preserved_legacy_branch": "legacy/baseline-branch",
+    "worktree_count": 1
+  },
+  "authority_files": [
+    "MASTERPLAN.md",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md"
+  ],
+  "authority_checkpoint_sha256": "6db4af9f53af62e0c2b1320ad155765d05c515193b0312f7020ab0f4ceffc42d",
+  "canonical": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "head_sha": "f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435",
+    "working_tree_changes": true,
+    "started_at": "2026-10-04T15:17:50.708011+00:00",
+    "input_sha256": {
+      "MASTERPLAN.md": "1721603b71d28a2589a3614f6100be18ece68f82f597966a40144f9e55342180",
+      "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "7179a61e316e7322a3abe2eceaa8f0d4655879850dd92a0bcd91342e817fc009",
+      "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "b8339f2470d42f4c02f6105269da6fbef66aaab412bd811d4d973d8f6e309573",
+      "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "183f33f4ac845e419a35a2a3fa566890fb29021defde46f5ab90087709650a84",
+      "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+      "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+      "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7",
+      "scripts/ci-check.sh": "150936b2f1feb4b21f8fc507e3b21ba175dc13a64e82af71a17697d2dd5c7769",
+      "scripts/doccheck/main.go": "c1c13787b9e0a795ec3e9588e8b4a2517c4096e4934ffd4d8d98c760255b7a6b",
+      "scripts/doccheck/main_test.go": "0895a9273d9065f76a5f43a4103b7442fd54e841abf7324374d4810d71abf895",
+      "scripts/docs-check.sh": "422026f57c6ad1b27aac731c7ed381eb5175de1fd1379b33debc7909293435ea",
+      "scripts/test/test_docs.sh": "691a88b056450925ff99e2338ff524489d659ffa0c6a5b528333edaffe482602",
+      "internal/tui/hierarchy_presentation_test.go": "3e51551e2dc19fce9b99867946f44f39f1d46ea6de568fa094bae2fbd0842f86",
+      "internal/tui/mutation_integration_test.go": "356d4161437a72426a73f8b4c249f33a4a69a404ebd20c929ba65e157c5225f9"
+    },
+    "changed_tracked_paths": [
+      "MASTERPLAN.md",
+      "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md",
+      "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md",
+      "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md"
+    ],
+    "input_scope": "Merged reviewed implementation tree plus the four synchronized governance files; evidence outcomes are appended after the command.",
+    "completed_at": "2026-10-04T15:25:56.573095+00:00",
+    "exit_code": 0,
+    "input_hashes_unchanged_after_command": true,
+    "status": "passed",
+    "named_script_assertions_passed": 743,
+    "helper_statement_coverage_percent": 98.1,
+    "log": "merge-cleanup-validate.log.gz",
+    "metadata": "canonical-meta.json"
+  },
+  "remaining_acceptance": "Fresh trusted-main packaged candidate; native/physical/manual/performance/cask and publication gates remain pending. No candidate dispatch, tag or release is authorized by this cleanup.",
+  "recorded_at": "2026-10-04T15:17:24.173275+00:00",
+  "final_input_sha256": {
+    "MASTERPLAN.md": "1721603b71d28a2589a3614f6100be18ece68f82f597966a40144f9e55342180",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "7179a61e316e7322a3abe2eceaa8f0d4655879850dd92a0bcd91342e817fc009",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "b8339f2470d42f4c02f6105269da6fbef66aaab412bd811d4d973d8f6e309573",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "183f33f4ac845e419a35a2a3fa566890fb29021defde46f5ab90087709650a84",
+    "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+    "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7",
+    "scripts/ci-check.sh": "150936b2f1feb4b21f8fc507e3b21ba175dc13a64e82af71a17697d2dd5c7769",
+    "scripts/doccheck/main.go": "c1c13787b9e0a795ec3e9588e8b4a2517c4096e4934ffd4d8d98c760255b7a6b",
+    "scripts/doccheck/main_test.go": "0895a9273d9065f76a5f43a4103b7442fd54e841abf7324374d4810d71abf895",
+    "scripts/docs-check.sh": "422026f57c6ad1b27aac731c7ed381eb5175de1fd1379b33debc7909293435ea",
+    "scripts/test/test_docs.sh": "691a88b056450925ff99e2338ff524489d659ffa0c6a5b528333edaffe482602",
+    "internal/tui/hierarchy_presentation_test.go": "3e51551e2dc19fce9b99867946f44f39f1d46ea6de568fa094bae2fbd0842f86",
+    "internal/tui/mutation_integration_test.go": "356d4161437a72426a73f8b4c249f33a4a69a404ebd20c929ba65e157c5225f9"
+  },
+  "post_command_changes": "Evidence outcomes and README only; all four governance inputs and implementation sources match the canonical input hashes.",
+  "retained_artifacts": {
+    "pre-merge-snapshot.json": {
+      "sha256": "c7c656b6303daa4200e17bcc992e229950f5e2428cc5feaf774114a1b2830e6a",
+      "bytes": 2595
+    },
+    "merged-pr.json": {
+      "sha256": "98fe89590c4aa9d40b088992c90e63b9b18cc5ba2804bbcdda0999688b5fb966",
+      "bytes": 337
+    },
+    "branch-cleanup.json": {
+      "sha256": "02335993363b5baa5a0b0ec6ac63c16f4deadfd3e614f9545cfd1ac242ba23d1",
+      "bytes": 924
+    },
+    "merged-thread-readback.json": {
+      "sha256": "0b745dd2cd8eccbf5df9726e18d4042a9c870be53d0757db34d343bacfb43ed1",
+      "bytes": 5868
+    },
+    "review-settlement.json": {
+      "sha256": "dd2e950df87a296a1a41b145b9ff4da41b4d61600c7413170cba1225a03b8c11",
+      "bytes": 781
+    },
+    "merge-cleanup-validate.log.gz": {
+      "sha256": "afe4ad01dfcbc9338fe5bc4d1c913f078ae781a0c2167143db17c0c0ea6492f4",
+      "bytes": 49130
+    },
+    "canonical-meta.json": {
+      "sha256": "4f574040239ad37a40af64422d09c12625c4e2079cebbf764b68ce8dc025d6a4",
+      "bytes": 2380
+    },
+    "README.md": {
+      "sha256": "9ce00489e753495acd44850ec6597efc941c96bfee19630766d4d458ec7a5100",
+      "bytes": 1540
+    }
+  }
+}

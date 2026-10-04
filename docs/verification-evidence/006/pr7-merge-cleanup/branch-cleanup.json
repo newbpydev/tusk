@@ -1,0 +1,24 @@
+{
+  "pr": {
+    "baseRefName": "main",
+    "headRefName": "feat/github-metadata-release-readiness",
+    "headRefOid": "21712acdbf4ee73df2b785ca4df53f89c34ac1b0",
+    "mergeCommit": {
+      "oid": "f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435"
+    },
+    "mergedAt": "2026-10-04T15:13:46Z",
+    "state": "MERGED",
+    "url": "https://github.com/newbpydev/tusk/pull/7"
+  },
+  "branch": "main",
+  "head": "f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435",
+  "origin_main": "f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435",
+  "local_feature_ref_absent": true,
+  "remote_feature_ref_absent": true,
+  "tracking_feature_ref_absent": true,
+  "merged_tree_equals_reviewed_head_tree": true,
+  "reviewed_head_ancestor_of_merge": true,
+  "status": "",
+  "worktrees": "worktree /home/newbpydev/Development/Xoomby/tusk\nHEAD f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435\nbranch refs/heads/main",
+  "preserved_local_branches": "legacy/baseline-branch\nmain"
+}

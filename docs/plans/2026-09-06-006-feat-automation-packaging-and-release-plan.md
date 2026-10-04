@@ -38,7 +38,7 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   terminal; retain CLI/TUI observations and terminal-restoration evidence.
 - [x] Complete social-preview upload and rendered GitHub readback; enable
   release immutability and hide the inapplicable Packages sidebar.
-- [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
+- [x] Publish and settle the tooling follow-up's complete hosted/cloud reports.
 - [x] Validate PR #7's combined verifier, draft-history, portable-test and
   documentation/evidence remediation before publishing the fix.
 - [x] Validate PR #7's follow-up provenance, disabled-state controls and
@@ -75,7 +75,8 @@ PR #7 remediation pins verifier code to the trusted main workflow SHA and guards
 dispatch before checkout. Only the release identity job has draft-visible
 contents access; build/CI/native verification remain read-only. Private-reporting
 activation is supported by retained API evidence; its rendered setting capture
-was not retained. Final hosted/candidate/publication gates remain pending.
+was not retained. Hosted source CI and cloud reviews are settled; final
+candidate/publication gates remain pending.
 
 The first remediation head `4351b66` passed all six source CI jobs and Codex's
 current-head review. Kilo confirmed the original ten fixes and reported six
@@ -164,8 +165,16 @@ fixture passes 20 repetitions with every original rollup assertion retained.
 Official-Go canonical validation passes 743 named script assertions; its
 bound receipt is retained at
 `docs/verification-evidence/006/pr7-fixture-guard/acceptance.json`.
-Publication, fresh hosted settlement and release acceptance remain pending at
-this local checkpoint.
+Publication, fresh hosted settlement and release acceptance were pending at
+that local checkpoint. The published head `21712ac` subsequently passed all six
+native source-CI jobs and completed Codex/Kilo review. All 46 observed threads
+are resolved, including seven fixes and two evidence-based replies in the last
+remediation run. PR #7 merged with owner authorization on 2026-10-04 UTC as
+`f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435`; its tree equals the reviewed head.
+Local main was fast-forwarded, both feature refs removed and tracking pruned.
+Final candidate, physical/native/manual/performance/cask and publication
+acceptance remain pending. The merge/cleanup receipt is retained at
+`docs/verification-evidence/006/pr7-merge-cleanup/acceptance.json`.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

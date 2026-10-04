@@ -1,8 +1,8 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 PR #6 merged; GitHub metadata applied; version and packaged-candidate tooling locally verified; hosted follow-up and final native/release acceptance pending
+**Current Status**: Feature 006 PRs #6 and #7 merged; GitHub metadata applied; tooling source CI and cloud reviews settled; final native/release acceptance pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; native/release acceptance
-**Active Implementation Target**: Feature 006 U6/U5 — Settle PR #7's GitHub/version tooling reviews, then after owner merge freeze a fresh trusted candidate for Native candidate verification (.github/workflows/native-candidate.yml) and final acceptance; stable publication gates pending
+**Active Implementation Target**: Feature 006 U6/U5 — Freeze a fresh trusted-main candidate after PR #7 merge for Native candidate verification (.github/workflows/native-candidate.yml) and final acceptance; stable publication gates pending
 
 ### GitHub presentation and hosted candidate follow-up (2026-10-03)
 
@@ -29,7 +29,7 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   terminal; retain CLI/TUI observations and terminal-restoration evidence.
 - [x] Complete social-preview upload and rendered GitHub readback; enable
   release immutability and hide the inapplicable Packages sidebar.
-- [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
+- [x] Publish and settle the tooling follow-up's complete hosted/cloud reports.
 - [x] Validate PR #7's combined verifier, draft-history, portable-test and
   documentation/evidence remediation before publishing the fix.
 - [x] Validate PR #7's follow-up provenance, disabled-state controls and
@@ -66,7 +66,8 @@ PR #7 remediation pins verifier code to the trusted main workflow SHA and guards
 dispatch before checkout. Only the release identity job has draft-visible
 contents access; build/CI/native verification remain read-only. Private-reporting
 activation is supported by retained API evidence; its rendered setting capture
-was not retained. Final hosted/candidate/publication gates remain pending.
+was not retained. Hosted source CI and cloud reviews are settled; final
+candidate/publication gates remain pending.
 
 The first remediation head `4351b66` passed all six source CI jobs and Codex's
 current-head review. Kilo confirmed the original ten fixes and reported six
@@ -155,8 +156,16 @@ fixture passes 20 repetitions with every original rollup assertion retained.
 Official-Go canonical validation passes 743 named script assertions; its
 bound receipt is retained at
 `docs/verification-evidence/006/pr7-fixture-guard/acceptance.json`.
-Publication, fresh hosted settlement and release acceptance remain pending at
-this local checkpoint.
+Publication, fresh hosted settlement and release acceptance were pending at
+that local checkpoint. The published head `21712ac` subsequently passed all six
+native source-CI jobs and completed Codex/Kilo review. All 46 observed threads
+are resolved, including seven fixes and two evidence-based replies in the last
+remediation run. PR #7 merged with owner authorization on 2026-10-04 UTC as
+`f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435`; its tree equals the reviewed head.
+Local main was fast-forwarded, both feature refs removed and tracking pruned.
+Final candidate, physical/native/manual/performance/cask and publication
+acceptance remain pending. The merge/cleanup receipt is retained at
+`docs/verification-evidence/006/pr7-merge-cleanup/acceptance.json`.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because
@@ -632,7 +641,7 @@ belong to Feature 006 native/hosted release proof. No push, PR or release is imp
 ---
 
 ### Phase 6: Feature 006 - Automation, Packaging & Release
-- **Status**: ⏳ **LOCAL ENGINEERING MERGED; RELEASE PENDING** (PR #6 merged on 2026-10-03 UTC; trusted-candidate/native/publication acceptance remains open)
+- **Status**: ⏳ **LOCAL ENGINEERING MERGED; RELEASE PENDING** (PR #6 merged on 2026-10-03 UTC and PR #7 on 2026-10-04 UTC; trusted-candidate/native/publication acceptance remains open)
 - **Plan**: `docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md`
 - **Verification Plan**: `docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md`
 - **Issue Workorder**: `docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md`

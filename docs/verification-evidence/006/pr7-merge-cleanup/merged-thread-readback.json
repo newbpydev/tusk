@@ -1,0 +1,208 @@
+[
+  {
+    "data": {
+      "repository": {
+        "pullRequest": {
+          "state": "MERGED",
+          "mergedAt": "2026-10-04T15:13:46Z",
+          "headRefOid": "21712acdbf4ee73df2b785ca4df53f89c34ac1b0",
+          "mergeCommit": {
+            "oid": "f4e2ddfabef759f0efd4d5e9adb6f27ae51a7435"
+          },
+          "reviewThreads": {
+            "nodes": [
+              {
+                "id": "PRRT_kwDOUQoUDc6ojIhN",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojIhP",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojO-n",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojO-t",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojO-x",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojO-0",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojO-3",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojO-5",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojO-7",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6ojO-8",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oon7h",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oon7j",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oon7k",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oon7m",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oon7p",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oon7q",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oo3XI",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oo4sr",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oo4st",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6op-L0",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6op_Fq",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6op_Fu",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6op_Fw",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oqcLg",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oqcLi",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oqcLm",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6oqdB7",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6orYVL",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6orYVP",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6orYVQ",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6orZMG",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6orZMI",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6orsET",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6orsEV",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6or4Rd",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6or4Rg",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6or4Ri",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6osKYU",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6osKYW",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6osQrW",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6otGMD",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6otSCU",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6otSgb",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6otVJA",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6otVfD",
+                "isResolved": true
+              },
+              {
+                "id": "PRRT_kwDOUQoUDc6otck_",
+                "isResolved": true
+              }
+            ],
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": "Y3Vyc29yOnYyOpK0MjAyNi0xMC0wNFQwMDo0NTowNlrOqLXJPw=="
+            }
+          }
+        }
+      }
+    }
+  }
+]
