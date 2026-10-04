@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "scope": "PR 7 deterministic fixture exhaustion and retained raw-HTML source policy",
+  "head_sha": "5e2da14385f7ededf35d57a6da35766a7fb8980f",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "production_go_changes": [],
+  "verdicts": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6otVJA",
+      "verdict": "fixed",
+      "invariant_key": "tui-fixture-ordering",
+      "summary": "Refuse exhausted fixture entropy before decrementing; the extra creation returns the service identity-generation error and cannot alter the six-task rollup fixture."
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6otVfD",
+      "verdict": "not-addressing",
+      "summary": "The proposed raw-HTML code exclusion conflicts with the explicit raw-text URL policy retained under the owner decision. Paired controls pin raw-HTML refusal and Markdown code acceptance."
+    }
+  ],
+  "red_green": {
+    "red": "The unguarded baseline generator accepts the extra fixture ID; the new assertion fails with got <nil>.",
+    "green": "The guarded real storage/service/model fixture passes 20 repetitions; original completion/reopen count/progress assertions remain.",
+    "policy_controls": "Three raw-HTML code-example refusals and one fenced Markdown-image acceptance pass without changing checker behavior."
+  },
+  "canonical": {
+    "started_at": "2026-10-04T00:35:12.471839+00:00",
+    "head_sha": "5e2da14385f7ededf35d57a6da35766a7fb8980f",
+    "working_tree_changes": true,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "input_sha256": {
+      "scripts/doccheck/main.go": "c1c13787b9e0a795ec3e9588e8b4a2517c4096e4934ffd4d8d98c760255b7a6b",
+      "scripts/doccheck/main_test.go": "0895a9273d9065f76a5f43a4103b7442fd54e841abf7324374d4810d71abf895",
+      "scripts/docs-check.sh": "422026f57c6ad1b27aac731c7ed381eb5175de1fd1379b33debc7909293435ea",
+      "scripts/test/test_docs.sh": "691a88b056450925ff99e2338ff524489d659ffa0c6a5b528333edaffe482602",
+      "MASTERPLAN.md": "5aaa34842b81827a47bc06407a716a0dda1e44558a231e48509ffc2d66d0bafe",
+      "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "bd425d6aac9bac0c23826699c8dd164c0ae822695c3a5cadae40be7008802bb9",
+      "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "926ae8deba8bcbc6baad51813942c21146f5a1fd982e0bd229216cc96fb5c0c8",
+      "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "5dc5a99aae5606cc22b644ba6f548a7ae09fb6828f96b4d460c0a9ae95224f96",
+      "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+      "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+      "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7",
+      "internal/tui/hierarchy_presentation_test.go": "3e51551e2dc19fce9b99867946f44f39f1d46ea6de568fa094bae2fbd0842f86"
+    },
+    "exit_code": 0,
+    "completed_at": "2026-10-04T00:37:22.633855+00:00",
+    "named_script_assertions_passed": 743,
+    "log": "validate.log.gz",
+    "metadata": "canonical-meta.json"
+  },
+  "input_scope": "Marked pre-command metadata binds parent SHA and changed source/test/authority inputs. Only outcome text in the four authority files changed afterwards; source and tests match the gate.",
+  "final_input_sha256": {
+    "scripts/doccheck/main.go": "c1c13787b9e0a795ec3e9588e8b4a2517c4096e4934ffd4d8d98c760255b7a6b",
+    "scripts/doccheck/main_test.go": "0895a9273d9065f76a5f43a4103b7442fd54e841abf7324374d4810d71abf895",
+    "scripts/docs-check.sh": "422026f57c6ad1b27aac731c7ed381eb5175de1fd1379b33debc7909293435ea",
+    "scripts/test/test_docs.sh": "691a88b056450925ff99e2338ff524489d659ffa0c6a5b528333edaffe482602",
+    "MASTERPLAN.md": "615c67a09c0e0f3a7d6cc2d08c6edf422255ce3035d7076fd4f06a8ac62c9bab",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "14dab5779fd04da8a0f9f340fef301ccabae0c6db089b63630afd472591c1a78",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "b0ae7f6b45df29e155a2f311e37f3a7261b10beca27578aa4d5be1b29ae2dd5b",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "d9265e410177625dffe0c777db7e5149eab42807e02818827a3146e0698aa89e",
+    "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+    "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7",
+    "internal/tui/hierarchy_presentation_test.go": "3e51551e2dc19fce9b99867946f44f39f1d46ea6de568fa094bae2fbd0842f86"
+  },
+  "authority_checkpoint_sha256": "334359b90efed75da5f0ada1d5e6b256f4a6bd0aee7eb39c0f90182a021ffc8b",
+  "hosted_validation": "Pending on the implementation to be published",
+  "release_acceptance": "Final trusted candidate, packaged native/physical/performance/cask and publication gates remain pending",
+  "retained_artifacts": {
+    "initial-red.log.gz": {
+      "sha256": "98a5d244a4ee3097d41f6c0e1784ae21b8cefa452e0713da1f26f26d44be0d56",
+      "uncompressed_bytes": 773
+    },
+    "baseline-red.log.gz": {
+      "sha256": "236363dbf59582e8d52d84719093354a67b2af1bfbe988f6dd6760c8001e3503",
+      "uncompressed_bytes": 767
+    },
+    "focused-green.log.gz": {
+      "sha256": "b2ea4d6f8ea011be73eabb09db171bdbd9cdf8699e4564e684f429ff69ca8ada",
+      "uncompressed_bytes": 2762
+    },
+    "policy-controls.log.gz": {
+      "sha256": "42448dbe5915a9b19b6314556dedcd463e15f3030312f616b563ecfd6a0a89ff",
+      "uncompressed_bytes": 25683
+    },
+    "validate.log.gz": {
+      "sha256": "0f76484180f3f8ad693bfb62314e36bee0042628ce430c3d431d9a91c3871852",
+      "uncompressed_bytes": 356540
+    },
+    "baseline-meta.json": {
+      "sha256": "22ebcc6f4027625261542d765e46b37ee4e1d47b18bde8698d1400a612b6ba8c"
+    },
+    "canonical-meta.json": {
+      "sha256": "cfa76bbb4e517b2cee8c7ae23d17d70c7e8d6dd1b7bc8f7b0d4a7eebe8c5fb48"
+    },
+    "final-docs.log.gz": {
+      "sha256": "bcd3637c6c9df6a2369a769ceac6e7879a017d473abc42978bb1b8319ea7813c",
+      "uncompressed_bytes": 77
+    }
+  },
+  "completed_at": "2026-10-04T00:38:07.208523+00:00",
+  "final_documentation_check": {
+    "command": "GOTOOLCHAIN=go1.27.1 make check-docs check-ci",
+    "exit_code": 0,
+    "log": "final-docs.log.gz"
+  }
+}

@@ -65,6 +65,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   selection before publishing the Windows source-CI correction.
 - [x] Validate solidus-separated raw resource attributes and conservative
   Markdown target checks across parsed HTML contexts before publishing.
+- [x] Validate fixture ID exhaustion and preserve the documented raw-HTML
+  policy with paired raw-HTML/Markdown code controls before publishing.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -150,8 +152,20 @@ validation passes 739 named script assertions and 98.1% helper coverage.
 The first passing canonical run was superseded by the extra unquoted controls;
 the fresh final run validates the complete correction. Its bound receipt is
 retained at `docs/verification-evidence/006/pr7-html-targets/acceptance.json`.
-Publication, fresh hosted settlement and final release acceptance remain pending
-at this local checkpoint.
+The HTML correction was published as `5e2da14`; both reported threads have
+submitted replies and authoritative resolutions. A follow-up adds a fail-fast
+exhaustion guard to the six-ID hierarchy fixture. The request to exempt raw HTML
+attributes in code examples contradicts the retained contributor policy: only
+Markdown/reference targets receive those code exclusions; raw HTML attributes
+and known-badge residue remain checked in raw README text. Paired controls
+retain the documented refusal and Markdown code acceptance. The unchanged
+fixture generator fails the new exhaustion assertion, while the guarded
+fixture passes 20 repetitions with every original rollup assertion retained.
+Official-Go canonical validation passes 743 named script assertions; its
+bound receipt is retained at
+`docs/verification-evidence/006/pr7-fixture-guard/acceptance.json`.
+Publication, fresh hosted settlement and release acceptance remain pending at
+this local checkpoint.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

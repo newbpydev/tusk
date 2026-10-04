@@ -3,6 +3,7 @@ package tui
 import (
 	"bytes"
 	"context"
+	"errors"
 	"strings"
 	"testing"
 	"time"
@@ -157,6 +158,9 @@ func TestHierarchy_DescendantCompletionRefresh(t *testing.T) {
 	m, svc, _ := mutationFixtureWithOptions(t, service.Options{
 		Clock: func() time.Time { return time.UnixMilli(1700000000000) },
 		NewID: func(now time.Time) (string, error) {
+			if sequence == 0 {
+				return "", errors.New("fixture UUID sequence exhausted")
+			}
 			entropy := make([]byte, 10)
 			entropy[9] = sequence
 			sequence--
@@ -183,6 +187,9 @@ func TestHierarchy_DescendantCompletionRefresh(t *testing.T) {
 	create("Third child", root)
 	a := create("First grandchild", parent)
 	b := create("Second grandchild", parent)
+	if _, err := svc.CreateTask(ctx, ports.CreateTaskCommand{Title: "Beyond fixture entropy"}); !errors.Is(err, ports.ErrIdentityGeneration) {
+		t.Fatalf("fixture must refuse exhausted UUID entropy, got %v", err)
+	}
 	check := func(rootCount, parentCount string, percent int) {
 		t.Helper()
 		deliverUI(m, m.requestRefresh())

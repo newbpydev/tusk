@@ -265,6 +265,14 @@ for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg
     printf '\n<div>\n![OK](%s)\n</div>\n' "$url" >>"$fixture/README.md"
     expect 0 'approved Markdown image text inside raw HTML remains allowed' bash "$root/scripts/docs-check.sh" "$fixture"
 done
+for text in $'```html\n<img src="https://evil.example/status.svg">\n```' '`<img src="https://evil.example/status.svg">`' $'    <img src="https://evil.example/status.svg>'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 1 'raw HTML source attributes retain their documented tripwire in code examples' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+cp "$root/README.md" "$fixture/README.md"
+printf '\n```text\n![Example](https://evil.example/status.svg)\n```\n' >>"$fixture/README.md"
+expect 0 'Markdown code exclusion remains distinct from the raw HTML attribute policy' bash "$root/scripts/docs-check.sh" "$fixture"
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"
