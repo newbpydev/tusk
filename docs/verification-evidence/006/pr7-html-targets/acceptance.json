@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "scope": "PR 7 raw HTML and conservative Markdown target-policy correction",
+  "head_sha": "87a9396869f3dffa62673b561163a09a50db0499",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "owner_direction": "Use the existing pinned Goldmark parser, retain explicit URL rules, and cover all reported cases (recommended).",
+  "review_threads": [
+    "PRRT_kwDOUQoUDc6otSCU",
+    "PRRT_kwDOUQoUDc6otSgb"
+  ],
+  "root_cause": "Whitespace-only raw attribute boundaries miss solidus-separated attributes; parsed raw HTML contains no walked Markdown Image nodes, narrowing the previous source-policy tripwire.",
+  "fix": "Cover solidus boundaries in raw attribute and unquoted extraction for src/href/srcset; conservatively reparse Goldmark HTML block and inline contents without hiding HTML again, preserving closing lines, CDATA markers and declared code exclusions.",
+  "red_green": {
+    "baseline": "Unchanged 87a9396 checker implementations plus owned test fixtures fail both reported cases and the HTML-context class.",
+    "approved_controls": "Both approved URLs pass quoted, single-quoted and unquoted solidus attribute controls and Markdown text inside HTML; ordinary HTML/CDATA and supported code remain accepted.",
+    "class_audit": "Extra unquoted approved-target controls exposed four refusals after the first passing canonical run. Focused and fresh canonical checks pass after consistent complete unquoted extraction.",
+    "scope": "Conservative source refusal inside HTML is policy coverage, not a claim that such Markdown renders as images."
+  },
+  "canonical": {
+    "started_at": "2026-10-04T00:29:47.757706+00:00",
+    "head_sha": "87a9396869f3dffa62673b561163a09a50db0499",
+    "working_tree_changes": true,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "input_sha256": {
+      "scripts/doccheck/main.go": "c1c13787b9e0a795ec3e9588e8b4a2517c4096e4934ffd4d8d98c760255b7a6b",
+      "scripts/doccheck/main_test.go": "0895a9273d9065f76a5f43a4103b7442fd54e841abf7324374d4810d71abf895",
+      "scripts/docs-check.sh": "422026f57c6ad1b27aac731c7ed381eb5175de1fd1379b33debc7909293435ea",
+      "scripts/test/test_docs.sh": "a8b79af04e51506d08c7bf5f5541f9b93bc801d037630f19ae08d3bba8f750e4",
+      "MASTERPLAN.md": "471ed051bba326ad72f14f348752b485d78fabdb305956e0ca7eeb15354c3bd2",
+      "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "612ed16b2288e7cf0b8ec8c830bef867f8ce02feb8de847d815977a3d2e5faaf",
+      "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "00d9238cb70b096ed8003cc224bfdd00f121e2517ab27745c371cf138e2e493b",
+      "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "fc124a268285d302efe479edfe2d75550d1536750fc92b215c8a03502c16aad3",
+      "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+      "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+      "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7"
+    },
+    "exit_code": 0,
+    "completed_at": "2026-10-04T00:30:53.277995+00:00",
+    "named_script_assertions_passed": 739,
+    "helper_coverage_percent": 98.1,
+    "log": "validate.log.gz",
+    "metadata": "canonical-meta.json"
+  },
+  "input_scope": "Pre-command source/test/authority inputs are marked and hashed. Only outcome text in the four authority checkpoints changed afterwards; executable and test inputs are unchanged. Final documentation/workflow validation is recorded separately.",
+  "final_input_sha256": {
+    "scripts/doccheck/main.go": "c1c13787b9e0a795ec3e9588e8b4a2517c4096e4934ffd4d8d98c760255b7a6b",
+    "scripts/doccheck/main_test.go": "0895a9273d9065f76a5f43a4103b7442fd54e841abf7324374d4810d71abf895",
+    "scripts/docs-check.sh": "422026f57c6ad1b27aac731c7ed381eb5175de1fd1379b33debc7909293435ea",
+    "scripts/test/test_docs.sh": "a8b79af04e51506d08c7bf5f5541f9b93bc801d037630f19ae08d3bba8f750e4",
+    "MASTERPLAN.md": "545e2df4cfc090f953944e03408bc6203e2120f40f9ebe619d16c10ac4924556",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "0f3d275089600021b3f3a9bbe26a0a27ffa58ff2160911f3ab2d3486cc1cd11c",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "49cf3967371249c9fbf1bb1ba09f2feef8796ccbd3673589a93f3c77802dec32",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "afc53beab9cc7b7fd92c75f1d1558541ed41ad8ee46e8ba502ffc5a9814718a0",
+    "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+    "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7"
+  },
+  "authority_checkpoint_sha256": "334359b90efed75da5f0ada1d5e6b256f4a6bd0aee7eb39c0f90182a021ffc8b",
+  "superseded_validation": {
+    "status": "passed-before-final-unquoted-controls",
+    "metadata": "superseded-canonical-meta.json",
+    "reason": "Not acceptance evidence for the complete final implementation"
+  },
+  "hosted_validation": "Pending on the implementation to be published",
+  "release_acceptance": "Final trusted candidate, packaged native/physical/performance/cask and publication gates remain pending",
+  "retained_artifacts": {
+    "initial-unit-red.log.gz": {
+      "sha256": "5cdc13c2be71ec7494813a48e617774799777ea0c427dda37f8d2d82b5e64c05",
+      "uncompressed_bytes": 6961
+    },
+    "baseline-unit-red.log.gz": {
+      "sha256": "8ff55b1c865ff76475b20ba0d2a70777dcec1dc609d6ab29b86ae8656be3af7d",
+      "uncompressed_bytes": 7179
+    },
+    "baseline-shell-red.log.gz": {
+      "sha256": "3f5016c5c257704f59932b482a0533d145b975c3357b70c1b698c2f0d5e573f5",
+      "uncompressed_bytes": 26119
+    },
+    "unquoted-control-red.log.gz": {
+      "sha256": "01088d53000f55b77c3c21fca8753b58707175f137034912a429f4687226e29a",
+      "uncompressed_bytes": 25687
+    },
+    "focused-unit-green.log.gz": {
+      "sha256": "bf483575ccc1ec7df12eacc4363eb743baca94c763c774d159866432b03ac102",
+      "uncompressed_bytes": 6457
+    },
+    "focused-shell-green.log.gz": {
+      "sha256": "94bcf32b4d06015273374ea35090197412920adae19df6320e11a9fa91dea1b7",
+      "uncompressed_bytes": 25352
+    },
+    "superseded-validate.log.gz": {
+      "sha256": "e896b8b318f3e28c67cbc4ceb8f633257ba8b0748ed21eb43b860467075c7777",
+      "uncompressed_bytes": 355417
+    },
+    "validate.log.gz": {
+      "sha256": "6edbd5c08fd9bfde16e1da401ddd1515006865fa5299117e082058dd924d9517",
+      "uncompressed_bytes": 355983
+    },
+    "baseline-meta.json": {
+      "sha256": "f4fa7412b8cd5e86342811e10df9635b0014f76370c54d32a62193b23efd4a81"
+    },
+    "unquoted-control-meta.json": {
+      "sha256": "f9e4ef3f5eddbd14f0b979d85465f3ed6df01cae0432875425f40053822daad1"
+    },
+    "superseded-canonical-meta.json": {
+      "sha256": "192578be183c83916e3b21ef85851c2a3108d13c178c49ea3b8d40a65ed8546c"
+    },
+    "canonical-meta.json": {
+      "sha256": "b9794861fe71c7deceb06a9af610b70ffdcd1949caad0b2e1c20046513963e4b"
+    },
+    "final-docs.log.gz": {
+      "sha256": "bcd3637c6c9df6a2369a769ceac6e7879a017d473abc42978bb1b8319ea7813c",
+      "uncompressed_bytes": 77
+    }
+  },
+  "completed_at": "2026-10-04T00:31:43.299828+00:00",
+  "final_documentation_check": {
+    "command": "GOTOOLCHAIN=go1.27.1 make check-docs check-ci",
+    "exit_code": 0,
+    "log": "final-docs.log.gz"
+  }
+}

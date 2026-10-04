@@ -63,6 +63,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   diagnostics before publishing the remaining preflight review fix.
 - [x] Validate the deterministic hierarchy-rollup fixture and identity-based
   selection before publishing the Windows source-CI correction.
+- [x] Validate solidus-separated raw resource attributes and conservative
+  Markdown target checks across parsed HTML contexts before publishing.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -136,8 +138,20 @@ retains every progress/count assertion and passes 20 repetitions. This changes
 test setup and navigation only. Official-Go canonical validation passes 710
 named script assertions; the bound receipt is retained at
 `docs/verification-evidence/006/pr7-windows-hierarchy/acceptance.json`.
-Publication and fresh Windows source-CI verification remain pending at this
-local checkpoint; final release acceptance remains pending.
+The Windows correction was published as `87a9396`; fresh source-CI verification
+remains pending at this checkpoint. Two new checker findings reproduce a
+solidus-separated raw image attribute bypass and narrowed Markdown-image
+refusal inside HTML blocks. The owner-approved Goldmark approach remains in
+force: raw URL rules cover solidus attribute boundaries, and conservative
+inspection includes every parsed HTML block kind and inline raw HTML.
+The immutable baseline fails the new refusal controls; approved quoted and
+unquoted targets remain accepted after the correction. Official-Go canonical
+validation passes 739 named script assertions and 98.1% helper coverage.
+The first passing canonical run was superseded by the extra unquoted controls;
+the fresh final run validates the complete correction. Its bound receipt is
+retained at `docs/verification-evidence/006/pr7-html-targets/acceptance.json`.
+Publication, fresh hosted settlement and final release acceptance remain pending
+at this local checkpoint.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because

@@ -243,6 +243,28 @@ for text in '<img alt=">" src'$'\n '"=\"$encoded\">" "<img src"$'\n '"=\"$encode
     printf '\n%s\n' "$text" >>"$fixture/README.md"
     expect 1 'remote image sources and reference targets require approval' bash "$root/scripts/docs-check.sh" "$fixture"
 done
+for target in '<img/src="https://evil.example/status.svg">' '<img alt="tasks"/src="https://evil.example/status.svg">' '<img//SrC="https://evil.example/status.svg">' '<source/srcset="https://evil.example/status.svg">' '<img/src=https://evil.example/status.svg>' '<source/srcset=https://evil.example/status.svg>' '<a/href="https://example.com/a%20b">link</a>'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n<div>\n%s\n</div>\n' "$target" >>"$fixture/README.md"
+    expect 1 'solidus-separated resource attributes retain URL policy' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' 'https://img.shields.io/github/license/newbpydev/tusk'; do
+    for target in "<img/src=\"$url\">" "<source/srcset=\"$url\">" "<img alt=\"tasks\"/src=\"$url\">" "<img/src='$url'>" "<img/src=$url>" "<source/srcset=$url>"; do
+        cp "$root/README.md" "$fixture/README.md"
+        printf '\n<div>\n%s\n</div>\n' "$target" >>"$fixture/README.md"
+        expect 0 'approved targets remain allowed after solidus attribute boundaries' bash "$root/scripts/docs-check.sh" "$fixture"
+    done
+done
+for text in $'<div>\n![No](https://evil.example/status.svg)\n</div>' $'<script>\n![No](https://evil.example/status.svg)\n</script>' $'<!--\n![No](https://evil.example/status.svg)\n-->' $'<?x\n![No](https://evil.example/status.svg)\n?>' $'<!X\n![No](https://evil.example/status.svg)\n>' $'<![CDATA[\n![No](https://evil.example/status.svg)\n]]>' $'<custom>\n![No](https://evil.example/status.svg)\n</custom>' 'Text <!-- ![No](https://evil.example/status.svg) -->'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n%s\n' "$text" >>"$fixture/README.md"
+    expect 1 'raw HTML retains conservative Markdown image refusal' bash "$root/scripts/docs-check.sh" "$fixture"
+done
+for url in 'https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main' 'https://img.shields.io/github/license/newbpydev/tusk'; do
+    cp "$root/README.md" "$fixture/README.md"
+    printf '\n<div>\n![OK](%s)\n</div>\n' "$url" >>"$fixture/README.md"
+    expect 0 'approved Markdown image text inside raw HTML remains allowed' bash "$root/scripts/docs-check.sh" "$fixture"
+done
 cp "$root/README.md" "$fixture/README.md"
 printf "\ntusk add sample --due='next week'\n" >>"$fixture/README.md"
 expect 1 'reject single-quoted unsupported due-date claim' bash "$root/scripts/docs-check.sh" "$fixture"

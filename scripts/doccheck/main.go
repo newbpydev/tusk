@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 	"unicode"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
+	"github.com/yuin/goldmark/util"
 )
 
 const ciBadge = "https://github.com/newbpydev/tusk/actions/workflows/ci.yml/badge.svg?branch=main"
@@ -57,6 +59,20 @@ func check(source []byte) error {
 func checkMarkdown(source []byte, inspectBlocks bool) error {
 	context := &referenceContext{Context: parser.NewContext()}
 	markdown := goldmark.New(goldmark.WithExtensions(extension.Footnote))
+	if inspectBlocks {
+		// Conservative source inspection must not hide targets inside HTML
+		// again. Keep Goldmark's other block, inline and reference parsers.
+		blocks := slices.DeleteFunc(parser.DefaultBlockParsers(), func(p util.PrioritizedValue) bool {
+			return p.Value == parser.NewHTMLBlockParser()
+		})
+		inlines := slices.DeleteFunc(parser.DefaultInlineParsers(), func(p util.PrioritizedValue) bool {
+			return p.Value == parser.NewRawHTMLParser()
+		})
+		markdown = goldmark.New(goldmark.WithParser(parser.NewParser(
+			parser.WithBlockParsers(blocks...), parser.WithInlineParsers(inlines...),
+			parser.WithParagraphTransformers(parser.DefaultParagraphTransformers()...),
+		)), goldmark.WithExtensions(extension.Footnote))
+	}
 	document := markdown.Parser().Parse(text.NewReader(source), parser.WithContext(context))
 	for _, ref := range context.definitions {
 		if err := destination(string(ref.Destination()), true); err != nil {
@@ -80,7 +96,21 @@ func checkMarkdown(source []byte, inspectBlocks bool) error {
 		case *ast.AutoLink:
 			err = destination(string(n.URL(source)), false)
 		case *ast.Text:
-			err = malformedTarget(n.Value(source))
+			value := n.Value(source)
+			// Goldmark splits the CDATA opener at its first bracket when
+			// HTML parsing is disabled. The opener itself is not an image.
+			if bytes.HasSuffix(value, []byte("<![")) && bytes.HasPrefix(source[n.Segment.Stop:], []byte("CDATA[")) {
+				value = bytes.TrimSuffix(value, []byte("<!["))
+			}
+			err = malformedTarget(value)
+		case *ast.HTMLBlock:
+			content := bytes.Clone(n.Lines().Value(source))
+			if n.HasClosure() {
+				content = append(content, n.ClosureLine.Value(source)...)
+			}
+			err = checkMarkdown(content, true)
+		case *ast.RawHTML:
+			err = checkMarkdown(n.Segments.Value(source), true)
 		case *ast.CodeSpan:
 			var content []byte
 			for child := n.FirstChild(); child != nil; child = child.NextSibling() {

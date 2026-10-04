@@ -104,7 +104,7 @@ for file in "${files[@]}"; do
                 # Check complete attribute targets even if their scheme or
                 # hostname is obscured, before scanning known badge hosts.
                 attrs = $0
-                while (match(tolower(attrs), /(^|[[:space:]])(src|href|srcset)[[:space:]]*=[[:space:]]*/)) {
+                while (match(tolower(attrs), /(^|[[:space:]\/])(src|href|srcset)[[:space:]]*=[[:space:]]*/)) {
                     attribute = tolower(substr(attrs, RSTART, RLENGTH))
                     attrs = substr(attrs, RSTART + RLENGTH)
                     quote = substr(attrs, 1, 1)
@@ -136,7 +136,7 @@ for file in "${files[@]}"; do
                     stop = delimiter == "" ? 0 : index(tail, delimiter)
                     if (delimiter != "") value = stop ? substr(tail, 1, stop - 1) : tail
                     else {
-                        unquoted = tolower(before) ~ /(^|[[:space:]])(src|href)=$/
+                        unquoted = tolower(before) ~ /(^|[[:space:]\/])(src|href|srcset)=$/
                         if (unquoted) match(tail, /^[^[:space:]>"\047]+/)
                         else match(tail, /^[^[:space:]"\047]+/)
                         value = substr(tail, 1, RLENGTH)
