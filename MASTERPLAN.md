@@ -1,8 +1,176 @@
 # Tusk Reboot: Checklist Masterplan & Orchestration Dashboard
 
-**Current Status**: Feature 006 PR #6 merged; local engineering and reviewed-head hosted checks passed; native/release acceptance pending
+**Current Status**: Feature 006 PR #6 merged; GitHub metadata applied; version and packaged-candidate tooling locally verified; hosted follow-up and final native/release acceptance pending
 **Active Phase**: Phase 6 — Automation, Packaging, Release and Public Repository Readiness; native/release acceptance
-**Active Implementation Target**: Feature 006 U6 — Trusted-main candidate prerequisites and physical/exact-byte acceptance; release operator gates remain pending
+**Active Implementation Target**: Feature 006 U6/U5 — Settle PR #7's GitHub/version tooling reviews, then after owner merge freeze a fresh trusted candidate for Native candidate verification (.github/workflows/native-candidate.yml) and final acceptance; stable publication gates pending
+
+### GitHub presentation and hosted candidate follow-up (2026-10-03)
+
+The owner requested public GitHub metadata, releases and distribution readiness
+using maintainer judgment, and confirmed that only CachyOS computers are available.
+This authorizes About/homepage/topics and security-channel activation before the
+stable release, independently of the post-publication metadata helper. Retain
+before/after API and browser readbacks; do not manufacture a publication receipt.
+
+Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
+
+- [x] Apply the reviewed About/homepage and eleven topics; enable and read back
+  GitHub private vulnerability reporting under the owner's metadata request.
+- [x] Refresh public documentation to distinguish five-platform native source CI
+  from exact packaged-binary and physical terminal acceptance.
+- [x] Implement and locally validate read-only hosted native checks that verify
+  a successful trusted candidate before executing its unchanged platform binary.
+- [x] Enforce owner-requested stable SemVer history checks before hosted
+  candidate construction and release promotion; document version bumps and
+  the repeatable per-release checklist.
+- [x] Produce and cryptographically verify the preliminary trusted-main candidate;
+  all nine reports passed before assessment.
+- [x] Inspect the unchanged preliminary Linux archive in an owned CachyOS
+  terminal; retain CLI/TUI observations and terminal-restoration evidence.
+- [x] Complete social-preview upload and rendered GitHub readback; enable
+  release immutability and hide the inapplicable Packages sidebar.
+- [ ] Publish and settle the tooling follow-up's complete hosted/cloud reports.
+- [x] Validate PR #7's combined verifier, draft-history, portable-test and
+  documentation/evidence remediation before publishing the fix.
+- [x] Validate PR #7's follow-up provenance, disabled-state controls and
+  mixed-case badge refusal before pushing the second combined fix.
+- [x] Validate the owner-approved complete-target/state and evidence correction
+  before pushing the third combined fix.
+- [x] Validate the literal-target and receipt-amendment class correction
+  before publishing its fresh hosted/cloud review head.
+- [x] Validate the complete host/source refusal and accepted-context matrix
+  before publishing the combined target-scope correction.
+- [x] Validate the archive binding and Markdown-container correction
+  before publishing its combined hosted/cloud review head.
+- [x] Validate list-container and quote-tab target refusal before publishing
+  the combined checker correction.
+- [x] Validate the noisy-tool preflight regression and preserve real command
+  failure statuses before publishing the independent CI repair.
+- [x] Record the owner-approved switch to the existing pinned Goldmark parser,
+  retaining explicit URL rules and all reported refusal cases.
+- [x] Validate the parsed-destination/reference correction and the complete
+  preserved README policy matrix before publishing its review fix.
+- [x] Validate distinct Make-version failure/status and non-GNU banner
+  diagnostics before publishing the remaining preflight review fix.
+- [x] Validate the deterministic hierarchy-rollup fixture and identity-based
+  selection before publishing the Windows source-CI correction.
+- [x] Validate solidus-separated raw resource attributes and conservative
+  Markdown target checks across parsed HTML contexts before publishing.
+- [x] Validate fixture ID exhaustion and preserve the documented raw-HTML
+  policy with paired raw-HTML/Markdown code controls before publishing.
+- [ ] After merge, create a fresh frozen-source candidate, dispatch the new
+  Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
+  and retain final reference measurements.
+
+PR #7 remediation pins verifier code to the trusted main workflow SHA and guards
+dispatch before checkout. Only the release identity job has draft-visible
+contents access; build/CI/native verification remain read-only. Private-reporting
+activation is supported by retained API evidence; its rendered setting capture
+was not retained. Final hosted/candidate/publication gates remain pending.
+
+The first remediation head `4351b66` passed all six source CI jobs and Codex's
+current-head review. Kilo confirmed the original ten fixes and reported six
+follow-ups. Those provenance, wording and badge/test corrections were locally
+validated together. The second head `e3dd105` passed all six source CI jobs;
+Kilo and Codex completed review with three boundary/provenance follow-ups.
+The owner directed continuing the complete badge URL/reporting-state and
+provenance corrections. The third pass uses complete single state declarations
+and marked validation evidence.
+The third head `7f1fe45` passed all six source CI jobs. Kilo and Codex
+completed review with an encoded-target bypass and two receipt-provenance
+concerns. The combined class correction enforces complete literal targets,
+preserves historical log bytes and records amendments and fresh marked runs.
+The fourth head `a6ded00` passed all six source CI jobs. The completed
+Kilo/Codex batch added Unicode-host and target-scope findings; the class audit
+also confirmed a fully encoded responsive-image target bypass. The next
+combined correction covers literal ASCII hosts and single responsive sources,
+while preserving titled links, code/prose, footnotes and Unicode paths.
+Its fresh hosted/cloud settlement remains pending.
+The fifth head `fc58788` passed all six source CI jobs. Completed Kilo/Codex
+review added quoted-reference, code/fence-context and native archive-receipt
+findings. The next combined correction retains archive identity, checks quoted
+references and fence boundaries, and scopes supported code excerpts explicitly.
+Its fresh hosted/cloud settlement remains pending.
+The sixth head `1419c01` passed all six source CI jobs; Codex completed
+with reference, split-attribute and remote-image findings. Kilo and the class
+audit identified list-container and quote-tab bypasses. The next correction keeps those block contexts under
+the literal-target tripwire, validates list reference definitions, refuses split
+resource tags and allowlists remote image/reference destinations; supported
+code exclusion resumes after explicit boundaries. Fresh cloud settlement
+remains pending.
+
+The seventh head `fb7554b` completed Kilo and Codex review with two reproduced
+reference-image bypasses and missing refusal fixtures. Five source jobs passed;
+macOS arm64 preflight stopped at exit 141 after Make version output. The
+independent CI repair drains Make/compiler version output under pipefail and
+keeps nonzero tool statuses fatal, with noisy-producer and failure controls.
+Fresh official-Go canonical validation, the native Linux preflight and pinned
+workflow checks pass. The CI receipt is retained at
+`docs/verification-evidence/006/pr7-ci-sigpipe/acceptance.json`.
+The owner selected the existing pinned Goldmark parser with explicit URL rules
+and all reported refusal cases. The correction replaces handwritten Markdown
+context parsing, retains every reference definition (including unused and
+shadowed definitions), and covers continued destinations, multiline labels and
+nested image-label refusal. Official-Go canonical validation and the complete
+policy matrix pass, including deep and nested list code; helper coverage is
+97.8%. The bound receipt is retained at
+`docs/verification-evidence/006/pr7-goldmark/acceptance.json`.
+The Goldmark fix was published as `b763be4`; all three Markdown threads have
+submitted substantive replies and verified resolutions. The remaining preflight
+suggestion is corrected by reporting the failed Make-version producer status
+separately from a successful non-GNU banner. Focused noisy-output, real-error
+and banner controls pass. Official-Go canonical validation passes 710 named
+script assertions; its receipt is retained at
+`docs/verification-evidence/006/pr7-preflight-diagnostic/acceptance.json`.
+The diagnostic fix was published as `2633ff8`; its submitted reply and
+authoritative thread resolution are verified. That head failed native Windows
+source CI because the hierarchy-rollup test assumed the first-created child
+was the next displayed row. A fixed-clock, descending-ID fixture reproduces
+that invalid assumption deterministically; selecting the intended parent by ID
+retains every progress/count assertion and passes 20 repetitions. This changes
+test setup and navigation only. Official-Go canonical validation passes 710
+named script assertions; the bound receipt is retained at
+`docs/verification-evidence/006/pr7-windows-hierarchy/acceptance.json`.
+The Windows correction was published as `87a9396`; fresh source-CI verification
+remains pending at this checkpoint. Two new checker findings reproduce a
+solidus-separated raw image attribute bypass and narrowed Markdown-image
+refusal inside HTML blocks. The owner-approved Goldmark approach remains in
+force: raw URL rules cover solidus attribute boundaries, and conservative
+inspection includes every parsed HTML block kind and inline raw HTML.
+The immutable baseline fails the new refusal controls; approved quoted and
+unquoted targets remain accepted after the correction. Official-Go canonical
+validation passes 739 named script assertions and 98.1% helper coverage.
+The first passing canonical run was superseded by the extra unquoted controls;
+the fresh final run validates the complete correction. Its bound receipt is
+retained at `docs/verification-evidence/006/pr7-html-targets/acceptance.json`.
+The HTML correction was published as `5e2da14`; both reported threads have
+submitted replies and authoritative resolutions. A follow-up adds a fail-fast
+exhaustion guard to the six-ID hierarchy fixture. The request to exempt raw HTML
+attributes in code examples contradicts the retained contributor policy: only
+Markdown/reference targets receive those code exclusions; raw HTML attributes
+and known-badge residue remain checked in raw README text. Paired controls
+retain the documented refusal and Markdown code acceptance. The unchanged
+fixture generator fails the new exhaustion assertion, while the guarded
+fixture passes 20 repetitions with every original rollup assertion retained.
+Official-Go canonical validation passes 743 named script assertions; its
+bound receipt is retained at
+`docs/verification-evidence/006/pr7-fixture-guard/acceptance.json`.
+Publication, fresh hosted settlement and release acceptance remain pending at
+this local checkpoint.
+
+Canonical validation, focused refusal controls, the live version readback and
+basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because
+this follow-up changes release tooling. No final candidate acceptance or public
+release is claimed. See the GitHub-readiness evidence receipt.
+
+Actions already executes source tests natively on all five OS/architecture pairs.
+The follow-up executes packaged bytes and labels hosted automation separately.
+Physical macOS, Windows 11 and Linux arm64 console observations remain unavailable;
+no automated receipt claims those observations. A stable publication decision must
+explicitly settle these outstanding manual gates against the concrete candidate.
+Homebrew destination/native cask and exact publication authority remain pending.
+GitHub Packages offers no native Go registry; native release archives are the
+appropriate distribution surface. No placeholder container package is planned.
 
 ### Feature 006 planning checkpoint (2026-10-01)
 

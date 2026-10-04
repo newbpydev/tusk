@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "scope": "Feature 006 owner-requested GitHub/version/native-candidate tooling follow-up",
+  "base_sha": "31894ff56fee1c32e34a972883a404a105683133",
+  "local_checks": {
+    "status": "passed",
+    "commands": [
+      "GOTOOLCHAIN=go1.27.1 make validate",
+      "GOTOOLCHAIN=go1.27.1 make test-release check-ci check-candidate-workflow",
+      "GOTOOLCHAIN=go1.27.1 make lint-release-promotion test-docs check-ci check-candidate-workflow",
+      "GOTOOLCHAIN=go1.27.1 make test-promotion lint-release-promotion",
+      "GOTOOLCHAIN=go1.27.1 make check-release-version RELEASE_VERSION=v0.3.0 RELEASE_VERSION_OUTPUT=NEW",
+      "GOTOOLCHAIN=go1.27.1 make verify-candidate",
+      "GOTOOLCHAIN=go1.27.1 make native-candidate-smoke RELEASE_NATIVE_TARGET=linux/amd64",
+      "GOTOOLCHAIN=go1.27.1 make release-prepare"
+    ],
+    "compiler": "go1.27.1",
+    "canonical_log": "validate-publish.log.gz",
+    "final_documentation": "make test-docs passed after synchronized headers and receipt documentation",
+    "implementation_bytes": "All reviewed executable/workflow/Make/test files unchanged since successful canonical gate",
+    "final_state": "Fresh canonical gate passed after evidence synchronization; executable bytes unchanged"
+  },
+  "review": {
+    "status": "complete",
+    "findings": 0,
+    "method": "Eight sequential root lenses per AGENTS.md, not independent agents",
+    "receipt": "review-review.json",
+    "independent_cross_model": "Claude provider-capable dispatch failed HTTP 401; no output"
+  },
+  "preliminary_candidate": {
+    "source_sha": "31894ff56fee1c32e34a972883a404a105683133",
+    "version": "v0.3.0",
+    "run_id": 37086312661,
+    "run_attempt": 1,
+    "all_nine_jobs": "success",
+    "manifest_sha256": "e6f076b8cf29569976d608308545d91e5e6f91494b9eb3ba053e3184a57c61e4",
+    "cryptographic_verification": "passed",
+    "linux_amd64_packaged_smoke": "passed without rebuilding binary",
+    "cachyos_owned_terminal": "basic inspection passed; isolated DB; stty restored",
+    "promotion_plan": "prepared-unaccepted; no remote mutation"
+  },
+  "version_control": {
+    "policy": "Stable SemVer; candidate strictly newer than all stable tags/releases; exact draft resumption; failed history refuses writes",
+    "live_observation": "v0.3.0 available; no reservation",
+    "published_identity": "Git tag and checked immutable binary constant",
+    "changelog": "Unreleased; no invented publication date"
+  },
+  "pending": [
+    "Merge tooling follow-up before dispatching the new default-branch packaged verification workflow",
+    "Fresh trusted-main candidate after tooling changes; repeat all affected candidate gates",
+    "Final candidate reference performance matrices",
+    "Full Linux amd64/manual and unavailable macOS Intel/ARM, Windows 11, Linux arm64 console checks or explicit owner settlement",
+    "Homebrew destination, native cask acceptance and tap publication",
+    "Concrete candidate-specific publication authority, release/tag/anonymous installation readback"
+  ],
+  "probe_notes": {
+    "version-lint-docs.log.gz": "Initial lint findings corrected; corrected lint/docs gate passed",
+    "promotion-version-green.log.gz": "Fixture call-log reset invalidated existing upload count; corrected fixture control passed in green2",
+    "version-invalid.log.gz": "Unsupported leading-zero version refused before output creation",
+    "kitty-help.png": "Stale initial help capture discarded; replacement pixels inspected and matching Keyboard shortcuts modal confirmed"
+  },
+  "evidence_sha256": {
+    "release-settings.jpg": "06e011a7a88fc08bc78cf1309d5b361c044170642980df5bf33732eb4fa633ff",
+    "kitty-cli.png": "2cc831ddab389449f329b2d17faa428bed273d82a2cf56ee3048fbbf2ecc8f0a",
+    "kitty-tui.png": "483a920304c335586d9c4728af0a0b8627241a41b190347d0e87a633bcdede0a",
+    "kitty-help.png": "18269e811d79dfe274c3c3366d1b6885f94baf65a9ef3c7eaa98d27521dcf56e",
+    "kitty-restored.png": "f228ae483bfaef4cd106e386502b4d29ac04d841d18201d242400f2c0bf0e6cb",
+    "kitty-receipt.json": "dd7887a3383a70c0b4404ffbd5c92a77903910a89c81712644cbb0e5f498c675",
+    "candidate-verification.json": "52c7c2a954bf4dfe10ce01b1bff2f509e287dbf88883f53f3963dc696d237415",
+    "linux-smoke.json": "bb22f174ed7a065aa3ec65a4240eae560e471b095e4168c4ea01bb7d43fe5b26",
+    "version-history.json": "d9a6a5219b73bd1491af630fde64758710889e69021215d268cb5e7b74245afb",
+    "candidate-asset-plan.json": "0f07e2acadfbe71f48a9802ea9e3948117f25d117b48a82a88e2afb32f305c87",
+    "docs-red.log.gz": "4dc5213f36d6f2ded821f43bbbe091a05f13597f1628ac4e3a5cff92282717b6",
+    "docs-green.log.gz": "a694c3ca063df7e8f3ab9ff9954855323a057cddce3e216d2675a03ea0373c6c",
+    "version-red.log.gz": "8b6db761e4234f88ea9c3445f9320ebe497a892a8c1582481f73c2e73ecfa9f5",
+    "attestation-permission-red.log.gz": "fffa8c24b52efe1f60a7bf5877affe1d1578b3d7a89d71188d489c9ff6a0d9ec",
+    "version-lint-docs.log.gz": "7525b7e5a938a8032187e14384124dd3b364120b9da92d6ad52d789462f4e15b",
+    "version-lint-docs-green.log.gz": "19866d62c724ee4760852e5f0e7a4e87e04b48802d03db2381474f838b08b15b",
+    "promotion-version-green.log.gz": "de8b093cc6abc3fbbd219a37d428c660c53ce3a1220affe6058c429392274d26",
+    "promotion-version-green2.log.gz": "738d9f79acfd8d7148f9a07a66f41b2f5583f062d3671571ee6c60bcb0fd41e2",
+    "release-final-focused.log.gz": "c34b4bb16976c3d7f32fab8c427dbea383a137e0c2e7b799c2f69e13587f7b53",
+    "validate-final.log.gz": "7910912041b2ad4e0bffa0c8e168038c229c08ecdd6425785ca1475752ddb1e1",
+    "candidate-verification.log.gz": "23338564a02a443339aced14f2cccd936fb9769d4cdeb84c7f92af58fac3842c",
+    "native-linux-preliminary.log.gz": "1c68a1b487c777974ee78e49110cf6195636f87ffc5d6accf8bdb6a47bffa25e",
+    "version-live.log.gz": "1fa0d008c2cdbeed59a0bbe513588b7b89cad714f5ea31dbbceb110defc91043",
+    "version-invalid.log.gz": "242cd9b31ce46226f409fc00417b8d465ca309cdbc0fbb1e92c3fe4993301f02",
+    "review-review.json": "8b15ccfb809d189be5fc7fde3cf76e82f77281aef50ed8196da9d29d20c10d52",
+    "review-reviewed-source-sha256.json": "408c08c6989c806f552c45be06d57308e4c3e5aa515857f996902c58a4705e52",
+    "review-metadata.json": "f4fcba4952a3ee242b79cb36551d11b8ac581ac201b80ad69b2a5e41156d2ad5",
+    "review-validator-outcome.json": "bb1c0fa86b10d8caeaea92011cfbe2e5eda4b3920ef8e0920b553503b776caf8",
+    "candidate-jobs.json": "6c22d5022cd99bec4999ed390d98e839e6b135760fcb178f517e878e1ef67a21",
+    "repository-metadata.json": "ec2b742d51f3c4abcd588bc4fcbcf1c5262e4c730072999e31d92c783f4414f7",
+    "README.md": "c6a2f16fc3a0517763f2302bb779b86cfa27fb64665bfa09ceda7c2170510a08",
+    "final-source-sha256.json": "fb75025e05b465c896500c7a0e8fa1276b126eda4787bda875429df64392ebd7",
+    "docs-publish.log.gz": "3484ddc2395343509d4de23e1ec8d33236c9531e576373a835d76eb11f0a0a41",
+    "kitty-help.txt": "8b91e492beb9f539944ad5158bf3e5680656e8dd20786024fb815be8b95bf432",
+    "validate-publish.log.gz": "1563e83f73b8885177c28ef86d5502152bb0857c359d11b474f106bf7d369ca2"
+  }
+}

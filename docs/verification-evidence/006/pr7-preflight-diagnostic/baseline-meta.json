@@ -1,0 +1,10 @@
+{
+  "baseline_sha": "b763be4b6636d4d2fcbb0c110bfec1cc410cef33",
+  "checker_sha256": "34e27da8ed9bcba7c8d143aabcbbc2750bf22704241ef328982eee922c0a59f7",
+  "test_sha256": "3a85d2d7b532a96f7c5ee6328ad841de515dbbbacff2d14da3a839ed84acd45b",
+  "command": "GOTOOLCHAIN=go1.27.1 make test-ci",
+  "started_at": "2026-10-04T00:06:13.632223+00:00",
+  "adaptation": "Only final test_ci.sh copied into immutable baseline checkout; implementation is unchanged.",
+  "exit_code": 2,
+  "completed_at": "2026-10-04T00:06:14.231390+00:00"
+}

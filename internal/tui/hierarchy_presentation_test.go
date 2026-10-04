@@ -1,15 +1,19 @@
 package tui
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"strings"
 	"testing"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/ansi"
 	"github.com/muesli/termenv"
 	"github.com/newbpydev/tusk/internal/core"
 	"github.com/newbpydev/tusk/internal/ports"
+	"github.com/newbpydev/tusk/internal/service"
 )
 
 func TestHierarchy_ConnectedSpaciousBranches(t *testing.T) {
@@ -148,7 +152,22 @@ func TestHierarchy_DeepTreeResizeAndScroll(t *testing.T) {
 }
 
 func TestHierarchy_DescendantCompletionRefresh(t *testing.T) {
-	m, svc, _ := mutationFixture(t, false)
+	// Equal creation times and descending UUID entropy force siblings out of
+	// creation order, regardless of the host clock's resolution.
+	sequence := byte(6)
+	m, svc, _ := mutationFixtureWithOptions(t, service.Options{
+		Clock: func() time.Time { return time.UnixMilli(1700000000000) },
+		NewID: func(now time.Time) (string, error) {
+			if sequence == 0 {
+				return "", errors.New("fixture UUID sequence exhausted")
+			}
+			entropy := make([]byte, 10)
+			entropy[9] = sequence
+			sequence--
+			return service.NewUUIDv7(now, bytes.NewReader(entropy))
+		},
+		Location: time.UTC,
+	})
 	ctx := context.Background()
 	create := func(title string, parent *core.Task) *core.Task {
 		t.Helper()
@@ -168,6 +187,9 @@ func TestHierarchy_DescendantCompletionRefresh(t *testing.T) {
 	create("Third child", root)
 	a := create("First grandchild", parent)
 	b := create("Second grandchild", parent)
+	if _, err := svc.CreateTask(ctx, ports.CreateTaskCommand{Title: "Beyond fixture entropy"}); !errors.Is(err, ports.ErrIdentityGeneration) {
+		t.Fatalf("fixture must refuse exhausted UUID entropy, got %v", err)
+	}
 	check := func(rootCount, parentCount string, percent int) {
 		t.Helper()
 		deliverUI(m, m.requestRefresh())
@@ -175,7 +197,7 @@ func TestHierarchy_DescendantCompletionRefresh(t *testing.T) {
 		if m.selectedTask().Progress != percent || !strings.Contains(m.View(), rootCount) {
 			t.Fatalf("grandparent missing %s / %d%%: %s", rootCount, percent, m.View())
 		}
-		deliverUI(m, press(m, "down"))
+		selectTask(t, m, parent.ID)
 		if m.selectedTask().ID != parent.ID || !strings.Contains(m.View(), parentCount) {
 			t.Fatalf("parent missing %s: %s", parentCount, m.View())
 		}

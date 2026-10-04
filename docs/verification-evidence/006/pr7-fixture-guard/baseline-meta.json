@@ -1,0 +1,9 @@
+{
+  "baseline_sha": "5e2da14385f7ededf35d57a6da35766a7fb8980f",
+  "scope": "Owned fixture-only adaptation adds the exhaustion assertion while retaining the baseline unguarded generator. No production source changes.",
+  "fixture_sha256": "6edf2f018c03c9c025ed11322ab886b139e95ed14d998076d5a84fdaa615e135",
+  "command": "GOTOOLCHAIN=go1.27.1 make test-tui TUI_TEST_RUN='^TestHierarchy_DescendantCompletionRefresh$'",
+  "started_at": "2026-10-04T00:35:34.734885+00:00",
+  "exit_code": 2,
+  "completed_at": "2026-10-04T00:35:38.632550+00:00"
+}

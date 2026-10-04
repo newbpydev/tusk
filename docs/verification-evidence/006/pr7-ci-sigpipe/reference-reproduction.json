@@ -1,0 +1,30 @@
+[
+  {
+    "case": "control",
+    "expected": 0,
+    "actual": 0,
+    "stdout": "Public guide contracts and local links pass; hosted rendering remains separate.\n",
+    "stderr": ""
+  },
+  {
+    "case": "continued_reference",
+    "expected": 1,
+    "actual": 0,
+    "stdout": "Public guide contracts and local links pass; hosted rendering remains separate.\n",
+    "stderr": ""
+  },
+  {
+    "case": "multiline_label",
+    "expected": 1,
+    "actual": 0,
+    "stdout": "Public guide contracts and local links pass; hosted rendering remains separate.\n",
+    "stderr": ""
+  },
+  {
+    "case": "nested_image",
+    "expected": 1,
+    "actual": 1,
+    "stdout": "",
+    "stderr": "Documentation: README badge scan failed: use complete literal URL targets\n"
+  }
+]

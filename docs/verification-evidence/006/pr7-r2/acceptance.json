@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "scope": "PR 7 second combined review pass; six complete-batch followups",
+  "head_sha": "4351b66b49e1a5c6c00bff372296179a2cfeed86",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "canonical": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "exit_code": 0,
+    "log": "validate.log.gz",
+    "environment_scope": "The historical validate log records the canonical gate result only. Ripgrep absence is evidenced separately by rg_absent_control and its marked log; no environment claim is attached to validate.log.gz."
+  },
+  "rg_absent_control": {
+    "recipe": "PATH=/tmp/pr7-path-without-rg bash -c: print PATH; require command -v rg exit 1; print the canonical command; GOTOOLCHAIN=go1.27.1 make test-scripts",
+    "host": "Linux/x86_64",
+    "ripgrep_lookup_exit": 1,
+    "named_assertions_passed": 483,
+    "log": "rg-absent-control.log.gz",
+    "setup": "Fresh isolated directory contains executable symlinks from the original PATH except rg and rg.exe; PATH contains only that directory. The recorded Bash lookup proves absence in the test command environment."
+  },
+  "additional_checks": [
+    "make test-docs: two mixed-case Red refusals followed by Green; four positive disabled states pass",
+    "make check-ci check-candidate-workflow check-native-candidate-workflow lint-release-promotion",
+    "synchrony.log.gz: four current planning blocks match and review-metadata scope/timestamp readback passes",
+    "r1-input-readback.log.gz: reconstruct and hash first-head evidence/planning from immutable 4351b66"
+  ],
+  "input_scope": "Worktree bytes of every code/test and evidence/planning input carrying a verdict; excludes this receipt to avoid self-reference. Retained artifacts carry their own hashes.",
+  "input_sha256": {
+    ".github/workflows/native-candidate.yml": "58c727df67762596a0fca959ee09fdcbed9bf110907347a8cc5343e3c9b79070",
+    ".github/workflows/release.yml": "59c0b3c2d41077b026e755064769b355dc0f3ce5f22a8eb58c68dc159b8e35a6",
+    "MASTERPLAN.md": "4406d732160f7db251500db038fcf64aa941db979fd6762a30ffa48beabdbd8c",
+    "SECURITY.md": "5262d79b05453eab22ce5b416fc13c621fea1ff883a78c8ad61b36b312ac741c",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "5f41c2d4a57d9e29b5632027b752334a98e4598a91fb94563e34dd1b988122ec",
+    "docs/releasing.md": "51170f0815b951fef89d3d3f545faadf28fe95da625be57f4eec461c538fa669",
+    "docs/verification-evidence/006/github-readiness/README.md": "dd697b545438857f7815cd0d0e2e07bba6d7956ea782ebd4eddaaa23961955e4",
+    "docs/verification-evidence/006/github-readiness/repository-metadata.json": "1fd7ba8175d35968001b3344c2a5fb69a84e267dc1a4ece709271a0704a888d9",
+    "docs/verification-evidence/006/github-readiness/review-metadata.json": "4efa6423716f72b0f6c2758e4ffb078bb3d4a2486c17e8cfabaab3fade3bc304",
+    "docs/verification-evidence/006/pr7-r1/acceptance.json": "ae19338e4ea5da29323bc1f2bb60ae52915165016b3884c950ae3e50cd3b1bef",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "35d75ab1157a311e2186ebf93e11c4a7c3f7ef1cafe9ad3d6407c3f00ece2e5a",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "6acd3cd8837bb048655759e802f00d152d8f34cdce1d1dd347d9b9a9e12a161f",
+    "scripts/candidate.sh": "da2bc7e4d75fa6833948730a3f307bfff75c2fab4f9a368931dd5b19c923b7db",
+    "scripts/docs-check.sh": "a3deca875219f4195201693fe27d824ff36657670c1440980d56c82cd642ce11",
+    "scripts/native_candidate.sh": "3b0a30738c33ddc3e9d34bc8a504b08947c681495fa7d0caaaef92934f5eefae",
+    "scripts/test/test_candidate.sh": "fbc6a08e368aee7be495483adf1dfcaf95ce3171f492b4c6ac57c9ed6abe71af",
+    "scripts/test/test_docs.sh": "dec918e68b37dbf4310ec5a53fc8ed667f62c06890d33bed0d42d2474ffa696a",
+    "scripts/test/test_native_candidate.sh": "8362e2e7b101766131727dc4d032f841a473e431e478816b547b283cc14ac7e2",
+    "scripts/test/test_promotion.sh": "d06aba013ed9b0f09962946549417f2d8d94f8b7a025df647fd9ff82f3f357e6",
+    "scripts/test/test_release_version.sh": "30284cf2edb697f2e4be88b5743b852dd51e9b819bb2bf5bf747c7cce762363b"
+  },
+  "feedback": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oon7h",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xDYN",
+      "root_comment_id": 4173608461,
+      "quote": "**WARNING:** The rg-absent control run is not distinguishable in retained evidence",
+      "summary": "The new retained portability control records its single isolated PATH, command-v rg exit status 1 and exact canonical command before all 483 named assertions. The earlier unmarked control log is preserved as historical evidence.",
+      "invariant_key": "verification-run-provenance",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oon7j",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xDYP",
+      "root_comment_id": 4173608463,
+      "quote": "**SUGGESTION:** Verdict-carrying evidence files are not bound by input_sha256",
+      "summary": "The first receipt now binds its verdict-carrying metadata/planning inputs to immutable commit 4351b66 and links a retained read-only hash/synchrony reconstruction. The follow-up receipt also hashes the reviewed metadata/planning files and retains its own synchrony output.",
+      "invariant_key": "verification-input-provenance",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oon7k",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xDYS",
+      "root_comment_id": 4173608466,
+      "quote": "**SUGGESTION:** Informal \"packaged-native\" label survives in the Active Implementation Target line",
+      "summary": "The active implementation target now names Native candidate verification and .github/workflows/native-candidate.yml explicitly, and keeps owner merge ahead of the fresh-candidate step.",
+      "invariant_key": "planning-evidence-consistency",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oon7m",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xDYW",
+      "root_comment_id": 4173608470,
+      "quote": "**SUGGESTION:** No positive control for the explicitly-disabled alternative",
+      "summary": "Positive fixtures now cover all four explicitly disabled/not-enabled wordings alongside the verified enabled and ambiguous-state refusal controls.",
+      "invariant_key": "documentation-state-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oon7p",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xDYZ",
+      "root_comment_id": 4173608473,
+      "quote": "**SUGGESTION:** Badge residue scan is case-sensitive",
+      "summary": "The raw residue scan is case-insensitive while removal of approved URLs remains exact and case-sensitive. Uppercase and mixed-case protocol-relative host controls failed first, then passed after the correction.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6oon7q",
+      "comment_node_id": "PRRC_kwDOUQoUDc74xDYc",
+      "root_comment_id": 4173608476,
+      "quote": "**SUGGESTION:** \"tracked after publication\" misstates the receipt's trigger",
+      "summary": "The readiness guide now says the hosted reports and thread settlement are tracked after push, matching the receipt and separating that milestone from stable publication.",
+      "invariant_key": "planning-evidence-consistency",
+      "verdict": "fixed"
+    }
+  ],
+  "prior_head_hosted_evidence": "prior-head-hosted.json",
+  "prior_head_codex_evidence": "prior-head-codex.json",
+  "retained_artifacts": {
+    "r1-input-readback.log.gz": {
+      "sha256": "720189b715c4f33ebb5c340dcab66d0d1b50bc6c1f1acb5fa011f35902267abc",
+      "uncompressed_bytes": 2304
+    },
+    "rg-absent-control.log.gz": {
+      "sha256": "25c0a85811bdafe592a46e65ca3ac7fd4c03573584b2993e7bdd68f707deea83",
+      "uncompressed_bytes": 29769
+    },
+    "docs-red.log.gz": {
+      "sha256": "5a4d14dfa367d0d1aece8797673e18371dce8041cbec8994956cf8e38bb5c549",
+      "uncompressed_bytes": 2667
+    },
+    "docs-green.log.gz": {
+      "sha256": "0dbeaa053c3ca4b8253cb0ea2877f19ec53d43ac4e05804d6d80432634f91ad4",
+      "uncompressed_bytes": 2424
+    },
+    "workflow-shellcheck.log.gz": {
+      "sha256": "5ae09f05725cd220aabf9ea428f3e578d1f7fa6c4bc4c69622fed572b2643a5a",
+      "uncompressed_bytes": 497
+    },
+    "validate.log.gz": {
+      "sha256": "7f5df320fe14d08a73f7a61fff941945b41ce0456eb4dd32ea576d615f388234",
+      "uncompressed_bytes": 316525
+    },
+    "synchrony.log.gz": {
+      "sha256": "745e85e84a72f4d519e7ffec9289ca0c3876cf59c8a0b53d3b2d36ca4f3278b1",
+      "uncompressed_bytes": 654
+    },
+    "prior-head-hosted.json": {
+      "sha256": "ca551ec71ade76d9aaedd504f056c126ce2c2eecee3401f4dafd8b3a7a15afd2"
+    },
+    "prior-head-codex.json": {
+      "sha256": "f981a068cf78c9c10d277f6fc8fb8a5319de11f0c7a508f2f8075082babc6ace"
+    }
+  },
+  "remote_feedback_settlement": "pending after push",
+  "current_head_hosted_review": "pending after push",
+  "release_acceptance": "Fresh frozen candidate, packaged hosted checks, manual/native/performance/cask and publication remain pending",
+  "completed_at": "2026-10-03T15:10:54.006742+00:00",
+  "input_commit": "e3dd105b1d4a9d5252f829a9615c92924392842e",
+  "amended_at": "2026-10-03T18:13:49.215855+00:00",
+  "amendments": [
+    {
+      "recorded_at": "2026-10-03T18:13:49.215855+00:00",
+      "introduced_by": "7f1fe45a272358399ff6a70c70645d6103f60be3",
+      "changes": "The R3 correction removed canonical.PATH, added canonical.environment_scope and bound the historical input hashes to input_commit e3dd105. This entry records that earlier amendment; completed_at remains the original R2 verdict time.",
+      "original_values": {
+        "canonical.PATH": "/tmp/pr7-path-without-rg"
+      },
+      "artifact_policy": "All original retained log bytes, hashes and completion time are preserved. The environment claim is scoped to the separate marked rg_absent_control."
+    }
+  ]
+}

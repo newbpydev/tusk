@@ -1,0 +1,44 @@
+{
+  "head_sha": "4351b66b49e1a5c6c00bff372296179a2cfeed86",
+  "run_url": "https://github.com/newbpydev/tusk/actions/runs/37129955171",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "Linux \u2014 minimum compiler and five-target cross-builds",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/newbpydev/tusk/actions/runs/37129955171/job/111222919180"
+    },
+    {
+      "name": "darwin/amd64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/newbpydev/tusk/actions/runs/37129955171/job/111222919335"
+    },
+    {
+      "name": "linux/arm64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/newbpydev/tusk/actions/runs/37129955171/job/111222919391"
+    },
+    {
+      "name": "linux/amd64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/newbpydev/tusk/actions/runs/37129955171/job/111222919415"
+    },
+    {
+      "name": "darwin/arm64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/newbpydev/tusk/actions/runs/37129955171/job/111222919419"
+    },
+    {
+      "name": "windows/amd64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/newbpydev/tusk/actions/runs/37129955171/job/111222919488"
+    }
+  ]
+}

@@ -22,6 +22,30 @@ write a failing behavior test, observe it, then implement the smallest fix.
 [MASTERPLAN.md](https://github.com/newbpydev/tusk/blob/main/MASTERPLAN.md) defines current implementation order. Keep the
 feature plan, verification plan and workorder synchronized when they change.
 
+README URL targets must be complete, on one line and literal: no character
+references, percent escapes or backslash escapes. External hosts must be ASCII;
+Unicode filenames, paths, titles and alt text are allowed. HTML `src`/`href`
+and single-URL `srcset` attributes are checked in raw text; compound `srcset`
+lists are unsupported. The pinned Goldmark parser identifies Markdown link,
+image, autolink and reference destinations; every reference definition is
+checked, including unused and duplicate definitions, continued destinations
+and multiline labels. Markdown/reference URL targets are checked outside code
+excerpts (single-line spans, ordinary indented blocks and fences indented at most
+three spaces, including block quotes), and link titles are separate from the URL.
+Block exclusions apply outside lists and use spaces in quote indentation.
+List-contained blocks and quote-tab indentation retain the target tripwire;
+code exclusion resumes after an explicit list boundary.
+Resource start tags must fit on one line. Remote image and reference destinations
+must use the two verified badge URLs; use local assets for other images and
+inline hyperlinks for other remote links. Links nested inside image labels are
+outside the supported target syntax. Malformed image markup and malformed
+URL-bearing link targets are refused in active text.
+Wrapped inline spans retain the target tripwire; put URL examples on one line or
+in a supported code block. Bare URLs in prose and
+code examples are outside target restrictions. Only the exact verified CI and
+license URLs may supply badges; the known-badge residue scan still checks all
+raw README text. This is a strict README tripwire, not a Markdown renderer.
+
 Generate static docs with `make generate-docs`; check drift with `make check-docs`.
 `make test-completions` additionally needs Bash completion, Zsh and Fish. On
 macOS set `BASH_COMPLETION_SOURCE` to your installed framework. Dependency

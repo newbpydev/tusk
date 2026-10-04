@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "scope": "PR 7 combined list/reference, resource-tag and remote-image target correction",
+  "head_sha": "1419c016e1474a523fd4f26423516cd59bd146b7",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "canonical": {
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "PATH": "/tmp/pr7-path-without-rg",
+    "ripgrep_lookup_exit": 1,
+    "compiler": "go1.27.1 linux/amd64",
+    "exit_code": 0,
+    "named_script_assertions_passed": 688,
+    "log": "validate.log.gz"
+  },
+  "additional_checks": [
+    "baseline-replay.log.gz: marked controlled replay of immutable 1419c01 documentation checker with final refusal/acceptance controls, expected exit 1",
+    "final-docs.log.gz: marked documentation controls after outcome-only checklist update",
+    "workflow.log.gz: marked pinned workflow contracts/lint and release shellcheck",
+    "synchrony.log.gz: shared planning block equality and final hashes",
+    "historical-audit.log.gz: R2/R3/R4/R5/R6 inputs bind published commits; original retained artifact bytes/hashes/lengths unchanged"
+  ],
+  "artifact_scope": {
+    "remote-red.log.gz": "Unmarked original refusal failures; result evidence only. Final marked immutable baseline replay binds the final test/control bytes independently.",
+    "tag-red.log.gz": "Unmarked intermediate quote-aware tag refusal failure; result evidence only. The final baseline replay also includes this control.",
+    "class-audit.json": "Complete passing fixture control, exact GitHub Markdown API inputs/readbacks and checker source SHA recorded for list/reference and quoted-tab forms; rendering evidence, not native acceptance."
+  },
+  "input_scope": "Final worktree source/test/fixture and verdict-carrying metadata/planning bytes, excluding this receipt. Marked gate logs identify each pre-command input. Source/tests passed canonical validation; outcome-only checklist update afterwards passed marked final documentation/synchrony checks. Unchanged source binds head_sha.",
+  "input_sha256": {
+    ".github/workflows/native-candidate.yml": "58c727df67762596a0fca959ee09fdcbed9bf110907347a8cc5343e3c9b79070",
+    ".github/workflows/release.yml": "59c0b3c2d41077b026e755064769b355dc0f3ce5f22a8eb58c68dc159b8e35a6",
+    "CONTRIBUTING.md": "5cdb5aa5ac72d60ba3f6334755088b248213533b7f35c606f75e40cb86a6adaf",
+    "LICENSE": "e7b8f7ad23179441d30f557ac1f4052def3c6a20c5a8d3217a82f6cbe8163482",
+    "MASTERPLAN.md": "475e81ddb1209b812bc88906d0ab4ace533866b7de568d72d5b7af73167db785",
+    "Makefile": "34bf303bc90b4580d3bf306a6d0053054c6c30ae1825b656399ca448764a4144",
+    "README.md": "59f989fabf6e3aeea9a59dbce4a27babd8295806b1d9154f0924fc01c0863400",
+    "SECURITY.md": "5262d79b05453eab22ce5b416fc13c621fea1ff883a78c8ad61b36b312ac741c",
+    "THIRD_PARTY_NOTICES.md": "ba486e7d36dd649f6b9a9a9c1068e014ca2d701f6b78e38eaf61e12c3691b7ed",
+    "docs/assets/README.md": "bfdad00f995f75d34b0626db8680cd01901353f007a741ce8187b7b70069f64f",
+    "docs/assets/tusk-tui.png": "0a5ad71ac8ba8671f0559fdea62d824504510fa9510574e9dd9059d05542eba7",
+    "docs/cli.md": "dccd177143794898dfc8bb34ad1cb35b337b366f99ce9fa2ef04023a55f2f121",
+    "docs/install.md": "48d65a3abca238883c51740ff1d9ee1a10ba40062c9a18820e8f1e587a726e50",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "60b48a2d7d86045fb12c0d6cda2696e11902296dac92f74b1b456ec9969e87c0",
+    "docs/releasing.md": "51170f0815b951fef89d3d3f545faadf28fe95da625be57f4eec461c538fa669",
+    "docs/tui.md": "d6e54fc9824b5973b4a7515122870c6d26553b483d787afb70ec47963cae41c5",
+    "docs/verification-evidence/006/github-readiness/README.md": "dd697b545438857f7815cd0d0e2e07bba6d7956ea782ebd4eddaaa23961955e4",
+    "docs/verification-evidence/006/github-readiness/repository-metadata.json": "1fd7ba8175d35968001b3344c2a5fb69a84e267dc1a4ece709271a0704a888d9",
+    "docs/verification-evidence/006/github-readiness/review-metadata.json": "4efa6423716f72b0f6c2758e4ffb078bb3d4a2486c17e8cfabaab3fade3bc304",
+    "docs/verification-evidence/006/pr7-r1/acceptance.json": "ae19338e4ea5da29323bc1f2bb60ae52915165016b3884c950ae3e50cd3b1bef",
+    "docs/verification-evidence/006/pr7-r2/acceptance.json": "d6119836d139cdd283c72b2c8869541b8e24ec67e900be27419651f1a54e98a6",
+    "docs/verification-evidence/006/pr7-r3/acceptance.json": "d05083635478583bda7c3354014b117ecc90e2f49cf2398150a8edc5997623a3",
+    "docs/verification-evidence/006/pr7-r4/acceptance.json": "253c5a1dea069473637d9e7e96a50ac5c862cd8358cb9680c4b32c4961c89f53",
+    "docs/verification-evidence/006/pr7-r5/acceptance.json": "0479c4009329bbb0305be8d359b06f659b1e4d7f89542a04aeb590010f2a27b3",
+    "docs/verification-evidence/006/pr7-r6/acceptance.json": "7409d2284d4d6c1cf035778799edd16b8ae792c77b5df3659881dd37ae09fc3a",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "c2346978567e7c01a284c90435a6e9e994683b38ce6b8ad083ca35269a6bf30d",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "953d888a7b87170a951e1889e1317ea0553f019472a55b1275f74a6d4d30fb09",
+    "scripts/candidate.sh": "da2bc7e4d75fa6833948730a3f307bfff75c2fab4f9a368931dd5b19c923b7db",
+    "scripts/docs-check.sh": "11b4e8ce5703a341fcaabdf2105c806b5b299836e071f949abf32fbb352c7e09",
+    "scripts/native_candidate.sh": "af506b0eb3f7eb010f3a57e145784550d01d3fe1b8cf98af76ff6dc87438eb23",
+    "scripts/test/test_candidate.sh": "fbc6a08e368aee7be495483adf1dfcaf95ce3171f492b4c6ac57c9ed6abe71af",
+    "scripts/test/test_docs.sh": "93ec154e0a41803f747a35fd90d9415a2ec2c6e75520a9b08e95d4a1cae47e8b",
+    "scripts/test/test_native_candidate.sh": "2046c52e975d65a2a546956eee54c5a885f8b6bba244e7ff800a095f0d1a0244",
+    "scripts/test/test_promotion.sh": "d06aba013ed9b0f09962946549417f2d8d94f8b7a025df647fd9ff82f3f357e6",
+    "scripts/test/test_release_version.sh": "30284cf2edb697f2e4be88b5743b852dd51e9b819bb2bf5bf747c7cce762363b"
+  },
+  "feedback": [
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6orsET",
+      "comment_node_id": "PRRC_kwDOUQoUDc74144A",
+      "root_comment_id": 4174876160,
+      "quote": "**WARNING:** Indented-code heuristic skips rendered list-item content, reopening the Unicode-host badge bypass",
+      "summary": "List-contained blocks retain literal target checks; conservative outer-list boundaries preserve nested/lazy context and code exclusion resumes after explicit boundaries. Reference validation strips supported list markers. Quote-tab indentation also retains the tripwire; rendered audit and refusal/acceptance controls cover these cases.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6orsEV",
+      "comment_node_id": "PRRC_kwDOUQoUDc74144D",
+      "root_comment_id": 4174876163,
+      "quote": "**WARNING:** Quote-depth reset closes quoted fences but list-item fences never close at their container end, suppressing following rendered lines",
+      "summary": "List-contained blocks retain literal target checks; conservative outer-list boundaries preserve nested/lazy context and code exclusion resumes after explicit boundaries. Reference validation strips supported list markers. Quote-tab indentation also retains the tripwire; rendered audit and refusal/acceptance controls cover these cases.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6or4Rd",
+      "comment_node_id": "PRRC_kwDOUQoUDc742KIz",
+      "root_comment_id": 4174946867,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Scan reference definitions in list containers**",
+      "summary": "List-contained blocks retain literal target checks; conservative outer-list boundaries preserve nested/lazy context and code exclusion resumes after explicit boundaries. Reference validation strips supported list markers. Quote-tab indentation also retains the tripwire; rendered audit and refusal/acceptance controls cover these cases.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6or4Rg",
+      "comment_node_id": "PRRC_kwDOUQoUDc742KI2",
+      "root_comment_id": 4174946870,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Reject attributes split before the equals sign**",
+      "summary": "Resource img/source/a start tags must be complete on one line, closing attribute-name/equals/value splits before target classification. The literal URI rule and raw HTML tripwire remain documented; refusal controls cover split src, srcset and href names.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    },
+    {
+      "thread_id": "PRRT_kwDOUQoUDc6or4Ri",
+      "comment_node_id": "PRRC_kwDOUQoUDc742KI4",
+      "root_comment_id": 4174946872,
+      "quote": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Allowlist all remote image targets**",
+      "summary": "Remote image and reference destinations must equal the two verified CI/license URLs; local images and ordinary inline hyperlinks remain allowed. Image-label state carries across records and rejects nested link targets. The contributor contract states the strict supported syntax and alternatives; refusal controls cover arbitrary remote Markdown/HTML sources.",
+      "invariant_key": "documentation-badge-contract",
+      "verdict": "fixed"
+    }
+  ],
+  "judgment": "Block exclusions are bounded outside lists and space-indented quoted contexts; wrapped spans and quote-tab/list blocks retain the tripwire. Remote image/reference destinations use only verified URLs; local assets and ordinary inline hyperlinks remain available. This strict README target contract is documented rather than a general Markdown renderer.",
+  "owner_direction": "Continue existing approved PR checker/evidence and review cleanup under the live instruction to proceed; no new merge/publication authority inferred.",
+  "retained_artifacts": {
+    "validate.log.gz": {
+      "sha256": "4731e0167fbce6d44a453e77a4883717c98e56697825aa9c6b998649a48a09a8",
+      "uncompressed_bytes": 340216
+    },
+    "final-docs.log.gz": {
+      "sha256": "280c968d74ce0f59a221f1e462e0fe83cc48eb5547aebbe110d404df3c81aae6",
+      "uncompressed_bytes": 25936
+    },
+    "workflow.log.gz": {
+      "sha256": "5fa0ca0fb1179367a14dbf63dc79c6518b454ab14640561953a0598bd91b78a0",
+      "uncompressed_bytes": 4497
+    },
+    "synchrony.log.gz": {
+      "sha256": "652dd4658cbaff39f9c3ea764e29c3321e67e446f345d9e361398f18a94fa184",
+      "uncompressed_bytes": 813
+    },
+    "historical-audit.log.gz": {
+      "sha256": "a1063a75912e14971a83a6f39d8bf3f58a0a096897fb511615f228cc3de8b67d",
+      "uncompressed_bytes": 803
+    },
+    "baseline-replay.log.gz": {
+      "sha256": "0d34854c03277ac5a5b4dd915a22d1b6db8d9d23cc32c2a98cee4e24b84bd7d7",
+      "uncompressed_bytes": 24388
+    },
+    "remote-red.log.gz": {
+      "sha256": "4b0dabd59c5fd54bcfce7e2bd29ee10274f59a919245fcfc3391ccca7dee8b3c",
+      "uncompressed_bytes": 22692
+    },
+    "tag-red.log.gz": {
+      "sha256": "5498fccf7ae121b69edf3ae68b5b517d2644c501c38e7f4139b216aed8496d36",
+      "uncompressed_bytes": 22158
+    },
+    "class-audit.json": {
+      "sha256": "1d6f1226b875daf1f488b9a1886aad2ff488917378a4bd35aa9d054bc26f5d64"
+    },
+    "prior-head-hosted.json": {
+      "sha256": "3ba2c31e24190c2ba5ca203acedb1c258f2e0f5deee708b4462cee59f182a15a"
+    },
+    "prior-head-reviews.jsonl": {
+      "sha256": "335e59e74b45f35a9717f211621300606fba945a572a183bdf9e6a88067b11e7"
+    }
+  },
+  "remote_feedback_settlement": "pending after push",
+  "current_head_hosted_review": "pending after push",
+  "release_acceptance": "Fresh frozen candidate after owner merge, packaged hosted checks, manual/native/performance/cask and publication remain pending",
+  "completed_at": "2026-10-03T21:58:49.414161+00:00"
+}

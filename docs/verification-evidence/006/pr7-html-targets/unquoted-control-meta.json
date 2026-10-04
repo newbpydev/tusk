@@ -1,0 +1,13 @@
+{
+  "scope": "The first canonical pass was superseded by additional unquoted approved-target controls before commit.",
+  "command": "GOTOOLCHAIN=go1.27.1 make test-docs",
+  "exit_code": 2,
+  "expected_failures": 4,
+  "source_input_sha256": {
+    "scripts/doccheck/main.go": "c1c13787b9e0a795ec3e9588e8b4a2517c4096e4934ffd4d8d98c760255b7a6b",
+    "scripts/docs-check.sh": "807b7fb932646a40615fe30696365248d6b2e40f0be13244f18938f94b889f25"
+  },
+  "final_fixture_sha256": "a8b79af04e51506d08c7bf5f5541f9b93bc801d037630f19ae08d3bba8f750e4",
+  "log": "html-unquoted-red.log",
+  "fix": "Recognize solidus boundaries and srcset consistently in complete unquoted target extraction."
+}

@@ -1,0 +1,54 @@
+{
+  "id": 37086312661,
+  "head_sha": "31894ff56fee1c32e34a972883a404a105683133",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/newbpydev/tusk/actions/runs/37086312661",
+  "jobs": [
+    {
+      "name": "identity",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "ci / Linux \u2014 minimum compiler and five-target cross-builds",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "ci / linux/arm64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "ci / darwin/amd64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "ci / windows/amd64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "ci / darwin/arm64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "ci / linux/amd64 \u2014 release compiler",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "build",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "provenance",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ]
+}

@@ -25,6 +25,10 @@
   },
   "jobs": {
     "identity": {
+      "if": "github.event_name == 'workflow_dispatch' && github.repository == 'newbpydev/tusk' && github.ref == 'refs/heads/main' && github.workflow_ref == 'newbpydev/tusk/.github/workflows/release.yml@refs/heads/main' && github.workflow_sha == github.sha",
+      "permissions": {
+        "contents": "write"
+      },
       "runs-on": "ubuntu-24.04",
       "timeout-minutes": 30,
       "defaults": {
@@ -43,12 +47,29 @@
           }
         },
         {
+          "name": "Version-check compiler",
+          "uses": "actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "with": {
+            "go-version": "1.27.1",
+            "cache": true
+          }
+        },
+        {
           "name": "Trusted dispatch identity",
           "env": {
             "RELEASE_VERSION": "${{ inputs.version }}",
             "RELEASE_SHA": "${{ inputs.source_sha }}"
           },
           "run": "make candidate-identity"
+        },
+        {
+          "name": "Check live stable version history",
+          "run": "make check-release-version RELEASE_VERSION_OUTPUT=\"$RUNNER_TEMP/version-history\"",
+          "env": {
+            "GH_TOKEN": "${{ github.token }}",
+            "GOTOOLCHAIN": "local",
+            "RELEASE_VERSION": "${{ inputs.version }}"
+          }
         }
       ]
     },

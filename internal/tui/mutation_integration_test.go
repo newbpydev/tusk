@@ -18,6 +18,11 @@ import (
 
 func mutationFixture(t *testing.T, policy bool) (*Model, ports.TaskService, *Session) {
 	t.Helper()
+	return mutationFixtureWithOptions(t, service.Options{Clock: time.Now, NewID: func(now time.Time) (string, error) { return service.NewUUIDv7(now, rand.Reader) }, Location: time.UTC, AutoCompleteParent: policy})
+}
+
+func mutationFixtureWithOptions(t *testing.T, options service.Options) (*Model, ports.TaskService, *Session) {
+	t.Helper()
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "tasks.db")
 	factory := func(ctx context.Context) (ports.TaskService, func() error, error) {
@@ -25,7 +30,7 @@ func mutationFixture(t *testing.T, policy bool) (*Model, ports.TaskService, *Ses
 		if err != nil {
 			return nil, nil, err
 		}
-		svc, err := service.NewTaskService(repo, service.Options{Clock: time.Now, NewID: func(now time.Time) (string, error) { return service.NewUUIDv7(now, rand.Reader) }, Location: time.UTC, AutoCompleteParent: policy})
+		svc, err := service.NewTaskService(repo, options)
 		if err != nil {
 			repo.Close()
 			return nil, nil, err

@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "scope": "PR 7 preflight Make-version diagnostic correction",
+  "head_sha": "b763be4b6636d4d2fcbb0c110bfec1cc410cef33",
+  "working_tree_changes": true,
+  "local_status": "passed",
+  "root_cause": "The status-preserving version pipeline conflated a failed Make --version producer with a successful non-GNU banner.",
+  "fix": "Capture the fully drained first line once; reject failed producer status before checking GNU Make identity; reuse the captured banner for display.",
+  "red_green": {
+    "red": "The unchanged b763be4 implementation fails the exact producer-status diagnostic assertion; the successful non-GNU banner control passes.",
+    "green": "Failed producer 23 reports CI: Make --version failed (status 23). Successful non-GNU output reports CI: GNU Make is required. Noisy Make/compiler producers complete; compiler status 23 remains 23. Actual Linux preflight and pinned workflow checks pass.",
+    "harness_preparation": "An initial harness edit used the wrong capture filename and stopped at cp; that log is retained separately and is not counted as defect Red."
+  },
+  "canonical": {
+    "started_at": "2026-10-04T00:06:00.087239+00:00",
+    "head_sha": "b763be4b6636d4d2fcbb0c110bfec1cc410cef33",
+    "working_tree_changes": true,
+    "command": "GOTOOLCHAIN=go1.27.1 make validate",
+    "input_sha256": {
+      "scripts/ci-check.sh": "150936b2f1feb4b21f8fc507e3b21ba175dc13a64e82af71a17697d2dd5c7769",
+      "scripts/test/test_ci.sh": "3a85d2d7b532a96f7c5ee6328ad841de515dbbbacff2d14da3a839ed84acd45b",
+      "MASTERPLAN.md": "0b179561e6f5b44919bb0151b92fb27ec560a478e3dcb58ddc52e75966cfffb1",
+      "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "b1f2340c75b4d632407ef0703ec6ea4d1138ca0240fa73a2cc290c300ced18ad",
+      "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "ceb5d62696967b5db767566215edbe34147f4e6d83ce152be61f0bc030b7d957",
+      "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "5004fb7fd90a7f47650f6eafc906cd990aba878cd7e98a0354682009debdd7dd",
+      "scripts/doccheck/main.go": "39c859c67a05d379d2a94d6024b86ee8fcd4253027eefc5ba007884c88276092",
+      "scripts/doccheck/main_test.go": "575f548c49712a2fe650e456e52d4b4d6ea7a66c0790e37673b15a0938be7596",
+      "scripts/docs-check.sh": "9634dbc6eff7818665a84ed0f60e55cc0492fb09bac28400f4ad712a7c9ab22b",
+      "scripts/test/test_docs.sh": "bd484a00dd68685a6ca10899c794627fe2ec8156b2fd69a8a765d8b2cd2732d2",
+      "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+      "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+      "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7"
+    },
+    "exit_code": 0,
+    "completed_at": "2026-10-04T00:07:02.102988+00:00",
+    "named_script_assertions_passed": 710,
+    "log": "validate.log.gz",
+    "metadata": "canonical-meta.json"
+  },
+  "input_scope": "Pre-command marked log and metadata record parent SHA and dirty source hashes. Only outcome text in the four authority files changed afterwards; final documentation/workflow checks pass. Executable/test/module inputs are unchanged from the canonical gate.",
+  "final_input_sha256": {
+    "scripts/ci-check.sh": "150936b2f1feb4b21f8fc507e3b21ba175dc13a64e82af71a17697d2dd5c7769",
+    "scripts/test/test_ci.sh": "3a85d2d7b532a96f7c5ee6328ad841de515dbbbacff2d14da3a839ed84acd45b",
+    "MASTERPLAN.md": "57080b5c53422c231106caf91039c79eb4de8e833f6ef9f1d1b671f1eba78f68",
+    "docs/plans/2026-09-06-006-feat-automation-packaging-and-release-plan.md": "b2bc9a6ad8f313bbe8c7ad82cf0962e3fa28b9a32b83b87238f9c583a33c7917",
+    "docs/verification-plans/2026-09-06-006-feat-automation-packaging-and-release-verification-plan.md": "a258839ee5c5b45e3c9e3d28e9f6e5b878282c8e0ad31bce488e4d09454bacb4",
+    "docs/workorders/2026-09-06-006-feat-automation-packaging-and-release-issues-workorder.md": "a1ad5c8673f5656e849117eeb6687a7a9003707e10becb1360a02735c93150a7",
+    "scripts/doccheck/main.go": "39c859c67a05d379d2a94d6024b86ee8fcd4253027eefc5ba007884c88276092",
+    "scripts/doccheck/main_test.go": "575f548c49712a2fe650e456e52d4b4d6ea7a66c0790e37673b15a0938be7596",
+    "scripts/docs-check.sh": "9634dbc6eff7818665a84ed0f60e55cc0492fb09bac28400f4ad712a7c9ab22b",
+    "scripts/test/test_docs.sh": "bd484a00dd68685a6ca10899c794627fe2ec8156b2fd69a8a765d8b2cd2732d2",
+    "Makefile": "f4d5f82b190a79bd1ce8325a58ecfe8b4f1a50043623793ca0a4cf4141dcb84d",
+    "go.mod": "df938004cdd2825f9f47f5fd2d39101bfa777e330eb83132221f88af20307629",
+    "go.sum": "d7d0655cff16dd3c24249fe03db8cf78591152e293659ce9bce34028b448fdf7"
+  },
+  "authority_checkpoint_sha256": "7683c0f44995694d88432ee2c5f42bc2b61af8aebc2c33e85caa1a6ac115a0f2",
+  "covered_thread": "PRRT_kwDOUQoUDc6otGMD",
+  "review_resolution": "Pending publication and independent submitted-reply/resolution readbacks",
+  "hosted_validation": "Pending for the implementation that will be published",
+  "release_acceptance": "Final trusted candidate and packaged native/physical/performance/cask/publication gates remain pending",
+  "retained_artifacts": {
+    "red.log.gz": {
+      "sha256": "682dc82bfc5ee9111549275d3dcb4b5c7c1aef0478924d361b8a9245f93fb5a3",
+      "uncompressed_bytes": 3363
+    },
+    "harness-preparation-error.log.gz": {
+      "sha256": "3370950d5186bbc9f4fcfdafa0eec47d6db7499d34f7a98c504fee9e24d2b816",
+      "uncompressed_bytes": 1309
+    },
+    "baseline-red.log.gz": {
+      "sha256": "4921474a6ac6e993bf87b52f6844c48c1eac20ffc3e9e0b2a278752dc1b7a11b",
+      "uncompressed_bytes": 3800
+    },
+    "focused-green.log.gz": {
+      "sha256": "d1ac479b80b13179cf1e015fa32b12e982077191b6973abd733bce2b9c1aef24",
+      "uncompressed_bytes": 3505
+    },
+    "validate.log.gz": {
+      "sha256": "5944e3533cc464c7cacf2a12284f722b47c35febce59a7f1c90537dbfa40e5de",
+      "uncompressed_bytes": 349664
+    },
+    "final-docs.log.gz": {
+      "sha256": "cd0b4646d4089d739a13457f4aa0d8831dd86405f0fd8262c02e2cbcd2d089fd",
+      "uncompressed_bytes": 23467
+    },
+    "baseline-meta.json": {
+      "sha256": "a04bb0449d661c8163c50edf7b58f66c84670cad28a3b2f72425c16a12f7007e"
+    },
+    "canonical-meta.json": {
+      "sha256": "89ba7a51821016fe74b61c1ff3585c3d8e8b07defc1c5eb0dbfa08726ddd2416"
+    }
+  },
+  "completed_at": "2026-10-04T00:08:06.417674+00:00"
+}

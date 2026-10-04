@@ -20,7 +20,7 @@ expect() {
 # Only policy/API boundary fixtures. No signatures, native execution or timing proof.
 mkdir -p "$scratch/fixture/scripts" "$scratch/candidate/assets" "$scratch/candidate/homebrew/Casks" "$scratch/bin" "$scratch/remote" "$scratch/gates"
 cp "$root/scripts/promote.sh" "$scratch/fixture/scripts/"
- cp "$root/scripts/json_check.sh" "$scratch/fixture/scripts/"
+cp "$root/scripts/json_check.sh" "$root/scripts/release_version.sh" "$scratch/fixture/scripts/"
 cp "$root/Makefile" "$scratch/fixture/"
 cp "$root/scripts/gh_deadline.sh" "$scratch/fixture/scripts/"
 cp -r "$root/scripts/ghdeadline" "$scratch/fixture/scripts/"
@@ -108,6 +108,7 @@ case "$endpoint:$method" in
   jq ${jq_binary_option:+"--binary"} -n --arg changed "${FIXTURE_MAIN_CHANGED:-0}" '{status:"identical",merge_base_commit:{sha:("a"*40)},files:(if $changed=="1" then [{filename:"scripts/promote.sh"}] else [] end)}' ;;
  'repos/newbpydev/tusk/git/ref/tags/v0.3.0:GET')
   if [[ -s "$remote/tag.json" ]];then printf 'HTTP/2.0 200 OK\r\n\r\n';cat "$remote/tag.json";else printf 'HTTP/2.0 404 Not Found\r\n\r\n{}';exit 1;fi ;;
+ 'repos/newbpydev/tusk/tags?per_page=100:GET') jq ${jq_binary_option:+"--binary"} -n --arg version "${FIXTURE_HIGHER_TAG:-}" 'if $version=="" then [[]] else [[{name:$version}]] end' ;;
  'repos/newbpydev/tusk/releases?per_page=100:GET') jq ${jq_binary_option:+"--binary"} -s '.' "$remote/releases.json" ;;
  'repos/newbpydev/tusk/releases:POST')
   jq ${jq_binary_option:+"--binary"} -e '.draft==true and .target_commitish==("a"*40)' "$input" >/dev/null || exit 77
@@ -238,6 +239,15 @@ reset
 expect 0 'lost create/upload responses reconcile exact accepted bytes' "${invoke[@]}" FIXTURE_LOST_CREATE=1 FIXTURE_LOST_UPLOAD=1 RELEASE_PROMOTION_OUTPUT="$scratch/draft" bash "$scratch/fixture/scripts/promote.sh" draft
 [[ "$(jq ${jq_binary_option:+"--binary"} -r '.status' "$scratch/draft/receipt.json" 2>/dev/null || true)" == draft-complete ]] || failed=1
 if [[ ! -s "$scratch/remote/tag.json" ]];then printf 'FAIL: complete draft lacks accepted tag\n' >&2;failed=1;fi
+
+cp "$scratch/gh-calls" "$scratch/prior-calls"
+: >"$scratch/gh-calls"
+expect 1 'newer reserved tag refuses older draft resumption' "${invoke[@]}" FIXTURE_HIGHER_TAG=v0.4.0 RELEASE_PROMOTION_OUTPUT="$scratch/superseded-draft" bash "$scratch/fixture/scripts/promote.sh" draft
+expect 1 'superseded draft makes no remote write' grep -Eq -- '--method (POST|PATCH|DELETE)' "$scratch/gh-calls"
+: >"$scratch/gh-calls"
+expect 1 'newer reserved tag refuses older publication' "${invoke[@]}" FIXTURE_HIGHER_TAG=v0.4.0 RELEASE_AUTHORIZATION="$scratch/publish-approval.json" RELEASE_PROMOTION_OUTPUT="$scratch/superseded-publish" bash "$scratch/fixture/scripts/promote.sh" publish
+expect 1 'superseded publication makes no remote write' grep -Eq -- '--method (POST|PATCH|DELETE)' "$scratch/gh-calls"
+cat "$scratch/prior-calls" >>"$scratch/gh-calls"
 [[ "$(grep -Ec '^api https://uploads.github.com/.* --method POST' "$scratch/gh-calls" || true)" == 9 ]] || failed=1
 [[ ! -e "$scratch/candidate/assets/marker" ]] || failed=1
 expect 0 'matching complete draft resumes without uploads' "${invoke[@]}" RELEASE_PROMOTION_OUTPUT="$scratch/draft-retry" bash "$scratch/fixture/scripts/promote.sh" draft

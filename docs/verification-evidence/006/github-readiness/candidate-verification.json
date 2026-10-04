@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "status": "verified",
+  "repository": "newbpydev/tusk",
+  "workflow": ".github/workflows/release.yml",
+  "source_sha": "31894ff56fee1c32e34a972883a404a105683133",
+  "version": "v0.3.0",
+  "run_id": 37086312661,
+  "run_attempt": 1,
+  "artifact_id": 11261237431,
+  "artifact_api_digest": "sha256:ba987d9eb766dfa2853144bc047b1da7851b265c9f4e33d59bb0994ad8210975",
+  "manifest_sha256": "e6f076b8cf29569976d608308545d91e5e6f91494b9eb3ba053e3184a57c61e4",
+  "cask_sha256": "6cff223b4f59c8e90a3be1fe080d4087d4e48e88e26a333cbbc6b84dc11dc377",
+  "transport": "API artifact digest retained; every payload and run receipt verified cryptographically, no claim of independently hashing the transport ZIP"
+}
