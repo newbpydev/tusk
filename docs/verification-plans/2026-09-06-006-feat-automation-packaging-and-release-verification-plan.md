@@ -57,6 +57,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   preserved README policy matrix before publishing its review fix.
 - [x] Validate distinct Make-version failure/status and non-GNU banner
   diagnostics before publishing the remaining preflight review fix.
+- [x] Validate the deterministic hierarchy-rollup fixture and identity-based
+  selection before publishing the Windows source-CI correction.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -121,8 +123,17 @@ separately from a successful non-GNU banner. Focused noisy-output, real-error
 and banner controls pass. Official-Go canonical validation passes 710 named
 script assertions; its receipt is retained at
 `docs/verification-evidence/006/pr7-preflight-diagnostic/acceptance.json`.
-Publication and independent resolution of the diagnostic thread are pending.
-Fresh hosted CI and final acceptance remain pending.
+The diagnostic fix was published as `2633ff8`; its submitted reply and
+authoritative thread resolution are verified. That head failed native Windows
+source CI because the hierarchy-rollup test assumed the first-created child
+was the next displayed row. A fixed-clock, descending-ID fixture reproduces
+that invalid assumption deterministically; selecting the intended parent by ID
+retains every progress/count assertion and passes 20 repetitions. This changes
+test setup and navigation only. Official-Go canonical validation passes 710
+named script assertions; the bound receipt is retained at
+`docs/verification-evidence/006/pr7-windows-hierarchy/acceptance.json`.
+Publication and fresh Windows source-CI verification remain pending at this
+local checkpoint; final release acceptance remains pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because
