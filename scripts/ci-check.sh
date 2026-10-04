@@ -63,7 +63,9 @@ contract() {
 preflight() {
     local go_cmd="${TUSK_GO_BIN:-go}" make_cmd="${TUSK_CI_MAKE:-make}" compiler
     require "$go_cmd"; require "$make_cmd"; require git; require jq; require curl
-    "$make_cmd" --version | sed -n '1p' | grep -q 'GNU Make' || die 'GNU Make is required'
+    local make_banner
+    make_banner=$("$make_cmd" --version | sed -n '1p') || die "Make --version failed (status $?)"
+    [[ "$make_banner" == *'GNU Make'* ]] || die 'GNU Make is required'
     local identity=() line
     while IFS= read -r line; do identity+=("$line"); done < <("$go_cmd" env GOOS GOARCH GOVERSION CGO_ENABLED GOHOSTOS GOHOSTARCH)
     [[ ${#identity[@]} == 6 ]] || die 'could not read native Go identity'
@@ -86,7 +88,7 @@ preflight() {
     esac
     printf 'Native job: %s/%s %s; C target %s\n' "${identity[0]}" "${identity[1]}" "${identity[2]}" "$machine"
     "$go_cmd" version
-    "$make_cmd" --version | sed -n '1p'
+    printf '%s\n' "$make_banner"
     "$compiler" --version | sed -n '1p'
 }
 setup() (

@@ -119,7 +119,7 @@ mkdir -p "$scratch/version-tools"
 cat >"$scratch/version-tools/make" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-printf 'GNU Make fixture\n'
+printf '%s\n' "${FIXTURE_MAKE_BANNER:-GNU Make fixture}"
 awk 'BEGIN { for (i = 0; i < 20000; i++) print "version detail" }'
 printf 'make version output drained\n' >>"$FIXTURE_VERSION_TRACE"
 exit "${FIXTURE_MAKE_VERSION_STATUS:-0}"
@@ -142,6 +142,11 @@ expect 0 'preflight drains noisy Make and compiler version output without SIGPIP
 expect 0 'Make version producers complete before preflight succeeds' grep -Fxq 'make version output drained' "$scratch/version-trace"
 expect 0 'compiler version producer completes before preflight succeeds' grep -Fxq 'compiler version output drained' "$scratch/version-trace"
 expect 1 'preflight rejects failed Make version command despite a valid banner' env PATH="$scratch/version-tools:$scratch/bin:$PATH" FIXTURE_VERSION_TRACE="$scratch/version-trace" FIXTURE_MAKE_VERSION_STATUS=23 TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
+cp "$scratch/output" "$scratch/failed-make-version"
+expect 0 'failed Make version diagnostic identifies the producer exit status' grep -Fxq 'CI: Make --version failed (status 23)' "$scratch/failed-make-version"
+expect 1 'successful non-GNU version command remains unsupported' env PATH="$scratch/version-tools:$scratch/bin:$PATH" FIXTURE_VERSION_TRACE="$scratch/version-trace" FIXTURE_MAKE_BANNER='BSD make fixture' TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
+cp "$scratch/output" "$scratch/non-gnu-version"
+expect 0 'non-GNU banner retains a separate prerequisite diagnostic' grep -Fxq 'CI: GNU Make is required' "$scratch/non-gnu-version"
 expect 23 'preflight preserves failed compiler version command status' env PATH="$scratch/version-tools:$scratch/bin:$PATH" FIXTURE_VERSION_TRACE="$scratch/version-trace" FIXTURE_CC_VERSION_STATUS=23 TUSK_CI_OS=windows TUSK_CI_ARCH=amd64 TUSK_CI_GO=1.27.1 bash "$root/scripts/ci-check.sh" preflight
 mkdir -p "$scratch/legacy-jq"
 cat >"$scratch/legacy-jq/jq" <<'JQ'

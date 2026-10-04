@@ -59,6 +59,8 @@ Active scope remains Feature 006 U6/U5 with a bounded U8 metadata follow-up:
   retaining explicit URL rules and all reported refusal cases.
 - [x] Validate the parsed-destination/reference correction and the complete
   preserved README policy matrix before publishing its review fix.
+- [x] Validate distinct Make-version failure/status and non-GNU banner
+  diagnostics before publishing the remaining preflight review fix.
 - [ ] After merge, create a fresh frozen-source candidate, dispatch the new
   Native candidate verification workflow (`.github/workflows/native-candidate.yml`)
   and retain final reference measurements.
@@ -116,10 +118,15 @@ nested image-label refusal. Official-Go canonical validation and the complete
 policy matrix pass, including deep and nested list code; helper coverage is
 97.8%. The bound receipt is retained at
 `docs/verification-evidence/006/pr7-goldmark/acceptance.json`.
-All three Markdown review threads
-remain open until the published fix is verified. The separate preflight
-diagnostic suggestion remains pending. Fresh hosted CI and final acceptance
-remain pending.
+The Goldmark fix was published as `b763be4`; all three Markdown threads have
+submitted substantive replies and verified resolutions. The remaining preflight
+suggestion is corrected by reporting the failed Make-version producer status
+separately from a successful non-GNU banner. Focused noisy-output, real-error
+and banner controls pass. Official-Go canonical validation passes 710 named
+script assertions; its receipt is retained at
+`docs/verification-evidence/006/pr7-preflight-diagnostic/acceptance.json`.
+Publication and independent resolution of the diagnostic thread are pending.
+Fresh hosted CI and final acceptance remain pending.
 
 Canonical validation, focused refusal controls, the live version readback and
 basic CachyOS inspection passed. The candidate at `31894ff` is preliminary because
